@@ -1,7 +1,10 @@
 import Terrain from '../data/terrain.json';
 
 class MapTile {
-	constructor({ id, layers }){
+	constructor({ id, layers, index, map }){
+
+		this.index = index
+		this.map = map
 
 		this.terrain = Object.values(Terrain).find((terrain) => terrain.id === id)
 		if (!this.terrain) {
@@ -16,7 +19,7 @@ class MapTile {
 		this.river = this.riverLarge || this.riverSmall
 		this.bonus = layers.bonus ===  Terrain.bonusResource.id
 
-		this.discovered = Math.random() < .5;
+		this.discovered = true;
 
 		// these variables make no sense as of now
 		this.plowed = false;
@@ -25,80 +28,96 @@ class MapTile {
 		this.coastTerrain = null;
 	}
 
-	// decideCoastTerrain() {
-	// 	if(this.terrain && this.terrain.domain === 'sea'){
-	// 		let left = this.left();
-	// 		let right = this.right();
-	// 		let up = this.up();
-	// 		let down = this.down();
+	left() {
+		return this.map.neighbor(this.index, -1, 0)
+	}
 
-	// 		let landNeighbor = null;
-	// 		if(left && left.terrain && left.terrain.domain === 'land')
-	// 			landNeighbor = left;
-	// 		if(right && typeof right.terrain !== 'undefined' && right.terrain.domain === 'land')
-	// 			landNeighbor = right;
-	// 		if(up && typeof up.terrain !== 'undefined' && up.terrain.domain === 'land')
-	// 			landNeighbor = up;
-	// 		if(down && typeof down.terrain !== 'undefined' && down.terrain.domain === 'land')
-	// 			landNeighbor = down;
+	up() {
+		return this.map.neighbor(this.index, 0, -1)
+	}
 
-	// 		if(landNeighbor)
-	// 			this.coastTerrain = landNeighbor.terrain;
+	right() {
+		return this.map.neighbor(this.index, 1, 0)
+	}
 
-	// 		if(landNeighbor === null && left && right){
-	// 			let leftUp = left.up();
-	// 			let leftDown = left.down();
-	// 			let rightUp = right.up();
-	// 			let rightDown = right.down();
+	down() {
+		return this.map.neighbor(this.index, 0, 1)
+	}
 
-	// 			if(leftUp && typeof leftUp.terrain !== 'undefined' && leftUp.terrain.domain === 'land')
-	// 				landNeighbor = leftUp;
-	// 			if(leftDown && typeof leftDown.terrain !== 'undefined' && leftDown.terrain.domain === 'land')
-	// 				landNeighbor = leftDown;
-	// 			if(rightUp && typeof rightUp.terrain !== 'undefined' && rightUp.terrain.domain === 'land')
-	// 				landNeighbor = rightUp;
-	// 			if(rightDown && typeof rightDown.terrain !== 'undefined' && rightDown.terrain.domain === 'land')
-	// 				landNeighbor = rightDown;
+	decideCoastTerrain() {
+		if(this.terrain && this.terrain.domain === 'sea'){
+			let left = this.left();
+			let right = this.right();
+			let up = this.up();
+			let down = this.down();
 
-	// 			if(landNeighbor)
-	// 				this.coastTerrain = landNeighbor.terrain;
-	// 		}
-	// 	}
+			let landNeighbor = null;
+			if(left && left.terrain && left.terrain.domain === 'land')
+				landNeighbor = left;
+			if(right && typeof right.terrain !== 'undefined' && right.terrain.domain === 'land')
+				landNeighbor = right;
+			if(up && typeof up.terrain !== 'undefined' && up.terrain.domain === 'land')
+				landNeighbor = up;
+			if(down && typeof down.terrain !== 'undefined' && down.terrain.domain === 'land')
+				landNeighbor = down;
 
-	// 	if(this.coastTerrain)
-	// 		this.coast = true;
-	// }
+			if(landNeighbor)
+				this.coastTerrain = landNeighbor.terrain;
 
-	// decideCoastalSea() {
-	// 	this.isCoastalSea = false;
-	// 	if(typeof this.terrain !== 'undefined' && this.terrain.domain === 'sea' && this.coastTerrain === null){
-	// 		let left = this.left();
-	// 		let right = this.right();
-	// 		let up = this.up();
-	// 		let down = this.down();
-	// 		if(left !== null && right !== null){
-	// 			let leftUp = left.up();
-	// 			let leftDown = left.down();
-	// 			let rightUp = right.up();
-	// 			let rightDown = right.down();
+			if(landNeighbor === null && left && right){
+				let leftUp = left.up();
+				let leftDown = left.down();
+				let rightUp = right.up();
+				let rightDown = right.down();
 
-	// 			if(
-	// 				up && rightUp && right && rightDown &&
-	// 				down && leftDown && left && leftUp
-	// 			){
-	// 			this.isCoastalSea =
-	// 				(up.coastTerrain !== null) ||
-	// 				(rightUp.coastTerrain !== null) ||
-	// 				(right.coastTerrain !== null) ||
-	// 				(rightDown.coastTerrain !== null) ||
-	// 				(down.coastTerrain !== null) ||
-	// 				(leftDown.coastTerrain !== null) ||
-	// 				(left.coastTerrain !== null) ||
-	// 				(leftUp.coastTerrain !== null);
-	// 			}
-	// 		}
-	// 	}
-	// }
+				if(leftUp && typeof leftUp.terrain !== 'undefined' && leftUp.terrain.domain === 'land')
+					landNeighbor = leftUp;
+				if(leftDown && typeof leftDown.terrain !== 'undefined' && leftDown.terrain.domain === 'land')
+					landNeighbor = leftDown;
+				if(rightUp && typeof rightUp.terrain !== 'undefined' && rightUp.terrain.domain === 'land')
+					landNeighbor = rightUp;
+				if(rightDown && typeof rightDown.terrain !== 'undefined' && rightDown.terrain.domain === 'land')
+					landNeighbor = rightDown;
+
+				if(landNeighbor)
+					this.coastTerrain = landNeighbor.terrain;
+			}
+		}
+
+		if(this.coastTerrain)
+			this.coast = true;
+	}
+
+	decideCoastalSea() {
+		this.isCoastalSea = false;
+		if(typeof this.terrain !== 'undefined' && this.terrain.domain === 'sea' && this.coastTerrain === null){
+			let left = this.left();
+			let right = this.right();
+			let up = this.up();
+			let down = this.down();
+			if(left && right){
+				let leftUp = left.up();
+				let leftDown = left.down();
+				let rightUp = right.up();
+				let rightDown = right.down();
+
+				if(
+					up && rightUp && right && rightDown &&
+					down && leftDown && left && leftUp
+				){
+				this.isCoastalSea =
+					(up.coastTerrain !== null) ||
+					(rightUp.coastTerrain !== null) ||
+					(right.coastTerrain !== null) ||
+					(rightDown.coastTerrain !== null) ||
+					(down.coastTerrain !== null) ||
+					(leftDown.coastTerrain !== null) ||
+					(left.coastTerrain !== null) ||
+					(leftUp.coastTerrain !== null);
+				}
+			}
+		}
+	}
 }
 
 export default MapTile

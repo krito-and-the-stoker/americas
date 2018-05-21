@@ -34,7 +34,7 @@ class RenderView {
 					background.container.y = current.y
 					background.background.tilePosition.x = current.x
 					background.background.tilePosition.y = current.y
-					background.layer.app.render()
+					background.render()
 				})
 				.start()
 		}

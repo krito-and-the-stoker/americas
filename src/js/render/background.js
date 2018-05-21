@@ -11,7 +11,7 @@ class Background {
 		// create layer
 		const layer = new Layer()
 
-		const [undiscovered, mapTiles] = await loadTexture('images/undiscovered.jpg', 'images/map.png')
+		const [undiscovered, mapTilesTexture] = await loadTexture('images/undiscovered.jpg', 'images/map.png')
 
 		const background = new PIXI.extras.TilingSprite(undiscovered, layer.width, layer.height)
 		// const numberOfSprites = 50000
@@ -28,27 +28,57 @@ class Background {
 		// 	tile.exactY = tile.y
 		// 	container.addChild(tile)
 		// })
-		const tiles = mapView.views.map(view => {
-			return view.sprites.map(sprite => {
-				const tile = new PIXI.Sprite(new PIXI.Texture(mapTiles, rectangle(sprite)))
+		console.log('creating tiles')
+		const tiles = mapView.views.map(view => ({
+			spites: null,
+			view,
+			createSprites: () => view.sprites.map(sprite => {
+				const tile = new PIXI.Sprite(new PIXI.Texture(mapTilesTexture, rectangle(sprite - 1)))
 				tile.x = view.position.x
 				tile.y = view.position.y
-				container.addChild(tile)
 				return tile
 			})
-		})
+		}))
+
 
 		layer.app.stage.addChild(background)
 		layer.app.stage.addChild(container)
 
 		layer.app.stop()
-		layer.app.render()
 
-		return new Background({
+		const result = new Background({
 			layer,
 			container,
-			background
+			background,
+			tiles,
+			mapTilesTexture,
+			numTiles: mapView.numTiles
 		})
+
+		result.render()
+		return result
+	}
+
+	render() {
+		this.container.removeChildren()
+		const tileWidth = Math.ceil(this.layer.width / 64) + 1
+		const tileHeight = Math.ceil(this.layer.height / 64) + 1
+		const tileX = -Math.ceil(this.container.x / 64)
+		const tileY = -Math.ceil(this.container.y / 64)
+		range(tileWidth).forEach(deltaX => {
+			range(tileHeight).forEach(deltaY => {
+				const x = tileX + deltaX
+				const y = tileY + deltaY
+				const index = y * this.numTiles.x + x
+				if (index >= 0 && index < this.tiles.length) {				
+					if (!this.tiles[index].sprites) {
+						this.tiles[index].sprites = this.tiles[index].createSprites()
+					}
+					this.tiles[index].sprites.forEach(sprite => this.container.addChild(sprite))
+				}
+			})
+		})
+		this.layer.app.render()
 	}
 }
 

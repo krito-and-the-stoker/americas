@@ -2,24 +2,23 @@ import Terrain from '../data/terrain.json';
 
 class MapView{
 	constructor({ mapEntity }) {
+		this.numTiles = mapEntity.numTiles
+		this.spriteSheetWidth = 1024 / 64
 		this.views = mapEntity.tiles.map((tile, index) => {
 			return {
 				position: mapEntity.position(index),
 				sprites: this.assembleTile(tile)
 			}
 		})
+		console.log(this.views)
 	}
 
 	assembleTile(tile){
-		const view = [tile.terrain.centerTile - 1]
-
-		// view.concat(this.renderBaseBlock(tile));
-		// view.concat(this.renderTopTiles(tile));
-		// view.concat(this.renderCoast(tile));
-		// view.concat(this.renderBonusResources(tile));
-		// view.concat(this.renderUndiscovered(tile));
-
-		return view;
+		return [].concat(this.renderBaseBlock(tile))
+			.concat(this.renderTopTiles(tile))
+			.concat(this.renderCoast(tile))
+			.concat(this.renderBonusResources(tile))
+			.concat(this.renderUndiscovered(tile))
 	}
 
 	renderBaseBlock(center){
@@ -39,7 +38,6 @@ class MapView{
 			let rightUp = right.up();
 			let rightDown = right.down();
 			if(leftUp && leftDown && rightUp && rightDown){
-
 				indices.push(this.getTileIndex(rightDown, -1, -1, center));
 				indices.push(this.getTileIndex(down, 0, -1, center));
 				indices.push(this.getTileIndex(leftDown, 1, -1, center));
@@ -99,7 +97,7 @@ class MapView{
 	}
 
 	getTileIndex(other, x, y, center){
-		return this.decideLandSeaTile(center, other) + Settings.tiles.x*y + x;
+		return this.decideLandSeaTile(center, other) + this.spriteSheetWidth*y + x;
 	}
 
 	renderUndiscovered(center){
@@ -174,7 +172,7 @@ class MapView{
 			right &&
 			up &&
 			down &&
-			center.props.domain === 'sea' &&
+			center.terrain.domain === 'sea' &&
 			center.coastTerrain
 		){
 			let leftUp = left.up();
@@ -183,13 +181,13 @@ class MapView{
 			let rightDown = right.down();
 
 			if(leftUp && rightUp && leftDown && rightDown){
-				if(leftUp.props.domain === 'sea' && left.props.domain === 'sea' && up.props.domain === 'sea')
+				if(leftUp.terrain.domain === 'sea' && left.terrain.domain === 'sea' && up.terrain.domain === 'sea')
 					indices.push(Terrain['coastal sea'].northWestCorner);
-				if(leftDown.props.domain === 'sea' && left.props.domain === 'sea' && down.props.domain === 'sea')
+				if(leftDown.terrain.domain === 'sea' && left.terrain.domain === 'sea' && down.terrain.domain === 'sea')
 					indices.push(Terrain['coastal sea'].southWestCorner);
-				if(rightUp.props.domain === 'sea' && right.props.domain === 'sea' && up.props.domain === 'sea')
+				if(rightUp.terrain.domain === 'sea' && right.terrain.domain === 'sea' && up.terrain.domain === 'sea')
 					indices.push(Terrain['coastal sea'].northEastCorner);
-				if(rightDown.props.domain === 'sea' && right.props.domain === 'sea' && down.props.domain === 'sea')
+				if(rightDown.terrain.domain === 'sea' && right.terrain.domain === 'sea' && down.terrain.domain === 'sea')
 					indices.push(Terrain['coastal sea'].southEastCorner);
 			}
 		}
@@ -214,13 +212,13 @@ class MapView{
 			right &&
 			up &&
 			down &&
-			center.props.domain === 'sea'
+			center.terrain.domain === 'sea'
 		){
 			let name = this.neighborToName(
-				up.props.domain === 'land',
-				right.props.domain === 'land',
-				down.props.domain === 'land',
-				left.props.domain === 'land'
+				up.terrain.domain === 'land',
+				right.terrain.domain === 'land',
+				down.terrain.domain === 'land',
+				left.terrain.domain === 'land'
 			);
 
 			if(name)
@@ -235,7 +233,7 @@ class MapView{
 
 		if(center){
 			//no corners on land tiles
-			if(center.props.domain === 'land' || !center.discovered)
+			if(center.terrain.domain === 'land' || !center.discovered)
 				return corners;
 
 			let left = center.left();
@@ -251,14 +249,14 @@ class MapView{
 
 				if(leftUp && rightUp && leftDown && rightDown){
 					let cornerNames = this.getCornerNames(
-						up.props.domain === 'land',
-						rightUp.props.domain === 'land',
-						right.props.domain === 'land',
-						rightDown.props.domain === 'land',
-						down.props.domain === 'land',
-						leftDown.props.domain === 'land',
-						left.props.domain === 'land',
-						leftUp.props.domain === 'land'
+						up.terrain.domain === 'land',
+						rightUp.terrain.domain === 'land',
+						right.terrain.domain === 'land',
+						rightDown.terrain.domain === 'land',
+						down.terrain.domain === 'land',
+						leftDown.terrain.domain === 'land',
+						left.terrain.domain === 'land',
+						leftUp.terrain.domain === 'land'
 					);
 					for(let name of cornerNames){
 						corners.push(Terrain.coast[name]);
@@ -343,7 +341,7 @@ class MapView{
 	}
 
 	getForestTileModifier(up, right, down, left){
-		let y = Settings.tiles.x;
+		let y = this.spriteSheetWidth;
 
 		if(!up && !right && !down && !left)
 			return 0;
@@ -454,11 +452,11 @@ class MapView{
 				}
 				if(center.riverSmall){
 					let mod = this.getForestTileModifier(up.riverSmall, right.riverSmall, down.riverSmall, left.riverSmall);
-					topTiles.push(Terrain['small river'].singleTile + mod);
+					topTiles.push(Terrain['smallRiver'].singleTile + mod);
 				}
 				if(center.riverLarge){
 					let mod = this.getForestTileModifier(up.riverLarge, right.riverLarge, down.riverLarge, left.riverLarge);
-					topTiles.push(Terrain['large river'].singleTile + mod);
+					topTiles.push(Terrain['largeRiver'].singleTile + mod);
 				}
 				if(center.forest){
 					let mod = this.getForestTileModifier(up.forest, right.forest, down.forest, left.forest);

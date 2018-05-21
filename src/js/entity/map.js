@@ -1,4 +1,4 @@
-import Tile from './tile.js'
+import MapTile from './tile.js'
 // import MapView from 'src/view/map/mapView.js'
 // import PathFinder from 'src/model/ai/pathFinder.js'
 
@@ -16,9 +16,10 @@ class MapEntity {
 		MapEntity.instance = this
 
 		console.log('creating tiles')
-		this.tiles = MapEntity.layer(data, 'terrain base').data.map((id, index) => new Tile({
+		this.tiles = MapEntity.layer(data, 'terrain base').data.map((id, index) => new MapTile({
 			id,
 			index,
+			map: this,
 			layers: {
 				top: MapEntity.layer(data, 'terrain top').data[index],
 				riverSmall: MapEntity.layer(data, 'terrain river small').data[index],
@@ -27,7 +28,7 @@ class MapEntity {
 			}
 		}))
 		console.log('creating coast line')
-		// this.createCoastLine()
+		this.createCoastLine()
 		console.log('creating graph')
 		// this.path = new PathFinder({
 		// 	map: this
@@ -50,33 +51,6 @@ class MapEntity {
 		return resultIndex >= 0 && resultIndex < this.tiles.length ? this.tiles[resultIndex] : 0
 	}
 
-	neighbors(center) {
-		return [
-			neighbor(center,  0, -1),
-			neighbor(center,  1, -1),
-			neighbor(center,  1,  0),
-			neighbor(center,  1,  1),
-			neighbor(center,  0,  1),
-			neighbor(center, -1,  1),
-			neighbor(center, -1,  0),
-			neighbor(center, -1, -1),
-		]
-	}
-
-	armor(center) {
-		return [
-			neighbor(center,  1,  1),
-			neighbor(center,  1,  0),
-			neighbor(center,  1, -1),
-			neighbor(center,  0,  1),
-			neighbor(center,  0,  0),
-			neighbor(center,  0, -1),
-			neighbor(center, -1,  1),
-			neighbor(center, -1,  0),
-			neighbor(center, -1, -1),
-		]
-	}
-
 	position(center) {
 		return {
 			x: (center % this.numTiles.x) * 64,
@@ -84,15 +58,15 @@ class MapEntity {
 		}
 	}
 
-	// createCoastLine(){
-	// 	//look for coasts and create coast lines
-	// 	this.tiles.forEach((tile) => {
-	// 		tile.decideCoastTerrain()
-	// 	})
-	// 	this.tiles.forEach((tile) => {
-	// 		tile.decideCoastalSea()
-	// 	})
-	// }
+	createCoastLine(){
+		//look for coasts and create coast lines
+		this.tiles.forEach(tile => {
+			tile.decideCoastTerrain()
+		})
+		this.tiles.forEach(tile => {
+			tile.decideCoastalSea()
+		})
+	}
 
 }
 
