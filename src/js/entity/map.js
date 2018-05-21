@@ -29,12 +29,12 @@ class MapEntity {
 		}))
 		console.log('creating coast line')
 		this.createCoastLine()
-		console.log('creating graph')
+		// console.log('creating graph')
 		// this.path = new PathFinder({
 		// 	map: this
 		// })
 
-		console.log('creating view')
+		// console.log('creating view')
 		// this.view = new MapView({
 		// 	map: this
 		// })

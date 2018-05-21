@@ -6,11 +6,14 @@ class MapTile {
 		this.index = index
 		this.map = map
 
-		this.terrain = Object.values(Terrain).find((terrain) => terrain.id === id)
-		if (!this.terrain) {
-			console.warn(`No terrain type found for id ${id} (${this.position}.`)
+		const [name, terrain] = Object.entries(Terrain).find(([name, terrain]) => terrain.id === id)
+		if (!terrain) {
+			console.warn(`No terrain type found for id ${id}.`)
+			throw new Error(`No terrain type found for id ${id}.`)
 		}
 
+		this.name = name
+		this.terrain = terrain
 		this.forest = layers.top === Terrain.forest.id
 		this.hills = layers.top === Terrain.hills.id
 		this.mountains = layers.top === Terrain.mountains.id

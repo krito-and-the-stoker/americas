@@ -10,7 +10,8 @@ class MapView{
 				sprites: this.assembleTile(tile)
 			}
 		})
-		console.log(this.views)
+		const totalSprites = this.views.reduce((count, view) => count + view.sprites.length, 0)
+		console.log(`use total of ${totalSprites} sprites for map`)
 	}
 
 	assembleTile(tile){

@@ -18,16 +18,6 @@ class Background {
 		// console.log(`Creating background with ${numberOfSprites} sprites`)
 		const container = new PIXI.particles.ParticleContainer(mapView.views.length);
 
-		// const tiles = range(numberOfSprites).map(index => new PIXI.Sprite(new PIXI.Texture(map, rectangle(Math.floor(150*Math.random())))))
-		// tiles.forEach((tile, index) => {
-		// 	tile.vx = 2*(Math.random() - .5)
-		// 	tile.vy = 2*(Math.random() - .5)
-		// 	tile.x = Math.round(layer.width / 2)
-		// 	tile.y = Math.round(layer.height / 2)
-		// 	tile.exactX = tile.x
-		// 	tile.exactY = tile.y
-		// 	container.addChild(tile)
-		// })
 		console.log('creating tiles')
 		const tiles = mapView.views.map(view => ({
 			spites: null,
@@ -55,6 +45,7 @@ class Background {
 			numTiles: mapView.numTiles
 		})
 
+		console.log('first render')
 		result.render()
 		return result
 	}

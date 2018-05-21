@@ -19,7 +19,7 @@ class RenderView {
 		const clickHandler = (e) => {
 			let newCoords = {
 				x: coords.x - e.clientX + background.layer.width / 2,
-				y: coords.y - e.clientY + background.layer.width / 2
+				y: coords.y - e.clientY + background.layer.height / 2
 			}
 			if (tween) {
 				tween.stop()
@@ -28,12 +28,12 @@ class RenderView {
 				.to(newCoords, 350)
 				.easing(TWEEN.Easing.Quadratic.Out)
 				.onUpdate((current) => {
-					foreground.container.x = current.x
-					foreground.container.y = current.y
-					background.container.x = current.x
-					background.container.y = current.y
-					background.background.tilePosition.x = current.x
-					background.background.tilePosition.y = current.y
+					foreground.container.x = Math.round(current.x)
+					foreground.container.y = Math.round(current.y)
+					background.container.x = Math.round(current.x)
+					background.container.y = Math.round(current.y)
+					background.background.tilePosition.x = Math.round(current.x)
+					background.background.tilePosition.y = Math.round(current.y)
 					background.render()
 				})
 				.start()
