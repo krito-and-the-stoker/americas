@@ -3,8 +3,8 @@ import Terrain from '../data/terrain.json';
 class MapTile {
 	constructor({ id, layers }){
 
-		const terrain = Object.values(Terrain).find((terrain) => terrain.id === id)
-		if (!terrain) {
+		this.terrain = Object.values(Terrain).find((terrain) => terrain.id === id)
+		if (!this.terrain) {
 			console.warn(`No terrain type found for id ${id} (${this.position}.`)
 		}
 
@@ -16,7 +16,7 @@ class MapTile {
 		this.river = this.riverLarge || this.riverSmall
 		this.bonus = layers.bonus ===  Terrain.bonusResource.id
 
-		this.discovered = true;
+		this.discovered = Math.random() < .5;
 
 		// these variables make no sense as of now
 		this.plowed = false;
