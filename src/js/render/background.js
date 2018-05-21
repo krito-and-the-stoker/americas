@@ -43,39 +43,13 @@ class Background {
 
 		layer.app.stop()
 		layer.app.render()
-		let rendering = false
-
-		const renderingLoop = () => {
-			if (rendering) {
-				tiles.forEach(tile => {
-					tile.exactX += tile.vx
-					tile.exactY += tile.vy
-					tile.x = Math.round(tile.exactX)
-					tile.y = Math.round(tile.exactY)
-				})
-				layer.app.render()
-			}
-			requestAnimationFrame(renderingLoop)
-		}
-		renderingLoop()
-
-		// window.addEventListener('mousedown', () => rendering = true)
-		// window.addEventListener('mouseup', () => rendering = false)
-
-		window.addEventListener('click', (e) => {
-			container.x -= e.clientX - layer.width / 2
-			container.y -= e.clientY - layer.height / 2
-			background.tilePosition.x -= e.clientX - layer.width / 2
-			background.tilePosition.y -= e.clientY - layer.height / 2
-			layer.app.render()
-		})
 
 		return new Background({
 			layer,
-			container
+			container,
+			background
 		})
 	}
-
 }
 
 

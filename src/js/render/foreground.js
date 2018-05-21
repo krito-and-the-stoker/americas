@@ -43,11 +43,6 @@ class Foreground {
 			})
 		})
 
-		window.addEventListener('click', (e) => {
-			container.x -= e.clientX - layer.width / 2
-			container.y -= e.clientY - layer.height / 2
-		})
-
 		return new Foreground({
 			container,
 			layer
