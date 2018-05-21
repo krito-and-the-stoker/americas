@@ -1,0 +1,157 @@
+{
+	"arctic":{
+		"id": 81,
+		"domain": "land",
+		"centerTile": 226
+	},
+	"marsh":{
+		"id":82,
+		"domain": "land",
+		"centerTile": 229
+	},
+	"plains":{
+		"id": 83,
+		"domain":"land",
+		"centerTile": 232
+	},
+	"grassland":{
+		"id": 84,
+		"domain":"land",
+		"centerTile": 235
+	},
+	"prairie":{
+		"id": 85,
+		"domain":"land",
+		"centerTile": 238
+	},
+	"savannah":{
+		"id": 86,
+		"domain":"land",
+		"centerTile": 274
+	},
+	"swamp":{
+		"id": 87,
+		"domain":"land",
+		"centerTile": 277
+	},
+	"tundra":{
+		"id": 88,
+		"domain":"land",
+		"centerTile": 280
+	},
+	"desert":{
+		"id": 89,
+		"domain":"land",
+		"centerTile": 283
+	},
+	"ocean":{
+		"id": 90,
+		"domain": "sea",
+		"centerTile": 286
+	},
+	"sea lane":{
+		"id": 91,
+		"domain": "sea",
+		"centerTile": 181
+	},
+	"coastal sea":{
+		"domain": "sea",
+		"centerTile": 178,
+		"southEastCorner": 184,
+		"southWestCorner": 136,
+		"northWestCorner": 152,
+		"northEastCorner": 168
+	},
+	"forest":{
+		"id": 309,
+		"singleTile": 309
+	},
+	"hills":{
+		"id": 317
+	},
+	"hillsPeak":{
+		"singleTile": 317
+	},
+	"hillsBase":{
+		"singleTile": 445,
+		"blending": "overlay"
+	},
+	"mountains":{
+		"id": 313
+	},
+	"mountainsPeak":{
+		"singleTile": 313
+	},
+	"mountainsBase":{
+		"singleTile": 441,
+		"blending": "overlay"
+	},
+	"smallRiver":{
+		"id": 305,
+		"singleTile": 305
+	},
+	"largeRiver":{
+		"id": 369,
+		"singleTile": 369
+	},
+	"bonusResource":{
+		"id": 97,
+		"minerals": 98,
+		"wheat": 99,
+		"tobacco": 100,
+		"cotton": 101,
+		"sugar": 102,
+		"game": 103,
+		"fur": 104,
+		"oasis": 105,
+		"fish": 106,
+		"wood": 108,
+		"ore": 110,
+		"silver": 111
+	},
+	"coast":{
+		"eastWestPassage": 121,
+		"northSouthPassage": 137,
+		"northBay": 153,
+		"westBay": 186,
+		"eastBay": 170,
+		"southBay": 185,
+		"southEast": 171,
+		"southWest": 172,
+		"northEast": 187,
+		"northWest": 188,
+		"west": 138,
+		"north": 123,
+		"south": 155,
+		"east": 140,
+		"lake": 139,
+		"southWestCorner": 154,
+		"southEastCorner": 156,
+		"northWestCorner": 122,
+		"northEastCorner": 124
+	},
+	"undiscovered":{
+		"eastWestPassage": 125,
+		"northSouthPassage": 141,
+		"northBay": 157,
+		"westBay": 190,
+		"eastBay": 174,
+		"southBay": 189,
+		"southEast": 175,
+		"southWest": 176,
+		"northEast": 191,
+		"northWest": 192,
+		"west": 142,
+		"north": 127,
+		"south": 159,
+		"east": 144,
+		"lake": 143,
+		"southWestCorner": 158,
+		"southEastCorner": 160,
+		"northWestCorner": 126,
+		"northEastCorner": 128
+	},
+	"transparent":{
+		"id": 97
+	}
+}

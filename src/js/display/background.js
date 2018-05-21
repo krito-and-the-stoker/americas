@@ -1,53 +1,44 @@
 import * as PIXI from 'pixi.js'
-import { loadTexture, range, rectangle } from './util.js'
+import { loadTexture, range, rectangle } from './../util/util.js'
+import Layer from './layer.js'
 
 class Background {
-	static async initialize() {
-		//Create a Pixi Application
-		const [width, height] = [window.innerWidth, window.innerHeight]
-		const app = new PIXI.Application()
-		app.renderer.view.style.position = "absolute";
-		app.renderer.view.style.display = "block";
-		app.renderer.autoResize = true;
-		app.renderer.resize(window.innerWidth, window.innerHeight)
+	constructor(props) {
+		Object.assign(this, props)
+	}
 
-		//Add the canvas that Pixi automatically created for you to the HTML document
-		document.body.appendChild(app.view)
+	static async initialize() {
+		// create layer
+		const layer = new Layer({
+			preserveDrawingBuffer: true,
+			clearBeforeRender: false
+		})
 
 		const [undiscovered, map] = await loadTexture('images/undiscovered.jpg', 'images/map.png')
+
 		const background = new PIXI.Sprite(undiscovered)
-		app.stage.addChild(background)
 		const numberOfSprites = 50000
-		console.log(`Benchmarking background with ${numberOfSprites} sprites`)
+		console.log(`Creating background with ${numberOfSprites} sprites`)
 		const container = new PIXI.particles.ParticleContainer();
-		app.stage.addChild(container)
 		const tiles = range(numberOfSprites).map(index => new PIXI.Sprite(new PIXI.Texture(map, rectangle(Math.floor(150*Math.random())))))
 		tiles.forEach((tile, index) => {
 			tile.vx = 2*(Math.random() - .5)
 			tile.vy = 2*(Math.random() - .5)
-			tile.x = Math.round(width / 2)
-			tile.y = Math.round(height / 2)
+			tile.x = Math.round(layer.width / 2)
+			tile.y = Math.round(layer.height / 2)
 			tile.exactX = tile.x
 			tile.exactY = tile.y
 			container.addChild(tile)
 		})
 
-		
-		app.ticker.add(() => {
-			tiles.forEach(tile => {
-				if (!container.cacheAsBitmap) {			
-					tile.exactX += tile.vx
-					tile.exactY += tile.vy
-					tile.x = Math.round(tile.exactX)
-					tile.y = Math.round(tile.exactY)
-				}
-			})
-		})
+		layer.app.stage.addChild(background)
+		layer.app.stage.addChild(container)
 
-		app.stop()
-		app.render()
+		layer.app.stop()
+		layer.app.render()
 		let rendering = false
 
+		layer.app.stage.removeChild(background)
 		const renderingLoop = () => {
 			if (rendering) {
 				tiles.forEach(tile => {
@@ -56,7 +47,7 @@ class Background {
 					tile.x = Math.round(tile.exactX)
 					tile.y = Math.round(tile.exactY)
 				})
-				app.render()
+				layer.app.render()
 			}
 			requestAnimationFrame(renderingLoop)
 		}

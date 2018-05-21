@@ -1,9 +1,12 @@
-import Background from './background.js'
-import Foreground from './foreground.js'
+import Background from './display/background.js'
+import Foreground from './display/foreground.js'
+import Map from './entity/map.js'
+import americaMap from './data/america-large.json'
 
 const initialize = async () => {
-	await Background.initialize()
-	await Foreground.initialize()
+	const background = await Background.initialize()
+	const foreground = await Foreground.initialize()
+	const map = new Map({ data: americaMap })
 }
 
 
