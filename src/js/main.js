@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js'
 
 const loadTexture = async (...files) => new Promise((resolve, reject) => {
-	PIXI.Loader.shared.add(files).load(() => {
-		resolve(files.map(path => PIXI.Loader.shared.resources[path].texture))
+	PIXI.loader.add(files).load(() => {
+		resolve(files.map(path => PIXI.loader.resources[path].texture))
 	})
 })
 
@@ -32,29 +32,42 @@ const initialize = async () => {
 	const [undiscovered, map] = await loadTexture('images/undiscovered.jpg', 'images/map.png')
 	const background = new PIXI.Sprite(undiscovered)
 	app.stage.addChild(background)
-	const numberOfSprites = 10
+	const numberOfSprites = 50000
 	console.log(`Benchmarking ${numberOfSprites} sprites`)
-	const container = new PIXI.ParticleContainer(numberOfSprites);
+	const container = new PIXI.particles.ParticleContainer();
+	// const container = new PIXI.Container();
 	app.stage.addChild(container)
 	const tiles = range(numberOfSprites).map(index => new PIXI.Sprite(new PIXI.Texture(map, rectangle(Math.floor(150*Math.random())))))
 	tiles.forEach((tile, index) => {
 		tile.vx = (Math.random() - .5)
 		tile.vy = (Math.random() - .5)
-		tile.x = width / 2
-		tile.y = height / 2
+		tile.x = Math.round(width / 2)
+		tile.y = Math.round(height / 2)
+		tile.exactX = tile.x
+		tile.exactY = tile.y
 		container.addChild(tile)
 	})
 
 	
 	app.ticker.add(() => {
 		tiles.forEach(tile => {
-			tile.x += tile.vx
-			tile.y += tile.vy
+			if (!container.cacheAsBitmap) {			
+				tile.exactX += tile.vx
+				tile.exactY += tile.vy
+				tile.x = Math.round(tile.exactX)
+				tile.y = Math.round(tile.exactY)
+			}
 		})
 	})
 
+	let running = true
 	const toggleFreeze = () => {
-		container.cacheAsBitmap = !container.cacheAsBitmap
+		running = !running
+		if (!running)
+			app.stop()
+		if (running)
+			app.start()
+		// container.cacheAsBitmap = !container.cacheAsBitmap
 	}
 	window.addEventListener('click', toggleFreeze)
 }
