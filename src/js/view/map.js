@@ -15,7 +15,8 @@ class MapView{
 	}
 
 	assembleTile(tile){
-		return [].concat(this.renderBaseBlock(tile))
+		return []
+			.concat(this.renderBaseBlock(tile))
 			.concat(this.renderTopTiles(tile))
 			.concat(this.renderCoast(tile))
 			.concat(this.renderBonusResources(tile))
@@ -443,12 +444,12 @@ class MapView{
 			if(left && right && up && down){			
 				if(center.hills){
 					let mod = this.getForestTileModifier(up.hills, right.hills, down.hills, left.hills);
-					topTiles.push(-(Terrain.hillsBase.singleTile + mod));
+					// topTiles.push(-(Terrain.hillsBase.singleTile + mod));
 					topTiles.push(Terrain.hillsPeak.singleTile + mod);
 				}
 				if(center.mountains){
 					let mod = this.getForestTileModifier(up.mountains, right.mountains, down.mountains, left.mountains);
-					topTiles.push(-(Terrain.mountainsBase.singleTile + mod));
+					// topTiles.push(-(Terrain.mountainsBase.singleTile + mod));
 					topTiles.push(Terrain.mountainsPeak.singleTile + mod);
 				}
 				if(center.riverSmall){
