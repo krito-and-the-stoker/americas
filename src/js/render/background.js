@@ -16,16 +16,18 @@ class Background {
 		const background = new PIXI.extras.TilingSprite(undiscovered, layer.width, layer.height)
 		// const numberOfSprites = 50000
 		// console.log(`Creating background with ${numberOfSprites} sprites`)
-		const container = new PIXI.particles.ParticleContainer(mapView.views.length);
+		const container = new PIXI.particles.ParticleContainer(10000);
+		// const container = new PIXI.Container();
 
 		console.log('creating tiles')
 		const tiles = mapView.views.map(view => ({
 			spites: null,
 			view,
 			createSprites: () => view.sprites.map(sprite => {
-				const tile = new PIXI.Sprite(new PIXI.Texture(mapTilesTexture, rectangle(sprite - 1)))
+				const tile = new PIXI.Sprite(new PIXI.Texture(mapTilesTexture, rectangle(Math.abs(sprite) - 1)))
 				tile.x = view.position.x
 				tile.y = view.position.y
+				tile.blendMode = sprite > 0 ? PIXI.BLEND_MODES.NORMAL : PIXI.BLEND_MODES.OVERLAY
 				return tile
 			})
 		}))
