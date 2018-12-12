@@ -34,7 +34,6 @@ const handleKeydown = (e) => {
 			.onUpdate(({ scale, x, y }) => {
 				RenderView.updateScale(scale)
 				RenderView.updateMapCoords({ x, y })
-				console.log(x, y)
 			})
 			.start()
 	}
