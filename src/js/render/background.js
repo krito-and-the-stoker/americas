@@ -4,7 +4,7 @@ import Layer from './layer'
 import RenderView from './view'
 import TileCache from './tileCache'
 
-const MAX_TILES = 250000
+const MAX_TILES = 30000
 
 let numTiles = null
 let layer = null
@@ -32,7 +32,7 @@ const updateCoords = ({ x, y }) => {
 
 const updateScale = newScale => {
 	container.scale.set(newScale, newScale)
-	// undiscovered.scale.set(newScale, newScale)
+	undiscovered.tileScale.set(newScale, newScale)
 	scale = newScale
 	render()
 }

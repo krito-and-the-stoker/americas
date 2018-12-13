@@ -22,7 +22,7 @@ class MapTile {
 		this.river = this.riverLarge || this.riverSmall
 		this.bonus = layers.bonus ===  Terrain.bonusResource.id
 
-		this.discovered = true;
+		this.discovered = true
 
 		// these variables make no sense as of now
 		this.plowed = false;
