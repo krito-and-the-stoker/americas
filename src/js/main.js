@@ -2,6 +2,7 @@ import MapEntity from './entity/map.js'
 import MapView from './view/map.js'
 import RenderView from './render/view.js'
 import Mouse from './input/mouse.js'
+import Touch from './input/touch.js'
 import Keyboard from './input/keyboard.js'
 import americaMap from './data/america-large.json'
 import Tween from './util/tween.js'
@@ -14,6 +15,7 @@ const initialize = async () => {
 	await RenderView.initialize(mapView)
 	Mouse.initialize()
 	Keyboard.initialize()
+	Touch.initialize()
 	Tween.initialize()
 }
 

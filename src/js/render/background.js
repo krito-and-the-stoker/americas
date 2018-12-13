@@ -106,12 +106,10 @@ const render = () => {
 					const index = y * numTiles.x + x
 					if (!tiles[index].sprites) {
 						tiles[index].sprites = tiles[index].createCachedSprites()
-						// tiles[index].createCachedSprites()
 					}
 					tiles[index].sprites.forEach(sprite => container.addChild(sprite))
 				})
 			})
-			console.log('rendering sprites: ', container.children.length)
 			layer.app.render()
 		})
 	}
