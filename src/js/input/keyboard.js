@@ -1,4 +1,4 @@
-import RenderView from '../render/view.js'
+import RenderView from '../render/view'
 import TWEEN from '@tweenjs/tween.js'
 
 
@@ -24,12 +24,13 @@ const handleKeydown = (e) => {
 			tween.stop()
 		}
 		const { scale, coords, } = RenderView.get()
+		const screen = RenderView.getDimensions()
 		tween = new TWEEN.Tween({ scale, x: coords.x, y: coords.y })
 			.to({
 				scale: targetScale,
-				x: coords.x * (targetScale / scale),
-				y: coords.y * (targetScale / scale) },
-			350)
+				x: (coords.x - 0.5*screen.x) * (targetScale / scale) + 0.5*screen.x,
+				y: (coords.y - 0.5*screen.y) * (targetScale / scale) + 0.5*screen.y
+			}, 350)
 			.easing(TWEEN.Easing.Quadratic.Out)
 			.onUpdate(({ scale, x, y }) => {
 				RenderView.updateScale(scale)

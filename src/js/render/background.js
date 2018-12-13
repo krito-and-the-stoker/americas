@@ -81,6 +81,14 @@ const initialize = async mapView => {
 
 	console.log('first render')
 	render()
+
+	window.addEventListener('resize', resize)
+}
+
+const resize = () => {
+	undiscovered.width = layer.width
+	undiscovered.height = layer.height
+	render()
 }
 
 const render = () => {
