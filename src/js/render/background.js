@@ -60,7 +60,11 @@ const initialize = async mapView => {
 			return sprite
 		}),
 		createCachedSprites: () => {		
-			const spriteFromFrames = frames => frames.map(frame => new PIXI.Sprite(new PIXI.Texture(mapTilesTexture, rectangle(Math.abs(frame) - 1))))
+			const spriteFromFrames = frames => frames.map(frame => {
+				const sprite = new PIXI.Sprite(new PIXI.Texture(mapTilesTexture, rectangle(Math.abs(frame) - 1)))
+				sprite.blendMode = frame > 0 ? PIXI.BLEND_MODES.NORMAL : PIXI.BLEND_MODES.OVERLAY
+				return sprite
+			})
 			const sprite = TileCache.createCachedSprite(spriteFromFrames, stack.frames)
 			if (sprite) {			
 				sprite.position.x = stack.position.x

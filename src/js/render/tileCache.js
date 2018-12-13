@@ -19,8 +19,8 @@ const tiles = {
 };
 const textureSize = tiles.x * tiles.y
 const rescale = {
-	x: (TILE_SIZE + 2*MARGIN) / TILE_SIZE,
-	y: (TILE_SIZE + 2*MARGIN) / TILE_SIZE,
+	x: (TILE_SIZE + 2.0*MARGIN) / TILE_SIZE,
+	y: (TILE_SIZE + 2.0*MARGIN) / TILE_SIZE,
 };
 
 const addRenderTexture = () => {
@@ -78,7 +78,14 @@ const renderStencil = (createSprites, indices) => {
 		group.addChild(sprite)
 	})
 	group.position.set(nextFrame.x - MARGIN, nextFrame.y - MARGIN)
-	group.scale.set(rescale.x, rescale.y)
+	renderer.render(group, currentRenderTexture())
+	group.position.set(nextFrame.x - MARGIN, nextFrame.y + MARGIN)
+	renderer.render(group, currentRenderTexture())
+	group.position.set(nextFrame.x + MARGIN, nextFrame.y - MARGIN)
+	renderer.render(group, currentRenderTexture())
+	group.position.set(nextFrame.x + MARGIN, nextFrame.y + MARGIN)
+	renderer.render(group, currentRenderTexture())
+	group.position.set(nextFrame.x, nextFrame.y)
 	renderer.render(group, currentRenderTexture())
 
 	getStencil(indices).texture = new PIXI.Texture(currentRenderTexture(), getRectFromFrame(currentFrame()), getRectFromFrame(currentFrame()));
