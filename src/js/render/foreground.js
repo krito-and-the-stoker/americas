@@ -29,7 +29,7 @@ const initialize = async () => {
 	// create 50 random textures
 	const numberOfSprites = 50
 	console.log(`Creating foreground with ${numberOfSprites} sprites`)
-	container = new PIXI.Container();
+	container = new PIXI.Container()
 	const tiles = range(numberOfSprites).map(index => new PIXI.Sprite(new PIXI.Texture(map, rectangle(Math.floor(150*Math.random())))))
 	tiles.forEach((tile, index) => {
 		tile.vx = 2*(Math.random() - .5)

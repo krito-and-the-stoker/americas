@@ -12,6 +12,11 @@ const get = () => ({
 	coords
 })
 
+const getDimensions = () => ({
+	x: Background.get().layer.width,
+	y: Background.get().layer.height
+})
+
 const updateMapCoords = ({ x, y }) => {
 	coords = { x: Math.round(x), y: Math.round(y) }
 	Foreground.updateCoords(coords)
@@ -32,6 +37,7 @@ const initialize = async mapView => {
 export default {
 	updateMapCoords,
 	updateScale,
+	getDimensions,
 	initialize,
 	get
 }

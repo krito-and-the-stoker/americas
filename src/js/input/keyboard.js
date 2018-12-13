@@ -3,7 +3,7 @@ import TWEEN from '@tweenjs/tween.js'
 
 
 const ZOOM_FACTOR = 1.25
-const MIN_SCALE = 0.25
+const MIN_SCALE = 0.125
 const MAX_SCALE = 4
 
 const sanitizeScale = scale => (scale < MIN_SCALE ? MIN_SCALE : (scale > MAX_SCALE ? MAX_SCALE : scale))

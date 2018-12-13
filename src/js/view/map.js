@@ -4,13 +4,13 @@ class MapView{
 	constructor({ mapEntity }) {
 		this.numTiles = mapEntity.numTiles
 		this.spriteSheetWidth = 1024 / 64
-		this.views = mapEntity.tiles.map((tile, index) => {
+		this.tileStacks = mapEntity.tiles.map((tile, index) => {
 			return {
 				position: mapEntity.position(index),
-				sprites: this.assembleTile(tile)
+				frames: this.assembleTile(tile)
 			}
 		})
-		const totalSprites = this.views.reduce((count, view) => count + view.sprites.length, 0)
+		const totalSprites = this.tileStacks.reduce((count, stack) => count + stack.frames.length, 0)
 		console.log(`use total of ${totalSprites} sprites for map`)
 	}
 
