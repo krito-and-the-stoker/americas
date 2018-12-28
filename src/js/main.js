@@ -4,7 +4,7 @@ import RenderView from './render/view.js'
 import Mouse from './input/mouse.js'
 import Touch from './input/touch.js'
 import Keyboard from './input/keyboard.js'
-import americaMap from './data/america-large.json'
+import americaMap from './data/america-small.json'
 import Tween from './util/tween.js'
 
 

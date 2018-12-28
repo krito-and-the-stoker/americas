@@ -64,26 +64,31 @@
 	},
 	"forest":{
 		"id": 309,
-		"singleTile": 309
+		"singleTile": 309,
+		"singleTileVariation": 373
 	},
 	"hills":{
 		"id": 317
 	},
 	"hillsPeak":{
-		"singleTile": 317
+		"singleTile": 317,
+		"singleTileVariation": 381
 	},
 	"hillsBase":{
 		"singleTile": 445,
+		"singleTileVariation": 509,
 		"blending": "overlay"
 	},
 	"mountains":{
 		"id": 313
 	},
 	"mountainsPeak":{
-		"singleTile": 313
+		"singleTile": 313,
+		"singleTileVariation": 377
 	},
 	"mountainsBase":{
 		"singleTile": 441,
+		"singleTileVariation": 505,
 		"blending": "overlay"
 	},
 	"smallRiver":{

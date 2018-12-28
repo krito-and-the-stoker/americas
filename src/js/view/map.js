@@ -443,14 +443,28 @@ class MapView{
 
 			if(left && right && up && down){			
 				if(center.hills){
-					let mod = this.getForestTileModifier(up.hills, right.hills, down.hills, left.hills);
-					// topTiles.push(-(Terrain.hillsBase.singleTile + mod));
-					topTiles.push(Terrain.hillsPeak.singleTile + mod);
+					const peakBase = center.hillVariation ? Terrain.hillsPeak.singleTileVariation : Terrain.hillsPeak.singleTile
+					// const baseBase = center.hillVariation ? Terrain.hillsBase.singleTileVariation : Terrain.hillsBase.singleTile;
+					const mod = this.getForestTileModifier(
+						up.hills,
+						right.hills,
+						down.hills,
+						left.hills
+					);
+					// topTiles.push(-(baseBase + mod));
+					topTiles.push(peakBase + mod);
 				}
 				if(center.mountains){
-					let mod = this.getForestTileModifier(up.mountains, right.mountains, down.mountains, left.mountains);
-					// topTiles.push(-(Terrain.mountainsBase.singleTile + mod));
-					topTiles.push(Terrain.mountainsPeak.singleTile + mod);
+					const peakBase = center.mountainVariation ? Terrain.mountainsPeak.singleTileVariation : Terrain.mountainsPeak.singleTile
+					// const baseBase = center.mountainVariation ? Terrain.mountainsBase.singleTileVariation : Terrain.mountainsBase.singleTile;
+					const mod = this.getForestTileModifier(
+						up.mountains,
+						right.mountains,
+						down.mountains,
+						left.mountains
+					);
+					// topTiles.push(-(baseBase + mod));
+					topTiles.push(peakBase + mod);
 				}
 				if(center.riverSmall){
 					let mod = this.getForestTileModifier(up.riverSmall, right.riverSmall, down.riverSmall, left.riverSmall);
@@ -461,8 +475,14 @@ class MapView{
 					topTiles.push(Terrain['largeRiver'].singleTile + mod);
 				}
 				if(center.forest){
-					let mod = this.getForestTileModifier(up.forest, right.forest, down.forest, left.forest);
-					topTiles.push(Terrain.forest.singleTile + mod);
+					let mod = this.getForestTileModifier(
+						up.forest && !(center.treeVariation && up.treeVariation),
+						right.forest && !(center.treeVariation && right.treeVariation),
+						down.forest && !(center.treeVariation && down.treeVariation),
+						left.forest && !(center.treeVariation && left.treeVariation)
+					);
+					const baseForestTile = center.treeVariation ? Terrain.forest.singleTileVariation : Terrain.forest.singleTile;
+					topTiles.push(baseForestTile + mod);
 				}
 			}
 

@@ -43,8 +43,11 @@ const initialize = async mapView => {
 	
 	layer = new Layer({
 		transparent: true,
-		clearBeforeRender: false
+		clearBeforeRender: false,
+		preserveDrawingBuffer: true,
 	})
+
+	// container = new PIXI.Container()
 	container = new PIXI.particles.ParticleContainer(MAX_TILES)
 	undiscovered = new PIXI.extras.TilingSprite(undiscoveredTexture, layer.width, layer.height)
 

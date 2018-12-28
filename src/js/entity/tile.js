@@ -15,12 +15,15 @@ class MapTile {
 		this.name = name
 		this.terrain = terrain
 		this.forest = layers.top === Terrain.forest.id
-		this.hills = layers.top === Terrain.hills.id
 		this.mountains = layers.top === Terrain.mountains.id
-		this.riverLarge = layers.riverSmall === Terrain.smallRiver.id
-		this.riverSmall = layers.riverLarge === Terrain.largeRiver.id
+		this.hills = layers.top === Terrain.hills.id || (this.mountains && Math.random() > 0.1);
+		this.riverSmall = layers.riverSmall === Terrain.smallRiver.id
+		this.riverLarge = layers.riverLarge === Terrain.largeRiver.id
 		this.river = this.riverLarge || this.riverSmall
 		this.bonus = layers.bonus ===  Terrain.bonusResource.id
+		this.treeVariation = this.riverLarge || Math.random() > (this.river ? 0.2 : 0.95);
+		this.mountainVariation = Math.random() > (this.river ? 0.2 : 0.75) && !this.bonus || this.mountains;
+		this.hillVariation = Math.random() > (this.river ? 0.2 : 0.75) && !this.bonus;
 
 		this.discovered = true
 

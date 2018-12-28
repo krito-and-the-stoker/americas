@@ -41,7 +41,7 @@ const initialize = async () => {
 		container.addChild(tile)
 	})
 
-	layer.app.stage.addChild(container)
+	// layer.app.stage.addChild(container)
 
 	layer.app.ticker.add(() => {
 		tiles.forEach(tile => {
