@@ -1,6 +1,9 @@
+import TWEEN from '@tweenjs/tween.js'
+
 import RenderView from '../render/view'
 import Background from '../render/background'
-import TWEEN from '@tweenjs/tween.js'
+import Zoom from '../control/zoom'
+
 
 let tween = null
 const moveMap = newCoords => {
@@ -23,9 +26,16 @@ const handleClick = (e) => {
 	moveMap(newCoords)
 }
 
+const ZOOM_FACTOR = 0.001
+const handleScroll = (e) => {
+	Zoom.zoomBy(Math.exp(-ZOOM_FACTOR * e.deltaY))
+}
+
 const initialize = () => {
 	window.addEventListener('click', handleClick)
+	window.addEventListener('wheel', handleScroll)
 }
+
 
 export default {
 	initialize
