@@ -5,8 +5,8 @@ const TILE_SIZE = 64
 const MARGIN = 2
 
 const renderTextureSize = {
-	x: 128*128,
-	y: 128*128
+	x: 2048,
+	y: 2048
 };
 
 const textures = {}
@@ -27,11 +27,10 @@ const addRenderTexture = () => {
 	const baseRenderTexture = new PIXI.BaseRenderTexture(renderTextureSize.x, renderTextureSize.y, PIXI.SCALE_MODES.LINEAR, 1)
 	const renderTexture = new PIXI.RenderTexture(baseRenderTexture)
 	renderTextures.push(renderTexture)
-	if (renderTextures.length > 1)
-		console.log('multiple rendertextures, now everything breaks down :(')
 }
 
 const	currentRenderTexture = () => renderTextures[renderTextures.length-1]
+const currentRenderTextureIndex = () => renderTextures.length - 1
 const currentFrame = () => numFrames % textureSize
 const hasStencil = indices => (typeof getStencil(indices) !== 'undefined')
 const stencilReady = indices => (typeof getStencil(indices).texture !== 'undefined')
@@ -89,6 +88,7 @@ const renderStencil = (createSprites, indices) => {
 	renderer.render(group, currentRenderTexture())
 
 	getStencil(indices).texture = new PIXI.Texture(currentRenderTexture(), getRectFromFrame(currentFrame()), getRectFromFrame(currentFrame()));
+	getStencil(indices).textureIndex = currentRenderTextureIndex()
 	numFrames++;
 }
 
@@ -107,8 +107,17 @@ const createCachedSprite = (createSprites, indices) => {
 	return new PIXI.Sprite(textures[h].texture)
 }
 
+const getTextureIndex = indices => {
+	if (!hasStencil(indices)) {
+		return null
+	}
+
+	return getStencil(indices).textureIndex
+}
+
 export default {
-	createCachedSprite
+	createCachedSprite,
+	getTextureIndex
 }
 
 

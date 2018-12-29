@@ -8,7 +8,7 @@ const MAX_TILES = 30000
 
 let numTiles = null
 let layer = null
-let container = null
+let containers = []
 let undiscovered = null
 let tiles = null
 let scale = 1
@@ -17,24 +17,43 @@ let renderRequested = false
 const get = () => ({
 	numTiles,
 	layer,
-	container,
+	containers,
 	undiscovered,
 	tiles
 })
 
 const updateCoords = ({ x, y }) => {
-	container.x = x
-	container.y = y
+	containers.forEach(container => {	
+		container.x = x
+		container.y = y
+	})
 	undiscovered.tilePosition.x = x
 	undiscovered.tilePosition.y = y
 	render()
 }
 
 const updateScale = newScale => {
-	container.scale.set(newScale, newScale)
+	containers.forEach(container => {	
+		container.scale.set(newScale, newScale)
+	})
 	undiscovered.tileScale.set(newScale, newScale)
 	scale = newScale
 	render()
+}
+
+const getContainer = index => {
+	while (containers.length <= index) {
+		const container = new PIXI.particles.ParticleContainer(MAX_TILES)
+		if (containers.length > 0) {		
+			container.x = containers[containers.length - 1].x
+			container.y = containers[containers.length - 1].y
+			container.scale.set(scale, scale)
+		}
+		layer.app.stage.addChild(container)
+		containers.push(container)
+	}
+
+	return containers[index]
 }
 
 
@@ -47,14 +66,14 @@ const initialize = async mapView => {
 		preserveDrawingBuffer: true,
 	})
 
-	// container = new PIXI.Container()
-	container = new PIXI.particles.ParticleContainer(MAX_TILES)
 	undiscovered = new PIXI.extras.TilingSprite(undiscoveredTexture, layer.width, layer.height)
 
 	console.log('creating tiles')
 	tiles = mapView.tileStacks.map(stack => ({
 		spites: null,
 		stack,
+		container: null,
+		initialized: false,
 		createSprites: () => stack.frames.map(frame => {
 			const sprite = new PIXI.Sprite(new PIXI.Texture(mapTilesTexture, rectangle(Math.abs(frame) - 1)))
 			sprite.x = stack.position.x
@@ -75,13 +94,17 @@ const initialize = async mapView => {
 				return [sprite]
 			}
 			return []
+		},
+		initialize: tile => {
+			tile.sprites = tile.createCachedSprites()
+			const index = TileCache.getTextureIndex(tile.stack.frames)
+			tile.container = getContainer(index)
+			tile.initialized = true
 		}
 	}))
 
 
 	layer.app.stage.addChild(undiscovered)
-	layer.app.stage.addChild(container)
-
 	layer.app.stop()
 
 	numTiles = mapView.numTiles
@@ -103,11 +126,13 @@ const render = () => {
 		renderRequested = true
 		requestAnimationFrame(() => {	
 			renderRequested = false
-			container.removeChildren()
+			containers.forEach(container => {
+				container.removeChildren()
+			})
 			const numTilesX = Math.ceil(layer.width / 64 / scale) + 1
 			const numTilesY = Math.ceil(layer.height / 64 / scale) + 1
-			const offsetX = -Math.ceil(container.x / 64 / scale)
-			const offsetY = -Math.ceil(container.y / 64 / scale)
+			const offsetX = -Math.ceil(undiscovered.tilePosition.x / 64 / scale)
+			const offsetY = -Math.ceil(undiscovered.tilePosition.y / 64 / scale)
 
 			const xIndices = range(numTilesX)
 				.map(x => x + offsetX)
@@ -119,10 +144,10 @@ const render = () => {
 			xIndices.forEach(x => {
 				yIndices.forEach(y => {
 					const index = y * numTiles.x + x
-					if (!tiles[index].sprites) {
-						tiles[index].sprites = tiles[index].createCachedSprites()
+					if (!tiles[index].initialized) {
+						tiles[index].initialize(tiles[index])
 					}
-					tiles[index].sprites.forEach(sprite => container.addChild(sprite))
+					tiles[index].sprites.forEach(sprite => tiles[index].container.addChild(sprite))
 				})
 			})
 			layer.app.render()
