@@ -60,7 +60,7 @@ const touchEnd = (e) => {
 			currentSpeed.y *= .9
 			lastCoords = { ...newCoords }
 
-			moveMap(newCoords)
+			MapControl.moveMap(newCoords)
 
 			requestAnimationFrame(rollOut)
 		}
