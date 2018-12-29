@@ -23,7 +23,6 @@ const updateScale = (newScale) => {
 }
 
 const initialize = async () => {
-	const [map] = await loadTexture('images/map.png')
 	layer = new Layer({
 		transparent: true
 	})
