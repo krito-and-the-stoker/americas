@@ -1,11 +1,6 @@
 import RenderView from '../render/view'
 import Background from '../render/background'
-import TWEEN from '@tweenjs/tween.js'
-
-let tween = null
-const moveMap = newCoords => {
-	RenderView.updateMapCoords(newCoords)
-}
+import MapControl from '../control/map'
 
 let currentStartCoords = null
 let currentSpeed = null
@@ -49,7 +44,7 @@ const touchMove = (e) => {
 		y: 0.3*currentSpeed.y + 0.9*(newCoords.y - lastCoords.y)
 	}
 	lastCoords = { ...newCoords }
-	moveMap(newCoords)
+	MapControl.moveMap(newCoords)
 	moveHandled = true
 	requestAnimationFrame(() => moveHandled = false)
 }

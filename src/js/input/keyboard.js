@@ -1,5 +1,5 @@
 import RenderView from '../render/view'
-import Zoom from '../control/zoom'
+import MapControl from '../control/map'
 
 const ZOOM_FACTOR = 1.25
 const ZOOM_TIME = 350
@@ -15,8 +15,8 @@ const handleKeydown = (e) => {
 			targetScale /= ZOOM_FACTOR
 		}
 
-		targetScale = Zoom.sanitizeScale(targetScale)
-		Zoom.zoom(targetScale, ZOOM_TIME)
+		targetScale = MapControl.sanitizeScale(targetScale)
+		MapControl.zoom(targetScale, ZOOM_TIME)
 	}
 }
 
