@@ -3,6 +3,7 @@ import { loadTexture, range, rectangle } from './../util/util.js'
 import Layer from './layer.js'
 
 let container = null
+let layer = null
 
 const get = () => ({
 	container
@@ -22,13 +23,10 @@ const updateScale = (newScale) => {
 }
 
 const initialize = async () => {
-	// create layer
-	const layer = new Layer({
+	const [map] = await loadTexture('images/map.png')
+	layer = new Layer({
 		transparent: true
 	})
-
-	// load texture
-	const [map] = await loadTexture('images/map.png')
 
 	// create 50 random textures
 	// const numberOfSprites = 50
@@ -46,13 +44,17 @@ const initialize = async () => {
 	// })
 
 	layer.app.stage.addChild(container)
+	layer.app.stop()
 }
+
+const doRenderWork = () => layer.app.render()
 
 
 export default {
 	initialize,
 	updateCoords,
 	updateScale,
+	doRenderWork,
 	add,
 	get
 }

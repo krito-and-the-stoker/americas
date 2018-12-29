@@ -38,6 +38,7 @@ const onDraw = () => {
 	if (Background.get().renderRequested) {
 		Background.doRenderWork()
 	}	
+	Foreground.doRenderWork()
 }
 
 export default {
