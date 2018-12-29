@@ -21,7 +21,7 @@ class MapTile {
 		this.riverLarge = layers.riverLarge === Terrain.largeRiver.id
 		this.river = this.riverLarge || this.riverSmall
 		this.bonus = layers.bonus ===  Terrain.bonusResource.id
-		this.treeVariation = this.riverLarge || Math.random() > (this.river ? 0.2 : 0.6);
+		this.treeVariation = this.riverLarge || Math.random() > (this.river ? 0.0 : 0.9);
 		this.mountainVariation = Math.random() > (this.river ? 0.2 : 0.75) && !this.bonus || this.mountains;
 		this.hillVariation = Math.random() > (this.river ? 0.2 : 0.75) && !this.bonus;
 
