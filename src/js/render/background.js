@@ -19,7 +19,8 @@ const get = () => ({
 	layer,
 	containers,
 	undiscovered,
-	tiles
+	tiles,
+	renderRequested
 })
 
 const updateCoords = ({ x, y }) => {
@@ -122,43 +123,42 @@ const resize = () => {
 }
 
 const render = () => {
-	if (!renderRequested) {
-		renderRequested = true
-		requestAnimationFrame(() => {	
-			renderRequested = false
-			containers.forEach(container => {
-				container.removeChildren()
-			})
-			const numTilesX = Math.ceil(layer.width / 64 / scale) + 1
-			const numTilesY = Math.ceil(layer.height / 64 / scale) + 1
-			const offsetX = -Math.ceil(undiscovered.tilePosition.x / 64 / scale)
-			const offsetY = -Math.ceil(undiscovered.tilePosition.y / 64 / scale)
+	renderRequested = true
+}
 
-			const xIndices = range(numTilesX)
-				.map(x => x + offsetX)
-				.filter(x => x >= 0 && x < numTiles.x)
-			const yIndices = range(numTilesY)
-				.map(y => y + offsetY)
-				.filter(y => y >= 0 && y < numTiles.y)
+const doRenderWork = () => {
+	containers.forEach(container => {
+		container.removeChildren()
+	})
+	const numTilesX = Math.ceil(layer.width / 64 / scale) + 1
+	const numTilesY = Math.ceil(layer.height / 64 / scale) + 1
+	const offsetX = -Math.ceil(undiscovered.tilePosition.x / 64 / scale)
+	const offsetY = -Math.ceil(undiscovered.tilePosition.y / 64 / scale)
 
-			xIndices.forEach(x => {
-				yIndices.forEach(y => {
-					const index = y * numTiles.x + x
-					if (!tiles[index].initialized) {
-						tiles[index].initialize(tiles[index])
-					}
-					tiles[index].sprites.forEach(sprite => tiles[index].container.addChild(sprite))
-				})
-			})
-			layer.app.render()
+	const xIndices = range(numTilesX)
+		.map(x => x + offsetX)
+		.filter(x => x >= 0 && x < numTiles.x)
+	const yIndices = range(numTilesY)
+		.map(y => y + offsetY)
+		.filter(y => y >= 0 && y < numTiles.y)
+
+	xIndices.forEach(x => {
+		yIndices.forEach(y => {
+			const index = y * numTiles.x + x
+			if (!tiles[index].initialized) {
+				tiles[index].initialize(tiles[index])
+			}
+			tiles[index].sprites.forEach(sprite => tiles[index].container.addChild(sprite))
 		})
-	}
+	})
+	layer.app.render()
 }
 
 
 export default {
 	initialize,
 	render,
+	doRenderWork,
 	updateCoords,
 	updateScale,
 	get

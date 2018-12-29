@@ -17,3 +17,9 @@ export const rectangle = index => {
 	const col = index % tilesPerRow
 	return new PIXI.Rectangle(width * col, height * row, width, height)
 }
+
+export default {
+	loadTexture,
+	range,
+	rectangle
+}

@@ -34,10 +34,17 @@ const initialize = async mapView => {
 	await Foreground.initialize()
 }
 
+const onDraw = () => {
+	if (Background.get().renderRequested) {
+		Background.doRenderWork()
+	}	
+}
+
 export default {
 	updateMapCoords,
 	updateScale,
 	getDimensions,
 	initialize,
+	onDraw,
 	get
 }
