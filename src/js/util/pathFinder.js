@@ -191,7 +191,7 @@ const find = (from, isTarget, target, freeDomainCross) => {
 
 const estimate = (from, to) => {
 	if(from.domain === 'land' && to.domain === 'land'){
-		return 0.33 * tileDIstance(from, to);
+		return 0.33 * tileDistance(from, to);
 	}
 	if(from.domain === 'sea' && to.domain === 'sea'){
 		return tileDistance(from, to);

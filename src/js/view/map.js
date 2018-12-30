@@ -2,6 +2,7 @@ import Terrain from '../data/terrain.json';
 
 class MapView{
 	constructor({ mapEntity }) {
+		this.mapEntity = mapEntity
 		this.numTiles = mapEntity.numTiles
 		this.spriteSheetWidth = 1024 / 64
 		this.tileStacks = mapEntity.tiles.map((tile, index) => {
@@ -21,6 +22,11 @@ class MapView{
 			.concat(this.renderCoast(tile))
 			.concat(this.renderBonusResources(tile))
 			.concat(this.renderUndiscovered(tile))
+	}
+
+	assembleTileXY(coords) {
+		const tile = this.mapEntity.tile(coords.x, coords.y)
+		return tile ? this.assembleTile(tile) : []
 	}
 
 	renderBaseBlock(center){

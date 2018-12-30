@@ -41,11 +41,14 @@ const onDraw = () => {
 	Foreground.doRenderWork()
 }
 
+const render = Background.render
+
 export default {
 	updateMapCoords,
 	updateScale,
 	getDimensions,
 	initialize,
 	onDraw,
+	render,
 	get
 }

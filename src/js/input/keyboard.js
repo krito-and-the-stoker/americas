@@ -27,21 +27,21 @@ const handleKeydown = (e) => {
 			x: activeUnit.mapCoordinates.x,
 			y: activeUnit.mapCoordinates.y
 		}
-		if (e.key === 'ArrowRight') {
-			to.x += 1
-		}
-		if (e.key === 'ArrowLeft') {
-			to.x -= 1
-		}
-		if (e.key === 'ArrowDown') {
-			to.y += 1
-		}
-		if (e.key === 'ArrowUp') {
-			to.y -= 1
-		}
-		if (to.x != activeUnit.mapCoordinates.x || to.y != activeUnit.mapCoordinates.y) {
-			Time.schedule(Move.create(activeUnit, to))
-		}
+		// if (e.key === 'ArrowRight') {
+		// 	to.x += 1
+		// }
+		// if (e.key === 'ArrowLeft') {
+		// 	to.x -= 1
+		// }
+		// if (e.key === 'ArrowDown') {
+		// 	to.y += 1
+		// }
+		// if (e.key === 'ArrowUp') {
+		// 	to.y -= 1
+		// }
+		// if (to.x != activeUnit.mapCoordinates.x || to.y != activeUnit.mapCoordinates.y) {
+		// 	Time.schedule(Move.create(activeUnit, to))
+		// }
 	}
 }
 

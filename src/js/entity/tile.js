@@ -1,5 +1,6 @@
 import Terrain from '../data/terrain.json';
 import MovementCosts from '../data/movementCosts'
+import RenderView from '../render/view'
 
 class MapTile {
 	constructor({ id, layers, index, map }){
@@ -27,13 +28,33 @@ class MapTile {
 		this.hillVariation = Math.random() > (this.river ? 0.2 : 0.75) && !this.bonus;
 		this.mapCoordinates = map.mapCoordinate(index)
 
-		this.discovered = true
+		this.discovered = false
 
 		// these variables make no sense as of now
 		this.plowed = false;
 		this.road = false;
 		this.coast = false;
 		this.coastTerrain = null;
+	}
+
+	discover() {
+		this.discovered = true
+		RenderView.render()
+	}
+
+	neighbors() {
+		return [this.left(), this.up(), this.right(), this.down()].filter(n => n !== null)
+	}
+
+	diagonalNeighbors() {
+		let result = this.neighbors()
+		if (this.up()) {
+			result = result.concat([this.up().left(), this.up().right()])
+		}
+		if (this.down()) {
+			result = result.concat([this.down().left(), this.down().right()])
+		}
+		return result.filter(n => n !== null)
 	}
 
 	left() {

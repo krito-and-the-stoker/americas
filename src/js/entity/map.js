@@ -47,6 +47,9 @@ class MapEntity {
 	}
 
 	neighbor(center, x, y) {
+		// if (center + x > this.numTiles.x || center + x < 0) {
+		// 	return null
+		// }
 		let resultIndex = center + x + this.numTiles.x * y
 		return resultIndex >= 0 && resultIndex < this.tiles.length ? this.tiles[resultIndex] : null
 	}

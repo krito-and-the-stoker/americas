@@ -96,6 +96,19 @@ const initialize = async mapView => {
 			}
 			return []
 		},
+		update: (tile, coords) => {
+			if (tile.initialized) {
+				const newStack = mapView.assembleTileXY(coords)
+				if (newStack.length !== tile.stack.frames.length || !newStack.every((frame, i) => frame === tile.stack.frames[i])) {
+					tile.stack.frames = newStack
+					tile.initialized = false
+				}
+				else {
+					tile.stack.frames = newStack
+					tile.initialized = false					
+				}
+			}
+		},
 		initialize: tile => {
 			tile.sprites = tile.createCachedSprites()
 			const index = TileCache.getTextureIndex(tile.stack.frames)
@@ -145,6 +158,7 @@ const doRenderWork = () => {
 	xIndices.forEach(x => {
 		yIndices.forEach(y => {
 			const index = y * numTiles.x + x
+			tiles[index].update(tiles[index], { x, y })
 			if (!tiles[index].initialized) {
 				tiles[index].initialize(tiles[index])
 			}
@@ -152,6 +166,7 @@ const doRenderWork = () => {
 		})
 	})
 	layer.app.render()
+	renderRequested = false
 }
 
 
