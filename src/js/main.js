@@ -35,10 +35,6 @@ const initialize = async () => {
 	Tween.initialize()
 
 	PathFinder.initialize(mapEntity)
-	const fromTile = mapEntity.tile(5, 5)
-	const toTile = mapEntity.tile(5, 7)
-	const path = PathFinder.findPath(fromTile, toTile)
-	console.log(path)
 
 	MainLoop.setUpdate(update)
 	MainLoop.setDraw(draw)

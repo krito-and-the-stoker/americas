@@ -13,7 +13,7 @@ class MapTile {
 		}
 
 		this.name = name
-		this.dimain = Terrain[name].domain
+		this.domain = Terrain[name].domain
 		this.terrain = terrain
 		this.forest = layers.top === Terrain.forest.id
 		this.mountains = layers.top === Terrain.mountains.id

@@ -1,7 +1,6 @@
 const create = () => {
 	const nodes = {}
 	const addNode = (node, neighbors) => {
-		// console.log('added', node)
 		nodes[node.index] = node
 		if(neighbors) {
 			nodes[node.index].neighbors = neighbors

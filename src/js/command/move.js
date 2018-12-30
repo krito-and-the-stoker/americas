@@ -3,11 +3,11 @@ import Time from '../timeline/time'
 const BASE_TIME = 2000
 const TILE_SIZE = 64
 
-const create = (unit, coords) => {
+const create = (unit, coords, finished) => {
 	let startTime = null
-	const startCoords = unit.mapCoordinates
-	const speed = unit.speed
-	const duration = BASE_TIME / unit.speed
+	let startCoords = null
+	let speed = null
+	let duration = null
 	const update = currentTime => {
 		if (startTime) {
 			const relativeTime = currentTime - startTime
@@ -23,12 +23,17 @@ const create = (unit, coords) => {
 			return true
 		} else {
 			startTime = currentTime
+			startCoords = unit.mapCoordinates
+			speed = unit.speed
+			duration = BASE_TIME / unit.speed
 			return true
 		}
 	}
 
 	return {
 		update,
+		finished,
+		coords
 	}
 }
 

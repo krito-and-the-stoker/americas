@@ -5,9 +5,11 @@ import { FibonacciHeap } from '@tyriar/fibonacci-heap';
 const UNDISCOVERED_COST = 5
 const CANNOT_MOVE_COST = 500
 const graph = Graph.create()
+let mapEntity = null
 
 
 const initialize = (map) => {
+	mapEntity = map
 	const isInnerTile = center =>
 		center.up() &&
 		center.left() &&
@@ -85,6 +87,12 @@ const initialize = (map) => {
 const findDomainChange = from => {
 	const target = node => node.tile.domain !== from.domain
 	return find(from, target, null, true);
+}
+
+const findPathXY = (from, to) => {
+	const fromTile = mapEntity.tile(from.x, from.y)
+	const toTile = mapEntity.tile(to.x, to.y)
+	return findPath(fromTile, toTile)	
 }
 
 
@@ -221,5 +229,6 @@ const findReverse = (from, to, unit) => {
 
 export default {
 	initialize,
-	findPath
+	findPath,
+	findPathXY
 };
