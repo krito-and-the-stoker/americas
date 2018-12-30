@@ -1,4 +1,4 @@
-const BASE_TIME = 10000
+const BASE_TIME = 2000
 const TILE_SIZE = 64
 
 const create = (unit, coords) => {

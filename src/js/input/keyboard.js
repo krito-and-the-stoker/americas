@@ -39,11 +39,8 @@ const handleKeydown = (e) => {
 		if (e.key === 'ArrowUp') {
 			to.y -= 1
 		}
-		console.log(to)
 		if (to.x != activeUnit.mapCoordinates.x || to.y != activeUnit.mapCoordinates.y) {
-			const move = Move.create(activeUnit, to)
-			console.log(move)
-			Time.schedule(move)
+			Time.schedule(Move.create(activeUnit, to))
 		}
 	}
 }
