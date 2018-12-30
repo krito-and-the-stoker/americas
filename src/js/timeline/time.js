@@ -8,9 +8,9 @@ const advance = deltaTime => {
 	scheduled = scheduled.filter(e => e.time > currentTime || e.update(currentTime))
 }
 
-const schedule = e => scheduled.push({
+const schedule = (e, time = null) => scheduled.push({
 	...e,
-	time: currentTime
+	time: time || currentTime
 })
 const remove = e => scheduled = scheduled.filter(evt => e != evt)
 

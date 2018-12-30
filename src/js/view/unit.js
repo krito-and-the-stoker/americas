@@ -5,9 +5,14 @@ import Util from '../util/util'
 import Foreground from '../render/foreground'
 
 const BLINK_TIME = 500
+const TILE_SIZE = 64
 
 let activeUnit = null
 let map = null
+
+const get = () => ({
+	activeUnit
+})
 
 const initialize = async () => {
 	[map] = await Util.loadTexture('images/map.png')
@@ -16,6 +21,7 @@ const initialize = async () => {
 let blinkTween = null
 const activateUnit = unit => {
 	if (unit != activeUnit) {
+		activeUnit = unit
 		if (blinkTween) {
 			blinkTween.stop()
 		}
@@ -32,8 +38,8 @@ const activateUnit = unit => {
 
 const createSprite = unit => {
 	const sprite = new PIXI.Sprite(new PIXI.Texture(map, Util.rectangle(unit.id)))
-	sprite.x = unit.pixelCoordinates.x
-	sprite.y = unit.pixelCoordinates.y
+	sprite.x = TILE_SIZE * unit.mapCoordinates.x
+	sprite.y = TILE_SIZE * unit.mapCoordinates.y
 	Foreground.add(sprite)
 	sprite.interactive = true
 	sprite.on('pointerdown', e => {
@@ -49,5 +55,6 @@ const createSprite = unit => {
 
 export default {
 	createSprite,
-	initialize
+	initialize,
+	get
 }
