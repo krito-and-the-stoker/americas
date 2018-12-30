@@ -1,9 +1,15 @@
 import Time from '../timeline/time'
 import PathFinder from '../util/pathFinder'
+import MapEntity from '../entity/map'
 import Move from './move'
 
 
 const create = async (unit, coords) => {
+	if (coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.instance.numTiles.x || coords.y >= MapEntity.instance.numTiles.y) {
+		return {
+			update: () => false
+		}
+	}
 	if (unit.abortMoveToCommand) {
 		unit.abortMoveToCommand()
 		unit.abortMoveToCommand = null

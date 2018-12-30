@@ -7,6 +7,12 @@ const TILE_SIZE = 64
 const inMoveDistance = (coords1, coords2) => Math.abs(coords1.x - coords2.x) <= 1 && Math.abs(coords1.y - coords2.y) <= 1
 
 const create = (unit, coords, finishedFn) => {
+	if (coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.instance.numTiles.x || coords.y >= MapEntity.instance.numTiles.y) {
+		return {
+			update: () => false
+		}
+	}
+
 	let startTime = null
 	let startCoords = null
 	let speed = null
