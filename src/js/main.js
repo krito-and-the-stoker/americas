@@ -14,7 +14,7 @@ import Time from './timeline/time'
 import Report from './command/report'
 import PathFinder from './util/pathFinder'
 import MapControl from './control/map'
-
+import Dialog from './view/dialog'
 
 const update = (deltaTime) => {
 	Time.advance(deltaTime)
@@ -30,9 +30,6 @@ const initialize = async () => {
 	
 	await RenderView.initialize(mapView)
 	await UnitView.initialize()
-	Mouse.initialize()
-	Keyboard.initialize()
-	Touch.initialize()
 	Tween.initialize()
 
 	PathFinder.initialize(mapEntity)
@@ -44,6 +41,12 @@ const initialize = async () => {
 	setTimeout(() => {
 		MapControl.zoomBy(0.35, 2500)
 	}, 50)
+
+	setTimeout(() => {
+		Mouse.initialize()
+		Keyboard.initialize()
+		Touch.initialize()		
+	}, 2550)
 
 	Time.schedule(Report.create())
 

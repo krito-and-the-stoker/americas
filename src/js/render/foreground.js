@@ -3,10 +3,12 @@ import { loadTexture, range, rectangle } from './../util/util.js'
 import Layer from './layer.js'
 
 let container = null
+let menu = null
 let layer = null
 
 const get = () => ({
-	container
+	container,
+	menu
 })
 
 const add = sprite => {
@@ -36,6 +38,7 @@ const initialize = async () => {
 	// const numberOfSprites = 50
 	// console.log(`Creating foreground with ${numberOfSprites} sprites`)
 	container = new PIXI.Container()
+	menu = new PIXI.Container()
 	// container.interactive = true
 	// container.on('pointerdown', () => console.log('interaction ok'))
 	// const tiles = range(numberOfSprites).map(index => new PIXI.Sprite(new PIXI.Texture(map, rectangle(Math.floor(150*Math.random())))))
@@ -50,6 +53,7 @@ const initialize = async () => {
 	// })
 
 	layer.app.stage.addChild(container)
+	layer.app.stage.addChild(menu)
 	layer.app.stop()
 }
 

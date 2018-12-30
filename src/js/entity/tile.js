@@ -1,6 +1,9 @@
 import Terrain from '../data/terrain.json';
 import MovementCosts from '../data/movementCosts'
 import RenderView from '../render/view'
+import Dialog from '../view/dialog'
+
+let hasDiscoveredLand = false
 
 class MapTile {
 	constructor({ id, layers, index, map }){
@@ -38,6 +41,10 @@ class MapTile {
 	}
 
 	discover() {
+		if (this.domain === 'land' && !hasDiscoveredLand) {
+			hasDiscoveredLand = true
+			Dialog.create('Land Ahoy!\nYou have discovered a new continent', ['Splendid!', 'Marvellous!', 'What a surprise!'])
+		}
 		this.discovered = true
 		RenderView.render()
 	}

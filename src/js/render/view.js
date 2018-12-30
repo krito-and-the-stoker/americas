@@ -17,6 +17,11 @@ const getDimensions = () => ({
 	y: Background.get().layer.height
 })
 
+const getCenter = () => ({
+	x: Background.get().layer.width / 2,
+	y: Background.get().layer.height / 2	
+})
+
 const updateMapCoords = ({ x, y }) => {
 	coords = { x: Math.round(x), y: Math.round(y) }
 	Foreground.updateCoords(coords)
@@ -47,6 +52,7 @@ export default {
 	updateMapCoords,
 	updateScale,
 	getDimensions,
+	getCenter,
 	initialize,
 	onDraw,
 	render,

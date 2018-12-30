@@ -2,6 +2,7 @@
 
 let currentTime = 0
 let scheduled = []
+let paused = false
 
 const get = () => ({
 	scheduled,
@@ -9,7 +10,9 @@ const get = () => ({
 })
 
 const advance = deltaTime => {
-	currentTime += deltaTime
+	if (!paused) {
+		currentTime += deltaTime
+	}
 	const readyTasks = scheduled.filter(e => e.time <= currentTime)
 	const needsInitialization = readyTasks.filter(e => !e.started && e.init)
 	needsInitialization.forEach(e => {
@@ -34,9 +37,16 @@ const schedule = (e, time = null) => scheduled.push({
 })
 const remove = e => scheduled = scheduled.filter(evt => e != evt)
 
+const pause = () => paused = true
+const resume = () => paused = false
+const togglePause = () => paused = !paused
+
 export default {
 	advance,
 	schedule,
 	remove,
+	togglePause,
+	pause,
+	resume,
 	get
 }
