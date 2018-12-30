@@ -50,9 +50,13 @@ const initialize = async () => {
 
 	Time.schedule(Report.create())
 
+	await Dialog.initialize()
+
 	MainLoop.setUpdate(update)
 	MainLoop.setDraw(draw)
 	MainLoop.start()
+
+	Dialog.create('Hallo', ['Ok'])
 }
 
 
