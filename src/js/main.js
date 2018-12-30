@@ -12,6 +12,7 @@ import Unit from './entity/unit'
 import UnitView from './view/unit'
 import Time from './timeline/time'
 import Report from './command/report'
+import PathFinder from './util/pathFinder'
 
 
 const update = (deltaTime) => {
@@ -32,6 +33,12 @@ const initialize = async () => {
 	Keyboard.initialize()
 	Touch.initialize()
 	Tween.initialize()
+
+	PathFinder.initialize(mapEntity)
+	const fromTile = mapEntity.tile(5, 5)
+	const toTile = mapEntity.tile(5, 7)
+	const path = PathFinder.findPath(fromTile, toTile)
+	console.log(path)
 
 	MainLoop.setUpdate(update)
 	MainLoop.setDraw(draw)

@@ -48,13 +48,24 @@ class MapEntity {
 
 	neighbor(center, x, y) {
 		let resultIndex = center + x + this.numTiles.x * y
-		return resultIndex >= 0 && resultIndex < this.tiles.length ? this.tiles[resultIndex] : 0
+		return resultIndex >= 0 && resultIndex < this.tiles.length ? this.tiles[resultIndex] : null
 	}
 
 	position(center) {
 		return {
 			x: (center % this.numTiles.x) * 64,
 			y: Math.floor(center / this.numTiles.x) * 64,
+		}
+	}
+
+	tile(x, y) {
+		return this.tiles[y * this.numTiles.x + x]
+	}
+
+	mapCoordinate(index) {
+		return {
+			x: (index % this.numTiles.x),
+			y: Math.floor(index / this.numTiles.x)
 		}
 	}
 

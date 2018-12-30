@@ -1,3 +1,5 @@
+import Time from '../timeline/time'
+
 const BASE_TIME = 2000
 const TILE_SIZE = 64
 
@@ -26,7 +28,7 @@ const create = (unit, coords) => {
 	}
 
 	return {
-		update
+		update,
 	}
 }
 

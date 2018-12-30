@@ -1,8 +1,8 @@
 import Terrain from '../data/terrain.json';
+import MovementCosts from '../data/movementCosts'
 
 class MapTile {
 	constructor({ id, layers, index, map }){
-
 		this.index = index
 		this.map = map
 
@@ -13,6 +13,7 @@ class MapTile {
 		}
 
 		this.name = name
+		this.dimain = Terrain[name].domain
 		this.terrain = terrain
 		this.forest = layers.top === Terrain.forest.id
 		this.mountains = layers.top === Terrain.mountains.id
@@ -24,6 +25,7 @@ class MapTile {
 		this.treeVariation = this.riverLarge || Math.random() > (this.river ? 0.0 : 0.9);
 		this.mountainVariation = Math.random() > (this.river ? 0.2 : 0.75) && !this.bonus || this.mountains;
 		this.hillVariation = Math.random() > (this.river ? 0.2 : 0.75) && !this.bonus;
+		this.mapCoordinates = map.mapCoordinate(index)
 
 		this.discovered = true
 
@@ -48,6 +50,18 @@ class MapTile {
 
 	down() {
 		return this.map.neighbor(this.index, 0, 1)
+	}
+
+	isNextTo(other){
+		let pos1 = this.mapCoordinates
+		let pos2 = other.mapCoordinates
+
+		//next to each other but not diagonal
+		return Math.abs(pos1.x-pos2.x) + Math.abs(pos1.y-pos2.y) <= 1.1
+	}
+
+	movementCost() {
+		return MovementCosts[this.name]
 	}
 
 	decideCoastTerrain() {
