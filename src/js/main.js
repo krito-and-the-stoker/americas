@@ -10,10 +10,12 @@ import americaMap from './data/america-small.json'
 import Tween from './util/tween.js'
 import Unit from './entity/unit'
 import UnitView from './view/unit'
+import Time from './timeline/time'
+import Report from './command/report'
 
 
 const update = (deltaTime) => {
-	
+	Time.advance(deltaTime)
 }
 
 const draw = () => {
@@ -36,7 +38,9 @@ const initialize = async () => {
 	MainLoop.start()
 
 	const caravel = Unit.create('caravel', 5, 5)
-	console.log(caravel)
+	const caravel2 = Unit.create('caravel', 5, 6)
+
+	Time.schedule(Report.create())
 }
 
 

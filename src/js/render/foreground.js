@@ -13,6 +13,11 @@ const add = sprite => {
 	container.addChild(sprite)
 }
 
+const addEventListener = (event, fn) => {
+	console.log('added', event)
+	container.on(event, fn)
+}
+
 const updateCoords = ({ x, y }) => {
 	container.x = x
 	container.y = y
@@ -31,6 +36,8 @@ const initialize = async () => {
 	// const numberOfSprites = 50
 	// console.log(`Creating foreground with ${numberOfSprites} sprites`)
 	container = new PIXI.Container()
+	// container.interactive = true
+	// container.on('pointerdown', () => console.log('interaction ok'))
 	// const tiles = range(numberOfSprites).map(index => new PIXI.Sprite(new PIXI.Texture(map, rectangle(Math.floor(150*Math.random())))))
 	// tiles.forEach((tile, index) => {
 	// 	tile.vx = 2*(Math.random() - .5)
@@ -54,6 +61,7 @@ export default {
 	updateCoords,
 	updateScale,
 	doRenderWork,
+	addEventListener,
 	add,
 	get
 }

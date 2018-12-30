@@ -2,6 +2,7 @@ import TWEEN from '@tweenjs/tween.js'
 
 import RenderView from '../render/view'
 import Background from '../render/background'
+import Foreground from '../render/foreground'
 import MapControl from '../control/map'
 
 const MOVEMAP_TIME = 350
