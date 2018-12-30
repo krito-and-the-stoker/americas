@@ -56,7 +56,7 @@ const initialize = async () => {
 	MainLoop.setDraw(draw)
 	MainLoop.start()
 
-	Dialog.create('Hallo', ['Ok'])
+	// Dialog.create('Hallo', ['Ok'], 'scout')
 }
 
 

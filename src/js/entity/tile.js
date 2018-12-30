@@ -43,7 +43,7 @@ class MapTile {
 	discover() {
 		if (this.domain === 'land' && !hasDiscoveredLand) {
 			hasDiscoveredLand = true
-			Dialog.create('Land Ahoy!\nYou have discovered a new continent', ['Splendid!', 'Marvellous!', 'What a surprise!'])
+			Dialog.create('Land Ahoy!\nYou have discovered a new continent', ['Splendid!', 'Marvellous!', 'What a surprise!'], 'scout')
 		}
 		this.discovered = true
 		RenderView.render()
