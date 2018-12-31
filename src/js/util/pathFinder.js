@@ -22,60 +22,11 @@ const initialize = (map) => {
 
 	Util.range(map.numTiles.total).forEach(index => {
 		const center = map.tiles[index]
-		const neighbors = []
-
-
-		if (isInnerTile(center)) {
-			const up = center.up()
-			const rightUp = up.right()
-			const right = center.right()
-			const rightDown = right.down()
-			const down = center.down()
-			const leftDown = down.left()
-			const left = center.left()
-			const leftUp = left.up()
-
-			neighbors.push({
-				index: up.index,
-				tile: up,
-				cost: up.movementCost(center)
-			})
-			neighbors.push({
-				index: rightUp.index,
-				tile: rightUp,
-				cost: rightUp.movementCost(center)
-			})
-			neighbors.push({
-				index: right.index,
-				tile: right,
-				cost: right.movementCost(center)
-			})
-			neighbors.push({
-				index: rightDown.index,
-				tile: rightDown,
-				cost: rightDown.movementCost(center)
-			})
-			neighbors.push({
-				index: down.index,
-				tile: down,
-				cost: down.movementCost(center)
-			})
-			neighbors.push({
-				index: leftDown.index,
-				tile: leftDown,
-				cost: leftDown.movementCost(center)
-			})
-			neighbors.push({
-				index: left.index,
-				tile: left,
-				cost: left.movementCost(center)
-			})
-			neighbors.push({
-				index: leftUp.index,
-				tile: leftUp,
-				cost: leftUp.movementCost(center)
-			})
-		}
+		const neighbors = center.diagonalNeighbors().map(tile => ({
+			index: tile.index,
+			cost: tile.movementCost(center),
+			tile
+		}))
 
 		graph.addNode({
 			index: center.index,
