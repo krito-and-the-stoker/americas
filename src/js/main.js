@@ -34,10 +34,10 @@ const initialize = async () => {
 
 	PathFinder.initialize(mapEntity)
 
+	const pioneer = Unit.create('pioneer', 125, 65, { active: false })
+	const soldier = Unit.create('soldier',125, 65, { active: false })
 	const caravel = Unit.create('caravel', 125, 65, {
-		cargo: [Unit.create('pioneer', 125, 65, {
-			active: false
-		})]
+		cargo: [soldier, pioneer]
 	})
 	// const caravel2 = Unit.create('caravel', 125, 66)
 	MapControl.centerAt({ x: 125, y: 65 })

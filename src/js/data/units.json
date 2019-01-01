@@ -35,5 +35,11 @@
 		"domain": "land",
 		"canFound": true,
 		"speed": 1
+	}, 
+	"soldier": {
+		"id": 48,
+		"domain": "land",
+		"canFound": true,
+		"speed": 1
 	}
 }

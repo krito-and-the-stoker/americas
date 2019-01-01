@@ -2,7 +2,7 @@ import Time from '../timeline/time'
 import MapEntity from '../entity/map'
 import Unload from './unload'
 
-const BASE_TIME = 750
+const BASE_TIME = 7500
 const TILE_SIZE = 64
 
 const inMoveDistance = (coords1, coords2) => Math.abs(coords1.x - coords2.x) <= 1 && Math.abs(coords1.y - coords2.y) <= 1
