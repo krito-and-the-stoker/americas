@@ -3,20 +3,16 @@ import TWEEN from '@tweenjs/tween.js'
 
 import Util from '../util/util'
 import Foreground from '../render/foreground'
+import Ressources from '../render/ressources'
 
 const BLINK_TIME = 500
 const TILE_SIZE = 64
 
 let activeUnit = null
-let map = null
 
 const get = () => ({
 	activeUnit
 })
-
-const initialize = async () => {
-	[map] = await Util.loadTexture('images/map.png')
-}
 
 let blinkTween = null
 const activateUnit = unit => {
@@ -45,8 +41,15 @@ const activate = unit => {
 	}
 }
 
+const deactivate = unit => {
+	if (unit.active) {
+		Foreground.remove(unit.sprite)
+		unit.active = false
+	}
+}
+
 const createSprite = unit => {
-	const sprite = new PIXI.Sprite(new PIXI.Texture(map, Util.rectangle(unit.id)))
+	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().map, Util.rectangle(unit.id)))
 	sprite.x = TILE_SIZE * unit.mapCoordinates.x
 	sprite.y = TILE_SIZE * unit.mapCoordinates.y
 	if (unit.active) {
@@ -67,6 +70,6 @@ const createSprite = unit => {
 export default {
 	createSprite,
 	activate,
-	initialize,
+	deactivate,
 	get
 }

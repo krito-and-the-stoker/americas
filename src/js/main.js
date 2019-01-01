@@ -9,7 +9,7 @@ import Keyboard from './input/keyboard.js'
 import americaMap from './data/america-small.json'
 import Tween from './util/tween.js'
 import Unit from './entity/unit'
-import UnitView from './view/unit'
+import Ressources from './render/ressources'
 import Time from './timeline/time'
 import Report from './command/report'
 import PathFinder from './util/pathFinder'
@@ -29,7 +29,7 @@ const initialize = async () => {
 	const mapView = new MapView()
 	
 	await RenderView.initialize(mapView)
-	await UnitView.initialize()
+	await Ressources.initialize()
 	Tween.initialize()
 
 	PathFinder.initialize()

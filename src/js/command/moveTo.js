@@ -5,18 +5,20 @@ import Move from './move'
 
 
 const create = async (unit, coords) => {
+	if (unit.resolveWhenMoveOver) {
+		await unit.resolveWhenMoveOver
+	}
+
 	if (unit.unloadingInProgress ||
 		coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y || (unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y)) {
 		return {
 			update: () => false
 		}
 	}
+
 	if (unit.abortMoveToCommand) {
 		unit.abortMoveToCommand()
 		unit.abortMoveToCommand = null
-	}
-	if (unit.resolveWhenMoveOver) {
-		await unit.resolveWhenMoveOver
 	}
 	const path = PathFinder.findPathXY(unit.mapCoordinates, coords).filter((waypoint, index) => index > 0)
 

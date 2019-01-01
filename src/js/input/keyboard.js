@@ -3,6 +3,7 @@ import MapControl from '../control/map'
 import Unit from '../view/unit'
 import Time from '../timeline/time'
 import Move from '../command/move'
+import Found from '../command/found'
 
 const ZOOM_FACTOR = 1.25
 const ZOOM_TIME = 350
@@ -23,6 +24,13 @@ const handleKeydown = (e) => {
 	}
 	if (e.key === ' ') {
 		Time.togglePause()
+	}
+
+	const activeUnit = Unit.get().activeUnit
+	if (activeUnit) {
+		if (e.key === 'b') {
+			Time.schedule(Found.create(activeUnit))
+		}
 	}
 	// const activeUnit = Unit.get().activeUnit
 	// if(activeUnit) {

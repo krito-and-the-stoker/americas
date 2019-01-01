@@ -15,6 +15,10 @@ const add = sprite => {
 	container.addChild(sprite)
 }
 
+const remove = sprite => {
+	container.removeChild(sprite)
+}
+
 const addEventListener = (event, fn) => {
 	console.log('added', event)
 	container.on(event, fn)
@@ -67,5 +71,6 @@ export default {
 	doRenderWork,
 	addEventListener,
 	add,
+	remove,
 	get
 }
