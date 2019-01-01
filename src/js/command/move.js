@@ -46,6 +46,10 @@ const create = (unit, coords, finishedFn) => {
 			startCoords = unit.mapCoordinates
 			speed = unit.speed
 			const fromTile = MapEntity.tile(unit.mapCoordinates)
+			if (fromTile === targetTile) {
+				aborted = true
+				return false
+			}
 			if (unit.unloadingInProgress) {
 				duration = UNLOADING_TIME
 			} else {
