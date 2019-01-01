@@ -62,7 +62,7 @@ const create = ({ data }) => {
 	// 	}
 	// }
 
-const	tile = ({ x, y }) => tiles[y * numTiles.x + x]
+const	tile = ({ x, y }) => x > 0 && x < numTiles.x && y > 0 && y < numTiles.y ? tiles[y * numTiles.x + x] : null
 const	mapCoordinates = index => ({
 	x: (index % numTiles.x),
 	y: Math.floor(index / numTiles.x)
