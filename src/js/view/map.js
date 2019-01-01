@@ -1,13 +1,16 @@
-import Terrain from '../data/terrain.json';
+import Terrain from '../data/terrain.json'
+import MapEntity from '../entity/map'
 
 class MapView{
-	constructor({ mapEntity }) {
-		this.mapEntity = mapEntity
-		this.numTiles = mapEntity.numTiles
+	constructor() {
+		this.numTiles = MapEntity.get().numTiles
 		this.spriteSheetWidth = 1024 / 64
-		this.tileStacks = mapEntity.tiles.map((tile, index) => {
+		this.tileStacks = MapEntity.get().tiles.map((tile, index) => {
 			return {
-				position: mapEntity.position(index),
+				position: {
+					x: MapEntity.mapCoordinates(index).x * 64,
+					y: MapEntity.mapCoordinates(index).y * 64
+				},
 				frames: this.assembleTile(tile)
 			}
 		})
@@ -25,7 +28,7 @@ class MapView{
 	}
 
 	assembleTileXY(coords) {
-		const tile = this.mapEntity.tile(coords.x, coords.y)
+		const tile = MapEntity.tile(coords)
 		return tile ? this.assembleTile(tile) : []
 	}
 

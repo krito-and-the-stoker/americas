@@ -3,7 +3,7 @@
 		"id": 9,
 		"domain": "sea",
 		"canFound": false,
-		"speed": 4,
+		"speed": 10,
 		"cargo": 2
 	},
 	"artillery":{

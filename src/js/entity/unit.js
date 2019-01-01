@@ -4,7 +4,7 @@ import MapEntity from '../entity/map'
 
 const create = (name, x, y, additionalProps = {}) => {
 	if (Units[name]) {
-		const tile = MapEntity.instance.tile(x, y)
+		const tile = MapEntity.tile({ x, y })
 		tile.discover()
 		tile.diagonalNeighbors().forEach(n => n.discover())
 

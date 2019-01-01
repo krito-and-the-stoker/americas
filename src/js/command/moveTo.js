@@ -5,7 +5,8 @@ import Move from './move'
 
 
 const create = async (unit, coords) => {
-	if (coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.instance.numTiles.x || coords.y >= MapEntity.instance.numTiles.y) {
+	if (unit.unloadingInProgress ||
+		coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y) {
 		return {
 			update: () => false
 		}

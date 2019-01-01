@@ -20,7 +20,12 @@ const create = (unit, coords) => {
 			const landingUnit = unit.cargo.shift()
 			landingUnit.mapCoordinates = { ...unit.mapCoordinates }
 			UnitView.activate(landingUnit)
-			Time.schedule(Move.create(landingUnit, coords))
+			landingUnit.unloadingInProgress = true
+			unit.unloadingInProgress = true
+			Time.schedule(Move.create(landingUnit, coords, () => {
+				landingUnit.unloadingInProgress = false
+				unit.unloadingInProgress = false
+			}))
 			return false
 		}
 	}

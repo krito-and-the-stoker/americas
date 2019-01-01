@@ -1,87 +1,76 @@
 import MapTile from './tile.js'
-// import MapView from 'src/view/map/mapView.js'
-// import PathFinder from 'src/model/ai/pathFinder.js'
 
-class MapEntity {
-	constructor({ data }) {
-		console.log('creating map')
 
-		const baseLayer = MapEntity.layer(data, 'terrain base')
-		this.numTiles = {
-			x: baseLayer.width,
-			y: baseLayer.height,
-		}
-		this.numTiles.total = this.numTiles.x * this.numTiles.y
+let numTiles = null
+let tiles = null
 
-		MapEntity.instance = this
+const	layer = (data, name) => data.layers.find((layer) => layer.name === name)
 
-		console.log('creating tiles')
-		this.tiles = MapEntity.layer(data, 'terrain base').data.map((id, index) => new MapTile({
-			id,
-			index,
-			map: this,
-			layers: {
-				top: MapEntity.layer(data, 'terrain top').data[index],
-				riverSmall: MapEntity.layer(data, 'terrain river small').data[index],
-				riverLarge: MapEntity.layer(data, 'terrain river large').data[index],
-				bonus: MapEntity.layer(data, 'terrain bonus').data[index]
-			}
-		}))
-		console.log('creating coast line')
-		this.createCoastLine()
-		// console.log('creating graph')
-		// this.path = new PathFinder({
-		// 	map: this
-		// })
-
-		// console.log('creating view')
-		// this.view = new MapView({
-		// 	map: this
-		// })
-
-		console.log('map created.')
-	}
-
-	static layer(data, name){
-		return data.layers.find((layer) => layer.name === name)
-	}
-
-	neighbor(center, x, y) {
-		// if (center + x > this.numTiles.x || center + x < 0) {
-		// 	return null
-		// }
-		let resultIndex = center + x + this.numTiles.x * y
-		return resultIndex >= 0 && resultIndex < this.tiles.length ? this.tiles[resultIndex] : null
-	}
-
-	position(center) {
-		return {
-			x: (center % this.numTiles.x) * 64,
-			y: Math.floor(center / this.numTiles.x) * 64,
-		}
-	}
-
-	tile(x, y) {
-		return this.tiles[y * this.numTiles.x + x]
-	}
-
-	mapCoordinate(index) {
-		return {
-			x: (index % this.numTiles.x),
-			y: Math.floor(index / this.numTiles.x)
-		}
-	}
-
-	createCoastLine(){
-		//look for coasts and create coast lines
-		this.tiles.forEach(tile => {
-			tile.decideCoastTerrain()
-		})
-		this.tiles.forEach(tile => {
-			tile.decideCoastalSea()
-		})
-	}
-
+const	createCoastLine = tiles => {
+	//look for coasts and create coast lines
+	tiles.forEach(tile => {
+		tile.decideCoastTerrain()
+	})
+	tiles.forEach(tile => {
+		tile.decideCoastalSea()
+	})
 }
 
-export default MapEntity
+const get = () => ({
+	numTiles,
+	tiles
+})
+
+const create = ({ data }) => {
+	console.log('creating map')
+
+	const baseLayer = layer(data, 'terrain base')
+	numTiles = {
+		x: baseLayer.width,
+		y: baseLayer.height,
+	}
+	numTiles.total = numTiles.x * numTiles.y
+
+	console.log('creating tiles')
+	tiles = layer(data, 'terrain base').data.map((id, index) => new MapTile({
+		id,
+		index,
+		layers: {
+			top: layer(data, 'terrain top').data[index],
+			riverSmall: layer(data, 'terrain river small').data[index],
+			riverLarge: layer(data, 'terrain river large').data[index],
+			bonus: layer(data, 'terrain bonus').data[index]
+		}
+	}))
+	console.log('creating coast line')
+	createCoastLine(tiles)
+	console.log('map created.')
+}
+
+// const neighbor = (center, x, y) => {
+// 	if (center + x > numTiles.x || center + x < 0) {
+// 		return null
+// 	}
+// 	let resultIndex = center + x + numTiles.x * y
+// 	return resultIndex >= 0 && resultIndex < numTiles.x * numTiles.y ? tiles[resultIndex] : null
+// }
+
+	// position(center) {
+	// 	return {
+	// 		x: (center % this.numTiles.x) * 64,
+	// 		y: Math.floor(center / this.numTiles.x) * 64,
+	// 	}
+	// }
+
+const	tile = ({ x, y }) => tiles[y * numTiles.x + x]
+const	mapCoordinates = index => ({
+	x: (index % numTiles.x),
+	y: Math.floor(index / numTiles.x)
+})
+
+export default {
+	create,
+	get,
+	tile,
+	mapCoordinates
+}

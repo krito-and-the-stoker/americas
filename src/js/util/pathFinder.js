@@ -1,15 +1,14 @@
 import Graph from '../util/graph';
 import Util from '../util/util'
 import { FibonacciHeap } from '@tyriar/fibonacci-heap';
+import MapEntity from '../entity/map'
 
 const UNDISCOVERED_COST = 5
 const CANNOT_MOVE_COST = 500
 const graph = Graph.create()
-let mapEntity = null
 
 
-const initialize = (map) => {
-	mapEntity = map
+const initialize = () => {
 	const isInnerTile = center =>
 		center.up() &&
 		center.left() &&
@@ -20,8 +19,9 @@ const initialize = (map) => {
 		center.down().left() &&
 		center.down().right()
 
-	Util.range(map.numTiles.total).forEach(index => {
-		const center = map.tiles[index]
+	const tiles = MapEntity.get().tiles
+	Util.range(MapEntity.get().numTiles.total).forEach(index => {
+		const center = tiles[index]
 		const neighbors = center.diagonalNeighbors().map(tile => ({
 			index: tile.index,
 			cost: tile.movementCost(center),
@@ -40,11 +40,7 @@ const findDomainChange = from => {
 	return find(from, target, null, true);
 }
 
-const findPathXY = (from, to) => {
-	const fromTile = mapEntity.tile(from.x, from.y)
-	const toTile = mapEntity.tile(to.x, to.y)
-	return findPath(fromTile, toTile)	
-}
+const findPathXY = (from, to) => findPath(MapEntity.tile(from), MapEntity.tile(to))
 
 
 const findPath = (from, to) => {

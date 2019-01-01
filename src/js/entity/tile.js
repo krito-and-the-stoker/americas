@@ -2,13 +2,14 @@ import Terrain from '../data/terrain.json';
 import MovementCosts from '../data/movementCosts'
 import RenderView from '../render/view'
 import Dialog from '../view/dialog'
+import MapEntity from '../entity/map'
 
 let hasDiscoveredLand = false
 
+
 class MapTile {
-	constructor({ id, layers, index, map }){
+	constructor({ id, layers, index }){
 		this.index = index
-		this.map = map
 
 		const [name, terrain] = Object.entries(Terrain).find(([name, terrain]) => terrain.id === id)
 		if (!terrain) {
@@ -29,7 +30,7 @@ class MapTile {
 		this.treeVariation = this.riverLarge || Math.random() > (this.river ? 0.0 : 0.9);
 		this.mountainVariation = Math.random() > (this.river ? 0.2 : 0.75) && !this.bonus || this.mountains;
 		this.hillVariation = Math.random() > (this.river ? 0.2 : 0.75) && !this.bonus;
-		this.mapCoordinates = map.mapCoordinate(index)
+		this.mapCoordinates = MapEntity.mapCoordinates(index)
 
 		this.discovered = false
 
@@ -50,7 +51,7 @@ class MapTile {
 	}
 
 	neighbors() {
-		return [this.left(), this.up(), this.right(), this.down()].filter(n => n !== null)
+		return [this.left(), this.up(), this.right(), this.down()].filter(n => n)
 	}
 
 	diagonalNeighbors() {
@@ -61,23 +62,39 @@ class MapTile {
 		if (this.down()) {
 			result = result.concat([this.down().left(), this.down().right()])
 		}
-		return result.filter(n => n !== null)
+		return result.filter(n => n)
 	}
 
 	left() {
-		return this.map.neighbor(this.index, -1, 0)
+		const coords = {
+			x: this.mapCoordinates.x - 1,
+			y: this.mapCoordinates.y
+		}
+		return MapEntity.tile(coords)
 	}
 
 	up() {
-		return this.map.neighbor(this.index, 0, -1)
+		const coords = {
+			x: this.mapCoordinates.x,
+			y: this.mapCoordinates.y - 1
+		}
+		return MapEntity.tile(coords)
 	}
 
 	right() {
-		return this.map.neighbor(this.index, 1, 0)
+		const coords = {
+			x: this.mapCoordinates.x + 1,
+			y: this.mapCoordinates.y
+		}
+		return MapEntity.tile(coords)
 	}
 
 	down() {
-		return this.map.neighbor(this.index, 0, 1)
+		const coords = {
+			x: this.mapCoordinates.x,
+			y: this.mapCoordinates.y + 1
+		}
+		return MapEntity.tile(coords)
 	}
 
 	isNextTo(other){
@@ -88,7 +105,12 @@ class MapTile {
 		return Math.abs(pos1.x-pos2.x) + Math.abs(pos1.y-pos2.y) <= 1.1
 	}
 
-	movementCost() {
+	movementCost(from) {
+		if (this.neighbors().includes(from)) {
+			if (this.river && from.river) {
+				return .33
+			}
+		}
 		return MovementCosts[this.name]
 	}
 

@@ -25,14 +25,14 @@ const draw = () => {
 }
 
 const initialize = async () => {
-	const mapEntity = new MapEntity({ data: americaMap })
-	const mapView = new MapView({ mapEntity })
+	MapEntity.create({ data: americaMap })
+	const mapView = new MapView()
 	
 	await RenderView.initialize(mapView)
 	await UnitView.initialize()
 	Tween.initialize()
 
-	PathFinder.initialize(mapEntity)
+	PathFinder.initialize()
 
 	const pioneer = Unit.create('pioneer', 125, 65, { active: false })
 	const soldier = Unit.create('soldier',125, 65, { active: false })
