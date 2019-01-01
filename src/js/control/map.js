@@ -21,6 +21,8 @@ const moveMap = (newCoords, moveTime = 0) => {
 	}
 }
 
+const centerAt = ({ x, y }, moveTime) => moveMap({ x: -64*x + RenderView.getDimensions().x / 2, y: -64*y + RenderView.getDimensions().y / 2}, moveTime)
+
 
 const sanitizeScale = scale => (scale < MIN_SCALE ? MIN_SCALE : (scale > MAX_SCALE ? MAX_SCALE : scale))
 
@@ -63,4 +65,5 @@ export default {
 	zoomBy,
 	sanitizeScale,
 	moveMap,
+	centerAt,
 }

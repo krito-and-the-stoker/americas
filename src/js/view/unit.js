@@ -36,11 +36,22 @@ const activateUnit = unit => {
 	}
 }
 
+const activate = unit => {
+	if (!unit.active) {
+		unit.sprite.x = TILE_SIZE * unit.mapCoordinates.x
+		unit.sprite.y = TILE_SIZE * unit.mapCoordinates.y
+		Foreground.add(unit.sprite)
+		unit.active = true
+	}
+}
+
 const createSprite = unit => {
 	const sprite = new PIXI.Sprite(new PIXI.Texture(map, Util.rectangle(unit.id)))
 	sprite.x = TILE_SIZE * unit.mapCoordinates.x
 	sprite.y = TILE_SIZE * unit.mapCoordinates.y
-	Foreground.add(sprite)
+	if (unit.active) {
+		Foreground.add(sprite)
+	}
 	sprite.interactive = true
 	sprite.on('pointerdown', e => {
 		// e.data.originalEvent.stopPropagation()
@@ -55,6 +66,7 @@ const createSprite = unit => {
 
 export default {
 	createSprite,
+	activate,
 	initialize,
 	get
 }

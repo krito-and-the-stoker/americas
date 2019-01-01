@@ -34,9 +34,13 @@ const initialize = async () => {
 
 	PathFinder.initialize(mapEntity)
 
-	const caravel = Unit.create('caravel', 125, 65)
-	const caravel2 = Unit.create('caravel', 125, 66)
-	MapControl.moveMap({ x: -64*125 + RenderView.getDimensions().x / 2, y: -64*65 + RenderView.getDimensions().y / 2})
+	const caravel = Unit.create('caravel', 125, 65, {
+		cargo: [Unit.create('pioneer', 125, 65, {
+			active: false
+		})]
+	})
+	// const caravel2 = Unit.create('caravel', 125, 66)
+	MapControl.centerAt({ x: 125, y: 65 })
 	MapControl.zoomBy(1/0.35, 0)
 	setTimeout(() => {
 		MapControl.zoomBy(0.35, 2500)

@@ -23,8 +23,25 @@ const initialize = async () => {
 	pngs = await Util.loadTexture('images/scout.png')
 }
 
+const dialogs = {
+	discovered: {
+		msg: 'Land Ahoy!\nYou have discovered a new continent',
+		options: ['Splendid!', 'Marvellous!', 'What a surprise!'],
+		image: 'scout'
+	},
+	unload: {
+		msg: 'Do you want to disembark here?',
+		options: ['make landfall', 'stay on board']
+	}
+}
 
-const create = (message, options, image = null) => {
+const show = dialogName => {
+	const dialog = dialogs[dialogName]
+	return create(dialog.msg, dialog.options, dialog.image)
+}
+
+
+const create = (message, options, image = null) => new Promise(resolve => {
 	let sprite = null
 	if (image && images[image]) {
 		sprite = new PIXI.Sprite(new PIXI.Texture(images[image].png()))
@@ -44,7 +61,6 @@ const create = (message, options, image = null) => {
 	})
 	menu.addChild(plane9)
 	if (sprite) {
-		console.log('added', sprite)
 		menu.addChild(sprite)
 	}
 	menu.addChild(text)
@@ -79,7 +95,10 @@ const create = (message, options, image = null) => {
 		if (optionText.width > plane9.width + 100) {
 			plane9.width = optionText.width + 100
 		}
-		optionText.on('pointerdown', destroy)
+		optionText.on('pointerdown', () => {
+			destroy()
+			resolve(index)
+		})
 		menu.addChild(optionText)
 		return optionText
 	})
@@ -87,9 +106,10 @@ const create = (message, options, image = null) => {
 	plane9.position.y = RenderView.getCenter().y - plane9.height / 2 + 30
 
 	Time.pause()
-}
+})
 
 export default {
 	initialize,
-	create
+	create,
+	show
 }
