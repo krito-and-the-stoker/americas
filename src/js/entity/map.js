@@ -47,20 +47,6 @@ const create = ({ data }) => {
 	console.log('map created.')
 }
 
-// const neighbor = (center, x, y) => {
-// 	if (center + x > numTiles.x || center + x < 0) {
-// 		return null
-// 	}
-// 	let resultIndex = center + x + numTiles.x * y
-// 	return resultIndex >= 0 && resultIndex < numTiles.x * numTiles.y ? tiles[resultIndex] : null
-// }
-
-	// position(center) {
-	// 	return {
-	// 		x: (center % this.numTiles.x) * 64,
-	// 		y: Math.floor(center / this.numTiles.x) * 64,
-	// 	}
-	// }
 
 const	tile = ({ x, y }) => x > 0 && x < numTiles.x && y > 0 && y < numTiles.y ? tiles[y * numTiles.x + x] : null
 const	mapCoordinates = index => ({

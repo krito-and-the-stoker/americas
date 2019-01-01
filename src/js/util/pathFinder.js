@@ -5,6 +5,7 @@ import MapEntity from '../entity/map'
 
 const UNDISCOVERED_COST = 5
 const CANNOT_MOVE_COST = 500
+const MIN_TERRAIN_COST = 0.33
 const graph = Graph.create()
 
 
@@ -138,13 +139,13 @@ const find = (from, isTarget, target, freeDomainCross) => {
 
 const estimate = (from, to) => {
 	if(from.domain === 'land' && to.domain === 'land'){
-		return 0.33 * tileDistance(from, to);
+		return MIN_TERRAIN_COST * tileDistance(from, to);
 	}
 	if(from.domain === 'sea' && to.domain === 'sea'){
 		return tileDistance(from, to);
 	}
 
-	return 0.33* tileDistance(from, to) + CANNOT_MOVE_COST;
+	return MIN_TERRAIN_COST * tileDistance(from, to) + CANNOT_MOVE_COST;
 }
 
 

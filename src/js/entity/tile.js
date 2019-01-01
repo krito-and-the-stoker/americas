@@ -31,6 +31,7 @@ class MapTile {
 		this.mountainVariation = Math.random() > (this.river ? 0.2 : 0.75) && !this.bonus || this.mountains;
 		this.hillVariation = Math.random() > (this.river ? 0.2 : 0.75) && !this.bonus;
 		this.mapCoordinates = MapEntity.mapCoordinates(index)
+		this.movementCostName = this.forest ? `${this.name}WithForest` : (this.hills ? 'hills' : (this.mountains ? 'mountains' : this.name) )
 
 		this.discovered = false
 
@@ -108,10 +109,10 @@ class MapTile {
 	movementCost(from) {
 		if (this.neighbors().includes(from)) {
 			if (this.river && from.river) {
-				return .33
+				return MovementCosts.river
 			}
 		}
-		return MovementCosts[this.name]
+		return MovementCosts[this.movementCostName]
 	}
 
 	decideCoastTerrain() {
