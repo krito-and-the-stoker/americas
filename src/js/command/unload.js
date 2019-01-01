@@ -4,6 +4,11 @@ import Time from '../timeline/time'
 import Move from './move'
 
 const create = (unit, coords) => {
+	if (unit.unloadingInProgress) {
+		return {
+			update: () => false
+		}
+	}
 	let decision = null
 	Dialog.show('unload').then(result => { decision = result })
 

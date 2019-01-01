@@ -108,7 +108,7 @@ class MapTile {
 
 	movementCost(from) {
 		if (this.neighbors().includes(from)) {
-			if (this.river && from.river) {
+			if (this.domain === 'land' && from.domain === 'land' && this.river && from.river) {
 				return MovementCosts.river
 			}
 		}
