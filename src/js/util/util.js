@@ -18,8 +18,15 @@ export const rectangle = index => {
 	return new PIXI.Rectangle(width * col, height * row, width, height)
 }
 
+let currentId = 0
+const getUid = () => {
+	currentId += 1
+	return currentId
+}
+
 export default {
 	loadTexture,
 	range,
-	rectangle
+	rectangle,
+	getUid
 }

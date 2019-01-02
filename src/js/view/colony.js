@@ -96,6 +96,32 @@ const createDetailScreen = colony => {
 	nameHeadline.position.y = 35
 	screenContainer.addChild(nameHeadline)
 
+	const numberOfGoods = Object.keys(colony.storage).length
+	const textObjects = Object.entries(colony.storage).map(([good, amount], i) => {
+		const number = new PIXI.Text(`${amount}`, {
+			fontFamily: 'Times New Roman',
+			fontSize: 32,
+			fill: 0xffffff,
+			align: 'center'
+		})
+		number.anchor.set(0.5)
+		const width = originalDimensions.x / numberOfGoods
+		number.position.x = (i + 0.5) * width
+		number.position.y = originalDimensions.y - width / 4
+
+		return number
+	})
+	const storageTextContainer = new PIXI.Container()
+	textObjects.forEach(number => {
+		storageTextContainer.addChild(number)
+	})
+	Colony.bindStorage(colony, storage => {
+		Object.values(storage).forEach((value, i) => {
+			textObjects[i].text = `${Math.round(value)}`
+		})
+	})
+	screenContainer.addChild(storageTextContainer)
+
 	RenderView.updateWhenResized(({ dimensions }) => {
 		const backgroundScale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
 		tilesContainer.position.x = (originalDimensions.x - 450) * backgroundScale
@@ -104,6 +130,7 @@ const createDetailScreen = colony => {
 		if (coastalDirection) {
 			coast.scale.set(backgroundScale)
 		}
+		storageTextContainer.scale.set(backgroundScale)
 		nameHeadline.position.x = dimensions.x / 2
 	})
 

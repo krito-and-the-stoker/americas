@@ -143,13 +143,13 @@ const	applyModifier = (tile, base, name, resource, where) => {
 	return base
 }
 
-const production = (tile, resource, colonist = {}) => {
+const production = (tile, resource, colonist = null) => {
 	const where = colonist ? 'field' : 'colony'
 	const base = applyModifier(tile, 0, 'base', resource, where)
 	const modifiers = ['coast', 'plowed', 'river', 'road', 'resource']
 	let result = modifiers
 		.reduce((result, name) => (tile[name] ? applyModifier(tile, result, name, resource, where) : result), base)
-	if (colonist.expert === resource) {
+	if (colonist && colonist.expert === resource) {
 		result += applyModifier(tile, result, 'expert', resource, where)
 	}
 
