@@ -1,43 +1,53 @@
 {
-	"caravel":{
-		"id": 9,
+	"caravel": {
+		"frame": {
+			"default": 9
+		},
 		"domain": "sea",
 		"canFound": false,
 		"speed": 10,
 		"cargo": 2
 	},
-	"artillery":{
-		"id": 0,
+	"artillery": {
+		"frame": {
+			"default": 0,
+			"damaged": 1
+		},
 		"domain": "land",
 		"canFound": false,
 		"speed": 1
 	},
-	"pioneer":{
-		"id": 17,
+	"pioneer": {
+		"frame": {
+			"default": 17,
+			"pioneer": 18
+		},
 		"domain": "land",
 		"canFound": true,
 		"speed": 1
 	},
-	"settler":{
-		"id": 22,
+	"settler": {
+		"frame": {
+			"default": 22
+		},
 		"domain": "land",
 		"canFound": true,
 		"speed": 1
 	},
-	"scout":{
-		"id": 49,
+	"scout": {
+		"frame": {
+			"default": 49,
+			"scout": 50
+		},
 		"domain": "land",
 		"canFound": true,
 		"speed": 4
 	},
-	"expert farmer":{
-		"id": 26,
-		"domain": "land",
-		"canFound": true,
-		"speed": 1
-	}, 
 	"soldier": {
-		"id": 48,
+		"frame": {
+			"default": 47,
+			"expert": 48
+		},
 		"domain": "land",
 		"canFound": true,
 		"speed": 1

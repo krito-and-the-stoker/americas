@@ -4,6 +4,13 @@ import Colony from '../entity/colony'
 const PRODUCTION_BASE_FACTOR = 0.0001
 
 const create = (colony, tile, good, colonist = null) => {
+	if (tile.harvestedBy && colonist) {
+		return {
+			update: () => false
+		}
+	}
+
+	tile.harvestedBy = colonist || colony
 	let lastUpdate = null
 	const update = currentTime => {
 		if (!lastUpdate) {
@@ -19,8 +26,13 @@ const create = (colony, tile, good, colonist = null) => {
 		return true
 	}
 
+	const stopped = () => {
+		tile.harvestedBy = null
+	}
+
 	return {
-		update
+		update,
+		stopped
 	}
 }
 

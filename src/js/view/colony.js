@@ -20,7 +20,7 @@ const createMapSprite = colony => {
 	sprite.x = TILE_SIZE * colony.mapCoordinates.x
 	sprite.y = TILE_SIZE * colony.mapCoordinates.y
 	sprite.interactive = true
-	sprite.on('pointerdown', () => {
+	sprite.on('pointertap', () => {
 		Foreground.openScreen(colony.screen)
 	})
 	const text = new PIXI.Text(colony.name, {
@@ -37,14 +37,8 @@ const createMapSprite = colony => {
 	return sprite
 }
 
-const createDetailScreen = colony => {
-	const screenContainer = new PIXI.Container()
-
+const createDetailBackground = (colony, screenContainer) => {
 	const background = new PIXI.Sprite(new PIXI.Texture(Ressources.get().colonyBackground))
-	const originalDimensions = {
-		x: background.width,
-		y: background.height
-	}
 	screenContainer.addChild(background)
 
 	const coastalDirection = Colony.coastalDirection(colony)
@@ -54,6 +48,13 @@ const createDetailScreen = colony => {
 		screenContainer.addChild(coast)
 	}
 
+	return {
+		x: background.width,
+		y: background.height
+	}
+}
+
+const createDetailTiles = (colony, screenContainer, originalDimensions) => {
 	const tilesContainer = new PIXI.Container()
 	const center = MapEntity.tile(colony.mapCoordinates)
 	const tiles = [center].concat(Tile.diagonalNeighbors(center))
@@ -67,10 +68,18 @@ const createDetailScreen = colony => {
 			sprite.position.y = position.y
 			tilesContainer.addChild(sprite)
 		})
+		const colonist = colony.colonists.find(colonist => colonist.worksAt && colonist.worksAt.tile == tile)
+		if (colonist) {
+			colonist.sprite.x = position.x
+			colonist.sprite.y = position.y
+			tilesContainer.addChild(colonist.sprite)
+		}
 	})
 	const colonySprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(MAP_COLONY_FRAME_ID)))
 	colonySprite.position.x = TILE_SIZE
 	colonySprite.position.y = TILE_SIZE
+	tilesContainer.position.x = (originalDimensions.x - 450)
+	tilesContainer.scale.set(450 / (3 * TILE_SIZE))
 	tilesContainer.addChild(colonySprite)
 	screenContainer.addChild(tilesContainer)
 
@@ -85,7 +94,9 @@ const createDetailScreen = colony => {
 			tilesContainer.addChild(s)
 		})
 	})
+}
 
+const createHeadline = (colony, screenContainer, originalDimensions) => {
 	const nameHeadline = new PIXI.Text(colony.name, {
 		fontFamily: 'Times New Roman',
 		fontSize: 50,
@@ -94,8 +105,11 @@ const createDetailScreen = colony => {
 	})
 	nameHeadline.anchor.set(0.5)
 	nameHeadline.position.y = 35
-	screenContainer.addChild(nameHeadline)
+	nameHeadline.position.x = originalDimensions.x / 2
+	screenContainer.addChild(nameHeadline)	
+}
 
+const createStorageNumbers = (colony, screenContainer, originalDimensions) => {
 	const numberOfGoods = Object.keys(colony.storage).length
 	const textObjects = Object.entries(colony.storage).map(([good, amount], i) => {
 		const number = new PIXI.Text(`${amount}`, {
@@ -120,18 +134,20 @@ const createDetailScreen = colony => {
 			textObjects[i].text = `${Math.round(value)}`
 		})
 	})
-	screenContainer.addChild(storageTextContainer)
+	screenContainer.addChild(storageTextContainer)	
+}
+
+const createDetailScreen = colony => {
+	const screenContainer = new PIXI.Container()
+
+	const originalDimensions = createDetailBackground(colony, screenContainer)
+	createDetailTiles(colony, screenContainer, originalDimensions)
+	createHeadline(colony, screenContainer, originalDimensions)
+	createStorageNumbers(colony, screenContainer, originalDimensions)
 
 	RenderView.updateWhenResized(({ dimensions }) => {
-		const backgroundScale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
-		tilesContainer.position.x = (originalDimensions.x - 450) * backgroundScale
-		tilesContainer.scale.set(backgroundScale * 450 / (3 * TILE_SIZE))
-		background.scale.set(backgroundScale)
-		if (coastalDirection) {
-			coast.scale.set(backgroundScale)
-		}
-		storageTextContainer.scale.set(backgroundScale)
-		nameHeadline.position.x = dimensions.x / 2
+		const scale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
+		screenContainer.scale.set(scale)
 	})
 
 	screenContainer.interactive = true

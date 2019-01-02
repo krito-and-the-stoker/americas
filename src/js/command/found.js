@@ -7,8 +7,8 @@ const create = unit => {
 			return false
 		}
 
-		const colony = Colony.create(unit.mapCoordinates)
 		UnitView.deactivate(unit)
+		const colony = Colony.create(unit.mapCoordinates, unit)
 
 		return false
 	}

@@ -106,7 +106,7 @@ const find = (from, isTarget, target, freeDomainCross) => {
 			if(!explored[neighbor.index]){
 				let neighborNode = graph.node(neighbor.index)
 				let newCost = node.value.cost + neighbor.cost
-				if(neighborNode.tile.domain !== node.value.tile.domain){
+				if(from.domain !== node.value.tile.domain){
 					if(freeDomainCross)
 						newCost = 0
 					else

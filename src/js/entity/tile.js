@@ -25,6 +25,7 @@ const create = ({ id, layers, index }) => {
 		riverLarge: layers.riverLarge === Terrain.largeRiver.id,
 		bonus: layers.bonus ===  Terrain.bonusResource.id,
 		mapCoordinates: MapEntity.mapCoordinates(index),
+		harvestedBy: null,
 		plowed: false,
 		road: false,
 		coast: false,

@@ -49,7 +49,8 @@ const deactivate = unit => {
 }
 
 const createSprite = unit => {
-	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(unit.id)))
+	const frame = unit.expert ? unit.frame[unit.expert] || unit.frame.default : unit.frame.default
+	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
 	sprite.x = TILE_SIZE * unit.mapCoordinates.x
 	sprite.y = TILE_SIZE * unit.mapCoordinates.y
 	if (unit.active) {

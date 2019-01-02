@@ -15,6 +15,7 @@ const create = (name, x, y, additionalProps = {}) => {
 			mapCoordinates: { x, y },
 			active: true,
 			cargo: [],
+			expert: null,
 			...additionalProps
 		}
 		unit.sprite = UnitView.createSprite(unit)

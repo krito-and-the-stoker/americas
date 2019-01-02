@@ -5,6 +5,11 @@ import Move from './move'
 
 
 const create = async (unit, coords) => {
+	if (unit.abortMoveToCommand) {
+		unit.abortMoveToCommand()
+		unit.abortMoveToCommand = null
+	}
+
 	if (unit.resolveWhenMoveOver) {
 		await unit.resolveWhenMoveOver
 	}
@@ -16,10 +21,6 @@ const create = async (unit, coords) => {
 		}
 	}
 
-	if (unit.abortMoveToCommand) {
-		unit.abortMoveToCommand()
-		unit.abortMoveToCommand = null
-	}
 	const path = PathFinder.findPathXY(unit.mapCoordinates, coords).filter((waypoint, index) => index > 0)
 
 	let aborted = false

@@ -82,7 +82,8 @@ gulp.task('build', ['pug', 'js', 'sass', 'static'])
 
 gulp.task('watch', ['serve'], () => {
 	gulp.watch('src/pages/**/*.pug', ['pug'])
-	gulp.watch('src/js/**/*.js', ['js'])
+  gulp.watch('src/js/**/*.js', ['js'])
+	gulp.watch('src/js/**/*.json', ['js'])
 	gulp.watch('src/content/**/*.md', ['pug'])
 	gulp.watch('src/sass/**/*.scss', ['sass'])
 	gulp.watch('src/static/**/*', ['static'])
