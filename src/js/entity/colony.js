@@ -21,7 +21,7 @@ const coastalDirection = colony => {
 	const winner = Tile.diagonalNeighbors(center)
 		.filter(neighbor => neighbor.coast)
 		.map(neighbor => ({
-			score: Tile.diagonalNeighbors(neighbor).filter(nn => nn.coast && Tile.diagonalNeighbors(center).includes(nn)).length,
+			score: Tile.diagonalNeighbors(neighbor).filter(nn => nn.coast && Tile.diagonalNeighbors(center).includes(nn)).length + 1,
 			tile: neighbor
 		}))
 		.reduce((winner, { tile, score }) => winner.score > score ? winner : { tile, score }, { score: 0 })

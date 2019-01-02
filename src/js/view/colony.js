@@ -48,8 +48,9 @@ const createDetailScreen = colony => {
 	screenContainer.addChild(background)
 
 	const coastalDirection = Colony.coastalDirection(colony)
+	let coast = null
 	if (coastalDirection) {	
-		const coast = new PIXI.Sprite(new PIXI.Texture(Ressources.get().colonyScreenCoast[coastalDirection]))
+		coast = new PIXI.Sprite(new PIXI.Texture(Ressources.get().colonyScreenCoast[coastalDirection]))
 		screenContainer.addChild(coast)
 	}
 
