@@ -12,6 +12,8 @@ const get = () => ({
 	coords
 })
 
+const resizeFunctions = []
+
 const getDimensions = () => ({
 	x: Background.get().layer.width,
 	y: Background.get().layer.height
@@ -37,6 +39,7 @@ const updateScale = newScale => {
 const initialize = async mapView => {
 	await Background.initialize(mapView)
 	Foreground.initialize()
+	window.addEventListener('resize', () => resizeFunctions.forEach(fn => fn({ dimensions: getDimensions(), scale, coords })))
 }
 
 const onDraw = () => {
@@ -46,12 +49,22 @@ const onDraw = () => {
 	Foreground.doRenderWork()
 }
 
+const updateWhenResized = fn => {
+	fn({
+		dimensions: getDimensions(),
+		scale,
+		coords
+	})
+	resizeFunctions.push(fn)
+}
+
 const render = Background.render
 
 export default {
 	updateMapCoords,
 	updateScale,
 	getDimensions,
+	updateWhenResized,
 	getCenter,
 	initialize,
 	onDraw,

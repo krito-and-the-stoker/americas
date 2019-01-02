@@ -36,8 +36,10 @@ const createDetailScreen = colony => {
 	const screenContainer = new PIXI.Container()
 
 	const background = new PIXI.Sprite(new PIXI.Texture(Ressources.get().colonyBackground))
-	const backgroundScale = Math.min(RenderView.getDimensions().x / background.width, RenderView.getDimensions().y / background.height)
-	background.scale.set(backgroundScale)
+	const originalDimensions = {
+		x: background.width,
+		y: background.height
+	}
 	screenContainer.addChild(background)
 
 	const nameHeadline = new PIXI.Text(colony.name, {
@@ -47,9 +49,14 @@ const createDetailScreen = colony => {
 		align: 'center'
 	})
 	nameHeadline.anchor.set(0.5)
-	nameHeadline.position.x = RenderView.getDimensions().x / 2
 	nameHeadline.position.y = 35
 	screenContainer.addChild(nameHeadline)
+
+	RenderView.updateWhenResized(({ dimensions }) => {
+		const backgroundScale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
+		background.scale.set(backgroundScale)
+		nameHeadline.position.x = dimensions.x / 2
+	})
 
 	screenContainer.interactive = true
 	screenContainer.on('pointerdown', () => {

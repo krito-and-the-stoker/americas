@@ -18,8 +18,10 @@ const initialize = () => {
 	const screenContainer = new PIXI.Container()
 
 	const background = new PIXI.Sprite(new PIXI.Texture(Ressources.get().europeBackground))
-	const backgroundScale = Math.max(RenderView.getDimensions().x / background.width, RenderView.getDimensions().y / background.height)
-	background.scale.set(backgroundScale)
+	const originalDimensions = {
+		x: background.width,
+		y: background.height
+	}
 	screenContainer.addChild(background)
 
 	const nameHeadline = new PIXI.Text('London', {
@@ -29,13 +31,18 @@ const initialize = () => {
 		align: 'center'
 	})
 	nameHeadline.anchor.set(0.5)
-	nameHeadline.position.x = RenderView.getDimensions().x / 2
 	nameHeadline.position.y = 35
 	screenContainer.addChild(nameHeadline)
 
 	screenContainer.interactive = true
 	screenContainer.on('pointerdown', close)
 	screen = screenContainer
+
+	RenderView.updateWhenResized(({ dimensions }) => {
+		nameHeadline.position.x = dimensions.x / 2
+		const backgroundScale = Math.max(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
+		background.scale.set(backgroundScale)		
+	})
 }
 
 export default {
