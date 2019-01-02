@@ -1,6 +1,7 @@
 import Time from '../timeline/time'
 import MapEntity from '../entity/map'
 import Unload from './unload'
+import Tile from '../entity/tile'
 
 const BASE_TIME = 7500
 const UNLOADING_TIME = 2500
@@ -53,7 +54,7 @@ const create = (unit, coords, finishedFn) => {
 			if (unit.unloadingInProgress) {
 				duration = UNLOADING_TIME
 			} else {
-				duration = targetTile.movementCost(fromTile) * BASE_TIME / unit.speed
+				duration = Tile.movementCost(fromTile, targetTile) * BASE_TIME / unit.speed
 			}
 			if (!inMoveDistance(startCoords, coords)) {
 				aborted = true
@@ -66,8 +67,8 @@ const create = (unit, coords, finishedFn) => {
 	const finished = () => {
 		if (!aborted) {		
 			const tile = MapEntity.tile(coords)
-			tile.discover()
-			tile.diagonalNeighbors().forEach(n => n.discover())
+			Tile.discover(tile)
+			Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))
 		}
 		if (finishedFn) {
 			finishedFn()

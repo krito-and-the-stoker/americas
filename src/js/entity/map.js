@@ -1,4 +1,4 @@
-import MapTile from './tile.js'
+import Tile from './tile.js'
 
 
 let numTiles = null
@@ -8,12 +8,8 @@ const	layer = (data, name) => data.layers.find((layer) => layer.name === name)
 
 const	createCoastLine = tiles => {
 	//look for coasts and create coast lines
-	tiles.forEach(tile => {
-		tile.decideCoastTerrain()
-	})
-	tiles.forEach(tile => {
-		tile.decideCoastalSea()
-	})
+	tiles.forEach(Tile.decideCoastTerrain)
+	tiles.forEach(Tile.decideCoastalSea)
 }
 
 const get = () => ({
@@ -32,7 +28,7 @@ const create = ({ data }) => {
 	numTiles.total = numTiles.x * numTiles.y
 
 	console.log('creating tiles')
-	tiles = layer(data, 'terrain base').data.map((id, index) => new MapTile({
+	tiles = layer(data, 'terrain base').data.map((id, index) => Tile.create({
 		id,
 		index,
 		layers: {

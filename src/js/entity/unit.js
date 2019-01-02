@@ -1,12 +1,13 @@
 import Units from '../data/units.json'
 import UnitView from '../view/unit'
 import MapEntity from '../entity/map'
+import Tile from '../entity/tile'
 
 const create = (name, x, y, additionalProps = {}) => {
 	if (Units[name]) {
 		const tile = MapEntity.tile({ x, y })
-		tile.discover()
-		tile.diagonalNeighbors().forEach(n => n.discover())
+		Tile.discover(tile)
+		Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))
 
 		const unit = {
 			name,

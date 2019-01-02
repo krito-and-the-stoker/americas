@@ -6,6 +6,7 @@ import Ressources from '../render/ressources'
 import RenderView from '../render/view'
 import MapEntity from '../entity/map'
 import Util from '../util/util'
+import Tile from '../entity/tile'
 
 const TILE_SIZE = 64
 
@@ -56,7 +57,7 @@ const createDetailScreen = colony => {
 
 	const tilesContainer = new PIXI.Container()
 	const center = MapEntity.tile(colony.mapCoordinates)
-	const tiles = [center].concat(center.diagonalNeighbors())
+	const tiles = [center].concat(Tile.diagonalNeighbors(center))
 	tiles.map(tile => {
 		const position = {
 			x: TILE_SIZE * (1 + tile.mapCoordinates.x - center.mapCoordinates.x),

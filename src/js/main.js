@@ -41,7 +41,6 @@ const initialize = async () => {
 	const caravel = Unit.create('caravel', 125, 65, {
 		cargo: [soldier, pioneer]
 	})
-	// const caravel2 = Unit.create('caravel', 125, 66)
 	MapControl.centerAt({ x: 125, y: 65 })
 	MapControl.zoomBy(1/0.35, 0)
 	setTimeout(() => {

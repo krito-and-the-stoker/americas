@@ -2,6 +2,7 @@ import Graph from '../util/graph';
 import Util from '../util/util'
 import { FibonacciHeap } from '@tyriar/fibonacci-heap';
 import MapEntity from '../entity/map'
+import Tile from '../entity/tile'
 
 const UNDISCOVERED_COST = 5
 const CANNOT_MOVE_COST = 500
@@ -23,9 +24,9 @@ const initialize = () => {
 	const tiles = MapEntity.get().tiles
 	Util.range(MapEntity.get().numTiles.total).forEach(index => {
 		const center = tiles[index]
-		const neighbors = center.diagonalNeighbors().map(tile => ({
+		const neighbors = Tile.diagonalNeighbors(center).map(tile => ({
 			index: tile.index,
-			cost: tile.movementCost(center),
+			cost: Tile.movementCost(center, tile),
 			tile
 		}))
 
@@ -67,10 +68,10 @@ const find = (from, isTarget, target, freeDomainCross) => {
 			return a.value.cost - b.value.cost;
 
 		//prefer horizontal or vertical movement to diagonals
-		if(a.value.prev.value.tile.isNextTo(a.value.tile))
+		if(Tile.isNextTo(a.value.prev.value.tile, a.value.tile))
 			return -1;
 
-		if(b.value.prev.value.tile.isNextTo(b.value.tile))
+		if(Tile.isNextTo(b.value.prev.value.tile, b.value.tile))
 			return 1;
 
 		return 0;
