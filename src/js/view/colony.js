@@ -46,6 +46,9 @@ const createDetailScreen = colony => {
 	}
 	screenContainer.addChild(background)
 
+	const coast = new PIXI.Sprite(new PIXI.Texture(Ressources.get().colonyScreenCoast.rightdown))
+	screenContainer.addChild(coast)
+
 	const tilesContainer = new PIXI.Container()
 	const center = MapEntity.tile(colony.mapCoordinates)
 	const tiles = [center].concat(Tile.diagonalNeighbors(center))
@@ -93,6 +96,7 @@ const createDetailScreen = colony => {
 		tilesContainer.position.x = (originalDimensions.x - 450) * backgroundScale
 		tilesContainer.scale.set(backgroundScale * 450 / (3 * TILE_SIZE))
 		background.scale.set(backgroundScale)
+		coast.scale.set(backgroundScale)
 		nameHeadline.position.x = dimensions.x / 2
 	})
 
