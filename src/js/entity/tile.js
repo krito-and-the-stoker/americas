@@ -121,12 +121,7 @@ const decideCoastTerrain = tile => {
 }
 
 const decideCoastalSea = tile => {
-	// if (!tile.terrain || tile.terrain !== 'sea' || tile.coast) {
-	// 	tile.isCoastalSea = false
-	// 	return
-	// }
-
-	tile.isCoastalSea = tile.terrain && tile.terrain === 'sea' && !tile.coast && diagonalNeighbors(tile).some(other => other.terrain && other.coast)
+	tile.isCoastalSea = tile.terrain && tile.domain === 'sea' && !tile.coast && diagonalNeighbors(tile).some(other => other.coast)
 }
 
 
