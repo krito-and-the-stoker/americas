@@ -90,8 +90,8 @@ const createDetailScreen = colony => {
 
 	RenderView.updateWhenResized(({ dimensions }) => {
 		const backgroundScale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
-		tilesContainer.position.x = (originalDimensions.x - 765) * backgroundScale
-		tilesContainer.scale.set(backgroundScale * 765 / (3 * TILE_SIZE))
+		tilesContainer.position.x = (originalDimensions.x - 450) * backgroundScale
+		tilesContainer.scale.set(backgroundScale * 450 / (3 * TILE_SIZE))
 		background.scale.set(backgroundScale)
 		nameHeadline.position.x = dimensions.x / 2
 	})

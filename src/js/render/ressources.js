@@ -14,7 +14,7 @@ const get = () => ({
 
 const initialize = async () => {
 	[mapTiles, colonyBackground, europeBackground, undiscovered] =
-		await Util.loadTexture('images/map.png', 'images/colony.png', 'images/europe.jpg', 'images/undiscovered.jpg')
+		await Util.loadTexture('images/map.png', 'images/colony-screen/background.jpg', 'images/europe.jpg', 'images/undiscovered.jpg')
 }
 
 
