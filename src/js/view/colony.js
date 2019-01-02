@@ -45,16 +45,6 @@ const createDetailScreen = colony => {
 	}
 	screenContainer.addChild(background)
 
-	const nameHeadline = new PIXI.Text(colony.name, {
-		fontFamily: 'Times New Roman',
-		fontSize: 50,
-		fill: 0xffffff,
-		align: 'center'
-	})
-	nameHeadline.anchor.set(0.5)
-	nameHeadline.position.y = 35
-	screenContainer.addChild(nameHeadline)
-
 	const tilesContainer = new PIXI.Container()
 	const center = MapEntity.tile(colony.mapCoordinates)
 	const tiles = [center].concat(Tile.diagonalNeighbors(center))
@@ -74,6 +64,16 @@ const createDetailScreen = colony => {
 	colonySprite.position.y = TILE_SIZE
 	tilesContainer.addChild(colonySprite)
 	screenContainer.addChild(tilesContainer)
+
+	const nameHeadline = new PIXI.Text(colony.name, {
+		fontFamily: 'Times New Roman',
+		fontSize: 50,
+		fill: 0xffffff,
+		align: 'center'
+	})
+	nameHeadline.anchor.set(0.5)
+	nameHeadline.position.y = 35
+	screenContainer.addChild(nameHeadline)
 
 	RenderView.updateWhenResized(({ dimensions }) => {
 		const backgroundScale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
