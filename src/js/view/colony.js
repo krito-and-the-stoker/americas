@@ -1,8 +1,10 @@
 import * as PIXI from 'pixi.js'
 
 import Foreground from '../render/foreground'
+import Background from '../render/background'
 import Ressources from '../render/ressources'
 import RenderView from '../render/view'
+import MapEntity from '../entity/map'
 import Util from '../util/util'
 
 const TILE_SIZE = 64
@@ -11,7 +13,7 @@ const TILE_SIZE = 64
 const MAP_COLONY_FRAME_ID = 53 
 
 const createMapSprite = colony => {
-	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().map, Util.rectangle(MAP_COLONY_FRAME_ID)))
+	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(MAP_COLONY_FRAME_ID)))
 	sprite.x = TILE_SIZE * colony.mapCoordinates.x
 	sprite.y = TILE_SIZE * colony.mapCoordinates.y
 	sprite.interactive = true
@@ -52,8 +54,30 @@ const createDetailScreen = colony => {
 	nameHeadline.position.y = 35
 	screenContainer.addChild(nameHeadline)
 
+	const tilesContainer = new PIXI.Container()
+	const center = MapEntity.tile(colony.mapCoordinates)
+	const tiles = [center].concat(center.diagonalNeighbors())
+	tiles.map(tile => {
+		const position = {
+			x: TILE_SIZE * (1 + tile.mapCoordinates.x - center.mapCoordinates.x),
+			y: TILE_SIZE * (1 + tile.mapCoordinates.y - center.mapCoordinates.y)
+		}
+		Background.createSpritesFromTile(tile).forEach(sprite => {
+			sprite.position.x = position.x
+			sprite.position.y = position.y
+			tilesContainer.addChild(sprite)
+		})
+	})
+	const colonySprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(MAP_COLONY_FRAME_ID)))
+	colonySprite.position.x = TILE_SIZE
+	colonySprite.position.y = TILE_SIZE
+	tilesContainer.addChild(colonySprite)
+	screenContainer.addChild(tilesContainer)
+
 	RenderView.updateWhenResized(({ dimensions }) => {
 		const backgroundScale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
+		tilesContainer.position.x = (originalDimensions.x - 765) * backgroundScale
+		tilesContainer.scale.set(backgroundScale * 765 / (3 * TILE_SIZE))
 		background.scale.set(backgroundScale)
 		nameHeadline.position.x = dimensions.x / 2
 	})

@@ -1,17 +1,20 @@
 import Util from '../util/util'
 
-let map = null
+let mapTiles = null
 let colonyBackground = null
 let europeBackground = null
+let undiscovered = null
 
 const get = () => ({
-	map,
+	mapTiles,
 	colonyBackground,
-	europeBackground
+	europeBackground,
+	undiscovered
 })
 
 const initialize = async () => {
-	[map, colonyBackground, europeBackground] = await Util.loadTexture('images/map.png', 'images/colony.png', 'images/europe.jpg')
+	[mapTiles, colonyBackground, europeBackground, undiscovered] =
+		await Util.loadTexture('images/map.png', 'images/colony.png', 'images/europe.jpg', 'images/undiscovered.jpg')
 }
 
 

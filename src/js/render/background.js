@@ -3,6 +3,8 @@ import { loadTexture, range, rectangle } from './../util/util'
 import Layer from './layer'
 import RenderView from './view'
 import TileCache from './tileCache'
+import Ressources from './ressources'
+import MapView from '../view/map'
 
 const MAX_TILES = 30000
 
@@ -68,17 +70,23 @@ const show = () => {
 	render()
 }
 
+const createSpriteFromFrames = frames => frames.map(frame => {
+	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, rectangle(Math.abs(frame) - 1)))
+	sprite.blendMode = frame > 0 ? PIXI.BLEND_MODES.NORMAL : PIXI.BLEND_MODES.OVERLAY
+	return sprite
+})
+
+const createSpritesFromTile = tile => createSpriteFromFrames(MapView.instance.assembleTile(tile))
+
 
 const initialize = async mapView => {
-	const [undiscoveredTexture, mapTilesTexture] = await loadTexture('images/undiscovered.jpg', 'images/map.png')
-	
 	layer = new Layer({
 		transparent: true,
 		clearBeforeRender: false,
 		preserveDrawingBuffer: true,
 	})
 
-	undiscovered = new PIXI.extras.TilingSprite(undiscoveredTexture, layer.width, layer.height)
+	undiscovered = new PIXI.extras.TilingSprite(Ressources.get().undiscovered, layer.width, layer.height)
 
 	console.log('creating tiles')
 	tiles = mapView.tileStacks.map(stack => ({
@@ -87,19 +95,14 @@ const initialize = async mapView => {
 		container: null,
 		initialized: false,
 		createSprites: () => stack.frames.map(frame => {
-			const sprite = new PIXI.Sprite(new PIXI.Texture(mapTilesTexture, rectangle(Math.abs(frame) - 1)))
+			const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, rectangle(Math.abs(frame) - 1)))
 			sprite.x = stack.position.x
 			sprite.y = stack.position.y
 			sprite.blendMode = frame > 0 ? PIXI.BLEND_MODES.NORMAL : PIXI.BLEND_MODES.OVERLAY
 			return sprite
 		}),
-		createCachedSprites: () => {		
-			const spriteFromFrames = frames => frames.map(frame => {
-				const sprite = new PIXI.Sprite(new PIXI.Texture(mapTilesTexture, rectangle(Math.abs(frame) - 1)))
-				sprite.blendMode = frame > 0 ? PIXI.BLEND_MODES.NORMAL : PIXI.BLEND_MODES.OVERLAY
-				return sprite
-			})
-			const sprite = TileCache.createCachedSprite(spriteFromFrames, stack.frames)
+		createCachedSprites: () => {
+			const sprite = TileCache.createCachedSprite(createSpriteFromFrames, stack.frames)
 			if (sprite) {			
 				sprite.position.x = stack.position.x
 				sprite.position.y = stack.position.y
@@ -193,5 +196,6 @@ export default {
 	doRenderWork,
 	updateCoords,
 	updateScale,
+	createSpritesFromTile,
 	get
 }

@@ -3,6 +3,7 @@ import MapEntity from '../entity/map'
 
 class MapView{
 	constructor() {
+		MapView.instance = this
 		this.numTiles = MapEntity.get().numTiles
 		this.spriteSheetWidth = 1024 / 64
 		this.tileStacks = MapEntity.get().tiles.map((tile, index) => {

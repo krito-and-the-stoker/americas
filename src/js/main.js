@@ -29,8 +29,8 @@ const initialize = async () => {
 	MapEntity.create({ data: americaMap })
 	const mapView = new MapView()
 	
-	await RenderView.initialize(mapView)
 	await Ressources.initialize()
+	await RenderView.initialize(mapView)
 	Tween.initialize()
 
 	PathFinder.initialize()
