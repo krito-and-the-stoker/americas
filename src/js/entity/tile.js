@@ -3,6 +3,7 @@ import MovementCosts from '../data/movementCosts'
 import RenderView from '../render/view'
 import Dialog from '../view/dialog'
 import MapEntity from '../entity/map'
+import Yield from '../data/yield'
 
 let hasDiscoveredLand = false
 
@@ -36,7 +37,7 @@ const create = ({ id, layers, index }) => {
 	tile.treeVariation = tile.riverLarge || Math.random() > (tile.river ? 0.0 : 0.9)
 	tile.mountainVariation = Math.random() > (tile.river ? 0.2 : 0.75) && !tile.bonus || tile.mountains
 	tile.hillVariation = Math.random() > (tile.river ? 0.2 : 0.75) && !tile.bonus
-	tile.movementCostName = tile.forest ? `${tile.name}WithForest` : (tile.hills ? 'hills' : (tile.mountains ? 'mountains' : tile.name) )
+	tile.terrainName = tile.forest ? `${tile.name}WithForest` : (tile.hills ? 'hills' : (tile.mountains ? 'mountains' : tile.name) )
 
 	tile.left = () => left(tile)
 	tile.up = () => up(tile)
@@ -102,7 +103,7 @@ const movementCost = (from, to) => {
 			return MovementCosts.river
 		}
 	}
-	return MovementCosts[to.movementCostName]
+	return MovementCosts[to.terrainName]
 }
 
 const decideCoastTerrain = tile => {
@@ -125,10 +126,45 @@ const decideCoastalSea = tile => {
 }
 
 
+const	applyModifier = (tile, base, name, resource, where) => {
+	const terrainName = tile.terrainName
+	if (Yield[terrainName][where][resource]) {
+		const mod = Yield[terrainName][where][resource][name]
+		if (mod) {
+			if (mod[0] === '+')
+				return base + parseFloat(mod.substr(1))
+			if (mod[0] === '*')
+				return base * parseFloat(mod.substr(1))
+
+			return mod
+		}
+	}
+
+	return base
+}
+
+const production = (tile, resource, colonist = {}) => {
+	const where = colonist ? 'field' : 'colony'
+	const base = applyModifier(tile, 0, 'base', resource, where)
+	const modifiers = ['coast', 'plowed', 'river', 'road', 'resource']
+	let result = modifiers
+		.reduce((result, name) => (tile[name] ? applyModifier(tile, result, name, resource, where) : result), base)
+	if (colonist.expert === resource) {
+		result += applyModifier(tile, result, 'expert', resource, where)
+	}
+
+	return result
+}
+
+const colonyProductionGoods = tile => Object.keys(Yield[tile.terrainName].colony)
+
+
 export default {
 	create,
 	discover,
 	isNextTo,
+	production,
+	colonyProductionGoods,
 	decideCoastTerrain,
 	decideCoastalSea,
 	diagonalNeighbors,

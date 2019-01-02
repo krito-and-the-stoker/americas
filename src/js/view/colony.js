@@ -7,6 +7,7 @@ import RenderView from '../render/view'
 import MapEntity from '../entity/map'
 import Util from '../util/util'
 import Tile from '../entity/tile'
+import ProductionView from '../view/production'
 
 const TILE_SIZE = 64
 
@@ -64,6 +65,18 @@ const createDetailScreen = colony => {
 	colonySprite.position.y = TILE_SIZE
 	tilesContainer.addChild(colonySprite)
 	screenContainer.addChild(tilesContainer)
+
+
+	const productionGoods = Tile.colonyProductionGoods(center)
+	productionGoods.forEach((good, i) => {	
+		const foodSprites = ProductionView.create(Tile.production(center, good), good, 32)
+		foodSprites.forEach(s => {
+			s.scale.set(1.0 / productionGoods.length)
+			s.position.x += TILE_SIZE
+			s.position.y += TILE_SIZE + i * TILE_SIZE / productionGoods.length
+			tilesContainer.addChild(s)
+		})
+	})
 
 	const nameHeadline = new PIXI.Text(colony.name, {
 		fontFamily: 'Times New Roman',

@@ -1,0 +1,68 @@
+{
+	"types":[
+		"food",
+		"sugar",
+		"tobacco",
+		"cotton",
+		"furs",
+		"wood",
+		"ore",
+		"silver",
+		"horses",
+		"rum",
+		"cigars",
+		"cloth",
+		"coats",
+		"trade goods",
+		"tools",
+		"guns"
+	],
+	"food":{
+		"id": 64
+	},
+	"sugar":{
+		"id": 65
+	},
+	"tobacco":{
+		"id": 66
+	},
+	"cotton":{
+		"id": 67
+	},
+	"furs":{
+		"id": 68
+	},
+	"wood":{
+		"id": 69
+	},
+	"ore":{
+		"id": 70
+	},
+	"silver":{
+		"id": 71
+	},
+	"horses":{
+		"id": 72
+	},
+	"rum":{
+		"id": 73
+	},
+	"cigars":{
+		"id": 74
+	},
+	"cloth":{
+		"id": 75
+	},
+	"coats":{
+		"id": 76
+	},
+	"trade goods":{
+		"id": 77
+	},
+	"tools":{
+		"id": 78
+	},
+	"guns":{
+		"id": 79
+	}
+}
