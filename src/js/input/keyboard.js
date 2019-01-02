@@ -4,6 +4,7 @@ import Unit from '../view/unit'
 import Time from '../timeline/time'
 import Move from '../command/move'
 import Found from '../command/found'
+import Europe from '../view/europe'
 
 const ZOOM_FACTOR = 1.25
 const ZOOM_TIME = 350
@@ -24,6 +25,10 @@ const handleKeydown = (e) => {
 	}
 	if (e.key === ' ') {
 		Time.togglePause()
+	}
+
+	if (e.key === 'e') {
+		Europe.open()
 	}
 
 	const activeUnit = Unit.get().activeUnit

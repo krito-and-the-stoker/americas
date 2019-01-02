@@ -10,6 +10,7 @@ import americaMap from './data/america-small.json'
 import Tween from './util/tween.js'
 import Unit from './entity/unit'
 import Ressources from './render/ressources'
+import Europe from './view/europe'
 import Time from './timeline/time'
 import Report from './command/report'
 import PathFinder from './util/pathFinder'
@@ -33,6 +34,7 @@ const initialize = async () => {
 	Tween.initialize()
 
 	PathFinder.initialize()
+	Europe.initialize()
 
 	const pioneer = Unit.create('pioneer', 125, 65, { active: false })
 	const soldier = Unit.create('soldier',125, 65, { active: false })
@@ -49,7 +51,7 @@ const initialize = async () => {
 	setTimeout(() => {
 		Mouse.initialize()
 		Keyboard.initialize()
-		Touch.initialize()		
+		Touch.initialize()
 	}, 2550)
 
 	Time.schedule(Report.create())

@@ -13,6 +13,7 @@ let undiscovered = null
 let tiles = null
 let scale = 1
 let renderRequested = false
+let visible = true
 
 const get = () => ({
 	numTiles,
@@ -55,6 +56,16 @@ const getContainer = index => {
 	}
 
 	return containers[index]
+}
+
+const hide = () => {
+	visible = false
+	render()
+}
+
+const show = () => {
+	visible = true
+	render()
 }
 
 
@@ -143,28 +154,32 @@ const doRenderWork = () => {
 	containers.forEach(container => {
 		container.removeChildren()
 	})
-	const numTilesX = Math.ceil(layer.width / 64 / scale) + 1
-	const numTilesY = Math.ceil(layer.height / 64 / scale) + 1
-	const offsetX = -Math.ceil(undiscovered.tilePosition.x / 64 / scale)
-	const offsetY = -Math.ceil(undiscovered.tilePosition.y / 64 / scale)
 
-	const xIndices = range(numTilesX)
-		.map(x => x + offsetX)
-		.filter(x => x >= 0 && x < numTiles.x)
-	const yIndices = range(numTilesY)
-		.map(y => y + offsetY)
-		.filter(y => y >= 0 && y < numTiles.y)
+	if (visible) {	
+		const numTilesX = Math.ceil(layer.width / 64 / scale) + 1
+		const numTilesY = Math.ceil(layer.height / 64 / scale) + 1
+		const offsetX = -Math.ceil(undiscovered.tilePosition.x / 64 / scale)
+		const offsetY = -Math.ceil(undiscovered.tilePosition.y / 64 / scale)
 
-	xIndices.forEach(x => {
-		yIndices.forEach(y => {
-			const index = y * numTiles.x + x
-			tiles[index].update(tiles[index], { x, y })
-			if (!tiles[index].initialized) {
-				tiles[index].initialize(tiles[index])
-			}
-			tiles[index].sprites.forEach(sprite => tiles[index].container.addChild(sprite))
+		const xIndices = range(numTilesX)
+			.map(x => x + offsetX)
+			.filter(x => x >= 0 && x < numTiles.x)
+		const yIndices = range(numTilesY)
+			.map(y => y + offsetY)
+			.filter(y => y >= 0 && y < numTiles.y)
+
+		xIndices.forEach(x => {
+			yIndices.forEach(y => {
+				const index = y * numTiles.x + x
+				tiles[index].update(tiles[index], { x, y })
+				if (!tiles[index].initialized) {
+					tiles[index].initialize(tiles[index])
+				}
+				tiles[index].sprites.forEach(sprite => tiles[index].container.addChild(sprite))
+			})
 		})
-	})
+	}
+
 	layer.app.render()
 	renderRequested = false
 }
@@ -173,6 +188,8 @@ const doRenderWork = () => {
 export default {
 	initialize,
 	render,
+	hide,
+	show,
 	doRenderWork,
 	updateCoords,
 	updateScale,

@@ -36,7 +36,7 @@ const updateScale = newScale => {
 
 const initialize = async mapView => {
 	await Background.initialize(mapView)
-	await Foreground.initialize()
+	Foreground.initialize()
 }
 
 const onDraw = () => {

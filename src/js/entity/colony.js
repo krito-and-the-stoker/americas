@@ -8,6 +8,7 @@ const create = coords => {
 		name: getColonyName(),
 		mapCoordinates: { ...coords }
 	}
+	colony.screen = ColonyView.createDetailScreen(colony)
 	colony.sprite = ColonyView.createMapSprite(colony)
 	console.log(colony)
 	return colony
