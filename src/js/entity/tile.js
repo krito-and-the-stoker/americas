@@ -158,6 +158,33 @@ const production = (tile, resource, colonist = {}) => {
 
 const colonyProductionGoods = tile => Object.keys(Yield[tile.terrainName].colony)
 
+const neighborString = (tile, other) => {
+	const result = (c1, c2) => {
+		const x1 = c1.x
+		const x2 = c2.x
+		const y1 = c1.y
+		const y2 = c2.y
+		if (x1 === x2 && y1 - 1 === y2)
+			return 'up'
+		if (x1 + 1 === x2 && y1 - 1 === y2)
+			return 'rightup'
+		if (x1 + 1 === x2 && y1 === y2)
+			return 'right'
+		if (x1 + 1 === x2 && y1 + 1 === y2)
+			return 'rightdown'
+		if (x1 === x2 && y1 + 1 === y2)
+			return 'down'
+		if (x1 - 1 === x2 && y1 + 1 === y2)
+			return 'leftdown'
+		if (x1 - 1 === x2 && y1 === y2)
+			return 'left'
+		if (x1 - 1 === x2 && y1 - 1 === y2)
+			return 'leftup'
+	}
+
+	return result(tile.mapCoordinates, other.mapCoordinates)
+}
+
 
 export default {
 	create,
@@ -169,4 +196,5 @@ export default {
 	decideCoastalSea,
 	diagonalNeighbors,
 	movementCost,
+	neighborString
 }

@@ -8,6 +8,7 @@ import MapEntity from '../entity/map'
 import Util from '../util/util'
 import Tile from '../entity/tile'
 import ProductionView from '../view/production'
+import Colony from '../entity/colony'
 
 const TILE_SIZE = 64
 
@@ -46,7 +47,8 @@ const createDetailScreen = colony => {
 	}
 	screenContainer.addChild(background)
 
-	const coast = new PIXI.Sprite(new PIXI.Texture(Ressources.get().colonyScreenCoast.rightdown))
+	const coastalDirection = Colony.coastalDirection(colony)
+	const coast = new PIXI.Sprite(new PIXI.Texture(Ressources.get().colonyScreenCoast[coastalDirection]))
 	screenContainer.addChild(coast)
 
 	const tilesContainer = new PIXI.Container()
