@@ -26,7 +26,7 @@ const coastalDirection = colony => {
 		}))
 		.reduce((winner, { tile, score }) => winner.score > score ? winner : { tile, score }, { score: 0 })
 
-	return Tile.neighborString(center, winner.tile)
+	return winner.score > 0 ? Tile.neighborString(center, winner.tile) : null
 }
 
 export default {

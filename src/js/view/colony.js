@@ -48,8 +48,10 @@ const createDetailScreen = colony => {
 	screenContainer.addChild(background)
 
 	const coastalDirection = Colony.coastalDirection(colony)
-	const coast = new PIXI.Sprite(new PIXI.Texture(Ressources.get().colonyScreenCoast[coastalDirection]))
-	screenContainer.addChild(coast)
+	if (coastalDirection) {	
+		const coast = new PIXI.Sprite(new PIXI.Texture(Ressources.get().colonyScreenCoast[coastalDirection]))
+		screenContainer.addChild(coast)
+	}
 
 	const tilesContainer = new PIXI.Container()
 	const center = MapEntity.tile(colony.mapCoordinates)
@@ -98,7 +100,9 @@ const createDetailScreen = colony => {
 		tilesContainer.position.x = (originalDimensions.x - 450) * backgroundScale
 		tilesContainer.scale.set(backgroundScale * 450 / (3 * TILE_SIZE))
 		background.scale.set(backgroundScale)
-		coast.scale.set(backgroundScale)
+		if (coastalDirection) {
+			coast.scale.set(backgroundScale)
+		}
 		nameHeadline.position.x = dimensions.x / 2
 	})
 
