@@ -17,6 +17,7 @@ const create = ({ id, layers, index }) => {
 
 	const tile = {
 		index,
+		id,
 		name,
 		domain: Terrain[name].domain,
 		terrain: terrain,
@@ -51,30 +52,38 @@ const create = ({ id, layers, index }) => {
 	return tile
 }
 
-const save = tile => ({
-	index: tile.index,
-	name: tile.name,
-	domain: tile.domain,
-	terrain: tile.terrain,
-	forest: tile.forest,
-	treeVariation: tile.treeVariation,
-	hills: tile.hills,
-	hillVariation: tile.hillVariation,
-	mountains: tile.mountains,
-	mountainVariation: tile.mountainVariation,
-	riverSmall: tile.riverSmall,
-	riverLarge: tile.riverLarge,
-	bonus: tile.bonus,
-	mapCoordinates: tile.mapCoordinates,
-	harvestedBy: Record.reference(tile.harvestedBy),
-	plowed: tile.plowed,
-	road: tile.road,
-	coast: tile.coast,
-	coastTerrain: tile.coastTerrain,
-	discovered: tile.discovered
-})
+const keys = ['index', 'id', 'forest', 'treeVariation', 'hills', 'hillVariation', 'mountains', 'mountainVariation', 'riverSmall', 'riverLarge', 'bonus', 'plowed', 'road', 'coast', 'discovered', 'harvestedBy']
+const save = tile => ([
+	tile.index,
+	tile.id,
+	tile.forest,
+	tile.treeVariation,
+	tile.hills,
+	tile.hillVariation,
+	tile.mountains,
+	tile.mountainVariation,
+	tile.riverSmall,
+	tile.riverLarge,
+	tile.bonus,
+	tile.plowed,
+	tile.road,
+	tile.coast,
+	tile.discovered,
+	Record.reference(tile.harvestedBy)
+])
 
-const load = tile => {
+const load = data => {
+	const tile = data.reduce((tile, value, index) => ({ ...tile, [keys[index]]: value }), {})
+	const [name, terrain] = Object.entries(Terrain).find(([name, terrain]) => terrain.id === tile.id)
+	if (!terrain) {
+		console.warn(`No terrain type found for id ${id}.`)
+		throw new Error(`No terrain type found for id ${id}.`)
+	}
+	tile.name = name
+	tile.terrain = terrain
+	tile.domain = Terrain[name].domain
+	tile.mapCoordinates = MapEntity.mapCoordinates(tile.index)
+
 	tile.river = tile.riverLarge || tile.riverSmall
 	tile.terrainName = tile.forest ? `${tile.name}WithForest` : (tile.hills ? 'hills' : (tile.mountains ? 'mountains' : tile.name) )
 

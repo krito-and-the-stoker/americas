@@ -84,9 +84,18 @@ const save = () => {
 		tiles: Object.values(tiles).map(saveSingleTile)
 	})
 	if (SAVE_TO_LOCAL_STORAGE) {
-		const compressed = LZString.compress(lastSave)
-		window.localStorage.setItem('lastSave', compressed)
-		console.log('entities saved to local storage', compressed.length)
+		if (window.Worker) {
+			const worker = new Worker('/worker.entry.js')
+			worker.onmessage = e => {
+				window.localStorage.setItem('lastSave', e.data)
+				console.log('entities saved to local storage', e.data.length)
+			}
+			worker.postMessage(lastSave)
+		} else {		
+			const compressed = LZString.compress(lastSave)
+			window.localStorage.setItem('lastSave', compressed)
+			console.log('entities saved to local storage', compressed.length)
+		}
 	} else {
 		console.log('entities saved', lastSave.length)
 	}
@@ -178,12 +187,9 @@ const load = () => {
 		.forEach(record => revive(record.data, record.type, record.id))
 
 	const mapView = new MapView()
+
 	Background.restart()
 }
-
-const compressed = LZString.compressToBase64('Hallo WeltHallo WeltHallo WeltHallo WeltHallo WeltHallo Welt')
-const uncompressed = LZString.decompressFromBase64(compressed)
-console.log(LZString)
 
 
 export default {

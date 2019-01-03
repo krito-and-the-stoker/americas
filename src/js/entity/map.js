@@ -63,6 +63,8 @@ const load = map => {
 	numTiles = map.numTiles
 	tiles = map.tiles
 
+	createCoastLine(tiles)
+
 	return { numTiles, tiles }
 }
 

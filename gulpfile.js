@@ -17,9 +17,12 @@ md.use(mila, {
 
 const config = {
 	mode: yargs.argv.production ? 'production' : 'development',
-  entry: './main.js',
+  entry: {
+    main: './main.js',
+    worker: './worker/main.js'
+  },
   output: {
-    filename: './bundle.js',
+    filename: './[name].entry.js',
     path: path.resolve(__dirname, 'dist')
   },
   context: path.resolve(__dirname, 'src/js/')
