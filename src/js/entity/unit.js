@@ -30,11 +30,12 @@ const create = (name, x, y, additionalProps = {}) => {
 
 const save = unit => ({
 	...unit,
-	sprite: undefined || console.log('saved', unit),
+	sprite: undefined,
 	cargo: unit.cargo.map(other => Record.reference(other))
 })
 
 const load = unit => {
+	unit.cargo = unit.cargo.map(Record.dereference)
 	unit.sprite = UnitView.createSprite(unit)
 	console.log('loaded', unit)
 	return unit

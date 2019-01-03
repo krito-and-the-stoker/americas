@@ -92,6 +92,8 @@ const load = data => {
 	tile.right = () => right(tile)
 	tile.down = () => down(tile)
 
+	Record.dereferenceLazy(tile.harvestedyBy, entity => tile.harvestedBy = entity)
+
 	return tile	
 }
 

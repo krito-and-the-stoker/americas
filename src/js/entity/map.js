@@ -61,7 +61,7 @@ const save = ({ tiles, numTiles }) => ({
 const load = map => {
 	console.log('loading map', map)
 	numTiles = map.numTiles
-	tiles = map.tiles
+	tiles = map.tiles.map(Record.dereferenceTile)
 
 	createCoastLine(tiles)
 

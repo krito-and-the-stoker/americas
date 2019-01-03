@@ -32,19 +32,25 @@ const addTile = tile => {
 	tiles[tile.index] = tile
 }
 
-const revive = (data, type, id) => {
-	if (idCounter < id) {
-		idCounter = id + 1
+const revive = (record) => {
+	if (record.entity) {
+		return record.entity
 	}
-	const entity = getModule(type).load(data)
+
+	if (idCounter < record.id) {
+		idCounter = record.id + 1
+	}
+
+	record.entity = getModule(record.type).load(record.data)
+	record.listeners.forEach(fn => fn(record.entity))
 	
 	records.push({
-		id,
-		entity,
-		type
+		id: record.id,
+		entity: record.entity,
+		type: record.type
 	})
 
-	return entity
+	return record.entity
 }
 
 const reviveTile = data => {
@@ -101,74 +107,41 @@ const save = () => {
 	}
 }
 
-const loadSingleRecord = record => {
-	return {	
-		id: record.id,
-		type: record.type,
-		entity: getModule(record.type).load(record.data)
+
+const dereferenceTile = ({ tileIndex }) => tiles[tileIndex]
+const dereference = ref => {
+	if (!ref) {
+		return null
 	}
-}
-
-
-const resolveReference = referenceId => {
-	// found alive
+	const referenceId = ref.referenceId
 	const alive = records.find(record => record.id === referenceId)
 	if (alive) {
 		return alive.entity
 	}
 
-	// found raw data, revive
-	const dead = snapshot.entities.find(snapshot => snapshot.id === referenceId)
-	if (dead && dead.type) {
-		return revive(dead.data, dead.type, referenceId)
+	const dead = snapshot.entities.find(record => record.id === referenceId)
+	if (dead) {
+		return revive(dead)
 	}
 
-	// not found :/
-	console.warn('reference not found', referenceId)
-	return { referenceId: referenceId }
+	console.warn('could not find reference for ', ref, snapshot.entities)
+	return null
 }
-
-const resolveTile = index => tiles[index]
-
-const isObject = x => typeof x === 'object' && !Array.isArray(x)
-const isArray = x => Array.isArray(x)
-
-const parseTree = node => {
-	if (!node) {
-		return node
-	}
-	if (isArray(node)) {
-		return node.map(value => parseTree(value))
-	}
-	if (isObject(node)) {	
-		let result = Object.entries(node)
-			.map(([key, value]) => {
-				if (key === 'referenceId') {
-					return ['_resolvedReference', resolveReference(value)]
-				}
-				if (key === 'tileIndex') {
-					return ['_resolvedTile', resolveTile(value)]	
-				}
-				return [key, parseTree(value)]
-			})
-			.reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
-		result = {
-			...result,
-			...result._resolvedReference,
-			...result._resolvedTile,
+const dereferenceLazy = (ref, fn) => {
+	if (!ref) {
+		fn(null)
+	} else {	
+		const referenceId = ref.referenceId
+		const alive = records.find(record => record.id === referenceId)
+		if (alive) {
+			fn(alive.entity)
+		} else {
+			const dead = snapshot.entities.find(record => record.id === referenceId)
+			dead.listeners.push(fn)
 		}
-		delete result._resolvedReference
-		delete result._resolvedTile
-		return result
 	}
-	return node
 }
 
-const dereference = record => ({
-	id: record.id,
-	type: record.type,
-	data: parseTree(record.data)
-})
 
 const load = () => {
 	console.log('loading')
@@ -182,9 +155,8 @@ const load = () => {
 	}
 	snapshot = JSON.parse(lastSave)
 	snapshot.tiles.forEach(reviveTile)
-	snapshot.entities = snapshot.entities.map(dereference)
-	snapshot.entities.filter(record => !record.isAlive)
-		.forEach(record => revive(record.data, record.type, record.id))
+	snapshot.entities.forEach(record => record.listeners = [])
+	snapshot.entities.forEach(revive)
 
 	const mapView = new MapView()
 
@@ -197,6 +169,9 @@ export default {
 	addTile,
 	reference,
 	referenceTile,
+	dereferenceTile,
+	dereference,
+	dereferenceLazy,
 	save,
 	load
 }

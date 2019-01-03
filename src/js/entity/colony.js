@@ -78,10 +78,13 @@ const save = colony => ({
 })
 
 const load = colony => {
+	colony.storageListeners = []
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good)))	
 
 	colony.sprite = ColonyView.createMapSprite(colony)
+
+	colony.colonists.forEach((colonist, index) => Record.dereferenceLazy(colonist, entity => colony.colonists[index] = entity))
 	return colony	
 }
 
