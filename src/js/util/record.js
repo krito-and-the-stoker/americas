@@ -12,6 +12,9 @@ import Background from '../render/background'
 
 
 const SAVE_TO_LOCAL_STORAGE = true
+const USE_COMPRESSION = false
+
+
 let lastSave = null
 
 let idCounter = 0
@@ -90,20 +93,25 @@ const save = () => {
 		tiles: Object.values(tiles).map(saveSingleTile)
 	})
 	if (SAVE_TO_LOCAL_STORAGE) {
-		if (window.Worker) {
-			const worker = new Worker('/worker.entry.js')
-			worker.onmessage = e => {
-				window.localStorage.setItem('lastSave', e.data)
-				console.log('entities saved to local storage', e.data.length)
+		if (USE_COMPRESSION) {		
+			if (window.Worker) {
+				const worker = new Worker('/worker.entry.js')
+				worker.onmessage = e => {
+					window.localStorage.setItem('lastSaveCompressed', e.data)
+					console.log('entities saved to local storage', e.data.length)
+				}
+				worker.postMessage(lastSave)
+			} else {		
+				const compressed = LZString.compress(lastSave)
+				window.localStorage.setItem('lastSaveCompressed', compressed)
+				console.log('entities saved to local storage', compressed.length)
 			}
-			worker.postMessage(lastSave)
-		} else {		
-			const compressed = LZString.compress(lastSave)
-			window.localStorage.setItem('lastSave', compressed)
-			console.log('entities saved to local storage', compressed.length)
+		} else {
+			window.localStorage.setItem('lastSave', lastSave)
+			console.log('entities saved to local storage', lastSave.length)
 		}
 	} else {
-		console.log('entities saved', lastSave.length)
+		console.log('entities saved in memory', lastSave.length)
 	}
 }
 
@@ -151,7 +159,11 @@ const load = () => {
 	records = [] // wipe records before reload (wouldn't have to, but otherwise reloading makes no sense)
 	tiles = []
 	if (SAVE_TO_LOCAL_STORAGE) {
-		lastSave = LZString.decompress(window.localStorage.getItem('lastSave'))
+		if (USE_COMPRESSION) {
+			lastSave = LZString.decompress(window.localStorage.getItem('lastSaveCompressed'))
+		} else {
+			lastSave = window.localStorage.getItem('lastSave')
+		}
 	}
 	snapshot = JSON.parse(lastSave)
 	snapshot.tiles.forEach(reviveTile)
