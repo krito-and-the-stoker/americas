@@ -1,4 +1,4 @@
-import Time from '../timeline/time'
+import Commander from './commander'
 import MapEntity from '../entity/map'
 import Unload from './unload'
 import Tile from '../entity/tile'
@@ -9,6 +9,7 @@ const UNLOADING_TIME = 2500
 const TILE_SIZE = 64
 
 const inMoveDistance = (coords1, coords2) => Math.abs(coords1.x - coords2.x) <= 1 && Math.abs(coords1.y - coords2.y) <= 1
+const unloading = (unit, fromTile, toTile) => unit.domain === 'land' && fromTile.domain === 'sea' && toTile.domain === 'land'
 
 const createFromData = data => {
 	const coords = data.coords
@@ -31,7 +32,7 @@ const createFromData = data => {
 
 		if (unit.domain !== targetTile.domain) {
 			if (unit.domain === 'sea' && unit.cargo.length > 0 && targetTile.domain === 'land' && inMoveDistance(unit.mapCoordinates, coords)) {
-				Time.schedule(Unload.create(unit, coords, finishedFn))
+				Commander.scheduleInstead(unit.commander, Unload.create(unit, coords, finishedFn))
 			}
 			aborted = true
 			return false
@@ -45,7 +46,7 @@ const createFromData = data => {
 			aborted = true
 			return false
 		}
-		if (unit.unloadingInProgress) {
+		if (unloading(unit, fromTile, targetTile)) {
 			duration = UNLOADING_TIME
 		} else {
 			duration = Tile.movementCost(fromTile, targetTile) * BASE_TIME / unit.speed

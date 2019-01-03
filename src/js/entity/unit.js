@@ -3,6 +3,8 @@ import UnitView from '../view/unit'
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
 import Record from '../util/record'
+import Commander from '../command/commander'
+import Time from '../timeline/time'
 
 const create = (name, x, y, additionalProps = {}) => {
 	if (Units[name]) {
@@ -19,6 +21,10 @@ const create = (name, x, y, additionalProps = {}) => {
 			expert: null,
 			...additionalProps
 		}
+
+		unit.commander = Commander.create({ keep: true })
+		Time.schedule(unit.commander)
+
 		unit.sprite = UnitView.createSprite(unit)
 
 		Record.add('unit', unit)

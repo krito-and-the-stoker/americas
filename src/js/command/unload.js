@@ -2,17 +2,23 @@ import Dialog from '../view/dialog'
 import UnitView from '../view/unit'
 import Time from '../timeline/time'
 import Move from './move'
+import Commander from './commander'
 
 const create = (unit, coords) => {
-	if (unit.unloadingInProgress) {
-		return {
-			update: () => false
-		}
-	}
 	let decision = null
+	let unloading = false
+	let done = false
 	Dialog.show('unload').then(result => { decision = result })
 
 	const update = () => {
+		if (unloading) {
+			return true
+		}
+
+		if (done) {
+			return false
+		}
+
 		if (decision === null) {
 			return true
 		}
@@ -25,20 +31,18 @@ const create = (unit, coords) => {
 			const landingUnit = unit.cargo.shift()
 			landingUnit.mapCoordinates = { ...unit.mapCoordinates }
 			UnitView.activate(landingUnit)
-			landingUnit.unloadingInProgress = true
-			unit.unloadingInProgress = true
-			Time.schedule(Move.create(landingUnit, coords, () => {
-				landingUnit.unloadingInProgress = false
-				unit.unloadingInProgress = false
+			Commander.scheduleInstead(landingUnit.commander, Move.create(landingUnit, coords, () => {
+				unloading = false
+				done = true
 			}))
-			return false
+			unloading = true
+			return true
 		}
 	}
 
 	return {
 		type: 'unload',
 		update,
-		save: () => ({})
 	}
 }
 

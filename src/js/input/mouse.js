@@ -7,6 +7,7 @@ import Foreground from '../render/foreground'
 import MapControl from '../control/map'
 import Time from '../timeline/time'
 import MoveTo from '../command/moveTo'
+import Commander from '../command/commander'
 
 const MOVEMAP_TIME = 350
 const CLICK_LONG_TIME = 300
@@ -29,8 +30,7 @@ const handleClick = async e => {
 				x: Math.floor((e.clientX - RenderView.get().coords.x) / (TILE_SIZE * RenderView.get().scale)),
 				y: Math.floor((e.clientY - RenderView.get().coords.y) / (TILE_SIZE * RenderView.get().scale))
 			}
-			const cmd = await MoveTo.create(activeUnit, target)
-			Time.schedule(cmd)
+			Commander.scheduleInstead(activeUnit.commander, MoveTo.create(activeUnit, target))
 		}
 	}
 }
