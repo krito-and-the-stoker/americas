@@ -13,8 +13,9 @@ const beginFieldWork = (colony, tile, good, colonist) => {
 
 	colonist.worksAt = {
 		type: 'Field',
-		stop,
-		tile
+		tile,
+		good,
+		stop
 	}
 }
 

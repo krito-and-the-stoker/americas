@@ -68,8 +68,8 @@ const createDetailTiles = (colony, screenContainer, originalDimensions) => {
 			sprite.position.y = position.y
 			tilesContainer.addChild(sprite)
 		})
-		const colonist = colony.colonists.find(colonist => colonist.worksAt && colonist.worksAt.tile == tile)
-		if (colonist) {
+		if (colony.colonists.includes(tile.harvestedBy)) {
+			const colonist = tile.harvestedBy
 			colonist.sprite.x = position.x
 			colonist.sprite.y = position.y
 			tilesContainer.addChild(colonist.sprite)
@@ -83,10 +83,10 @@ const createDetailTiles = (colony, screenContainer, originalDimensions) => {
 	tilesContainer.addChild(colonySprite)
 	screenContainer.addChild(tilesContainer)
 
-
+	// production sprites for center
 	const productionGoods = Tile.colonyProductionGoods(center)
 	productionGoods.forEach((good, i) => {	
-		const foodSprites = ProductionView.create(Tile.production(center, good), good, 32)
+		const foodSprites = ProductionView.create(good, Tile.production(center, good), 32)
 		foodSprites.forEach(s => {
 			s.scale.set(1.0 / productionGoods.length)
 			s.position.x += TILE_SIZE
@@ -94,6 +94,23 @@ const createDetailTiles = (colony, screenContainer, originalDimensions) => {
 			tilesContainer.addChild(s)
 		})
 	})
+	// production sprites for neighbors
+	Tile.diagonalNeighbors(center).filter(tile => colony.colonists.includes(tile.harvestedBy))
+		.map(tile => {
+			const colonist = tile.harvestedBy
+			const good = colonist.worksAt.good
+			const position = {
+				x: TILE_SIZE * (1 + tile.mapCoordinates.x - center.mapCoordinates.x),
+				y: TILE_SIZE * (1 + tile.mapCoordinates.y - center.mapCoordinates.y)
+			}
+			const sprites = ProductionView.create(good, Tile.production(tile, good, colonist), 32)
+			sprites.forEach(s => {
+				s.position.x += position.x
+				s.position.y += position.y + 0.5* TILE_SIZE
+				s.scale.set(0.5)
+				tilesContainer.addChild(s)
+			})
+		})
 }
 
 const createHeadline = (colony, screenContainer, originalDimensions) => {

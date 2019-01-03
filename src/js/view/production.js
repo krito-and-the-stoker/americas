@@ -4,10 +4,10 @@ import Util from '../util/util'
 import Ressources from '../render/ressources'
 
 
-const	create = (amount, resource, width = 100) => {
+const	create = (resource, amount, width = 100) => {
 	if (amount > 0) {
-		const index = Goods[resource].id
-		const texture = new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(index))
+		const frame = Goods[resource].id
+		const texture = new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame))
 		return Util.range(amount).map(i => {
 			const sprite = new PIXI.Sprite(texture)
 			sprite.x = Math.round(i*width / amount)
