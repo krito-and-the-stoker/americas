@@ -55,7 +55,7 @@ const load = colonist => {
 	if (colonist.worksAt) {
 		colonist.worksAt.tile = Record.dereferenceTile(colonist.worksAt.tile)
 		colonist.worksAt.tile.harvestedBy = null
-		Time.schedule(Harvest.create(colonist.colony, colonist.worksAt.tile, colonist.worksAt.good, colonist))
+		colonist.worksAt.stop = Time.schedule(Harvest.create(colonist.colony, colonist.worksAt.tile, colonist.worksAt.good, colonist))
 	}
 
 	Time.schedule(Consume.create(colonist.colony, 'food', 2))

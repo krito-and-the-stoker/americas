@@ -9,6 +9,7 @@ import Unit from '../entity/unit'
 import MapView from '../view/map'
 import Foreground from '../render/foreground'
 import Background from '../render/background'
+import RenderView from '../render/view'
 
 
 const SAVE_TO_LOCAL_STORAGE = true
@@ -159,11 +160,11 @@ const dereferenceLazy = (ref, fn) => {
 
 
 const load = () => {
-	console.log('loading')
+	console.log('loading...')
 
 	Foreground.shutdown()
 	
-	records = [] // wipe records before reload (wouldn't have to, but otherwise reloading makes no sense)
+	records = []
 	tiles = []
 	if (SAVE_TO_LOCAL_STORAGE) {
 		if (USE_COMPRESSION) {
@@ -181,6 +182,7 @@ const load = () => {
 	const mapView = new MapView()
 
 	Background.restart()
+	RenderView.restart()
 }
 
 

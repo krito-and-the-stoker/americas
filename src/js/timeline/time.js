@@ -17,7 +17,7 @@ const advance = deltaTime => {
 	const readyTasks = scheduled.filter(e => e.time <= currentTime)
 	const needsInitialization = readyTasks.filter(e => !e.started && e.init)
 	needsInitialization.forEach(e => {
-		e.init()
+		e.cleanup = !e.init()
 		e.started = true
 	})
 	const finished = readyTasks.filter(e => !e.update(currentTime))
@@ -47,16 +47,21 @@ const schedule = (e, time = null) => {
 	})
 	return () => { e.stop = true }
 }
-const remove = e => scheduled = scheduled.filter(evt => e != evt)
 
 const pause = () => paused = true
 const resume = () => paused = false
 const togglePause = () => paused = !paused
 
+const save = () => {
+	return {
+		currentTime,
+		paused
+	}
+}
+
 export default {
 	advance,
 	schedule,
-	remove,
 	togglePause,
 	pause,
 	resume,

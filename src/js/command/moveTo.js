@@ -36,6 +36,7 @@ const create = async (unit, coords) => {
 	const init = () => {
 		const cmd = commands.shift()
 		Time.schedule(cmd)
+		return true
 	}
 	
 	const update = () => !lastMoveOver

@@ -1,18 +1,25 @@
 import Background from './background.js'
 import Foreground from './foreground.js'
+import Record from '../util/record'
 
-let scale = 1
-let coords = {
+Record.setGlobal('scale', 1)
+Record.setGlobal('coords', {
 	x: 0,
 	y: 0,
-}
+})
 
 const get = () => ({
-	scale,
-	coords
+	scale: Record.getGlobal('scale'),
+	coords: Record.getGlobal('coords')
 })
 
 let resizeFunctions = []
+
+const restart = () => {
+	const { scale, coords } = get()
+	updateScale(scale)
+	updateMapCoords(coords)
+}
 
 const getDimensions = () => ({
 	x: Background.get().layer.width,
@@ -25,21 +32,27 @@ const getCenter = () => ({
 })
 
 const updateMapCoords = ({ x, y }) => {
-	coords = { x: Math.round(x), y: Math.round(y) }
+	const coords = { x: Math.round(x), y: Math.round(y) }
+	Record.setGlobal('coords', coords)
 	Foreground.updateCoords(coords)
 	Background.updateCoords(coords)
 }
 
 const updateScale = newScale => {
-	scale = newScale
-	Foreground.updateScale(scale)
-	Background.updateScale(scale)
+	Record.setGlobal('scale', newScale)
+	Foreground.updateScale(newScale)
+	Background.updateScale(newScale)
 }
 
 const initialize = async mapView => {
 	await Background.initialize(mapView)
 	Foreground.initialize()
-	window.addEventListener('resize', () => resizeFunctions.forEach(fn => fn({ dimensions: getDimensions(), scale, coords })))
+	window.addEventListener('resize', () => resizeFunctions
+		.forEach(fn => fn({
+			dimensions: getDimensions(),
+			scale: Record.getGlobal('scale'),
+			coords: Record.getGlobal('coords')
+		})))
 }
 
 const onDraw = () => {
@@ -52,8 +65,8 @@ const onDraw = () => {
 const updateWhenResized = fn => {
 	fn({
 		dimensions: getDimensions(),
-		scale,
-		coords
+		scale: Record.getGlobal('scale'),
+		coords: Record.getGlobal('coords')
 	})
 	resizeFunctions.push(fn)
 	return () => resizeFunctions = resizeFunctions.filter(func => func !== fn)
@@ -68,6 +81,7 @@ export default {
 	updateWhenResized,
 	getCenter,
 	initialize,
+	restart,
 	onDraw,
 	render,
 	get
