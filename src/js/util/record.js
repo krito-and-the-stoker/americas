@@ -1,4 +1,5 @@
 import LZString from 'lz-string'
+import MainLoop from 'mainloop.js'
 
 import Colonist from '../entity/colonist'
 import Colony from '../entity/colony'
@@ -10,6 +11,7 @@ import MapView from '../view/map'
 import Foreground from '../render/foreground'
 import Background from '../render/background'
 import RenderView from '../render/view'
+import Time from '../timeline/time'
 
 
 const SAVE_TO_LOCAL_STORAGE = true
@@ -98,6 +100,7 @@ const save = () => {
 	lastSave = JSON.stringify({
 		entities: records.map(saveSingleRecord),
 		tiles: Object.values(tiles).map(saveSingleTile),
+		time: Time.save(),
 		globals
 	})
 	if (SAVE_TO_LOCAL_STORAGE) {
@@ -161,7 +164,9 @@ const dereferenceLazy = (ref, fn) => {
 
 const load = () => {
 	console.log('loading...')
+	// MainLoop.stop()
 
+	// Time.pause()
 	Foreground.shutdown()
 	
 	records = []
@@ -178,11 +183,14 @@ const load = () => {
 	snapshot.tiles.forEach(reviveTile)
 	snapshot.entities.forEach(record => record.listeners = [])
 	snapshot.entities.forEach(revive)
+	Time.load(snapshot.time)
 
 	const mapView = new MapView()
 
 	Background.restart()
 	RenderView.restart()
+	// setTimeout(() => Time.resume(), 0)
+	// MainLoop.start()
 }
 
 

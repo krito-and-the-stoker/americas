@@ -36,9 +36,17 @@ const create = (unit, coords) => {
 	}
 
 	return {
-		update
+		type: 'unload',
+		update,
+		save: () => ({})
 	}
 }
 
+const load = data => ({
+	update: () => false
+})
 
-export default { create }
+export default {
+	create,
+	load
+}

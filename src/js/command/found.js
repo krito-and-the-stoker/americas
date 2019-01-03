@@ -1,8 +1,9 @@
 import Colony from '../entity/colony'
 import UnitView from '../view/unit'
+import Record from '../util/record'
 
 const create = unit => {
-	const update = () => {
+	const init = () => {
 		if (!unit.canFound) {
 			return false
 		}
@@ -13,10 +14,17 @@ const create = unit => {
 		return false
 	}
 
+	const save = () => {
+		unit: Record.reference(unit)
+	}
+
 	return {
-		update
+		type: 'found',
+		init,
+		save
 	}
 }
 
+const load = data => create(Record.dereference(data.unit))
 
-export default { create }
+export default { create, load }

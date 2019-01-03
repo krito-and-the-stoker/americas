@@ -51,11 +51,20 @@ const create = async (unit, coords) => {
 
 
 	return {
+		type: 'moveTo',
 		init,
 		update,
 		finished,
+		save: () => ({})
 	}
 }
 
+const load = data => ({
+	update: () => false
+})
 
-export default { create }
+
+export default {
+	create,
+	load
+}
