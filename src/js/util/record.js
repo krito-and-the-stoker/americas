@@ -22,6 +22,7 @@ const makeId = () => idCounter += 1
 
 let records = []
 let snapshot = []
+let globals = {}
 let tiles = {}
 const add = (type, entity) => {
 	records.push({
@@ -34,6 +35,11 @@ const add = (type, entity) => {
 const addTile = tile => {
 	tiles[tile.index] = tile
 }
+
+const setGlobal = (key, value) => {
+	globals[key] = value
+}
+const getGlobal = key => globals[key]
 
 const revive = (record) => {
 	if (record.entity) {
@@ -90,7 +96,8 @@ const save = () => {
 	console.log('saving...')
 	lastSave = JSON.stringify({
 		entities: records.map(saveSingleRecord),
-		tiles: Object.values(tiles).map(saveSingleTile)
+		tiles: Object.values(tiles).map(saveSingleTile),
+		globals
 	})
 	if (SAVE_TO_LOCAL_STORAGE) {
 		if (USE_COMPRESSION) {		
@@ -166,6 +173,7 @@ const load = () => {
 		}
 	}
 	snapshot = JSON.parse(lastSave)
+	globals = snapshot.globals
 	snapshot.tiles.forEach(reviveTile)
 	snapshot.entities.forEach(record => record.listeners = [])
 	snapshot.entities.forEach(revive)
@@ -184,6 +192,8 @@ export default {
 	dereferenceTile,
 	dereference,
 	dereferenceLazy,
+	setGlobal,
+	getGlobal,
 	save,
 	load
 }

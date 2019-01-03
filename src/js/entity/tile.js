@@ -6,8 +6,6 @@ import MapEntity from '../entity/map'
 import Yield from '../data/yield'
 import Record from '../util/record'
 
-let hasDiscoveredLand = false
-
 const create = ({ id, layers, index }) => {
 	const [name, terrain] = Object.entries(Terrain).find(([name, terrain]) => terrain.id === id)
 	if (!terrain) {
@@ -114,8 +112,8 @@ const load = data => {
 
 
 const discover = tile => {
-	if (tile.domain === 'land' && !hasDiscoveredLand) {
-		hasDiscoveredLand = true
+	if (tile.domain === 'land' && !Record.getGlobal('hasDiscoveredLand')) {
+		Record.setGlobal('hasDiscoveredLand', true)
 		Dialog.show('discovered')
 	}
 	tile.discovered = true
