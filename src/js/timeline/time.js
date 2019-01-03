@@ -65,14 +65,15 @@ const save = () => {
 	return {
 		currentTime,
 		paused,
-		scheduled: scheduled.map(e => ({
-			data: e.save(),
-			type: e.type,
-			started: e.started,
-			cleanup: e.cleanup,
-			willStop: e.willStop,
-			time: e.time
-		}))
+		scheduled: scheduled.filter(e => e.save)
+			.map(e => ({
+				data: e.save(),
+				type: e.type,
+				started: e.started,
+				cleanup: e.cleanup,
+				willStop: e.willStop,
+				time: e.time
+			}))
 	}
 }
 
