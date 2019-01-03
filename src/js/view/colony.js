@@ -131,7 +131,7 @@ const createStorageNumbers = (colony, screenContainer, originalDimensions) => {
 	})
 	Colony.bindStorage(colony, storage => {
 		Object.values(storage).forEach((value, i) => {
-			textObjects[i].text = `${Math.round(value)}`
+			textObjects[i].text = `${Math.floor(value)}`
 		})
 	})
 	screenContainer.addChild(storageTextContainer)	
