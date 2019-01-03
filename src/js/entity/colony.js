@@ -5,6 +5,7 @@ import Harvest from '../task/harvest'
 import Time from '../timeline/time'
 import Util from '../util/util'
 import Colonist from '../entity/colonist'
+import Record from '../util/record'
 
 let colonieNames = ['Jamestown', 'Roanoke', 'Virginia', "Cuper's Cove", "St. John's", 'Henricus']
 const getColonyName = () => colonieNames.shift()
@@ -65,7 +66,23 @@ const create = (coords, unit) => {
 
 	colony.sprite = ColonyView.createMapSprite(colony)
 
+	Record.add('colony', colony)
 	return colony
+}
+
+const save = colony => ({
+	name: colony.name,
+	storage: colony.storage,
+	mapCoordinates: colony.mapCoordinates,
+	colonists: colony.colonists.map(colonist => Record.reference(colonist))
+})
+
+const load = colony => {
+	const tile = MapEntity.tile(colony.mapCoordinates)
+	Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good)))	
+
+	colony.sprite = ColonyView.createMapSprite(colony)
+	return colony	
 }
 
 const coastalDirection = colony => {
@@ -83,6 +100,8 @@ const coastalDirection = colony => {
 
 export default {
 	create,
+	save,
+	load,
 	coastalDirection,
 	updateStorage,
 	bindStorage

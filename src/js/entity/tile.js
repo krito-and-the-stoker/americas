@@ -4,6 +4,7 @@ import RenderView from '../render/view'
 import Dialog from '../view/dialog'
 import MapEntity from '../entity/map'
 import Yield from '../data/yield'
+import Record from '../util/record'
 
 let hasDiscoveredLand = false
 
@@ -33,11 +34,48 @@ const create = ({ id, layers, index }) => {
 		discovered: false,
 	}
 
-	tile.hills = layers.top === Terrain.hills.id || (tile.mountains && Math.random() > 0.1)
 	tile.river = tile.riverLarge || tile.riverSmall
+	tile.terrainName = tile.forest ? `${tile.name}WithForest` : (tile.hills ? 'hills' : (tile.mountains ? 'mountains' : tile.name) )
+
+	tile.hills = layers.top === Terrain.hills.id || (tile.mountains && Math.random() > 0.1)
 	tile.treeVariation = tile.riverLarge || Math.random() > (tile.river ? 0.0 : 0.9)
 	tile.mountainVariation = Math.random() > (tile.river ? 0.2 : 0.75) && !tile.bonus || tile.mountains
 	tile.hillVariation = Math.random() > (tile.river ? 0.2 : 0.75) && !tile.bonus
+
+	tile.left = () => left(tile)
+	tile.up = () => up(tile)
+	tile.right = () => right(tile)
+	tile.down = () => down(tile)
+
+	Record.addTile(tile)
+	return tile
+}
+
+const save = tile => ({
+	index: tile.index,
+	name: tile.name,
+	domain: tile.domain,
+	terrain: tile.terrain,
+	forest: tile.forest,
+	treeVariation: tile.treeVariation,
+	hills: tile.hills,
+	hillVariation: tile.hillVariation,
+	mountains: tile.mountains,
+	mountainVariation: tile.mountainVariation,
+	riverSmall: tile.riverSmall,
+	riverLarge: tile.riverLarge,
+	bonus: tile.bonus,
+	mapCoordinates: tile.mapCoordinates,
+	harvestedBy: Record.reference(tile.harvestedBy),
+	plowed: tile.plowed,
+	road: tile.road,
+	coast: tile.coast,
+	coastTerrain: tile.coastTerrain,
+	discovered: tile.discovered
+})
+
+const load = tile => {
+	tile.river = tile.riverLarge || tile.riverSmall
 	tile.terrainName = tile.forest ? `${tile.name}WithForest` : (tile.hills ? 'hills' : (tile.mountains ? 'mountains' : tile.name) )
 
 	tile.left = () => left(tile)
@@ -45,7 +83,7 @@ const create = ({ id, layers, index }) => {
 	tile.right = () => right(tile)
 	tile.down = () => down(tile)
 
-	return tile
+	return tile	
 }
 
 
@@ -197,5 +235,7 @@ export default {
 	decideCoastalSea,
 	diagonalNeighbors,
 	movementCost,
+	save,
+	load,
 	neighborString
 }

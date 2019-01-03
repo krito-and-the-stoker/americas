@@ -25,10 +25,12 @@ const openScreen = screen => {
 }
 
 const closeScreen = () => {
-	layer.app.stage.removeChild(currentScreen)
-	layer.app.stage.addChild(container)
-	layer.app.stage.addChild(menu)
-	Background.show()
+	if (currentScreen) {	
+		layer.app.stage.removeChild(currentScreen)
+		layer.app.stage.addChild(container)
+		layer.app.stage.addChild(menu)
+		Background.show()
+	}
 	currentScreen = null
 }
 
@@ -61,11 +63,16 @@ const initialize = () => {
 
 	container = new PIXI.Container()
 	menu = new PIXI.Container()
-	screen = new PIXI.Container()
 
 	layer.app.stage.addChild(container)
 	layer.app.stage.addChild(menu)
 	layer.app.stop()
+}
+
+const shutdown = () => {
+	closeScreen()
+	container.removeChildren()
+	menu.removeChildren()
 }
 
 const doRenderWork = () => layer.app.render()
@@ -73,6 +80,7 @@ const doRenderWork = () => layer.app.render()
 
 export default {
 	initialize,
+	shutdown,
 	updateCoords,
 	updateScale,
 	doRenderWork,

@@ -213,6 +213,8 @@ class MapView{
 		if(!center)
 			return coastTiles;
 
+		// console.log(center, center.left)
+
 		let left = center.left();
 		let right = center.right();
 		let up = center.up();

@@ -5,6 +5,7 @@ import Time from '../timeline/time'
 import Move from '../command/move'
 import Found from '../command/found'
 import Europe from '../view/europe'
+import Record from '../util/record'
 
 const ZOOM_FACTOR = 1.25
 const ZOOM_TIME = 350
@@ -29,6 +30,14 @@ const handleKeydown = (e) => {
 
 	if (e.key === 'e') {
 		Europe.open()
+	}
+
+	if (e.key === 's') {
+		Record.save()
+	}
+
+	if (e.key === 'l') {
+		Record.load()
 	}
 
 	const activeUnit = Unit.get().activeUnit

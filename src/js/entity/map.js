@@ -1,4 +1,5 @@
 import Tile from './tile.js'
+import Record from '../util/record'
 
 
 let numTiles = null
@@ -41,6 +42,8 @@ const create = ({ data }) => {
 	console.log('creating coast line')
 	createCoastLine(tiles)
 	console.log('map created.')
+
+	Record.add('map', { tiles, numTiles })
 }
 
 
@@ -50,9 +53,24 @@ const	mapCoordinates = index => ({
 	y: Math.floor(index / numTiles.x)
 })
 
+const save = ({ tiles, numTiles }) => ({
+	tiles: tiles.map(tile => Record.referenceTile(tile)),
+	numTiles
+})
+
+const load = map => {
+	console.log('loading map', map)
+	numTiles = map.numTiles
+	tiles = map.tiles
+
+	return { numTiles, tiles }
+}
+
 export default {
 	create,
 	get,
 	tile,
+	save,
+	load,
 	mapCoordinates
 }

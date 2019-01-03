@@ -78,6 +78,54 @@ const createSpriteFromFrames = frames => frames.map(frame => {
 
 const createSpritesFromTile = tile => createSpriteFromFrames(MapView.instance.assembleTile(tile))
 
+const createTiles = tileStacks => tileStacks.map(stack => ({
+	spites: null,
+	stack,
+	container: null,
+	initialized: false,
+	createSprites: () => stack.frames.map(frame => {
+		const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, rectangle(Math.abs(frame) - 1)))
+		sprite.x = stack.position.x
+		sprite.y = stack.position.y
+		sprite.blendMode = frame > 0 ? PIXI.BLEND_MODES.NORMAL : PIXI.BLEND_MODES.OVERLAY
+		return sprite
+	}),
+	createCachedSprites: () => {
+		const sprite = TileCache.createCachedSprite(createSpriteFromFrames, stack.frames)
+		if (sprite) {			
+			sprite.position.x = stack.position.x
+			sprite.position.y = stack.position.y
+			return [sprite]
+		}
+		return []
+	},
+	update: (tile, coords) => {
+		if (tile.initialized) {
+			const newStack = MapView.instance.assembleTileXY(coords)
+			if (newStack.length !== tile.stack.frames.length || !newStack.every((frame, i) => frame === tile.stack.frames[i])) {
+				tile.stack.frames = newStack
+				tile.initialized = false
+			}
+			else {
+				tile.stack.frames = newStack
+				tile.initialized = false					
+			}
+		}
+	},
+	initialize: tile => {
+		tile.sprites = tile.createCachedSprites()
+		const index = TileCache.getTextureIndex(tile.stack.frames)
+		tile.container = getContainer(index)
+		tile.initialized = true
+	}
+}))
+
+const restart = () => {
+	console.log('recreating tiles')
+	tiles = createTiles(MapView.instance.tileStacks)
+	numTiles = MapView.instance.numTiles
+	render()
+}
 
 const initialize = async mapView => {
 	layer = new Layer({
@@ -89,48 +137,7 @@ const initialize = async mapView => {
 	undiscovered = new PIXI.extras.TilingSprite(Ressources.get().undiscovered, layer.width, layer.height)
 
 	console.log('creating tiles')
-	tiles = mapView.tileStacks.map(stack => ({
-		spites: null,
-		stack,
-		container: null,
-		initialized: false,
-		createSprites: () => stack.frames.map(frame => {
-			const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, rectangle(Math.abs(frame) - 1)))
-			sprite.x = stack.position.x
-			sprite.y = stack.position.y
-			sprite.blendMode = frame > 0 ? PIXI.BLEND_MODES.NORMAL : PIXI.BLEND_MODES.OVERLAY
-			return sprite
-		}),
-		createCachedSprites: () => {
-			const sprite = TileCache.createCachedSprite(createSpriteFromFrames, stack.frames)
-			if (sprite) {			
-				sprite.position.x = stack.position.x
-				sprite.position.y = stack.position.y
-				return [sprite]
-			}
-			return []
-		},
-		update: (tile, coords) => {
-			if (tile.initialized) {
-				const newStack = mapView.assembleTileXY(coords)
-				if (newStack.length !== tile.stack.frames.length || !newStack.every((frame, i) => frame === tile.stack.frames[i])) {
-					tile.stack.frames = newStack
-					tile.initialized = false
-				}
-				else {
-					tile.stack.frames = newStack
-					tile.initialized = false					
-				}
-			}
-		},
-		initialize: tile => {
-			tile.sprites = tile.createCachedSprites()
-			const index = TileCache.getTextureIndex(tile.stack.frames)
-			tile.container = getContainer(index)
-			tile.initialized = true
-		}
-	}))
-
+	tiles = createTiles(mapView.tileStacks)
 
 	layer.app.stage.addChild(undiscovered)
 	layer.app.stop()
@@ -142,6 +149,7 @@ const initialize = async mapView => {
 
 	window.addEventListener('resize', resize)
 }
+
 
 const resize = () => {
 	undiscovered.width = layer.width
@@ -190,6 +198,7 @@ const doRenderWork = () => {
 
 export default {
 	initialize,
+	restart,
 	render,
 	hide,
 	show,

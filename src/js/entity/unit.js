@@ -2,6 +2,7 @@ import Units from '../data/units.json'
 import UnitView from '../view/unit'
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
+import Record from '../util/record'
 
 const create = (name, x, y, additionalProps = {}) => {
 	if (Units[name]) {
@@ -19,12 +20,28 @@ const create = (name, x, y, additionalProps = {}) => {
 			...additionalProps
 		}
 		unit.sprite = UnitView.createSprite(unit)
+
+		Record.add('unit', unit)
 		return unit
 	} else {
 		return null
 	}
 }
 
+const save = unit => ({
+	...unit,
+	sprite: undefined || console.log('saved', unit),
+	cargo: unit.cargo.map(other => Record.reference(other))
+})
+
+const load = unit => {
+	unit.sprite = UnitView.createSprite(unit)
+	console.log('loaded', unit)
+	return unit
+}
+
 export default {
-	create
+	create,
+	save,
+	load
 }
