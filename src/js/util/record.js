@@ -1,3 +1,5 @@
+import LZString from 'lz-string'
+
 import Colonist from '../entity/colonist'
 import Colony from '../entity/colony'
 import MapEntity from '../entity/map'
@@ -9,6 +11,7 @@ import Foreground from '../render/foreground'
 import Background from '../render/background'
 
 
+const SAVE_TO_LOCAL_STORAGE = true
 let lastSave = null
 
 let idCounter = 0
@@ -80,7 +83,13 @@ const save = () => {
 		entities: records.map(saveSingleRecord),
 		tiles: Object.values(tiles).map(saveSingleTile)
 	})
-	console.log('entities saved', lastSave.length)
+	if (SAVE_TO_LOCAL_STORAGE) {
+		const compressed = LZString.compress(lastSave)
+		window.localStorage.setItem('lastSave', compressed)
+		console.log('entities saved to local storage', compressed.length)
+	} else {
+		console.log('entities saved', lastSave.length)
+	}
 }
 
 const loadSingleRecord = record => {
@@ -159,6 +168,9 @@ const load = () => {
 	
 	records = [] // wipe records before reload (wouldn't have to, but otherwise reloading makes no sense)
 	tiles = []
+	if (SAVE_TO_LOCAL_STORAGE) {
+		lastSave = LZString.decompress(window.localStorage.getItem('lastSave'))
+	}
 	snapshot = JSON.parse(lastSave)
 	snapshot.tiles.forEach(reviveTile)
 	snapshot.entities = snapshot.entities.map(dereference)
@@ -168,6 +180,10 @@ const load = () => {
 	const mapView = new MapView()
 	Background.restart()
 }
+
+const compressed = LZString.compressToBase64('Hallo WeltHallo WeltHallo WeltHallo WeltHallo WeltHallo Welt')
+const uncompressed = LZString.decompressFromBase64(compressed)
+console.log(LZString)
 
 
 export default {
