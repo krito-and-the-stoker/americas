@@ -59,7 +59,7 @@ const save = ({ tiles, numTiles }) => ({
 })
 
 const load = map => {
-	console.log('loading map', map)
+	console.log('loading map')
 	numTiles = map.numTiles
 	tiles = map.tiles.map(Record.dereferenceTile)
 

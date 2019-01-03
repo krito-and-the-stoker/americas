@@ -37,7 +37,7 @@ const save = unit => ({
 const load = unit => {
 	unit.cargo = unit.cargo.map(Record.dereference)
 	unit.sprite = UnitView.createSprite(unit)
-	console.log('loaded', unit)
+
 	return unit
 }
 
