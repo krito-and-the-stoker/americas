@@ -17,6 +17,7 @@ const updateStorage = (colony, good, amount) => {
 const bindStorage = (colony, fn) => {
 	fn(colony.storage)
 	colony.storageListeners.push(fn)
+	return () => colony.storageListeners = colony.storageListeners.filter(func => func !== fn)
 }
 
 const create = (coords, unit) => {
@@ -62,7 +63,6 @@ const create = (coords, unit) => {
 
 	Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good)))	
 
-	colony.screen = ColonyView.createDetailScreen(colony)
 	colony.sprite = ColonyView.createMapSprite(colony)
 
 	return colony

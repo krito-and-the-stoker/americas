@@ -21,6 +21,7 @@ const createMapSprite = colony => {
 	sprite.y = TILE_SIZE * colony.mapCoordinates.y
 	sprite.interactive = true
 	sprite.on('pointertap', () => {
+		colony.screen = createDetailScreen(colony)
 		Foreground.openScreen(colony.screen)
 	})
 	const text = new PIXI.Text(colony.name, {
@@ -146,12 +147,13 @@ const createStorageNumbers = (colony, screenContainer, originalDimensions) => {
 	textObjects.forEach(number => {
 		storageTextContainer.addChild(number)
 	})
-	Colony.bindStorage(colony, storage => {
+	const unsubscribe = Colony.bindStorage(colony, storage => {
 		Object.values(storage).forEach((value, i) => {
 			textObjects[i].text = `${Math.floor(value)}`
 		})
 	})
 	screenContainer.addChild(storageTextContainer)	
+	return unsubscribe
 }
 
 const createDetailScreen = colony => {
@@ -160,15 +162,17 @@ const createDetailScreen = colony => {
 	const originalDimensions = createDetailBackground(colony, screenContainer)
 	createDetailTiles(colony, screenContainer, originalDimensions)
 	createHeadline(colony, screenContainer, originalDimensions)
-	createStorageNumbers(colony, screenContainer, originalDimensions)
+	const unsubscribeStorage = createStorageNumbers(colony, screenContainer, originalDimensions)
 
-	RenderView.updateWhenResized(({ dimensions }) => {
+	const unsubscribeResize = RenderView.updateWhenResized(({ dimensions }) => {
 		const scale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
 		screenContainer.scale.set(scale)
 	})
 
 	screenContainer.interactive = true
 	screenContainer.on('pointerdown', () => {
+		unsubscribeResize()
+		unsubscribeStorage()
 		Foreground.closeScreen()
 	})
 	return screenContainer

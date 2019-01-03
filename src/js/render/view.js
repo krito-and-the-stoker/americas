@@ -12,7 +12,7 @@ const get = () => ({
 	coords
 })
 
-const resizeFunctions = []
+let resizeFunctions = []
 
 const getDimensions = () => ({
 	x: Background.get().layer.width,
@@ -56,6 +56,7 @@ const updateWhenResized = fn => {
 		coords
 	})
 	resizeFunctions.push(fn)
+	return () => resizeFunctions = resizeFunctions.filter(func => func !== fn)
 }
 
 const render = Background.render
