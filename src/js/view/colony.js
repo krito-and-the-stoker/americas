@@ -158,6 +158,8 @@ const createStorageNumbers = (colony, screenContainer, originalDimensions) => {
 
 const createDetailScreen = colony => {
 	const screenContainer = new PIXI.Container()
+	const colonyWoodBackground = new PIXI.extras.TilingSprite(Ressources.get().colonyWoodBackground, RenderView.getDimensions().x, RenderView.getDimensions().y)
+	screenContainer.addChild(colonyWoodBackground)
 
 	const originalDimensions = createDetailBackground(colony, screenContainer)
 	createDetailTiles(colony, screenContainer, originalDimensions)
@@ -165,8 +167,16 @@ const createDetailScreen = colony => {
 	const unsubscribeStorage = createStorageNumbers(colony, screenContainer, originalDimensions)
 
 	const unsubscribeResize = RenderView.updateWhenResized(({ dimensions }) => {
-		const scale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
+		const scaleX = dimensions.x / originalDimensions.x
+		const scaleY = dimensions.y / originalDimensions.y
+		const scale = 0.9 * Math.min(scaleX, scaleY)
 		screenContainer.scale.set(scale)
+		screenContainer.position.x = (dimensions.x - scale * originalDimensions.x) / 2
+		screenContainer.position.y = (dimensions.y - scale * originalDimensions.y) / 2
+		colonyWoodBackground.width = dimensions.x / scale
+		colonyWoodBackground.height = dimensions.y / scale
+		colonyWoodBackground.x = -screenContainer.x / scale
+		colonyWoodBackground.y = -screenContainer.y / scale
 	})
 
 	screenContainer.interactive = true

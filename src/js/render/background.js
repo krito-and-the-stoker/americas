@@ -61,13 +61,19 @@ const getContainer = index => {
 }
 
 const hide = () => {
-	visible = false
-	render()
+	if (visible) {
+		// undiscovered.visible = false
+		visible = false
+		render()
+	}
 }
 
 const show = () => {
-	visible = true
-	render()
+	if (!visible) {
+		// undiscovered.visible = true
+		visible = true
+		render()
+	}
 }
 
 const createSpriteFromFrames = frames => frames.map(frame => {

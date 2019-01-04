@@ -4,6 +4,7 @@ let mapTiles = null
 let colonyBackground = null
 let europeBackground = null
 let undiscovered = null
+let colonyWoodBackground = null
 let colonyScreenCoast = {}
 
 const get = () => ({
@@ -11,12 +12,13 @@ const get = () => ({
 	colonyBackground,
 	europeBackground,
 	undiscovered,
-	colonyScreenCoast
+	colonyScreenCoast,
+	colonyWoodBackground
 })
 
 const initialize = async () => {
-	[mapTiles, colonyBackground, europeBackground, undiscovered] =
-		await Util.loadTexture('images/map.png', 'images/colony-screen/background.jpg', 'images/europe.jpg', 'images/undiscovered.jpg')
+	[mapTiles, colonyBackground, europeBackground, undiscovered, colonyWoodBackground] =
+		await Util.loadTexture('images/map.png', 'images/colony-screen/background.jpg', 'images/europe.jpg', 'images/undiscovered.jpg', 'images/colony-screen/wood-background.jpg')
 
 	const [up, rightup, right, rightdown, down, leftdown, left, leftup] =
 		await Util.loadTexture(
