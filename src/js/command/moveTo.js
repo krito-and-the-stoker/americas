@@ -3,6 +3,7 @@ import PathFinder from '../util/pathFinder'
 import MapEntity from '../entity/map'
 import Move from './move'
 import Commander from './commander'
+import Record from '../util/record'
 
 
 const create = (unit, coords) => {
@@ -25,12 +26,26 @@ const create = (unit, coords) => {
 		return true
 	}
 
+	moveToCommander.save = () => ({
+		type: 'moveTo',
+		commands: moveToCommander.commands.map(cmd => cmd.save()),
+		currentCommand: moveToCommander.currentCommand ? moveToCommander.currentCommand.save() : null,
+		coords,
+		unit: Record.reference(unit)
+	})
+
 	return moveToCommander
 }
 
-const load = data => ({
-	update: () => false
-})
+const load = data => {
+	if (data.commands) {
+		const commands = (data.currentCommand ? [data.currentCommand, ...data.commands] : data.commands).map(cmd => Commander.getModule(cmd.type).load(cmd))
+		return Commander.create({ commands })
+	} else {
+		const unit = Record.dereference(data.unit)
+		return create(unit, data.coords)
+	}
+}
 
 
 export default {

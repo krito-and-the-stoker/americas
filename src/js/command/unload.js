@@ -40,15 +40,36 @@ const create = (unit, coords) => {
 		}
 	}
 
-	return {
+	const save = () => ({
 		type: 'unload',
+		decision,
+		unloading,
+		done,
+		coords,
+		unit: Record.reference(unit),
+		landingUnit: Record.reference(landingUnit)
+	})
+
+	return {
 		update,
+		save
 	}
 }
 
-const load = data => ({
-	update: () => false
-})
+const load = data => {
+	const unit = Record.dereference(data.unit)
+	if (data.decision === null) {
+		return create(unit, data.coords)
+	}
+	if (decision === 1) {
+		return Commander.cancel()
+	}
+	if (data.decision === 0 && data.unloading && !data.done) {
+		// TODO: find a solution to this problem
+		console.warn('loading of unload command not implemented yet')
+		return Commander.cancel()
+	}
+}
 
 export default {
 	create,

@@ -86,6 +86,7 @@ const createFromData = data => {
 	}
 
 	const save = () => ({
+		type: 'move',
 		unit: Record.reference(unit),
 		coords,
 		startTime,
@@ -95,11 +96,9 @@ const createFromData = data => {
 	})
 
 	return {
-		type: 'move',
 		init,
 		update,
 		finished,
-		coords,
 		save
 	}
 	

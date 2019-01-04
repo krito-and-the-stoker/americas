@@ -13,16 +13,9 @@ const update = currentTime => {
 }
 
 const create = () => ({
-	type: 'report',
 	update,
-	save: () => ({})
-})
-
-const load = data => ({
-	update: () => false
 })
 
 export default {
 	create,
-	load
 }

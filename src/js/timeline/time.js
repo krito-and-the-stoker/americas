@@ -1,8 +1,3 @@
-import Found from '../command/found'
-import Move from '../command/move'
-import MoveTo from '../command/moveTo'
-import Report from '../command/report'
-import Unload from '../command/unload'
 
 const TIME_SCALE = 1
 
@@ -65,45 +60,14 @@ const save = () => {
 	return {
 		currentTime,
 		paused,
-		scheduled: scheduled.filter(e => e.save)
-			.map(e => ({
-				data: e.save(),
-				type: e.type,
-				started: e.started,
-				cleanup: e.cleanup,
-				willStop: e.willStop,
-				time: e.time
-			}))
 	}
 }
 
-const getModule = type => ({
-	found: Found,
-	move: Move,
-	moveTo: MoveTo,
-	report: Report,
-	unload: Unload
-})[type]
-
-const revive = (type, data) => {
-	const module = getModule(type)
-	if (!module) {
-		console.warn('could not revive', data, type)
-		return {
-			cleanup : true
-		}
-	}
-
-	return module.load(data)
-}
 
 const load = data => {
 	paused = data.paused
-	scheduled = data.scheduled.map(d => ({
-		...d,
-		...revive(d.type, d.data)
-	}))
 	currentTime = data.currentTime
+	scheduled = []
 }
 
 export default {

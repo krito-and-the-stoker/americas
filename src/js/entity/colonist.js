@@ -52,13 +52,16 @@ const load = colonist => {
 	colonist.colony = Record.dereference(colonist.colony)
 	colonist.unit = Record.dereference(colonist.unit)
 
-	if (colonist.worksAt) {
-		colonist.worksAt.tile = Record.dereferenceTile(colonist.worksAt.tile)
-		colonist.worksAt.tile.harvestedBy = null
-		colonist.worksAt.stop = Time.schedule(Harvest.create(colonist.colony, colonist.worksAt.tile, colonist.worksAt.good, colonist))
-	}
+	Record.entitiesLoaded(() => {	
+		if (colonist.worksAt) {
+			colonist.worksAt.tile = Record.dereferenceTile(colonist.worksAt.tile)
+			colonist.worksAt.tile.harvestedBy = null
+			colonist.worksAt.stop = Time.schedule(Harvest.create(colonist.colony, colonist.worksAt.tile, colonist.worksAt.good, colonist))
+		}
 
-	Time.schedule(Consume.create(colonist.colony, 'food', 2))
+		Time.schedule(Consume.create(colonist.colony, 'food', 2))
+	})
+
 	return colonist
 }
 

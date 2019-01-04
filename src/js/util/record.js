@@ -161,9 +161,12 @@ const dereferenceLazy = (ref, fn) => {
 	}
 }
 
+let loadedListeners = []
+const entitiesLoaded = fn => loadedListeners.push(fn)
 
 const load = () => {
 	console.log('loading...')
+	loadedListeners = []
 	// MainLoop.stop()
 
 	// Time.pause()
@@ -185,6 +188,8 @@ const load = () => {
 	snapshot.entities.forEach(revive)
 	Time.load(snapshot.time)
 
+	loadedListeners.forEach(fn => fn())
+
 	const mapView = new MapView()
 
 	Background.restart()
@@ -202,6 +207,7 @@ export default {
 	dereferenceTile,
 	dereference,
 	dereferenceLazy,
+	entitiesLoaded,
 	setGlobal,
 	getGlobal,
 	save,
