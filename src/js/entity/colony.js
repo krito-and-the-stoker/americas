@@ -85,7 +85,9 @@ const save = colony => ({
 const load = colony => {
 	colony.storageListeners = []
 	const tile = MapEntity.tile(colony.mapCoordinates)
-	Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good)))	
+	Record.entitiesLoaded(() => {
+		Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good)))	
+	})
 
 	colony.sprite = ColonyView.createMapSprite(colony)
 

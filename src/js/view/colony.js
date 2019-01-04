@@ -40,6 +40,10 @@ const createMapSprite = colony => {
 
 const createDetailBackground = (colony, screenContainer) => {
 	const background = new PIXI.Sprite(new PIXI.Texture(Ressources.get().colonyBackground))
+	background.interactive = true
+	background.on('pointerdown', e => {
+		e.stopPropagation()
+	})
 	screenContainer.addChild(background)
 
 	const coastalDirection = Colony.coastalDirection(colony)
@@ -179,8 +183,8 @@ const createDetailScreen = colony => {
 		colonyWoodBackground.y = -screenContainer.y / scale
 	})
 
-	screenContainer.interactive = true
-	screenContainer.on('pointerdown', () => {
+	colonyWoodBackground.interactive = true
+	colonyWoodBackground.on('pointerdown', () => {
 		unsubscribeResize()
 		unsubscribeStorage()
 		Foreground.closeScreen()
