@@ -1,0 +1,140 @@
+let currentDrags = []
+const isDragTarget = target => currentDrags.includes(target)
+
+let possibleDragTargets = []
+const isPossibleDragTarget = target => possibleDragTargets.includes(target)
+
+const MIN_DRAG_TIME = 150
+
+const on = (target, onStart, onMove, onEnd, rollout = false) => {
+	let currentStartCoords = null
+	let currentSpeed = null
+	let lastCoords = null
+
+	const dragStart = e => {
+		possibleDragTargets.push(target)
+		setTimeout(() => {
+			if (!possibleDragTargets.includes(target)) {
+				return
+			}
+
+			currentDrags.push(target)
+			currentStartCoords = {
+				x: e.data.global.x,
+				y: e.data.global.y
+			}
+			lastCoords = {
+				x: currentStartCoords.x,
+				y: currentStartCoords.y
+		  }
+			currentSpeed = {
+				x: 0,
+				y: 0
+			}
+
+			const handleSpeedDeterioration = () => {
+				if (!moveHandled) {
+					currentSpeed = {
+						x: 0.7*currentSpeed.x,
+						y: 0.7*currentSpeed.y
+					}
+				}
+				if (currentStartCoords) {
+					requestAnimationFrame(handleSpeedDeterioration)
+				}
+			}
+			requestAnimationFrame(handleSpeedDeterioration)
+
+			onStart(currentStartCoords)
+		}, MIN_DRAG_TIME)
+	}
+
+	let moveHandled = false
+	const dragMove = (e) => {
+		if (!currentStartCoords) {
+			return
+		}
+		e.stopPropagation()
+
+		const newCoords = {
+			x: e.data.global.x,
+			y: e.data.global.y
+		}
+		currentSpeed = {
+			x: 0.3*currentSpeed.x + 0.9*(newCoords.x - lastCoords.x),
+			y: 0.3*currentSpeed.y + 0.9*(newCoords.y - lastCoords.y)
+		}
+		lastCoords = { ...newCoords }
+		
+		onMove(newCoords)
+
+		moveHandled = true
+		requestAnimationFrame(() => moveHandled = false)
+	}
+
+	const dragEnd = (e) => {
+		if (possibleDragTargets.includes(target)) {
+			possibleDragTargets = possibleDragTargets.filter(t => t !== target)
+		}
+		if (!currentSpeed) {
+			return
+		}
+		currentDrags = currentDrags.filter(t => t !== target)
+		e.stopPropagation()
+
+		currentStartCoords = null
+		if (rollout) {		
+			const rollOut = () => {
+				if(!currentStartCoords && currentSpeed.x*currentSpeed.x + currentSpeed.y*currentSpeed.y > 2) {
+					const newCoords = {
+						x: currentSpeed.x + lastCoords.x,
+						y: currentSpeed.y + lastCoords.y
+					}
+					currentSpeed.x *= .9
+					currentSpeed.y *= .9
+					lastCoords = { ...newCoords }
+
+					onMove(newCoords)
+					requestAnimationFrame(rollOut)
+				} else {
+					onEnd(lastCoords)
+				}
+			}
+			rollOut()
+		} else {
+			onEnd(lastCoords)
+		}
+	}
+
+	target.interactive = true
+	target
+		.on('mousedown', dragStart)
+		.on('touchstart', dragStart)
+    .on('mousemove', dragMove)
+    .on('touchmove', dragMove)
+    .on('mouseup', dragEnd)
+    .on('mouseupoutside', dragEnd)
+    .on('touchend', dragEnd)
+    .on('touchendoutside', dragEnd)
+
+   const unsubscribe = () => {
+			target
+				.off('mousedown', dragStart)
+				.off('touchstart', dragStart)
+		    .off('mousemove', dragMove)
+		    .off('touchmove', dragMove)
+		    .off('mouseup', dragEnd)
+		    .off('mouseupoutside', dragEnd)
+		    .off('touchend', dragEnd)
+		    .off('touchendoutside', dragEnd)
+		}
+
+		return unsubscribe
+}
+
+export default {
+	on,
+	isDragTarget,
+	isPossibleDragTarget,
+	MIN_DRAG_TIME
+}

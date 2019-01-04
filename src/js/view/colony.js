@@ -9,6 +9,7 @@ import Util from '../util/util'
 import Tile from '../entity/tile'
 import ProductionView from '../view/production'
 import Colony from '../entity/colony'
+import Click from '../input/click'
 
 import ColonyBackground from './colony/background'
 import ColonyTiles from './colony/tiles'
@@ -27,7 +28,7 @@ const createMapSprite = colony => {
 	sprite.x = TILE_SIZE * colony.mapCoordinates.x
 	sprite.y = TILE_SIZE * colony.mapCoordinates.y
 	sprite.interactive = true
-	sprite.on('pointertap', () => {
+	Click.on(sprite, () => {
 		colony.screen = createDetailScreen(colony)
 		Foreground.openScreen(colony.screen)
 	})
@@ -81,7 +82,7 @@ const createDetailScreen = colony => {
 	})
 
 	colonyWoodBackground.interactive = true
-	colonyWoodBackground.on('pointerdown', () => {
+	Click.on(colonyWoodBackground, () => {
 		tiles.unsubscribe()
 		storage.unsubscribe()
 		unsubscribeResize()

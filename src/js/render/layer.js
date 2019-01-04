@@ -2,7 +2,8 @@ const setDimensions = (layer) => {
 	const [width, height] = [window.innerWidth, window.innerHeight]
 	layer.width = width
 	layer.height = height
-	layer.app.renderer.resize(width, height)	
+	layer.app.renderer.resize(width, height)
+	layer.app.stage.hitArea = new PIXI.Rectangle(0, 0, width, height);
 }
 
 class Layer {

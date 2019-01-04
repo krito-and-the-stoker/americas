@@ -10,7 +10,8 @@ let layer = null
 
 const get = () => ({
 	container,
-	menu
+	menu,
+	layer
 })
 
 const openScreen = screen => {

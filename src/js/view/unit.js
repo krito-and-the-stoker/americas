@@ -4,6 +4,7 @@ import TWEEN from '@tweenjs/tween.js'
 import Util from '../util/util'
 import Foreground from '../render/foreground'
 import Ressources from '../render/ressources'
+import Click from '../input/click'
 
 const BLINK_TIME = 500
 const TILE_SIZE = 64
@@ -56,14 +57,10 @@ const createSprite = unit => {
 	if (unit.active) {
 		Foreground.add(sprite)
 	}
-	sprite.interactive = true
-	sprite.on('pointerdown', e => {
-		// e.data.originalEvent.stopPropagation()
-		// e.data.originalEvent.stopImmediatePropagation()
-		// e.data.originalEvent.preventDefault()
-		// e.stopPropagation()
+	Click.on(sprite, () => {
 		activateUnit(unit)
 	})
+
 	return sprite
 }
 

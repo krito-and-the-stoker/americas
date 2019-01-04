@@ -3,8 +3,6 @@ import MainLoop from 'mainloop.js'
 import MapEntity from './entity/map.js'
 import MapView from './view/map.js'
 import RenderView from './render/view.js'
-import Mouse from './input/mouse.js'
-import Touch from './input/touch.js'
 import Keyboard from './input/keyboard.js'
 import americaMap from './data/america-small.json'
 import Tween from './util/tween.js'
@@ -42,16 +40,15 @@ const initialize = async () => {
 		cargo: [soldier, pioneer]
 	})
 	MapControl.centerAt({ x: 125, y: 65 })
-	MapControl.zoomBy(1/0.35, 0)
+	MapControl.zoomBy(1/0.35, null, 0)
 	setTimeout(() => {
-		MapControl.zoomBy(0.35, 2500)
+		MapControl.zoomBy(0.35, null, 2000)
 	}, 50)
 
 	setTimeout(() => {
-		Mouse.initialize()
 		Keyboard.initialize()
-		Touch.initialize()
-	}, 2550)
+		MapControl.initializeInteraction()
+	}, 2050)
 
 	Time.schedule(Report.create())
 

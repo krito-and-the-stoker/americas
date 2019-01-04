@@ -4,6 +4,7 @@ import Foreground from '../render/foreground'
 import RenderView from '../render/view'
 import Time from '../timeline/time'
 import Util from '../util/util'
+import Click from '../input/click'
 
 
 const images = {
@@ -97,7 +98,7 @@ const create = (message, options, image = null) => {
 			if (optionText.width > plane9.width + 100) {
 				plane9.width = optionText.width + 100
 			}
-			optionText.on('pointerdown', () => {
+			Click.on(optionText, () => {
 				destroy()
 				resolve(index)
 			})
