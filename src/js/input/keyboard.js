@@ -6,6 +6,7 @@ import Move from '../command/move'
 import Found from '../command/found'
 import Europe from '../view/europe'
 import Record from '../util/record'
+import Commander from '../command/commander'
 
 const ZOOM_FACTOR = 1.25
 const ZOOM_TIME = 350
@@ -43,7 +44,7 @@ const handleKeydown = (e) => {
 	const activeUnit = Unit.get().activeUnit
 	if (activeUnit) {
 		if (e.key === 'b') {
-			Time.schedule(Found.create(activeUnit))
+			Commander.scheduleInstead(activeUnit.commander, Found.create(activeUnit))
 		}
 	}
 	// const activeUnit = Unit.get().activeUnit

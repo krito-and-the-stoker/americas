@@ -7,8 +7,13 @@ import Util from '../util/util'
 import Colonist from '../entity/colonist'
 import Record from '../util/record'
 
-let colonieNames = ['Jamestown', 'Roanoke', 'Virginia', "Cuper's Cove", "St. John's", 'Henricus']
-const getColonyName = () => colonieNames.shift()
+setTimeout(() => Record.setGlobal('colonyNames', ['Jamestown', 'Roanoke', 'Virginia', "Cuper's Cove", "St. John's", 'Henricus']), 0)
+const getColonyName = () => {
+	let colonyNames = Record.getGlobal('colonyNames')
+	const name = colonyNames.shift()
+	Record.setGlobal('colonyNames', colonyNames)
+	return name
+}
 
 const updateStorage = (colony, good, amount) => {
 	colony.storage[good] += amount
