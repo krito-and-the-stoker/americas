@@ -62,7 +62,6 @@ const getContainer = index => {
 
 const hide = () => {
 	if (visible) {
-		// undiscovered.visible = false
 		visible = false
 		render()
 	}
@@ -70,7 +69,6 @@ const hide = () => {
 
 const show = () => {
 	if (!visible) {
-		// undiscovered.visible = true
 		visible = true
 		render()
 	}

@@ -9,6 +9,7 @@ import Util from '../util/util'
 import Tile from '../entity/tile'
 import ProductionView from '../view/production'
 import Colony from '../entity/colony'
+import Colonist from '../entity/colonist'
 
 const TILE_SIZE = 64
 
@@ -63,7 +64,7 @@ const createDetailTiles = (colony, screenContainer, originalDimensions) => {
 	const tilesContainer = new PIXI.Container()
 	const center = MapEntity.tile(colony.mapCoordinates)
 	const tiles = [center].concat(Tile.diagonalNeighbors(center))
-	tiles.map(tile => {
+	const tilesAndPosition = tiles.map(tile => {
 		const position = {
 			x: TILE_SIZE * (1 + tile.mapCoordinates.x - center.mapCoordinates.x),
 			y: TILE_SIZE * (1 + tile.mapCoordinates.y - center.mapCoordinates.y)
@@ -73,13 +74,21 @@ const createDetailTiles = (colony, screenContainer, originalDimensions) => {
 			sprite.position.y = position.y
 			tilesContainer.addChild(sprite)
 		})
-		if (colony.colonists.includes(tile.harvestedBy)) {
-			const colonist = tile.harvestedBy
-			colonist.sprite.x = position.x
-			colonist.sprite.y = position.y
-			tilesContainer.addChild(colonist.sprite)
+		return {
+			tile,
+			position
 		}
 	})
+	const unbindAll = colony.colonists.map(colonist => 
+		Colonist.bindWorksAt(colonist, worksAt => {
+			const { tile, position } = tilesAndPosition.find(({ tile }) => worksAt && worksAt.tile === tile) || {}
+			if (position) {
+				colonist.sprite.x = position.x
+				colonist.sprite.y = position.y
+				tilesContainer.addChild(colonist.sprite)
+			}
+		})
+	).reduce((all, unbind) => () => { all(); unbind(); }, () => {})
 	const colonySprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(MAP_COLONY_FRAME_ID)))
 	colonySprite.position.x = TILE_SIZE
 	colonySprite.position.y = TILE_SIZE
@@ -116,6 +125,8 @@ const createDetailTiles = (colony, screenContainer, originalDimensions) => {
 				tilesContainer.addChild(s)
 			})
 		})
+
+	return unbindAll
 }
 
 const createHeadline = (colony, screenContainer, originalDimensions) => {
@@ -166,7 +177,7 @@ const createDetailScreen = colony => {
 	screenContainer.addChild(colonyWoodBackground)
 
 	const originalDimensions = createDetailBackground(colony, screenContainer)
-	createDetailTiles(colony, screenContainer, originalDimensions)
+	const unsubscribeColonists = createDetailTiles(colony, screenContainer, originalDimensions)
 	createHeadline(colony, screenContainer, originalDimensions)
 	const unsubscribeStorage = createStorageNumbers(colony, screenContainer, originalDimensions)
 
@@ -185,6 +196,7 @@ const createDetailScreen = colony => {
 
 	colonyWoodBackground.interactive = true
 	colonyWoodBackground.on('pointerdown', () => {
+		unsubscribeColonists()
 		unsubscribeResize()
 		unsubscribeStorage()
 		Foreground.closeScreen()

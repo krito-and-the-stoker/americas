@@ -1,5 +1,31 @@
 import * as PIXI from 'pixi.js'
 
+
+const bind = fieldName => {
+	const listeners = `${fieldName}Listeners`
+	const init = instance => {
+		instance[listeners] = []
+	}
+
+	const bind = (instance, fn) => {
+		fn(instance[fieldName])
+		instance[listeners].push(fn)
+		const remove = () => instance[listeners] = instance[listeners].filter(f => f !== fn)
+		return remove
+	}
+
+	const update = (instance, value) => {
+		instance[fieldName] = value
+		instance[listeners].forEach(fn => fn(value))
+	}
+
+	return {
+		init,
+		bind,
+		update,
+	}
+}
+
 export const loadTexture = async (...files) => new Promise((resolve, reject) => {
 	PIXI.loader.reset()
 	PIXI.loader.add(files).load(() => {
@@ -28,5 +54,6 @@ export default {
 	loadTexture,
 	range,
 	rectangle,
-	getUid
+	getUid,
+	bind,
 }

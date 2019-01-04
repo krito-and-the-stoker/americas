@@ -3,6 +3,10 @@ import Consume from '../task/consume'
 import Time from '../timeline/time'
 import ColonistView from '../view/colonist'
 import Record from '../util/record'
+import Util from '../util/util'
+
+const worksAt = Util.bind('worksAt')
+
 
 const beginFieldWork = (colony, tile, good, colonist) => {
 	if (colonist.worksAt) {
@@ -12,13 +16,15 @@ const beginFieldWork = (colony, tile, good, colonist) => {
 
 	const stop = Time.schedule(Harvest.create(colony, tile, good, colonist))
 
-	colonist.worksAt = {
+	worksAt.update(colonist, {
 		type: 'Field',
 		tile,
 		good,
 		stop
-	}
+	})
 }
+
+const bindWorksAt = worksAt.bind
 
 const create = (colony, unit) => {
 	const colonist = {
@@ -27,6 +33,7 @@ const create = (colony, unit) => {
 		expert: unit.expert,
 		worksAt: null
 	}
+	worksAt.init(colonist)
 	colonist.sprite = ColonistView.create(colonist)
 
 	Time.schedule(Consume.create(colony, 'food', 2))
@@ -47,6 +54,7 @@ const save = colonist => ({
 })
 
 const load = colonist => {
+	worksAt.init(colonist)
 	colonist.sprite = ColonistView.create(colonist)
 
 	colonist.colony = Record.dereference(colonist.colony)
@@ -70,5 +78,6 @@ export default {
 	create,
 	save,
 	load,
-	beginFieldWork
+	beginFieldWork,
+	bindWorksAt
 }
