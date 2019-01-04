@@ -3,20 +3,33 @@ import UnitView from '../view/unit'
 import Time from '../timeline/time'
 import Move from './move'
 import Commander from './commander'
+import Record from '../util/record'
+
+const createUnloadingOnly = unloadingStartedAt => {
+	const update = currentTime => {
+		return  currentTime < unloadingStartedAt + Time.UNLOAD_TIME		
+	}
+
+	const save = () => ({
+		unloadingStartedAt,
+		decision: 0,
+	})
+
+	return {
+		update,
+		save
+	}
+}
 
 const create = (unit, coords) => {
 	let decision = null
-	let unloading = false
-	let done = false
+	let unloadingStartedAt = null
+	let landingUnit = null
 	Dialog.show('unload').then(result => { decision = result })
 
-	const update = () => {
-		if (unloading) {
-			return true
-		}
-
-		if (done) {
-			return false
+	const update = currentTime => {
+		if (unloadingStartedAt) {
+			return  currentTime < unloadingStartedAt + Time.UNLOAD_TIME
 		}
 
 		if (decision === null) {
@@ -28,14 +41,11 @@ const create = (unit, coords) => {
 		}
 
 		if (decision === 0) {
-			const landingUnit = unit.cargo.shift()
+			landingUnit = unit.cargo.shift()
 			landingUnit.mapCoordinates = { ...unit.mapCoordinates }
 			UnitView.activate(landingUnit)
-			Commander.scheduleInstead(landingUnit.commander, Move.create(landingUnit, coords, () => {
-				unloading = false
-				done = true
-			}))
-			unloading = true
+			Commander.scheduleInstead(landingUnit.commander, Move.create(landingUnit, coords))
+			unloadingStartedAt = currentTime
 			return true
 		}
 	}
@@ -43,8 +53,7 @@ const create = (unit, coords) => {
 	const save = () => ({
 		type: 'unload',
 		decision,
-		unloading,
-		done,
+		unloadingStartedAt,
 		coords,
 		unit: Record.reference(unit),
 		landingUnit: Record.reference(landingUnit)
@@ -61,13 +70,11 @@ const load = data => {
 	if (data.decision === null) {
 		return create(unit, data.coords)
 	}
-	if (decision === 1) {
+	if (data.decision === 1) {
 		return Commander.cancel()
 	}
-	if (data.decision === 0 && data.unloading && !data.done) {
-		// TODO: find a solution to this problem
-		console.warn('loading of unload command not implemented yet')
-		return Commander.cancel()
+	if (data.decision === 0 && data.unloadingStartedAt) {
+		return createUnloadingOnly(data.unloadingStartedAt)
 	}
 }
 

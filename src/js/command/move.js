@@ -3,9 +3,8 @@ import MapEntity from '../entity/map'
 import Unload from './unload'
 import Tile from '../entity/tile'
 import Record from '../util/record'
+import Time from '../timeline/time'
 
-const BASE_TIME = 7500
-const UNLOADING_TIME = 2500
 const TILE_SIZE = 64
 
 const inMoveDistance = (coords1, coords2) => Math.abs(coords1.x - coords2.x) <= 1 && Math.abs(coords1.y - coords2.y) <= 1
@@ -47,9 +46,9 @@ const createFromData = data => {
 			return false
 		}
 		if (unloading(unit, fromTile, targetTile)) {
-			duration = UNLOADING_TIME
+			duration = Time.UNLOAD_TIME
 		} else {
-			duration = Tile.movementCost(fromTile, targetTile) * BASE_TIME / unit.speed
+			duration = Tile.movementCost(fromTile, targetTile) * Time.MOVE_BASE_TIME / unit.speed
 		}
 
 		if (!inMoveDistance(startCoords, coords)) {
