@@ -1,5 +1,6 @@
 import Tile from './tile.js'
 import Record from '../util/record'
+import Util from '../util/util'
 
 
 let numTiles = null
@@ -54,14 +55,15 @@ const	mapCoordinates = index => ({
 })
 
 const save = ({ tiles, numTiles }) => ({
-	tiles: tiles.map(tile => Record.referenceTile(tile)),
 	numTiles
 })
 
 const load = map => {
 	console.log('loading map')
 	numTiles = map.numTiles
-	tiles = map.tiles.map(Record.dereferenceTile)
+	tiles = Util.range(numTiles.x*numTiles.y)
+		.map(index => Record.referenceTile({ index }))
+		.map(Record.dereferenceTile)
 
 	createCoastLine(tiles)
 
