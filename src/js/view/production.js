@@ -1,3 +1,5 @@
+import * as PIXI from 'pixi.js'
+
 import Goods from '../data/goods.json'
 
 import Util from '../util/util'
@@ -10,7 +12,7 @@ const	create = (resource, amount, width = 100) => {
 		const texture = new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame))
 		return Util.range(amount).map(i => {
 			const sprite = new PIXI.Sprite(texture)
-			sprite.x = Math.round(i*width / amount)
+			sprite.x = width - Math.round((i + 1)*width / amount)
 			sprite.y = 0
 			return sprite
 		})

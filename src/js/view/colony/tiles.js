@@ -27,7 +27,7 @@ const create = (colony, originalDimensions) => {
 			sprite.position.y = position.y
 			container.addChild(sprite)
 		})
-		const destroy = Drag.makeDragTarget(sprites[sprites.length - 1], entity => {
+		const destroy = Drag.makeDragTarget(sprites[sprites.length - 1], async entity => {
 			if (Colonist.is(entity)) {
 				if (!tile.harvestedBy) {
 					Colonist.beginFieldWork(colony, tile, entity.worksAt ? entity.worksAt.good : 'food', entity)

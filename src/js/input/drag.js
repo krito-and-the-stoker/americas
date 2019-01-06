@@ -75,7 +75,7 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 		requestAnimationFrame(() => moveHandled = false)
 	}
 
-	const dragEnd = (e) => {
+	const dragEnd = async e => {
 		if (possibleDragTargets.includes(target)) {
 			possibleDragTargets = possibleDragTargets.filter(t => t !== target)
 		}
@@ -87,7 +87,7 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 
 		currentStartCoords = null
 		if (rollout) {		
-			const rollOut = () => {
+			const rollOut = async () => {
 				if(!currentStartCoords && currentSpeed.x*currentSpeed.x + currentSpeed.y*currentSpeed.y > 2) {
 					const newCoords = {
 						x: currentSpeed.x + lastCoords.x,
@@ -100,12 +100,12 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 					onMove(newCoords)
 					requestAnimationFrame(rollOut)
 				} else {
-					onEnd(lastCoords)
+					await onEnd(lastCoords)
 				}
 			}
 			rollOut()
 		} else {
-			onEnd(lastCoords)
+			await onEnd(lastCoords)
 		}
 	}
 
@@ -157,13 +157,13 @@ const makeDraggable = (sprite, entity) => {
 		sprite.y = initialCoords.y + coords.y / scale
 	}
 
-	const end = coords => {
+	const end = async coords => {
 		// set non-interactive for a moment, otherwise we will just hit our sprite all the time
 		sprite.interactive = false
 		const target = Foreground.hitTest(coords)
 		sprite.interactive = true
 		if (dragTargets.map(({ sprite }) => sprite).includes(target)) {
-			const result = dragTargets.find(({ sprite }) => target === sprite).fn(entity)
+			const result = await dragTargets.find(({ sprite }) => target === sprite).fn(entity)
 			if (result) {
 				return
 			}
