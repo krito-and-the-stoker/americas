@@ -53,7 +53,7 @@ const createDetailScreen = colony => {
 	const screenContainer = new PIXI.Container()
 	const colonyWoodBackground = new PIXI.extras.TilingSprite(Ressources.get().colonyWoodBackground, RenderView.getDimensions().x, RenderView.getDimensions().y)
 	screenContainer.addChild(colonyWoodBackground)
-
+	
 	const background = ColonyBackground.create(colony)
 	screenContainer.addChild(background.container)
 	const originalDimensions = background.originalDimensions

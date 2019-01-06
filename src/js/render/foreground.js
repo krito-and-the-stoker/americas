@@ -14,6 +14,7 @@ const get = () => ({
 	layer
 })
 
+const hitTest = coords => layer.app.renderer.plugins.interaction.hitTest(new PIXI.Point(coords.x, coords.y), layer.app.stage)
 const openScreen = screen => {
 	if (currentScreen) {
 		closeScreen()
@@ -81,6 +82,7 @@ const doRenderWork = () => layer.app.render()
 
 export default {
 	initialize,
+	hitTest,
 	shutdown,
 	updateCoords,
 	updateScale,

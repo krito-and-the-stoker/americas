@@ -26,6 +26,17 @@ const bind = fieldName => {
 	}
 }
 
+const globalScale = sprite => {
+	let s = sprite
+	let scale = s.scale.x
+	while(s.parent && s.parent.scale) {
+		s = s.parent
+		scale *= s.scale.x
+	}
+
+	return scale
+}
+
 export const loadTexture = async (...files) => new Promise((resolve, reject) => {
 	PIXI.loader.reset()
 	PIXI.loader.add(files).load(() => {
@@ -52,6 +63,7 @@ const getUid = () => {
 
 export default {
 	loadTexture,
+	globalScale,
 	range,
 	rectangle,
 	getUid,

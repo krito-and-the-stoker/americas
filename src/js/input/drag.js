@@ -1,3 +1,6 @@
+import Util from '../util/util'
+import Foreground from '../render/foreground'
+
 let currentDrags = []
 const isDragTarget = target => currentDrags.includes(target)
 
@@ -132,9 +135,62 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 		return unsubscribe
 }
 
+let dragTargets = []
+const makeDraggable = (sprite, entity) => {
+	let initialCoords = null
+	let initialSpriteCoords = null
+	const start = coords => {
+		const scale = Util.globalScale(sprite)
+		initialSpriteCoords = {
+			x: sprite.x,
+			y: sprite.y
+		}
+		initialCoords = {
+			x: sprite.x - coords.x / scale,
+			y: sprite.y - coords.y / scale
+		}
+	}
+
+	const move = coords => {
+		const scale = Util.globalScale(sprite)
+		sprite.x = initialCoords.x + coords.x / scale
+		sprite.y = initialCoords.y + coords.y / scale
+	}
+
+	const end = coords => {
+		// set non-interactive for a moment, otherwise we will just hit our sprite all the time
+		sprite.interactive = false
+		const target = Foreground.hitTest(coords)
+		sprite.interactive = true
+		if (dragTargets.map(({ sprite }) => sprite).includes(target)) {
+			const result = dragTargets.find(({ sprite }) => target === sprite).fn(entity)
+			if (result) {
+				return
+			}
+		}
+		sprite.x = initialSpriteCoords.x
+		sprite.y = initialSpriteCoords.y
+	}
+
+	return on(sprite, start, move, end, false)
+}
+
+const makeDragTarget = (sprite, fn) => {
+	sprite.interactive = true
+	const target = {
+		sprite,
+		fn
+	}
+	dragTargets.push(target)
+
+	return () => dragTargets = dragTargets.filter(t => t !== target)
+}
+
 export default {
 	on,
 	isDragTarget,
 	isPossibleDragTarget,
+	makeDraggable,
+	makeDragTarget,
 	MIN_DRAG_TIME
 }

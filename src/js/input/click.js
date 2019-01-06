@@ -3,7 +3,7 @@ import Drag from './drag'
 const on = (target, fn) => {
 	const handler = e => {
 		e.stopPropagation()
-		const handleClick = () => {			
+		const handleClick = () => {	
 			if (!Drag.isDragTarget(target)) {
 				fn(e.data.global)
 			}

@@ -11,6 +11,7 @@ const worksAt = Util.bind('worksAt')
 const beginFieldWork = (colony, tile, good, colonist) => {
 	if (colonist.worksAt) {
 		colonist.worksAt.stop()
+		colonist.worksAt.tile.harvestedBy = null
 	}
 
 
@@ -28,6 +29,7 @@ const bindWorksAt = worksAt.bind
 
 const create = (colony, unit) => {
 	const colonist = {
+		type: 'colonist',
 		colony,
 		unit,
 		expert: unit.expert,
@@ -55,6 +57,7 @@ const save = colonist => ({
 
 const load = colonist => {
 	worksAt.init(colonist)
+	colonist.type = 'colonist'
 	colonist.sprite = ColonistView.create(colonist)
 
 	colonist.colony = Record.dereference(colonist.colony)
@@ -73,9 +76,11 @@ const load = colonist => {
 	return colonist
 }
 
+const is = entity => entity.type === 'colonist'
 
 export default {
 	create,
+	is,
 	save,
 	load,
 	beginFieldWork,
