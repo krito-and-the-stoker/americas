@@ -1,19 +1,23 @@
 import Drag from './drag'
 
 const on = (target, fn) => {
-	const handler = e => {
+	const handler = async e => {
 		e.stopPropagation()
-		const handleClick = () => {	
+		const handleClick = async () => {	
 			if (!Drag.isDragTarget(target)) {
-				fn(e.data.global)
+				target.interactive = false
+				await fn(e.data.global)
+				target.interactive = true
 			}
 		}
 
-		requestAnimationFrame(() => {
+		requestAnimationFrame(async () => {
 			if (Drag.isPossibleDragTarget(target)) {
-				setTimeout(handleClick, Drag.MIN_DRAG_TIME)				
+				setTimeout(async () => {
+					await handleClick()
+				}, Drag.MIN_DRAG_TIME)
 			} else {
-				handleClick()
+				await handleClick()
 			}
 		})
 	}
