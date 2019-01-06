@@ -8,7 +8,8 @@ import Util from '../util/util'
 const worksAt = Util.bind('worksAt')
 
 
-const beginFieldWork = (colony, tile, good, colonist) => {
+const beginFieldWork = (colonist, tile, good) => {
+	const colony = colonist.colony
 	if (colonist.worksAt) {
 		colonist.worksAt.stop()
 		colonist.worksAt.tile.harvestedBy = null

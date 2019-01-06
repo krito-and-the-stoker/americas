@@ -34,7 +34,7 @@ const create = (colony, originalDimensions) => {
 					const options = Tile.fieldProductionOptions(tile, colonist).map(Context.productionOption)
 					const coords = colonist.sprite.getGlobalPosition()
 					const decision = await Context.create(options, coords, 80, 0.5)
-					Colonist.beginFieldWork(colony, tile, decision.good, colonist)
+					Colonist.beginFieldWork(colonist, tile, decision.good)
 					return true
 				}
 			}

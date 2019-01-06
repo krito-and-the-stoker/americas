@@ -85,6 +85,11 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 		currentDrags = currentDrags.filter(t => t !== target)
 		e.stopPropagation()
 
+		// otherwise sometimes drag end fires twice
+		if (!currentStartCoords) {
+			return
+		}
+
 		currentStartCoords = null
 		if (rollout) {		
 			const rollOut = async () => {

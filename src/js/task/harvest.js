@@ -26,13 +26,8 @@ const create = (colony, tile, good, colonist = null) => {
 		return true
 	}
 
-	const stopped = () => {
-		tile.harvestedBy = null
-	}
-
 	return {
-		update,
-		stopped
+		update
 	}
 }
 

@@ -64,7 +64,7 @@ const create = (coords, unit) => {
 		},
 		{ production: -1 })
 	if (winner.tile) {
-		Colonist.beginFieldWork(colony, winner.tile, 'food', colonist)
+		Colonist.beginFieldWork(colonist, winner.tile, 'food')
 	}
 
 	Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good)))	
