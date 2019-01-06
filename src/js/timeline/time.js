@@ -44,14 +44,20 @@ const advance = deltaTime => {
 }
 
 const schedule = (e, time = null) => {
-	scheduled.push({
+	const task = {
 		...e,
 		started: false,
 		cleanup: false,
 		willStop: false,
 		time: time || currentTime
-	})
-	return () => { e.willStop = true }
+	}
+	scheduled.push(task)
+
+	const stop = () => {
+		task.willStop = true
+	}
+
+	return stop
 }
 
 const pause = () => paused = true

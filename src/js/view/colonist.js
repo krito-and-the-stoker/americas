@@ -17,10 +17,14 @@ const create = colonist => {
 	Click.on(sprite, async () => {
 		if (colonist.worksAt) {
 			const tile = colonist.worksAt.tile
-			const options = Tile.fieldProductionOptions(tile, colonist).map(Context.productionOption)
-			const coords = colonist.sprite.getGlobalPosition()
-			const decision = await Context.create(options, coords, 80, 0.5)
-			Colonist.beginFieldWork(colonist, tile, decision.good)
+			const options = Tile.fieldProductionOptions(tile, colonist)
+			if (options.length > 1) {			
+				const coords = colonist.sprite.getGlobalPosition()
+				coords.y += colonist.sprite.height / 2
+				const optionsView = options.map(Context.productionOption)
+				const decision = await Context.create(optionsView, coords, 80, 0.5)
+				Colonist.beginFieldWork(colonist, tile, decision.good)
+			}
 		}
 	})
 

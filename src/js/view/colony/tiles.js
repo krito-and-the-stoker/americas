@@ -31,10 +31,16 @@ const create = (colony, originalDimensions) => {
 		const destroy = Drag.makeDragTarget(sprites[sprites.length - 1], async colonist => {
 			if (Colonist.is(colonist)) {
 				if (!tile.harvestedBy) {
-					const options = Tile.fieldProductionOptions(tile, colonist).map(Context.productionOption)
-					const coords = colonist.sprite.getGlobalPosition()
-					const decision = await Context.create(options, coords, 80, 0.5)
-					Colonist.beginFieldWork(colonist, tile, decision.good)
+					const options = Tile.fieldProductionOptions(tile, colonist)
+					if (options.length === 1) {
+						Colonist.beginFieldWork(colonist, tile, options[0].good)
+					} else {
+						const coords = colonist.sprite.getGlobalPosition()
+						coords.y += colonist.sprite.height / 2
+						const optionsView = options.map(Context.productionOption)
+						const decision = await Context.create(optionsView, coords, 80, 0.5)
+						Colonist.beginFieldWork(colonist, tile, decision.good)
+					}
 					return true
 				}
 			}

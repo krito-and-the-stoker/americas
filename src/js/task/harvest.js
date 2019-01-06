@@ -27,7 +27,7 @@ const create = (colony, tile, good, colonist = null) => {
 	}
 
 	return {
-		update
+		update,
 	}
 }
 
