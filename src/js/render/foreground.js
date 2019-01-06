@@ -4,6 +4,7 @@ import Layer from './layer'
 import Background from './background'
 
 let container = null
+let context = null
 let menu = null
 let currentScreen = null
 let layer = null
@@ -11,6 +12,7 @@ let layer = null
 const get = () => ({
 	container,
 	menu,
+	context,
 	layer
 })
 
@@ -21,6 +23,7 @@ const openScreen = screen => {
 	}
 	currentScreen = screen
 	layer.app.stage.addChild(screen)
+	layer.app.stage.addChild(context)
 	layer.app.stage.removeChild(container)
 	layer.app.stage.removeChild(menu)
 	Background.hide()
@@ -30,6 +33,7 @@ const closeScreen = () => {
 	if (currentScreen) {	
 		layer.app.stage.removeChild(currentScreen)
 		layer.app.stage.addChild(container)
+		layer.app.stage.addChild(context)
 		layer.app.stage.addChild(menu)
 		Background.show()
 	}
@@ -64,9 +68,11 @@ const initialize = () => {
 	})
 
 	container = new PIXI.Container()
+	context = new PIXI.Container()
 	menu = new PIXI.Container()
 
 	layer.app.stage.addChild(container)
+	layer.app.stage.addChild(context)
 	layer.app.stage.addChild(menu)
 	layer.app.stop()
 }

@@ -6,6 +6,7 @@ import Util from '../../util/util'
 import Tile from '../../entity/tile'
 import ProductionView from '../production'
 import Drag from '../../input/drag'
+import Context from '../../view/context'
 
 
 const TILE_SIZE = 64
@@ -27,10 +28,13 @@ const create = (colony, originalDimensions) => {
 			sprite.position.y = position.y
 			container.addChild(sprite)
 		})
-		const destroy = Drag.makeDragTarget(sprites[sprites.length - 1], async entity => {
-			if (Colonist.is(entity)) {
+		const destroy = Drag.makeDragTarget(sprites[sprites.length - 1], async colonist => {
+			if (Colonist.is(colonist)) {
 				if (!tile.harvestedBy) {
-					Colonist.beginFieldWork(colony, tile, entity.worksAt ? entity.worksAt.good : 'food', entity)
+					const options = Tile.fieldProductionOptions(tile, colonist).map(Context.productionOption)
+					const coords = colonist.sprite.getGlobalPosition()
+					const decision = await Context.create(options, coords, 80, 0.5)
+					Colonist.beginFieldWork(colony, tile, decision.good, colonist)
 					return true
 				}
 			}

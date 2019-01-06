@@ -114,7 +114,7 @@ const initializeInteraction = () => {
 
 	const ZOOM_FACTOR = 0.001
 	const handleWheel = (e) => {
-		zoomBy(Math.exp(-ZOOM_FACTOR * e.deltaY), { x: e.clientX, y: e.clientY })
+		zoomBy(Math.exp(-ZOOM_FACTOR * e.deltaY), { x: Math.round(e.clientX), y: Math.round(e.clientY) })
 	}
 	Wheel.on(handleWheel)
 

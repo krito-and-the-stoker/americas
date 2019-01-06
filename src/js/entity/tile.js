@@ -5,6 +5,7 @@ import Dialog from '../view/dialog'
 import MapEntity from '../entity/map'
 import Yield from '../data/yield'
 import Record from '../util/record'
+import Goods from '../data/goods'
 
 const create = ({ id, layers, index }) => {
 	const [name, terrain] = Object.entries(Terrain).find(([name, terrain]) => terrain.id === id)
@@ -220,6 +221,9 @@ const production = (tile, resource, colonist = null) => {
 }
 
 const colonyProductionGoods = tile => Object.keys(Yield[tile.terrainName].colony)
+const fieldProductionOptions = (tile, colonist) => Goods.types
+	.map(good => ({ good, amount: production(tile, good, colonist) }))
+	.filter(({ amount }) => amount > 0)
 
 const neighborString = (tile, other) => {
 	const result = (c1, c2) => {
@@ -255,6 +259,7 @@ export default {
 	isNextTo,
 	production,
 	colonyProductionGoods,
+	fieldProductionOptions,
 	decideCoastTerrain,
 	decideCoastalSea,
 	diagonalNeighbors,
