@@ -46,7 +46,7 @@ const americaLarge = () => {
 }
 
 const initialize = async () => {
-	MapEntity.create({ data: americaLargeMap })
+	MapEntity.create({ data: americaSmallMap })
 	const mapView = new MapView()
 	
 	await Ressources.initialize()
@@ -57,7 +57,7 @@ const initialize = async () => {
 	PathFinder.initialize()
 	Europe.initialize()
 
-	americaLarge()
+	americaSmall()
 
 	MapControl.zoomBy(1/0.35, null, 0)
 	setTimeout(() => {
