@@ -161,13 +161,14 @@ const makeDraggable = (sprite, entity) => {
 		// set non-interactive for a moment, otherwise we will just hit our sprite all the time
 		sprite.interactive = false
 		const target = Foreground.hitTest(coords)
-		sprite.interactive = true
 		if (dragTargets.map(({ sprite }) => sprite).includes(target)) {
 			const result = await dragTargets.find(({ sprite }) => target === sprite).fn(entity)
+			sprite.interactive = true
 			if (result) {
 				return
 			}
 		}
+		sprite.interactive = true
 		sprite.x = initialSpriteCoords.x
 		sprite.y = initialSpriteCoords.y
 	}
