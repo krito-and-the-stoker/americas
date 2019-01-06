@@ -17,12 +17,17 @@ const images = {
 }
 
 let pngs = null
-let currentDialog = Promise.resolve(0)
+let currentDialog = null
 
 let slice = null
-const initialize = async () => {
-	[slice] = await Util.loadTexture('images/schriftrolle-nineslice.png')
-	pngs = await Util.loadTexture('images/scout.png')
+let initialized = false
+const initialize = () => {
+	const load = async () => {		
+		[slice] = await Util.loadTexture('images/schriftrolle-nineslice.png')
+		pngs = await Util.loadTexture('images/scout.png')
+	}
+
+	currentDialog = load()
 }
 
 const dialogs = {

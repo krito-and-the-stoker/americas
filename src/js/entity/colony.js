@@ -51,6 +51,7 @@ const create = (coords, unit) => {
 		mapCoordinates: { ...coords }
 	}
 	const tile = MapEntity.tile(coords)
+	tile.colony = colony
 	const colonist = Colonist.create(colony, unit)
 	colony.colonists = [colonist]
 	const winner = Tile.diagonalNeighbors(tile)
@@ -85,6 +86,7 @@ const save = colony => ({
 const load = colony => {
 	colony.storageListeners = []
 	const tile = MapEntity.tile(colony.mapCoordinates)
+	tile.colony = colony
 	Record.entitiesLoaded(() => {
 		Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good)))	
 	})

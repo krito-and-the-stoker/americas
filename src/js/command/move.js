@@ -29,7 +29,7 @@ const createFromData = data => {
 	const init = currentTime => {
 		const targetTile = MapEntity.tile(coords)
 
-		if (unit.domain !== targetTile.domain) {
+		if (unit.domain !== targetTile.domain && !targetTile.colony) {
 			if (unit.domain === 'sea' && unit.cargo.length > 0 && targetTile.domain === 'land' && inMoveDistance(unit.mapCoordinates, coords)) {
 				Commander.scheduleInstead(unit.commander, Unload.create(unit, coords, finishedFn))
 			}

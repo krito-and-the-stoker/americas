@@ -51,10 +51,9 @@ const create = ({ id, layers, index }) => {
 	return tile
 }
 
-const keys = ['index', 'id', 'forest', 'treeVariation', 'hills', 'hillVariation', 'mountains', 'mountainVariation', 'riverSmall', 'riverLarge', 'bonus', 'plowed', 'road', 'coast', 'discovered', 'harvestedBy']
-const type = ['int',   'int','bool',   'bool',          'bool',  'bool',          'bool',      'bool',              'bool',       'bool',       'bool',  'bool',   'bool', 'bool',  'bool',       'complext']
+const keys = ['id', 'forest', 'treeVariation', 'hills', 'hillVariation', 'mountains', 'mountainVariation', 'riverSmall', 'riverLarge', 'bonus', 'plowed', 'road', 'coast', 'discovered', 'harvestedBy']
+const type = ['int','bool',   'bool',          'bool',  'bool',          'bool',      'bool',              'bool',       'bool',       'bool',  'bool',   'bool', 'bool',  'bool',       'reference']
 const save = tile => ([
-	tile.index,
 	tile.id,
 	tile.forest,
 	tile.treeVariation,
@@ -73,21 +72,28 @@ const save = tile => ([
 ].map((value, index) => {
 	if (type[index] === 'bool') {
 		return value ? 1 : 0
-	} else {
-		return value
 	}
+	if (type[index] === 'reference') {
+		return value ? value[Record.REFERENCE_KEY] : 0
+	}
+	return value
 }))
 
-const load = data => {
+const load = (data, index) => {
 	const tile = data
-		.map((value, index) => {
-			if (type[index] === 'bool') {
+		.map((value, key) => {
+			if (type[key] === 'bool') {
 				return value === 1
-			} else {
-				return value
 			}
+			if (type[key] === 'reference') {
+				return value ? {
+					[Record.REFERENCE_KEY]: value
+				} : null
+			}
+			return value
 		})
 		.reduce((tile, value, index) => ({ ...tile, [keys[index]]: value }), {})
+	tile.index = index
 	const [name, terrain] = Object.entries(Terrain).find(([name, terrain]) => terrain.id === tile.id)
 	if (!terrain) {
 		console.warn(`No terrain type found for id ${id}.`)

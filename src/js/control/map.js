@@ -7,6 +7,7 @@ import Wheel from '../input/wheel'
 import UnitView from '../view/unit'
 import MoveTo from '../command/moveTo'
 import Commander from '../command/commander'
+import Secondary from '../input/secondary'
 
 const MIN_SCALE = 0.125
 const MAX_SCALE = 4
@@ -101,7 +102,7 @@ const initializeInteraction = () => {
 	const end = coords => {}
 
 	Drag.on(stage, start, move, end, true)
-	Click.on(stage, coords => {
+	Secondary.on(stage, coords => {
 		const activeUnit = UnitView.get().activeUnit
 		if (activeUnit) {
 			const target = {

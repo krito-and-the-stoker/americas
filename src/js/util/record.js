@@ -13,6 +13,7 @@ import Background from '../render/background'
 import RenderView from '../render/view'
 import Time from '../timeline/time'
 
+const REFERENCE_KEY = 'referenceId'
 
 const SAVE_TO_LOCAL_STORAGE = true
 const USE_COMPRESSION = false
@@ -20,7 +21,8 @@ const USE_COMPRESSION = false
 
 let lastSave = null
 
-let idCounter = 0
+// start with 1 because 0 is not concidered a valid id
+let idCounter = 1
 const makeId = () => idCounter += 1
 
 let records = []
@@ -65,13 +67,13 @@ const revive = (record) => {
 	return record.entity
 }
 
-const reviveTile = data => {
-	const tile = Tile.load(data)
+const reviveTile = (data, index) => {
+	const tile = Tile.load(data, index)
 	tiles[tile.index] = tile
 }
 
 const reference = entity => (entity ? {
-	referenceId: records.find(record => record.entity === entity).id
+	[REFERENCE_KEY]: records.find(record => record.entity === entity).id
 } : null)
 
 const referenceTile = tile => (tile ? {
@@ -132,7 +134,7 @@ const dereference = ref => {
 	if (!ref) {
 		return null
 	}
-	const referenceId = ref.referenceId
+	const referenceId = ref[REFERENCE_KEY]
 	const alive = records.find(record => record.id === referenceId)
 	if (alive) {
 		return alive.entity
@@ -150,7 +152,7 @@ const dereferenceLazy = (ref, fn) => {
 	if (!ref) {
 		fn(null)
 	} else {	
-		const referenceId = ref.referenceId
+		const referenceId = ref[REFERENCE_KEY]
 		const alive = records.find(record => record.id === referenceId)
 		if (alive) {
 			fn(alive.entity)
@@ -211,5 +213,6 @@ export default {
 	setGlobal,
 	getGlobal,
 	save,
-	load
+	load,
+	REFERENCE_KEY
 }
