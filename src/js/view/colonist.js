@@ -20,9 +20,11 @@ const create = colonist => {
 			const options = Tile.fieldProductionOptions(tile, colonist)
 			if (options.length > 1) {			
 				const coords = colonist.sprite.getGlobalPosition()
-				coords.y += colonist.sprite.height / 2
+				const scale = Util.globalScale(colonist.sprite)
+				coords.y += 0.5 * colonist.sprite.height / 2
+
 				const optionsView = options.map(Context.productionOption)
-				const decision = await Context.create(optionsView, coords, 80, 0.5)
+				const decision = await Context.create(optionsView, coords, 80, 0.5 * scale)
 				Colonist.beginFieldWork(colonist, tile, decision.good)
 			}
 		}
