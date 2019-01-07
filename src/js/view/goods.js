@@ -19,7 +19,8 @@ const create = ({ good, amount }) => {
 	return {
 		sprite,
 		number,
-		update
+		update,
+		good
 	}
 }
 

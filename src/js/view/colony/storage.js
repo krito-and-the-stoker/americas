@@ -4,6 +4,7 @@ import Colony from '../../entity/colony'
 import Util from '../../util/util'
 import Drag from '../../input/drag'
 import GoodsView from '../../view/goods'
+import Unit from '../../entity/unit'
 
 const create = (colony, originalDimensions) => {
 	const container = new PIXI.Container()
@@ -40,7 +41,19 @@ const create = (colony, originalDimensions) => {
 			updateAndArgs[i].args.amount = Math.floor(value)
 		})
 	})
-	
+
+	// container.hitArea = new PIXI.Rectangle(0, originalDimensions.y - 121, originalDimensions.x, 121)
+	// Drag.makeDragTarget(container, args => {
+	// 	const { good, unit, amount } = args
+	// 	if (good && unit) {
+	// 		Colony.updateStorage(colony, good, amount)
+	// 		Unit.loadGoods(unit, good, -amount)
+	// 		return false
+	// 	}
+
+	// 	return false
+	// })
+
 	return {
 		container,
 		unsubscribe

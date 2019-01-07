@@ -15,6 +15,9 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 	let lastCoords = null
 
 	const dragStart = e => {
+		if (possibleDragTargets.length > 0) {
+			return
+		}
 		possibleDragTargets.push(target)
 		setTimeout(() => {
 			if (!possibleDragTargets.includes(target)) {
@@ -164,8 +167,23 @@ const makeDraggable = (sprite, entity) => {
 
 	const end = async coords => {
 		// set non-interactive for a moment, otherwise we will just hit our sprite all the time
+		// let target = null
+		// const findTarget = next => {
+		// 	if (next) {
+		// 		if (dragTargets.map(({ sprite }) => sprite).includes(next)) {
+		// 			target = next
+		// 		} else {
+		// 			let originalInteractive = next.interactive
+		// 			next.interactive = false
+		// 			findTarget(Foreground.hitTest(coords))
+		// 			next.interactive = originalInteractive
+		// 		}
+		// 	}
+		// }
+		// findTarget(Foreground.hitTest(coords))
 		sprite.interactive = false
 		const target = Foreground.hitTest(coords)
+		sprite.interactive = true
 		if (dragTargets.map(({ sprite }) => sprite).includes(target)) {
 			const result = await dragTargets.find(({ sprite }) => target === sprite).fn(entity)
 			sprite.interactive = true

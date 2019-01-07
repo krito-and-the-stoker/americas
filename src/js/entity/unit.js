@@ -6,6 +6,7 @@ import Record from '../util/record'
 import Commander from '../command/commander'
 import Time from '../timeline/time'
 import Colony from '../entity/colony'
+import Storage from '../entity/storage'
 
 const create = (name, x, y, additionalProps = {}) => {
 	if (Units[name]) {
@@ -23,7 +24,7 @@ const create = (name, x, y, additionalProps = {}) => {
 			expert: null,
 			...additionalProps
 		}
-
+		unit.storage = Storage.create(unit)
 		unit.commander = Commander.create({ keep: true })
 		Time.schedule(unit.commander)
 
@@ -39,22 +40,21 @@ const create = (name, x, y, additionalProps = {}) => {
 	}
 }
 
-const loadGoods = (unit, good, amount) => {
-
-}
-
-const unloadGoods = (unit, good, amount) => {
-
+const loadGoods = (unit, good, amount) => Storage.update(unit, good, amount)
+const listenStorage = (unit, fn) => {
+	return Storage.listen(unit, fn)
 }
 
 const save = unit => ({
 	...unit,
 	commander: unit.commander.save(),
 	sprite: undefined,
+	[Storage.LISTENER_KEY]: undefined,
 	cargo: unit.cargo.map(other => Record.reference(other)),
 })
 
 const load = unit => {
+	Storage.init(unit)
 	unit.cargo = unit.cargo.map(Record.dereference)
 	unit.sprite = UnitView.createSprite(unit)
 	Record.entitiesLoaded(() => {	
@@ -68,7 +68,7 @@ const load = unit => {
 export default {
 	create,
 	loadGoods,
-	unloadGoods,
+	listenStorage,
 	save,
 	load
 }

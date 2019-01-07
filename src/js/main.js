@@ -11,7 +11,6 @@ import Unit from './entity/unit'
 import Ressources from './render/ressources'
 import Europe from './view/europe'
 import Time from './timeline/time'
-import Report from './command/report'
 import PathFinder from './util/pathFinder'
 import MapControl from './control/map'
 import Dialog from './view/dialog'
@@ -31,9 +30,9 @@ const americaSmall = () => {
 		cargo: [soldier, pioneer]
 	})
 	MapControl.centerAt({ x: 125, y: 65 })
-	Unit.create('caravel', 125, 65)
-	Unit.create('caravel', 125, 65)
-	Unit.create('caravel', 125, 65)
+	Unit.create('caravel', 125, 66)
+	Unit.create('caravel', 125, 67)
+	Unit.create('caravel', 125, 68)
 }
 
 const americaLarge = () => {
@@ -72,14 +71,10 @@ const initialize = async () => {
 		MapControl.initializeInteraction()
 	}, 2050)
 
-	Time.schedule(Report.create())
-
 
 	MainLoop.setUpdate(update)
 	MainLoop.setDraw(draw)
 	MainLoop.start()
-
-	// Dialog.create('Hallo', ['Ok'], 'scout')
 }
 
 

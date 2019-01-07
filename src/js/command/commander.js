@@ -1,7 +1,6 @@
 import Found from '../command/found'
 import Move from '../command/move'
 import MoveTo from '../command/moveTo'
-import Report from '../command/report'
 import Unload from '../command/unload'
 import Time from '../timeline/time'
 
@@ -64,7 +63,6 @@ const getModule = type => ( type ? ({
 	found: Found,
 	move: Move,
 	moveTo: MoveTo,
-	report: Report,
 	unload: Unload,
 	commander: { load }
 })[type] : { load: data => console.warn('cannot load command, missing type', data) }) 

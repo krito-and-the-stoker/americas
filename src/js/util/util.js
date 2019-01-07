@@ -25,6 +25,7 @@ const binding = fieldName => {
 		init,
 		bind,
 		update,
+		listenerKey: listeners
 	}
 }
 
