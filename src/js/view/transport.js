@@ -13,10 +13,10 @@ const create = unit => {
 	container.addChild(sprite)
 
 	const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {
-		const { good, amount, buyInEurope, colony } = args
+		const { good, amount, buyFromEurope, colony } = args
 		const fromUnit = args.unit
 		if (good) {
-			if (buyInEurope) {
+			if (buyFromEurope) {
 				Unit.loadGoods(unit, good, amount)
 				Europe.buy(good, amount)
 				return false
