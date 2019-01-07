@@ -88,16 +88,14 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 		if (possibleDragTargets.includes(target)) {
 			possibleDragTargets = possibleDragTargets.filter(t => t !== target)
 		}
-		if (!currentSpeed) {
-			return
-		}
+
 		currentDrags = currentDrags.filter(t => t !== target)
-		e.stopPropagation()
 
 		// otherwise sometimes drag end fires twice
 		if (!currentStartCoords) {
 			return
 		}
+		e.stopPropagation()
 
 		currentStartCoords = null
 		if (rollout) {		
@@ -173,6 +171,7 @@ const makeDraggable = (sprite, entity) => {
 	}
 
 	const end = async coords => {
+		console.log('draggable end')
 		// mark all possible drag targets interactive
 		const dragTargetsInteractivity = dragTargets.map(({ sprite }) => {
 			const original = sprite.interactive
@@ -198,6 +197,7 @@ const makeDraggable = (sprite, entity) => {
 			}
 		}
 		findTarget(sprite)
+		console.log(target)
 
 		// restore their interactivity
 		dragTargetsInteractivity.forEach(({ sprite, interactive }) => sprite.interactive = interactive)
