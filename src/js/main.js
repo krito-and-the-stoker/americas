@@ -55,7 +55,6 @@ const initialize = async () => {
 	Tween.initialize()
 
 	PathFinder.initialize()
-	Europe.initialize()
 
 	americaSmall()
 

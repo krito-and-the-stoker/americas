@@ -9,6 +9,13 @@ const arrive = unit => {
 	unitsListeners.forEach(fn => fn(units))
 }
 
+const leave = unit => {
+	units = units.filter(u => u !== unit)
+	unitsListeners.forEach(fn => fn(units))
+}
+
+const hasUnit = unit => units.includes(unit)
+
 const bindUnits = fn => {
 	fn(units)
 	unitsListeners.push(fn)
@@ -31,7 +38,9 @@ const load = data => {
 
 export default {
 	arrive,
+	leave,
+	hasUnit,
 	bindUnits,
 	save,
-	load
+	load,
 }

@@ -4,26 +4,28 @@ import Ressources from '../render/ressources'
 import RenderView from '../render/view'
 import Foreground from '../render/foreground'
 import Europe from '../entity/europe'
-
-let screen = null
+import DocksView from './europe/docks'
 
 const open = () => {
-	Foreground.openScreen(screen)
+	Foreground.openScreen(create())
 }
 
 const close = () => {
 	Foreground.closeScreen()
 }
 
-const initialize = () => {
-	const screenContainer = new PIXI.Container()
+const create = () => {
+	const container = new PIXI.Container()
 
 	const background = new PIXI.Sprite(new PIXI.Texture(Ressources.get().europeBackground))
 	const originalDimensions = {
 		x: background.width,
 		y: background.height
 	}
-	screenContainer.addChild(background)
+	container.addChild(background)
+
+	const docks = DocksView.create()
+	container.addChild(docks.container)
 
 	const nameHeadline = new PIXI.Text('London', {
 		fontFamily: 'Times New Roman',
@@ -33,21 +35,19 @@ const initialize = () => {
 	})
 	nameHeadline.anchor.set(0.5)
 	nameHeadline.position.y = 35
-	screenContainer.addChild(nameHeadline)
-
-	screenContainer.interactive = true
-	screenContainer.on('pointerdown', close)
-	screen = screenContainer
+	container.addChild(nameHeadline)
 
 	RenderView.updateWhenResized(({ dimensions }) => {
 		nameHeadline.position.x = dimensions.x / 2
 		const backgroundScale = Math.max(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
 		background.scale.set(backgroundScale)		
 	})
+
+	return container
 }
 
 export default {
-	initialize,
+	create,
 	open,
 	close
 }

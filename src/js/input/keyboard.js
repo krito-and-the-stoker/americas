@@ -1,4 +1,5 @@
 import RenderView from '../render/view'
+import Foreground from '../render/foreground'
 import MapControl from '../control/map'
 import Unit from '../view/unit'
 import Time from '../timeline/time'
@@ -31,6 +32,10 @@ const handleKeydown = (e) => {
 
 	if (e.key === 'e') {
 		Europe.open()
+	}
+
+	if (e.key === 'm') {
+		Foreground.closeScreen()
 	}
 
 	if (e.key === 's') {
