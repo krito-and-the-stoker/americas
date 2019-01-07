@@ -35,6 +35,14 @@ const load = data => {
 	units = data.units.map(Record.dereference)
 }
 
+const buy = (goods, amount) => {
+	console.log(`bought ${amount} ${goods}`)
+}
+
+const sell = (goods, amount) => {
+	console.log(`sold ${amount} ${goods}`)
+}
+
 
 export default {
 	arrive,
@@ -43,4 +51,6 @@ export default {
 	bindUnits,
 	save,
 	load,
+	buy,
+	sell
 }

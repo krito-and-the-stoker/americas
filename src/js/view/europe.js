@@ -4,7 +4,9 @@ import Ressources from '../render/ressources'
 import RenderView from '../render/view'
 import Foreground from '../render/foreground'
 import Europe from '../entity/europe'
+
 import DocksView from './europe/docks'
+import MarketView from './europe/market'
 
 let unsubscribe = () => {}
 const open = () => {
@@ -32,6 +34,9 @@ const create = () => {
 	const docks = DocksView.create()
 	container.addChild(docks.container)
 
+	const market = MarketView.create(originalDimensions)
+	container.addChild(market.container)
+
 	const nameHeadline = new PIXI.Text('London', {
 		fontFamily: 'Times New Roman',
 		fontSize: 50,
@@ -44,12 +49,15 @@ const create = () => {
 
 	RenderView.updateWhenResized(({ dimensions }) => {
 		nameHeadline.position.x = dimensions.x / 2
-		const backgroundScale = Math.max(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
-		background.scale.set(backgroundScale)		
+		const coverScale = Math.max(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
+		const fitScale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
+		background.scale.set(coverScale / fitScale)
+		container.scale.set(fitScale)
 	})
 
 	const unsubscribe = () => {
 		docks.unsubscribe()
+		market.unsubscribe()
 	}
 
 	return {

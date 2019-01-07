@@ -34,7 +34,7 @@ const handleKeydown = (e) => {
 		Europe.open()
 	}
 
-	if (e.key === 'm') {
+	if (e.key === 'm' || e.key === 'Escape') {
 		Foreground.closeScreen()
 	}
 
