@@ -6,11 +6,16 @@ import Foreground from '../render/foreground'
 import Europe from '../entity/europe'
 import DocksView from './europe/docks'
 
+let unsubscribe = () => {}
 const open = () => {
-	Foreground.openScreen(create())
+	const screen = create()
+	unsubscribe = screen.unsubscribe
+	Foreground.openScreen(screen.container)
 }
 
 const close = () => {
+	unsubscribe()
+	unsubscribe = () => {}
 	Foreground.closeScreen()
 }
 
@@ -43,7 +48,14 @@ const create = () => {
 		background.scale.set(backgroundScale)		
 	})
 
-	return container
+	const unsubscribe = () => {
+		docks.unsubscribe()
+	}
+
+	return {
+		container,
+		unsubscribe
+	}
 }
 
 export default {
