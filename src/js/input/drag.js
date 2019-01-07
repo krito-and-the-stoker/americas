@@ -13,6 +13,7 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 	let currentStartCoords = null
 	let currentSpeed = null
 	let lastCoords = null
+	let rollingOut = false
 
 	const dragStart = e => {
 		if (possibleDragTargets.length > 0) {
@@ -24,6 +25,11 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 			x: e.data.global.x,
 			y: e.data.global.y
 		}
+		currentSpeed = {
+			x: 0,
+			y: 0
+		}
+		rollingOut = false
 
 		setTimeout(() => {
 			if (!possibleDragTargets.includes(target)) {
@@ -34,10 +40,6 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 			currentStartCoords = {
 				x: lastCoords.x,
 				y: lastCoords.y
-			}
-			currentSpeed = {
-				x: 0,
-				y: 0
 			}
 
 			if (rollout) {			
@@ -99,8 +101,9 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 
 		currentStartCoords = null
 		if (rollout) {		
+			rollingOut = true
 			const rollOut = async () => {
-				if(!currentStartCoords && currentSpeed.x*currentSpeed.x + currentSpeed.y*currentSpeed.y > 2) {
+				if(rollingOut && currentSpeed.x*currentSpeed.x + currentSpeed.y*currentSpeed.y > 2) {
 					const newCoords = {
 						x: currentSpeed.x + lastCoords.x,
 						y: currentSpeed.y + lastCoords.y

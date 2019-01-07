@@ -92,14 +92,22 @@ const initializeInteraction = () => {
 		}
 	}
 	const move = coords => {
-		const from = RenderView.get().coords
-		const target = {
-			x: initialCoords.x + coords.x,
-			y: initialCoords.y + coords.y
+		if (initialCoords) {		
+			const from = RenderView.get().coords
+			const target = {
+				x: initialCoords.x + coords.x,
+				y: initialCoords.y + coords.y
+			}
+			if (moveTween !== null) {
+				moveMap(target, 0)
+			} else {
+				initialCoords = null
+			}
 		}
-		moveMap(target, 0)
 	}
-	const end = coords => {}
+	const end = coords => {
+		initialCoords = null
+	}
 
 	Drag.on(stage, start, move, end, true)
 	Secondary.on(stage, coords => {
