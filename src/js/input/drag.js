@@ -19,6 +19,12 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 			return
 		}
 		possibleDragTargets.push(target)
+
+		lastCoords = {
+			x: e.data.global.x,
+			y: e.data.global.y
+		}
+
 		setTimeout(() => {
 			if (!possibleDragTargets.includes(target)) {
 				return
@@ -26,37 +32,35 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 
 			currentDrags.push(target)
 			currentStartCoords = {
-				x: e.data.global.x,
-				y: e.data.global.y
+				x: lastCoords.x,
+				y: lastCoords.y
 			}
-			lastCoords = {
-				x: currentStartCoords.x,
-				y: currentStartCoords.y
-		  }
 			currentSpeed = {
 				x: 0,
 				y: 0
 			}
 
-			const handleSpeedDeterioration = () => {
-				if (!moveHandled) {
-					currentSpeed = {
-						x: 0.7*currentSpeed.x,
-						y: 0.7*currentSpeed.y
+			if (rollout) {			
+				const handleSpeedDeterioration = () => {
+					if (!moveHandled) {
+						currentSpeed = {
+							x: 0.7*currentSpeed.x,
+							y: 0.7*currentSpeed.y
+						}
+					}
+					if (currentStartCoords) {
+						requestAnimationFrame(handleSpeedDeterioration)
 					}
 				}
-				if (currentStartCoords) {
-					requestAnimationFrame(handleSpeedDeterioration)
-				}
+				requestAnimationFrame(handleSpeedDeterioration)
 			}
-			requestAnimationFrame(handleSpeedDeterioration)
 
 			onStart(currentStartCoords)
 		}, MIN_DRAG_TIME)
 	}
 
 	let moveHandled = false
-	const dragMove = (e) => {
+	const dragMove = e => {
 		if (!currentStartCoords) {
 			return
 		}
