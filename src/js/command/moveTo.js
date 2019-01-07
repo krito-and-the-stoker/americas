@@ -19,11 +19,13 @@ const create = (unit, coords) => {
 	const moveToCommander = Commander.create()
 
 	const target = MapEntity.tile(coords)
-	Dialog.show('europe').then(decision => {
-		if (decision === 0) {
-			Commander.scheduleBehind(moveToCommander, Europe.create(unit))
-		}
-	})
+	if (target.name === 'sea lane') {	
+		Dialog.show('europe').then(decision => {
+			if (decision === 0) {
+				Commander.scheduleBehind(moveToCommander, Europe.create(unit))
+			}
+		})
+	}
 
 	const originalInit = moveToCommander.init
 	moveToCommander.init = () => {

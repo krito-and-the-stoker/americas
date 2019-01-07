@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js'
 import Ressources from '../render/ressources'
 import RenderView from '../render/view'
 import Foreground from '../render/foreground'
+import Europe from '../entity/europe'
 
 let screen = null
 

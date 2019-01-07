@@ -2,6 +2,7 @@ import Found from '../command/found'
 import Move from '../command/move'
 import MoveTo from '../command/moveTo'
 import Unload from '../command/unload'
+import Europe from '../command/europe'
 import Time from '../timeline/time'
 
 const cancel = () => ({
@@ -64,6 +65,7 @@ const getModule = type => ( type ? ({
 	move: Move,
 	moveTo: MoveTo,
 	unload: Unload,
+	europe: Europe,
 	commander: { load }
 })[type] : { load: data => console.warn('cannot load command, missing type', data) }) 
 
