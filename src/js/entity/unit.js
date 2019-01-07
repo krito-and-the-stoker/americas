@@ -49,6 +49,7 @@ const save = unit => ({
 	...unit,
 	commander: unit.commander.save(),
 	sprite: undefined,
+	colony: Record.reference(unit.colony),
 	[Storage.LISTENER_KEY]: undefined,
 	cargo: unit.cargo.map(other => Record.reference(other)),
 })
@@ -57,6 +58,7 @@ const load = unit => {
 	Storage.init(unit)
 	unit.cargo = unit.cargo.map(Record.dereference)
 	unit.sprite = UnitView.createSprite(unit)
+	Record.dereferenceLazy(unit.colony, colony => unit.colony = colony)
 	Record.entitiesLoaded(() => {	
 		unit.commander = Commander.load(unit.commander)
 		Time.schedule(unit.commander)

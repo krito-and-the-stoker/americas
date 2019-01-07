@@ -3,7 +3,9 @@ import PathFinder from '../util/pathFinder'
 import MapEntity from '../entity/map'
 import Move from './move'
 import Commander from './commander'
+import Europe from './europe'
 import Record from '../util/record'
+import Dialog from '../view/dialog'
 
 
 const create = (unit, coords) => {
@@ -15,6 +17,14 @@ const create = (unit, coords) => {
 	}
 
 	const moveToCommander = Commander.create()
+
+	const target = MapEntity.tile(coords)
+	Dialog.show('europe').then(decision => {
+		if (decision === 0) {
+			Commander.scheduleBehind(moveToCommander, Europe.create(unit))
+		}
+	})
+
 	const originalInit = moveToCommander.init
 	moveToCommander.init = () => {
 		if (originalInit) {

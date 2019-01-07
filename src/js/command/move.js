@@ -39,14 +39,17 @@ const createFromData = data => {
 			return false
 		}
 
+
 		startTime = currentTime
 		startCoords = unit.mapCoordinates
 		const speed = unit.speed
 		fromTile = MapEntity.tile(unit.mapCoordinates)
+
 		if (fromTile === targetTile) {
 			aborted = true
 			return false
 		}
+
 		if (unloading(unit, fromTile, targetTile)) {
 			duration = Time.UNLOAD_TIME
 		} else {

@@ -31,8 +31,6 @@ const americaSmall = () => {
 	})
 	MapControl.centerAt({ x: 125, y: 65 })
 	Unit.create('caravel', 125, 66)
-	Unit.create('caravel', 125, 67)
-	Unit.create('caravel', 125, 68)
 }
 
 const americaLarge = () => {

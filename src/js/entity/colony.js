@@ -8,6 +8,7 @@ import Time from '../timeline/time'
 import Util from '../util/util'
 import Colonist from '../entity/colonist'
 import Record from '../util/record'
+import UnitView from '../view/unit'
 
 setTimeout(() => Record.setGlobal('colonyNames', ['Jamestown', 'Roanoke', 'Virginia', "Cuper's Cove", "St. John's", 'Henricus']), 0)
 const getColonyName = () => {
@@ -31,9 +32,12 @@ const bindStorage = (colony, fn) => {
 
 const enter = (colony, unit) => {
 	colony.units.push(unit)
+	unit.colony = colony
+	UnitView.deactivate(unit)
 	Util.binding('units').update(colony)
 }
 const leave = (colony, unit) => {
+	unit.colony = null
 	Util.binding('units').update(colony, colony.units.filter(u => u !== unit))
 }
 const bindUnits = Util.binding('units').bind

@@ -7,6 +7,9 @@ let container = null
 let context = null
 let menu = null
 let currentScreen = null
+let units = null
+let terrain = null
+
 let layer = null
 
 const get = () => ({
@@ -40,17 +43,16 @@ const closeScreen = () => {
 	currentScreen = null
 }
 
-const add = sprite => {
-	container.addChild(sprite)
+const addTerrain = sprite => {
+	terrain.addChild(sprite)
 }
 
-const remove = sprite => {
-	container.removeChild(sprite)
+const addUnit = sprite => {
+	units.addChild(sprite)
 }
 
-const addEventListener = (event, fn) => {
-	console.log('added', event)
-	container.on(event, fn)
+const removeUnit = sprite => {
+	units.removeChild(sprite)
 }
 
 const updateCoords = ({ x, y }) => {
@@ -68,9 +70,13 @@ const initialize = () => {
 	})
 
 	container = new PIXI.Container()
+	terrain = new PIXI.Container()
+	units = new PIXI.Container()
 	context = new PIXI.Container()
 	menu = new PIXI.Container()
 
+	container.addChild(terrain)
+	container.addChild(units)
 	layer.app.stage.addChild(container)
 	layer.app.stage.addChild(context)
 	layer.app.stage.addChild(menu)
@@ -79,7 +85,8 @@ const initialize = () => {
 
 const shutdown = () => {
 	closeScreen()
-	container.removeChildren()
+	terrain.removeChildren()
+	units.removeChildren()
 	menu.removeChildren()
 }
 
@@ -93,10 +100,10 @@ export default {
 	updateCoords,
 	updateScale,
 	doRenderWork,
-	addEventListener,
 	openScreen,
 	closeScreen,
-	add,
-	remove,
+	addTerrain,
+	addUnit,
+	removeUnit,
 	get
 }

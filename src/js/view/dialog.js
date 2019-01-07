@@ -39,6 +39,10 @@ const dialogs = {
 	unload: {
 		msg: 'Do you want to disembark here?',
 		options: ['make landfall', 'stay on board']
+	},
+	europe: {
+		msg: 'Do you want to set sail for europe?',
+		options: ['yes, steady as she goes!', 'no, let us remain here.']
 	}
 }
 

@@ -43,8 +43,8 @@ const createMapSprite = colony => {
 	text.position.x = sprite.x + TILE_SIZE / 2
 	text.position.y = sprite.y + TILE_SIZE + 10
 	text.anchor.set(0.5)
-	Foreground.add(text)
-	Foreground.add(sprite)
+	Foreground.addTerrain(text)
+	Foreground.addTerrain(sprite)
 	return sprite
 }
 

@@ -21,7 +21,7 @@ const create = (colony, closeScreen) => {
 			
 			Click.on(sprite, () => {
 				closeScreen()
-				UnitView.activateUnit(unit)
+				UnitView.select(unit)
 			})
 
 			Drag.makeDragTarget(sprite, args => {

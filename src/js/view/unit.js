@@ -7,6 +7,7 @@ import Ressources from '../render/ressources'
 import Click from '../input/click'
 import Secondary from '../input/secondary'
 import Record from '../util/record'
+import ColonyView from '../view/colony'
 
 const BLINK_TIME = 500
 const TILE_SIZE = 64
@@ -17,9 +18,13 @@ const get = () => ({
 })
 
 let blinkTween = null
-const activateUnit = unit => {
+const select = unit => {
 	if (unit != activeUnit) {
+		if (activeUnit) {
+			unselect()
+		}
 		activeUnit = unit
+		activate(activeUnit)
 		if (blinkTween) {
 			blinkTween.stop()
 		}
@@ -34,18 +39,30 @@ const activateUnit = unit => {
 	}
 }
 
+const unselect = () => {
+	const unit = activeUnit
+	activeUnit = null
+
+	if (unit.colony) {
+		deactivate(unit)
+	}
+}
+
 const activate = unit => {
 	if (!unit.active) {
 		unit.sprite.x = TILE_SIZE * unit.mapCoordinates.x
 		unit.sprite.y = TILE_SIZE * unit.mapCoordinates.y
-		Foreground.add(unit.sprite)
+		Foreground.addUnit(unit.sprite)
 		unit.active = true
 	}
 }
 
 const deactivate = unit => {
 	if (unit.active) {
-		Foreground.remove(unit.sprite)
+		if (unit === activeUnit) {
+			unselect()
+		}
+		Foreground.removeUnit(unit.sprite)
 		unit.active = false
 	}
 }
@@ -56,10 +73,15 @@ const createSprite = unit => {
 	sprite.x = TILE_SIZE * unit.mapCoordinates.x
 	sprite.y = TILE_SIZE * unit.mapCoordinates.y
 	if (unit.active) {
-		Foreground.add(sprite)
+		Foreground.addUnit(sprite)
 	}
 	Click.on(sprite, () => {
-		activateUnit(unit)
+		if (unit.colony) {
+			unit.colony.screen = ColonyView.createDetailScreen(unit.colony)
+			Foreground.openScreen(unit.colony.screen)			
+		} else {
+			select(unit)
+		}
 	})
 
 	return sprite
@@ -77,7 +99,7 @@ const save = () => Record.reference(activeUnit)
 const load = data => {
 	const unit = Record.dereference(data)
 	if (unit) {
-		activateUnit(unit)
+		select(unit)
 	}
 }
 
@@ -87,7 +109,7 @@ export default {
 	createColonySprite,
 	activate,
 	deactivate,
-	activateUnit,
+	select,
 	get,
 	load,
 	save
