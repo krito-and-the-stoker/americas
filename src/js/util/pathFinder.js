@@ -26,7 +26,7 @@ const initialize = () => {
 		const center = tiles[index]
 		const neighbors = Tile.diagonalNeighbors(center).map(tile => ({
 			index: tile.index,
-			cost: Tile.movementCost(center, tile),
+			cost: () => Tile.movementCost(center, tile),
 			tile
 		}))
 
@@ -37,17 +37,15 @@ const initialize = () => {
 	})
 }
 
-const findDomainChange = from => {
-	const target = node => node.tile.domain !== from.domain
-	return find(from, target, null, true);
-}
+// const findDomainChange = (from, unit) => {
+// 	const target = node => node.tile.domain !== unit.domain
+// 	return find(from, target, null, true, unit);
+// }
 
-const findPathXY = (from, to) => findPath(MapEntity.tile(from), MapEntity.tile(to))
-
-
-const findPath = (from, to) => {
+const findPathXY = (from, to, unit) => findPath(MapEntity.tile(from), MapEntity.tile(to), unit)
+const findPath = (from, to, unit) => {
 	const target = node => node.index === to.index
-	return find(from, target, to, false)
+	return find(from, target, to, false, unit)
 }
 
 const	tileDistance = (from, to) => {
@@ -57,7 +55,7 @@ const	tileDistance = (from, to) => {
 }
 
 
-const find = (from, isTarget, target, freeDomainCross) => {
+const find = (from, isTarget, target, freeDomainCross, unit) => {
 	const frontier = new FibonacciHeap((a, b) => {
 		//comparison by used cost
 		if(a.key !== b.key)
@@ -77,7 +75,7 @@ const find = (from, isTarget, target, freeDomainCross) => {
 		return 0;
 	});
 
-	const relativeEstimate = tile => target ? estimate(tile, target) - estimate(from, target) : 0
+	const relativeEstimate = tile => target ? estimate(tile, target, unit) - estimate(from, target, unit) : 0
 
 	let node = graph.node(from.index)
 	const explored = {}
@@ -105,8 +103,8 @@ const find = (from, isTarget, target, freeDomainCross) => {
 		node.value.neighbors.forEach(neighbor => {
 			if(!explored[neighbor.index]){
 				let neighborNode = graph.node(neighbor.index)
-				let newCost = node.value.cost + neighbor.cost
-				if(from.domain !== node.value.tile.domain && !node.value.tile.colony){
+				let newCost = node.value.cost + neighbor.cost()
+				if(unit.domain !== node.value.tile.domain && !node.value.tile.colony){
 					if(freeDomainCross)
 						newCost = 0
 					else
@@ -138,11 +136,11 @@ const find = (from, isTarget, target, freeDomainCross) => {
 	return [from]
 }
 
-const estimate = (from, to) => {
+const estimate = (from, to, unit) => {
 	if(from.domain === 'land' && to.domain === 'land'){
 		return MIN_TERRAIN_COST * tileDistance(from, to);
 	}
-	if(from.domain === 'sea' && to.domain === 'sea'){
+	if(from.domain === 'sea' && to.domain === 'sea' || to.colony){
 		return tileDistance(from, to);
 	}
 
@@ -150,30 +148,30 @@ const estimate = (from, to) => {
 }
 
 
-const findReverse = (from, to, unit) => {
-	const domain = unit.domain;
-	if(to.isNextToOrDiagonal(from)){
-		if(to.domain === domain)
-			return [to];
-		else
-			return [];
-	}
-	else{
-		let target = to;
-		if(from.domain !== to.domain){
-			target = findDomainChange(to, unit).pop();
-		}
-		let path = findPath(from, target, unit);
-		if(path){
-			path.reverse();
-			path.pop(); //remove last element (this is the current position)
+// const findReverse = (from, to, unit) => {
+// 	const domain = unit.domain;
+// 	if(to.isNextToOrDiagonal(from)){
+// 		if(to.domain === domain)
+// 			return [to];
+// 		else
+// 			return [];
+// 	}
+// 	else{
+// 		let target = to;
+// 		if(unit.domain !== to.domain && !to.colony){
+// 			target = findDomainChange(to, unit).pop();
+// 		}
+// 		let path = findPath(from, target, unit);
+// 		if(path){
+// 			path.reverse();
+// 			path.pop(); //remove last element (this is the current position)
 
-			return path;
-		}
+// 			return path;
+// 		}
 
-		return [];
-	}
-}
+// 		return [];
+// 	}
+// }
 
 
 export default {

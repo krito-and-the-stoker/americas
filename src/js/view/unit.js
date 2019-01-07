@@ -6,12 +6,12 @@ import Foreground from '../render/foreground'
 import Ressources from '../render/ressources'
 import Click from '../input/click'
 import Secondary from '../input/secondary'
+import Record from '../util/record'
 
 const BLINK_TIME = 500
 const TILE_SIZE = 64
 
 let activeUnit = null
-
 const get = () => ({
 	activeUnit
 })
@@ -65,10 +65,30 @@ const createSprite = unit => {
 	return sprite
 }
 
+const createColonySprite = unit => {
+	const frame = unit.expert ? unit.frame[unit.expert] || unit.frame.default : unit.frame.default
+	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
+	sprite.scale.set(2)
+
+	return sprite	
+}
+
+const save = () => Record.reference(activeUnit)
+const load = data => {
+	const unit = Record.dereference(data)
+	if (unit) {
+		activateUnit(unit)
+	}
+}
+
 
 export default {
 	createSprite,
+	createColonySprite,
 	activate,
 	deactivate,
-	get
+	activateUnit,
+	get,
+	load,
+	save
 }

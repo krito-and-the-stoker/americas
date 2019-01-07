@@ -5,6 +5,7 @@ import Tile from '../entity/tile'
 import Record from '../util/record'
 import Commander from '../command/commander'
 import Time from '../timeline/time'
+import Colony from '../entity/colony'
 
 const create = (name, x, y, additionalProps = {}) => {
 	if (Units[name]) {
@@ -18,6 +19,7 @@ const create = (name, x, y, additionalProps = {}) => {
 			mapCoordinates: { x, y },
 			active: true,
 			cargo: [],
+			goods: [],
 			expert: null,
 			...additionalProps
 		}
@@ -25,6 +27,9 @@ const create = (name, x, y, additionalProps = {}) => {
 		unit.commander = Commander.create({ keep: true })
 		Time.schedule(unit.commander)
 
+		if (tile.colony) {
+			Colony.enter(tile.colony, unit)
+		}
 		unit.sprite = UnitView.createSprite(unit)
 
 		Record.add('unit', unit)
@@ -34,11 +39,19 @@ const create = (name, x, y, additionalProps = {}) => {
 	}
 }
 
+const loadGoods = (unit, good, amount) => {
+
+}
+
+const unloadGoods = (unit, good, amount) => {
+
+}
+
 const save = unit => ({
 	...unit,
 	commander: unit.commander.save(),
 	sprite: undefined,
-	cargo: unit.cargo.map(other => Record.reference(other))
+	cargo: unit.cargo.map(other => Record.reference(other)),
 })
 
 const load = unit => {
@@ -54,6 +67,8 @@ const load = unit => {
 
 export default {
 	create,
+	loadGoods,
+	unloadGoods,
 	save,
 	load
 }

@@ -37,7 +37,6 @@ const create = (colony, originalDimensions) => {
 					} else {
 						const coords = colonist.sprite.getGlobalPosition()
 						const scale = Util.globalScale(colonist.sprite)
-						// coords.x += 0.5 * colonist.sprite.width / 4
 						coords.y += 0.5 * colonist.sprite.height / 2
 
 						const optionsView = options.map(Context.productionOption)

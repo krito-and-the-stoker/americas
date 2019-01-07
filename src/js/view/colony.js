@@ -10,11 +10,13 @@ import Tile from '../entity/tile'
 import ProductionView from '../view/production'
 import Colony from '../entity/colony'
 import Click from '../input/click'
+import UnitView from '../view/unit'
 
 import ColonyBackground from './colony/background'
 import ColonyTiles from './colony/tiles'
 import ColonyHeadline from './colony/headline'
 import ColonyStorage from './colony/storage'
+import ColonyDocks from './colony/docks'
 
 
 const TILE_SIZE = 64
@@ -52,19 +54,21 @@ const createMapSprite = colony => {
 const createDetailScreen = colony => {
 	const screenContainer = new PIXI.Container()
 	const colonyWoodBackground = new PIXI.extras.TilingSprite(Ressources.get().colonyWoodBackground, RenderView.getDimensions().x, RenderView.getDimensions().y)
-	screenContainer.addChild(colonyWoodBackground)
 	
 	const background = ColonyBackground.create(colony)
-	screenContainer.addChild(background.container)
 	const originalDimensions = background.originalDimensions
 
 	const tiles = ColonyTiles.create(colony, originalDimensions)
-	screenContainer.addChild(tiles.container)
-
 	const headline = ColonyHeadline.create(colony, originalDimensions)
-	screenContainer.addChild(headline.container)
-
 	const storage = ColonyStorage.create(colony, originalDimensions)
+
+	const docks = ColonyDocks.create(colony, () => closeScreen())
+
+	screenContainer.addChild(colonyWoodBackground)
+	screenContainer.addChild(background.container)
+	screenContainer.addChild(docks.container)
+	screenContainer.addChild(tiles.container)
+	screenContainer.addChild(headline.container)
 	screenContainer.addChild(storage.container)
 
 
@@ -82,12 +86,14 @@ const createDetailScreen = colony => {
 	})
 
 	colonyWoodBackground.interactive = true
-	Click.on(colonyWoodBackground, () => {
+	const closeScreen = () => {
 		tiles.unsubscribe()
 		storage.unsubscribe()
+		docks.unsubscribe()
 		unsubscribeResize()
 		Foreground.closeScreen()
-	})
+	}
+	Click.on(colonyWoodBackground, closeScreen)
 	return screenContainer
 }
 

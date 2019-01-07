@@ -1,35 +1,48 @@
 import * as PIXI from 'pixi.js'
 
 import Colony from '../../entity/colony'
+import Util from '../../util/util'
+import Drag from '../../input/drag'
+import GoodsView from '../../view/goods'
 
 const create = (colony, originalDimensions) => {
+	const container = new PIXI.Container()
 	const numberOfGoods = Object.keys(colony.storage).length
-	const textObjects = Object.entries(colony.storage).map(([good, amount], i) => {
-		const number = new PIXI.Text(`${amount}`, {
-			fontFamily: 'Times New Roman',
-			fontSize: 32,
-			fill: 0xffffff,
-			align: 'center'
-		})
-		number.anchor.set(0.5)
-		const width = originalDimensions.x / numberOfGoods
-		number.position.x = (i + 0.5) * width
-		number.position.y = originalDimensions.y - width / 4
+	const width = originalDimensions.x / numberOfGoods
+	const updateAndArgs = Object.keys(colony.storage).map((good, index) => {
+		const { sprite, number, update } = GoodsView.create({ good, amount: colony.storage[good] })
+		sprite.x = Math.round(index * (originalDimensions.x + 11) / numberOfGoods)
+		sprite.y = originalDimensions.y - 121
+		sprite.scale.set(1.7)
+		container.addChild(sprite)
 
-		return number
+		number.anchor.set(0.5)
+		number.position.x = (index + 0.5) * width
+		number.position.y = originalDimensions.y - width / 4
+		container.addChild(number)
+
+		let args = {
+			good: good,
+			amount: colony.storage[good],
+			colony
+		}
+		Drag.makeDraggable(sprite, args)
+
+		return {
+			update,
+			args
+		}
 	})
-	const storageTextContainer = new PIXI.Container()
-	textObjects.forEach(number => {
-		storageTextContainer.addChild(number)
-	})
+
 	const unsubscribe = Colony.bindStorage(colony, storage => {
 		Object.values(storage).forEach((value, i) => {
-			textObjects[i].text = `${Math.floor(value)}`
+			updateAndArgs[i].update(Math.floor(value))
+			updateAndArgs[i].args.amount = Math.floor(value)
 		})
 	})
 	
 	return {
-		container: storageTextContainer,
+		container,
 		unsubscribe
 	}
 }

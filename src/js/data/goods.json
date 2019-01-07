@@ -13,7 +13,7 @@
 		"cigars",
 		"cloth",
 		"coats",
-		"trade goods",
+		"tradeGoods",
 		"tools",
 		"guns"
 	],
@@ -56,7 +56,7 @@
 	"coats":{
 		"id": 76
 	},
-	"trade goods":{
+	"tradeGoods":{
 		"id": 77
 	},
 	"tools":{

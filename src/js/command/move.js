@@ -4,6 +4,7 @@ import Unload from './unload'
 import Tile from '../entity/tile'
 import Record from '../util/record'
 import Time from '../timeline/time'
+import Colony from '../entity/colony'
 
 const TILE_SIZE = 64
 
@@ -25,9 +26,10 @@ const createFromData = data => {
 	let startCoords = data.startCoords
 	let duration = data.duration
 	let aborted = data.aborted
+	const targetTile = MapEntity.tile(coords)
+	let fromTile = null
 
 	const init = currentTime => {
-		const targetTile = MapEntity.tile(coords)
 
 		if (unit.domain !== targetTile.domain && !targetTile.colony) {
 			if (unit.domain === 'sea' && unit.cargo.length > 0 && targetTile.domain === 'land' && inMoveDistance(unit.mapCoordinates, coords)) {
@@ -40,7 +42,7 @@ const createFromData = data => {
 		startTime = currentTime
 		startCoords = unit.mapCoordinates
 		const speed = unit.speed
-		const fromTile = MapEntity.tile(unit.mapCoordinates)
+		fromTile = MapEntity.tile(unit.mapCoordinates)
 		if (fromTile === targetTile) {
 			aborted = true
 			return false
@@ -66,6 +68,12 @@ const createFromData = data => {
 			unit.sprite.y = TILE_SIZE * coords.y
 			unit.mapCoordinates.x = coords.x
 			unit.mapCoordinates.y = coords.y
+			if (targetTile.colony) {
+				Colony.enter(targetTile.colony, unit)
+			}
+			if (fromTile.colony) {
+				Colony.leave(fromTile.colony, unit)
+			}
 			return false
 		}
 		unit.sprite.x = TILE_SIZE * (startCoords.x + (coords.x - startCoords.x) * relativeTime / duration)

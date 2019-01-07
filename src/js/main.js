@@ -31,6 +31,9 @@ const americaSmall = () => {
 		cargo: [soldier, pioneer]
 	})
 	MapControl.centerAt({ x: 125, y: 65 })
+	Unit.create('caravel', 125, 65)
+	Unit.create('caravel', 125, 65)
+	Unit.create('caravel', 125, 65)
 }
 
 const americaLarge = () => {

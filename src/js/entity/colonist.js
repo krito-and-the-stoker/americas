@@ -5,7 +5,7 @@ import ColonistView from '../view/colonist'
 import Record from '../util/record'
 import Util from '../util/util'
 
-const worksAt = Util.bind('worksAt')
+const worksAt = Util.binding('worksAt')
 
 
 const beginFieldWork = (colonist, tile, good) => {

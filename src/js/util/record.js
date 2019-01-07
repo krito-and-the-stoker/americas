@@ -11,6 +11,7 @@ import MapView from '../view/map'
 import Foreground from '../render/foreground'
 import Background from '../render/background'
 import RenderView from '../render/view'
+import UnitView from '../view/unit'
 import Time from '../timeline/time'
 
 const REFERENCE_KEY = 'referenceId'
@@ -103,6 +104,7 @@ const save = () => {
 		entities: records.map(saveSingleRecord),
 		tiles: Object.values(tiles).map(saveSingleTile),
 		time: Time.save(),
+		unitView: UnitView.save(),
 		globals
 	})
 	if (SAVE_TO_LOCAL_STORAGE) {
@@ -189,6 +191,7 @@ const load = () => {
 	snapshot.entities.forEach(record => record.listeners = [])
 	snapshot.entities.forEach(revive)
 	Time.load(snapshot.time)
+	UnitView.load(snapshot.unitView)
 
 	loadedListeners.forEach(fn => fn())
 

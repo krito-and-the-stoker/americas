@@ -1,3 +1,5 @@
+import Goods from '../data/goods.json'
+
 import ColonyView from '../view/colony'
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
@@ -26,31 +28,26 @@ const bindStorage = (colony, fn) => {
 	return () => colony.storageListeners = colony.storageListeners.filter(func => func !== fn)
 }
 
+
+const enter = (colony, unit) => {
+	colony.units.push(unit)
+	Util.binding('units').update(colony)
+}
+const leave = (colony, unit) => {
+	Util.binding('units').update(colony, colony.units.filter(u => u !== unit))
+}
+const bindUnits = Util.binding('units').bind
+
 const create = (coords, unit) => {
 	const colony = {
 		name: getColonyName(),
+		units: [],
 		storageListeners: [],
-		storage: {
-			food: 0,
-			sugar: 0,
-			tobacco: 0,
-			cotton: 0,
-			furs: 0,
-			wood: 0,
-			ore: 0,
-			silver: 0,
-			horses: 0,
-			rum: 0,
-			cigars: 0,
-			cloth: 0,
-			coats: 0,
-			tradeGoods: 0,
-			tools: 0,
-			guns: 0
-		},
+		storage: Goods.types.reduce((obj, name) => ({ ...obj, [name]: 0 }), {}),
 		mapCoordinates: { ...coords }
 	}
 	const tile = MapEntity.tile(coords)
+	Util.binding('units').init(colony)
 	tile.colony = colony
 	const colonist = Colonist.create(colony, unit)
 	colony.colonists = [colonist]
@@ -80,11 +77,13 @@ const save = colony => ({
 	name: colony.name,
 	storage: colony.storage,
 	mapCoordinates: colony.mapCoordinates,
-	colonists: colony.colonists.map(colonist => Record.reference(colonist))
+	colonists: colony.colonists.map(colonist => Record.reference(colonist)),
+	units: colony.units.map(unit => Record.reference(unit))
 })
 
 const load = colony => {
 	colony.storageListeners = []
+	Util.binding('units').init(colony)
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	tile.colony = colony
 	Record.entitiesLoaded(() => {
@@ -94,6 +93,7 @@ const load = colony => {
 	colony.sprite = ColonyView.createMapSprite(colony)
 
 	colony.colonists.forEach((colonist, index) => Record.dereferenceLazy(colonist, entity => colony.colonists[index] = entity))
+	colony.units.forEach((unit, index) => Record.dereferenceLazy(unit, entity => colony.units[index] = entity))
 	return colony	
 }
 
@@ -116,5 +116,8 @@ export default {
 	load,
 	coastalDirection,
 	updateStorage,
-	bindStorage
+	bindStorage,
+	bindUnits,
+	enter,
+	leave
 }

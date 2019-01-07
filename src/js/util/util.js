@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 
 
-const bind = fieldName => {
+const binding = fieldName => {
 	const listeners = `${fieldName}Listeners`
 	const init = instance => {
 		instance[listeners] = []
@@ -15,8 +15,10 @@ const bind = fieldName => {
 	}
 
 	const update = (instance, value) => {
-		instance[fieldName] = value
-		instance[listeners].forEach(fn => fn(value))
+		if (value !== undefined) {
+			instance[fieldName] = value
+		}
+		instance[listeners].forEach(fn => fn(instance[fieldName]))
 	}
 
 	return {
@@ -67,5 +69,5 @@ export default {
 	range,
 	rectangle,
 	getUid,
-	bind,
+	binding,
 }

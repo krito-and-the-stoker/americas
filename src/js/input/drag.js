@@ -145,7 +145,7 @@ const makeDraggable = (sprite, entity) => {
 	let initialCoords = null
 	let initialSpriteCoords = null
 	const start = coords => {
-		const scale = Util.globalScale(sprite)
+		const scale = Util.globalScale(sprite) / sprite.scale.x
 		initialSpriteCoords = {
 			x: sprite.x,
 			y: sprite.y
@@ -157,7 +157,7 @@ const makeDraggable = (sprite, entity) => {
 	}
 
 	const move = coords => {
-		const scale = Util.globalScale(sprite)
+		const scale = Util.globalScale(sprite) / sprite.scale.x
 		sprite.x = initialCoords.x + coords.x / scale
 		sprite.y = initialCoords.y + coords.y / scale
 	}

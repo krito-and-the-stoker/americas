@@ -173,6 +173,9 @@ const movementCost = (from, to) => {
 			return MovementCosts.river
 		}
 	}
+	if (to.colony) {
+		return MovementCosts.colony
+	}
 	return MovementCosts[to.terrainName]
 }
 
