@@ -6,104 +6,33 @@ import Click from '../../input/click'
 import Drag from '../../input/drag'
 import Unit from '../../entity/unit'
 import GoodsView from '../../view/goods'
+import Transport from '../../view/transport'
 
 const create = (colony, closeScreen) => {
-	let unitSprites = []
 	const container = new PIXI.Container()
-	let unsubscribeStorage = () => {}
+
+	let shipViews = []
 	const unsubscribeUnits = Colony.bindUnits(colony, units => {
 		const ships = units.filter(unit => unit.domain === 'sea')
-		unitSprites.forEach(s => container.removeChild(s))
-		unitSprites = ships.map((unit, index) => {
-			const sprite = UnitView.createColonySprite(unit)
-			sprite.x = index * sprite.width
-			sprite.y = 10
-			
-			Click.on(sprite, () => {
-				closeScreen()
-				UnitView.select(unit)
-			})
-
-			Drag.makeDragTarget(sprite, args => {
-				const { good, colony, amount } = args
-				const fromUnit = args.unit
-				if (good) {
-					if (colony) {
-						Unit.loadGoods(unit, good, amount)
-						Colony.updateStorage(colony, good, -amount)
-						return false
-					}
-					if (args.unit && args.unit !== unit) {
-						Unit.loadGoods(unit, good, amount)
-						Unit.loadGoods(fromUnit, good, -amount)
-						return false
-					}
-				}
-
-				return false
-			})
-
-			container.addChild(sprite)
-
-			return sprite
+		shipViews.forEach(view => {
+			view.unsubscribe()
+			container.removeChild(view.container)
 		})
-
-		unsubscribeStorage()
-		unsubscribeStorage = ships.map((unit, unitIndex) => {
-			const goodsViews = Object.entries(unit.storage)
-				.map(([good, amount]) => ({ good, amount }))
-				.map(GoodsView.create)
-
-			const args = goodsViews.map(view => {
-				container.addChild(view.sprite)
-				const args = {
-					good: view.good,
-					amount: unit.storage[view.good],
-					unit
-				}
-				Drag.makeDraggable(view.sprite, args)
-				// container.addChild(view.number)
-
-				return args
+		shipViews = ships.map(Transport.create)
+		shipViews.forEach((view, index) => {
+			Click.on(view.sprite, () => {
+				closeScreen()
+				UnitView.select(view.unit)
 			})
-
-			return Unit.listenStorage(unit, storage => {
-				const numberOfGoods = goodsViews.filter(view => storage[view.good]).length
-				args.forEach(arg => arg.amount = storage[arg.good])
-				let index = {
-					x: 0,
-					y: 0
-				}
-				goodsViews.forEach(view => {
-					view.update(storage[view.good])
-					if (storage[view.good]) {
-						view.sprite.x = index.x * 1.4 * 32 - 8 + 2 * 64 * unitIndex
-						view.sprite.y = index.y * 1.2 * 32 + 80
-						view.sprite.visible = true
-						view.sprite.scale.set(1.4)
-						// view.number.x = (index + 0.5) * 64 / numberOfGoods
-						// view.number.y = 100
-						// view.number.visible = true
-						index.x += 1
-						if (index.x >= 2) {
-							index.x = 0
-							index.y += 1
-						}
-					} else {
-						view.sprite.visible = false
-						// view.number.visible = false
-					}
-				})
-			})
-		}).reduce((all, fn) => () => {
-			all()
-			fn()
-		}, () => {})
+			view.container.x = index * 64 * 2
+			view.container.y = 10
+			container.addChild(view.container)
+		})
 	})
 
 	const unsubscribe = () => {
 		unsubscribeUnits()
-		unsubscribeStorage()
+		shipViews.forEach(view => view.unsubscribe())
 	}
 
 	return {
