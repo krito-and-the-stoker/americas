@@ -35,24 +35,31 @@ const create = (colony, originalDimensions) => {
 		}
 	})
 
-	const unsubscribe = Colony.bindStorage(colony, storage => {
+	const unsubscribeStorage = Colony.bindStorage(colony, storage => {
 		Object.values(storage).forEach((value, i) => {
 			updateAndArgs[i].update(Math.floor(value))
 			updateAndArgs[i].args.amount = Math.floor(value)
 		})
 	})
 
-	// container.hitArea = new PIXI.Rectangle(0, originalDimensions.y - 121, originalDimensions.x, 121)
-	// Drag.makeDragTarget(container, args => {
-	// 	const { good, unit, amount } = args
-	// 	if (good && unit) {
-	// 		Colony.updateStorage(colony, good, amount)
-	// 		Unit.loadGoods(unit, good, -amount)
-	// 		return false
-	// 	}
+	const dragTarget = new PIXI.Container()
+	container.addChild(dragTarget)
+	dragTarget.hitArea = new PIXI.Rectangle(0, originalDimensions.y - 121, originalDimensions.x, 121)
+	const unsubscribeDrag = Drag.makeDragTarget(dragTarget, args => {
+		const { good, unit, amount } = args
+		if (good && unit) {
+			Colony.updateStorage(colony, good, amount)
+			Unit.loadGoods(unit, good, -amount)
+			return false
+		}
 
-	// 	return false
-	// })
+		return false
+	})
+
+	const unsubscribe = () => {
+		unsubscribeStorage()
+		unsubscribeDrag()
+	}
 
 	return {
 		container,

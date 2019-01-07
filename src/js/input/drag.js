@@ -166,6 +166,16 @@ const makeDraggable = (sprite, entity) => {
 	}
 
 	const end = async coords => {
+		// mark all possible drag targets interactive
+		const dragTargetsInteractivity = dragTargets.map(({ sprite }) => {
+			const original = sprite.interactive
+			sprite.interactive = true
+			return {
+				interactive: original,
+				sprite
+			}
+		})
+
 		// recursively find target by hit testing through the tree
 		let target = null
 		const findTarget = next => {
@@ -181,6 +191,9 @@ const makeDraggable = (sprite, entity) => {
 			}
 		}
 		findTarget(sprite)
+
+		// restore their interactivity
+		dragTargetsInteractivity.forEach(({ sprite, interactive }) => sprite.interactive = interactive)
 
 		if (target) {
 			const result = await dragTargets.find(({ sprite }) => target === sprite).fn(entity)
@@ -198,7 +211,6 @@ const makeDraggable = (sprite, entity) => {
 }
 
 const makeDragTarget = (sprite, fn) => {
-	sprite.interactive = true
 	const target = {
 		sprite,
 		fn
