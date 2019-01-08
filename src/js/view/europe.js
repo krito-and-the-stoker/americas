@@ -34,7 +34,7 @@ const create = () => {
 	const market = MarketView.create(originalDimensions)
 	container.addChild(market.container)
 
-	const docks = DocksView.create()
+	const docks = DocksView.create(close)
 	container.addChild(docks.container)
 
 	const nameHeadline = new PIXI.Text('London', {

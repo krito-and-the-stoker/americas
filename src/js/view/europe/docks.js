@@ -11,7 +11,7 @@ import Commander from '../../command/commander'
 import America from '../../command/america'
 import Transport from '../../view/transport'
 
-const create = () => {
+const create = close => {
 	let shipViews = []
 	const container = new PIXI.Container()
 
@@ -25,6 +25,9 @@ const create = () => {
 		shipViews.forEach((view, index) => {
 			Click.on(view.sprite, () => {
 				Commander.scheduleBehind(view.unit.commander, America.create(view.unit))
+				if (ships.length === 1) {
+					close()
+				}
 			})
 			view.container.x = index * 64 * 2
 			view.container.y = 10
