@@ -59,18 +59,12 @@ const create = (colony, originalDimensions) => {
 		}
 	})
 	const unsubscribeTiles = tilesAndPosition.reduce((all, tp) => () => { all(); tp.destroy(); }, () => {})
-	let unsubscribeWorksAts = () => {}
-	let productionSprites = []
-	let colonistsSprites = []
 	const unsubscribeColonists = Colony.bindColonists(colony, colonists => {
-		colonistsSprites.forEach(s => container.removeChild(s))
-		colonistsSprites = []
+		const colonistsSprites = []
 		
-		unsubscribeWorksAts()
-		unsubscribeWorksAts = colonists.map(colonist => {
+		const cleanupWorksAt = Util.mergeFunctions(colonists.map(colonist => {
 			return Colonist.bindWorksAt(colonist, worksAt => {
 				const { tile, position } = tilesAndPosition.find(({ tile }) => worksAt && worksAt.tile === tile) || {}
-				productionSprites.forEach(s => container.removeChild(s))
 				
 				if (position) {
 					colonist.sprite.x = position.x
@@ -79,16 +73,27 @@ const create = (colony, originalDimensions) => {
 					colonistsSprites.push(colonist.sprite)
 
 					const good = colonist.worksAt.good
-					productionSprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
+					const productionSprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
 					productionSprites.forEach(s => {
 						s.position.x += position.x
 						s.position.y += position.y + 0.5 * TILE_SIZE
 						s.scale.set(0.5)
 						container.addChild(s)
 					})
+
+					return () => {
+						console.log('cleaning up production sprites', position)
+						productionSprites.forEach(s => container.removeChild(s))
+					}
 				}
 			})
-		}).reduce((all, unbind) => () => { all(); unbind(); }, () => {})
+		}))
+
+		return () => {
+			console.log('cleaning up worksAt and colony sprites')
+			colonistsSprites.forEach(s => container.removeChild(s))
+			cleanupWorksAt()
+		}
 	})
 	const colonySprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(MAP_COLONY_FRAME_ID)))
 	colonySprite.position.x = TILE_SIZE
@@ -112,7 +117,6 @@ const create = (colony, originalDimensions) => {
 
 	const unsubscribe = () => {
 		unsubscribeTiles()
-		unsubscribeWorksAts()
 		unsubscribeColonists()
 	}
 

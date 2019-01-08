@@ -66,13 +66,13 @@ const initialize = () => {
 
 	MapControl.zoomBy(1/0.35, null, 0)
 	setTimeout(() => {
-		MapControl.zoomBy(0.35, null, 2000)
+		MapControl.zoomBy(0.35, null, 100)
 	}, 50)
 
 	setTimeout(() => {
 		Keyboard.initialize()
 		MapControl.initializeInteraction()
-	}, 2050)
+	}, 150)
 
 
 	MainLoop.setUpdate(update)

@@ -10,6 +10,7 @@ import Colonist from '../entity/colonist'
 import Record from '../util/record'
 import UnitView from '../view/unit'
 import Unit from './unit'
+import Binding from '../util/binding'
 
 setTimeout(() => Record.setGlobal('colonyNames',
 	['Jamestown',
@@ -53,19 +54,19 @@ const enter = (colony, unit) => {
 	unit.colony = colony
 	Unit.unloadAllUnits(unit)
 	UnitView.deactivate(unit)
-	Util.binding('units').update(colony)
+	Binding.update(colony, 'units')
 }
 const leave = (colony, unit) => {
 	unit.colony = null
-	Util.binding('units').update(colony, colony.units.filter(u => u !== unit))
+	Binding.update(colony, 'units', colony.units.filter(u => u !== unit))
 }
 
 const join = (colony, colonist) => {
 	colony.colonists.push(colonist)
-	Util.binding('colonists').update(colony)
+	Binding.update(colony, 'colonists')
 }
-const bindUnits = Util.binding('units').bind
-const bindColonists = Util.binding('colonists').bind
+const bindUnits = (colony, fn) => Binding.listen(colony, 'units', fn)
+const bindColonists = (colony, fn) => Binding.listen(colony, 'colonists', fn)
 
 const create = (coords, unit) => {
 	const colony = {
@@ -79,8 +80,8 @@ const create = (coords, unit) => {
 	tile.colony = colony
 	const colonist = Colonist.create(colony, unit)
 	colony.colonists = [colonist]
-	Util.binding('colonists').init(colony)
-	Util.binding('units').init(colony)
+	Binding.create(colony, 'colonists')
+	Binding.create(colony, 'units')
 	const winner = Tile.diagonalNeighbors(tile)
 		.filter(neighbor => !neighbor.harvestedBy)
 		.reduce((winner, neighbor) => {
@@ -113,8 +114,8 @@ const save = colony => ({
 
 const load = colony => {
 	colony.storageListeners = []
-	Util.binding('units').init(colony)
-	Util.binding('colonists').init(colony)
+	Binding.create(colony, 'colonists')
+	Binding.create(colony, 'units')
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	tile.colony = colony
 	Record.entitiesLoaded(() => {

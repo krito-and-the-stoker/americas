@@ -3,10 +3,9 @@ import Harvest from '../task/harvest'
 import Time from '../timeline/time'
 import ColonistView from '../view/colonist'
 import Record from '../util/record'
-import Util from '../util/util'
+import Binding from '../util/binding'
 import Colony from './colony'
 
-const worksAt = Util.binding('worksAt')
 
 
 const beginFieldWork = (colonist, tile, good) => {
@@ -19,7 +18,7 @@ const beginFieldWork = (colonist, tile, good) => {
 
 	const stop = Time.schedule(Harvest.create(colony, tile, good, colonist))
 
-	worksAt.update(colonist, {
+	Binding.update(colonist, 'worksAt', {
 		type: 'Field',
 		tile,
 		good,
@@ -27,7 +26,7 @@ const beginFieldWork = (colonist, tile, good) => {
 	})
 }
 
-const bindWorksAt = worksAt.bind
+const bindWorksAt = (colonist, fn) => Binding.listen(colonist, 'worksAt', fn)
 
 const create = (colony, unit) => {
 	const colonist = {
@@ -37,7 +36,7 @@ const create = (colony, unit) => {
 		expert: unit.expert,
 		worksAt: null
 	}
-	worksAt.init(colonist)
+	Binding.create(colonist, 'worksAt')
 	colonist.sprite = ColonistView.create(colonist)
 	Colony.leave(colony, unit)
 	Colony.join(colony, colonist)
@@ -59,7 +58,7 @@ const save = colonist => ({
 })
 
 const load = colonist => {
-	worksAt.init(colonist)
+	Binding.create(colonist, 'worksAt')
 	colonist.type = 'colonist'
 	colonist.sprite = ColonistView.create(colonist)
 

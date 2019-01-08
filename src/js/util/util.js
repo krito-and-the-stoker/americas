@@ -29,6 +29,8 @@ const binding = fieldName => {
 	}
 }
 
+const mergeFunctions = funcArray => funcArray.reduce((all, fn) => () => { all(); fn(); }, () => {})
+
 const globalScale = sprite => {
 	let s = sprite
 	let scale = s.scale.x
@@ -71,4 +73,5 @@ export default {
 	rectangle,
 	getUid,
 	binding,
+	mergeFunctions,
 }
