@@ -11,12 +11,14 @@ import Commander from '../../command/commander'
 import America from '../../command/america'
 import Transport from '../../view/transport'
 
-const create = close => {
+const create = (close, originalDimensions) => {
 	let shipViews = []
+	let landUnitsView = []
 	const container = new PIXI.Container()
 
 	const unsubscribeUnits = Europe.bindUnits(units => {
 		const ships = units.filter(unit => unit.domain === 'sea')
+		const landUnits = units.filter(unit => unit.domain === 'land')
 		shipViews.forEach(view => {
 			view.unsubscribe()
 			container.removeChild(view.container)
@@ -32,6 +34,17 @@ const create = close => {
 			view.container.x = index * 64 * 2
 			view.container.y = 10
 			container.addChild(view.container)
+		})
+
+		landUnitsView.forEach(({ sprite }) => {
+			container.removeChild(sprite)
+		})
+		landUnitsView = landUnits.map(unit => ({ sprite: UnitView.createColonySprite(unit), unit }))
+		landUnitsView.forEach(({ sprite, unit }, index) => {
+			sprite.x = originalDimensions.x - (landUnitsView.length - index) * sprite.width
+			sprite.y = originalDimensions.y - 125 - sprite.height
+			container.addChild(sprite)
+			Drag.makeDraggable(sprite, { unit })
 		})
 	})
 

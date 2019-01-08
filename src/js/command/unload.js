@@ -4,6 +4,7 @@ import Time from '../timeline/time'
 import Move from './move'
 import Commander from './commander'
 import Record from '../util/record'
+import Unit from '../entity/unit'
 
 const createUnloadingOnly = unloadingStartedAt => {
 	const update = currentTime => {
@@ -41,9 +42,7 @@ const create = (unit, coords) => {
 		}
 
 		if (decision === 0) {
-			landingUnit = unit.cargo.shift()
-			landingUnit.mapCoordinates = { ...unit.mapCoordinates }
-			UnitView.activate(landingUnit)
+			landingUnit = Unit.unloadUnit(unit)
 			Commander.scheduleInstead(landingUnit.commander, Move.create(landingUnit, coords))
 			unloadingStartedAt = currentTime
 			return true

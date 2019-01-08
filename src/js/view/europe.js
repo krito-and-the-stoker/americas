@@ -4,6 +4,8 @@ import Ressources from '../render/ressources'
 import RenderView from '../render/view'
 import Foreground from '../render/foreground'
 import Europe from '../entity/europe'
+import Treasure from '../entity/treasure'
+import Unit from '../entity/unit'
 
 import DocksView from './europe/docks'
 import MarketView from './europe/market'
@@ -36,7 +38,7 @@ const create = () => {
 	const market = MarketView.create(originalDimensions)
 	container.addChild(market.container)
 
-	const docks = DocksView.create(close)
+	const docks = DocksView.create(close, originalDimensions)
 	container.addChild(docks.container)
 
 	const nameHeadline = new PIXI.Text('London', {
@@ -51,15 +53,19 @@ const create = () => {
 	container.addChild(nameHeadline)
 
 	const button = Button.create('recruit', () => {
+		const choices = Treasure.amount() > 200 ? ['Settler', 'Never mind.'] : ['Never mind. I cannot afford it.']
 		return Dialog.createIndependent('Who would you like to recruit?',
-			['Settler', 'Settler', 'Settler', 'Never mind.'],
+			choices,
 			null,
 			{
 				context: container,
 				pause: false
 			})
 		.then(decision => {
-			console.log(decision)
+			if (choices[decision] === 'Settler' && Treasure.spend(200)) {
+				const unit = Unit.create('settler')
+				Europe.arrive(unit)
+			}
 		})
 	})
 	button.x = originalDimensions.x - button.width - 10
@@ -78,6 +84,7 @@ const create = () => {
 		background.x = dimensions.x / fitScale - background.width
 		background.y = dimensions.y / fitScale - background.height - 125
 		market.container.y = originalDimensions.y * (scale.y - fitScale) / fitScale
+		market.container.scale.set(scale.x / fitScale)
 	})
 
 	const unsubscribe = () => {

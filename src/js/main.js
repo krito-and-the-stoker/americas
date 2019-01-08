@@ -26,21 +26,23 @@ const draw = () => {
 }
 
 const americaSmall = () => {
-	const pioneer = Unit.create('pioneer', 125, 65, { active: false })
-	const soldier = Unit.create('soldier',125, 65, { active: false })
-	const caravel = Unit.create('caravel', 125, 65, {
+	const x = 125
+	const y = 65
+	const pioneer = Unit.create('pioneer', { x, y }, { active: false })
+	const soldier = Unit.create('soldier', { x, y }, { active: false })
+	const caravel = Unit.create('caravel', { x, y }, {
 		cargo: [soldier, pioneer]
 	})
-	MapControl.centerAt({ x: 125, y: 65 })
-	Unit.create('caravel', 125, 66)
+	MapControl.centerAt({ x, y })
+	// Unit.create('caravel', { x, y })
 }
 
 const americaLarge = () => {
 	const x = 135
 	const y = 135
-	const pioneer = Unit.create('pioneer', x, y, { active: false })
-	const soldier = Unit.create('soldier',x, y, { active: false })
-	const caravel = Unit.create('caravel', x, y, {
+	const pioneer = Unit.create('pioneer', { x, y }, { active: false })
+	const soldier = Unit.create('soldier', { x, y }, { active: false })
+	const caravel = Unit.create('caravel', { x, y }, {
 		cargo: [soldier, pioneer]
 	})
 	MapControl.centerAt({ x, y })

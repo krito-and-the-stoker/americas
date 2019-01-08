@@ -34,6 +34,16 @@ const create = unit => {
 				return false
 			}
 		}
+		if (fromUnit) {
+			Unit.loadUnit(unit, fromUnit)
+			if (Europe.hasUnit(fromUnit)) {
+				Europe.leave(fromUnit)
+			}
+			if (fromUnit.colony) {
+				Colony.leave(fromUnit.colony, fromUnit)
+			}
+			return false
+		}
 
 		return false
 	})

@@ -62,7 +62,7 @@ const createDetailScreen = colony => {
 	const headline = ColonyHeadline.create(colony, originalDimensions)
 	const storage = ColonyStorage.create(colony, originalDimensions)
 
-	const docks = ColonyDocks.create(colony, () => closeScreen())
+	const docks = ColonyDocks.create(colony, () => closeScreen(), originalDimensions)
 
 	screenContainer.addChild(colonyWoodBackground)
 	screenContainer.addChild(background.container)

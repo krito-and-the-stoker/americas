@@ -9,8 +9,26 @@ import Util from '../util/util'
 import Colonist from '../entity/colonist'
 import Record from '../util/record'
 import UnitView from '../view/unit'
+import Unit from './unit'
 
-setTimeout(() => Record.setGlobal('colonyNames', ['Jamestown', 'Roanoke', 'Virginia', "Cuper's Cove", "St. John's", 'Henricus']), 0)
+setTimeout(() => Record.setGlobal('colonyNames',
+	['Jamestown',
+	'Roanoke',
+	'Virginia',
+	"Cuper's Cove",
+	"St. John's",
+	'Henricus',
+	'Delaware',
+	'Pennsylvania',
+	'Massachusetts Bay Colony',
+	'Maine',
+	'New Jersey',
+	'Connecticut',
+	'Maryland',
+	'South Carolina',
+	'New Hampshire',
+	'North Carolina',
+	'Rhode Island']), 0)
 const getColonyName = () => {
 	let colonyNames = Record.getGlobal('colonyNames')
 	const name = colonyNames.shift()
@@ -33,6 +51,7 @@ const bindStorage = (colony, fn) => {
 const enter = (colony, unit) => {
 	colony.units.push(unit)
 	unit.colony = colony
+	Unit.unloadAllUnits(unit)
 	UnitView.deactivate(unit)
 	Util.binding('units').update(colony)
 }

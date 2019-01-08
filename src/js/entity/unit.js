@@ -7,17 +7,20 @@ import Commander from '../command/commander'
 import Time from '../timeline/time'
 import Colony from '../entity/colony'
 import Storage from '../entity/storage'
+import Util from '../util/util'
 
-const create = (name, x, y, additionalProps = {}) => {
+const create = (name, coords = null, additionalProps = {}) => {
 	if (Units[name]) {
-		const tile = MapEntity.tile({ x, y })
-		Tile.discover(tile)
-		Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))
+		if (coords) {
+			const tile = MapEntity.tile(coords)
+			Tile.discover(tile)
+			Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))
+		}
 
 		const unit = {
 			name,
 			...Units[name],
-			mapCoordinates: { x, y },
+			mapCoordinates: coords,
 			active: true,
 			cargo: [],
 			goods: [],
@@ -28,14 +31,15 @@ const create = (name, x, y, additionalProps = {}) => {
 		unit.commander = Commander.create({ keep: true })
 		Time.schedule(unit.commander)
 
-		if (tile.colony) {
-			Colony.enter(tile.colony, unit)
+		if (coords && MapEntity.tile(coords).colony) {
+			Colony.enter(MapEntity.tile(coords).colony, unit)
 		}
 		unit.sprite = UnitView.createSprite(unit)
 
 		Record.add('unit', unit)
 		return unit
 	} else {
+		console.warn('unit type not found', name)
 		return null
 	}
 }
@@ -43,6 +47,31 @@ const create = (name, x, y, additionalProps = {}) => {
 const loadGoods = (unit, good, amount) => Storage.update(unit, good, amount)
 const listenStorage = (unit, fn) => {
 	return Storage.listen(unit, fn)
+}
+
+const loadUnit = (unit, cargoUnit) => {
+	UnitView.deactivate(cargoUnit)
+	unit.cargo.push(cargoUnit)
+}
+
+const unloadUnit = unit => {
+	if (unit.cargo.length > 0) {	
+		const landingUnit = unit.cargo.shift()
+		landingUnit.mapCoordinates = { ...unit.mapCoordinates }
+		UnitView.activate(landingUnit)
+		if (unit.colony) {
+			Colony.enter(unit.colony, landingUnit)
+		}
+		console.log('unloaded', unit, landingUnit)
+
+		return landingUnit
+	}
+	console.warn('could not unload, no units on board', unit)
+	return null
+}
+
+const unloadAllUnits = unit => {
+	Util.range(unit.cargo.length).forEach(() => unloadUnit(unit))
 }
 
 const save = unit => ({
@@ -70,6 +99,9 @@ const load = unit => {
 export default {
 	create,
 	loadGoods,
+	loadUnit,
+	unloadUnit,
+	unloadAllUnits,
 	listenStorage,
 	save,
 	load
