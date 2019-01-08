@@ -35,10 +35,14 @@ const create = (colony, originalDimensions) => {
 				if (!unit && !args.colonist) {
 					return false
 				}
-				const colonist = args.colonist || Colonist.create(colony, unit)
+				const colonist = args.colonist || unit.colonist || Colonist.create(colony, unit)
+				if (unit) {
+					unit.colonist = colonist
+					Colony.leave(colony, unit)
+					Colony.join(colony, colonist)
+				}
 				const options = Tile.fieldProductionOptions(tile, colonist)
 				if (options.length === 1 || unit) {
-					const colonist = args.colonist || Colonist.create(colony, unit)
 					Colonist.beginFieldWork(colonist, tile, options[0].good)
 				} else {
 					const scale = 1 //Util.globalScale(colonist.sprite)

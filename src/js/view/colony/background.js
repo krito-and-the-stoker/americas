@@ -36,7 +36,6 @@ const create = colony => {
 	container.addChild(leaveColonyZone)
 
 	Drag.makeDragTarget(leaveColonyZone, args => {
-		console.log(args)
 		if (args.colonist && args.colonist.colony.colonists.length > 1) {
 			Colony.unjoin(args.colonist.colony, args.colonist)
 			Colony.enter(args.colonist.colony, args.colonist.unit)

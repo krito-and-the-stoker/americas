@@ -55,8 +55,10 @@ const leave = (colony, unit) => {
 }
 
 const join = (colony, colonist) => {
-	colony.colonists.push(colonist)
-	Binding.update(colony, 'colonists')
+	if (!colony.colonists.includes(colonist)) {	
+		colony.colonists.push(colonist)
+		Binding.update(colony, 'colonists')
+	}
 }
 const unjoin = (colony, colonist) => {
 	Colonist.stopWorking(colonist)
@@ -79,7 +81,6 @@ const create = (coords, unit) => {
 	const tile = MapEntity.tile(coords)
 	tile.colony = colony
 	const colonist = Colonist.create(colony, unit)
-	join(colony, colonist)
 
 	const winner = Tile.diagonalNeighbors(tile)
 		.filter(neighbor => !neighbor.harvestedBy)
