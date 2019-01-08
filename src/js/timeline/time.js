@@ -3,6 +3,7 @@ const TIME_SCALE = 1
 const MOVE_BASE_TIME = 7500
 const UNLOAD_TIME = 2500
 const EUROPE_SAIL_TIME = 15000
+const PRODUCTION_BASE_TIME = 15000
 
 let currentTime = 0
 let scheduled = []
@@ -90,5 +91,6 @@ export default {
 	get,
 	MOVE_BASE_TIME,
 	UNLOAD_TIME,
-	EUROPE_SAIL_TIME
+	EUROPE_SAIL_TIME,
+	PRODUCTION_BASE_TIME
 }

@@ -1,34 +1,6 @@
 import * as PIXI from 'pixi.js'
 
 
-const binding = fieldName => {
-	const listeners = `${fieldName}Listeners`
-	const init = instance => {
-		instance[listeners] = []
-	}
-
-	const bind = (instance, fn) => {
-		fn(instance[fieldName])
-		instance[listeners].push(fn)
-		const remove = () => instance[listeners] = instance[listeners].filter(f => f !== fn)
-		return remove
-	}
-
-	const update = (instance, value) => {
-		if (value !== undefined) {
-			instance[fieldName] = value
-		}
-		instance[listeners].forEach(fn => fn(instance[fieldName]))
-	}
-
-	return {
-		init,
-		bind,
-		update,
-		listenerKey: listeners
-	}
-}
-
 const mergeFunctions = funcArray => funcArray.reduce((all, fn) => () => { all(); fn(); }, () => {})
 
 const globalScale = sprite => {
@@ -72,6 +44,5 @@ export default {
 	range,
 	rectangle,
 	getUid,
-	binding,
 	mergeFunctions,
 }

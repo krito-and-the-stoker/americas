@@ -176,17 +176,17 @@ const makeDraggable = (sprite, entity) => {
 			const original = sprite.interactive
 			sprite.interactive = true
 			return {
-				interactive: original,
+				original,
 				sprite
 			}
 		})
 
 		// recursively find target by hit testing through the tree
-		let target = null
+		let targetSprite = null
 		const findTarget = next => {
 			if (next) {
 				if (dragTargets.map(({ sprite }) => sprite).includes(next)) {
-					target = next
+					targetSprite = next
 				} else {
 					let originalInteractive = next.interactive
 					next.interactive = false
@@ -198,10 +198,10 @@ const makeDraggable = (sprite, entity) => {
 		findTarget(sprite)
 
 		// restore their interactivity
-		dragTargetsInteractivity.forEach(({ sprite, interactive }) => sprite.interactive = interactive)
+		dragTargetsInteractivity.forEach(({ sprite, original }) => sprite.interactive = original)
 
-		if (target) {
-			const result = await dragTargets.find(({ sprite }) => target === sprite).fn(entity)
+		if (targetSprite) {
+			const result = await dragTargets.find(target => targetSprite === target.sprite).fn(entity, sprite.getGlobalPosition())
 			sprite.interactive = true
 			if (result) {
 				return

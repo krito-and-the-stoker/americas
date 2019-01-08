@@ -1,14 +1,15 @@
 import Goods from '../data/goods.json'
-import Util from '../util/util'
+import Binding from '../util/binding'
 
-const LISTENER_KEY = Util.binding('storage').listenerKey
+const LISTENER_KEY = Binding.listenerKey('storage')
 const update = (entity, good, amount) => {
 	entity.storage[good] += amount
-	Util.binding('storage').update(entity)
+	Binding.update(entity, 'storage')
 }
 
-const init = entity => Util.binding('storage').init(entity)
-const listen = (entity, fn) => Util.binding('storage').bind(entity, fn)
+
+const listen = (entity, fn) => Binding.listen(entity, 'storage', fn)
+const init = entity => Binding.create(entity, 'storage')
 
 const create = entity => {
 	init(entity)

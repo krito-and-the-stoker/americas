@@ -29,20 +29,20 @@ const create = (colony, originalDimensions) => {
 			sprite.position.y = position.y
 			container.addChild(sprite)
 		})
-		const destroy = Drag.makeDragTarget(sprites[sprites.length - 1], async args => {
+		const destroy = Drag.makeDragTarget(sprites[sprites.length - 1], async (args, coords) => {
 			const { unit } = args
 			if (!tile.harvestedBy) {
 				if (!unit && !args.colonist) {
 					return false
 				}
-				let colonist = args.colonist || Colonist.create(colony, unit)
+				const colonist = args.colonist || Colonist.create(colony, unit)
 				const options = Tile.fieldProductionOptions(tile, colonist)
-				if (options.length === 1) {
+				if (options.length === 1 || unit) {
+					const colonist = args.colonist || Colonist.create(colony, unit)
 					Colonist.beginFieldWork(colonist, tile, options[0].good)
 				} else {
-					const coords = colonist.sprite.getGlobalPosition()
-					const scale = Util.globalScale(colonist.sprite)
-					coords.y += 0.5 * colonist.sprite.height / 2
+					const scale = 1 //Util.globalScale(colonist.sprite)
+					coords.y += 0.5 * TILE_SIZE / 2
 
 					const optionsView = options.map(Context.productionOption)
 					const decision = await Context.create(optionsView, coords, 80, 0.5 * scale)
@@ -82,7 +82,6 @@ const create = (colony, originalDimensions) => {
 					})
 
 					return () => {
-						console.log('cleaning up production sprites', position)
 						productionSprites.forEach(s => container.removeChild(s))
 					}
 				}
@@ -90,7 +89,6 @@ const create = (colony, originalDimensions) => {
 		}))
 
 		return () => {
-			console.log('cleaning up worksAt and colony sprites')
 			colonistsSprites.forEach(s => container.removeChild(s))
 			cleanupWorksAt()
 		}

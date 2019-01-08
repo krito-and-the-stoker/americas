@@ -30,7 +30,6 @@ const update = (instance, key, value) => {
 		instance[key] = value
 	}
 	instance[listeners].forEach(listener => {
-		console.log('updating', listener)
 		if (listener.cleanup) {
 			listener.cleanup()
 		}
