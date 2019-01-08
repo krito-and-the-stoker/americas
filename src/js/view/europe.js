@@ -31,11 +31,11 @@ const create = () => {
 	}
 	container.addChild(background)
 
-	const docks = DocksView.create()
-	container.addChild(docks.container)
-
 	const market = MarketView.create(originalDimensions)
 	container.addChild(market.container)
+
+	const docks = DocksView.create()
+	container.addChild(docks.container)
 
 	const nameHeadline = new PIXI.Text('London', {
 		fontFamily: 'Times New Roman',
@@ -44,15 +44,22 @@ const create = () => {
 		align: 'center'
 	})
 	nameHeadline.anchor.set(0.5)
+	nameHeadline.position.x = originalDimensions.x / 2
 	nameHeadline.position.y = 35
 	container.addChild(nameHeadline)
 
 	RenderView.updateWhenResized(({ dimensions }) => {
-		nameHeadline.position.x = dimensions.x / 2
-		const coverScale = Math.max(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
-		const fitScale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
+		const scale = {
+			x: dimensions.x / originalDimensions.x,
+			y: dimensions.y / originalDimensions.y,
+		} 
+		const coverScale = Math.max(scale.x, scale.y)
+		const fitScale = Math.min(scale.x, scale.y)
 		background.scale.set(coverScale / fitScale)
 		container.scale.set(fitScale)
+		background.x = dimensions.x / fitScale - background.width
+		background.y = dimensions.y / fitScale - background.height - 125
+		market.container.y = originalDimensions.y * (scale.y - fitScale) / fitScale
 	})
 
 	const unsubscribe = () => {

@@ -5,10 +5,15 @@ import GoodsView from '../../view/goods'
 import Drag from '../../input/drag'
 import Europe from '../../entity/europe'
 import Unit from '../../entity/unit'
+import Ressources from '../../render/ressources'
 
 
 const create = (originalDimensions) => {
 	const container = new PIXI.Container()
+
+	const goodsBackground = new PIXI.Sprite(new PIXI.Texture(Ressources.get().goodsBackground))
+	goodsBackground.y = originalDimensions.y - 125
+	container.addChild(goodsBackground)
 
 	Object.values(Goods.types).map((good, index) => {	
 		const { sprite } = GoodsView.create({ good })
