@@ -7,6 +7,7 @@ import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
 import Unit from '../entity/unit'
 import Europe from '../entity/europe'
+import Treasure from '../entity/treasure'
 
 import MapView from '../view/map'
 import Foreground from '../render/foreground'
@@ -107,6 +108,7 @@ const save = () => {
 		time: Time.save(),
 		unitView: UnitView.save(),
 		europe: Europe.save(),
+		treasure: Treasure.save(),
 		globals
 	})
 	if (SAVE_TO_LOCAL_STORAGE) {
@@ -193,6 +195,7 @@ const load = () => {
 	snapshot.entities.forEach(record => record.listeners = [])
 	snapshot.entities.forEach(revive)
 	Time.load(snapshot.time)
+	Treasure.load(snapshot.treasure)
 	Europe.load(snapshot.europe)
 	UnitView.load(snapshot.unitView)
 

@@ -17,8 +17,10 @@ const create = unit => {
 		const fromUnit = args.unit
 		if (good) {
 			if (buyFromEurope) {
-				Unit.loadGoods(unit, good, amount)
-				Europe.buy(good, amount)
+				let boughtAmount = Europe.buy(good, amount)
+				if (amount > 0) {
+					Unit.loadGoods(unit, good, boughtAmount)
+				}
 				return false
 			}
 			if (colony) {

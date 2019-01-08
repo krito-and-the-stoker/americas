@@ -1,4 +1,5 @@
 import Record from '../util/record'
+import Treasure from './treasure'
 
 
 let units = []
@@ -32,14 +33,26 @@ const save = () => ({
 })
 
 const load = data => {
+	unitsListeners = []
 	units = data.units.map(Record.dereference)
 }
 
 const buy = (goods, amount) => {
-	console.log(`bought ${amount} ${goods}`)
+	const pricePerGood = 6
+	const price = pricePerGood * amount
+	if (Treasure.spend(price)) {
+		console.log(`bought ${amount} ${goods}`)
+		return amount
+	}
+	const actualAmount = Math.floor(Treasure.amount() / pricePerGood)
+	Treasure.spend(actualAmount * pricePerGood)
+	console.log(`bought ${actualAmount} ${goods}`)
+	return actualAmount
 }
 
 const sell = (goods, amount) => {
+	const pricePerGood = 4
+	Treasure.gain(amount * pricePerGood)
 	console.log(`sold ${amount} ${goods}`)
 }
 
