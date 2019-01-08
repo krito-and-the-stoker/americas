@@ -1,4 +1,3 @@
-import Consume from '../task/consume'
 import Harvest from '../task/harvest'
 import Time from '../timeline/time'
 import ColonistView from '../view/colonist'
@@ -40,7 +39,6 @@ const create = (colony, unit) => {
 	colonist.sprite = ColonistView.create(colonist)
 	Colony.leave(colony, unit)
 	Colony.join(colony, colonist)
-	Time.schedule(Consume.create(colony, 'food', 2))
 
 	Record.add('colonist', colonist)
 	return colonist
@@ -71,8 +69,6 @@ const load = colonist => {
 			colonist.worksAt.tile.harvestedBy = null
 			colonist.worksAt.stop = Time.schedule(Harvest.create(colonist.colony, colonist.worksAt.tile, colonist.worksAt.good, colonist))
 		}
-
-		Time.schedule(Consume.create(colonist.colony, 'food', 2))
 	})
 
 	return colonist

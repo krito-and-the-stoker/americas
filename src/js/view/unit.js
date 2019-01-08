@@ -42,6 +42,10 @@ const select = unit => {
 const unselect = () => {
 	const unit = activeUnit
 	activeUnit = null
+	if (blinkTween) {
+		blinkTween.stop()
+		blinkTween = null
+	}
 
 	if (unit.colony) {
 		deactivate(unit)

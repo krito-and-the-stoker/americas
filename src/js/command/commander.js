@@ -2,6 +2,7 @@ import Found from '../command/found'
 import Move from '../command/move'
 import MoveTo from '../command/moveTo'
 import Unload from '../command/unload'
+import Load from '../command/load'
 import Europe from '../command/europe'
 import America from '../command/america'
 import Time from '../timeline/time'
@@ -66,6 +67,7 @@ const getModule = type => ( type ? ({
 	move: Move,
 	moveTo: MoveTo,
 	unload: Unload,
+	load: Load,
 	europe: Europe,
 	america: America,
 	commander: { load }
