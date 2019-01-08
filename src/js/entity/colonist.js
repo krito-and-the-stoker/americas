@@ -8,13 +8,8 @@ import Colony from './colony'
 
 
 const beginFieldWork = (colonist, tile, good) => {
+	stopWorking(colonist)
 	const colony = colonist.colony
-	if (colonist.worksAt) {
-		colonist.worksAt.stop()
-		colonist.worksAt.tile.harvestedBy = null
-	}
-
-
 	const stop = Time.schedule(Harvest.create(colony, tile, good, colonist))
 
 	Binding.update(colonist, 'worksAt', {
@@ -23,6 +18,16 @@ const beginFieldWork = (colonist, tile, good) => {
 		good,
 		stop
 	})
+}
+
+const stopWorking = colonist => {
+	if (colonist.worksAt) {
+		colonist.worksAt.stop()
+		if (colonist.worksAt.tile) {
+			colonist.worksAt.tile.harvestedBy = null
+		}
+	}
+	Binding.update(colonist, 'worksAt')
 }
 
 const bindWorksAt = (colonist, fn) => Binding.listen(colonist, 'worksAt', fn)
@@ -82,5 +87,6 @@ export default {
 	save,
 	load,
 	beginFieldWork,
+	stopWorking,
 	bindWorksAt
 }

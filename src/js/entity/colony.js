@@ -58,6 +58,11 @@ const join = (colony, colonist) => {
 	colony.colonists.push(colonist)
 	Binding.update(colony, 'colonists')
 }
+const unjoin = (colony, colonist) => {
+	Colonist.stopWorking(colonist)
+	Binding.update(colony, 'colonists', colony.colonists.filter(col => col !== colonist))
+}
+
 const bindUnits = (colony, fn) => Binding.listen(colony, 'units', fn)
 const bindColonists = (colony, fn) => Binding.listen(colony, 'colonists', fn)
 
@@ -147,5 +152,6 @@ export default {
 	bindColonists,
 	enter,
 	leave,
-	join
+	join,
+	unjoin
 }
