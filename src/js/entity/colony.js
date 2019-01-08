@@ -59,7 +59,13 @@ const leave = (colony, unit) => {
 	unit.colony = null
 	Util.binding('units').update(colony, colony.units.filter(u => u !== unit))
 }
+
+const join = (colony, colonist) => {
+	colony.colonists.push(colonist)
+	Util.binding('colonists').update(colony)
+}
 const bindUnits = Util.binding('units').bind
+const bindColonists = Util.binding('colonists').bind
 
 const create = (coords, unit) => {
 	const colony = {
@@ -70,10 +76,11 @@ const create = (coords, unit) => {
 		mapCoordinates: { ...coords }
 	}
 	const tile = MapEntity.tile(coords)
-	Util.binding('units').init(colony)
 	tile.colony = colony
 	const colonist = Colonist.create(colony, unit)
 	colony.colonists = [colonist]
+	Util.binding('colonists').init(colony)
+	Util.binding('units').init(colony)
 	const winner = Tile.diagonalNeighbors(tile)
 		.filter(neighbor => !neighbor.harvestedBy)
 		.reduce((winner, neighbor) => {
@@ -107,6 +114,7 @@ const save = colony => ({
 const load = colony => {
 	colony.storageListeners = []
 	Util.binding('units').init(colony)
+	Util.binding('colonists').init(colony)
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	tile.colony = colony
 	Record.entitiesLoaded(() => {
@@ -141,6 +149,8 @@ export default {
 	updateStorage,
 	bindStorage,
 	bindUnits,
+	bindColonists,
 	enter,
-	leave
+	leave,
+	join
 }

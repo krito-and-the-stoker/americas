@@ -7,6 +7,7 @@ import Tile from '../../entity/tile'
 import ProductionView from '../production'
 import Drag from '../../input/drag'
 import Context from '../../view/context'
+import Colony from '../../entity/colony'
 
 
 const TILE_SIZE = 64
@@ -28,23 +29,26 @@ const create = (colony, originalDimensions) => {
 			sprite.position.y = position.y
 			container.addChild(sprite)
 		})
-		const destroy = Drag.makeDragTarget(sprites[sprites.length - 1], async colonist => {
-			if (Colonist.is(colonist)) {
-				if (!tile.harvestedBy) {
-					const options = Tile.fieldProductionOptions(tile, colonist)
-					if (options.length === 1) {
-						Colonist.beginFieldWork(colonist, tile, options[0].good)
-					} else {
-						const coords = colonist.sprite.getGlobalPosition()
-						const scale = Util.globalScale(colonist.sprite)
-						coords.y += 0.5 * colonist.sprite.height / 2
-
-						const optionsView = options.map(Context.productionOption)
-						const decision = await Context.create(optionsView, coords, 80, 0.5 * scale)
-						Colonist.beginFieldWork(colonist, tile, decision.good)
-					}
-					return true
+		const destroy = Drag.makeDragTarget(sprites[sprites.length - 1], async args => {
+			const { unit } = args
+			if (!tile.harvestedBy) {
+				if (!unit && !args.colonist) {
+					return false
 				}
+				let colonist = args.colonist || Colonist.create(colony, unit)
+				const options = Tile.fieldProductionOptions(tile, colonist)
+				if (options.length === 1) {
+					Colonist.beginFieldWork(colonist, tile, options[0].good)
+				} else {
+					const coords = colonist.sprite.getGlobalPosition()
+					const scale = Util.globalScale(colonist.sprite)
+					coords.y += 0.5 * colonist.sprite.height / 2
+
+					const optionsView = options.map(Context.productionOption)
+					const decision = await Context.create(optionsView, coords, 80, 0.5 * scale)
+					Colonist.beginFieldWork(colonist, tile, decision.good)
+				}
+				return true
 			}
 			return false
 		})
@@ -54,28 +58,38 @@ const create = (colony, originalDimensions) => {
 			destroy
 		}
 	})
-	const unbindTiles = tilesAndPosition.reduce((all, tp) => () => { all(); tp.destroy(); }, () => {})
-	const unbindColonists = colony.colonists.map(colonist => {
-		let sprites = []
-		return Colonist.bindWorksAt(colonist, worksAt => {
-			const { tile, position } = tilesAndPosition.find(({ tile }) => worksAt && worksAt.tile === tile) || {}
-			sprites.forEach(s => container.removeChild(s))
-			if (position) {
-				colonist.sprite.x = position.x
-				colonist.sprite.y = position.y
-				container.addChild(colonist.sprite)
+	const unsubscribeTiles = tilesAndPosition.reduce((all, tp) => () => { all(); tp.destroy(); }, () => {})
+	let unsubscribeWorksAts = () => {}
+	let productionSprites = []
+	let colonistsSprites = []
+	const unsubscribeColonists = Colony.bindColonists(colony, colonists => {
+		colonistsSprites.forEach(s => container.removeChild(s))
+		colonistsSprites = []
+		
+		unsubscribeWorksAts()
+		unsubscribeWorksAts = colonists.map(colonist => {
+			return Colonist.bindWorksAt(colonist, worksAt => {
+				const { tile, position } = tilesAndPosition.find(({ tile }) => worksAt && worksAt.tile === tile) || {}
+				productionSprites.forEach(s => container.removeChild(s))
+				
+				if (position) {
+					colonist.sprite.x = position.x
+					colonist.sprite.y = position.y
+					container.addChild(colonist.sprite)
+					colonistsSprites.push(colonist.sprite)
 
-				const good = colonist.worksAt.good
-				sprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
-				sprites.forEach(s => {
-					s.position.x += position.x
-					s.position.y += position.y + 0.5 * TILE_SIZE
-					s.scale.set(0.5)
-					container.addChild(s)
-				})
-			}
-		})
-	}).reduce((all, unbind) => () => { all(); unbind(); }, () => {})
+					const good = colonist.worksAt.good
+					productionSprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
+					productionSprites.forEach(s => {
+						s.position.x += position.x
+						s.position.y += position.y + 0.5 * TILE_SIZE
+						s.scale.set(0.5)
+						container.addChild(s)
+					})
+				}
+			})
+		}).reduce((all, unbind) => () => { all(); unbind(); }, () => {})
+	})
 	const colonySprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(MAP_COLONY_FRAME_ID)))
 	colonySprite.position.x = TILE_SIZE
 	colonySprite.position.y = TILE_SIZE
@@ -97,8 +111,9 @@ const create = (colony, originalDimensions) => {
 
 
 	const unsubscribe = () => {
-		unbindTiles()
-		unbindColonists()
+		unsubscribeTiles()
+		unsubscribeWorksAts()
+		unsubscribeColonists()
 	}
 
 	return {

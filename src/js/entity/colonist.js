@@ -1,9 +1,10 @@
-import Harvest from '../task/harvest'
 import Consume from '../task/consume'
+import Harvest from '../task/harvest'
 import Time from '../timeline/time'
 import ColonistView from '../view/colonist'
 import Record from '../util/record'
 import Util from '../util/util'
+import Colony from './colony'
 
 const worksAt = Util.binding('worksAt')
 
@@ -38,7 +39,8 @@ const create = (colony, unit) => {
 	}
 	worksAt.init(colonist)
 	colonist.sprite = ColonistView.create(colonist)
-
+	Colony.leave(colony, unit)
+	Colony.join(colony, colonist)
 	Time.schedule(Consume.create(colony, 'food', 2))
 
 	Record.add('colonist', colonist)

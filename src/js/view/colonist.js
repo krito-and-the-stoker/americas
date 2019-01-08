@@ -30,7 +30,7 @@ const create = colonist => {
 		}
 	})
 
-	Drag.makeDraggable(sprite, colonist)
+	Drag.makeDraggable(sprite, { colonist })
 
 	return sprite
 }
