@@ -40,6 +40,11 @@ const create = (colony, closeScreen, originalDimensions) => {
 			sprite.y = originalDimensions.y - 125 - sprite.height
 			container.addChild(sprite)
 			Drag.makeDraggable(sprite, { unit })
+
+			Click.on(sprite, () => {
+				closeScreen()
+				UnitView.select(unit)
+			})
 		})
 	})
 
