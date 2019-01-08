@@ -175,6 +175,7 @@ const entitiesLoaded = fn => loadedListeners.push(fn)
 const load = () => {
 	console.log('loading...')
 	Foreground.shutdown()
+	Unit.reset()
 	
 	loadedListeners = []
 	records = []

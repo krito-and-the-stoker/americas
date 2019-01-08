@@ -17,7 +17,7 @@ const create = (unit, cargoUnit, loadingStartedAt = null) => {
 	}
 
 	const update = currentTime => {
-		return  currentTime < unloadingStartedAt + Time.LOAD_TIME
+		return currentTime < loadingStartedAt + Time.LOAD_TIME
 	}
 
 	const finished = () => {
@@ -32,6 +32,7 @@ const create = (unit, cargoUnit, loadingStartedAt = null) => {
 	})
 
 	return {
+		type: 'load',
 		init,
 		update,
 		finished,

@@ -59,6 +59,7 @@ const create = (unit, coords) => {
 	})
 
 	return {
+		type: 'unload',
 		update,
 		save
 	}

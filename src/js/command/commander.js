@@ -18,6 +18,8 @@ const scheduleInstead = (commander, command) => {
 	}
 }
 
+const isIdle = commander => !commander.currentCommand && commander.commands.length === 0
+
 const scheduleBehind = (commander, command) => {
 	commander.commands.push(command)
 }
@@ -85,5 +87,6 @@ export default {
 	getModule,
 	cancel,
 	scheduleInstead,
-	scheduleBehind
+	scheduleBehind,
+	isIdle
 }

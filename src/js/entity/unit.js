@@ -9,6 +9,7 @@ import Colony from '../entity/colony'
 import Storage from '../entity/storage'
 import Util from '../util/util'
 
+let allUnits = []
 const create = (name, coords = null, additionalProps = {}) => {
 	if (Units[name]) {
 		if (coords) {
@@ -37,6 +38,7 @@ const create = (name, coords = null, additionalProps = {}) => {
 		unit.sprite = UnitView.createSprite(unit)
 
 		Record.add('unit', unit)
+		allUnits.push(unit)
 		return unit
 	} else {
 		console.warn('unit type not found', name)
@@ -44,6 +46,7 @@ const create = (name, coords = null, additionalProps = {}) => {
 	}
 }
 
+const at = coords => allUnits.filter(unit => unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y)
 const loadGoods = (unit, good, amount) => Storage.update(unit, good, amount)
 const listenStorage = (unit, fn) => {
 	return Storage.listen(unit, fn)
@@ -62,7 +65,6 @@ const unloadUnit = unit => {
 		if (unit.colony) {
 			Colony.enter(unit.colony, landingUnit)
 		}
-		console.log('unloaded', unit, landingUnit)
 
 		return landingUnit
 	}
@@ -93,8 +95,11 @@ const load = unit => {
 		Time.schedule(unit.commander)
 	})
 
+	allUnits.push(unit)
 	return unit
 }
+
+const reset = () => allUnits = []
 
 export default {
 	create,
@@ -104,5 +109,7 @@ export default {
 	unloadAllUnits,
 	listenStorage,
 	save,
-	load
+	load,
+	reset,
+	at
 }
