@@ -51,9 +51,8 @@ const show = dialogName => {
 	return create(dialog.msg, dialog.options, dialog.image)
 }
 
-
-const create = (message, options, image = null) => {
-	currentDialog = currentDialog.then(() => new Promise(resolve => {
+const createIndependent = (message, options, image = null, params = {}) => {
+	return new Promise(resolve => {
 		let sprite = null
 		if (image && images[image]) {
 			sprite = new PIXI.Sprite(new PIXI.Texture(images[image].png()))
@@ -61,10 +60,10 @@ const create = (message, options, image = null) => {
 			sprite.position.x = RenderView.getCenter().x + images[image].x
 			sprite.position.y = RenderView.getCenter().y + images[image].y
 		}
-		const plane9 = new PIXI.mesh.NineSlicePlane(new PIXI.Texture(slice), 160, 160, 160, 160);
+		const plane9 = new PIXI.mesh.NineSlicePlane(new PIXI.Texture(slice), 160, 160, 160, 160)
 
 		let optionTexts = []
-		const container = Foreground.get().dialog
+		const container = params.context || Foreground.get().dialog
 		const text = new PIXI.Text(message, {
 			fontFamily: 'Times New Roman',
 			fontSize: 24,
@@ -87,7 +86,9 @@ const create = (message, options, image = null) => {
 				container.removeChild(sprite)
 			}
 			optionTexts.forEach(optionText => container.removeChild(optionText))
-			Time.resume()
+			if (params.pause) {
+				Time.resume()
+			}
 		}
 
 		plane9.width = 200 + text.width
@@ -117,13 +118,21 @@ const create = (message, options, image = null) => {
 		plane9.position.x = RenderView.getCenter().x - plane9.width / 2
 		plane9.position.y = RenderView.getCenter().y - plane9.height / 2 + 30
 
-		Time.pause()
-	}))
+		if (params.pause) {
+			Time.pause()
+		}
+	})
+}
+
+
+const create = (message, options, image) => {
+	currentDialog = currentDialog.then(() => createIndependent(message, options, image, { pause: true }))
 	return currentDialog
 }
 
 export default {
 	initialize,
 	create,
+	createIndependent,
 	show
 }

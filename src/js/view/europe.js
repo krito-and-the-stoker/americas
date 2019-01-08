@@ -7,6 +7,8 @@ import Europe from '../entity/europe'
 
 import DocksView from './europe/docks'
 import MarketView from './europe/market'
+import Button from './button'
+import Dialog from './dialog'
 
 let unsubscribe = () => {}
 const open = () => {
@@ -47,6 +49,22 @@ const create = () => {
 	nameHeadline.position.x = originalDimensions.x / 2
 	nameHeadline.position.y = 35
 	container.addChild(nameHeadline)
+
+	const button = Button.create('recruit', () => {
+		return Dialog.createIndependent('Who would you like to recruit?',
+			['Settler', 'Settler', 'Settler', 'Never mind.'],
+			null,
+			{
+				context: container,
+				pause: false
+			})
+		.then(decision => {
+			console.log(decision)
+		})
+	})
+	button.x = originalDimensions.x - button.width - 10
+	button.y = originalDimensions.y / 2
+	container.addChild(button)
 
 	RenderView.updateWhenResized(({ dimensions }) => {
 		const scale = {
