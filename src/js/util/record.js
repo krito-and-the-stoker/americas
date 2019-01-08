@@ -174,12 +174,9 @@ const entitiesLoaded = fn => loadedListeners.push(fn)
 
 const load = () => {
 	console.log('loading...')
-	loadedListeners = []
-	// MainLoop.stop()
-
-	// Time.pause()
 	Foreground.shutdown()
 	
+	loadedListeners = []
 	records = []
 	tiles = []
 	if (SAVE_TO_LOCAL_STORAGE) {
@@ -203,10 +200,7 @@ const load = () => {
 
 	const mapView = new MapView()
 
-	Background.restart()
 	RenderView.restart()
-	// setTimeout(() => Time.resume(), 0)
-	// MainLoop.start()
 }
 
 

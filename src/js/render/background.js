@@ -131,7 +131,7 @@ const restart = () => {
 	render()
 }
 
-const initialize = async mapView => {
+const initialize = mapView => {
 	layer = new Layer({
 		transparent: true,
 		clearBeforeRender: false,

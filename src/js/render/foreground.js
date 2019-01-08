@@ -5,17 +5,19 @@ import Background from './background'
 
 let container = null
 let context = null
-let menu = null
+let dialog = null
 let currentScreen = null
 let units = null
 let terrain = null
+let permanent = null
 
 let layer = null
 
 const get = () => ({
 	container,
-	menu,
+	dialog,
 	context,
+	permanent,
 	layer
 })
 
@@ -26,9 +28,10 @@ const openScreen = screen => {
 	}
 	currentScreen = screen
 	layer.app.stage.addChild(screen)
+	layer.app.stage.addChild(permanent)
 	layer.app.stage.addChild(context)
 	layer.app.stage.removeChild(container)
-	layer.app.stage.removeChild(menu)
+	layer.app.stage.removeChild(dialog)
 	Background.hide()
 }
 
@@ -36,8 +39,9 @@ const closeScreen = () => {
 	if (currentScreen) {	
 		layer.app.stage.removeChild(currentScreen)
 		layer.app.stage.addChild(container)
+		layer.app.stage.addChild(permanent)
 		layer.app.stage.addChild(context)
-		layer.app.stage.addChild(menu)
+		layer.app.stage.addChild(dialog)
 		Background.show()
 	}
 	currentScreen = null
@@ -73,13 +77,15 @@ const initialize = () => {
 	terrain = new PIXI.Container()
 	units = new PIXI.Container()
 	context = new PIXI.Container()
-	menu = new PIXI.Container()
+	dialog = new PIXI.Container()
+	permanent = new PIXI.Container()
 
 	container.addChild(terrain)
 	container.addChild(units)
 	layer.app.stage.addChild(container)
+	layer.app.stage.addChild(permanent)
 	layer.app.stage.addChild(context)
-	layer.app.stage.addChild(menu)
+	layer.app.stage.addChild(dialog)
 	layer.app.stop()
 }
 
@@ -87,8 +93,9 @@ const shutdown = () => {
 	closeScreen()
 	terrain.removeChildren()
 	units.removeChildren()
-	menu.removeChildren()
+	dialog.removeChildren()
 }
+
 
 const doRenderWork = () => layer.app.render()
 

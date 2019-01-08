@@ -19,6 +19,7 @@ const restart = () => {
 	const { scale, coords } = get()
 	updateScale(scale)
 	updateMapCoords(coords)
+	Background.restart()
 }
 
 const getDimensions = () => ({
@@ -44,8 +45,8 @@ const updateScale = newScale => {
 	Background.updateScale(newScale)
 }
 
-const initialize = async mapView => {
-	await Background.initialize(mapView)
+const initialize = mapView => {
+	Background.initialize(mapView)
 	Foreground.initialize()
 	window.addEventListener('resize', () => resizeFunctions
 		.forEach(fn => fn({

@@ -14,6 +14,8 @@ import Time from './timeline/time'
 import PathFinder from './util/pathFinder'
 import MapControl from './control/map'
 import Dialog from './view/dialog'
+import TreasureView from './view/treasure'
+import Foreground from './render/foreground'
 
 const update = (deltaTime) => {
 	Time.advance(deltaTime)
@@ -45,18 +47,20 @@ const americaLarge = () => {
 	MapControl.zoomBy(1/0.35, null, 0)
 }
 
-const initialize = async () => {
+const initialize = () => {
 	MapEntity.create({ data: americaSmallMap })
 	const mapView = new MapView()
 	
-	await Ressources.initialize()
-	await RenderView.initialize(mapView)
+	RenderView.initialize(mapView)
 	Dialog.initialize()
 	Tween.initialize()
 
 	PathFinder.initialize()
 
 	americaSmall()
+
+	// for no apparent reason the layers are not available inside TreasureView
+	TreasureView.initialize(Foreground.get().permanent)
 
 	MapControl.zoomBy(1/0.35, null, 0)
 	setTimeout(() => {
@@ -75,6 +79,7 @@ const initialize = async () => {
 }
 
 
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
+	await Ressources.initialize()
 	initialize()
 })

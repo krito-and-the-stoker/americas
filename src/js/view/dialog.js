@@ -64,29 +64,29 @@ const create = (message, options, image = null) => {
 		const plane9 = new PIXI.mesh.NineSlicePlane(new PIXI.Texture(slice), 160, 160, 160, 160);
 
 		let optionTexts = []
-		const menu = Foreground.get().menu
+		const container = Foreground.get().dialog
 		const text = new PIXI.Text(message, {
 			fontFamily: 'Times New Roman',
 			fontSize: 24,
 			fill: 0x000000,
 			align: 'center'
 		})
-		menu.addChild(plane9)
+		container.addChild(plane9)
 		if (sprite) {
-			menu.addChild(sprite)
+			container.addChild(sprite)
 		}
-		menu.addChild(text)
+		container.addChild(text)
 		text.anchor.set(0.5)
 		text.position.x = RenderView.getCenter().x
 		text.position.y = RenderView.getCenter().y - 50
 
 		const destroy = () => {
-			menu.removeChild(text)
-			menu.removeChild(plane9)
+			container.removeChild(text)
+			container.removeChild(plane9)
 			if (sprite) {
-				menu.removeChild(sprite)
+				container.removeChild(sprite)
 			}
-			optionTexts.forEach(optionText => menu.removeChild(optionText))
+			optionTexts.forEach(optionText => container.removeChild(optionText))
 			Time.resume()
 		}
 
@@ -111,7 +111,7 @@ const create = (message, options, image = null) => {
 				destroy()
 				resolve(index)
 			})
-			menu.addChild(optionText)
+			container.addChild(optionText)
 			return optionText
 		})
 		plane9.position.x = RenderView.getCenter().x - plane9.width / 2

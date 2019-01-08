@@ -28,12 +28,10 @@ const amount = () => treasure
 
 const save = () => treasure
 const load = data => {
-	treasureListeners = []
-	bind(console.log)
+	// treasureListeners = []
 	treasure = data
+	treasureListeners.forEach(fn => fn(treasure))
 }
-
-bind(console.log)
 
 export default {
 	spend,
