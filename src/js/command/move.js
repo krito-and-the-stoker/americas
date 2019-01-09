@@ -74,10 +74,10 @@ const createFromData = data => {
 		}
 
 
-		const speed = unit.speed
+		const speed = unit.properties.speed
 		fromTile = MapEntity.tile(unit.mapCoordinates)
 
-		duration = Tile.movementCost(fromTile, targetTile) * Time.MOVE_BASE_TIME / unit.speed
+		duration = Tile.movementCost(fromTile, targetTile) * Time.MOVE_BASE_TIME / speed
 		if (unloading(unit, fromTile, targetTile)) {
 			duration = Time.UNLOAD_TIME
 		}

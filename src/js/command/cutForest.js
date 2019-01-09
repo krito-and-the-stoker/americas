@@ -5,21 +5,27 @@ import UnitView from '../view/unit'
 import Record from '../util/record'
 
 const create = (unit, eta) => {
+	let aborted = false
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)
-		if (!eta && unit.canTerraform && tile.forest) {
-			eta = currentTime + Time.CUT_FOREST
+		if (eta) {
 			UnitView.markOccupied(unit)
+		}
+		if (!eta && unit.properties.canTerraform && tile.forest) {
+			eta = currentTime + Time.CUT_FOREST
 			return true
 		}
 
+		aborted = true
 		return false
 	}
 
 	const update = currentTime => currentTime < eta
 	const finished = () => {
-		Tile.clearForest(MapEntity.tile(unit.mapCoordinates))
-		UnitView.markFree(unit)
+		if (!aborted) {		
+			Tile.clearForest(MapEntity.tile(unit.mapCoordinates))
+			UnitView.markFree(unit)
+		}
 	}
 
 	const save = () => ({

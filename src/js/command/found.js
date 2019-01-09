@@ -6,7 +6,7 @@ import Tile from '../entity/tile'
 
 const create = unit => {
 	const init = () => {
-		if (!unit.canFound) {
+		if (!unit.properties.canFound) {
 			return false
 		}
 

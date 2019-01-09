@@ -20,7 +20,8 @@ const create = (name, coords = null, additionalProps = {}) => {
 
 		const unit = {
 			name,
-			...Units[name],
+			properties: Units[name],
+			domain: Units[name].domain,
 			mapCoordinates: coords || { x: undefined, y: undefined },
 			active: true,
 			cargo: [],
@@ -77,13 +78,16 @@ const unloadAllUnits = unit => {
 }
 
 const save = unit => ({
-	// todo: expanding unit like this will leads to circular data structures easily!
-	...unit,
+	properties: unit.properties,
+	domain: unit.domain,
+	active: unit.active,
+	mapCoordinates: unit.mapCoordinates,
+	goods: unit.goods,
+	expert: unit.expert,
+	storage: unit.storage,
 	commander: unit.commander.save(),
-	sprite: undefined,
 	colony: Record.reference(unit.colony),
 	colonist: Record.reference(unit.colonist),
-	[Storage.LISTENER_KEY]: undefined,
 	cargo: unit.cargo.map(other => Record.reference(other)),
 })
 

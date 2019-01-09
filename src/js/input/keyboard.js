@@ -33,7 +33,7 @@ const handleKeydown = (e) => {
 		Time.togglePause()
 	}
 
-	if (e.key === 'd') {
+	if (e.key === 'o') {
 		Record.dump()
 	}
 

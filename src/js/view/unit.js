@@ -72,7 +72,7 @@ const deactivate = unit => {
 }
 
 const createSprite = unit => {
-	const frame = unit.expert ? unit.frame[unit.expert] || unit.frame.default : unit.frame.default
+	const frame = unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
 	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
 	if (unit.mapCoordinates) {	
 		sprite.x = TILE_SIZE * unit.mapCoordinates.x
@@ -109,7 +109,7 @@ const markFree = unit => {
 }
 
 const createColonySprite = unit => {
-	const frame = unit.expert ? unit.frame[unit.expert] || unit.frame.default : unit.frame.default
+	const frame = unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
 	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
 	sprite.scale.set(2)
 
