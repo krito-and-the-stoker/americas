@@ -1,0 +1,44 @@
+{
+	"places": [
+		"blacksmiths",
+		"tobacconists",
+		"townhall",
+		"furTraders",
+		"carpenters",
+		"warehouse",
+		"weavers",
+		"rumDistillers"
+	],
+	"blacksmiths": {
+		"frame": 0,
+		"width": 1
+	},
+	"tobacconists": {
+		"frame": 3,
+		"width": 1
+	},
+	"furTraders": {
+		"frame": 6,
+		"width": 1
+	},
+	"carpenters": {
+		"frame": 9,
+		"width": 1
+	},
+	"townhall": {
+		"frame": 10,
+		"width": 2
+	},
+	"warehouse": {
+		"frame": 12,
+		"width": 2
+	},
+	"weavers": {
+		"frame": 16,
+		"width": 1
+	},
+	"rumDistillers": {
+		"frame": 17,
+		"width": 1
+	}
+}

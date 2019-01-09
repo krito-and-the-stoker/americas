@@ -17,6 +17,7 @@ import ColonyTiles from './colony/tiles'
 import ColonyHeadline from './colony/headline'
 import ColonyStorage from './colony/storage'
 import ColonyDocks from './colony/docks'
+import ColonyBuildings from './colony/buildings'
 
 
 const TILE_SIZE = 64
@@ -62,6 +63,7 @@ const createDetailScreen = colony => {
 	const headline = ColonyHeadline.create(colony, originalDimensions)
 	const storage = ColonyStorage.create(colony, originalDimensions)
 	const docks = ColonyDocks.create(colony, () => closeScreen(), originalDimensions)
+	const buildings = ColonyBuildings.create(colony)
 
 	screenContainer.addChild(colonyWoodBackground)
 	screenContainer.addChild(background.container)
@@ -69,6 +71,7 @@ const createDetailScreen = colony => {
 	screenContainer.addChild(docks.container)
 	screenContainer.addChild(headline.container)
 	screenContainer.addChild(storage.container)
+	screenContainer.addChild(buildings.container)
 
 
 	const unsubscribeResize = RenderView.updateWhenResized(({ dimensions }) => {

@@ -25,7 +25,7 @@ export const loadTexture = async (...files) => new Promise((resolve, reject) => 
 
 export const range = n => [...Array(n).keys()]
 
-export const rectangle = index => {
+export const rectangle = (index) => {
 	const width = 64
 	const height = 64
 	const tilesPerRow = Math.floor(1024 / width)
@@ -33,6 +33,7 @@ export const rectangle = index => {
 	const col = index % tilesPerRow
 	return new PIXI.Rectangle(width * col, height * row, width, height)
 }
+
 
 let currentId = 0
 const getUid = () => {
