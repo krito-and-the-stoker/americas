@@ -8,6 +8,7 @@ import Tile from '../entity/tile'
 import Unit from '../entity/unit'
 import Europe from '../entity/europe'
 import Treasure from '../entity/treasure'
+import Market from '../entity/market'
 
 import MapView from '../view/map'
 import Foreground from '../render/foreground'
@@ -109,6 +110,7 @@ const save = () => {
 		unitView: UnitView.save(),
 		europe: Europe.save(),
 		treasure: Treasure.save(),
+		market: Market.save(),
 		globals
 	})
 	if (SAVE_TO_LOCAL_STORAGE) {
@@ -194,6 +196,7 @@ const load = () => {
 	snapshot.entities.forEach(revive)
 	Time.load(snapshot.time)
 	Treasure.load(snapshot.treasure)
+	Market.load(snapshot.market)
 	Europe.load(snapshot.europe)
 	UnitView.load(snapshot.unitView)
 

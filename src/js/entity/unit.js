@@ -77,10 +77,12 @@ const unloadAllUnits = unit => {
 }
 
 const save = unit => ({
+	// todo: expanding unit like this will leads to circular data structures easily!
 	...unit,
 	commander: unit.commander.save(),
 	sprite: undefined,
 	colony: Record.reference(unit.colony),
+	colonist: Record.reference(unit.colonist),
 	[Storage.LISTENER_KEY]: undefined,
 	cargo: unit.cargo.map(other => Record.reference(other)),
 })

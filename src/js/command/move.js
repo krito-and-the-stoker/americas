@@ -7,6 +7,7 @@ import Time from '../timeline/time'
 import Colony from '../entity/colony'
 import Unit from '../entity/unit'
 import Load from '../command/load'
+import UnitView from '../view/unit'
 
 const TILE_SIZE = 64
 
@@ -33,11 +34,11 @@ const createFromData = data => {
 	let aborted = data.aborted
 	const targetTile = MapEntity.tile(coords)
 	let fromTile = null
+	let enteringShip = data.enteringShip
 
 	const init = currentTime => {
 		startTime = currentTime
 		startCoords = unit.mapCoordinates
-		let enteringShip = false
 
 		if (!inMoveDistance(startCoords, coords)) {
 			aborted = true
@@ -100,6 +101,9 @@ const createFromData = data => {
 			if (fromTile.colony) {
 				Colony.leave(fromTile.colony, unit)
 			}
+			if (!targetTile.colony && !enteringShip) {
+				UnitView.activate(unit)
+			}
 			return false
 		}
 		unit.sprite.x = TILE_SIZE * (startCoords.x + (coords.x - startCoords.x) * relativeTime / duration)
@@ -126,6 +130,7 @@ const createFromData = data => {
 		startCoords,
 		duration,
 		aborted,
+		enteringShip
 	})
 
 	return {

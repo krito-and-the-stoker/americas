@@ -84,7 +84,7 @@ const Market = {
 	}
 }
 
-const prices = Util.makeObject(Object.keys(Market)
+let prices = Util.makeObject(Object.keys(Market)
 	.map(good => [good, Market[good].low + Math.floor(Math.random() * (Market[good].high - Market[good].low))]))
 
 const bid = good => prices[good]
@@ -109,9 +109,16 @@ const sell = (good, amount) => {
 	console.log(`sold ${amount} ${good}`)
 }
 
+const save = () => prices
+const load = data => {
+	prices = data
+}
+
 export default {
 	buy,
 	sell,
 	ask,
-	bid
+	bid,
+	save,
+	load
 }
