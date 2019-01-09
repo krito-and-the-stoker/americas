@@ -8,6 +8,7 @@ import GoodsView from '../view/goods'
 import Colony from '../entity/colony'
 import Market from '../entity/market'
 import Util from '../util/util'
+import Storage from '../entity/storage'
 
 const create = unit => {
 	const container = new PIXI.Container()
@@ -26,23 +27,26 @@ const create = unit => {
 				return false
 			}
 			if (colony) {
-				Unit.loadGoods(unit, good, amount)
-				Colony.updateStorage(colony, good, -amount)
+				if (Unit.loadGoods(unit, good, amount)) {
+					Colony.updateStorage(colony, good, -amount)
+				}
 				return false
 			}
 			if (args.unit && args.unit !== unit) {
-				Unit.loadGoods(unit, good, amount)
-				Unit.loadGoods(fromUnit, good, -amount)
+				if (Unit.loadGoods(unit, good, amount)) {
+					Unit.loadGoods(fromUnit, good, -amount)
+				}
 				return false
 			}
 		}
 		if (fromUnit && fromUnit !== unit) {
-			Unit.loadUnit(unit, fromUnit)
-			if (Europe.hasUnit(fromUnit)) {
-				Europe.leave(fromUnit)
-			}
-			if (fromUnit.colony) {
-				Colony.leave(fromUnit.colony, fromUnit)
+			if (Unit.loadUnit(unit, fromUnit)) {			
+				if (Europe.hasUnit(fromUnit)) {
+					Europe.leave(fromUnit)
+				}
+				if (fromUnit.colony) {
+					Colony.leave(fromUnit.colony, fromUnit)
+				}
 			}
 			return false
 		}
@@ -54,11 +58,12 @@ const create = unit => {
 	const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
 	greyScaleFilter.blackAndWhite()
 	const unsubscribeStorage = Unit.listenStorage(unit, storage => {
+		console.log(storage)
 		let index = {
 			x: 0,
 			y: 0
 		}
-		const goods = GoodsView.splitStorage(unit.storage)
+		const goods = Storage.split(unit.storage)
 		return Util.mergeFunctions(goods.map(pack => {
 			const view = GoodsView.create(pack)
 			view.sprite.x = index.x * 1.4 * 32 - 8

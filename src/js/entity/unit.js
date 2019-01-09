@@ -48,14 +48,27 @@ const create = (name, coords = null, additionalProps = {}) => {
 }
 
 const at = coords => allUnits.filter(unit => unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y)
-const loadGoods = (unit, good, amount) => Storage.update(unit, good, amount)
+const hasStorageCapacity = unit => Storage.split(unit.storage).length + unit.cargo.length < unit.properties.cargo
+const loadGoods = (unit, good, amount) => {
+	if (!hasStorageCapacity(unit) && amount > 0) {
+		return false
+	}
+
+	Storage.update(unit, good, amount)
+	return true
+}
 const listenStorage = (unit, fn) => {
 	return Storage.listen(unit, fn)
 }
 
 const loadUnit = (unit, cargoUnit) => {
+	if (!hasStorageCapacity(unit)) {
+		return false
+	}
+
 	UnitView.deactivate(cargoUnit)
 	unit.cargo.push(cargoUnit)
+	return true
 }
 
 const unloadUnit = unit => {

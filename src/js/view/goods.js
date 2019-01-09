@@ -3,16 +3,6 @@ import Ressources from '../render/ressources'
 import Util from '../util/util'
 
 
-const splitStorage = storage => {
-	return Object.keys(storage)
-		.filter(good => storage[good] > 0)
-		.map(good => 
-			Util.range(Math.ceil(storage[good] / 100))
-				.map(i => Math.min(100*(i+1), storage[good] - 100*i))
-				.map(amount => ({ good, amount }))
-			).flat()
-}
-
 const create = ({ good, amount }) => {
 	const frame = Goods[good].id
 	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
@@ -34,7 +24,4 @@ const create = ({ good, amount }) => {
 	}
 }
 
-export default {
-	create,
-	splitStorage
-}
+export default { create }
