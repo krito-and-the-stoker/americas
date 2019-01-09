@@ -1,4 +1,5 @@
 import Harvest from '../task/harvest'
+import Produce from '../task/produce'
 import Time from '../timeline/time'
 import ColonistView from '../view/colonist'
 import Record from '../util/record'
@@ -16,6 +17,23 @@ const beginFieldWork = (colonist, tile, good) => {
 		type: 'Field',
 		tile,
 		good,
+		stop
+	})
+}
+
+const beginColonyWork = (colonist, building) => {
+	stopWorking(colonist)
+	const stop = Time.schedule(Produce.create(colonist.colony, building, colonist))
+
+	const position = colonist.colony.colonists
+		.filter(col => col.worksAt && col.worksAt.building === building)
+		.map(col => col.worksAt.position)
+		.reduce((free, occupied) => free.filter(pos => pos !== occupied), [0, 1, 2])
+		.find(() => true)
+	Binding.update(colonist, 'worksAt', {
+		type: 'Colony',
+		building,
+		position,
 		stop
 	})
 }
@@ -85,6 +103,7 @@ export default {
 	save,
 	load,
 	beginFieldWork,
+	beginColonyWork,
 	stopWorking,
 	bindWorksAt
 }

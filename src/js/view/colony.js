@@ -92,6 +92,7 @@ const createDetailScreen = colony => {
 		tiles.unsubscribe()
 		storage.unsubscribe()
 		docks.unsubscribe()
+		buildings.unsubscribe()
 		unsubscribeResize()
 		Foreground.closeScreen()
 	}

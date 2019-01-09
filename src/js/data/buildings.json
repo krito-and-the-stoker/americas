@@ -11,19 +11,51 @@
 	],
 	"blacksmiths": {
 		"frame": 0,
-		"width": 1
+		"width": 1,
+		"consumption": {
+			"good": "ore",
+			"amount": 3
+		},
+		"production": {
+			"good": "tools",
+			"amount": 3
+		}
 	},
 	"tobacconists": {
 		"frame": 3,
-		"width": 1
+		"width": 1,
+		"consumption": {
+			"good": "tobacco",
+			"amount": 3
+		},
+		"production": {
+			"good": "cigars",
+			"amount": 3
+		}
 	},
 	"furTraders": {
 		"frame": 6,
-		"width": 1
+		"width": 1,
+		"consumption": {
+			"good": "furs",
+			"amount": 3
+		},
+		"production": {
+			"good": "coats",
+			"amount": 3
+		}
 	},
 	"carpenters": {
 		"frame": 9,
-		"width": 1
+		"width": 1,
+		"consumption": {
+			"good": "wood",
+			"amount": 3
+		},
+		"production": {
+			"good": "build",
+			"amount": 3
+		}
 	},
 	"townhall": {
 		"frame": 10,
@@ -35,10 +67,26 @@
 	},
 	"weavers": {
 		"frame": 16,
-		"width": 1
+		"width": 1,
+		"consumption": {
+			"good": "cotton",
+			"amount": 3
+		},
+		"production": {
+			"good": "cloth",
+			"amount": 3
+		}
 	},
 	"rumDistillers": {
 		"frame": 17,
-		"width": 1
+		"width": 1,
+		"consumption": {
+			"good": "sugar",
+			"amount": 3
+		},
+		"production": {
+			"good": "rum",
+			"amount": 3
+		}
 	}
 }

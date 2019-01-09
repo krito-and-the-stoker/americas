@@ -14,6 +14,7 @@ import Binding from '../util/binding'
 import Storage from './storage'
 import Consume from '../task/consume'
 
+// for unknown reasons we need to wait bit until we can set the global here :/
 setTimeout(() => Record.setGlobal('colonyNames',
 	['Jamestown',
 	'Roanoke',
@@ -66,6 +67,7 @@ const unjoin = (colony, colonist) => {
 	Binding.update(colony, 'colonists', colony.colonists.filter(col => col !== colonist))
 }
 
+const canEmploy = (colony, building) => colony.colonists.filter(colonist => colonist.worksAt && colonist.worksAt.building === building).length < 3
 const bindUnits = (colony, fn) => Binding.listen(colony, 'units', fn)
 const bindColonists = (colony, fn) => Binding.listen(colony, 'colonists', fn)
 
@@ -86,6 +88,7 @@ const create = (coords, unit) => {
 		name: getColonyName(),
 		units: [],
 		colonists: [],
+		buildings: [],
 		mapCoordinates: { ...coords }
 	}
 	colony.storage = Storage.create(colony)
@@ -158,5 +161,6 @@ export default {
 	enter,
 	leave,
 	join,
-	unjoin
+	unjoin,
+	canEmploy,
 }
