@@ -48,22 +48,22 @@ const Market = {
 		high: 2
 	},
 	rum : {
-		difference: 2,
+		difference: 1,
 		low: 8,
 		high: 12
 	},
 	cigars : {
-		difference: 2,
+		difference: 1,
 		low: 8,
 		high: 12
 	},
 	cloth : {
-		difference: 2,
+		difference: 1,
 		low: 8,
 		high: 12
 	},
 	coats : {
-		difference: 2,
+		difference: 1,
 		low: 8,
 		high: 12
 	},
