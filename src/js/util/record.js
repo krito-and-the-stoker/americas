@@ -16,6 +16,7 @@ import Background from '../render/background'
 import RenderView from '../render/view'
 import UnitView from '../view/unit'
 import Time from '../timeline/time'
+import PathFinder from '../util/pathFinder'
 
 const REFERENCE_KEY = 'referenceId'
 
@@ -203,6 +204,7 @@ const load = () => {
 	Market.load(snapshot.market)
 	Europe.load(snapshot.europe)
 	UnitView.load(snapshot.unitView)
+	PathFinder.initialize()
 
 	loadedListeners.forEach(fn => fn())
 

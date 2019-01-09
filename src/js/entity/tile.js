@@ -278,6 +278,7 @@ const clearForest = tile => {
 
 const plow = tile => {
 	tile.plowed = true
+	tile.bonus = Math.random() > 0.85
 
 	Binding.update(tile)
 	Background.render()

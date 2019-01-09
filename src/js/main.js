@@ -75,7 +75,6 @@ const initialize = () => {
 	}, 150)
 
 	document.addEventListener('visibilitychange', () => {
-		console.log(document.hidden)
 		if (document.hidden) {
 			MainLoop.stop()
 		} else {

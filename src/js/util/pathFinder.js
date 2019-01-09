@@ -27,12 +27,12 @@ const initialize = () => {
 		const neighbors = Tile.diagonalNeighbors(center).map(tile => ({
 			index: tile.index,
 			cost: () => Tile.movementCost(center, tile),
-			tile
+			tile: () => MapEntity.tileFromIndex(tile.index)
 		}))
 
 		graph.addNode({
 			index: center.index,
-			tile: center
+			tile: () => MapEntity.tileFromIndex(center.index)
 		}, neighbors);
 	})
 }
@@ -66,10 +66,10 @@ const find = (from, isTarget, target, freeDomainCross, unit) => {
 			return a.value.cost - b.value.cost;
 
 		//prefer horizontal or vertical movement to diagonals
-		if(Tile.isNextTo(a.value.prev.value.tile, a.value.tile))
+		if(Tile.isNextTo(a.value.prev.value.tile(), a.value.tile()))
 			return -1;
 
-		if(Tile.isNextTo(b.value.prev.value.tile, b.value.tile))
+		if(Tile.isNextTo(b.value.prev.value.tile(), b.value.tile()))
 			return 1;
 
 		return 0;
@@ -90,10 +90,10 @@ const find = (from, isTarget, target, freeDomainCross, unit) => {
 		node = frontier.extractMinimum()
 		inFrontier[node.value.index] = false
 		if(isTarget(node.value)){
-			const path = [node.value.tile]
+			const path = [node.value.tile()]
 			while(node.value.prev !== node){
 				node = node.value.prev
-				path.push(node.value.tile)
+				path.push(node.value.tile())
 			}
 
 			return path.reverse()
@@ -104,7 +104,7 @@ const find = (from, isTarget, target, freeDomainCross, unit) => {
 			if(!explored[neighbor.index]){
 				let neighborNode = graph.node(neighbor.index)
 				let newCost = node.value.cost + neighbor.cost()
-				if(unit.domain !== node.value.tile.domain && !node.value.tile.colony){
+				if(unit.domain !== node.value.tile().domain && !node.value.tile().colony){
 					if(freeDomainCross)
 						newCost = 0
 					else
@@ -115,7 +115,7 @@ const find = (from, isTarget, target, freeDomainCross, unit) => {
 				if(!inFrontier[neighbor.index]){
 					neighborNode.prev = node
 					neighborNode.cost = newCost
-					neighborNode.priority =  newCost + relativeEstimate(neighborNode.tile)
+					neighborNode.priority =  newCost + relativeEstimate(neighborNode.tile())
 
 					inFrontier[neighbor.index] = frontier.insert(neighborNode.priority, neighborNode)
 				}
@@ -123,7 +123,7 @@ const find = (from, isTarget, target, freeDomainCross, unit) => {
 					if(newCost < neighborNode.cost){
 						neighborNode.prev = node
 						neighborNode.cost = newCost
-						neighborNode.priority = newCost + relativeEstimate(neighborNode.tile)
+						neighborNode.priority = newCost + relativeEstimate(neighborNode.tile())
 
 						frontier.decreaseKey(inFrontier[neighbor.index], neighborNode.priority)
 					}
