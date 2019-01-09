@@ -71,6 +71,15 @@ const deactivate = unit => {
 	}
 }
 
+const updateType = unit => {
+	const frame = unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
+	const texture = new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame))
+	unit.sprite.texture = texture
+	if (unit.colonySprite) {
+		unit.colonySprite.texture = texture
+	}
+}
+
 const createSprite = unit => {
 	const frame = unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
 	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
@@ -109,11 +118,15 @@ const markFree = unit => {
 }
 
 const createColonySprite = unit => {
-	const frame = unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
-	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
-	sprite.scale.set(2)
+	if (!unit.colonySprite) {	
+		const frame = unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
+		const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
+		sprite.scale.set(2)
 
-	return sprite	
+		unit.colonySprite = sprite
+	}
+
+	return unit.colonySprite
 }
 
 
@@ -129,6 +142,7 @@ const load = data => {
 export default {
 	createSprite,
 	createColonySprite,
+	updateType,
 	activate,
 	deactivate,
 	markFree,

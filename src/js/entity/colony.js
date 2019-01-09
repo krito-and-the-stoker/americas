@@ -61,6 +61,14 @@ const leave = (colony, unit) => {
 const join = (colony, colonist) => {
 	if (!colony.colonists.includes(colonist)) {	
 		colony.colonists.push(colonist)
+		const equipment = colonist.unit.equipment
+		Object.keys(equipment).forEach(good => {
+			if (equipment[good] > 0) {
+				updateStorage(colony, good, equipment[good])
+				equipment[good] = 0
+			}
+		})
+		Binding.update(colonist.unit, 'equipment')
 		Binding.update(colony, 'colonists')
 	}
 }

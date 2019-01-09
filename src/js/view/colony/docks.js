@@ -7,6 +7,8 @@ import Drag from '../../input/drag'
 import Unit from '../../entity/unit'
 import GoodsView from '../../view/goods'
 import Transport from '../../view/transport'
+import Binding from '../../util/binding'
+
 
 const create = (colony, closeScreen, originalDimensions) => {
 	const container = new PIXI.Container()
@@ -44,6 +46,43 @@ const create = (colony, closeScreen, originalDimensions) => {
 			Click.on(sprite, () => {
 				closeScreen()
 				UnitView.select(unit)
+			})
+
+			Drag.makeDragTarget(sprite, args => {
+				const { good, amount, colony }= args
+				const fromUnit = args.unit
+				if (unit.name === 'settler') {
+					if (good === 'tools') {
+						const maximumAmount = Math.min(amount, 100 - unit.equipment.tools)
+						const roundedAmount = 5 * Math.floor(maximumAmount / 5)
+						if (roundedAmount > 0) {
+							if (colony) {
+								Colony.updateStorage(colony, 'tools', -roundedAmount)
+							}
+							if (fromUnit) {
+								Unit.loadGoods(fromUnit, 'tools', -roundedAmount)
+							}
+							unit.equipment.tools += roundedAmount
+							Binding.update(unit, 'equipment')
+							console.log(unit)
+						}
+					}
+				}
+				if (['settler', 'scout', 'soldier', 'dragoon'].includes(unit.name)) {
+					if (good === 'guns' || good === 'horses') {
+						const maximumAmount = Math.min(amount, 100 - unit.equipment[good])
+						if (colony) {
+							Colony.updateStorage(colony, good, -maximumAmount)
+						}
+						if (unit) {
+							Unit.loadGoods(unit, good, -maximumAmount)
+						}
+						unit.equipment[good] += maximumAmount
+						Binding.update(unit, 'equipment')
+					}
+				}
+
+				return false
 			})
 		})
 	})

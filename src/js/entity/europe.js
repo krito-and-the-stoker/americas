@@ -60,7 +60,7 @@ const purchaseOptions = () => [
 		{ text: 'Merchantman (2000)', unit: 'merchantman', price: 2000 },
 		{ text: 'Galleon (3000)', unit: 'galleon', price: 3000 },
 		{ text: 'Frigate (5000)', unit: 'frigate', price: 5000 },
-		{ text: 'Nothing at the moment.', price: 0}
+		{ text: 'Nothing at the moment.', price: 0 }
 	].filter(option => option.price <= Treasure.amount())
 
 const purchase = option => {

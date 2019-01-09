@@ -8,6 +8,7 @@ import Time from '../timeline/time'
 import Colony from '../entity/colony'
 import Storage from '../entity/storage'
 import Util from '../util/util'
+import Binding from '../util/binding'
 
 let allUnits = []
 const create = (name, coords = null, additionalProps = {}) => {
@@ -25,13 +26,27 @@ const create = (name, coords = null, additionalProps = {}) => {
 			mapCoordinates: coords || { x: undefined, y: undefined },
 			active: true,
 			cargo: [],
-			goods: [],
 			expert: null,
 			...additionalProps
 		}
 		unit.storage = Storage.create(unit)
-		unit.commander = Commander.create({ keep: true })
-		Time.schedule(unit.commander)
+		unit.equipment = Storage.create(unit)
+
+		if (name === 'pioneer') {
+			unit.equipment.tools = 100
+		}
+		if (name === 'soldier') {
+			unit.equipment.guns = 50
+		}
+		if (name === 'scout') {
+			unit.equipment.horses = 50
+		}
+		if (name === 'dragoon') {
+			unit.equipment.horses = 50
+			unit.equipment.guns = 50
+		}
+
+		initialize(unit)
 
 		if (coords && MapEntity.tile(coords).colony) {
 			Colony.enter(MapEntity.tile(coords).colony, unit)
@@ -48,6 +63,48 @@ const create = (name, coords = null, additionalProps = {}) => {
 	}
 }
 
+const initialize = unit => {
+	unit.commander = Commander.create({ keep: true })
+	Time.schedule(unit.commander)
+	Binding.listen(unit, 'equipment', equipment => {
+		// lose status
+		if (unit.name === 'pioneer' && equipment.tools < 20) {
+			updateType(unit, 'settler')
+		}
+		if (unit.name === 'scout' && equipment.horses < 50) {
+			updateType(unit, 'settler')
+		}
+		if (unit.name === 'dragoon' && equipment.horses <= 0) {
+			updateType(unit, 'soldier')
+		}
+		if (unit.name === 'soldier' && equipment.guns <= 0) {
+			updateType(unit, 'settler')
+		}
+
+		// gain status
+		if (unit.name === 'settler') {
+			if (equipment.tools >= 20) {
+				updateType(unit, 'pioneer')
+			}
+			if (equipment.guns > 0) {
+				if (equipment.horses > 0) {
+					updateType(unit, 'dragoon')
+				} else {
+					updateType(unit, 'soldier')
+				}
+			}
+			if (equipment.horses >= 50) {
+				updateType(unit, 'scout')
+			}
+		}
+	})
+}
+
+const updateType = (unit, name) => {
+	unit.name = name
+	unit.properties = Units[name]
+	UnitView.updateType(unit)
+}
 const at = coords => allUnits.filter(unit => unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y)
 const hasStorageCapacity = unit => Storage.split(unit.storage).length + unit.cargo.length < unit.properties.cargo
 const loadGoods = (unit, good, amount) => {
@@ -92,13 +149,14 @@ const unloadAllUnits = unit => {
 }
 
 const save = unit => ({
+	name: unit.name,
 	properties: unit.properties,
 	domain: unit.domain,
 	active: unit.active,
 	mapCoordinates: unit.mapCoordinates,
-	goods: unit.goods,
 	expert: unit.expert,
 	storage: unit.storage,
+	equipment: unit.equipment,
 	commander: unit.commander.save(),
 	colony: Record.reference(unit.colony),
 	colonist: Record.reference(unit.colonist),
@@ -110,9 +168,8 @@ const load = unit => {
 	unit.sprite = UnitView.createSprite(unit)
 	Record.dereferenceLazy(unit.colony, colony => unit.colony = colony)
 	Record.dereferenceLazy(unit.colonist, colonist => unit.colonist = colonist)
-	Record.entitiesLoaded(() => {	
-		unit.commander = Commander.load(unit.commander)
-		Time.schedule(unit.commander)
+	Record.entitiesLoaded(() => {
+		initialize(unit)
 	})
 
 	allUnits.push(unit)

@@ -185,7 +185,7 @@ const makeDraggable = (sprite, entity) => {
 		let targetSprite = null
 		const findTarget = next => {
 			if (next) {
-				if (dragTargets.map(({ sprite }) => sprite).includes(next)) {
+				if (next !== sprite && dragTargets.map(({ sprite }) => sprite).includes(next)) {
 					targetSprite = next
 				} else {
 					let originalInteractive = next.interactive
