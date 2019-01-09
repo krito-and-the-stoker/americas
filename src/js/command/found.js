@@ -1,10 +1,16 @@
 import Colony from '../entity/colony'
 import UnitView from '../view/unit'
 import Record from '../util/record'
+import MapEntity from '../entity/map'
+import Tile from '../entity/tile'
 
 const create = unit => {
 	const init = () => {
 		if (!unit.canFound) {
+			return false
+		}
+
+		if (Tile.diagonalNeighbors(MapEntity.tile(unit.mapCoordinates)).some(neighbor => neighbor.colony)) {
 			return false
 		}
 
