@@ -33,6 +33,10 @@ const handleKeydown = (e) => {
 		Time.togglePause()
 	}
 
+	if (e.key === 'd') {
+		Record.dump()
+	}
+
 	if (e.key === 'e') {
 		Europe.open()
 	}

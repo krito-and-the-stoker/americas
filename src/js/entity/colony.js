@@ -69,6 +69,18 @@ const unjoin = (colony, colonist) => {
 const bindUnits = (colony, fn) => Binding.listen(colony, 'units', fn)
 const bindColonists = (colony, fn) => Binding.listen(colony, 'colonists', fn)
 
+const initializeBindings = colony => {
+	const tile = MapEntity.tile(colony.mapCoordinates)
+	Tile.listen(tile, () => Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good))))
+	Binding.listen(colony, 'colonists', colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)))
+	bindStorage(colony, storage => {
+		if (storage.food >= 200) {
+			const unit = Unit.create('settler', colony.mapCoordinates)
+			updateStorage(colony, 'food', -200)
+		}
+	})	
+}
+
 const create = (coords, unit) => {
 	const colony = {
 		name: getColonyName(),
@@ -95,10 +107,6 @@ const create = (coords, unit) => {
 		Colonist.beginFieldWork(colonist, winner.tile, 'food')
 	}
 
-	Tile.listen(tile, () => Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good))))
-	Binding.listen(colony, 'colonists', colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)))
-
-
 	colony.sprite = ColonyView.createMapSprite(colony)
 
 	Record.add('colony', colony)
@@ -116,10 +124,7 @@ const save = colony => ({
 const load = colony => {
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	tile.colony = colony
-	Record.entitiesLoaded(() => {
-		Tile.listen(tile, () => Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good))))
-		Binding.listen(colony, 'colonists', colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)))
-	})
+	Record.entitiesLoaded(() => initializeBindings(colony))
 
 	colony.sprite = ColonyView.createMapSprite(colony)
 

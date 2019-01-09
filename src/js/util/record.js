@@ -71,6 +71,10 @@ const revive = (record) => {
 	return record.entity
 }
 
+const dump = () => {
+	console.log(records)
+}
+
 const reviveTile = (data, index) => {
 	const tile = Tile.load(data, index)
 	tiles[tile.index] = tile
@@ -221,5 +225,6 @@ export default {
 	getGlobal,
 	save,
 	load,
+	dump,
 	REFERENCE_KEY
 }

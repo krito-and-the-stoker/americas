@@ -99,7 +99,7 @@ const buy = (good, amount) => {
 	}
 	const actualAmount = Math.floor(Treasure.amount() / pricePerGood)
 	Treasure.spend(actualAmount * pricePerGood)
-	console.log(`bought ${actualAmount} ${goods}`)
+	console.log(`bought ${actualAmount} ${good}`)
 	return actualAmount
 }
 

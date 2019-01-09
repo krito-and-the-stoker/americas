@@ -35,7 +35,7 @@ const create = unit => {
 				return false
 			}
 		}
-		if (fromUnit) {
+		if (fromUnit && fromUnit !== unit) {
 			Unit.loadUnit(unit, fromUnit)
 			if (Europe.hasUnit(fromUnit)) {
 				Europe.leave(fromUnit)
