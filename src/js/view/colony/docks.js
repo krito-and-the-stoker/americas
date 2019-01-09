@@ -74,8 +74,8 @@ const create = (colony, closeScreen, originalDimensions) => {
 						if (colony) {
 							Colony.updateStorage(colony, good, -maximumAmount)
 						}
-						if (unit) {
-							Unit.loadGoods(unit, good, -maximumAmount)
+						if (fromUnit) {
+							Unit.loadGoods(fromUnit, good, -maximumAmount)
 						}
 						unit.equipment[good] += maximumAmount
 						Binding.update(unit, 'equipment')

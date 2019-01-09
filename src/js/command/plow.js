@@ -3,6 +3,7 @@ import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
 import UnitView from '../view/unit'
 import Record from '../util/record'
+import Binding from '../util/binding'
 
 const create = (unit, eta) => {
 	let aborted = false
@@ -23,7 +24,9 @@ const create = (unit, eta) => {
 
 	const update = currentTime => currentTime < eta
 	const finished = () => {
-		if (!aborted) {		
+		if (!aborted) {
+			unit.equipment.tools -= 20
+			Binding.update(unit, 'equipment')	
 			Tile.plow(MapEntity.tile(unit.mapCoordinates))
 			UnitView.markFree(unit)
 		}
