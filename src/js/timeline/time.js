@@ -16,6 +16,7 @@ const get = () => ({
 	currentTime
 })
 
+
 const advance = deltaTime => {
 	if (!paused) {
 		currentTime += deltaTime * TIME_SCALE

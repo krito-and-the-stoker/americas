@@ -74,6 +74,14 @@ const initialize = () => {
 		MapControl.initializeInteraction()
 	}, 150)
 
+	document.addEventListener('visibilitychange', () => {
+		console.log(document.hidden)
+		if (document.hidden) {
+			MainLoop.stop()
+		} else {
+			MainLoop.start()
+		}
+	})
 
 	MainLoop.setUpdate(update)
 	MainLoop.setDraw(draw)
