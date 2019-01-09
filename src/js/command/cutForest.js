@@ -2,6 +2,7 @@ import Time from '../timeline/time'
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
 import UnitView from '../view/unit'
+import Record from '../util/record'
 
 const create = (unit, eta) => {
 	const init = currentTime => {

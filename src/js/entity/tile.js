@@ -7,6 +7,7 @@ import Yield from '../data/yield'
 import Record from '../util/record'
 import Goods from '../data/goods'
 import Background from '../render/background'
+import Binding from '../util/binding'
 
 const create = ({ id, layers, index }) => {
 	const [name, terrain] = Object.entries(Terrain).find(([name, terrain]) => terrain.id === id)
@@ -270,8 +271,12 @@ const neighborString = (tile, other) => {
 const clearForest = tile => {
 	tile.forest = false
 	tile.terrainName = terrainName(tile)
+
+	Binding.update(tile)
 	Background.render()
 }
+
+const listen = (tile, fn) => Binding.listen(tile, null, fn)
 
 
 export default {
@@ -288,5 +293,6 @@ export default {
 	save,
 	load,
 	neighborString,
-	clearForest
+	clearForest,
+	listen
 }

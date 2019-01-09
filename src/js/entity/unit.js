@@ -86,7 +86,6 @@ const save = unit => ({
 })
 
 const load = unit => {
-	Storage.init(unit)
 	unit.cargo = unit.cargo.map(Record.dereference)
 	unit.sprite = UnitView.createSprite(unit)
 	Record.dereferenceLazy(unit.colony, colony => unit.colony = colony)

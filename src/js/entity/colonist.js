@@ -40,7 +40,6 @@ const create = (colony, unit) => {
 		expert: unit.expert,
 		worksAt: null
 	}
-	Binding.create(colonist, 'worksAt')
 	colonist.sprite = ColonistView.create(colonist)
 	Colony.leave(colony, unit)
 	Colony.join(colony, colonist)
@@ -61,7 +60,6 @@ const save = colonist => ({
 })
 
 const load = colonist => {
-	Binding.create(colonist, 'worksAt')
 	colonist.type = 'colonist'
 	colonist.sprite = ColonistView.create(colonist)
 

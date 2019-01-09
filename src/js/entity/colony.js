@@ -75,8 +75,6 @@ const create = (coords, unit) => {
 		colonists: [],
 		mapCoordinates: { ...coords }
 	}
-	Binding.create(colony, 'colonists')
-	Binding.create(colony, 'units')
 	colony.storage = Storage.create(colony)
 	const tile = MapEntity.tile(coords)
 	tile.colony = colony
@@ -96,7 +94,10 @@ const create = (coords, unit) => {
 		Colonist.beginFieldWork(colonist, winner.tile, 'food')
 	}
 
-	Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good)))	
+	Tile.listen(tile, () => {
+		return Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good)))
+	})
+
 
 	colony.sprite = ColonyView.createMapSprite(colony)
 
@@ -113,13 +114,12 @@ const save = colony => ({
 })
 
 const load = colony => {
-	Binding.create(colony, 'colonists')
-	Binding.create(colony, 'units')
-	Storage.init(colony)
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	tile.colony = colony
 	Record.entitiesLoaded(() => {
-		Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good)))	
+		Tile.listen(tile, () => {
+			return Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good)))
+		})
 	})
 
 	colony.sprite = ColonyView.createMapSprite(colony)

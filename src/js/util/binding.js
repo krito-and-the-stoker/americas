@@ -8,11 +8,17 @@ const create = (instance, key) => {
 
 const listen = (instance, key, fn) => {
 	const listeners = listenerKey(key)
-	const cleanup = fn(instance[key]) || doNothing
+	const value = key ? instance[key] : undefined
+	const cleanup = fn(value) || doNothing
 	const listener = {
 		fn,
 		cleanup
 	}
+
+	if (!instance[listeners]) {
+		create(instance, key)
+	}
+
 	instance[listeners].push(listener)
 	
 	const remove = () => {
@@ -29,19 +35,20 @@ const update = (instance, key, value) => {
 	if (value !== undefined) {
 		instance[key] = value
 	}
-	instance[listeners].forEach(listener => {
-		if (listener.cleanup) {
-			listener.cleanup()
-		}
-		listener.cleanup = listener.fn(instance[key])
-	})
+	if (instance[listeners]) {	
+		instance[listeners].forEach(listener => {
+			if (listener.cleanup) {
+				listener.cleanup()
+			}
+			listener.cleanup = listener.fn(instance[key])
+		})
+	}
 }
 
-const listenerKey = key => `${key}Listeners`
+const listenerKey = key => key ? `${key}Listeners` : 'listeners'
 
 
 export default {
-	create,
 	update,
 	listen,
 	listenerKey
