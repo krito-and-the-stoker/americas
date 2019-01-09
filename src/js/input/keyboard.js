@@ -10,6 +10,7 @@ import Record from '../util/record'
 import Commander from '../command/commander'
 import CutForest from '../command/cutForest'
 import MapEntity from '../entity/map'
+import Treasure from '../entity/treasure'
 
 const ZOOM_FACTOR = 1.25
 const ZOOM_TIME = 350
@@ -34,6 +35,10 @@ const handleKeydown = (e) => {
 
 	if (e.key === 'e') {
 		Europe.open()
+	}
+
+	if (e.key === 'g') {
+		Treasure.gain(100)
 	}
 
 	if (e.key === 'm' || e.key === 'Escape') {

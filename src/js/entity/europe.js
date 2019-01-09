@@ -1,5 +1,6 @@
 import Record from '../util/record'
 import Treasure from './treasure'
+import Unit from './unit'
 
 
 let units = []
@@ -29,14 +30,28 @@ const bindUnits = fn => {
 }
 
 const save = () => ({
-	units: units.map(Record.reference)
+	units: units.map(Record.reference),
+	currentPrice
 })
 
 const load = data => {
 	unitsListeners = []
 	units = data.units.map(Record.dereference)
+	currentPrice = data.currentPrice
 }
 
+let currentPrice = 200
+const recruitmentOptions = () => Treasure.amount() >= currentPrice ?
+	[{ text: `Settler (${currentPrice})`, unit: 'settler' }, { text: 'None at the moment.' }] :
+	[{ text: `Oh we cannot afford to recruit a new colonist (${currentPrice})` }]
+
+const recruit = option => {
+	if (option.unit && Treasure.spend(currentPrice)) {
+		const unit = Unit.create(option.unit)
+		arrive(unit)
+		currentPrice += 100
+	}
+}
 
 
 export default {
@@ -46,4 +61,6 @@ export default {
 	bindUnits,
 	save,
 	load,
+	recruitmentOptions,
+	recruit
 }

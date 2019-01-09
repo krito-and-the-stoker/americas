@@ -53,7 +53,8 @@ const create = () => {
 	container.addChild(nameHeadline)
 
 	const button = Button.create('recruit', () => {
-		const choices = Treasure.amount() > 200 ? ['Settler', 'Never mind.'] : ['Never mind. I cannot afford it.']
+		const options = Europe.recruitmentOptions()
+		const choices = options.map(option => option.text)
 		return Dialog.createIndependent('Who would you like to recruit?',
 			choices,
 			null,
@@ -62,10 +63,7 @@ const create = () => {
 				pause: false
 			})
 		.then(decision => {
-			if (choices[decision] === 'Settler' && Treasure.spend(200)) {
-				const unit = Unit.create('settler')
-				Europe.arrive(unit)
-			}
+			Europe.recruit(options[decision])
 		})
 	})
 	button.x = originalDimensions.x - button.width - 10
