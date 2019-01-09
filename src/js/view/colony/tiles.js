@@ -8,6 +8,7 @@ import ProductionView from '../production'
 import Drag from '../../input/drag'
 import Context from '../../view/context'
 import Colony from '../../entity/colony'
+import Commander from '../../command/commander'
 
 
 const TILE_SIZE = 64
@@ -31,6 +32,9 @@ const create = (colony, originalDimensions) => {
 		})
 		const destroy = Drag.makeDragTarget(sprites[sprites.length - 1], async (args, coords) => {
 			const { unit } = args
+			if (unit && !Commander.isIdle(unit.commander)) {
+				return false
+			}
 			if (!tile.harvestedBy) {
 				if (!unit && !args.colonist) {
 					return false
