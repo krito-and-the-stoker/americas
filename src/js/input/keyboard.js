@@ -9,6 +9,7 @@ import Europe from '../view/europe'
 import Record from '../util/record'
 import Commander from '../command/commander'
 import CutForest from '../command/cutForest'
+import Plow from '../command/plow'
 import MapEntity from '../entity/map'
 import Treasure from '../entity/treasure'
 
@@ -67,7 +68,11 @@ const handleKeydown = (e) => {
 			Commander.scheduleInstead(activeUnit.commander, Found.create(activeUnit))
 		}
 		if (e.key === 'p') {
-			Commander.scheduleInstead(activeUnit.commander, CutForest.create(activeUnit))
+			if (MapEntity.tile(activeUnit.mapCoordinates).forest) {
+				Commander.scheduleInstead(activeUnit.commander, CutForest.create(activeUnit))
+			} else {
+				Commander.scheduleInstead(activeUnit.commander, Plow.create(activeUnit))
+			}
 		}
 	}
 	// const activeUnit = Unit.get().activeUnit

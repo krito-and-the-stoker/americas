@@ -158,5 +158,8 @@
 	},
 	"transparent":{
 		"id": 97
+	},
+	"plowed":{
+		"id": 96
 	}
 }

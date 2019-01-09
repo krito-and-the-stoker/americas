@@ -8,8 +8,8 @@ const create = (unit, eta) => {
 	let aborted = false
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)
-		if (!eta && unit.properties.canTerraform && tile.forest) {
-			eta = currentTime + Time.CUT_FOREST
+		if (!eta && unit.properties.canTerraform && !tile.forest) {
+			eta = currentTime + Time.PLOW
 		}
 
 		if (eta) {
@@ -24,13 +24,13 @@ const create = (unit, eta) => {
 	const update = currentTime => currentTime < eta
 	const finished = () => {
 		if (!aborted) {		
-			Tile.clearForest(MapEntity.tile(unit.mapCoordinates))
+			Tile.plow(MapEntity.tile(unit.mapCoordinates))
 			UnitView.markFree(unit)
 		}
 	}
 
 	const save = () => ({
-		type: 'cutForest',
+		type: 'plow',
 		unit: Record.reference(unit),
 		eta
 	})

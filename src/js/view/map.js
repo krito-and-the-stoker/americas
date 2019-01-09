@@ -24,6 +24,7 @@ class MapView{
 			.concat(this.renderBaseBlock(tile))
 			.concat(this.renderTopTiles(tile))
 			.concat(this.renderCoast(tile))
+			.concat(this.renderTerraform(tile))
 			.concat(this.renderBonusResources(tile))
 			.concat(this.renderUndiscovered(tile))
 	}
@@ -280,6 +281,13 @@ class MapView{
 		}
 
 		return corners;
+	}
+
+	renderTerraform(tile) {
+		if (tile.plowed) {
+			return [Terrain.plowed.id]
+		}
+		return []
 	}
 
 	getCornerNames(up, rightUp, right, rightDown, down, leftDown, left, leftUp){

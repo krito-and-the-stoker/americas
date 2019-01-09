@@ -276,6 +276,13 @@ const clearForest = tile => {
 	Background.render()
 }
 
+const plow = tile => {
+	tile.plowed = true
+
+	Binding.update(tile)
+	Background.render()
+}
+
 const listen = (tile, fn) => Binding.listen(tile, null, fn)
 
 
@@ -294,5 +301,6 @@ export default {
 	load,
 	neighborString,
 	clearForest,
+	plow,
 	listen
 }
