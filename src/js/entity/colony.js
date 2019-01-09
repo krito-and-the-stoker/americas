@@ -1,4 +1,5 @@
 import Goods from '../data/goods.json'
+import Buildings from '../data/buildings.json'
 
 import ColonyView from '../view/colony'
 import MapEntity from '../entity/map'
@@ -68,7 +69,8 @@ const unjoin = (colony, colonist) => {
 	Binding.update(colony, 'colonists', colony.colonists.filter(col => col !== colonist))
 }
 
-const canEmploy = (colony, building) => colony.colonists.filter(colonist => colonist.worksAt && colonist.worksAt.building === building).length < 3
+const canEmploy = (colony, building) => colony.colonists
+	.filter(colonist => colonist.worksAt && colonist.worksAt.building === building).length < Buildings[building].workspace
 const bindUnits = (colony, fn) => Binding.listen(colony, 'units', fn)
 const bindColonists = (colony, fn) => Binding.listen(colony, 'colonists', fn)
 

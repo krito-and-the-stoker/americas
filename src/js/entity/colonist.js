@@ -1,3 +1,4 @@
+import Buildings from '../data/buildings.json'
 import Harvest from '../task/harvest'
 import Produce from '../task/produce'
 import Time from '../timeline/time'
@@ -5,7 +6,7 @@ import ColonistView from '../view/colonist'
 import Record from '../util/record'
 import Binding from '../util/binding'
 import Colony from './colony'
-
+import Util from '../util/util'
 
 
 const beginFieldWork = (colonist, tile, good) => {
@@ -28,7 +29,7 @@ const beginColonyWork = (colonist, building) => {
 	const position = colonist.colony.colonists
 		.filter(col => col.worksAt && col.worksAt.building === building)
 		.map(col => col.worksAt.position)
-		.reduce((free, occupied) => free.filter(pos => pos !== occupied), [0, 1, 2])
+		.reduce((free, occupied) => free.filter(pos => pos !== occupied), Util.range(Buildings[building].workspace))
 		.find(() => true)
 	Binding.update(colonist, 'worksAt', {
 		type: 'Colony',
