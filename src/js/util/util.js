@@ -3,6 +3,8 @@ import * as PIXI from 'pixi.js'
 
 const mergeFunctions = funcArray => funcArray.reduce((all, fn) => () => { all(); fn(); }, () => {})
 
+const makeObject = arr => arr.reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
+
 const globalScale = sprite => {
 	let s = sprite
 	let scale = s.scale.x
@@ -38,11 +40,14 @@ const getUid = () => {
 	return currentId
 }
 
+
 export default {
 	loadTexture,
+	makeObject,
 	globalScale,
 	range,
 	rectangle,
 	getUid,
 	mergeFunctions,
+	makeObject,
 }

@@ -24,6 +24,7 @@
 		},
 		"domain": "land",
 		"canFound": true,
+		"canTerraform": true,
 		"speed": 1
 	},
 	"settler": {

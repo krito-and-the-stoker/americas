@@ -8,6 +8,8 @@ import Found from '../command/found'
 import Europe from '../view/europe'
 import Record from '../util/record'
 import Commander from '../command/commander'
+import CutForest from '../command/cutForest'
+import MapEntity from '../entity/map'
 
 const ZOOM_FACTOR = 1.25
 const ZOOM_TIME = 350
@@ -46,10 +48,17 @@ const handleKeydown = (e) => {
 		Record.load()
 	}
 
+	if (e.key === 'd') {
+		MapEntity.discoverAll()
+	}
+
 	const activeUnit = Unit.get().activeUnit
 	if (activeUnit) {
 		if (e.key === 'b') {
 			Commander.scheduleInstead(activeUnit.commander, Found.create(activeUnit))
+		}
+		if (e.key === 'p') {
+			Commander.scheduleInstead(activeUnit.commander, CutForest.create(activeUnit))
 		}
 	}
 	// const activeUnit = Unit.get().activeUnit

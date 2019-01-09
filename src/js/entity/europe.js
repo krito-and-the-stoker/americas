@@ -37,24 +37,6 @@ const load = data => {
 	units = data.units.map(Record.dereference)
 }
 
-const buy = (goods, amount) => {
-	const pricePerGood = 6
-	const price = pricePerGood * amount
-	if (Treasure.spend(price)) {
-		console.log(`bought ${amount} ${goods}`)
-		return amount
-	}
-	const actualAmount = Math.floor(Treasure.amount() / pricePerGood)
-	Treasure.spend(actualAmount * pricePerGood)
-	console.log(`bought ${actualAmount} ${goods}`)
-	return actualAmount
-}
-
-const sell = (goods, amount) => {
-	const pricePerGood = 4
-	Treasure.gain(amount * pricePerGood)
-	console.log(`sold ${amount} ${goods}`)
-}
 
 
 export default {
@@ -64,6 +46,4 @@ export default {
 	bindUnits,
 	save,
 	load,
-	buy,
-	sell
 }

@@ -6,6 +6,7 @@ import Drag from '../input/drag'
 import Europe from '../entity/europe'
 import GoodsView from '../view/goods'
 import Colony from '../entity/colony'
+import Market from '../entity/market'
 
 const create = unit => {
 	const container = new PIXI.Container()
@@ -17,7 +18,7 @@ const create = unit => {
 		const fromUnit = args.unit
 		if (good) {
 			if (buyFromEurope) {
-				let boughtAmount = Europe.buy(good, amount)
+				let boughtAmount = Market.buy(good, amount)
 				if (amount > 0) {
 					Unit.loadGoods(unit, good, boughtAmount)
 				}

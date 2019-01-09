@@ -5,6 +5,7 @@ import Unload from '../command/unload'
 import Load from '../command/load'
 import Europe from '../command/europe'
 import America from '../command/america'
+import CutForest from '../command/cutForest'
 import Time from '../timeline/time'
 
 const cancel = () => ({
@@ -71,6 +72,7 @@ const getModule = type => ( type ? ({
 	unload: Unload,
 	load: Load,
 	europe: Europe,
+	cutForest: CutForest,
 	america: America,
 	commander: { load }
 })[type] : { load: data => console.warn('cannot load command, missing type', data) }) 

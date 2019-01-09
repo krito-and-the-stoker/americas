@@ -6,6 +6,7 @@ import Drag from '../../input/drag'
 import Europe from '../../entity/europe'
 import Unit from '../../entity/unit'
 import Ressources from '../../render/ressources'
+import Market from '../../entity/market'
 
 
 const create = (originalDimensions) => {
@@ -22,7 +23,9 @@ const create = (originalDimensions) => {
 		sprite.scale.set(1.7)
 		container.addChild(sprite)
 
-		const price =	 new PIXI.Text(`${4}/${6}`, {
+		const bid = Market.bid(good)
+		const ask = Market.ask(good)
+		const price =	 new PIXI.Text(`${bid}/${ask}`, {
 			fontFamily: 'Times New Roman',
 			fontSize: 32,
 			fill: 0xffffff,
@@ -49,7 +52,7 @@ const create = (originalDimensions) => {
 	const unsubscribe = Drag.makeDragTarget(dragTarget, args => {
 		const { good, unit, amount } = args
 		if (good && unit) {
-			Europe.sell(good, amount)
+			Market.sell(good, amount)
 			Unit.loadGoods(unit, good, -amount)
 			return false
 		}

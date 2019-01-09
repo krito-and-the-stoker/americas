@@ -95,6 +95,19 @@ const createSprite = unit => {
 	return sprite
 }
 
+const markOccupied = unit => {
+	const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
+	unit.sprite.filters = [greyScaleFilter]
+	greyScaleFilter.blackAndWhite()
+	if (unit === activeUnit) {
+		unselect()
+	}
+}
+
+const markFree = unit => {
+	unit.sprite.filters = []
+}
+
 const createColonySprite = unit => {
 	const frame = unit.expert ? unit.frame[unit.expert] || unit.frame.default : unit.frame.default
 	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
@@ -118,6 +131,8 @@ export default {
 	createColonySprite,
 	activate,
 	deactivate,
+	markFree,
+	markOccupied,
 	select,
 	get,
 	load,

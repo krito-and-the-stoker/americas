@@ -6,6 +6,7 @@ import MapEntity from '../entity/map'
 import Yield from '../data/yield'
 import Record from '../util/record'
 import Goods from '../data/goods'
+import Background from '../render/background'
 
 const create = ({ id, layers, index }) => {
 	const [name, terrain] = Object.entries(Terrain).find(([name, terrain]) => terrain.id === id)
@@ -35,10 +36,10 @@ const create = ({ id, layers, index }) => {
 	}
 
 	tile.river = tile.riverLarge || tile.riverSmall
-	tile.terrainName = tile.forest ? `${tile.name}WithForest` : (tile.hills ? 'hills' : (tile.mountains ? 'mountains' : tile.name) )
+	tile.terrainName = terrainName(tile)
 
 	tile.hills = layers.top === Terrain.hills.id || (tile.mountains && Math.random() > 0.1)
-	tile.treeVariation = tile.riverLarge || Math.random() > (tile.river ? 0.0 : 0.9)
+	tile.treeVariation = tile.riverLarge || Math.random() > (tile.river ? 0.3 : 0.9)
 	tile.mountainVariation = Math.random() > (tile.river ? 0.2 : 0.75) && !tile.bonus || tile.mountains
 	tile.hillVariation = Math.random() > (tile.river ? 0.2 : 0.75) && !tile.bonus
 
@@ -50,6 +51,8 @@ const create = ({ id, layers, index }) => {
 	Record.addTile(tile)
 	return tile
 }
+
+const terrainName = tile => tile.forest ? `${tile.name}WithForest` : (tile.hills ? 'hills' : (tile.mountains ? 'mountains' : tile.name) )
 
 const keys = ['id', 'forest', 'treeVariation', 'hills', 'hillVariation', 'mountains', 'mountainVariation', 'riverSmall', 'riverLarge', 'bonus', 'plowed', 'road', 'coast', 'discovered', 'harvestedBy']
 const type = ['int','bool',   'bool',          'bool',  'bool',          'bool',      'bool',              'bool',       'bool',       'bool',  'bool',   'bool', 'bool',  'bool',       'reference']
@@ -105,7 +108,7 @@ const load = (data, index) => {
 	tile.mapCoordinates = MapEntity.mapCoordinates(tile.index)
 
 	tile.river = tile.riverLarge || tile.riverSmall
-	tile.terrainName = tile.forest ? `${tile.name}WithForest` : (tile.hills ? 'hills' : (tile.mountains ? 'mountains' : tile.name) )
+	tile.terrainName = terrainName(tile)
 
 	tile.left = () => left(tile)
 	tile.up = () => up(tile)
@@ -264,6 +267,12 @@ const neighborString = (tile, other) => {
 	return result(tile.mapCoordinates, other.mapCoordinates)
 }
 
+const clearForest = tile => {
+	tile.forest = false
+	tile.terrainName = terrainName(tile)
+	Background.render()
+}
+
 
 export default {
 	create,
@@ -278,5 +287,6 @@ export default {
 	movementCost,
 	save,
 	load,
-	neighborString
+	neighborString,
+	clearForest
 }

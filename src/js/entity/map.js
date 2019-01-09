@@ -47,6 +47,10 @@ const create = ({ data }) => {
 	Record.add('map', { tiles, numTiles })
 }
 
+const discoverAll = () => {
+	tiles.forEach(Tile.discover)
+}
+
 
 const	tile = ({ x, y }) => x > 0 && x < numTiles.x && y > 0 && y < numTiles.y ? tiles[y * numTiles.x + x] : null
 const	mapCoordinates = index => ({
@@ -72,6 +76,7 @@ const load = map => {
 
 export default {
 	create,
+	discoverAll,
 	get,
 	tile,
 	save,

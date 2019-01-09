@@ -5,6 +5,7 @@ const UNLOAD_TIME = 2500
 const LOAD_TIME = 2500
 const EUROPE_SAIL_TIME = 15000
 const PRODUCTION_BASE_TIME = 15000
+const CUT_FOREST = 25000
 
 let currentTime = 0
 let scheduled = []
@@ -94,5 +95,6 @@ export default {
 	UNLOAD_TIME,
 	LOAD_TIME,
 	EUROPE_SAIL_TIME,
-	PRODUCTION_BASE_TIME
+	PRODUCTION_BASE_TIME,
+	CUT_FOREST
 }
