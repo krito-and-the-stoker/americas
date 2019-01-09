@@ -73,13 +73,14 @@ gulp.task('sass', () => {
 		.pipe(browserSync.stream())
 })
 
-gulp.task('serve', () => {
+gulp.task('serve', done => {
   browserSync.init({
     server: {
       baseDir: 'dist',
     },
     open: false
   })
+  done()
 })
 
 gulp.task('assets', resolve => {
@@ -113,14 +114,14 @@ gulp.task('assets', resolve => {
 
 gulp.task('build', gulp.parallel(['pug', 'js', 'sass', 'static', 'assets']))
 
-gulp.task('watch', gulp.parallel(['serve']), () => {
-	gulp.watch('src/pages/**/*.pug', ['pug'])
-  gulp.watch('src/js/**/*.js', ['js'])
-	gulp.watch('src/js/**/*.json', ['js'])
-	gulp.watch('src/content/**/*.md', ['pug'])
-	gulp.watch('src/sass/**/*.scss', ['sass'])
-  gulp.watch('src/static/**/*', ['static'])
-	gulp.watch('src/assets/**/*', ['assets'])
+gulp.task('watch', () => {
+	gulp.watch('src/pages/**/*.pug', gulp.series('pug'))
+  gulp.watch('src/js/**/*.js', gulp.series('js'))
+	gulp.watch('src/js/**/*.json', gulp.series('js'))
+	gulp.watch('src/content/**/*.md', gulp.series('pug'))
+	gulp.watch('src/sass/**/*.scss', gulp.series('sass'))
+  gulp.watch('src/static/**/*', gulp.series('static'))
+	gulp.watch('src/assets/**/*', gulp.series('assets'))
 })
 
-gulp.task('default', gulp.series(['build', 'watch']))
+gulp.task('default', gulp.series('build', 'serve', 'watch'))
