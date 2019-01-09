@@ -107,6 +107,9 @@ const createSprite = unit => {
 const markOccupied = unit => {
 	const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
 	unit.sprite.filters = [greyScaleFilter]
+	if (unit.colonySprite) {
+		unit.colonySprite.filters = []
+	}
 	greyScaleFilter.blackAndWhite()
 	if (unit === activeUnit) {
 		unselect()
@@ -115,6 +118,9 @@ const markOccupied = unit => {
 
 const markFree = unit => {
 	unit.sprite.filters = []
+	if (unit.colonySprite) {
+		unit.colonySprite.filters = []
+	}
 }
 
 const createColonySprite = unit => {
