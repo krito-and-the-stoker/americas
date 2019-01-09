@@ -13,6 +13,7 @@ import Unit from './unit'
 import Binding from '../util/binding'
 import Storage from './storage'
 import Consume from '../task/consume'
+import Deteriorate from '../task/deteriorate'
 
 // for unknown reasons we need to wait bit until we can set the global here :/
 setTimeout(() => Record.setGlobal('colonyNames',
@@ -80,7 +81,8 @@ const initializeBindings = colony => {
 			const unit = Unit.create('settler', colony.mapCoordinates)
 			updateStorage(colony, 'food', -200)
 		}
-	})	
+	})
+	Time.schedule(Deteriorate.create(colony))
 }
 
 const create = (coords, unit) => {
@@ -88,7 +90,7 @@ const create = (coords, unit) => {
 		name: getColonyName(),
 		units: [],
 		colonists: [],
-		buildings: [],
+		capacity: 100,
 		mapCoordinates: { ...coords }
 	}
 	colony.storage = Storage.create(colony)
@@ -110,6 +112,7 @@ const create = (coords, unit) => {
 		Colonist.beginFieldWork(colonist, winner.tile, 'food')
 	}
 
+	initializeBindings(colony)
 	colony.sprite = ColonyView.createMapSprite(colony)
 
 	Record.add('colony', colony)
@@ -120,6 +123,7 @@ const save = colony => ({
 	name: colony.name,
 	storage: colony.storage,
 	mapCoordinates: colony.mapCoordinates,
+	capacity: colony.capacity,
 	colonists: colony.colonists.map(colonist => Record.reference(colonist)),
 	units: colony.units.map(unit => Record.reference(unit))
 })

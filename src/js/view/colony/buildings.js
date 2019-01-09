@@ -6,6 +6,7 @@ import Drag from '../../input/drag'
 import Colonist from '../../entity/colonist'
 import Colony from '../../entity/colony'
 import ProductionView from '../../view/production'
+import Commander from '../../command/commander'
 
 const TILE_SIZE = 64
 
@@ -22,8 +23,23 @@ const createBuilding = (colony, name) => {
 	container.addChild(sprite)
 
 	Drag.makeDragTarget(sprite, args => {
-		if (args.colonist && Colony.canEmploy(colony, name)) {
-			Colonist.beginColonyWork(args.colonist, name)
+		const { unit } = args
+		if (!args.colonist && !unit) {
+			return
+		}
+
+		if (unit && !Commander.isIdle(unit.commander)) {
+			return false
+		}
+		const colonist = args.colonist || unit.colonist || Colonist.create(colony, unit)
+		if (unit) {
+			unit.colonist = colonist
+			Colony.leave(colony, unit)
+			Colony.join(colony, colonist)
+		}
+
+		if (colonist && Colony.canEmploy(colony, name)) {
+			Colonist.beginColonyWork(colonist, name)
 			return true
 		}
 		return false
@@ -34,7 +50,7 @@ const createBuilding = (colony, name) => {
 		
 		const cleanupWorksAt = Util.mergeFunctions(colonists.map(colonist => {
 			return Colonist.bindWorksAt(colonist, worksAt => {
-				if (worksAt.building === name) {
+				if (worksAt && worksAt.building === name) {
 					colonist.sprite.x = worksAt.position * 128 / 3
 					colonist.sprite.y = 36
 					container.addChild(colonist.sprite)

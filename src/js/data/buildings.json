@@ -52,8 +52,7 @@
 			"good": "wood",
 			"amount": 3
 		},
-		"production": {
-			"good": "build",
+		"building": {
 			"amount": 3
 		}
 	},
