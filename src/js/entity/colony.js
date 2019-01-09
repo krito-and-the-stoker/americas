@@ -12,6 +12,7 @@ import UnitView from '../view/unit'
 import Unit from './unit'
 import Binding from '../util/binding'
 import Storage from './storage'
+import Consume from '../task/consume'
 
 setTimeout(() => Record.setGlobal('colonyNames',
 	['Jamestown',
@@ -94,9 +95,8 @@ const create = (coords, unit) => {
 		Colonist.beginFieldWork(colonist, winner.tile, 'food')
 	}
 
-	Tile.listen(tile, () => {
-		return Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good)))
-	})
+	Tile.listen(tile, () => Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good))))
+	Binding.listen(colony, 'colonists', colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)))
 
 
 	colony.sprite = ColonyView.createMapSprite(colony)
@@ -117,9 +117,8 @@ const load = colony => {
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	tile.colony = colony
 	Record.entitiesLoaded(() => {
-		Tile.listen(tile, () => {
-			return Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good)))
-		})
+		Tile.listen(tile, () => Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good))))
+		Binding.listen(colony, 'colonists', colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)))
 	})
 
 	colony.sprite = ColonyView.createMapSprite(colony)
