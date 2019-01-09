@@ -21,7 +21,7 @@ const create = (name, coords = null, additionalProps = {}) => {
 		const unit = {
 			name,
 			...Units[name],
-			mapCoordinates: coords,
+			mapCoordinates: coords || { x: undefined, y: undefined },
 			active: true,
 			cargo: [],
 			goods: [],
