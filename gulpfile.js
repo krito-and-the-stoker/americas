@@ -81,9 +81,9 @@ gulp.task('serve', () => {
   })
 })
 
-gulp.task('build', ['pug', 'js', 'sass', 'static'])
+gulp.task('build', gulp.parallel(['pug', 'js', 'sass', 'static']))
 
-gulp.task('watch', ['serve'], () => {
+gulp.task('watch', gulp.parallel(['serve']), () => {
 	gulp.watch('src/pages/**/*.pug', ['pug'])
   gulp.watch('src/js/**/*.js', ['js'])
 	gulp.watch('src/js/**/*.json', ['js'])
@@ -92,4 +92,4 @@ gulp.task('watch', ['serve'], () => {
 	gulp.watch('src/static/**/*', ['static'])
 })
 
-gulp.task('default', ['build', 'watch'])
+gulp.task('default', gulp.series(['build', 'watch']))
