@@ -24,7 +24,7 @@ const create = (colony, originalDimensions) => {
 
 		let args = {
 			good: good,
-			amount: colony.storage[good],
+			amount: Math.min(100, colony.storage[good]),
 			colony
 		}
 		Drag.makeDraggable(sprite, args)
@@ -38,7 +38,7 @@ const create = (colony, originalDimensions) => {
 	const unsubscribeStorage = Colony.bindStorage(colony, storage => {
 		Object.values(storage).forEach((value, i) => {
 			updateAndArgs[i].update(Math.floor(value))
-			updateAndArgs[i].args.amount = Math.floor(value)
+			updateAndArgs[i].args.amount = Math.min(100, Math.floor(value))
 		})
 	})
 
