@@ -58,7 +58,6 @@ const create = unit => {
 	const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
 	greyScaleFilter.blackAndWhite()
 	const unsubscribeStorage = Unit.listenStorage(unit, storage => {
-		console.log(storage)
 		let index = {
 			x: 0,
 			y: 0

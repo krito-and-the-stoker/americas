@@ -16,6 +16,7 @@ import MapControl from './control/map'
 import Dialog from './view/dialog'
 import TreasureView from './view/treasure'
 import Foreground from './render/foreground'
+import Record from './util/record'
 
 const update = (deltaTime) => {
 	Time.advance(deltaTime)
@@ -34,7 +35,7 @@ const americaSmall = () => {
 		cargo: [soldier, pioneer]
 	})
 	MapControl.centerAt({ x, y })
-	// Unit.create('caravel', { x, y })
+	Record.setGlobal('defaultShipArrival', { x, y })
 }
 
 const americaLarge = () => {
@@ -47,6 +48,7 @@ const americaLarge = () => {
 	})
 	MapControl.centerAt({ x, y })
 	MapControl.zoomBy(1/0.35, null, 0)
+	Record.setGlobal('defaultShipArrival', { x, y })
 }
 
 const initialize = () => {

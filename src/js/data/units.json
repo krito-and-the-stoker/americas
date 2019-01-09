@@ -5,8 +5,49 @@
 		},
 		"domain": "sea",
 		"canFound": false,
+		"speed": 8,
+		"cargo": 2,
+		"combat": 2
+	},
+	"privateer": {
+		"frame": {
+			"default": 8
+		},
+		"domain": "sea",
+		"canFound": false,
+		"speed": 16,
+		"cargo": 2,
+		"combat": 8
+	},
+	"frigate": {
+		"frame": {
+			"default": 7
+		},
+		"domain": "sea",
+		"canFound": false,
+		"speed": 12,
+		"cargo": 4,
+		"combat": 16
+	},
+	"galleon": {
+		"frame": {
+			"default": 6
+		},
+		"domain": "sea",
+		"canFound": false,
+		"speed": 12,
+		"cargo": 6,
+		"combat": 10
+	},
+	"merchantman": {
+		"frame": {
+			"default": 52
+		},
+		"domain": "sea",
+		"canFound": false,
 		"speed": 10,
-		"cargo": 2
+		"cargo": 4,
+		"combat": 6
 	},
 	"artillery": {
 		"frame": {

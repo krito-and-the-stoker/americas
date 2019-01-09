@@ -52,7 +52,7 @@ const create = () => {
 	nameHeadline.position.y = 35
 	container.addChild(nameHeadline)
 
-	const button = Button.create('recruit', () => {
+	const recruitButton = Button.create('recruit', () => {
 		const options = Europe.recruitmentOptions()
 		const choices = options.map(option => option.text)
 		return Dialog.createIndependent('Who would you like to recruit?',
@@ -66,9 +66,27 @@ const create = () => {
 			Europe.recruit(options[decision])
 		})
 	})
-	button.x = originalDimensions.x - button.width - 10
-	button.y = originalDimensions.y / 2
-	container.addChild(button)
+	recruitButton.x = originalDimensions.x - recruitButton.width - 20
+	recruitButton.y = originalDimensions.y / 2
+	container.addChild(recruitButton)
+
+	const purchaseButton = Button.create('purchase', () => {
+		const options = Europe.purchaseOptions()
+		const choices = options.map(option => option.text)
+		return Dialog.createIndependent('What would you like to purchase?',
+			choices,
+			null,
+			{
+				context: container,
+				pause: false
+			})
+		.then(decision => {
+			Europe.purchase(options[decision])
+		})
+	})
+	purchaseButton.x = originalDimensions.x - purchaseButton.width - 20
+	purchaseButton.y = originalDimensions.y / 2 + 40
+	container.addChild(purchaseButton)
 
 	RenderView.updateWhenResized(({ dimensions }) => {
 		const scale = {

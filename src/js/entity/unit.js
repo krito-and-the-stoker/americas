@@ -40,6 +40,7 @@ const create = (name, coords = null, additionalProps = {}) => {
 
 		Record.add('unit', unit)
 		allUnits.push(unit)
+
 		return unit
 	} else {
 		console.warn('unit type not found', name)

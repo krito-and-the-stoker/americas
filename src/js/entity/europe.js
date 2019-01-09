@@ -43,7 +43,7 @@ const load = data => {
 let currentPrice = 200
 const recruitmentOptions = () => Treasure.amount() >= currentPrice ?
 	[{ text: `Settler (${currentPrice})`, unit: 'settler' }, { text: 'None at the moment.' }] :
-	[{ text: `Oh we cannot afford to recruit a new colonist (${currentPrice})` }]
+	[{ text: `We cannot afford a new colonist (${currentPrice})` }]
 
 const recruit = option => {
 	if (option.unit && Treasure.spend(currentPrice)) {
@@ -53,6 +53,22 @@ const recruit = option => {
 	}
 }
 
+const purchaseOptions = () => [
+		{ text: 'Artillery (500)', unit: 'artillery', price: 500 },
+		{ text: 'Caravel (1000)', unit: 'caravel', price: 1000 },
+		{ text: 'Privateer (2000)', unit: 'privateer', price: 2000 },
+		{ text: 'Merchantman (2000)', unit: 'merchantman', price: 2000 },
+		{ text: 'Galleon (3000)', unit: 'galleon', price: 3000 },
+		{ text: 'Frigate (5000)', unit: 'frigate', price: 5000 },
+		{ text: 'Nothing at the moment.', price: 0}
+	].filter(option => option.price <= Treasure.amount())
+
+const purchase = option => {
+	if (Treasure.spend(option.price) && option.unit) {
+		const unit = Unit.create(option.unit, Record.getGlobal('defaultShipArrival'), { active: false })
+		arrive(unit)
+	}
+}
 
 export default {
 	arrive,
@@ -62,5 +78,7 @@ export default {
 	save,
 	load,
 	recruitmentOptions,
-	recruit
+	recruit,
+	purchaseOptions,
+	purchase
 }
