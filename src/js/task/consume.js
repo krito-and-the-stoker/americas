@@ -1,7 +1,7 @@
 import Colony from '../entity/colony'
+import Time from '../timeline/time'
 
-
-const PRODUCTION_BASE_FACTOR = 0.0001
+const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
 const create = (colony, good, amount) => {
 	let lastUpdate = null
