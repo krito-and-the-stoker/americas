@@ -1,16 +1,18 @@
 import * as PIXI from 'pixi.js'
 
+import Goods from '../../data/goods.json'
 import Colony from '../../entity/colony'
 import Util from '../../util/util'
 import Drag from '../../input/drag'
 import GoodsView from '../../view/goods'
 import Unit from '../../entity/unit'
+import Storage from '../../entity/storage'
 
 const create = (colony, originalDimensions) => {
 	const container = new PIXI.Container()
-	const numberOfGoods = Object.keys(colony.storage).length
+	const numberOfGoods = Object.keys(Goods.types).length
 	const width = originalDimensions.x / numberOfGoods
-	const updateAndArgs = Object.keys(colony.storage).map((good, index) => {
+	const updateAndArgs = Storage.goods(colony.storage).map(({ good }, index) => {
 		const { sprite, number, update } = GoodsView.create({ good, amount: colony.storage[good] })
 		sprite.x = Math.round(index * (originalDimensions.x + 11) / numberOfGoods)
 		sprite.y = originalDimensions.y - 121
@@ -35,10 +37,10 @@ const create = (colony, originalDimensions) => {
 		}
 	})
 
-	const unsubscribeStorage = Colony.bindStorage(colony, storage => {
-		Object.values(storage).forEach((value, i) => {
-			updateAndArgs[i].update(Math.floor(value))
-			updateAndArgs[i].args.amount = Math.min(100, Math.floor(value))
+	const unsubscribeStorage = Storage.listen(colony.storage, storage => {
+		Storage.goods(storage).forEach(({ amount }, i) => {
+			updateAndArgs[i].update(Math.floor(amount))
+			updateAndArgs[i].args.amount = Math.min(100, Math.floor(amount))
 		})
 	})
 

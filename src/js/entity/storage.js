@@ -40,7 +40,9 @@ const transfer = (src, dest, pack = {}) => {
 	update(dest)
 }
 
-const save = storage => (Object.keys(Goods.types).map(good => [good, storage[good]]))
+const goods = storage => Object.values(Goods.types).map(good => ({ good, amount: storage[good] }))
+
+const save = storage => Object.values(Goods.types).map(good => [good, storage[good]])
 const load = data => Util.makeObject(data)
 
 export default {
@@ -50,5 +52,6 @@ export default {
 	split,
 	transfer,
 	load,
-	save
+	save,
+	goods,
 }
