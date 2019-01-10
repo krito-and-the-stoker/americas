@@ -64,17 +64,17 @@ const canEmploy = (colony, building) => colony.colonists
 const initialize = colony => {
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	Tile.listen(tile, () => Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good))))
-	Binding.listen(colony, 'colonists', colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)))
-	bindStorage(colony, storage => {
+	listen.colonists(colony, colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)))
+	Storage.listen(colony.storage, storage => {
 		if (storage.food >= 200) {
 			const unit = Unit.create('settler', colony.mapCoordinates)
-			updateStorage(colony, 'food', -200)
+			Storage.update(colony.storage, { good: 'food', amount: -200 })
 		}
 	})
 	Time.schedule(Deteriorate.create(colony))
 }
 
-const create = (coords, unit) => {
+const create = coords => {
 	const colony = {
 		name: getColonyName(),
 		units: [],
@@ -89,20 +89,20 @@ const create = (coords, unit) => {
 	tile.colony = colony
 
 	// TODO: this is the wrong place for that
-	const colonist = Colonist.create(colony, unit)
-	const winner = Tile.diagonalNeighbors(tile)
-		.filter(neighbor => !neighbor.harvestedBy)
-		.reduce((winner, neighbor) => {
-			const production = Tile.production(neighbor, 'food', colonist)
-			return production > winner.production ? {
-				production,
-				tile: neighbor
-			 } : winner
-		},
-		{ production: -1 })
-	if (winner.tile) {
-		Colonist.beginFieldWork(colonist, winner.tile, 'food')
-	}
+	// const colonist = Colonist.create(colony, unit)
+	// const winner = Tile.diagonalNeighbors(tile)
+	// 	.filter(neighbor => !neighbor.harvestedBy)
+	// 	.reduce((winner, neighbor) => {
+	// 		const production = Tile.production(neighbor, 'food', colonist)
+	// 		return production > winner.production ? {
+	// 			production,
+	// 			tile: neighbor
+	// 		 } : winner
+	// 	},
+	// 	{ production: -1 })
+	// if (winner.tile) {
+	// 	Colonist.beginFieldWork(colonist, winner.tile, 'food')
+	// }
 
 
 	initialize(colony)

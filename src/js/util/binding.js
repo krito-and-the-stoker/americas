@@ -8,7 +8,7 @@ const create = (instance, key) => {
 
 const listen = (instance, key, fn) => {
 	const listeners = listenerKey(key)
-	const value = key ? instance[key] : undefined
+	const value = key ? instance[key] : instance
 	const cleanup = fn(value) || doNothing
 	const listener = {
 		fn,
@@ -40,7 +40,8 @@ const update = (instance, key, value) => {
 			if (listener.cleanup) {
 				listener.cleanup()
 			}
-			listener.cleanup = listener.fn(instance[key])
+			const value = key ? instance[key] : instance
+			listener.cleanup = listener.fn(value)
 		})
 	}
 }
