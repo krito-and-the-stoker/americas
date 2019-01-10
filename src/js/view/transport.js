@@ -18,6 +18,7 @@ import LoadUnitToShip from '../action/loadUnitToShip'
 const create = unit => {
 	const container = new PIXI.Container()
 	const sprite = UnitView.create(unit)
+	sprite.scale.set(2)
 	container.addChild(sprite)
 
 	const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {

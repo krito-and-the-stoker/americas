@@ -113,12 +113,10 @@ const updateType = (unit, name) => {
 }
 
 const at = coords => Record.getAll('unit').filter(unit => unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y)
-const hasCapacity = (unit, pack) => Storage.split(unit.storage)
-	.filter(p => p.good === pack.good && (p.amount + pack.amount <= 100))
-		.length + unit.passengers.length < unit.properties.cargo
+const hasCapacity = (unit, pack) => Storage.split(unit.storage).length + unit.passengers.length < unit.properties.cargo
 
 const loadGoods = (unit, pack) => {
-	if (!hasCapacity(unit, pack) && amount > 0) {
+	if (!hasCapacity(unit, pack) && pack.amount > 0) {
 		return false
 	}
 

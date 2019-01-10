@@ -16,9 +16,7 @@ const create = (close, originalDimensions) => {
 	let landUnitsView = []
 	const container = new PIXI.Container()
 
-	console.log('create units view')
 	const unsubscribeUnits = Europe.listen.units(units => {
-		console.log('listening', units)
 		const ships = units.filter(unit => unit.domain === 'sea')
 		const landUnits = units.filter(unit => unit.domain === 'land')
 		shipViews.forEach(view => {

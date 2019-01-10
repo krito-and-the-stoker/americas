@@ -44,7 +44,7 @@ const recruitmentOptions = () => Treasure.amount() >= currentPrice ?
 const recruit = option => {
 	if (option.unit && Treasure.spend(currentPrice)) {
 		const unit = Unit.create(option.unit)
-		arrive(unit)
+		add.unit(unit)
 		currentPrice += 100
 	}
 }
@@ -62,7 +62,7 @@ const purchaseOptions = () => [
 const purchase = option => {
 	if (Treasure.spend(option.price) && option.unit) {
 		const unit = Unit.create(option.unit, Record.getGlobal('defaultShipArrival'), { active: false })
-		arrive(unit)
+		add.unit(unit)
 	}
 }
 
