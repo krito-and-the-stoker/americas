@@ -6,7 +6,7 @@ import Util from '../../util/util'
 import Tile from '../../entity/tile'
 import ProductionView from '../production'
 import Drag from '../../input/drag'
-import Context from '../../view/context'
+import Context from '../../view/ui/context'
 import Colony from '../../entity/colony'
 import Commander from '../../command/commander'
 

@@ -2,7 +2,6 @@ import Buildings from '../data/buildings.json'
 import Harvest from '../task/harvest'
 import Produce from '../task/produce'
 import Time from '../timeline/time'
-import ColonistView from '../view/colonist'
 import Record from '../util/record'
 import Binding from '../util/binding'
 import Colony from './colony'
@@ -64,7 +63,6 @@ const create = (colony, unit) => {
 		expert: unit.expert,
 		work: null
 	}
-	colonist.sprite = ColonistView.create(colonist)
 	Colony.leave(colony, unit)
 	Colony.join(colony, colonist)
 
@@ -85,7 +83,6 @@ const save = colonist => ({
 
 const load = colonist => {
 	colonist.type = 'colonist'
-	colonist.sprite = ColonistView.create(colonist)
 
 	colonist.colony = Record.dereference(colonist.colony)
 	colonist.unit = Record.dereference(colonist.unit)

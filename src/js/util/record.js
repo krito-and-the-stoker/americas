@@ -30,17 +30,39 @@ let lastSave = null
 let idCounter = 1
 const makeId = () => idCounter += 1
 
-let records = []
+let	records = []
 let snapshot = []
 let globals = {}
 let tiles = {}
+let listeners = {}
 const add = (type, entity) => {
 	records.push({
 		id: makeId(),
 		entity,
 		type
 	})
+	update(type, entity)
 }
+
+
+const initListeners = type => {
+	listeners[type] = []
+}
+
+const listen = (type, fn) => {
+	if (!listeners[type]) {
+		initListeners(type)
+	}
+	listeners[type].push(fn)
+}
+
+const update = (type, entity) => {
+	if (!listeners[type]) {
+		initListeners(type)
+	}
+	listeners[type].forEach(fn => fn(entity))
+}
+
 
 const addTile = tile => {
 	tiles[tile.index] = tile
@@ -220,6 +242,7 @@ const load = () => {
 
 export default {
 	add,
+	listen,
 	addTile,
 	reference,
 	referenceTile,

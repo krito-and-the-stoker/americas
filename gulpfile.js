@@ -26,7 +26,7 @@ const config = {
     filename: './[name].entry.js',
     path: path.resolve(__dirname, 'dist')
   },
-  context: path.resolve(__dirname, 'src/js/')
+  context: path.resolve(__dirname, 'src/js/'),
 }
 
 gulp.task('js', () => {

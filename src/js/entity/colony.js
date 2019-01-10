@@ -1,7 +1,6 @@
 import Goods from '../data/goods.json'
 import Buildings from '../data/buildings.json'
 
-import ColonyView from '../view/colony'
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
 import Harvest from '../task/harvest'
@@ -45,12 +44,12 @@ const getColonyName = () => {
 }
 
 const add = {
-	unit: (colony, unit) => Member.add(colony, 'units', unit)
+	unit: (colony, unit) => Member.add(colony, 'units', unit),
 	colonist: (colony, colonist) => Member.add(colony, 'colonists', colonist)
 }
 
 const remove = {
-	unit: unit => Member.remove(unit.colony, 'units', unit)
+	unit: unit => Member.remove(unit.colony, 'units', unit),
 	colonist: colonist => Member.remove(colonist.colony, 'colonists', colonist)
 }
 
@@ -108,7 +107,6 @@ const create = (coords, unit) => {
 
 
 	initialize(colony)
-	colony.sprite = ColonyView.createMapSprite(colony)
 
 	Record.add('colony', colony)
 	return colony
@@ -116,7 +114,7 @@ const create = (coords, unit) => {
 
 const save = colony => ({
 	name: colony.name,
-	units: colony.units.map(unit => Record.reference(unit))
+	units: colony.units.map(unit => Record.reference(unit)),
 	colonists: colony.colonists.map(colonist => Record.reference(colonist)),
 	capacity: colony.capacity,
 	mapCoordinates: colony.mapCoordinates,

@@ -47,8 +47,6 @@ const create = (name, coords, additionalProps = {}) => {
 			EnterColony(colony, unit)
 		}
 
-		unit.sprite = UnitView.createSprite(unit)
-
 		Record.add('unit', unit)
 
 		return unit
@@ -123,7 +121,6 @@ const loadUnit = (unit, cargoUnit) => {
 		return false
 	}
 
-	UnitView.deactivate(cargoUnit)
 	unit.cargo.push(cargoUnit)
 	return true
 }
@@ -132,9 +129,8 @@ const unloadUnit = unit => {
 	if (unit.cargo.length > 0) {	
 		const landingUnit = unit.cargo.shift()
 		landingUnit.mapCoordinates = { ...unit.mapCoordinates }
-		UnitView.activate(landingUnit)
 		if (unit.colony) {
-			Colony.enter(unit.colony, landingUnit)
+			EnterColony(unit.colony, landingUnit)
 		}
 
 		return landingUnit
@@ -164,7 +160,6 @@ const save = unit => ({
 
 const load = unit => {
 	unit.cargo = unit.cargo.map(Record.dereference)
-	unit.sprite = UnitView.createSprite(unit)
 	Record.dereferenceLazy(unit.colony, colony => unit.colony = colony)
 	Record.dereferenceLazy(unit.colonist, colonist => unit.colonist = colonist)
 	Record.entitiesLoaded(() => {
