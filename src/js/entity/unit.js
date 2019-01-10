@@ -138,6 +138,7 @@ const unloadUnit = unit => {
 	if (unit.passengers.length > 0) {	
 		const passenger = unit.passengers.shift()
 		passenger.mapCoordinates = { ...unit.mapCoordinates }
+		update.offTheMap(passenger, unit.offTheMap)
 		update.vehicle(passenger, null)
 		if (unit.colony) {
 			EnterColony(unit.colony, passenger)

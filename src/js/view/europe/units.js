@@ -39,10 +39,11 @@ const create = (close, originalDimensions) => {
 		landUnitsView.forEach(({ sprite }) => {
 			container.removeChild(sprite)
 		})
-		landUnitsView = landUnits.map(unit => ({ sprite: UnitView.createColonySprite(unit), unit }))
+		landUnitsView = landUnits.map(unit => ({ sprite: UnitView.create(unit), unit }))
 		landUnitsView.forEach(({ sprite, unit }, index) => {
 			sprite.x = originalDimensions.x - (landUnitsView.length - index) * sprite.width
 			sprite.y = originalDimensions.y - 125 - sprite.height
+			sprite.scale.set(2)
 			container.addChild(sprite)
 			Drag.makeDraggable(sprite, { unit })
 		})
