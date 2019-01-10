@@ -36,12 +36,13 @@ const select = view => {
 	}
 }
 
-const unselect = () => {
-	const unit = selectedView
-	selectedView = null
-	if (blinkTween) {
-		blinkTween.stop()
-		blinkTween = null
+const unselect = (unit = null) => {
+	if (!unit || unit === selectedView.unit) {	
+		selectedView = null
+		if (blinkTween) {
+			blinkTween.stop()
+			blinkTween = null
+		}
 	}
 }
 
@@ -81,23 +82,17 @@ const create = unit => {
 
 const selectedUnit = () => selectedView ? selectedView.unit : null
 
-const markOccupied = unit => {
-	const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
-	unit.sprite.filters = [greyScaleFilter]
-	if (unit.colonySprite) {
-		unit.colonySprite.filters = []
-	}
+
+const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
+const lookGrey = unit => {
+	const view = getView(unit)
+	view.sprite.filters = [greyScaleFilter]
 	greyScaleFilter.blackAndWhite()
-	if (unit === selectedView) {
-		unselect()
-	}
 }
 
-const markFree = unit => {
-	unit.sprite.filters = []
-	if (unit.colonySprite) {
-		unit.colonySprite.filters = []
-	}
+const lookNormal = unit => {
+	const view = getView(unit)
+	view.sprite.filters = []
 }
 
 const show = view => {
@@ -136,16 +131,16 @@ const initialize = () => {
 	})
 }
 
-const get = unit => views.find(view => view.unit === unit)
+const getView = unit => views.find(view => view.unit === unit)
 
 export default {
 	initialize,
-	get,
+	getView,
 	selectedUnit,
-	updateType,
-	markFree,
-	markOccupied,
 	select,
+	unselect,
+	lookGrey,
+	lookNormal,
 	load,
 	save
 }

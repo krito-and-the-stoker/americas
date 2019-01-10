@@ -1,9 +1,9 @@
 import Time from '../timeline/time'
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
-import UnitView from '../view/unit'
+import UnitView from '../view/map/unit'
 import Record from '../util/record'
-import Binding from '../util/binding'
+import Storage from '../entity/storage'
 
 const create = (unit, eta) => {
 	let aborted = false
@@ -14,7 +14,8 @@ const create = (unit, eta) => {
 		}
 
 		if (eta) {
-			UnitView.markOccupied(unit)
+			UnitView.lookGrey(unit)
+			UnitView.unselect(unit)
 			return true
 		}
 
@@ -25,10 +26,9 @@ const create = (unit, eta) => {
 	const update = currentTime => currentTime < eta
 	const finished = () => {
 		if (!aborted) {
-			unit.equipment.tools -= 20
-			Binding.update(unit, 'equipment')	
+			Storage.update(unit.equipment, { good: 'tools', amount: -20 })	
 			Tile.plow(MapEntity.tile(unit.mapCoordinates))
-			UnitView.markFree(unit)
+			UnitView.lookNormal(unit)
 		}
 	}
 

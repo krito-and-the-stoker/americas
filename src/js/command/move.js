@@ -37,7 +37,7 @@ const createFromData = data => {
 	const targetTile = MapEntity.tile(coords)
 	let fromTile = null
 	let enteringShip = data.enteringShip
-	const sprite = UnitView.get(unit).sprite
+	const sprite = UnitView.getView(unit).sprite
 
 	const init = currentTime => {
 		startTime = currentTime

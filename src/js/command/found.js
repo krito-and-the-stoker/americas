@@ -1,5 +1,4 @@
 import Colony from '../entity/colony'
-import UnitView from '../view/unit'
 import Record from '../util/record'
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
@@ -14,7 +13,6 @@ const create = unit => {
 			return false
 		}
 
-		UnitView.deactivate(unit)
 		const colony = Colony.create(unit.mapCoordinates, unit)
 
 		return false

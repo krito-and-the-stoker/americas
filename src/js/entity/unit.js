@@ -1,5 +1,4 @@
 import Units from '../data/units.json'
-import UnitView from '../view/unit'
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
 import Record from '../util/record'

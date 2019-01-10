@@ -10,6 +10,7 @@ const createColonySprite = unit => {
 	return unit.colonySprite
 }
 
+
 export default {
 	createColonySprite
 }
