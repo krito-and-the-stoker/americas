@@ -16,7 +16,7 @@ const remove = {
 }
 
 const has = {
-	unit: Member.has(europe, 'units', unit)
+	unit: unit => Member.has(europe, 'units', unit)
 }
 
 const listen = {

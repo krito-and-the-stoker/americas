@@ -58,6 +58,7 @@ const initialize = () => {
 	RenderView.initialize(mapRendering)
 	Dialog.initialize()
 	Tween.initialize()
+	MapView.initialize()
 
 	PathFinder.initialize()
 
@@ -73,7 +74,6 @@ const initialize = () => {
 
 	setTimeout(() => {
 		Keyboard.initialize()
-		MapView.initializeInteraction()
 	}, 150)
 
 	document.addEventListener('visibilitychange', () => {

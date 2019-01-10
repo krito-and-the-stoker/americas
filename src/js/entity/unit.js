@@ -57,7 +57,7 @@ const create = (name, coords, additionalProps = {}) => {
 }
 
 const initialize = unit => {
-	const tile = MapEntity.tile(coords)
+	const tile = MapEntity.tile(unit.mapCoordinates)
 	Tile.discover(tile)
 	Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))
 

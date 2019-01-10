@@ -132,10 +132,13 @@ const load = data => {
 	}
 }
 
+const initialize = () => {
+	console.log('not yet implemented')
+}
 
 export default {
+	initialize,
 	createSprite,
-	createColonySprite,
 	updateType,
 	activate,
 	deactivate,

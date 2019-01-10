@@ -24,3 +24,11 @@ const createMapSprite = colony => {
 	Foreground.addTerrain(sprite)
 	return sprite
 }
+
+const initialize = () => {
+	console.log('not yet implemented')
+}
+
+export default {
+	initialize
+}
