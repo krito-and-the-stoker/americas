@@ -29,11 +29,11 @@ const draw = () => {
 const americaSmall = () => {
 	const x = 125
 	const y = 65
-	const pioneer = Unit.create('pioneer', { x, y }, { active: false })
-	const soldier = Unit.create('soldier', { x, y }, { active: false })
-	const caravel = Unit.create('caravel', { x, y }, {
-		cargo: [soldier, pioneer]
-	})
+	const pioneer = Unit.create('pioneer', { x, y })
+	const soldier = Unit.create('soldier', { x, y })
+	const caravel = Unit.create('caravel', { x, y })
+	Unit.loadUnit(caravel, pioneer)
+	Unit.loadUnit(caravel, soldier)
 	MapView.centerAt({ x, y })
 	Record.setGlobal('defaultShipArrival', { x, y })
 }
@@ -41,11 +41,11 @@ const americaSmall = () => {
 const americaLarge = () => {
 	const x = 135
 	const y = 135
-	const pioneer = Unit.create('pioneer', { x, y }, { active: false })
-	const soldier = Unit.create('soldier', { x, y }, { active: false })
-	const caravel = Unit.create('caravel', { x, y }, {
-		cargo: [soldier, pioneer]
-	})
+	const pioneer = Unit.create('pioneer', { x, y })
+	const soldier = Unit.create('soldier', { x, y })
+	const caravel = Unit.create('caravel', { x, y })
+	Unit.loadUnit(caravel, pioneer)
+	Unit.loadUnit(caravel, soldier)
 	MapView.centerAt({ x, y })
 	MapView.zoomBy(1/0.35, null, 0)
 	Record.setGlobal('defaultShipArrival', { x, y })

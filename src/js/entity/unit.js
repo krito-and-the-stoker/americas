@@ -11,17 +11,17 @@ import Util from '../util/util'
 import Binding from '../util/binding'
 import EnterColony from '../action/enterColony'
 
-const create = (name, coords, additionalProps = {}) => {
+const create = (name, coords) => {
 	if (Units[name]) {
 		const unit = {
 			name,
 			properties: Units[name],
 			domain: Units[name].domain,
 			mapCoordinates: coords || { x: undefined, y: undefined },
-			cargo: [],
+			passengers: [],
+			vehicle: null,
 			colony: null,
 			expert: null,
-			...additionalProps
 		}
 		unit.storage = Storage.create()
 		unit.equipment = Storage.create()
@@ -103,12 +103,12 @@ const updateType = (unit, name) => {
 }
 
 const at = coords => Record.getAll('unit').filter(unit => unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y)
-const hasStorageCapacity = (unit, pack) => Storage.split(unit.storage)
+const hasCapacity = (unit, pack) => Storage.split(unit.storage)
 	.filter(p => p.good === pack.good && (p.amount + pack.amount <= 100))
-		.length + unit.cargo.length < unit.properties.cargo
+		.length + unit.passengers.length < unit.properties.cargo
 
 const loadGoods = (unit, pack) => {
-	if (!hasStorageCapacity(unit, pack) && amount > 0) {
+	if (!hasCapacity(unit, pack) && amount > 0) {
 		return false
 	}
 
@@ -116,24 +116,26 @@ const loadGoods = (unit, pack) => {
 	return true
 }
 
-const loadUnit = (unit, cargoUnit) => {
-	if (!hasStorageCapacity(unit)) {
+const loadUnit = (unit, passenger) => {
+	if (!hasCapacity(unit)) {
 		return false
 	}
 
-	unit.cargo.push(cargoUnit)
+	passenger.vehicle = unit
+	unit.passengers.push(passenger)
 	return true
 }
 
 const unloadUnit = unit => {
-	if (unit.cargo.length > 0) {	
-		const landingUnit = unit.cargo.shift()
-		landingUnit.mapCoordinates = { ...unit.mapCoordinates }
+	if (unit.passengers.length > 0) {	
+		const passenger = unit.passengers.shift()
+		passenger.mapCoordinates = { ...unit.mapCoordinates }
+		passenger.vehicle = null
 		if (unit.colony) {
-			EnterColony(unit.colony, landingUnit)
+			EnterColony(unit.colony, passenger)
 		}
 
-		return landingUnit
+		return passenger
 	}
 	console.warn('could not unload, no units on board', unit)
 	return null
@@ -141,7 +143,7 @@ const unloadUnit = unit => {
 
 const unloadAllUnits = unit => {
 	// do not iterate over the cargo array directly because unloadUnit changes it
-	Util.range(unit.cargo.length).forEach(() => unloadUnit(unit))
+	Util.range(unit.passengers.length).forEach(() => unloadUnit(unit))
 }
 
 const save = unit => ({
@@ -155,11 +157,12 @@ const save = unit => ({
 	commander: unit.commander.save(),
 	colony: Record.reference(unit.colony),
 	colonist: Record.reference(unit.colonist),
-	cargo: unit.cargo.map(other => Record.reference(other)),
+	passengers: unit.passengers.map(other => Record.reference(other)),
+	vehicle: Record.reference(unit.vehicle)
 })
 
 const load = unit => {
-	unit.cargo = unit.cargo.map(Record.dereference)
+	unit.passengers = unit.passengers.map(Record.dereference)
 	Record.dereferenceLazy(unit.colony, colony => unit.colony = colony)
 	Record.dereferenceLazy(unit.colonist, colonist => unit.colonist = colonist)
 	Record.entitiesLoaded(() => {

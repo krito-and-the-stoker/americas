@@ -73,7 +73,7 @@ const setGlobal = (key, value) => {
 }
 const getGlobal = key => globals[key]
 
-const getAll = type => record
+const getAll = type => records
 	.filter(record => record.type === type)
 	.map(record => record.entity)
 

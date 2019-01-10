@@ -117,13 +117,13 @@ const initialize = () => {
 
 	Drag.on(stage, start, move, end, true)
 	Secondary.on(stage, coords => {
-		const activeUnit = UnitView.get().activeUnit
-		if (activeUnit) {
+		const selectedUnit = UnitView.selectedUnit()
+		if (selectedUnit) {
 			const target = {
 				x: Math.floor((coords.x - RenderView.get().coords.x) / (TILE_SIZE * RenderView.get().scale)),
 				y: Math.floor((coords.y - RenderView.get().coords.y) / (TILE_SIZE * RenderView.get().scale))
 			}
-			Commander.scheduleInstead(activeUnit.commander, MoveTo.create(activeUnit, target))			
+			Commander.scheduleInstead(selectedUnit.commander, MoveTo.create(selectedUnit, target))			
 		}
 	})
 
