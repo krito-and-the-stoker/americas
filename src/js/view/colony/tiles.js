@@ -30,9 +30,10 @@ const create = (colony, originalDimensions) => {
 			position
 		}
 	})
-	const unsubscribeTiles = mergeFunctions(tiles.map(tile => {
+	const unsubscribeTiles = Util.mergeFunctions(tiles.map(tile => {
 		return Tile.listen(tile, tile => {
 			const sprites = Background.createSpritesFromTile(tile)
+			const { position } = tilesAndPositions.find(tp => tp.tile === tile)
 			sprites.forEach(sprite => {
 				sprite.position.x = position.x
 				sprite.position.y = position.y
