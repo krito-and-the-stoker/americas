@@ -104,8 +104,11 @@ const hide = view => {
 	Foreground.removeUnit(view.sprite)
 }
 
-const visibleOnMap = view => (view === selectedView || !view.unit.colony) && !view.unit.vehicle && !Europe.has.unit(view.unit)
-
+const updateVisibility = view => visibleOnMap(view) ? show(view) : hide(view)
+const visibleOnMap = view => (view === selectedView || !view.unit.colony) &&
+	!view.unit.vehicle &&
+	!Europe.has.unit(view.unit) &&
+	!view.unit.offTheMap
 
 const save = () => Record.reference(selectedUnit())
 const load = data => {
@@ -119,13 +122,8 @@ let views = []
 const initialize = () => {
 	Record.listen('unit', unit => {
 		const view = create(unit)
-		Unit.listen.vehicle(unit, () => {
-			if (visibleOnMap(view)) {
-				show(view)
-			} else {
-				hide(view)
-			}
-		})
+		Unit.listen.vehicle(unit, () => { updateVisibility(view) })
+		Unit.listen.offTheMap(unit, () => { updateVisibility(view) })
 
 		views.push(view)
 	})

@@ -21,6 +21,7 @@ const create = (name, coords) => {
 			vehicle: null,
 			colony: null,
 			expert: null,
+			offTheMap: false,
 		}
 		unit.storage = Storage.create()
 		unit.equipment = Storage.create()
@@ -97,11 +98,13 @@ const initialize = unit => {
 }
 
 const listen = {
-	vehicle: (unit, fn) => Binding.listen(unit, 'vehicle', fn)
+	vehicle: (unit, fn) => Binding.listen(unit, 'vehicle', fn),
+	offTheMap: (unit, fn) => Binding.listen(unit, 'offTheMap', fn)
 }
 
 const update = {
-	vehicle: (unit, value) => Binding.update(unit, 'vehicle', value)
+	vehicle: (unit, value) => Binding.update(unit, 'vehicle', value),
+	offTheMap: (unit, value) => Binding.update(unit, 'offTheMap', value)
 }
 
 const updateType = (unit, name) => {
@@ -161,17 +164,19 @@ const save = unit => ({
 	expert: unit.expert,
 	storage: unit.storage,
 	equipment: unit.equipment,
+	offTheMap: unit.offTheMap,
 	commander: unit.commander.save(),
 	colony: Record.reference(unit.colony),
 	colonist: Record.reference(unit.colonist),
 	passengers: unit.passengers.map(other => Record.reference(other)),
-	vehicle: Record.reference(unit.vehicle)
+	vehicle: Record.reference(unit.vehicle),
 })
 
 const load = unit => {
 	unit.passengers = unit.passengers.map(Record.dereference)
 	Record.dereferenceLazy(unit.colony, colony => unit.colony = colony)
 	Record.dereferenceLazy(unit.colonist, colonist => unit.colonist = colonist)
+	Record.dereferenceLazy(unit.vehicle, vehicle => unit.vehicle = vehicle)
 	Record.entitiesLoaded(() => {
 		initialize(unit)
 	})
@@ -182,6 +187,7 @@ const load = unit => {
 export default {
 	create,
 	listen,
+	update,
 	loadGoods,
 	loadUnit,
 	unloadUnit,
