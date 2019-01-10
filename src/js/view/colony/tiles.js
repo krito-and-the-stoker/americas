@@ -19,55 +19,64 @@ const create = (colony, originalDimensions) => {
 	const container = new PIXI.Container()
 	const center = MapEntity.tile(colony.mapCoordinates)
 	const tiles = [center].concat(Tile.diagonalNeighbors(center))
-	const tilesAndPosition = tiles.map(tile => {
+	const tilesAndPositions = tiles.map(tile => {
 		const position = {
 			x: TILE_SIZE * (1 + tile.mapCoordinates.x - center.mapCoordinates.x),
 			y: TILE_SIZE * (1 + tile.mapCoordinates.y - center.mapCoordinates.y)
 		}
-		const sprites = Background.createSpritesFromTile(tile)
-		sprites.forEach(sprite => {
-			sprite.position.x = position.x
-			sprite.position.y = position.y
-			container.addChild(sprite)
-		})
-		const destroy = Drag.makeDragTarget(sprites[sprites.length - 1], async (args, coords) => {
-			const { unit } = args
-			if (unit && !Commander.isIdle(unit.commander)) {
-				return false
-			}
-			if (!tile.harvestedBy) {
-				if (!unit && !args.colonist) {
-					return false
-				}
-				const colonist = args.colonist || unit.colonist || Colonist.create(colony, unit)
-				if (unit) {
-					unit.colonist = colonist
-					Colony.leave(colony, unit)
-					Colony.join(colony, colonist)
-				}
-				const options = Tile.fieldProductionOptions(tile, colonist)
-				if (options.length === 1 || unit) {
-					Colonist.beginFieldWork(colonist, tile, options[0].good)
-				} else {
-					const scale = 1 //Util.globalScale(colonist.sprite)
-					coords.y += 0.5 * TILE_SIZE / 2
 
-					const optionsView = options.map(Context.productionOption)
-					const decision = await Context.create(optionsView, coords, 80, 0.5 * scale)
-					Colonist.beginFieldWork(colonist, tile, decision.good)
-				}
-				return true
-			}
-			return false
-		})
 		return {
 			tile,
-			position,
-			destroy
+			position
 		}
 	})
-	const unsubscribeTiles = tilesAndPosition.reduce((all, tp) => () => { all(); tp.destroy(); }, () => {})
-	const unsubscribeColonists = Colony.bindColonists(colony, colonists => {
+	const unsubscribeTiles = mergeFunctions(tiles.map(tile => {
+		return Tile.listen(tile, tile => {
+			const sprites = Background.createSpritesFromTile(tile)
+			sprites.forEach(sprite => {
+				sprite.position.x = position.x
+				sprite.position.y = position.y
+				container.addChild(sprite)
+			})
+			
+			const destroy = Drag.makeDragTarget(sprites[sprites.length - 1], async (args, coords) => {
+				const { unit } = args
+				if (unit && !Commander.isIdle(unit.commander)) {
+					return false
+				}
+				if (!tile.harvestedBy) {
+					if (!unit && !args.colonist) {
+						return false
+					}
+					const colonist = args.colonist || unit.colonist || Colonist.create(colony, unit)
+					if (unit) {
+						unit.colonist = colonist
+						Colony.leave(colony, unit)
+						Colony.join(colony, colonist)
+					}
+					const options = Tile.fieldProductionOptions(tile, colonist)
+					if (options.length === 1 || unit) {
+						Colonist.beginFieldWork(colonist, tile, options[0].good)
+					} else {
+						const scale = 1 //Util.globalScale(colonist.sprite)
+						coords.y += 0.5 * TILE_SIZE / 2
+
+						const optionsView = options.map(Context.productionOption)
+						const decision = await Context.create(optionsView, coords, 80, 0.5 * scale)
+						Colonist.beginFieldWork(colonist, tile, decision.good)
+					}
+					return true
+				}
+				return false
+			})
+			return () => {
+				destroy()
+				sprites.forEach(s => container.removeChild(s))
+			}
+		})
+	}))
+
+	const unsubscribeColonists = Colony.listen.colonists(colony, colonists => {
 		const colonistsSprites = []
 		
 		const cleanupWork = Util.mergeFunctions(colonists.map(colonist => {

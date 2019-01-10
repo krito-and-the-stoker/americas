@@ -125,8 +125,6 @@ const load = colony => {
 	tile.colony = colony
 	Record.entitiesLoaded(() => initialize(colony))
 
-	colony.sprite = ColonyView.createMapSprite(colony)
-
 	colony.colonists.forEach((colonist, index) => Record.dereferenceLazy(colonist, entity => colony.colonists[index] = entity))
 	colony.units.forEach((unit, index) => Record.dereferenceLazy(unit, entity => colony.units[index] = entity))
 	return colony	
