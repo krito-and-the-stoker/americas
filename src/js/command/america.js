@@ -8,7 +8,7 @@ import Unit from '../entity/unit'
 
 const create = (unit, eta = null) => {
 	const init = currentTime => {
-		if (!Europe.hasUnit(unit)) {
+		if (!Europe.has.unit(unit)) {
 			return false
 		}
 
