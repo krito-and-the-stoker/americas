@@ -61,17 +61,17 @@
 		}
 	},
 	"townhall": {
-		"frame": 10,
+		"frame": 11,
 		"width": 2,
 		"workspace": 3
 	},
 	"warehouse": {
-		"frame": 12,
+		"frame": 13,
 		"width": 2,
 		"workspace": 0
 	},
 	"weavers": {
-		"frame": 16,
+		"frame": 17,
 		"width": 1,
 		"workspace": 3,
 		"consumption": {
@@ -84,7 +84,7 @@
 		}
 	},
 	"rumDistillers": {
-		"frame": 17,
+		"frame": 20,
 		"width": 1,
 		"workspace": 3,
 		"consumption": {
