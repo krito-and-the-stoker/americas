@@ -117,12 +117,13 @@ const save = colony => ({
 	colonists: colony.colonists.map(colonist => Record.reference(colonist)),
 	capacity: colony.capacity,
 	mapCoordinates: colony.mapCoordinates,
-	storage: colony.storage,
+	storage: Storage.save(colony.storage),
 })
 
 const load = colony => {
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	tile.colony = colony
+	colony.storage = Storage.load(colony.storage)
 	Record.entitiesLoaded(() => initialize(colony))
 
 	colony.colonists.forEach((colonist, index) => Record.dereferenceLazy(colonist, entity => colony.colonists[index] = entity))

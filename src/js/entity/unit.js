@@ -161,8 +161,8 @@ const save = unit => ({
 	domain: unit.domain,
 	mapCoordinates: unit.mapCoordinates,
 	expert: unit.expert,
-	storage: unit.storage,
-	equipment: unit.equipment,
+	storage: Storage.save(unit.storage),
+	equipment: Storage.save(unit.equipment),
 	offTheMap: unit.offTheMap,
 	commander: unit.commander.save(),
 	colony: Record.reference(unit.colony),
@@ -172,6 +172,8 @@ const save = unit => ({
 })
 
 const load = unit => {
+	unit.storage = Storage.load(unit.storage)
+	unit.equipment = Storage.load(unit.equipment)
 	unit.passengers = unit.passengers.map(Record.dereference)
 	Record.dereferenceLazy(unit.colony, colony => unit.colony = colony)
 	Record.dereferenceLazy(unit.colonist, colonist => unit.colonist = colonist)
