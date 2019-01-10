@@ -70,9 +70,9 @@ const create = (colony, originalDimensions) => {
 	const unsubscribeColonists = Colony.bindColonists(colony, colonists => {
 		const colonistsSprites = []
 		
-		const cleanupWorksAt = Util.mergeFunctions(colonists.map(colonist => {
-			return Colonist.bindWorksAt(colonist, worksAt => {
-				const { tile, position } = tilesAndPosition.find(({ tile }) => worksAt && worksAt.tile === tile) || {}
+		const cleanupWork = Util.mergeFunctions(colonists.map(colonist => {
+			return Colonist.listen.work(colonist, work => {
+				const { tile, position } = tilesAndPosition.find(({ tile }) => work && work.tile === tile) || {}
 				
 				if (position) {
 					colonist.sprite.x = position.x
@@ -80,7 +80,7 @@ const create = (colony, originalDimensions) => {
 					container.addChild(colonist.sprite)
 					colonistsSprites.push(colonist.sprite)
 
-					const good = colonist.worksAt.good
+					const good = work.good
 					const productionSprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
 					productionSprites.forEach(s => {
 						s.position.x += position.x
@@ -98,7 +98,7 @@ const create = (colony, originalDimensions) => {
 
 		return () => {
 			colonistsSprites.forEach(s => container.removeChild(s))
-			cleanupWorksAt()
+			cleanupWork()
 		}
 	})
 	const colonySprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(MAP_COLONY_FRAME_ID)))

@@ -15,8 +15,8 @@ const create = colonist => {
 	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
 
 	Click.on(sprite, async () => {
-		if (colonist.worksAt) {
-			const tile = colonist.worksAt.tile
+		if (colonist.work) {
+			const tile = colonist.work.tile
 			const options = Tile.fieldProductionOptions(tile, colonist)
 			if (options.length > 1) {			
 				const coords = colonist.sprite.getGlobalPosition()

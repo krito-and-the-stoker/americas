@@ -14,7 +14,7 @@ const beginFieldWork = (colonist, tile, good) => {
 	const colony = colonist.colony
 	const stop = Time.schedule(Harvest.create(colony, tile, good, colonist))
 
-	Binding.update(colonist, 'worksAt', {
+	update.work(colonist, {
 		type: 'Field',
 		tile,
 		good,
@@ -27,11 +27,11 @@ const beginColonyWork = (colonist, building) => {
 	const stop = Time.schedule(Produce.create(colonist.colony, building, colonist))
 
 	const position = colonist.colony.colonists
-		.filter(col => col.worksAt && col.worksAt.building === building)
-		.map(col => col.worksAt.position)
+		.filter(col => col.work && col.work.building === building)
+		.map(col => col.work.position)
 		.reduce((free, occupied) => free.filter(pos => pos !== occupied), Util.range(Buildings[building].workspace))
 		.find(() => true)
-	Binding.update(colonist, 'worksAt', {
+	update.work(colonist, {
 		type: 'Colony',
 		building,
 		position,
@@ -40,16 +40,21 @@ const beginColonyWork = (colonist, building) => {
 }
 
 const stopWorking = colonist => {
-	if (colonist.worksAt) {
-		colonist.worksAt.stop()
-		if (colonist.worksAt.tile) {
-			colonist.worksAt.tile.harvestedBy = null
+	if (colonist.work) {
+		colonist.work.stop()
+		if (colonist.work.tile) {
+			colonist.work.tile.harvestedBy = null
 		}
 	}
-	Binding.update(colonist, 'worksAt')
+	update.work(colonist)
 }
 
-const bindWorksAt = (colonist, fn) => Binding.listen(colonist, 'worksAt', fn)
+const listen = {
+	work: (colonist, fn) => Binding.listen(colonist, 'work', fn)
+}
+const update = {
+	work: (colonist, value) => Binding.update(colonist, 'work', value)
+}
 
 const create = (colony, unit) => {
 	const colonist = {
@@ -57,7 +62,7 @@ const create = (colony, unit) => {
 		colony,
 		unit,
 		expert: unit.expert,
-		worksAt: null
+		work: null
 	}
 	colonist.sprite = ColonistView.create(colonist)
 	Colony.leave(colony, unit)
@@ -71,10 +76,10 @@ const save = colonist => ({
 	colony: Record.reference(colonist.colony),
 	unit: Record.reference(colonist.unit),
 	expert: colonist.expert,
-	worksAt: colonist.worksAt ? {
-		type: colonist.worksAt.type,
-		good: colonist.worksAt.good,
-		tile: Record.referenceTile(colonist.worksAt.tile)
+	work: colonist.work ? {
+		type: colonist.work.type,
+		good: colonist.work.good,
+		tile: Record.referenceTile(colonist.work.tile)
 	} : null
 })
 
@@ -86,25 +91,23 @@ const load = colonist => {
 	colonist.unit = Record.dereference(colonist.unit)
 
 	Record.entitiesLoaded(() => {	
-		if (colonist.worksAt) {
-			colonist.worksAt.tile = Record.dereferenceTile(colonist.worksAt.tile)
-			colonist.worksAt.tile.harvestedBy = null
-			colonist.worksAt.stop = Time.schedule(Harvest.create(colonist.colony, colonist.worksAt.tile, colonist.worksAt.good, colonist))
+		if (colonist.work) {
+			colonist.work.tile = Record.dereferenceTile(colonist.work.tile)
+			colonist.work.tile.harvestedBy = null
+			colonist.work.stop = Time.schedule(Harvest.create(colonist.colony, colonist.work.tile, colonist.work.good, colonist))
 		}
 	})
 
 	return colonist
 }
 
-const is = entity => entity.type === 'colonist'
-
 export default {
 	create,
-	is,
 	save,
 	load,
 	beginFieldWork,
 	beginColonyWork,
 	stopWorking,
-	bindWorksAt
+	listen,
+	update,
 }

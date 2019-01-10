@@ -78,7 +78,7 @@ const unjoin = (colony, colonist) => {
 }
 
 const canEmploy = (colony, building) => colony.colonists
-	.filter(colonist => colonist.worksAt && colonist.worksAt.building === building).length < Buildings[building].workspace
+	.filter(colonist => colonist.work && colonist.work.building === building).length < Buildings[building].workspace
 const bindUnits = (colony, fn) => Binding.listen(colony, 'units', fn)
 const bindColonists = (colony, fn) => Binding.listen(colony, 'colonists', fn)
 

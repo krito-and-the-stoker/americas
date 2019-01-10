@@ -48,10 +48,10 @@ const createBuilding = (colony, name) => {
 	const unsubscribe = Colony.bindColonists(colony, colonists => {
 		const colonistsSprites = []
 		
-		const cleanupWorksAt = Util.mergeFunctions(colonists.map(colonist => {
-			return Colonist.bindWorksAt(colonist, worksAt => {
-				if (worksAt && worksAt.building === name) {
-					colonist.sprite.x = worksAt.position * 128 / 3
+		const cleanupWork = Util.mergeFunctions(colonists.map(colonist => {
+			return Colonist.listen.work(colonist, work => {
+				if (work && work.building === name) {
+					colonist.sprite.x = work.position * 128 / 3
 					colonist.sprite.y = 36
 					container.addChild(colonist.sprite)
 					colonistsSprites.push(colonist.sprite)
@@ -60,7 +60,7 @@ const createBuilding = (colony, name) => {
 					if (good) {					
 						const productionSprites = ProductionView.create(good, Buildings[name].production.amount, TILE_SIZE / 2)
 						productionSprites.forEach(s => {
-							s.position.x += worksAt.position * 128 / 3
+							s.position.x += work.position * 128 / 3
 							s.position.y += 36 + 0.5 * TILE_SIZE
 							s.scale.set(0.5)
 							container.addChild(s)
@@ -75,7 +75,7 @@ const createBuilding = (colony, name) => {
 
 		return () => {
 			colonistsSprites.forEach(s => container.removeChild(s))
-			cleanupWorksAt()
+			cleanupWork()
 		}
 	})
 
