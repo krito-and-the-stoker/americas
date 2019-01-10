@@ -9,28 +9,22 @@ import Colony from '../entity/colony'
 import Storage from '../entity/storage'
 import Util from '../util/util'
 import Binding from '../util/binding'
+import EnterColony from '../action/enterColony'
 
-let allUnits = []
-const create = (name, coords = null, additionalProps = {}) => {
+const create = (name, coords, additionalProps = {}) => {
 	if (Units[name]) {
-		if (coords) {
-			const tile = MapEntity.tile(coords)
-			Tile.discover(tile)
-			Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))
-		}
-
 		const unit = {
 			name,
 			properties: Units[name],
 			domain: Units[name].domain,
 			mapCoordinates: coords || { x: undefined, y: undefined },
-			active: true,
 			cargo: [],
+			colony: null,
 			expert: null,
 			...additionalProps
 		}
-		unit.storage = Storage.create(unit)
-		unit.equipment = Storage.create(unit)
+		unit.storage = Storage.create()
+		unit.equipment = Storage.create()
 
 		if (name === 'pioneer') {
 			unit.equipment.tools = 100
@@ -48,13 +42,14 @@ const create = (name, coords = null, additionalProps = {}) => {
 
 		initialize(unit)
 
-		if (coords && MapEntity.tile(coords).colony) {
-			Colony.enter(MapEntity.tile(coords).colony, unit)
+		const colony = MapEntity.tile(coords).colony
+		if (colony) {
+			EnterColony(colony, unit)
 		}
+
 		unit.sprite = UnitView.createSprite(unit)
 
 		Record.add('unit', unit)
-		allUnits.push(unit)
 
 		return unit
 	} else {
@@ -64,6 +59,10 @@ const create = (name, coords = null, additionalProps = {}) => {
 }
 
 const initialize = unit => {
+	const tile = MapEntity.tile(coords)
+	Tile.discover(tile)
+	Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))
+
 	unit.commander = Commander.create({ keep: true })
 	Time.schedule(unit.commander)
 	Binding.listen(unit, 'equipment', equipment => {
@@ -103,20 +102,20 @@ const initialize = unit => {
 const updateType = (unit, name) => {
 	unit.name = name
 	unit.properties = Units[name]
-	UnitView.updateType(unit)
 }
-const at = coords => allUnits.filter(unit => unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y)
-const hasStorageCapacity = unit => Storage.split(unit.storage).length + unit.cargo.length < unit.properties.cargo
-const loadGoods = (unit, good, amount) => {
-	if (!hasStorageCapacity(unit) && amount > 0) {
+
+const at = coords => Record.getAll('unit').filter(unit => unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y)
+const hasStorageCapacity = (unit, pack) => Storage.split(unit.storage)
+	.filter(p => p.good === pack.good && (p.amount + pack.amount <= 100))
+		.length + unit.cargo.length < unit.properties.cargo
+
+const loadGoods = (unit, pack) => {
+	if (!hasStorageCapacity(unit, pack) && amount > 0) {
 		return false
 	}
 
-	Storage.update(unit, good, amount)
+	Storage.update(unit.storage, pack)
 	return true
-}
-const listenStorage = (unit, fn) => {
-	return Storage.listen(unit, fn)
 }
 
 const loadUnit = (unit, cargoUnit) => {
@@ -145,6 +144,7 @@ const unloadUnit = unit => {
 }
 
 const unloadAllUnits = unit => {
+	// do not iterate over the cargo array directly because unloadUnit changes it
 	Util.range(unit.cargo.length).forEach(() => unloadUnit(unit))
 }
 
@@ -152,7 +152,6 @@ const save = unit => ({
 	name: unit.name,
 	properties: unit.properties,
 	domain: unit.domain,
-	active: unit.active,
 	mapCoordinates: unit.mapCoordinates,
 	expert: unit.expert,
 	storage: unit.storage,
@@ -184,7 +183,6 @@ export default {
 	loadUnit,
 	unloadUnit,
 	unloadAllUnits,
-	listenStorage,
 	save,
 	load,
 	reset,

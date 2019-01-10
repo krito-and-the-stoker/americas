@@ -1,33 +1,29 @@
 import Record from '../util/record'
 import Treasure from './treasure'
 import Unit from './unit'
+import Member from '../util/member'
 
-
-let units = []
-let unitsListeners = []
-const arrive = unit => {
-	console.log('arrived in europe', unit)
-	units.push(unit)
-	unitsListeners.forEach(fn => fn(units))
+const europe = {
+	units: []
 }
 
-const leave = unit => {
-	units = units.filter(u => u !== unit)
-	unitsListeners.forEach(fn => fn(units))
+const add = {
+	unit: unit => Member.add(europe, 'units', unit)
 }
 
-const hasUnit = unit => units.includes(unit)
-
-const bindUnits = fn => {
-	fn(units)
-	unitsListeners.push(fn)
-
-	const remove = () => {
-		unitsListeners = unitsListeners.filter(f => f !== fn)
-	}
-
-	return remove
+const remove = {
+	unit: unit => Member.remove(europe, 'units', unit)
 }
+
+const has = {
+	unit: Member.has(europe, 'units', unit)
+}
+
+const listen = {
+	units: fn => Binding.listen(europe, 'units', fn)
+}
+
+
 
 const save = () => ({
 	units: units.map(Record.reference),
@@ -71,10 +67,10 @@ const purchase = option => {
 }
 
 export default {
-	arrive,
-	leave,
-	hasUnit,
-	bindUnits,
+	add,
+	remove,
+	has,
+	listen,
 	save,
 	load,
 	recruitmentOptions,

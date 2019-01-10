@@ -2,15 +2,17 @@ import Goods from '../data/goods.json'
 import Binding from '../util/binding'
 import Util from '../util/util'
 
-const LISTENER_KEY = Binding.listenerKey('storage')
-const update = (entity, good, amount) => {
-	entity.storage[good] += amount
-	Binding.update(entity, 'storage')
+
+const update = (storage, pack) => {
+	if (pack.amount) {
+		storage[pack.good] += pack.amount
+	}
+	Binding.update(storage)
 }
 
 
-const listen = (entity, fn) => Binding.listen(entity, 'storage', fn)
-const create = entity => Goods.types.reduce((obj, name) => ({ ...obj, [name]: 0 }), {})
+const listen = (storage, fn) => Binding.listen(storage, null, fn)
+const create = () => Goods.types.reduce((obj, name) => ({ ...obj, [name]: 0 }), {})
 
 const split = storage => Object.keys(storage)
 	.filter(good => storage[good] > 0)
@@ -20,11 +22,28 @@ const split = storage => Object.keys(storage)
 			.map(amount => ({ good, amount }))
 		).flat()
 
+const transfer = (src, dest, pack = {}) => {
+	const move = ({ good, amout }) => {
+		dest[good] += amount || src[good]
+		src[good] -= amount || src[good]
+	}
+
+	if (pack.good) {
+		move(pack)
+	} else {
+		Object.keys(src)
+			.map(good => ({ good }))
+			.forEach(move)
+	}
+
+	update(src)
+	update(dest)
+}
 
 export default {
 	create,
 	listen,
 	update,
 	split,
-	LISTENER_KEY
+	transfer
 }

@@ -1,7 +1,7 @@
 import MainLoop from 'mainloop.js'
 
 import MapEntity from './entity/map.js'
-import MapView from './view/map.js'
+import MapView from './render/map.js'
 import RenderView from './render/view.js'
 import Keyboard from './input/keyboard.js'
 import americaSmallMap from './data/america-small.json'

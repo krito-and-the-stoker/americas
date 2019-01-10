@@ -10,7 +10,7 @@ import Europe from '../entity/europe'
 import Treasure from '../entity/treasure'
 import Market from '../entity/market'
 
-import MapView from '../view/map'
+import MapView from '../render/map'
 import Foreground from '../render/foreground'
 import Background from '../render/background'
 import RenderView from '../render/view'
@@ -50,6 +50,10 @@ const setGlobal = (key, value) => {
 	globals[key] = value
 }
 const getGlobal = key => globals[key]
+
+const getAll = type => record
+	.filter(record => record.type === type)
+	.map(record => record.entity)
 
 const revive = (record) => {
 	if (record.entity) {
@@ -228,5 +232,6 @@ export default {
 	save,
 	load,
 	dump,
+	getAll,
 	REFERENCE_KEY
 }
