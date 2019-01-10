@@ -14,7 +14,7 @@ import MapView from '../render/map'
 import Foreground from '../render/foreground'
 import Background from '../render/background'
 import RenderView from '../render/view'
-import UnitView from '../view/unit'
+import UnitView from '../view/map/unit'
 import Time from '../timeline/time'
 import PathFinder from '../util/pathFinder'
 
@@ -26,8 +26,7 @@ const USE_COMPRESSION = false
 
 let lastSave = null
 
-// start with 1 because 0 is not concidered a valid id
-let idCounter = 1
+let idCounter = 0
 const makeId = () => idCounter += 1
 
 let	records = []
@@ -94,6 +93,7 @@ const revive = (record) => {
 		entity: record.entity,
 		type: record.type
 	})
+	update(record.type, record.entity)
 
 	return record.entity
 }
@@ -208,7 +208,6 @@ const entitiesLoaded = fn => loadedListeners.push(fn)
 const load = () => {
 	console.log('loading...')
 	Foreground.shutdown()
-	Unit.reset()
 	
 	loadedListeners = []
 	records = []

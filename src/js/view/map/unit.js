@@ -16,7 +16,8 @@ const TILE_SIZE = 64
 
 let selectedView = null
 let blinkTween = null
-const select = view => {
+const select = unit => {
+	const view = getView(unit)
 	if (view != selectedView) {
 		if (selectedView) {
 			unselect()
@@ -73,7 +74,7 @@ const create = unit => {
 			unit.colony.screen = ColonyView.createDetailScreen(unit.colony)
 			Foreground.openScreen(unit.colony.screen)			
 		} else {
-			select(view)
+			select(unit)
 		}
 	})
 
@@ -106,7 +107,7 @@ const hide = view => {
 const visibleOnMap = view => (view === selectedView || !view.unit.colony) && !view.unit.vehicle && !Europe.has.unit(view.unit)
 
 
-const save = () => Record.reference(selectedView)
+const save = () => Record.reference(selectedUnit())
 const load = data => {
 	const unit = Record.dereference(data)
 	if (unit) {
@@ -117,7 +118,6 @@ const load = data => {
 let views = []
 const initialize = () => {
 	Record.listen('unit', unit => {
-		console.log('create', unit)
 		const view = create(unit)
 		Unit.listen.vehicle(unit, () => {
 			if (visibleOnMap(view)) {

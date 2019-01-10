@@ -26,13 +26,12 @@ const listen = {
 
 
 const save = () => ({
-	units: units.map(Record.reference),
+	units: europe.units.map(Record.reference),
 	currentPrice
 })
 
 const load = data => {
-	unitsListeners = []
-	units = data.units.map(Record.dereference)
+	europe.units = data.units.map(Record.dereference)
 	currentPrice = data.currentPrice
 }
 

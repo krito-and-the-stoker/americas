@@ -176,11 +176,8 @@ const load = unit => {
 		initialize(unit)
 	})
 
-	allUnits.push(unit)
 	return unit
 }
-
-const reset = () => allUnits = []
 
 export default {
 	create,
@@ -191,6 +188,5 @@ export default {
 	unloadAllUnits,
 	save,
 	load,
-	reset,
 	at
 }
