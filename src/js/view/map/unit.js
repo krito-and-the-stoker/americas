@@ -1,13 +1,13 @@
 import * as PIXI from 'pixi.js'
 import TWEEN from '@tweenjs/tween.js'
 
-import Util from '../util/util'
-import Foreground from '../render/foreground'
-import Ressources from '../render/ressources'
-import Click from '../input/click'
-import Secondary from '../input/secondary'
-import Record from '../util/record'
-import ColonyView from '../view/colony'
+import Util from '../../util/util'
+import Foreground from '../../render/foreground'
+import Ressources from '../../render/ressources'
+import Click from '../../input/click'
+import Secondary from '../../input/secondary'
+import Record from '../../util/record'
+import ColonyView from '../../view/colony'
 
 const BLINK_TIME = 500
 const TILE_SIZE = 64

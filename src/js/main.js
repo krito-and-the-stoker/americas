@@ -1,7 +1,7 @@
 import MainLoop from 'mainloop.js'
 
 import MapEntity from './entity/map.js'
-import MapView from './render/map.js'
+import RenderMap from './render/map.js'
 import RenderView from './render/view.js'
 import Keyboard from './input/keyboard.js'
 import americaSmallMap from './data/america-small.json'
@@ -12,7 +12,7 @@ import Ressources from './render/ressources'
 import Europe from './view/europe'
 import Time from './timeline/time'
 import PathFinder from './util/pathFinder'
-import MapControl from './control/map'
+import MapView from './view/map'
 import Dialog from './view/ui/dialog'
 import TreasureView from './view/treasure'
 import Foreground from './render/foreground'
@@ -34,7 +34,7 @@ const americaSmall = () => {
 	const caravel = Unit.create('caravel', { x, y }, {
 		cargo: [soldier, pioneer]
 	})
-	MapControl.centerAt({ x, y })
+	MapView.centerAt({ x, y })
 	Record.setGlobal('defaultShipArrival', { x, y })
 }
 
@@ -46,16 +46,16 @@ const americaLarge = () => {
 	const caravel = Unit.create('caravel', { x, y }, {
 		cargo: [soldier, pioneer]
 	})
-	MapControl.centerAt({ x, y })
-	MapControl.zoomBy(1/0.35, null, 0)
+	MapView.centerAt({ x, y })
+	MapView.zoomBy(1/0.35, null, 0)
 	Record.setGlobal('defaultShipArrival', { x, y })
 }
 
 const initialize = () => {
 	MapEntity.create({ data: americaSmallMap })
-	const mapView = new MapView()
+	const mapRendering = new RenderMap()
 	
-	RenderView.initialize(mapView)
+	RenderView.initialize(mapRendering)
 	Dialog.initialize()
 	Tween.initialize()
 
@@ -66,14 +66,14 @@ const initialize = () => {
 	// for no apparent reason the layers are not available inside TreasureView
 	TreasureView.initialize(Foreground.get().permanent)
 
-	MapControl.zoomBy(1/0.35, null, 0)
+	MapView.zoomBy(1/0.35, null, 0)
 	setTimeout(() => {
-		MapControl.zoomBy(0.35, null, 100)
+		MapView.zoomBy(0.35, null, 100)
 	}, 50)
 
 	setTimeout(() => {
 		Keyboard.initialize()
-		MapControl.initializeInteraction()
+		MapView.initializeInteraction()
 	}, 150)
 
 	document.addEventListener('visibilitychange', () => {

@@ -1,13 +1,16 @@
 import TWEEN from '@tweenjs/tween.js'
-import RenderView from '../render/view'
-import Foreground from '../render/foreground'
-import Click from '../input/click'
-import Drag from '../input/drag'
-import Wheel from '../input/wheel'
-import UnitView from '../view/unit'
-import MoveTo from '../command/moveTo'
-import Commander from '../command/commander'
-import Secondary from '../input/secondary'
+
+import RenderView from '../../render/view'
+import Foreground from '../../render/foreground'
+import Click from '../../input/click'
+import Drag from '../../input/drag'
+import Wheel from '../../input/wheel'
+import MoveTo from '../../command/moveTo'
+import Commander from '../../command/commander'
+import Secondary from '../../input/secondary'
+
+import UnitView from './unit'
+import ColonyView from './colony'
 
 const MIN_SCALE = 0.125
 const MAX_SCALE = 4
@@ -81,7 +84,10 @@ const moveBy = (relativeCoords, moveTime) => {
 	moveMap(targetCoords, moveTime)
 }
 
-const initializeInteraction = () => {
+const initialize = () => {
+	ColonyView.initialize()
+	UnitView.initialize()
+
 	const stage = Foreground.get().layer.app.stage
 
 	let initialCoords = null
@@ -136,5 +142,5 @@ export default {
 	sanitizeScale,
 	moveMap,
 	centerAt,
-	initializeInteraction
+	initialize
 }

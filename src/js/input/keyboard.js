@@ -1,6 +1,6 @@
 import RenderView from '../render/view'
 import Foreground from '../render/foreground'
-import MapControl from '../control/map'
+import MapView from '../view/map'
 import Unit from '../view/unit'
 import Time from '../timeline/time'
 import Move from '../command/move'
@@ -27,8 +27,8 @@ const handleKeydown = (e) => {
 			targetScale /= ZOOM_FACTOR
 		}
 
-		targetScale = MapControl.sanitizeScale(targetScale)
-		MapControl.zoom(targetScale, ZOOM_TIME)
+		targetScale = MapView.sanitizeScale(targetScale)
+		MapView.zoom(targetScale, ZOOM_TIME)
 	}
 	if (e.key === ' ') {
 		Time.togglePause()
