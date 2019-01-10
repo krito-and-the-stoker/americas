@@ -25,6 +25,7 @@ const create = (name, coords) => {
 		}
 		unit.storage = Storage.create()
 		unit.equipment = Storage.create()
+		unit.commander = Commander.create({ keep: true })
 
 		if (name === 'pioneer') {
 			unit.equipment.tools = 100
@@ -61,7 +62,6 @@ const initialize = unit => {
 	Tile.discover(tile)
 	Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))
 
-	unit.commander = Commander.create({ keep: true })
 	Time.schedule(unit.commander)
 	Binding.listen(unit, 'equipment', equipment => {
 		// lose status
@@ -179,6 +179,7 @@ const load = unit => {
 	Record.dereferenceLazy(unit.colonist, colonist => unit.colonist = colonist)
 	Record.dereferenceLazy(unit.vehicle, vehicle => unit.vehicle = vehicle)
 	Record.entitiesLoaded(() => {
+		unit.commander = Commander.load(unit.commander)
 		initialize(unit)
 	})
 
