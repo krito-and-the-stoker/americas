@@ -4,6 +4,7 @@ import Europe from '../entity/europe'
 import UnitView from '../view/unit'
 import Record from '../util/record'
 import Unit from '../entity/unit'
+import Message from '../view/ui/message'
 
 
 const create = (unit, eta = null) => {
@@ -26,6 +27,7 @@ const create = (unit, eta = null) => {
 
 	const finished = () => {
 		if (eta) {
+			Message.send(`A ${unit.name} arrived in Europe.`)
 			Europe.add.unit(unit)
 		}
 	}

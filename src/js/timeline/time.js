@@ -1,5 +1,5 @@
 
-const TIME_SCALE = 1
+let timeScale = 1
 const MOVE_BASE_TIME = 7500
 const UNLOAD_TIME = 2500
 const LOAD_TIME = 2500
@@ -17,10 +17,13 @@ const get = () => ({
 	currentTime
 })
 
+const speedUp = () => timeScale *= 1.5
+const slowDown = () => timeScale /= 1.5
+
 
 const advance = deltaTime => {
 	if (!paused) {
-		currentTime += deltaTime * TIME_SCALE
+		currentTime += deltaTime * timeScale
 	}
 	const readyTasks = scheduled.filter(e => e.time <= currentTime)
 	const needsInitialization = readyTasks.filter(e => !e.started && e.init)
@@ -93,6 +96,8 @@ export default {
 	pause,
 	resume,
 	get,
+	speedUp,
+	slowDown,
 	MOVE_BASE_TIME,
 	UNLOAD_TIME,
 	LOAD_TIME,

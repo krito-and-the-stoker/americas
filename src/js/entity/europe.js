@@ -2,6 +2,7 @@ import Record from '../util/record'
 import Treasure from './treasure'
 import Unit from './unit'
 import Member from '../util/member'
+import Binding from '../util/binding'
 
 const europe = {
 	units: []

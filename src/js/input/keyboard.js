@@ -62,6 +62,14 @@ const handleKeydown = (e) => {
 		MapEntity.discoverAll()
 	}
 
+	if (e.key === '+') {
+		Time.speedUp()
+	}
+
+	if (e.key === '-') {
+		Time.slowDown()
+	}
+
 	const unit = UnitView.selectedUnit()
 	if (unit) {
 		if (e.key === 'b') {

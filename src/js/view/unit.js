@@ -1,16 +1,23 @@
-const createColonySprite = unit => {
-	if (!unit.colonySprite) {	
-		const frame = unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
-		const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
-		sprite.scale.set(2)
+import Ressources from '../render/ressources'
+import Util from '../util/util'
 
-		unit.colonySprite = sprite
-	}
-
-	return unit.colonySprite
+const create = unit => {
+	const frame = unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
+	return new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
 }
 
+// const createColonySprite = unit => {
+// 	if (!unit.colonySprite) {	
+// 		const frame = unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
+// 		const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
+// 		sprite.scale.set(2)
+
+// 		unit.colonySprite = sprite
+// 	}
+
+// 	return unit.colonySprite
+// }
 
 export default {
-	createColonySprite
+	create
 }

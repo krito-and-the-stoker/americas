@@ -90,7 +90,7 @@ let prices = Util.makeObject(Object.keys(Market)
 const bid = good => prices[good]
 const ask = good => prices[good] + Market[good].difference
 
-const buy = (good, amount) => {
+const buy = ({ good, amount }) => {
 	const pricePerGood = prices[good] + Market[good].difference
 	const price = pricePerGood * amount
 	if (Treasure.spend(price)) {
@@ -103,7 +103,7 @@ const buy = (good, amount) => {
 	return actualAmount
 }
 
-const sell = (good, amount) => {
+const sell = ({ good, amount }) => {
 	const pricePerGood = prices[good]
 	Treasure.gain(amount * pricePerGood)
 	console.log(`sold ${amount} ${good}`)
