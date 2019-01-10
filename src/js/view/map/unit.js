@@ -8,18 +8,20 @@ import Click from '../../input/click'
 import Secondary from '../../input/secondary'
 import Record from '../../util/record'
 import ColonyView from '../../view/colony'
+import Unit from '../../entity/unit'
+import Europe from '../../entity/europe'
 
 const BLINK_TIME = 500
 const TILE_SIZE = 64
 
-let selectedUnitView = null
+let selectedView = null
 let blinkTween = null
 const select = view => {
-	if (view != selectedUnitView) {
-		if (selectedUnitView) {
+	if (view != selectedView) {
+		if (selectedView) {
 			unselect()
 		}
-		selectedUnitView = view
+		selectedView = view
 		if (blinkTween) {
 			blinkTween.stop()
 		}
@@ -35,8 +37,8 @@ const select = view => {
 }
 
 const unselect = () => {
-	const unit = selectedUnitView
-	selectedUnitView = null
+	const unit = selectedView
+	selectedView = null
 	if (blinkTween) {
 		blinkTween.stop()
 		blinkTween = null
@@ -77,7 +79,7 @@ const create = unit => {
 	return view
 }
 
-const selectedUnit = () => selectedUnitView ? selectedUnitView.unit : null
+const selectedUnit = () => selectedView ? selectedView.unit : null
 
 const markOccupied = unit => {
 	const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
@@ -86,7 +88,7 @@ const markOccupied = unit => {
 		unit.colonySprite.filters = []
 	}
 	greyScaleFilter.blackAndWhite()
-	if (unit === selectedUnitView) {
+	if (unit === selectedView) {
 		unselect()
 	}
 }
@@ -98,8 +100,18 @@ const markFree = unit => {
 	}
 }
 
+const show = view => {
+	Foreground.addUnit(view.sprite)
+}
 
-const save = () => Record.reference(selectedUnitView)
+const hide = view => {
+	Foreground.removeUnit(view.sprite)
+}
+
+const visibleOnMap = view => (view === selectedView || !view.unit.colony) && !view.unit.vehicle && !Europe.has.unit(view.unit)
+
+
+const save = () => Record.reference(selectedView)
 const load = data => {
 	const unit = Record.dereference(data)
 	if (unit) {
@@ -111,7 +123,16 @@ let views = []
 const initialize = () => {
 	Record.listen('unit', unit => {
 		console.log('create', unit)
-		views.push(create(unit))
+		const view = create(unit)
+		Unit.listen.vehicle(unit, () => {
+			if (visibleOnMap(view)) {
+				show(view)
+			} else {
+				hide(view)
+			}
+		})
+
+		views.push(view)
 	})
 }
 

@@ -97,6 +97,14 @@ const initialize = unit => {
 	})
 }
 
+const listen = {
+	vehicle: (unit, fn) => Binding.listen(unit, 'vehicle', fn)
+}
+
+const update = {
+	vehicle: (unit, value) => Binding.update(unit, 'vehicle', value)
+}
+
 const updateType = (unit, name) => {
 	unit.name = name
 	unit.properties = Units[name]
@@ -121,7 +129,7 @@ const loadUnit = (unit, passenger) => {
 		return false
 	}
 
-	passenger.vehicle = unit
+	update.vehicle(passenger, unit)
 	unit.passengers.push(passenger)
 	return true
 }
@@ -130,7 +138,7 @@ const unloadUnit = unit => {
 	if (unit.passengers.length > 0) {	
 		const passenger = unit.passengers.shift()
 		passenger.mapCoordinates = { ...unit.mapCoordinates }
-		passenger.vehicle = null
+		update.vehicle(passenger, null)
 		if (unit.colony) {
 			EnterColony(unit.colony, passenger)
 		}
@@ -177,6 +185,7 @@ const reset = () => allUnits = []
 
 export default {
 	create,
+	listen,
 	loadGoods,
 	loadUnit,
 	unloadUnit,
