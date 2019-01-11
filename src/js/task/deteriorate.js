@@ -1,4 +1,4 @@
-import Colony from '../entity/colony'
+import Storage from '../entity/storage'
 import Time from '../timeline/time'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
@@ -17,8 +17,8 @@ const create = colony => {
 			.filter(([good, amount]) => good !== 'food')
 			.filter(([good, amount]) => amount > colony.capacity)
 			.forEach(([good, amount]) => {
-				const loss = deltaTime * PRODUCTION_BASE_FACTOR * LOSS_FACTOR * (amount - colony.capacity)				
-				Colony.updateStorage(colony, good, -loss)
+				const loss = deltaTime * PRODUCTION_BASE_FACTOR * LOSS_FACTOR * (amount - colony.capacity)
+				Storage.update(colony.storage, { good, amount: -loss })
 			})
 
 		lastUpdate = currentTime
