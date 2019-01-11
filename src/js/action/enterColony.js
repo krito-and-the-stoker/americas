@@ -3,6 +3,6 @@ import Colony from '../entity/colony'
 
 export default (colony, unit) => {
 	Colony.add.unit(colony, unit)
-	unit.colony = colony
+	Unit.update.colony(unit, colony)
 	Unit.unloadAllUnits(unit)
 }

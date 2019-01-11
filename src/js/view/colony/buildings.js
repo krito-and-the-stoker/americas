@@ -7,6 +7,7 @@ import Colonist from '../../entity/colonist'
 import Colony from '../../entity/colony'
 import ProductionView from '../../view/production'
 import Commander from '../../command/commander'
+import JoinColony from '../../action/joinColony'
 
 const TILE_SIZE = 64
 
@@ -31,11 +32,9 @@ const createBuilding = (colony, name) => {
 		if (unit && !Commander.isIdle(unit.commander)) {
 			return false
 		}
-		const colonist = args.colonist || unit.colonist || Colonist.create(colony, unit)
+		const colonist = args.colonist || unit.colonist || Colonist.create(unit)
 		if (unit) {
-			unit.colonist = colonist
-			Colony.leave(colony, unit)
-			Colony.join(colony, colonist)
+			JoinColony(colony, colonist)
 		}
 
 		if (colonist && Colony.canEmploy(colony, name)) {

@@ -1,11 +1,11 @@
-import Units from '../data/units.json'
-import Util from '../util/util'
-import Ressources from '../render/ressources'
-import Click from '../input/click'
-import Drag from '../input/drag'
-import Tile from '../entity/tile'
-import Context from '../view/context'
-import Colonist from '../entity/colonist'
+import Units from '../../data/units.json'
+import Util from '../../util/util'
+import Ressources from '../../render/ressources'
+import Click from '../../input/click'
+import Drag from '../../input/drag'
+import Tile from '../../entity/tile'
+import Context from '../../view/ui/context'
+import Colonist from '../../entity/colonist'
 
 
 const frames = Units.settler.frame

@@ -102,12 +102,16 @@ const listen = {
 	vehicle: (unit, fn) => Binding.listen(unit, 'vehicle', fn),
 	offTheMap: (unit, fn) => Binding.listen(unit, 'offTheMap', fn),
 	colonist: (unit, fn) => Binding.listen(unit, 'colonist', fn),
+	mapCoordinates: (unit, fn) => Binding.listen(unit, 'mapCoordinates', fn),
+	colony: (unit, fn) => Binding.listen(unit, 'colony', fn),
 }
 
 const update = {
 	vehicle: (unit, value) => Binding.update(unit, 'vehicle', value),
 	offTheMap: (unit, value) => Binding.update(unit, 'offTheMap', value),
 	colonist: (unit, value) => Binding.update(unit, 'colonist', value),
+	mapCoordinates: (unit, value) => Binding.update(unit, 'mapCoordinates', value),
+	colony: (unit, value) => Binding.update(unit, 'colony', value),
 }
 
 const updateType = (unit, name) => {
@@ -140,7 +144,7 @@ const loadUnit = (unit, passenger) => {
 const unloadUnit = unit => {
 	if (unit.passengers.length > 0) {	
 		const passenger = unit.passengers.shift()
-		passenger.mapCoordinates = { ...unit.mapCoordinates }
+		update.mapCoordinates(passenger, { ...unit.mapCoordinates })
 		update.offTheMap(passenger, unit.offTheMap)
 		update.vehicle(passenger, null)
 		if (unit.colony) {

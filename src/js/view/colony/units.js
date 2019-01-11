@@ -8,6 +8,7 @@ import Drag from '../../input/drag'
 import Unit from '../../entity/unit'
 import GoodsView from '../../view/goods'
 import Transport from '../../view/transport'
+import Util from '../../util/util'
 import Binding from '../../util/binding'
 
 import EquipUnitFromShip from '../../action/equipUnitFromShip'
@@ -17,16 +18,9 @@ import EquipUnitFromColony from '../../action/equipUnitFromColony'
 const create = (colony, closeScreen, originalDimensions) => {
 	const container = new PIXI.Container()
 
-	let shipViews = []
-	let landUnitsView = []
 	const unsubscribeUnits = Colony.listen.units(colony, units => {
 		const ships = units.filter(unit => unit.domain === 'sea')
-		const landUnits = units.filter(unit => unit.domain === 'land')
-		shipViews.forEach(view => {
-			view.unsubscribe()
-			container.removeChild(view.container)
-		})
-		shipViews = ships.map(Transport.create)
+		const shipViews = ships.map(Transport.create)
 		shipViews.forEach((view, index) => {
 			Click.on(view.sprite, () => {
 				closeScreen()
@@ -37,40 +31,59 @@ const create = (colony, closeScreen, originalDimensions) => {
 			container.addChild(view.container)
 		})
 
-		landUnitsView.forEach(({ sprite }) => {
-			container.removeChild(sprite)
-		})
-		landUnitsView = landUnits.map(unit => ({ sprite: UnitView.create(unit), unit }))
-		landUnitsView.forEach(({ sprite, unit }, index) => {
-			sprite.x = originalDimensions.x - (landUnitsView.length - index) * sprite.width
-			sprite.y = originalDimensions.y - 125 - sprite.height
-			sprite.scale.set(2)
-			container.addChild(sprite)
-			Drag.makeDraggable(sprite, { unit })
+		const createLandUnitsRaw = () => {
+			return Util.mergeFunctions(units
+				.filter(unit => unit.domain === 'land')
+				.filter(unit => !unit.colonist)
+				.map((unit, index, all) => {
+					const shownUnits = all.length
+					const sprite = UnitView.create(unit)
+					sprite.x = originalDimensions.x - (shownUnits - index - 1) * sprite.width
+					sprite.y = originalDimensions.y - 125 - sprite.height
+					sprite.scale.set(2)
+					container.addChild(sprite)
+					Drag.makeDraggable(sprite, { unit })
 
-			Click.on(sprite, () => {
-				closeScreen()
-				UnitMapView.select(unit)
+					Click.on(sprite, () => {
+						closeScreen()
+						UnitMapView.select(unit)
+					})
+
+					const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {
+						const { good, amount, colony } = args
+						const fromUnit = args.unit
+						if (fromUnit) {
+							EquipUnitFromShip(ship, unit, { good, amount })
+						}
+						if (colony) {
+							EquipUnitFromColony(colony, unit, { good, amount })
+						}
+
+						return false
+					})
+					return () => {
+						console.log('destroyed land units')
+						unsubscribeDrag()				
+						container.removeChild(sprite)
+					}
+				}))
+		}
+		const createLandUnits = Binding.shared(createLandUnitsRaw)
+		const unsubscribeLandUnits = Util.mergeFunctions(units
+			.filter(unit => unit.domain === 'land')
+			.map(unit => Unit.listen.colonist(unit, createLandUnits)))
+
+		return () => {
+			shipViews.forEach(view => {
+				view.unsubscribe()
+				container.removeChild(view.container)
 			})
-
-			Drag.makeDragTarget(sprite, args => {
-				const { good, amount, colony } = args
-				const fromUnit = args.unit
-				if (fromUnit) {
-					EquipUnitFromShip(ship, unit, { good, amount })
-				}
-				if (colony) {
-					EquipUnitFromColony(colony, unit, { good, amount })
-				}
-
-				return false
-			})
-		})
+			unsubscribeLandUnits()
+		}
 	})
 
 	const unsubscribe = () => {
 		unsubscribeUnits()
-		shipViews.forEach(view => view.unsubscribe())
 	}
 
 	return {

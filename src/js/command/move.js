@@ -108,8 +108,7 @@ const createFromData = data => {
 		if (!aborted) {		
 			sprite.x = TILE_SIZE * coords.x
 			sprite.y = TILE_SIZE * coords.y
-			unit.mapCoordinates.x = coords.x
-			unit.mapCoordinates.y = coords.y
+			Unit.update.mapCoordinates(unit, { ...coords })
 			if (targetTile.colony) {
 				EnterColony(targetTile.colony, unit)
 			}

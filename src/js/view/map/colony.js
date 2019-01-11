@@ -3,7 +3,7 @@ import Record from '../../util/record'
 import Ressources from '../../render/ressources'
 import Util from '../../util/util'
 import Foreground from '../../render/foreground'
-import Click from '../../input/Click'
+import Click from '../../input/click'
 
 const TILE_SIZE = 64
 const MAP_COLONY_FRAME_ID = 53 

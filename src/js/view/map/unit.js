@@ -56,11 +56,14 @@ const updateType = unit => {
 	}
 }
 
+const updatePosition = view => {
+	view.sprite.x = TILE_SIZE * view.unit.mapCoordinates.x
+	view.sprite.y = TILE_SIZE * view.unit.mapCoordinates.y
+}
+
 const create = unit => {
 	const frame = unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
 	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
-	sprite.x = TILE_SIZE * unit.mapCoordinates.x
-	sprite.y = TILE_SIZE * unit.mapCoordinates.y
 
 	const view = {
 		sprite,
@@ -71,8 +74,7 @@ const create = unit => {
 
 	Click.on(sprite, () => {
 		if (unit.colony) {
-			unit.colony.screen = ColonyView.createDetailScreen(unit.colony)
-			Foreground.openScreen(unit.colony.screen)			
+			unit.colony.screen = ColonyView.open(unit.colony)
 		} else {
 			select(unit)
 		}
@@ -126,6 +128,9 @@ const initialize = () => {
 		Unit.listen.vehicle(unit, () => { updateVisibility(view) })
 		Unit.listen.offTheMap(unit, () => { updateVisibility(view) })
 		Unit.listen.colonist(unit, () => { updateVisibility(view) })
+		Unit.listen.colony(unit, () => { updateVisibility(view) })
+
+		Unit.listen.mapCoordinates(unit, () => { updatePosition(view) })
 
 		views.push(view)
 	})

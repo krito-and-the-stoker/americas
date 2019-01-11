@@ -9,6 +9,8 @@ import Drag from '../../input/drag'
 import Context from '../../view/ui/context'
 import Colony from '../../entity/colony'
 import Commander from '../../command/commander'
+import ColonistView from './colonist'
+import BecomeColonist from '../../action/becomeColonist'
 
 
 const TILE_SIZE = 64
@@ -40,7 +42,7 @@ const create = (colony, originalDimensions) => {
 				container.addChild(sprite)
 			})
 			
-			const destroy = Drag.makeDragTarget(sprites[sprites.length - 1], async (args, coords) => {
+			const unsubscribeDragTarget = Drag.makeDragTarget(sprites[sprites.length - 1], async (args, coords) => {
 				const { unit } = args
 				if (unit && !Commander.isIdle(unit.commander)) {
 					return false
@@ -49,46 +51,50 @@ const create = (colony, originalDimensions) => {
 					if (!unit && !args.colonist) {
 						return false
 					}
-					const colonist = args.colonist || unit.colonist || Colonist.create(colony, unit)
+					// const colonist = args.colonist || unit.colonist || Colonist.create(unit)
+					let colonist = args.colonist
 					if (unit) {
-						unit.colonist = colonist
-						Colony.leave(colony, unit)
-						Colony.join(colony, colonist)
+						if (unit.colonist) {
+							JoinColony(colony, unit.colonist)
+						} else {
+							BecomeColonist(colony, unit)
+						}
+						colonist = unit.colonist
 					}
-					const options = Tile.fieldProductionOptions(tile, colonist)
-					if (options.length === 1 || unit) {
-						Colonist.beginFieldWork(colonist, tile, options[0].good)
-					} else {
-						const scale = 1 //Util.globalScale(colonist.sprite)
-						coords.y += 0.5 * TILE_SIZE / 2
+					if (colonist) {					
+						const options = Tile.fieldProductionOptions(tile, colonist)
+						if (options.length === 1 || unit) {
+							Colonist.beginFieldWork(colonist, tile, options[0].good)
+						} else {
+							const scale = 1
+							coords.y += 0.5 * TILE_SIZE / 2
 
-						const optionsView = options.map(Context.productionOption)
-						const decision = await Context.create(optionsView, coords, 80, 0.5 * scale)
-						Colonist.beginFieldWork(colonist, tile, decision.good)
+							const optionsView = options.map(Context.productionOption)
+							const decision = await Context.create(optionsView, coords, 80, 0.5 * scale)
+							Colonist.beginFieldWork(colonist, tile, decision.good)
+						}
+						return true
 					}
-					return true
 				}
 				return false
 			})
 			return () => {
-				destroy()
+				unsubscribeDragTarget()
 				sprites.forEach(s => container.removeChild(s))
 			}
 		})
 	}))
 
 	const unsubscribeColonists = Colony.listen.colonists(colony, colonists => {
-		const colonistsSprites = []
-		
 		const cleanupWork = Util.mergeFunctions(colonists.map(colonist => {
 			return Colonist.listen.work(colonist, work => {
-				const { tile, position } = tilesAndPosition.find(({ tile }) => work && work.tile === tile) || {}
+				const { tile, position } = tilesAndPositions.find(({ tile }) => work && work.tile === tile) || {}
 				
 				if (position) {
-					colonist.sprite.x = position.x
-					colonist.sprite.y = position.y
-					container.addChild(colonist.sprite)
-					colonistsSprites.push(colonist.sprite)
+					const colonistSprite = ColonistView.create(colonist)
+					colonistSprite.x = position.x
+					colonistSprite.y = position.y
+					container.addChild(colonistSprite)
 
 					const good = work.good
 					const productionSprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
@@ -100,6 +106,7 @@ const create = (colony, originalDimensions) => {
 					})
 
 					return () => {
+						container.removeChild(colonistSprite)
 						productionSprites.forEach(s => container.removeChild(s))
 					}
 				}
@@ -107,7 +114,6 @@ const create = (colony, originalDimensions) => {
 		}))
 
 		return () => {
-			colonistsSprites.forEach(s => container.removeChild(s))
 			cleanupWork()
 		}
 	})

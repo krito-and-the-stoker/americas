@@ -48,9 +48,29 @@ const update = (instance, key, value) => {
 
 const listenerKey = key => key ? `${key}Listeners` : 'listeners'
 
+const shared = fn => {
+	let destroyScheduled = 0
+	let destroyExecuted = 0
+	let destroy = null
+	return arg => {
+		if (destroy) {
+			destroy()
+			destroyExecuted += 1
+		}
+		destroy = fn(arg) || doNothing
+		return () => {
+			destroyScheduled += 1
+			if (destroyScheduled > destroyExecuted) {
+				destroy()
+				destroyExecuted += 1
+			}
+		}
+	}
+}
 
 export default {
 	update,
 	listen,
-	listenerKey
+	listenerKey,
+	shared
 }
