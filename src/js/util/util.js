@@ -34,6 +34,8 @@ export const rectangle = (index) => {
 	return new PIXI.Rectangle(width * col, height * row, width, height)
 }
 
+const choose = array => array[Math.floor(Math.random() * array.length)]
+
 
 let currentId = 0
 const getUid = () => {
@@ -47,6 +49,7 @@ export default {
 	makeObject,
 	globalScale,
 	range,
+	choose,
 	rectangle,
 	getUid,
 	mergeFunctions,

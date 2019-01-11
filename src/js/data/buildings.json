@@ -56,14 +56,19 @@
 			"good": "wood",
 			"amount": 3
 		},
-		"building": {
+		"production": {
+			"type": "construction",
 			"amount": 3
 		}
 	},
 	"townhall": {
 		"frame": 11,
 		"width": 2,
-		"workspace": 3
+		"workspace": 3,
+		"production": {
+			"type": "bells",
+			"amount": 3
+		}
 	},
 	"warehouse": {
 		"frame": 13,
@@ -94,6 +99,12 @@
 		"production": {
 			"good": "rum",
 			"amount": 3
+		}
+	},
+	"colony": {
+		"production": {
+			"type": "crosses",
+			"amount": 1
 		}
 	}
 }

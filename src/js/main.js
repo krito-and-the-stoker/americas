@@ -9,7 +9,7 @@ import americaLargeMap from './data/america-large.json'
 import Tween from './util/tween.js'
 import Unit from './entity/unit'
 import Ressources from './render/ressources'
-import Europe from './view/europe'
+import Europe from './entity/europe'
 import Time from './timeline/time'
 import PathFinder from './util/pathFinder'
 import MapView from './view/map'
@@ -59,6 +59,7 @@ const initialize = () => {
 	Dialog.initialize()
 	Tween.initialize()
 	MapView.initialize()
+	Europe.initialize()
 
 	PathFinder.initialize()
 

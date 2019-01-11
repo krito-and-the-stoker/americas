@@ -64,5 +64,14 @@
 	},
 	"guns":{
 		"id": 79
+	},
+	"production":{
+		"id": 80
+	},
+	"bells":{
+		"id": 81
+	},
+	"crosses":{
+		"id": 82
 	}
 }

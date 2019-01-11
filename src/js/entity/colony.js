@@ -14,6 +14,7 @@ import Storage from './storage'
 import Consume from '../task/consume'
 import Deteriorate from '../task/deteriorate'
 import Member from '../util/member'
+import Produce from '../task/produce'
 
 // for unknown reasons we need to wait bit until we can set the global here :/
 setTimeout(() => Record.setGlobal('colonyNames',
@@ -54,7 +55,14 @@ const remove = {
 
 const listen = {
 	units: (colony, fn) => Binding.listen(colony, 'units', fn),
-	colonists: (colony, fn) => Binding.listen(colony, 'colonists', fn)
+	colonists: (colony, fn) => Binding.listen(colony, 'colonists', fn),
+	construction: (colony, fn) => Binding.listen(colony, 'construction', fn),
+	bells: (colony, fn) => Binding.listen(colony, 'bells', fn)
+}
+
+const update = {
+	construction: (colony, value) => Binding.update(colony, 'construction', colony.construction + value),
+	bells: (colony, value) => Binding.update(colony, 'bells', colony.bells + value),
 }
 
 const canEmploy = (colony, building) => colony.colonists
@@ -71,6 +79,7 @@ const initialize = colony => {
 			Storage.update(colony.storage, { good: 'food', amount: -200 })
 		}
 	})
+	Time.schedule(Produce.create(colony, 'colony', null))
 	Time.schedule(Deteriorate.create(colony))
 }
 
@@ -80,7 +89,9 @@ const create = coords => {
 		units: [],
 		colonists: [],
 		capacity: 100,
-		mapCoordinates: { ...coords }
+		mapCoordinates: { ...coords },
+		construction: 0,
+		bells: 0
 	}
 	colony.storage = Storage.create()
 
@@ -118,6 +129,8 @@ const save = colony => ({
 	capacity: colony.capacity,
 	mapCoordinates: colony.mapCoordinates,
 	storage: Storage.save(colony.storage),
+	construction: colony.construction,
+	bells: colony.bells
 })
 
 const load = colony => {

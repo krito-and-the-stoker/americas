@@ -7,6 +7,7 @@ import Europe from '../../entity/europe'
 import Unit from '../../entity/unit'
 import Ressources from '../../render/ressources'
 import Market from '../../entity/market'
+import SellInEurope from '../../action/sellInEurope'
 
 
 const create = (originalDimensions) => {
@@ -52,8 +53,7 @@ const create = (originalDimensions) => {
 	const unsubscribe = Drag.makeDragTarget(dragTarget, args => {
 		const { good, unit, amount } = args
 		if (good && unit) {
-			Market.sell(good, amount)
-			Unit.loadGoods(unit, good, -amount)
+			SellInEurope(unit, {good, amount })
 			return false
 		}
 
