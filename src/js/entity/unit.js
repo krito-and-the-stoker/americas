@@ -22,6 +22,7 @@ const create = (name, coords) => {
 			colony: null,
 			expert: null,
 			offTheMap: false,
+			colonist: null
 		}
 		unit.storage = Storage.create()
 		unit.equipment = Storage.create()
@@ -99,12 +100,14 @@ const initialize = unit => {
 
 const listen = {
 	vehicle: (unit, fn) => Binding.listen(unit, 'vehicle', fn),
-	offTheMap: (unit, fn) => Binding.listen(unit, 'offTheMap', fn)
+	offTheMap: (unit, fn) => Binding.listen(unit, 'offTheMap', fn),
+	colonist: (unit, fn) => Binding.listen(unit, 'colonist', fn),
 }
 
 const update = {
 	vehicle: (unit, value) => Binding.update(unit, 'vehicle', value),
-	offTheMap: (unit, value) => Binding.update(unit, 'offTheMap', value)
+	offTheMap: (unit, value) => Binding.update(unit, 'offTheMap', value),
+	colonist: (unit, value) => Binding.update(unit, 'colonist', value),
 }
 
 const updateType = (unit, name) => {

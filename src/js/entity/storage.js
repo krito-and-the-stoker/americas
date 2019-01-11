@@ -4,7 +4,7 @@ import Util from '../util/util'
 
 
 const update = (storage, pack) => {
-	if (pack.amount) {
+	if (pack && pack.amount) {
 		storage[pack.good] += pack.amount
 	}
 	Binding.update(storage)
@@ -23,7 +23,7 @@ const split = storage => Object.keys(storage)
 		).flat()
 
 const transfer = (src, dest, pack = {}) => {
-	const move = ({ good, amout }) => {
+	const move = ({ good, amount }) => {
 		dest[good] += amount || src[good]
 		src[good] -= amount || src[good]
 	}

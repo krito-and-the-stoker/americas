@@ -108,7 +108,8 @@ const updateVisibility = view => visibleOnMap(view) ? show(view) : hide(view)
 const visibleOnMap = view => (view === selectedView || !view.unit.colony) &&
 	!view.unit.vehicle &&
 	!Europe.has.unit(view.unit) &&
-	!view.unit.offTheMap
+	!view.unit.offTheMap &&
+	!view.unit.colonist
 
 const save = () => Record.reference(selectedUnit())
 const load = data => {
@@ -124,6 +125,7 @@ const initialize = () => {
 		const view = create(unit)
 		Unit.listen.vehicle(unit, () => { updateVisibility(view) })
 		Unit.listen.offTheMap(unit, () => { updateVisibility(view) })
+		Unit.listen.colonist(unit, () => { updateVisibility(view) })
 
 		views.push(view)
 	})

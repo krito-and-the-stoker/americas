@@ -43,13 +43,13 @@ const create = colony => {
 	const tiles = ColonyTiles.create(colony, originalDimensions)
 	const headline = ColonyHeadline.create(colony, originalDimensions)
 	const storage = ColonyStorage.create(colony, originalDimensions)
-	// const units = ColonyUnits.create(colony, () => closeScreen(), originalDimensions)
+	const units = ColonyUnits.create(colony, () => close(), originalDimensions)
 	// const buildings = ColonyBuildings.create(colony)
 
 	container.addChild(colonyWoodBackground)
 	container.addChild(background.container)
 	container.addChild(tiles.container)
-	// container.addChild(units.container)
+	container.addChild(units.container)
 	container.addChild(headline.container)
 	container.addChild(storage.container)
 	// container.addChild(buildings.container)
@@ -72,7 +72,7 @@ const create = colony => {
 	const unsubscribe = () => {
 		tiles.unsubscribe()
 		storage.unsubscribe()
-		// units.unsubscribe()
+		units.unsubscribe()
 		// buildings.unsubscribe()
 		unsubscribeResize()
 	}

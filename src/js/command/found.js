@@ -3,7 +3,7 @@ import Record from '../util/record'
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
 import Colonist from '../entity/colonist'
-import JoinColony from '../action/joinColony'
+import BecomeColonist from '../action/becomeColonist'
 
 const create = unit => {
 	const init = () => {
@@ -16,8 +16,7 @@ const create = unit => {
 		}
 
 		const colony = Colony.create(unit.mapCoordinates)
-		// const colonist = Colonist.create(unit)
-		// JoinColony(colony, colonist)
+		BecomeColonist(colony, unit)
 
 		return false
 	}

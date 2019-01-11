@@ -5,4 +5,5 @@ export default colonist => {
 	const colony = colonist.colony
 	Colonist.stopWorking(colonist)
 	Colony.remove(colonist)
+	colonist.colony = null
 }

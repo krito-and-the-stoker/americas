@@ -55,16 +55,13 @@ const update = {
 	work: (colonist, value) => Binding.update(colonist, 'work', value)
 }
 
-const create = (colony, unit) => {
+const create = unit => {
 	const colonist = {
 		type: 'colonist',
-		colony,
 		unit,
 		expert: unit.expert,
 		work: null
 	}
-	Colony.leave(colony, unit)
-	Colony.join(colony, colonist)
 
 	Record.add('colonist', colonist)
 	return colonist
