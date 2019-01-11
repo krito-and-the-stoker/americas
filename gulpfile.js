@@ -84,9 +84,9 @@ gulp.task('serve', done => {
 })
 
 gulp.task('assets', resolve => {
-  const cols = 4
-  const images = 18
-  const rows = 5
+  const cols = 31
+  const images = 31
+  const rows = 1
   const base = 128
   const pad = (n, width, z) => {
     z = z || '0';

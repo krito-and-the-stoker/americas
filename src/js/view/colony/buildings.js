@@ -17,8 +17,9 @@ const TILE_SIZE = 64
 const createBuilding = (colony, name) => {
 	const container = new PIXI.Container()
 	const frame = Buildings[name].frame
-	const x = 128 * (frame % 4)
-	const y = 128 * Math.floor(frame / 4)
+	const cols = 31
+	const x = 128 * (frame % cols)
+	const y = 128 * Math.floor(frame / cols)
 	const width = Buildings[name].width * 128
 	const height = 128
 	const rectangle = new PIXI.Rectangle(x, y, width, height)
