@@ -1,5 +1,4 @@
 import Units from '../data/units.json'
-import UnitView from '../view/unit'
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
 import Record from '../util/record'
@@ -9,28 +8,25 @@ import Colony from '../entity/colony'
 import Storage from '../entity/storage'
 import Util from '../util/util'
 import Binding from '../util/binding'
+import EnterColony from '../action/enterColony'
 
-let allUnits = []
-const create = (name, coords = null, additionalProps = {}) => {
+const create = (name, coords) => {
 	if (Units[name]) {
-		if (coords) {
-			const tile = MapEntity.tile(coords)
-			Tile.discover(tile)
-			Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))
-		}
-
 		const unit = {
 			name,
 			properties: Units[name],
 			domain: Units[name].domain,
 			mapCoordinates: coords || { x: undefined, y: undefined },
-			active: true,
-			cargo: [],
+			passengers: [],
+			vehicle: null,
+			colony: null,
 			expert: null,
-			...additionalProps
+			offTheMap: false,
+			colonist: null
 		}
-		unit.storage = Storage.create(unit)
-		unit.equipment = Storage.create(unit)
+		unit.storage = Storage.create()
+		unit.equipment = Storage.create()
+		unit.commander = Commander.create({ keep: true })
 
 		if (name === 'pioneer') {
 			unit.equipment.tools = 100
@@ -48,13 +44,12 @@ const create = (name, coords = null, additionalProps = {}) => {
 
 		initialize(unit)
 
-		if (coords && MapEntity.tile(coords).colony) {
-			Colony.enter(MapEntity.tile(coords).colony, unit)
+		const colony = MapEntity.tile(coords).colony
+		if (colony) {
+			EnterColony(colony, unit)
 		}
-		unit.sprite = UnitView.createSprite(unit)
 
 		Record.add('unit', unit)
-		allUnits.push(unit)
 
 		return unit
 	} else {
@@ -64,9 +59,12 @@ const create = (name, coords = null, additionalProps = {}) => {
 }
 
 const initialize = unit => {
-	unit.commander = Commander.create({ keep: true })
+	const tile = MapEntity.tile(unit.mapCoordinates)
+	Tile.discover(tile)
+	Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))
+
 	Time.schedule(unit.commander)
-	Binding.listen(unit, 'equipment', equipment => {
+	Storage.listen(unit.equipment, equipment => {
 		// lose status
 		if (unit.name === 'pioneer' && equipment.tools < 20) {
 			updateType(unit, 'settler')
@@ -100,93 +98,114 @@ const initialize = unit => {
 	})
 }
 
-const updateType = (unit, name) => {
-	unit.name = name
-	unit.properties = Units[name]
-	UnitView.updateType(unit)
+const listen = {
+	vehicle: (unit, fn) => Binding.listen(unit, 'vehicle', fn),
+	offTheMap: (unit, fn) => Binding.listen(unit, 'offTheMap', fn),
+	colonist: (unit, fn) => Binding.listen(unit, 'colonist', fn),
+	mapCoordinates: (unit, fn) => Binding.listen(unit, 'mapCoordinates', fn),
+	colony: (unit, fn) => Binding.listen(unit, 'colony', fn),
+	properties: (unit, fn) => Binding.listen(unit, 'properties', fn),
+	name: (unit, fn) => Binding.listen(unit, 'name', fn),
 }
-const at = coords => allUnits.filter(unit => unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y)
-const hasStorageCapacity = unit => Storage.split(unit.storage).length + unit.cargo.length < unit.properties.cargo
-const loadGoods = (unit, good, amount) => {
-	if (!hasStorageCapacity(unit) && amount > 0) {
+
+const update = {
+	vehicle: (unit, value) => Binding.update(unit, 'vehicle', value),
+	offTheMap: (unit, value) => Binding.update(unit, 'offTheMap', value),
+	colonist: (unit, value) => Binding.update(unit, 'colonist', value),
+	mapCoordinates: (unit, value) => Binding.update(unit, 'mapCoordinates', value),
+	colony: (unit, value) => Binding.update(unit, 'colony', value),
+	properties: (unit, value) => Binding.update(unit, 'properties', value),
+	name: (unit, value) => Binding.update(unit, 'name', value),
+}
+
+const updateType = (unit, name) => {
+	update.name(unit, name)
+	update.properties(unit, Units[name])
+}
+
+const at = coords => Record.getAll('unit').filter(unit => unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y)
+const hasCapacity = (unit, pack) => Storage.split(unit.storage).length + unit.passengers.length < unit.properties.cargo
+
+const loadGoods = (unit, pack) => {
+	if (!hasCapacity(unit, pack) && pack.amount > 0) {
 		return false
 	}
 
-	Storage.update(unit, good, amount)
+	Storage.update(unit.storage, pack)
 	return true
 }
-const listenStorage = (unit, fn) => {
-	return Storage.listen(unit, fn)
-}
 
-const loadUnit = (unit, cargoUnit) => {
-	if (!hasStorageCapacity(unit)) {
+const loadUnit = (unit, passenger) => {
+	if (!hasCapacity(unit)) {
 		return false
 	}
 
-	UnitView.deactivate(cargoUnit)
-	unit.cargo.push(cargoUnit)
+	update.vehicle(passenger, unit)
+	unit.passengers.push(passenger)
 	return true
 }
 
 const unloadUnit = unit => {
-	if (unit.cargo.length > 0) {	
-		const landingUnit = unit.cargo.shift()
-		landingUnit.mapCoordinates = { ...unit.mapCoordinates }
-		UnitView.activate(landingUnit)
+	if (unit.passengers.length > 0) {	
+		const passenger = unit.passengers.shift()
+		update.mapCoordinates(passenger, { ...unit.mapCoordinates })
+		update.offTheMap(passenger, unit.offTheMap)
+		update.vehicle(passenger, null)
 		if (unit.colony) {
-			Colony.enter(unit.colony, landingUnit)
+			EnterColony(unit.colony, passenger)
 		}
 
-		return landingUnit
+		return passenger
 	}
 	console.warn('could not unload, no units on board', unit)
 	return null
 }
 
 const unloadAllUnits = unit => {
-	Util.range(unit.cargo.length).forEach(() => unloadUnit(unit))
+	// do not iterate over the cargo array directly because unloadUnit changes it
+	Util.range(unit.passengers.length).forEach(() => unloadUnit(unit))
 }
 
 const save = unit => ({
 	name: unit.name,
 	properties: unit.properties,
 	domain: unit.domain,
-	active: unit.active,
 	mapCoordinates: unit.mapCoordinates,
 	expert: unit.expert,
-	storage: unit.storage,
-	equipment: unit.equipment,
+	storage: Storage.save(unit.storage),
+	equipment: Storage.save(unit.equipment),
+	offTheMap: unit.offTheMap,
 	commander: unit.commander.save(),
 	colony: Record.reference(unit.colony),
 	colonist: Record.reference(unit.colonist),
-	cargo: unit.cargo.map(other => Record.reference(other)),
+	passengers: unit.passengers.map(other => Record.reference(other)),
+	vehicle: Record.reference(unit.vehicle),
 })
 
 const load = unit => {
-	unit.cargo = unit.cargo.map(Record.dereference)
-	unit.sprite = UnitView.createSprite(unit)
+	unit.storage = Storage.load(unit.storage)
+	unit.equipment = Storage.load(unit.equipment)
+	unit.passengers = unit.passengers.map(Record.dereference)
 	Record.dereferenceLazy(unit.colony, colony => unit.colony = colony)
 	Record.dereferenceLazy(unit.colonist, colonist => unit.colonist = colonist)
+	Record.dereferenceLazy(unit.vehicle, vehicle => unit.vehicle = vehicle)
 	Record.entitiesLoaded(() => {
+		unit.commander = Commander.load(unit.commander)
 		initialize(unit)
 	})
 
-	allUnits.push(unit)
 	return unit
 }
 
-const reset = () => allUnits = []
-
 export default {
 	create,
+	listen,
+	update,
 	loadGoods,
 	loadUnit,
 	unloadUnit,
 	unloadAllUnits,
-	listenStorage,
 	save,
 	load,
-	reset,
 	at
 }

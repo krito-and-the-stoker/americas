@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import Click from '../input/click'
+import Click from '../../input/click'
 
 
 const create = (text, fn) => {

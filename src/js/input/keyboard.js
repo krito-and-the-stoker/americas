@@ -1,7 +1,7 @@
 import RenderView from '../render/view'
 import Foreground from '../render/foreground'
-import MapControl from '../control/map'
-import Unit from '../view/unit'
+import MapView from '../view/map'
+import UnitView from '../view/map/unit'
 import Time from '../timeline/time'
 import Move from '../command/move'
 import Found from '../command/found'
@@ -27,8 +27,8 @@ const handleKeydown = (e) => {
 			targetScale /= ZOOM_FACTOR
 		}
 
-		targetScale = MapControl.sanitizeScale(targetScale)
-		MapControl.zoom(targetScale, ZOOM_TIME)
+		targetScale = MapView.sanitizeScale(targetScale)
+		MapView.zoom(targetScale, ZOOM_TIME)
 	}
 	if (e.key === ' ') {
 		Time.togglePause()
@@ -62,16 +62,24 @@ const handleKeydown = (e) => {
 		MapEntity.discoverAll()
 	}
 
-	const activeUnit = Unit.get().activeUnit
-	if (activeUnit) {
+	if (e.key === '+') {
+		Time.speedUp()
+	}
+
+	if (e.key === '-') {
+		Time.slowDown()
+	}
+
+	const unit = UnitView.selectedUnit()
+	if (unit) {
 		if (e.key === 'b') {
-			Commander.scheduleInstead(activeUnit.commander, Found.create(activeUnit))
+			Commander.scheduleInstead(unit.commander, Found.create(unit))
 		}
 		if (e.key === 'p') {
-			if (MapEntity.tile(activeUnit.mapCoordinates).forest) {
-				Commander.scheduleInstead(activeUnit.commander, CutForest.create(activeUnit))
+			if (MapEntity.tile(unit.mapCoordinates).forest) {
+				Commander.scheduleInstead(unit.commander, CutForest.create(unit))
 			} else {
-				Commander.scheduleInstead(activeUnit.commander, Plow.create(activeUnit))
+				Commander.scheduleInstead(unit.commander, Plow.create(unit))
 			}
 		}
 	}

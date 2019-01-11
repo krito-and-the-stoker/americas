@@ -2,29 +2,60 @@ import Goods from '../data/goods.json'
 import Binding from '../util/binding'
 import Util from '../util/util'
 
-const LISTENER_KEY = Binding.listenerKey('storage')
-const update = (entity, good, amount) => {
-	entity.storage[good] += amount
-	Binding.update(entity, 'storage')
+
+const update = (storage, pack) => {
+	if (pack && pack.amount) {
+		storage[pack.good] += pack.amount
+	}
+	Binding.update(storage)
 }
 
 
-const listen = (entity, fn) => Binding.listen(entity, 'storage', fn)
-const create = entity => Goods.types.reduce((obj, name) => ({ ...obj, [name]: 0 }), {})
+const listen = (storage, fn) => Binding.listen(storage, null, fn)
+const create = () => Goods.types.reduce((obj, name) => ({ ...obj, [name]: 0 }), {})
 
-const split = storage => Object.keys(storage)
-	.filter(good => storage[good] > 0)
-	.map(good => 
-		Util.range(Math.ceil(storage[good] / 100))
-			.map(i => Math.min(100*(i+1), storage[good] - 100*i))
+const split = storage => goods(storage)
+	.filter(({ amount }) => amount > 0)
+	.map(({ good, amount }) => 
+		Util.range(Math.ceil(amount / 100))
+			.map(i => Math.min(100*(i+1), amount - 100*i))
 			.map(amount => ({ good, amount }))
 		).flat()
 
+const transfer = (src, dest, pack = {}) => {
+	const move = ({ good, amount }) => {
+		if (amount) {
+			dest[good] += amount
+			src[good] -= amount
+		}  else {
+			dest[good] += src[good]
+			src[good] = 0
+		}
+	}
+
+	if (pack.good) {
+		move(pack)
+	} else {
+		goods(src)
+			.forEach(move)
+	}
+
+	update(src)
+	update(dest)
+}
+
+const goods = storage => Object.values(Goods.types).map(good => ({ good, amount: storage[good] }))
+
+const save = storage => Object.values(Goods.types).map(good => [good, storage[good]])
+const load = data => Util.makeObject(data)
 
 export default {
 	create,
 	listen,
 	update,
 	split,
-	LISTENER_KEY
+	transfer,
+	load,
+	save,
+	goods,
 }

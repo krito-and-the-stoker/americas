@@ -1,16 +1,17 @@
 import * as PIXI from 'pixi.js'
 
-import Ressources from '../render/ressources'
-import RenderView from '../render/view'
-import Foreground from '../render/foreground'
-import Europe from '../entity/europe'
-import Treasure from '../entity/treasure'
-import Unit from '../entity/unit'
+import Ressources from '../../render/ressources'
+import RenderView from '../../render/view'
+import Foreground from '../../render/foreground'
+import Europe from '../../entity/europe'
+import Treasure from '../../entity/treasure'
+import Unit from '../../entity/unit'
 
-import DocksView from './europe/docks'
-import MarketView from './europe/market'
-import Button from './button'
-import Dialog from './dialog'
+import Button from '../../view/ui/button'
+import Dialog from '../../view/ui/dialog'
+
+import UnitsView from './units'
+import MarketView from './market'
 
 let unsubscribe = () => {}
 const open = () => {
@@ -38,8 +39,8 @@ const create = () => {
 	const market = MarketView.create(originalDimensions)
 	container.addChild(market.container)
 
-	const docks = DocksView.create(close, originalDimensions)
-	container.addChild(docks.container)
+	const units = UnitsView.create(close, originalDimensions)
+	container.addChild(units.container)
 
 	const nameHeadline = new PIXI.Text('London', {
 		fontFamily: 'Times New Roman',
@@ -104,7 +105,7 @@ const create = () => {
 	})
 
 	const unsubscribe = () => {
-		docks.unsubscribe()
+		units.unsubscribe()
 		market.unsubscribe()
 	}
 
@@ -115,7 +116,6 @@ const create = () => {
 }
 
 export default {
-	create,
 	open,
 	close
 }

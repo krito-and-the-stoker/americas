@@ -3,17 +3,18 @@ import Time from '../timeline/time'
 import Europe from '../entity/europe'
 import UnitView from '../view/unit'
 import Record from '../util/record'
+import Unit from '../entity/unit'
 
 
 const create = (unit, eta = null) => {
 	const init = currentTime => {
-		if (!Europe.hasUnit(unit)) {
+		if (!Europe.has.unit(unit)) {
 			return false
 		}
 
-		if (!eta) {		
-			Europe.leave(unit)
+		if (!eta) {
 			eta = currentTime + Time.EUROPE_SAIL_TIME
+			Europe.remove.unit(unit)
 		}
 
 		return true
@@ -23,7 +24,7 @@ const create = (unit, eta = null) => {
 
 	const finished = () => {
 		if (eta) {
-			UnitView.activate(unit)
+			Unit.update.offTheMap(unit, false)
 		}
 	}
 

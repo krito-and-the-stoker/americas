@@ -1,5 +1,6 @@
 import Treasure from './treasure'
 import Util from '../util/util'
+import Message from '../view/ui/message'
 
 const Market = {
 	food: {
@@ -90,23 +91,23 @@ let prices = Util.makeObject(Object.keys(Market)
 const bid = good => prices[good]
 const ask = good => prices[good] + Market[good].difference
 
-const buy = (good, amount) => {
+const buy = ({ good, amount }) => {
 	const pricePerGood = prices[good] + Market[good].difference
 	const price = pricePerGood * amount
 	if (Treasure.spend(price)) {
-		console.log(`bought ${amount} ${good}`)
+		Message.send(`bought ${amount} ${good}`)
 		return amount
 	}
 	const actualAmount = Math.floor(Treasure.amount() / pricePerGood)
 	Treasure.spend(actualAmount * pricePerGood)
-	console.log(`bought ${actualAmount} ${good}`)
+	Message.send(`bought ${actualAmount} ${good}`)
 	return actualAmount
 }
 
-const sell = (good, amount) => {
+const sell = ({ good, amount }) => {
 	const pricePerGood = prices[good]
 	Treasure.gain(amount * pricePerGood)
-	console.log(`sold ${amount} ${good}`)
+	Message.send(`sold ${amount} ${good}`)
 }
 
 const save = () => prices

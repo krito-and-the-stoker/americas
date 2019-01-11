@@ -1,10 +1,10 @@
 import * as PIXI from 'pixi.js'
 
-import Foreground from '../render/foreground'
-import RenderView from '../render/view'
-import Time from '../timeline/time'
-import Util from '../util/util'
-import Click from '../input/click'
+import Foreground from '../../render/foreground'
+import RenderView from '../../render/view'
+import Time from '../../timeline/time'
+import Util from '../../util/util'
+import Click from '../../input/click'
 
 
 const images = {

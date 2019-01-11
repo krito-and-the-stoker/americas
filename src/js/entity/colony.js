@@ -1,7 +1,6 @@
 import Goods from '../data/goods.json'
 import Buildings from '../data/buildings.json'
 
-import ColonyView from '../view/colony'
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
 import Harvest from '../task/harvest'
@@ -9,12 +8,12 @@ import Time from '../timeline/time'
 import Util from '../util/util'
 import Colonist from '../entity/colonist'
 import Record from '../util/record'
-import UnitView from '../view/unit'
 import Unit from './unit'
 import Binding from '../util/binding'
 import Storage from './storage'
 import Consume from '../task/consume'
 import Deteriorate from '../task/deteriorate'
+import Member from '../util/member'
 
 // for unknown reasons we need to wait bit until we can set the global here :/
 setTimeout(() => Record.setGlobal('colonyNames',
@@ -35,6 +34,7 @@ setTimeout(() => Record.setGlobal('colonyNames',
 	'New Hampshire',
 	'North Carolina',
 	'Rhode Island']), 0)
+
 const getColonyName = () => {
 	let colonyNames = Record.getGlobal('colonyNames')
 	const name = colonyNames.shift()
@@ -42,60 +42,39 @@ const getColonyName = () => {
 	return name
 }
 
-const updateStorage = (colony, good, amount) => Storage.update(colony, good, amount)
-const bindStorage = (colony, fn) => Storage.listen(colony, fn)
-
-
-const enter = (colony, unit) => {
-	colony.units.push(unit)
-	unit.colony = colony
-	Unit.unloadAllUnits(unit)
-	UnitView.deactivate(unit)
-	Binding.update(colony, 'units')
-}
-const leave = (colony, unit) => {
-	unit.colony = null
-	Binding.update(colony, 'units', colony.units.filter(u => u !== unit))
+const add = {
+	unit: (colony, unit) => Member.add(colony, 'units', unit),
+	colonist: (colony, colonist) => Member.add(colony, 'colonists', colonist)
 }
 
-const join = (colony, colonist) => {
-	if (!colony.colonists.includes(colonist)) {	
-		colony.colonists.push(colonist)
-		const equipment = colonist.unit.equipment
-		Object.keys(equipment).forEach(good => {
-			if (equipment[good] > 0) {
-				updateStorage(colony, good, equipment[good])
-				equipment[good] = 0
-			}
-		})
-		Binding.update(colonist.unit, 'equipment')
-		Binding.update(colony, 'colonists')
-	}
+const remove = {
+	unit: unit => Member.remove(unit.colony, 'units', unit),
+	colonist: colonist => Member.remove(colonist.colony, 'colonists', colonist)
 }
-const unjoin = (colony, colonist) => {
-	Colonist.stopWorking(colonist)
-	Binding.update(colony, 'colonists', colony.colonists.filter(col => col !== colonist))
+
+const listen = {
+	units: (colony, fn) => Binding.listen(colony, 'units', fn),
+	colonists: (colony, fn) => Binding.listen(colony, 'colonists', fn)
 }
 
 const canEmploy = (colony, building) => colony.colonists
-	.filter(colonist => colonist.worksAt && colonist.worksAt.building === building).length < Buildings[building].workspace
-const bindUnits = (colony, fn) => Binding.listen(colony, 'units', fn)
-const bindColonists = (colony, fn) => Binding.listen(colony, 'colonists', fn)
+	.filter(colonist => colonist.work && colonist.work.building === building).length < Buildings[building].workspace
 
-const initializeBindings = colony => {
+
+const initialize = colony => {
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	Tile.listen(tile, () => Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good))))
-	Binding.listen(colony, 'colonists', colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)))
-	bindStorage(colony, storage => {
+	listen.colonists(colony, colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)))
+	Storage.listen(colony.storage, storage => {
 		if (storage.food >= 200) {
 			const unit = Unit.create('settler', colony.mapCoordinates)
-			updateStorage(colony, 'food', -200)
+			Storage.update(colony.storage, { good: 'food', amount: -200 })
 		}
 	})
 	Time.schedule(Deteriorate.create(colony))
 }
 
-const create = (coords, unit) => {
+const create = coords => {
 	const colony = {
 		name: getColonyName(),
 		units: [],
@@ -103,27 +82,30 @@ const create = (coords, unit) => {
 		capacity: 100,
 		mapCoordinates: { ...coords }
 	}
-	colony.storage = Storage.create(colony)
+	colony.storage = Storage.create()
+
+	// TODO: does the tile need to know about the colony?
 	const tile = MapEntity.tile(coords)
 	tile.colony = colony
-	const colonist = Colonist.create(colony, unit)
 
-	const winner = Tile.diagonalNeighbors(tile)
-		.filter(neighbor => !neighbor.harvestedBy)
-		.reduce((winner, neighbor) => {
-			const production = Tile.production(neighbor, 'food', colonist)
-			return production > winner.production ? {
-				production,
-				tile: neighbor
-			 } : winner
-		},
-		{ production: -1 })
-	if (winner.tile) {
-		Colonist.beginFieldWork(colonist, winner.tile, 'food')
-	}
+	// TODO: this is the wrong place for that
+	// const colonist = Colonist.create(colony, unit)
+	// const winner = Tile.diagonalNeighbors(tile)
+	// 	.filter(neighbor => !neighbor.harvestedBy)
+	// 	.reduce((winner, neighbor) => {
+	// 		const production = Tile.production(neighbor, 'food', colonist)
+	// 		return production > winner.production ? {
+	// 			production,
+	// 			tile: neighbor
+	// 		 } : winner
+	// 	},
+	// 	{ production: -1 })
+	// if (winner.tile) {
+	// 	Colonist.beginFieldWork(colonist, winner.tile, 'food')
+	// }
 
-	initializeBindings(colony)
-	colony.sprite = ColonyView.createMapSprite(colony)
+
+	initialize(colony)
 
 	Record.add('colony', colony)
 	return colony
@@ -131,19 +113,18 @@ const create = (coords, unit) => {
 
 const save = colony => ({
 	name: colony.name,
-	storage: colony.storage,
-	mapCoordinates: colony.mapCoordinates,
-	capacity: colony.capacity,
+	units: colony.units.map(unit => Record.reference(unit)),
 	colonists: colony.colonists.map(colonist => Record.reference(colonist)),
-	units: colony.units.map(unit => Record.reference(unit))
+	capacity: colony.capacity,
+	mapCoordinates: colony.mapCoordinates,
+	storage: Storage.save(colony.storage),
 })
 
 const load = colony => {
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	tile.colony = colony
-	Record.entitiesLoaded(() => initializeBindings(colony))
-
-	colony.sprite = ColonyView.createMapSprite(colony)
+	colony.storage = Storage.load(colony.storage)
+	Record.entitiesLoaded(() => initialize(colony))
 
 	colony.colonists.forEach((colonist, index) => Record.dereferenceLazy(colonist, entity => colony.colonists[index] = entity))
 	colony.units.forEach((unit, index) => Record.dereferenceLazy(unit, entity => colony.units[index] = entity))
@@ -168,13 +149,8 @@ export default {
 	save,
 	load,
 	coastalDirection,
-	updateStorage,
-	bindStorage,
-	bindUnits,
-	bindColonists,
-	enter,
-	leave,
-	join,
-	unjoin,
 	canEmploy,
+	add,
+	remove,
+	listen
 }

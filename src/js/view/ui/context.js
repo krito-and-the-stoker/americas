@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js'
 
-import Foreground from '../render/foreground'
-import ProductionView from '../view/production'
-import Click from '../input/click'
+import Foreground from '../../render/foreground'
+import ProductionView from '../../view/production'
+import Click from '../../input/click'
 
 const productionOption = choice => {
 	const container = new PIXI.Container()

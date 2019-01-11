@@ -10,44 +10,37 @@ import Market from '../entity/market'
 import Util from '../util/util'
 import Storage from '../entity/storage'
 
+import BuyFromEurope from '../action/buyFromEurope'
+import LoadFromColonyToShip from '../action/loadFromColonyToShip'
+import LoadBetweenShips from '../action/loadBetweenShips'
+import LoadUnitToShip from '../action/loadUnitToShip'
+
 const create = unit => {
 	const container = new PIXI.Container()
-	const sprite = UnitView.createColonySprite(unit)
+	const sprite = UnitView.create(unit)
+	sprite.scale.set(2)
 	container.addChild(sprite)
 
 	const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {
 		const { good, amount, buyFromEurope, colony } = args
 		const fromUnit = args.unit
 		if (good) {
+			const pack = { good, amount }
 			if (buyFromEurope) {
-				let boughtAmount = Market.buy(good, amount)
-				if (amount > 0) {
-					Unit.loadGoods(unit, good, boughtAmount)
-				}
+				BuyFromEurope(unit, pack)
 				return false
 			}
 			if (colony) {
-				if (Unit.loadGoods(unit, good, amount)) {
-					Colony.updateStorage(colony, good, -amount)
-				}
+				LoadFromColonyToShip(colony, unit, pack)
 				return false
 			}
 			if (args.unit && args.unit !== unit) {
-				if (Unit.loadGoods(unit, good, amount)) {
-					Unit.loadGoods(fromUnit, good, -amount)
-				}
+				LoadBetweenShips(src, dest, pack)
 				return false
 			}
 		}
 		if (fromUnit && fromUnit !== unit) {
-			if (Unit.loadUnit(unit, fromUnit)) {			
-				if (Europe.hasUnit(fromUnit)) {
-					Europe.leave(fromUnit)
-				}
-				if (fromUnit.colony) {
-					Colony.leave(fromUnit.colony, fromUnit)
-				}
-			}
+			LoadUnitToShip(unit, fromUnit)
 			return false
 		}
 
@@ -57,7 +50,7 @@ const create = unit => {
 
 	const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
 	greyScaleFilter.blackAndWhite()
-	const unsubscribeStorage = Unit.listenStorage(unit, storage => {
+	const unsubscribeStorage = Storage.listen(unit.storage, storage => {
 		let index = {
 			x: 0,
 			y: 0

@@ -1,5 +1,4 @@
-import Dialog from '../view/dialog'
-import UnitView from '../view/unit'
+import Dialog from '../view/ui/dialog'
 import Time from '../timeline/time'
 import Move from './move'
 import Commander from './commander'

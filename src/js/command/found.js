@@ -1,8 +1,12 @@
 import Colony from '../entity/colony'
-import UnitView from '../view/unit'
 import Record from '../util/record'
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
+import Colonist from '../entity/colonist'
+import BecomeColonist from '../action/becomeColonist'
+import FindWork from '../action/findWork'
+import EnterColony from '../action/enterColony'
+import Unit from '../entity/unit'
 
 const create = unit => {
 	const init = () => {
@@ -14,8 +18,12 @@ const create = unit => {
 			return false
 		}
 
-		UnitView.deactivate(unit)
-		const colony = Colony.create(unit.mapCoordinates, unit)
+		const colony = Colony.create(unit.mapCoordinates)
+		Unit.at(unit.mapCoordinates).forEach(unit => {
+			EnterColony(colony, unit)
+		})
+		BecomeColonist(colony, unit)
+		FindWork(unit.colonist)
 
 		return false
 	}

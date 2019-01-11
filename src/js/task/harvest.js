@@ -1,5 +1,5 @@
 import Tile from '../entity/tile'
-import Colony from '../entity/colony'
+import Storage from '../entity/storage'
 import Time from '../timeline/time'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
@@ -21,7 +21,7 @@ const create = (colony, tile, good, colonist = null) => {
 
 		const deltaTime = currentTime - lastUpdate
 		const amount = deltaTime * Tile.production(tile, good, colonist) * PRODUCTION_BASE_FACTOR
-		Colony.updateStorage(colony, good, amount)
+		Storage.update(colony.storage, { good, amount })
 
 		lastUpdate = currentTime
 		return true

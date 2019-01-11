@@ -4,7 +4,7 @@ import Layer from './layer'
 import RenderView from './view'
 import TileCache from './tileCache'
 import Ressources from './ressources'
-import MapView from '../view/map'
+import MapView from '../render/map'
 
 const MAX_TILES = 30000
 

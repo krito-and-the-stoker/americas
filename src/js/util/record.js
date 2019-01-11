@@ -10,11 +10,11 @@ import Europe from '../entity/europe'
 import Treasure from '../entity/treasure'
 import Market from '../entity/market'
 
-import MapView from '../view/map'
+import MapView from '../render/map'
 import Foreground from '../render/foreground'
 import Background from '../render/background'
 import RenderView from '../render/view'
-import UnitView from '../view/unit'
+import UnitView from '../view/map/unit'
 import Time from '../timeline/time'
 import PathFinder from '../util/pathFinder'
 
@@ -26,21 +26,42 @@ const USE_COMPRESSION = false
 
 let lastSave = null
 
-// start with 1 because 0 is not concidered a valid id
-let idCounter = 1
+let idCounter = 0
 const makeId = () => idCounter += 1
 
-let records = []
+let	records = []
 let snapshot = []
 let globals = {}
 let tiles = {}
+let listeners = {}
 const add = (type, entity) => {
 	records.push({
 		id: makeId(),
 		entity,
 		type
 	})
+	update(type, entity)
 }
+
+
+const initListeners = type => {
+	listeners[type] = []
+}
+
+const listen = (type, fn) => {
+	if (!listeners[type]) {
+		initListeners(type)
+	}
+	listeners[type].push(fn)
+}
+
+const update = (type, entity) => {
+	if (!listeners[type]) {
+		initListeners(type)
+	}
+	listeners[type].forEach(fn => fn(entity))
+}
+
 
 const addTile = tile => {
 	tiles[tile.index] = tile
@@ -50,6 +71,10 @@ const setGlobal = (key, value) => {
 	globals[key] = value
 }
 const getGlobal = key => globals[key]
+
+const getAll = type => records
+	.filter(record => record.type === type)
+	.map(record => record.entity)
 
 const revive = (record) => {
 	if (record.entity) {
@@ -68,6 +93,7 @@ const revive = (record) => {
 		entity: record.entity,
 		type: record.type
 	})
+	update(record.type, record.entity)
 
 	return record.entity
 }
@@ -182,7 +208,6 @@ const entitiesLoaded = fn => loadedListeners.push(fn)
 const load = () => {
 	console.log('loading...')
 	Foreground.shutdown()
-	Unit.reset()
 	
 	loadedListeners = []
 	records = []
@@ -216,6 +241,7 @@ const load = () => {
 
 export default {
 	add,
+	listen,
 	addTile,
 	reference,
 	referenceTile,
@@ -228,5 +254,6 @@ export default {
 	save,
 	load,
 	dump,
+	getAll,
 	REFERENCE_KEY
 }

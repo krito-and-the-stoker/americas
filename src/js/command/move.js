@@ -7,7 +7,9 @@ import Time from '../timeline/time'
 import Colony from '../entity/colony'
 import Unit from '../entity/unit'
 import Load from '../command/load'
-import UnitView from '../view/unit'
+import UnitView from '../view/map/unit'
+import EnterColony from '../action/enterColony'
+import LeaveColony from '../action/leaveColony'
 
 const TILE_SIZE = 64
 
@@ -35,6 +37,7 @@ const createFromData = data => {
 	const targetTile = MapEntity.tile(coords)
 	let fromTile = null
 	let enteringShip = data.enteringShip
+	const sprite = UnitView.getView(unit).sprite
 
 	const init = currentTime => {
 		startTime = currentTime
@@ -51,7 +54,7 @@ const createFromData = data => {
 		}
 
 		// unload?
-		if (unit.domain === 'sea' && unit.cargo.length > 0 && targetTile.domain === 'land' && !targetTile.colony && inMoveDistance(unit.mapCoordinates, coords)) {
+		if (unit.domain === 'sea' && unit.passengers.length > 0 && targetTile.domain === 'land' && !targetTile.colony && inMoveDistance(unit.mapCoordinates, coords)) {
 			Commander.scheduleInstead(unit.commander, Unload.create(unit, coords, finishedFn))
 			aborted = true
 			return false
@@ -73,6 +76,9 @@ const createFromData = data => {
 			return false
 		}
 
+		if (unit.colony) {
+			LeaveColony(unit)
+		}
 
 		const speed = unit.properties.speed
 		fromTile = MapEntity.tile(unit.mapCoordinates)
@@ -91,28 +97,22 @@ const createFromData = data => {
 	const update = currentTime => {
 		const relativeTime = currentTime - startTime
 		if (relativeTime > duration) {
-			unit.sprite.x = TILE_SIZE * coords.x
-			unit.sprite.y = TILE_SIZE * coords.y
-			unit.mapCoordinates.x = coords.x
-			unit.mapCoordinates.y = coords.y
-			if (targetTile.colony) {
-				Colony.enter(targetTile.colony, unit)
-			}
-			if (fromTile.colony) {
-				Colony.leave(fromTile.colony, unit)
-			}
-			if (!targetTile.colony && !enteringShip) {
-				UnitView.activate(unit)
-			}
 			return false
 		}
-		unit.sprite.x = TILE_SIZE * (startCoords.x + (coords.x - startCoords.x) * relativeTime / duration)
-		unit.sprite.y = TILE_SIZE * (startCoords.y + (coords.y - startCoords.y) * relativeTime / duration)
+		sprite.x = TILE_SIZE * (startCoords.x + (coords.x - startCoords.x) * relativeTime / duration)
+		sprite.y = TILE_SIZE * (startCoords.y + (coords.y - startCoords.y) * relativeTime / duration)
 		return true
 	}
 
 	const finished = () => {
 		if (!aborted) {		
+			sprite.x = TILE_SIZE * coords.x
+			sprite.y = TILE_SIZE * coords.y
+			Unit.update.mapCoordinates(unit, { ...coords })
+			if (targetTile.colony) {
+				EnterColony(targetTile.colony, unit)
+			}
+
 			const tile = MapEntity.tile(coords)
 			Tile.discover(tile)
 			Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))

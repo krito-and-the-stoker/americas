@@ -16,7 +16,7 @@ const create = (close, originalDimensions) => {
 	let landUnitsView = []
 	const container = new PIXI.Container()
 
-	const unsubscribeUnits = Europe.bindUnits(units => {
+	const unsubscribeUnits = Europe.listen.units(units => {
 		const ships = units.filter(unit => unit.domain === 'sea')
 		const landUnits = units.filter(unit => unit.domain === 'land')
 		shipViews.forEach(view => {
@@ -39,10 +39,11 @@ const create = (close, originalDimensions) => {
 		landUnitsView.forEach(({ sprite }) => {
 			container.removeChild(sprite)
 		})
-		landUnitsView = landUnits.map(unit => ({ sprite: UnitView.createColonySprite(unit), unit }))
+		landUnitsView = landUnits.map(unit => ({ sprite: UnitView.create(unit), unit }))
 		landUnitsView.forEach(({ sprite, unit }, index) => {
 			sprite.x = originalDimensions.x - (landUnitsView.length - index) * sprite.width
 			sprite.y = originalDimensions.y - 125 - sprite.height
+			sprite.scale.set(2)
 			container.addChild(sprite)
 			Drag.makeDraggable(sprite, { unit })
 		})

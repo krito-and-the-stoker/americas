@@ -1,7 +1,7 @@
 import Buildings from '../data/buildings.json'
 
 import Tile from '../entity/tile'
-import Colony from '../entity/colony'
+import Storage from '../entity/storage'
 import Time from '../timeline/time'
 
 
@@ -21,10 +21,10 @@ const create = (colony, building, colonist) => {
 		const scale = deltaTime * PRODUCTION_BASE_FACTOR
 		const efficiency = consumption ? Math.min(1, colony.storage[consumption.good] / (scale * consumption.amount)) : 1
 		if (consumption) {
-			Colony.updateStorage(colony, consumption.good, - scale * efficiency * consumption.amount)
+			Storage.update(colony.storage, { good: consumption.good, amount: -scale * efficiency * consumption.amount })
 		}
 		if (production) {
-			Colony.updateStorage(colony, production.good, scale * efficiency * production.amount)
+			Storage.update(colony.storage, { good: production.good, amount: scale * efficiency * production.amount })
 		}
 
 		lastUpdate = currentTime

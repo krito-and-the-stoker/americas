@@ -5,7 +5,7 @@ import Move from './move'
 import Commander from './commander'
 import Europe from './europe'
 import Record from '../util/record'
-import Dialog from '../view/dialog'
+import Dialog from '../view/ui/dialog'
 
 
 const create = (unit, coords) => {
