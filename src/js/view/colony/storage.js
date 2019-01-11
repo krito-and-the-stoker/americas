@@ -8,6 +8,8 @@ import GoodsView from '../../view/goods'
 import Unit from '../../entity/unit'
 import Storage from '../../entity/storage'
 
+import LoadFromShipToColony from '../../action/loadFromShipToColony'
+
 const create = (colony, originalDimensions) => {
 	const container = new PIXI.Container()
 	const numberOfGoods = Object.keys(Goods.types).length
@@ -50,9 +52,7 @@ const create = (colony, originalDimensions) => {
 	const unsubscribeDrag = Drag.makeDragTarget(dragTarget, args => {
 		const { good, unit, amount } = args
 		if (good && unit) {
-			Colony.updateStorage(colony, good, amount)
-			Unit.loadGoods(unit, good, -amount)
-			return false
+			LoadFromShipToColony(colony, unit, { good, amount })
 		}
 
 		return false
