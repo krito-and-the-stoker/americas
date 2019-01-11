@@ -6,7 +6,29 @@ import Binding from '../util/binding'
 import Util from '../util/util'
 import Message from '../view/ui/message'
 
-const possibleColonists = ['settler', 'soldier', 'pioneer', 'scout']
+const possibleColonists = [
+	{ unit: 'settler', name: "Free Colonist", expert: null },
+	{ unit: 'soldier', name: "Veteran Soldier", expert: "soldier" },
+	{ unit: 'pioneer', name: "Hardened Pioneer", expert: "pioneer" },
+	{ unit: 'scout', name: "Seasoned Scout", expert: "scout" },
+	{ unit: 'missionary', name: "Missionary", expert: "missionary" },
+	{ unit: 'settler', 'name': 'Servants', expert: "servant" },
+	{ unit: 'settler', 'name': 'Petty Criminals', expert: "criminal" },
+	{ unit: 'settler', 'name': 'Expert Farmer', expert: "farmer" },
+	{ unit: 'settler', 'name': 'Expert Lumberjack', expert: "lumberjack" },
+	{ unit: 'settler', 'name': 'Expert Oreminer', expert: "oreminer" },
+	{ unit: 'settler', 'name': 'Expert Silverminer', expert: "silverminer" },
+	{ unit: 'settler', 'name': 'Expert Fisher', expert: "fisher" },
+	{ unit: 'settler', 'name': 'Master Distiller', expert: "distiller" },
+	{ unit: 'settler', 'name': 'Master Tobacconist', expert: "tobacconist" },
+	{ unit: 'settler', 'name': 'Master Weaver', expert: "weaver" },
+	{ unit: 'settler', 'name': 'Master Furtrader', expert: "furtrader" },
+	{ unit: 'settler', 'name': 'Expert Carpenter', expert: "carpenter" },
+	{ unit: 'settler', 'name': 'Expert Blacksmith', expert: "blacksmith" },
+	{ unit: 'settler', 'name': 'Expert Gunsmith', expert: "gunsmith" },
+	{ unit: 'settler', 'name': 'Firebrand Preacher', expert: "preacher" },
+	{ unit: 'settler', 'name': 'Elder Statesman', expert: "statesman" },
+]
 
 const europe = {
 	units: [],
@@ -57,18 +79,20 @@ const recruitmentCost = () => Math.round(100 + 500 * Math.max(1 - Math.floor(eur
 const recruitmentOptions = () => {
 	const price = recruitmentCost()
 	return Treasure.amount() >= price ?
-		europe.pool.map(unit => ({ text: `${unit} (${price})`, unit })).concat([{ text: 'No one at the moment.' }]) :
+		europe.pool.map(({ unit, name, expert }) => ({ text: `${name} (${price})`, unit, expert })).concat([{ text: 'No one at the moment.' }]) :
 		[{ text: `We cannot afford a new colonist (${price})` }]
 }
 
-const recruit = option => {
+const recruit = (option, index) => {
 	if (option.unit && Treasure.spend(recruitmentCost())) {
 		const unit = Unit.create(option.unit, Record.getGlobal('defaultShipArrival'))
 		Unit.update.offTheMap(unit, true)
+		Unit.update.expert(unit, option.expert)
 		add.unit(unit)
 		europe.crossesNeeded += 1
 		europe.crosses = 0
 		update.crosses(0)
+		europe.pool[index] = Util.choose(possibleColonists)
 	}
 }
 
@@ -94,14 +118,16 @@ const initialize = () => {
 	console.log('initialized europe')
 	listen.crosses(crosses => {
 		if (crosses > europe.crossesNeeded) {
-			const type = Util.choose(europe.pool)
-			europe.pool[europe.pool.indexOf(type)] = Util.choose(possibleColonists)
-			const unit = Unit.create(type, Record.getGlobal('defaultShipArrival'))
+			const index = Math.floor(Math.random() * europe.pool.length)
+			const chosen = europe.pool[index]
+			europe.pool[index] = Util.choose(possibleColonists)
+			const unit = Unit.create(chosen.unit, Record.getGlobal('defaultShipArrival'))
+			Unit.update.expert(unit, chosen.expert)
 			Unit.update.offTheMap(unit, true)
 			add.unit(unit)
 			europe.crossesNeeded += 1
 			europe.crosses = 0
-			Message.send(`Religious unrest in Europe has caused a ${type} to line up for migration to the new world.`)
+			Message.send(`Religious unrest in Europe has caused a ${chosen.name} to line up for migration to the new world.`)
 		}
 	})
 }

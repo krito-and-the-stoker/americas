@@ -135,6 +135,7 @@ const initialize = () => {
 
 		Unit.listen.mapCoordinates(unit, () => { updatePosition(view) })
 		Unit.listen.properties(unit, () => { updateTexture(view) })
+		Unit.listen.expert(unit, () => { updateTexture(view) })
 
 		views.push(view)
 	})

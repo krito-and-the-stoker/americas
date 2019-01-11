@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
-import Buildings from '../../data/buildings'
+import Buildings from '../../data/buildings.json'
+import Goods from '../../data/goods.json'
 import Ressources from '../../render/ressources'
 import Util from '../../util/util'
 import Drag from '../../input/drag'
@@ -8,6 +9,7 @@ import Colony from '../../entity/colony'
 import ProductionView from '../../view/production'
 import Commander from '../../command/commander'
 import ColonistView from '../../view/colony/colonist'
+
 
 import JoinColony from '../../action/joinColony'
 import BecomeColonist from '../../action/becomeColonist'
@@ -67,9 +69,10 @@ const createBuilding = (colony, name) => {
 					colonistSprite.y = 36
 					container.addChild(colonistSprite)
 
-					const good = Buildings[name].production ? Buildings[name].production.good : null
-					if (good) {					
-						const productionSprites = ProductionView.create(good, Buildings[name].production.amount, TILE_SIZE / 2)
+					const { good, type } = Buildings[name].production ? Buildings[name].production : {}
+					if (good || type) {
+						const expert = colonist && colonist.expert === Goods[good || type].expert ? 2 : 1
+						const productionSprites = ProductionView.create(good || type, expert * Buildings[name].production.amount, TILE_SIZE / 2)
 						productionSprites.forEach(s => {
 							s.position.x += work.position * 128 / 3
 							s.position.y += 36 + 0.5 * TILE_SIZE

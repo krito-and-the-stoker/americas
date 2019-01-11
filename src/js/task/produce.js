@@ -1,4 +1,5 @@
 import Buildings from '../data/buildings.json'
+import Goods from '../data/goods.json'
 
 import Tile from '../entity/tile'
 import Storage from '../entity/storage'
@@ -26,17 +27,19 @@ const create = (colony, building, colonist) => {
 			Storage.update(colony.storage, { good: consumption.good, amount: -scale * efficiency * consumption.amount })
 		}
 		if (production && production.good) {
-			Storage.update(colony.storage, { good: production.good, amount: scale * efficiency * production.amount })
+			const expert = colonist && colonist.expert === Goods[production.good].expert ? 2 : 1
+			Storage.update(colony.storage, { good: production.good, amount: expert * scale * efficiency * production.amount })
 		}
 		if (production && production.type) {
+			const expert = colonist && colonist.expert === Goods[production.type].expert ? 2 : 1
 			if (production.type === 'construction') {
-				Colony.update.construction(scale * efficiency * production.amount)
+				Colony.update.construction(colony, expert * scale * efficiency * production.amount)
 			}
 			if (production.type === 'bells') {
-				Colony.update.bells(scale * efficiency * production.amount)
+				Colony.update.bells(colony, expert * scale * efficiency * production.amount)
 			}
 			if (production.type === 'crosses') {
-				Europe.update.crosses(scale * efficiency * production.amount)
+				Europe.update.crosses(expert * scale * efficiency * production.amount)
 			}
 		}
 

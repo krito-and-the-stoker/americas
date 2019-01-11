@@ -70,7 +70,30 @@
 	},
 	"settler": {
 		"frame": {
-			"default": 22
+			"default": 22,
+			"servant": 23,
+			"criminal": 24,
+			"farmer": 26,
+			"sugarplanter": 27,
+			"tobaccoplanter": 28,
+			"cottonplanter": 29,
+			"furtrapper": 30,
+			"lumberjack": 31,
+			"oreminer": 32,
+			"silverminer": 33,
+			"fisher": 34,
+			"distiller": 35,
+			"tobacconist": 36,
+			"weaver": 37,
+			"furtrader": 38,
+			"carpenter": 39,
+			"blacksmith": 40,
+			"gunsmith": 41,
+			"preacher": 42,
+			"statesman": 43,
+			"pioneer": 44,
+			"soldier":  45,
+			"scout": 46
 		},
 		"domain": "land",
 		"canFound": true,
@@ -88,10 +111,29 @@
 	"soldier": {
 		"frame": {
 			"default": 47,
-			"expert": 48
+			"soldier": 48
 		},
 		"domain": "land",
 		"canFound": true,
+		"speed": 1
+	},
+	"dragoon": {
+		"frame": {
+			"default": 4,
+			"soldier": 5
+		},
+		"domain": "land",
+		"canFound": true,
+		"speed": 4
+	},
+	"missionary": {
+		"frame": {
+			"default": 15,
+			"missionary": 16
+		},
+		"domain": "land",
+		"canFound": true,
+		"canMission": true,
 		"speed": 1
 	}
 }

@@ -106,6 +106,7 @@ const listen = {
 	colony: (unit, fn) => Binding.listen(unit, 'colony', fn),
 	properties: (unit, fn) => Binding.listen(unit, 'properties', fn),
 	name: (unit, fn) => Binding.listen(unit, 'name', fn),
+	expert: (unit, fn) => Binding.listen(unit, 'expert', fn),
 }
 
 const update = {
@@ -116,6 +117,7 @@ const update = {
 	colony: (unit, value) => Binding.update(unit, 'colony', value),
 	properties: (unit, value) => Binding.update(unit, 'properties', value),
 	name: (unit, value) => Binding.update(unit, 'name', value),
+	expert: (unit, value) => Binding.update(unit, 'expert', value),
 }
 
 const updateType = (unit, name) => {

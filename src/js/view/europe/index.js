@@ -64,7 +64,7 @@ const create = () => {
 				pause: false
 			})
 		.then(decision => {
-			Europe.recruit(options[decision])
+			Europe.recruit(options[decision], decision)
 		})
 	})
 	recruitButton.x = originalDimensions.x - recruitButton.width - 20
