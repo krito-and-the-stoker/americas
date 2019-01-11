@@ -1,5 +1,5 @@
 import Colonist from '../entity/colonist'
-import Colony from '../entity/Colony'
+import Colony from '../entity/colony'
 
 export default colonist => {
 	const colony = colonist.colony

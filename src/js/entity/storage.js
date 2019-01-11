@@ -14,7 +14,7 @@ const update = (storage, pack) => {
 const listen = (storage, fn) => Binding.listen(storage, null, fn)
 const create = () => Goods.types.reduce((obj, name) => ({ ...obj, [name]: 0 }), {})
 
-const split = storage => Object.keys(storage)
+const split = storage => goods(storage)
 	.filter(good => storage[good] > 0)
 	.map(good => 
 		Util.range(Math.ceil(storage[good] / 100))
@@ -24,15 +24,19 @@ const split = storage => Object.keys(storage)
 
 const transfer = (src, dest, pack = {}) => {
 	const move = ({ good, amount }) => {
-		dest[good] += amount || src[good]
-		src[good] -= amount || src[good]
+		if (amount) {
+			dest[good] += amount
+			src[good] -= amount
+		}  else {
+			dest[good] += src[good]
+			src[good] = 0
+		}
 	}
 
 	if (pack.good) {
 		move(pack)
 	} else {
-		Object.keys(src)
-			.map(good => ({ good }))
+		goods(src)
 			.forEach(move)
 	}
 

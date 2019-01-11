@@ -64,7 +64,7 @@ const initialize = unit => {
 	Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))
 
 	Time.schedule(unit.commander)
-	Binding.listen(unit, 'equipment', equipment => {
+	Storage.listen(unit.equipment, equipment => {
 		// lose status
 		if (unit.name === 'pioneer' && equipment.tools < 20) {
 			updateType(unit, 'settler')
@@ -104,6 +104,8 @@ const listen = {
 	colonist: (unit, fn) => Binding.listen(unit, 'colonist', fn),
 	mapCoordinates: (unit, fn) => Binding.listen(unit, 'mapCoordinates', fn),
 	colony: (unit, fn) => Binding.listen(unit, 'colony', fn),
+	properties: (unit, fn) => Binding.listen(unit, 'properties', fn),
+	name: (unit, fn) => Binding.listen(unit, 'name', fn),
 }
 
 const update = {
@@ -112,11 +114,13 @@ const update = {
 	colonist: (unit, value) => Binding.update(unit, 'colonist', value),
 	mapCoordinates: (unit, value) => Binding.update(unit, 'mapCoordinates', value),
 	colony: (unit, value) => Binding.update(unit, 'colony', value),
+	properties: (unit, value) => Binding.update(unit, 'properties', value),
+	name: (unit, value) => Binding.update(unit, 'name', value),
 }
 
 const updateType = (unit, name) => {
-	unit.name = name
-	unit.properties = Units[name]
+	update.name(unit, name)
+	update.properties(unit, Units[name])
 }
 
 const at = coords => Record.getAll('unit').filter(unit => unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y)

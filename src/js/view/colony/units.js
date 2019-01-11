@@ -55,9 +55,11 @@ const create = (colony, closeScreen, originalDimensions) => {
 						const fromUnit = args.unit
 						if (fromUnit) {
 							EquipUnitFromShip(ship, unit, { good, amount })
+							sprite.texture = UnitView.createTexture(unit)
 						}
 						if (colony) {
 							EquipUnitFromColony(colony, unit, { good, amount })
+							sprite.texture = UnitView.createTexture(unit)
 						}
 
 						return false

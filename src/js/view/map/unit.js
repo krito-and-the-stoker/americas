@@ -51,13 +51,10 @@ const unselect = (unit = null) => {
 	}
 }
 
-const updateType = unit => {
-	const frame = unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
+const updateTexture = view => {
+	const frame = view.unit.expert ? view.unit.properties.frame[view.unit.expert] || view.unit.properties.frame.default : view.unit.properties.frame.default
 	const texture = new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame))
-	unit.sprite.texture = texture
-	if (unit.colonySprite) {
-		unit.colonySprite.texture = texture
-	}
+	view.sprite.texture = texture
 }
 
 const updatePosition = view => {
@@ -137,6 +134,7 @@ const initialize = () => {
 			colonist ? Colonist.listen.colony(colonist, updateBoundVisibility) : updateBoundVisibility())
 
 		Unit.listen.mapCoordinates(unit, () => { updatePosition(view) })
+		Unit.listen.properties(unit, () => { updateTexture(view) })
 
 		views.push(view)
 	})
