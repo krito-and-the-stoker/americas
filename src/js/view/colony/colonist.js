@@ -19,9 +19,9 @@ const create = colonist => {
 			const tile = colonist.work.tile
 			const options = Tile.fieldProductionOptions(tile, colonist)
 			if (options.length > 1) {			
-				const coords = colonist.sprite.getGlobalPosition()
-				const scale = Util.globalScale(colonist.sprite)
-				coords.y += 0.5 * colonist.sprite.height / 2
+				const coords = sprite.getGlobalPosition()
+				const scale = Util.globalScale(sprite)
+				coords.y += 0.5 * sprite.height / 2
 
 				const optionsView = options.map(Context.productionOption)
 				const decision = await Context.create(optionsView, coords, 80, 0.5 * scale)

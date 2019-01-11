@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 
 import Colony from '../../entity/colony'
+import Colonist from '../../entity/colonist'
 import UnitView from '../../view/unit'
 import UnitMapView from '../../view/map/unit'
 import Click from '../../input/click'
@@ -24,7 +25,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 		shipViews.forEach((view, index) => {
 			Click.on(view.sprite, () => {
 				closeScreen()
-				UnitView.select(view.unit)
+				UnitMapView.select(view.unit)
 			})
 			view.container.x = index * 64 * 2
 			view.container.y = 10
@@ -34,12 +35,12 @@ const create = (colony, closeScreen, originalDimensions) => {
 		const createLandUnitsRaw = () => {
 			return Util.mergeFunctions(units
 				.filter(unit => unit.domain === 'land')
-				.filter(unit => !unit.colonist)
+				.filter(unit => !unit.colonist || !unit.colonist.colony)
 				.map((unit, index, all) => {
 					const shownUnits = all.length
 					const sprite = UnitView.create(unit)
-					sprite.x = originalDimensions.x - (shownUnits - index - 1) * sprite.width
-					sprite.y = originalDimensions.y - 125 - sprite.height
+					sprite.x = 0.9* originalDimensions.x - (shownUnits - index - 1) * sprite.width
+					sprite.y = 0.9 * originalDimensions.y - 125 - sprite.height
 					sprite.scale.set(2)
 					container.addChild(sprite)
 					Drag.makeDraggable(sprite, { unit })
@@ -62,7 +63,6 @@ const create = (colony, closeScreen, originalDimensions) => {
 						return false
 					})
 					return () => {
-						console.log('destroyed land units')
 						unsubscribeDrag()				
 						container.removeChild(sprite)
 					}
@@ -71,7 +71,15 @@ const create = (colony, closeScreen, originalDimensions) => {
 		const createLandUnits = Binding.shared(createLandUnitsRaw)
 		const unsubscribeLandUnits = Util.mergeFunctions(units
 			.filter(unit => unit.domain === 'land')
-			.map(unit => Unit.listen.colonist(unit, createLandUnits)))
+			.map(unit => {
+				return Unit.listen.colonist(unit,
+					colonist => {
+						if (colonist) {
+							return Colonist.listen.colony(colonist, createLandUnits)
+						}
+						return createLandUnits()
+					})
+			}))
 
 		return () => {
 			shipViews.forEach(view => {

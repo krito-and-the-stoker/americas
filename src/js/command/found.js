@@ -5,6 +5,8 @@ import Tile from '../entity/tile'
 import Colonist from '../entity/colonist'
 import BecomeColonist from '../action/becomeColonist'
 import FindWork from '../action/findWork'
+import EnterColony from '../action/enterColony'
+import Unit from '../entity/unit'
 
 const create = unit => {
 	const init = () => {
@@ -17,6 +19,9 @@ const create = unit => {
 		}
 
 		const colony = Colony.create(unit.mapCoordinates)
+		Unit.at(unit.mapCoordinates).forEach(unit => {
+			EnterColony(colony, unit)
+		})
 		BecomeColonist(colony, unit)
 		FindWork(unit.colonist)
 

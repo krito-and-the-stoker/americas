@@ -49,10 +49,12 @@ const stopWorking = colonist => {
 }
 
 const listen = {
-	work: (colonist, fn) => Binding.listen(colonist, 'work', fn)
+	work: (colonist, fn) => Binding.listen(colonist, 'work', fn),
+	colony: (colonist, fn) => Binding.listen(colonist, 'colony', fn),
 }
 const update = {
-	work: (colonist, value) => Binding.update(colonist, 'work', value)
+	work: (colonist, value) => Binding.update(colonist, 'work', value),
+	colony: (colonist, value) => Binding.update(colonist, 'colony', value),
 }
 
 const create = unit => {

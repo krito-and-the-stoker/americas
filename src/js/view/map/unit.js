@@ -10,6 +10,7 @@ import Record from '../../util/record'
 import ColonyView from '../../view/colony'
 import Unit from '../../entity/unit'
 import Europe from '../../entity/europe'
+import Colonist from '../../entity/colonist'
 
 const BLINK_TIME = 500
 const TILE_SIZE = 64
@@ -23,6 +24,7 @@ const select = unit => {
 			unselect()
 		}
 		selectedView = view
+		updateVisibility(view)
 		if (blinkTween) {
 			blinkTween.stop()
 		}
@@ -39,7 +41,9 @@ const select = unit => {
 
 const unselect = (unit = null) => {
 	if (!unit || unit === selectedView.unit) {	
+		const previouslySelectedView = selectedView
 		selectedView = null
+		updateVisibility(previouslySelectedView)
 		if (blinkTween) {
 			blinkTween.stop()
 			blinkTween = null
@@ -111,7 +115,7 @@ const visibleOnMap = view => (view === selectedView || !view.unit.colony) &&
 	!view.unit.vehicle &&
 	!Europe.has.unit(view.unit) &&
 	!view.unit.offTheMap &&
-	!view.unit.colonist
+	!(view.unit.colonist && view.unit.colonist.colony)
 
 const save = () => Record.reference(selectedUnit())
 const load = data => {
@@ -125,10 +129,12 @@ let views = []
 const initialize = () => {
 	Record.listen('unit', unit => {
 		const view = create(unit)
-		Unit.listen.vehicle(unit, () => { updateVisibility(view) })
-		Unit.listen.offTheMap(unit, () => { updateVisibility(view) })
-		Unit.listen.colonist(unit, () => { updateVisibility(view) })
-		Unit.listen.colony(unit, () => { updateVisibility(view) })
+		const updateBoundVisibility = () => { updateVisibility(view) }
+		Unit.listen.vehicle(unit, updateBoundVisibility)
+		Unit.listen.offTheMap(unit, updateBoundVisibility)
+		Unit.listen.colony(unit, updateBoundVisibility)
+		Unit.listen.colonist(unit, colonist =>
+			colonist ? Colonist.listen.colony(colonist, updateBoundVisibility) : updateBoundVisibility())
 
 		Unit.listen.mapCoordinates(unit, () => { updatePosition(view) })
 

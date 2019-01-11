@@ -11,6 +11,7 @@ import Colony from '../../entity/colony'
 import Commander from '../../command/commander'
 import ColonistView from './colonist'
 import BecomeColonist from '../../action/becomeColonist'
+import JoinColony from '../../action/joinColony'
 
 
 const TILE_SIZE = 64
