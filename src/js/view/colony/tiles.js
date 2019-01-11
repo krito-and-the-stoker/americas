@@ -92,24 +92,26 @@ const create = (colony, originalDimensions) => {
 				const { tile, position } = tilesAndPositions.find(({ tile }) => work && work.tile === tile) || {}
 				
 				if (position) {
-					const colonistSprite = ColonistView.create(colonist)
-					colonistSprite.x = position.x
-					colonistSprite.y = position.y
-					container.addChild(colonistSprite)
+					return Tile.listen(tile, tile => {					
+						const colonistSprite = ColonistView.create(colonist)
+						colonistSprite.x = position.x
+						colonistSprite.y = position.y
+						container.addChild(colonistSprite)
 
-					const good = work.good
-					const productionSprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
-					productionSprites.forEach(s => {
-						s.position.x += position.x
-						s.position.y += position.y + 0.5 * TILE_SIZE
-						s.scale.set(0.5)
-						container.addChild(s)
+						const good = work.good
+						const productionSprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
+						productionSprites.forEach(s => {
+							s.position.x += position.x
+							s.position.y += position.y + 0.5 * TILE_SIZE
+							s.scale.set(0.5)
+							container.addChild(s)
+						})
+
+						return () => {
+							container.removeChild(colonistSprite)
+							productionSprites.forEach(s => container.removeChild(s))
+						}
 					})
-
-					return () => {
-						container.removeChild(colonistSprite)
-						productionSprites.forEach(s => container.removeChild(s))
-					}
 				}
 			})
 		}))
@@ -118,29 +120,39 @@ const create = (colony, originalDimensions) => {
 			cleanupWork()
 		}
 	})
-	const colonySprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(MAP_COLONY_FRAME_ID)))
-	colonySprite.position.x = TILE_SIZE
-	colonySprite.position.y = TILE_SIZE
-	container.position.x = (originalDimensions.x - 450)
-	container.scale.set(450 / (3 * TILE_SIZE))
-	container.addChild(colonySprite)
+	
+	const unsubscribeCenter = Tile.listen(center, center => {	
+		const colonySprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(MAP_COLONY_FRAME_ID)))
+		colonySprite.position.x = TILE_SIZE
+		colonySprite.position.y = TILE_SIZE
+		container.position.x = (originalDimensions.x - 450)
+		container.scale.set(450 / (3 * TILE_SIZE))
+		container.addChild(colonySprite)
 
-	// production sprites for center
-	const productionGoods = Tile.colonyProductionGoods(center)
-	productionGoods.forEach((good, i) => {	
-		const foodSprites = ProductionView.create(good, Tile.production(center, good), TILE_SIZE / 2)
-		foodSprites.forEach(s => {
-			s.scale.set(1.0 / productionGoods.length)
-			s.position.x += TILE_SIZE
-			s.position.y += TILE_SIZE + i * TILE_SIZE / productionGoods.length
-			container.addChild(s)
-		})
+		// production sprites for center
+		const productionGoods = Tile.colonyProductionGoods(center)
+		const productionSprites = productionGoods.map((good, i) => {	
+			const sprites = ProductionView.create(good, Tile.production(center, good), TILE_SIZE / 2)
+			sprites.forEach(s => {
+				s.scale.set(1.0 / productionGoods.length)
+				s.position.x += TILE_SIZE
+				s.position.y += TILE_SIZE + i * TILE_SIZE / productionGoods.length
+				container.addChild(s)
+			})
+			return sprites
+		}).flat()
+
+		return () => {
+			container.removeChild(colonySprite)
+			container.removeChild(productionSprites)
+		}
 	})
 
 
 	const unsubscribe = () => {
 		unsubscribeTiles()
 		unsubscribeColonists()
+		unsubscribeCenter()
 	}
 
 	return {
