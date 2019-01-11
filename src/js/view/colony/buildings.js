@@ -7,7 +7,10 @@ import Colonist from '../../entity/colonist'
 import Colony from '../../entity/colony'
 import ProductionView from '../../view/production'
 import Commander from '../../command/commander'
+import ColonistView from '../../view/colony/colonist'
+
 import JoinColony from '../../action/joinColony'
+import BecomeColonist from '../../action/becomeColonist'
 
 const TILE_SIZE = 64
 
@@ -23,7 +26,7 @@ const createBuilding = (colony, name) => {
 	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().buildings, rectangle))
 	container.addChild(sprite)
 
-	Drag.makeDragTarget(sprite, args => {
+	const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {
 		const { unit } = args
 		if (!args.colonist && !unit) {
 			return
@@ -32,28 +35,36 @@ const createBuilding = (colony, name) => {
 		if (unit && !Commander.isIdle(unit.commander)) {
 			return false
 		}
-		const colonist = args.colonist || unit.colonist || Colonist.create(unit)
-		if (unit) {
-			JoinColony(colony, colonist)
+
+		if (!Colony.canEmploy(colony, name)) {
+			return false
 		}
 
-		if (colonist && Colony.canEmploy(colony, name)) {
+		let colonist = args.colonist
+		if (unit) {
+			if (unit.colonist) {
+				JoinColony(colony, unit.colonist)
+			} else {
+				BecomeColonist(colony, unit)
+			}
+			colonist = unit.colonist
+		}
+
+		if (colonist) {
 			Colonist.beginColonyWork(colonist, name)
 			return true
 		}
 		return false
 	})
 
-	const unsubscribe = Colony.bindColonists(colony, colonists => {
-		const colonistsSprites = []
-		
+	const unsubscribeColonists = Colony.listen.colonists(colony, colonists => {
 		const cleanupWork = Util.mergeFunctions(colonists.map(colonist => {
 			return Colonist.listen.work(colonist, work => {
 				if (work && work.building === name) {
-					colonist.sprite.x = work.position * 128 / 3
-					colonist.sprite.y = 36
-					container.addChild(colonist.sprite)
-					colonistsSprites.push(colonist.sprite)
+					const colonistSprite = ColonistView.create(colonist)
+					colonistSprite.x = work.position * 128 / 3
+					colonistSprite.y = 36
+					container.addChild(colonistSprite)
 
 					const good = Buildings[name].production ? Buildings[name].production.good : null
 					if (good) {					
@@ -66,17 +77,25 @@ const createBuilding = (colony, name) => {
 						})
 						return () => {
 							productionSprites.forEach(s => container.removeChild(s))
+							container.removeChild(colonistSprite)
 						}
+					}
+					return () => {
+						container.removeChild(colonistSprite)
 					}
 				}
 			})
 		}))
 
 		return () => {
-			colonistsSprites.forEach(s => container.removeChild(s))
 			cleanupWork()
 		}
 	})
+
+	const unsubscribe = () => {
+		unsubscribeColonists()
+		unsubscribeDrag()
+	}
 
 	return {
 		container,

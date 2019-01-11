@@ -52,7 +52,7 @@ const create = (colony, originalDimensions) => {
 					if (!unit && !args.colonist) {
 						return false
 					}
-					// const colonist = args.colonist || unit.colonist || Colonist.create(unit)
+
 					let colonist = args.colonist
 					if (unit) {
 						if (unit.colonist) {

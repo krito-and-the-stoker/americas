@@ -15,7 +15,7 @@ const create = colonist => {
 	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
 
 	Click.on(sprite, async () => {
-		if (colonist.work) {
+		if (colonist.work && colonist.work.type === 'Field') {
 			const tile = colonist.work.tile
 			const options = Tile.fieldProductionOptions(tile, colonist)
 			if (options.length > 1) {			

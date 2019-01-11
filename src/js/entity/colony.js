@@ -149,6 +149,7 @@ export default {
 	save,
 	load,
 	coastalDirection,
+	canEmploy,
 	add,
 	remove,
 	listen

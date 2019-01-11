@@ -31,7 +31,7 @@ const beginColonyWork = (colonist, building) => {
 		.reduce((free, occupied) => free.filter(pos => pos !== occupied), Util.range(Buildings[building].workspace))
 		.find(() => true)
 	update.work(colonist, {
-		type: 'Colony',
+		type: 'Building',
 		building,
 		position,
 		stop

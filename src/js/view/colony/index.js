@@ -44,15 +44,15 @@ const create = colony => {
 	const headline = ColonyHeadline.create(colony, originalDimensions)
 	const storage = ColonyStorage.create(colony, originalDimensions)
 	const units = ColonyUnits.create(colony, () => close(), originalDimensions)
-	// const buildings = ColonyBuildings.create(colony)
+	const buildings = ColonyBuildings.create(colony)
 
 	container.addChild(colonyWoodBackground)
 	container.addChild(background.container)
 	container.addChild(tiles.container)
+	container.addChild(buildings.container)
 	container.addChild(units.container)
 	container.addChild(headline.container)
 	container.addChild(storage.container)
-	// container.addChild(buildings.container)
 
 
 	const unsubscribeResize = RenderView.updateWhenResized(({ dimensions }) => {
@@ -73,7 +73,7 @@ const create = colony => {
 		tiles.unsubscribe()
 		storage.unsubscribe()
 		units.unsubscribe()
-		// buildings.unsubscribe()
+		buildings.unsubscribe()
 		unsubscribeResize()
 	}
 	Click.on(colonyWoodBackground, close)
