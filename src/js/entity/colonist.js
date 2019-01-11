@@ -39,7 +39,6 @@ const beginColonyWork = (colonist, building) => {
 }
 
 const stopWorking = colonist => {
-	console.log('stop working', colonist)
 	if (colonist.work) {
 		colonist.work.stop()
 		if (colonist.work.tile) {
@@ -89,7 +88,6 @@ const load = colonist => {
 
 	Record.entitiesLoaded(() => {	
 		if (colonist.work) {
-			console.log(colonist)
 			colonist.work.tile = Record.dereferenceTile(colonist.work.tile)
 			colonist.work.tile.harvestedBy = null
 			colonist.work.stop = Time.schedule(Harvest.create(colonist.colony, colonist.work.tile, colonist.work.good, colonist))

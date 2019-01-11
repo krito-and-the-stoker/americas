@@ -15,10 +15,10 @@ const listen = (storage, fn) => Binding.listen(storage, null, fn)
 const create = () => Goods.types.reduce((obj, name) => ({ ...obj, [name]: 0 }), {})
 
 const split = storage => goods(storage)
-	.filter(good => storage[good] > 0)
-	.map(good => 
-		Util.range(Math.ceil(storage[good] / 100))
-			.map(i => Math.min(100*(i+1), storage[good] - 100*i))
+	.filter(({ amount }) => amount > 0)
+	.map(({ good, amount }) => 
+		Util.range(Math.ceil(amount / 100))
+			.map(i => Math.min(100*(i+1), amount - 100*i))
 			.map(amount => ({ good, amount }))
 		).flat()
 
