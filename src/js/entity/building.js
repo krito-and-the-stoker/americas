@@ -17,6 +17,10 @@ const efficiency = (colony, building, colonist, scale = 1) => {
 	const type = Buildings[building].consumption ? Buildings[building].consumption.good || Buildings[building].consumption.type : null
 	const consumption = Buildings[building].consumption
 
+	if (scale === 0) {
+		return 0
+	}
+
 	//are there enough goods?
 	return consumption ? Math.min(1, colony.storage[consumption.good] / (scale * expert(colonist, type) * consumption.amount)) : 1
 }
@@ -26,11 +30,15 @@ const production = (colony, building, colonist, scale = null) => {
 		return null
 	}
 
+	if (scale === 0) {
+		return {}
+	}
+
 	const type = baseProduction.good || baseProduction.type
 	return {
 		good: baseProduction.good,
 		type: baseProduction.type,
-		amount: expert(colonist, type) * (scale ? scale * efficiency(colony, building, colonist, scale) : 1) * baseProduction.amount
+		amount: expert(colonist, type) * (scale !== null ? scale * efficiency(colony, building, colonist, scale) : 1) * baseProduction.amount
 	}
 }
 
