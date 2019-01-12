@@ -10,7 +10,7 @@ const	create = (resource, amount, width = 100) => {
 	if (amount > 0) {
 		const frame = Goods[resource].id
 		const texture = new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame))
-		return Util.range(amount).map(i => {
+		return Util.range(Math.floor(amount)).map(i => {
 			const sprite = new PIXI.Sprite(texture)
 			sprite.x = width - Math.round((i + 1)*width / amount)
 			sprite.y = 0

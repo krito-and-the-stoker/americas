@@ -67,7 +67,8 @@ const createBuilding = (colony, name) => {
 				if (work && work.building === name) {
 					const colonistSprite = ColonistView.create(colonist)
 					colonistSprite.x = work.position * 128 / 3
-					colonistSprite.y = 36
+					colonistSprite.y = 20
+					colonistSprite.scale.set(1.5)
 					container.addChild(colonistSprite)
 
 					const production = Building.production(colony, name, colonist)
@@ -75,8 +76,7 @@ const createBuilding = (colony, name) => {
 						const productionSprites = ProductionView.create(production.good || production.type, production.amount, TILE_SIZE / 2)
 						productionSprites.forEach(s => {
 							s.position.x += work.position * 128 / 3
-							s.position.y += 36 + 0.5 * TILE_SIZE
-							s.scale.set(0.5)
+							s.position.y += 20 + TILE_SIZE
 							container.addChild(s)
 						})
 						return () => {
