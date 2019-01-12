@@ -76,6 +76,8 @@ const save = colonist => ({
 	work: colonist.work ? {
 		type: colonist.work.type,
 		good: colonist.work.good,
+		building: colonist.work.building,
+		position: colonist.work.position,
 		tile: Record.referenceTile(colonist.work.tile)
 	} : null
 })
@@ -88,9 +90,14 @@ const load = colonist => {
 
 	Record.entitiesLoaded(() => {	
 		if (colonist.work) {
-			colonist.work.tile = Record.dereferenceTile(colonist.work.tile)
-			colonist.work.tile.harvestedBy = null
-			colonist.work.stop = Time.schedule(Harvest.create(colonist.colony, colonist.work.tile, colonist.work.good, colonist))
+			if (colonist.work.type === 'Field') {			
+				colonist.work.tile = Record.dereferenceTile(colonist.work.tile)
+				colonist.work.tile.harvestedBy = null
+				colonist.work.stop = Time.schedule(Harvest.create(colonist.colony, colonist.work.tile, colonist.work.good, colonist))
+			} 
+			if (colonist.work.type === 'Building') {
+				colonist.work.stop = Time.schedule(Produce.create(colonist.colony, colonist.work.building, colonist))
+			}
 		}
 	})
 

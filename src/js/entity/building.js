@@ -1,7 +1,17 @@
 import Buildings from '../data/buildings.json'
 import Goods from '../data/goods.json'
 
-const expert = (colonist, type) => type && colonist && colonist.expert === Goods[type].expert ? 2 : 1
+const expert = (colonist, type) => {
+	if (colonist && colonist.expert === 'criminal') {
+		return 1
+	}
+
+	if (colonist && colonist.expert === 'servant') {
+		return 2
+	}
+
+	return type && colonist && colonist.expert === Goods[type].expert ? 2 : 1
+}
 
 const efficiency = (colony, building, colonist, scale = 1) => {
 	const type = Buildings[building].consumption ? Buildings[building].consumption.good || Buildings[building].consumption.type : null

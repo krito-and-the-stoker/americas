@@ -40,7 +40,7 @@ const select = unit => {
 }
 
 const unselect = (unit = null) => {
-	if (!unit || unit === selectedView.unit) {	
+	if (!unit || (selectedView && unit === selectedView.unit)) {	
 		const previouslySelectedView = selectedView
 		selectedView = null
 		updateVisibility(previouslySelectedView)

@@ -168,7 +168,7 @@ const save = () => {
 }
 
 
-const dereferenceTile = ({ tileIndex }) => tiles[tileIndex]
+const dereferenceTile = ref => ref ? tiles[ref.tileIndex] : null
 const dereference = ref => {
 	if (!ref) {
 		return null
