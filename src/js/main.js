@@ -17,6 +17,7 @@ import Dialog from './view/ui/dialog'
 import TreasureView from './view/treasure'
 import Foreground from './render/foreground'
 import Record from './util/record'
+import Util from './util/util'
 
 const update = (deltaTime) => {
 	Time.advance(deltaTime)
@@ -27,15 +28,19 @@ const draw = () => {
 }
 
 const americaSmall = () => {
-	const x = 125
-	const y = 65
-	const pioneer = Unit.create('pioneer', { x, y })
-	const soldier = Unit.create('soldier', { x, y })
-	const caravel = Unit.create('caravel', { x, y })
+	const startCoordinates = Util.choose([{ x: 125, y: 65 },
+	{ x: 135, y: 82 },
+	{ x: 152, y: 105 },
+	{ x: 168, y: 117 },
+	{ x: 159, y: 152 },
+	{ x: 132, y: 55 }])
+	const pioneer = Unit.create('pioneer', startCoordinates)
+	const soldier = Unit.create('soldier', startCoordinates)
+	const caravel = Unit.create('caravel', startCoordinates)
 	Unit.loadUnit(caravel, pioneer)
 	Unit.loadUnit(caravel, soldier)
-	MapView.centerAt({ x, y })
-	Record.setGlobal('defaultShipArrival', { x, y })
+	MapView.centerAt(startCoordinates)
+	Record.setGlobal('defaultShipArrival', startCoordinates)
 }
 
 const americaLarge = () => {

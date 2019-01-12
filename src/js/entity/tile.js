@@ -142,6 +142,7 @@ const diagonalNeighbors = tile => {
 	}
 	return result.filter(n => n)
 }
+const radius = tile => diagonalNeighbors(tile).concat([tile])
 
 const left = tile => MapEntity.tile({	
 	x: tile.mapCoordinates.x - 1,
@@ -297,6 +298,7 @@ export default {
 	decideCoastTerrain,
 	decideCoastalSea,
 	diagonalNeighbors,
+	radius,
 	movementCost,
 	save,
 	load,

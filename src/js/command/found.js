@@ -14,7 +14,7 @@ const create = unit => {
 			return false
 		}
 
-		if (Tile.diagonalNeighbors(MapEntity.tile(unit.mapCoordinates)).some(neighbor => neighbor.colony)) {
+		if (Tile.radius(MapEntity.tile(unit.mapCoordinates)).some(neighbor => neighbor.colony)) {
 			return false
 		}
 
