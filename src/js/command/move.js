@@ -41,7 +41,7 @@ const createFromData = data => {
 
 	const init = currentTime => {
 		startTime = currentTime
-		startCoords = unit.mapCoordinat
+		startCoords = unit.mapCoordinates
 
 
 		if (!inMoveDistance(startCoords, coords)) {
