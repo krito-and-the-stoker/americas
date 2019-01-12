@@ -41,17 +41,20 @@ const createFromData = data => {
 
 	const init = currentTime => {
 		startTime = currentTime
-		startCoords = unit.mapCoordinates
+		startCoords = unit.mapCoordinat
+
 
 		if (!inMoveDistance(startCoords, coords)) {
 			aborted = true
 			return false
 		}
 
-		if (startCoords.x === coords.y && startCoords.y === coords.y) {
+
+		if (startCoords.x === coords.x && startCoords.y === coords.y) {
 			aborted = true
 			return false
 		}
+
 
 		// unload?
 		if (unit.domain === 'sea' && unit.passengers.length > 0 && targetTile.domain === 'land' && !targetTile.colony && inMoveDistance(unit.mapCoordinates, coords)) {
@@ -59,6 +62,7 @@ const createFromData = data => {
 			aborted = true
 			return false
 		}
+
 
 		// load?
 		const shipsAtTarget = Unit.at(coords).filter(unit => unit.domain === 'sea')
@@ -70,11 +74,13 @@ const createFromData = data => {
 			Commander.scheduleBehind(ship.commander, Load.create(ship, unit))
 		}
 
+
 		// cannot move here
 		if (!enteringShip && unit.domain !== targetTile.domain && !targetTile.colony) {
 			aborted = true
 			return false
 		}
+
 
 		if (unit.colony) {
 			LeaveColony(unit)
