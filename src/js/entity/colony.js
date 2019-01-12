@@ -16,6 +16,7 @@ import Deteriorate from '../task/deteriorate'
 import Member from '../util/member'
 import Produce from '../task/produce'
 import ProductionSummary from '../task/productionSummary'
+import Building from '../entity/building'
 
 // for unknown reasons we need to wait bit until we can set the global here :/
 setTimeout(() => Record.setGlobal('colonyNames',
@@ -58,11 +59,13 @@ const listen = {
 	units: (colony, fn) => Binding.listen(colony, 'units', fn),
 	colonists: (colony, fn) => Binding.listen(colony, 'colonists', fn),
 	construction: (colony, fn) => Binding.listen(colony, 'construction', fn),
-	bells: (colony, fn) => Binding.listen(colony, 'bells', fn)
+	bells: (colony, fn) => Binding.listen(colony, 'bells', fn),
+	buildings: (colony, fn) => Binding.listen(colony, 'buildings', fn),
 }
 
 const update = {
-	construction: (colony, value) => Binding.update(colony, 'construction', colony.construction + value),
+	construction: (colony, value) => Binding.update(colony, 'construction', value),
+	buildings: (colony, value) => Binding.update(colony, 'buildings', value),
 	bells: (colony, value) => Binding.update(colony, 'bells', colony.bells + value),
 }
 
@@ -82,6 +85,17 @@ const initialize = colony => {
 			Storage.update(colony.storage, { good: 'food', amount: -200 })
 		}
 	})
+	listen.construction(colony, construction => {
+		if (construction.amount >= construction.cost.construction) {
+			if (construction.cost.tools) {
+				if (colony.storage.tools >= construction.cost.tools) {
+					Building.construct(colony, construction.target)
+				}
+			} else {
+				Building.construct(colony, construction.target)
+			}
+		}
+	})
 	Time.schedule(Produce.create(colony, 'colony', null))
 	Time.schedule(Deteriorate.create(colony))
 	Time.schedule(ProductionSummary.create(colony))
@@ -92,9 +106,17 @@ const create = coords => {
 		name: getColonyName(),
 		units: [],
 		colonists: [],
+		buildings: Building.create(),
 		capacity: 100,
 		mapCoordinates: { ...coords },
-		construction: 0,
+		construction: {
+			amount: 0,
+			target: "wagontrain",
+			name: "Wagon Train",
+			cost: {
+				construction: 20
+			}
+		},
 		bells: 0
 	}
 	colony.storage = Storage.create()
@@ -133,6 +155,7 @@ const save = colony => ({
 	capacity: colony.capacity,
 	mapCoordinates: colony.mapCoordinates,
 	storage: Storage.save(colony.storage),
+	buildings: colony.buildings,
 	construction: colony.construction,
 	bells: colony.bells
 })

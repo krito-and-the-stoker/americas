@@ -19,7 +19,7 @@ const TILE_SIZE = 64
 
 const createBuilding = (colony, name) => {
 	const container = new PIXI.Container()
-	const frame = Buildings[name].frame
+	const frame = Building.frame(colony, name)
 	const cols = 31
 	const x = 128 * (frame % cols)
 	const y = 128 * Math.floor(frame / cols)
@@ -110,24 +110,30 @@ const createBuilding = (colony, name) => {
 const create = colony => {
 	const container = new PIXI.Container()
 
-	const cols = 4
-	let position = {
-		x: 0,
-		y: 0
-	}
-	const unsubscribe = Util.mergeFunctions(Object.values(Buildings.places)
-		.map(name => {
-			const building = createBuilding(colony, name)
-			building.container.x = position.x * 128 + 400 / 1.6
-			building.container.y = position.y * 128 + 200 / 1.4
-			position.x += Buildings[name].width
-			if (position.x > cols) {
-				position.x = 0
-				position.y += 1
-			}
-			container.addChild(building.container)
-			return building.unsubscribe
-		}))
+	const unsubscribe = Colony.listen.buildings(colony, buildings => {
+		const cols = 4
+		let position = {
+			x: 0,
+			y: 0
+		}
+		return Util.mergeFunctions(Object.keys(buildings)
+			.map(name => {
+				const building = createBuilding(colony, name)
+				building.container.x = position.x * 128 + 400 / 1.6
+				building.container.y = position.y * 128 + 200 / 1.4
+				position.x += Buildings[name].width
+				if (position.x > cols) {
+					position.x = 0
+					position.y += 1
+				}
+				container.addChild(building.container)
+
+				return () => {
+					building.unsubscribe()
+					container.removeChild(building.container)
+				}
+			}))
+	})
 
 	container.scale.set(1.3)
 

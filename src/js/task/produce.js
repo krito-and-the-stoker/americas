@@ -29,7 +29,8 @@ const create = (colony, building, colonist) => {
 		}
 		if (production && production.type) {
 			if (production.type === 'construction') {
-				Colony.update.construction(colony, production.amount)
+				colony.construction.amount += production.amount
+				Colony.update.construction(colony)
 			}
 			if (production.type === 'bells') {
 				Colony.update.bells(colony, production.amount)

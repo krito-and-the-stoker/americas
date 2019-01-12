@@ -19,6 +19,7 @@ import ColonyStorage from './storage'
 import ColonyUnits from './units'
 import ColonyBuildings from './buildings'
 import ColonyProduction from './production'
+import ColonyConstruction from './construction'
 
 
 let currentScreen = null
@@ -47,15 +48,17 @@ const create = colony => {
 	const units = ColonyUnits.create(colony, () => close(), originalDimensions)
 	const buildings = ColonyBuildings.create(colony)
 	const production = ColonyProduction.create(colony)
+	const construction = ColonyConstruction.create(colony, originalDimensions)
 
 	container.addChild(colonyWoodBackground)
 	container.addChild(background.container)
 	container.addChild(tiles.container)
 	container.addChild(buildings.container)
-	container.addChild(units.container)
 	container.addChild(headline.container)
 	container.addChild(storage.container)
 	container.addChild(production.container)
+	container.addChild(construction.container)
+	container.addChild(units.container)
 
 
 	const unsubscribeResize = RenderView.updateWhenResized(({ dimensions }) => {

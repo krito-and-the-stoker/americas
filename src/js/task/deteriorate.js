@@ -1,4 +1,5 @@
 import Storage from '../entity/storage'
+import Colony from '../entity/colony'
 import Time from '../timeline/time'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
@@ -21,6 +22,17 @@ const create = colony => {
 				Storage.update(colony.storage, { good, amount: -loss })
 				Storage.update(colony.productionRecord, { good, amount: -loss })
 			})
+
+		if (colony.construction.amount > colony.construction.cost.construction) {
+			const amount = colony.construction.amount
+			const capacity = colony.construction.cost.construction
+			const loss = deltaTime * PRODUCTION_BASE_FACTOR * LOSS_FACTOR * (amount - capacity)
+			Colony.update.construction(colony, {
+				...colony.construction,
+				amount: colony.construction.amount - loss
+			})
+			Storage.update(colony.productionRecord, { good: 'construction', amount: -loss })
+		}
 
 		lastUpdate = currentTime
 		return true

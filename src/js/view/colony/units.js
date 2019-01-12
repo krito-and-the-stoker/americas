@@ -20,7 +20,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 	const container = new PIXI.Container()
 
 	const unsubscribeUnits = Colony.listen.units(colony, units => {
-		const ships = units.filter(unit => unit.domain === 'sea')
+		const ships = units.filter(unit => unit.domain === 'sea' || unit.properties.cargo > 0)
 		const shipViews = ships.map(Transport.create)
 		shipViews.forEach((view, index) => {
 			Click.on(view.sprite, () => {
@@ -34,7 +34,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 
 		const createLandUnitsRaw = () => {
 			return Util.mergeFunctions(units
-				.filter(unit => unit.domain === 'land')
+				.filter(unit => unit.domain === 'land' && !unit.properties.cargo)
 				.filter(unit => !unit.colonist || !unit.colonist.colony)
 				.map((unit, index, all) => {
 					const shownUnits = all.length

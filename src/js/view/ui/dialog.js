@@ -92,7 +92,6 @@ const createIndependent = (message, options, image = null, params = {}) => {
 		}
 
 		plane9.width = 200 + text.width
-		plane9.height = 300 + 80 + (optionTexts.length + 1) * 30
 		optionTexts = options.map((msg, index) => {
 			const optionText = new PIXI.Text(msg, {
 				fontFamily: 'Times New Roman',
@@ -115,6 +114,7 @@ const createIndependent = (message, options, image = null, params = {}) => {
 			container.addChild(optionText)
 			return optionText
 		})
+		plane9.height = 300 + 80 + (optionTexts.length + 1) * 30
 		plane9.position.x = RenderView.getCenter().x - plane9.width / 2
 		plane9.position.y = RenderView.getCenter().y - plane9.height / 2 + 30
 

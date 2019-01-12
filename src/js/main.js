@@ -66,7 +66,8 @@ const americaLarge = () => {
 }
 
 const initialize = () => {
-	MapEntity.create({ data: americaLargeMap })
+	MapEntity.create({ data: americaSmallMap })
+	// MapEntity.create({ data: americaLargeMap })
 	const mapRendering = new RenderMap()
 	
 	RenderView.initialize(mapRendering)
@@ -77,7 +78,8 @@ const initialize = () => {
 
 	PathFinder.initialize()
 
-	americaLarge()
+	americaSmall()
+	// americaLarge()
 
 	// for no apparent reason the layers are not available inside TreasureView
 	TreasureView.initialize(Foreground.get().permanent)
