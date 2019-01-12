@@ -8,7 +8,7 @@ export default (ship, unit) => {
 			Europe.remove.unit(unit)
 		}
 		if (unit.colony) {
-			LeaveColony(unit.colony, unit)
+			LeaveColony(unit)
 		}
 	}
 }
