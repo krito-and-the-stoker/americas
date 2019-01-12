@@ -19,6 +19,7 @@ const create = colony => {
 			.forEach(([good, amount]) => {
 				const loss = deltaTime * PRODUCTION_BASE_FACTOR * LOSS_FACTOR * (amount - colony.capacity)
 				Storage.update(colony.storage, { good, amount: -loss })
+				Storage.update(colony.productionRecord, { good, amount: -loss })
 			})
 
 		lastUpdate = currentTime

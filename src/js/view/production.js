@@ -7,15 +7,31 @@ import Ressources from '../render/ressources'
 
 
 const	create = (resource, amount, width = 100) => {
-	if (amount > 0) {
+	if (amount !== 0) {
+		const absoluteAmount = Math.abs(amount)
 		const frame = Goods[resource].id
 		const texture = new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame))
-		return Util.range(Math.floor(amount)).map(i => {
+		const result = Util.range(Math.floor(absoluteAmount)).map(i => {
 			const sprite = new PIXI.Sprite(texture)
-			sprite.x = width - Math.round((i + 1)*width / amount)
+			sprite.x = width - Math.round((i + 1)*width / absoluteAmount)
 			sprite.y = 0
+			if (amount < 0) {
+				sprite.tint = 0xFF6666
+			}
 			return sprite
 		})
+		if (result.length > 6) {
+			const number = new PIXI.Text(`${absoluteAmount}`, {
+				fontFamily: 'Times New Roman',
+				fontSize: 32,
+				fill: amount > 0 ? 0xffffff : 0xFF6666,
+				align: 'center'
+			})
+			number.x = 10
+			number.y = 10
+			result.push(number)
+		}
+		return result
 	} else {
 		return []
 	}

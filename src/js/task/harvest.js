@@ -22,6 +22,7 @@ const create = (colony, tile, good, colonist = null) => {
 		const deltaTime = currentTime - lastUpdate
 		const amount = deltaTime * Tile.production(tile, good, colonist) * PRODUCTION_BASE_FACTOR
 		Storage.update(colony.storage, { good, amount })
+		Storage.update(colony.productionRecord, { good, amount })
 
 		lastUpdate = currentTime
 		return true

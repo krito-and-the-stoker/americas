@@ -15,6 +15,7 @@ import Consume from '../task/consume'
 import Deteriorate from '../task/deteriorate'
 import Member from '../util/member'
 import Produce from '../task/produce'
+import ProductionSummary from '../task/productionSummary'
 
 // for unknown reasons we need to wait bit until we can set the global here :/
 setTimeout(() => Record.setGlobal('colonyNames',
@@ -70,6 +71,8 @@ const canEmploy = (colony, building) => colony.colonists
 
 
 const initialize = colony => {
+	colony.productionSummary = Storage.createWithProduction()
+	colony.productionRecord = Storage.createWithProduction()
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	Tile.listen(tile, () => Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good))))
 	listen.colonists(colony, colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)))
@@ -81,6 +84,7 @@ const initialize = colony => {
 	})
 	Time.schedule(Produce.create(colony, 'colony', null))
 	Time.schedule(Deteriorate.create(colony))
+	Time.schedule(ProductionSummary.create(colony))
 }
 
 const create = coords => {

@@ -18,6 +18,7 @@ import ColonyHeadline from './headline'
 import ColonyStorage from './storage'
 import ColonyUnits from './units'
 import ColonyBuildings from './buildings'
+import ColonyProduction from './production'
 
 
 let currentScreen = null
@@ -45,6 +46,7 @@ const create = colony => {
 	const storage = ColonyStorage.create(colony, originalDimensions)
 	const units = ColonyUnits.create(colony, () => close(), originalDimensions)
 	const buildings = ColonyBuildings.create(colony)
+	const production = ColonyProduction.create(colony)
 
 	container.addChild(colonyWoodBackground)
 	container.addChild(background.container)
@@ -53,6 +55,7 @@ const create = colony => {
 	container.addChild(units.container)
 	container.addChild(headline.container)
 	container.addChild(storage.container)
+	container.addChild(production.container)
 
 
 	const unsubscribeResize = RenderView.updateWhenResized(({ dimensions }) => {
@@ -74,6 +77,7 @@ const create = colony => {
 		storage.unsubscribe()
 		units.unsubscribe()
 		buildings.unsubscribe()
+		production.unsubscribe()
 		unsubscribeResize()
 	}
 	Click.on(colonyWoodBackground, close)

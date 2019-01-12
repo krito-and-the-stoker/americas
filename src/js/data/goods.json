@@ -17,6 +17,11 @@
 		"tools",
 		"guns"
 	],
+	"productions":[
+		"construction",
+		"bells",
+		"crosses"
+	],
 	"food":{
 		"id": 64,
 		"expert": "farmer"

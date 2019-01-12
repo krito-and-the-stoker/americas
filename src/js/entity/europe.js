@@ -128,7 +128,6 @@ const initialize = () => {
 			europe.crossesNeeded += 1
 			europe.crosses = 0
 			update.crosses(0)
-			console.log(crosses, europe.crosses)
 			Message.send(`Religious unrest in Europe has caused a ${chosen.name} to line up for migration to the new world.`)
 		}
 	})

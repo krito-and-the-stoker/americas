@@ -21,9 +21,11 @@ const create = (colony, building, colonist) => {
 		const production = Building.production(colony, building, colonist, scale)
 		if (consumption) {
 			Storage.update(colony.storage, { good: consumption.good, amount: -consumption.amount })
+			Storage.update(colony.productionRecord, { good: consumption.good, amount: -consumption.amount })
 		}
 		if (production && production.good) {
 			Storage.update(colony.storage, { good: production.good, amount: production.amount })
+			Storage.update(colony.productionRecord, { good: production.good, amount: production.amount })
 		}
 		if (production && production.type) {
 			if (production.type === 'construction') {
@@ -35,6 +37,7 @@ const create = (colony, building, colonist) => {
 			if (production.type === 'crosses') {
 				Europe.update.crosses(production.amount)
 			}
+			Storage.update(colony.productionRecord, { good: production.type, amount: production.amount })
 		}
 
 		lastUpdate = currentTime

@@ -13,6 +13,7 @@ const update = (storage, pack) => {
 
 const listen = (storage, fn) => Binding.listen(storage, null, fn)
 const create = () => Goods.types.reduce((obj, name) => ({ ...obj, [name]: 0 }), {})
+const createWithProduction = () => Goods.types.concat(Goods.productions).reduce((obj, name) => ({ ...obj, [name]: 0 }), {})
 
 const split = storage => goods(storage)
 	.filter(({ amount }) => amount > 0)
@@ -22,7 +23,7 @@ const split = storage => goods(storage)
 			.map(amount => ({ good, amount }))
 		).flat()
 
-const transfer = (src, dest, pack = {}) => {
+const transfer = (src, dest, pack = {}, supressUpdate = false) => {
 	const move = ({ good, amount }) => {
 		if (amount) {
 			dest[good] += amount
@@ -40,22 +41,35 @@ const transfer = (src, dest, pack = {}) => {
 			.forEach(move)
 	}
 
+	if (!supressUpdate) {
+		update(src)
+		update(dest)
+	}
+}
+
+const transferWithProduction = (src, dest) => {
+	transfer(src, dest, {}, true)
+	productions(src).forEach(pack => transfer(src, dest, pack, true))
 	update(src)
 	update(dest)
 }
 
 const goods = storage => Object.values(Goods.types).map(good => ({ good, amount: storage[good] }))
+const productions = storage => Object.values(Goods.productions).map(good => ({ good, amount: storage[good] }))
 
 const save = storage => Object.values(Goods.types).map(good => [good, storage[good]])
 const load = data => Util.makeObject(data)
 
 export default {
 	create,
+	createWithProduction,
 	listen,
 	update,
 	split,
 	transfer,
+	transferWithProduction,
 	load,
 	save,
 	goods,
+	productions,
 }
