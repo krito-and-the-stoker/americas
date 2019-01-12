@@ -67,11 +67,10 @@ const create = (colony, originalDimensions) => {
 						if (options.length === 1 || unit) {
 							Colonist.beginFieldWork(colonist, tile, options[0].good)
 						} else {
-							const scale = 1
 							coords.y += 0.5 * TILE_SIZE / 2
 
 							const optionsView = options.map(Context.productionOption)
-							const decision = await Context.create(optionsView, coords, 80, 0.5 * scale)
+							const decision = await Context.create(optionsView, coords, 80, 0.5)
 							Colonist.beginFieldWork(colonist, tile, decision.good)
 						}
 						return true
@@ -96,6 +95,7 @@ const create = (colony, originalDimensions) => {
 						const colonistSprite = ColonistView.create(colonist)
 						colonistSprite.x = position.x
 						colonistSprite.y = position.y
+						colonistSprite.scale.set(0.75)
 						container.addChild(colonistSprite)
 
 						const good = work.good
