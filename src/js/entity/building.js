@@ -48,7 +48,8 @@ const consumption = (colony, building, colonist, scale = 1) => {
 		return null
 	}
 
-	const type = baseConsumption.good || baseConsumption.type
+	const baseProduction = Buildings[building].production
+	const type = baseProduction ? baseProduction.good || baseProduction.type : null
 	return {
 		good: baseConsumption.good,
 		type: baseConsumption.type,
