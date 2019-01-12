@@ -5,6 +5,7 @@ const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
 const create = colony => {
 	let lastUpdate = null
+	let count = -1
 	const update = currentTime => {
 		if (!lastUpdate) {
 			lastUpdate = currentTime
@@ -13,16 +14,18 @@ const create = colony => {
 
 		const deltaTime = currentTime - lastUpdate
 		const scale = deltaTime * PRODUCTION_BASE_FACTOR
+		count += 1
 
-		if (scale > 0) {		
+		if (count > 30) {
 			Storage.goods(colony.productionSummary).forEach(({ good }) => colony.productionSummary[good] = 0)
 			Storage.productions(colony.productionSummary).forEach(({ good }) => colony.productionSummary[good] = 0)
 			Storage.goods(colony.productionRecord).forEach(({ good, amount }) => colony.productionRecord[good] = Math.round(amount / scale))
 			Storage.productions(colony.productionRecord).forEach(({ good, amount }) => colony.productionRecord[good] = Math.round(amount / scale))
 			Storage.transferWithProduction(colony.productionRecord, colony.productionSummary)
+			lastUpdate = currentTime
+			count = 0
 		}
 
-		lastUpdate = currentTime
 		return true
 	}
 
