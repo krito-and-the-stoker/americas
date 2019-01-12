@@ -5,6 +5,7 @@ import Goods from '../data/goods.json'
 import Util from '../util/util'
 import Ressources from '../render/ressources'
 
+const MAX_DISTANCE = 30
 
 const	create = (resource, amount, width = 100) => {
 	if (amount !== 0) {
@@ -13,7 +14,8 @@ const	create = (resource, amount, width = 100) => {
 		const texture = new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame))
 		const result = Util.range(Math.floor(absoluteAmount)).map(i => {
 			const sprite = new PIXI.Sprite(texture)
-			sprite.x = width - Math.round((i + 1)*width / absoluteAmount)
+			const distance = Math.min(MAX_DISTANCE, width / absoluteAmount)
+			sprite.x = distance * absoluteAmount - Math.round((i + 1)*distance)
 			sprite.y = 0
 			if (amount < 0) {
 				sprite.tint = 0xFF6666
