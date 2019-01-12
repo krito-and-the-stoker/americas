@@ -74,7 +74,7 @@ const initialize = colony => {
 	colony.productionSummary = Storage.createWithProduction()
 	colony.productionRecord = Storage.createWithProduction()
 	const tile = MapEntity.tile(colony.mapCoordinates)
-	Tile.listen(tile, () => Tile.colonyProductionGoods(tile).forEach(good => Time.schedule(Harvest.create(colony, tile, good))))
+	Tile.listen(tile, () => Util.mergeFunctions(Tile.colonyProductionGoods(tile).map(good => Time.schedule(Harvest.create(colony, tile, good)))))
 	listen.colonists(colony, colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)))
 	Storage.listen(colony.storage, storage => {
 		if (storage.food >= 200) {

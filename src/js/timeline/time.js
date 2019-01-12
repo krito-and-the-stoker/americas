@@ -19,6 +19,7 @@ const get = () => ({
 
 const speedUp = () => timeScale *= 1.5
 const slowDown = () => timeScale /= 1.5
+const normalize = () => timeScale = 1
 
 
 const advance = deltaTime => {
@@ -98,6 +99,7 @@ export default {
 	get,
 	speedUp,
 	slowDown,
+	normalize,
 	MOVE_BASE_TIME,
 	UNLOAD_TIME,
 	LOAD_TIME,

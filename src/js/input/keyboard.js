@@ -70,6 +70,10 @@ const handleKeydown = (e) => {
 		Time.slowDown()
 	}
 
+	if (e.key === '0') {
+		Time.normalize()
+	}
+
 	const unit = UnitView.selectedUnit()
 	if (unit) {
 		if (e.key === 'b') {
