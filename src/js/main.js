@@ -28,7 +28,7 @@ const draw = () => {
 }
 
 const americaSmall = () => {
-	const startCoordinates = Util.choose([{ x: 125, y: 65 },
+	const startCoordinates = Util.choose([
 	{ x: 135, y: 82 },
 	{ x: 152, y: 105 },
 	{ x: 168, y: 117 },
@@ -44,7 +44,7 @@ const americaSmall = () => {
 }
 
 const americaLarge = () => {
-	const startCoordinates = Util.choose([{ x: 135, y: 135 },
+	const startCoordinates = Util.choose([
 	{ x: 172, y: 113 },
 	{ x: 182, y: 102 },
 	{ x: 167, y: 141 },
