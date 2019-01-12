@@ -16,8 +16,8 @@ const create = colony => {
 
 		Storage.goods(colony.productionSummary).forEach(({ good }) => colony.productionSummary[good] = 0)
 		Storage.productions(colony.productionSummary).forEach(({ good }) => colony.productionSummary[good] = 0)
-		Storage.goods(colony.productionRecord).forEach(({ good, amount }) => colony.productionRecord[good] = Math.floor(amount / scale))
-		Storage.productions(colony.productionRecord).forEach(({ good, amount }) => colony.productionRecord[good] = Math.floor(amount / scale))
+		Storage.goods(colony.productionRecord).forEach(({ good, amount }) => colony.productionRecord[good] = amount > 0 ? Math.floor(amount / scale) : Math.ceil(amount / scale))
+		Storage.productions(colony.productionRecord).forEach(({ good, amount }) => colony.productionRecord[good] = amount > 0 ? Math.floor(amount / scale) : Math.ceil(amount / scale))
 		Storage.transferWithProduction(colony.productionRecord, colony.productionSummary)
 
 		lastUpdate = currentTime
