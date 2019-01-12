@@ -167,11 +167,5 @@
 			"good": "rum",
 			"amount": [3, 6, 9]
 		}
-	},
-	"colony": {
-		"production": {
-			"type": "crosses",
-			"amount": [1]
-		}
 	}
 }

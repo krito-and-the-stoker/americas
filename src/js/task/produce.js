@@ -17,6 +17,14 @@ const create = (colony, building, colonist) => {
 
 		const deltaTime = currentTime - lastUpdate
 		const scale = deltaTime * PRODUCTION_BASE_FACTOR
+		lastUpdate = currentTime
+
+		if (building === 'colony') {
+			Europe.update.crosses(scale)
+			Storage.update(colony.productionRecord, { good: 'crosses', amount: scale })
+			return true
+		}
+
 		const consumption = Building.consumption(colony, building, colonist, scale)
 		const production = Building.production(colony, building, colonist, scale)
 		if (consumption) {
@@ -41,7 +49,6 @@ const create = (colony, building, colonist) => {
 			Storage.update(colony.productionRecord, { good: production.type, amount: production.amount })
 		}
 
-		lastUpdate = currentTime
 		return true
 	}
 
