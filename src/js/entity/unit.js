@@ -95,6 +95,12 @@ const initialize = unit => {
 				updateType(unit, 'scout')
 			}
 		}
+
+		if (unit.name === 'soldier') {
+			if (equipment.horses > 0 && equipment.guns > 0) {
+				updateType(unit, 'dragoon')
+			}
+		}
 	})
 }
 

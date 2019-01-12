@@ -35,7 +35,7 @@ const create = unit => {
 				return false
 			}
 			if (args.unit && args.unit !== unit) {
-				LoadBetweenShips(src, dest, pack)
+				LoadBetweenShips(fromUnit, unit, pack)
 				return false
 			}
 		}
