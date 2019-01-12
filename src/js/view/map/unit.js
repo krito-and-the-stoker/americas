@@ -104,6 +104,7 @@ const show = view => {
 }
 
 const hide = view => {
+	unselect(view.unit)
 	Foreground.removeUnit(view.sprite)
 }
 

@@ -43,6 +43,11 @@ const createFromData = data => {
 		startTime = currentTime
 		startCoords = unit.mapCoordinates
 
+		if(unit.offTheMap) {
+			aborted = true
+			return false
+		}
+
 
 		if (!inMoveDistance(startCoords, coords)) {
 			aborted = true

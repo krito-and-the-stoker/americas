@@ -14,11 +14,13 @@ const create = colony => {
 		const deltaTime = currentTime - lastUpdate
 		const scale = deltaTime * PRODUCTION_BASE_FACTOR
 
-		Storage.goods(colony.productionSummary).forEach(({ good }) => colony.productionSummary[good] = 0)
-		Storage.productions(colony.productionSummary).forEach(({ good }) => colony.productionSummary[good] = 0)
-		Storage.goods(colony.productionRecord).forEach(({ good, amount }) => colony.productionRecord[good] = Math.round(amount / scale))
-		Storage.productions(colony.productionRecord).forEach(({ good, amount }) => colony.productionRecord[good] = Math.round(amount / scale))
-		Storage.transferWithProduction(colony.productionRecord, colony.productionSummary)
+		if (scale > 0) {		
+			Storage.goods(colony.productionSummary).forEach(({ good }) => colony.productionSummary[good] = 0)
+			Storage.productions(colony.productionSummary).forEach(({ good }) => colony.productionSummary[good] = 0)
+			Storage.goods(colony.productionRecord).forEach(({ good, amount }) => colony.productionRecord[good] = Math.round(amount / scale))
+			Storage.productions(colony.productionRecord).forEach(({ good, amount }) => colony.productionRecord[good] = Math.round(amount / scale))
+			Storage.transferWithProduction(colony.productionRecord, colony.productionSummary)
+		}
 
 		lastUpdate = currentTime
 		return true
