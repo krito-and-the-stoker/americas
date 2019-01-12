@@ -44,20 +44,29 @@ const americaSmall = () => {
 }
 
 const americaLarge = () => {
-	const x = 135
-	const y = 135
-	const pioneer = Unit.create('pioneer', { x, y })
-	const soldier = Unit.create('soldier', { x, y })
-	const caravel = Unit.create('caravel', { x, y })
+	const startCoordinates = Util.choose([{ x: 135, y: 135 },
+	{ x: 172, y: 113 },
+	{ x: 182, y: 102 },
+	{ x: 167, y: 141 },
+	{ x: 171, y: 160 },
+	{ x: 181, y: 168 },
+	{ x: 200, y: 180 },
+	{ x: 231, y: 206 },
+	{ x: 286, y: 243 },
+	{ x: 275, y: 296 },
+	{ x: 235, y: 354 }])
+	const pioneer = Unit.create('pioneer', startCoordinates)
+	const soldier = Unit.create('soldier', startCoordinates)
+	const caravel = Unit.create('caravel', startCoordinates)
 	Unit.loadUnit(caravel, pioneer)
 	Unit.loadUnit(caravel, soldier)
-	MapView.centerAt({ x, y })
+	MapView.centerAt(startCoordinates)
 	MapView.zoomBy(1/0.35, null, 0)
-	Record.setGlobal('defaultShipArrival', { x, y })
+	Record.setGlobal('defaultShipArrival', startCoordinates)
 }
 
 const initialize = () => {
-	MapEntity.create({ data: americaSmallMap })
+	MapEntity.create({ data: americaLargeMap })
 	const mapRendering = new RenderMap()
 	
 	RenderView.initialize(mapRendering)
@@ -68,7 +77,7 @@ const initialize = () => {
 
 	PathFinder.initialize()
 
-	americaSmall()
+	americaLarge()
 
 	// for no apparent reason the layers are not available inside TreasureView
 	TreasureView.initialize(Foreground.get().permanent)

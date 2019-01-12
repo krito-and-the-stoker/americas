@@ -14,7 +14,9 @@ const create = ({ good, amount }) => {
 		align: 'center'
 	})
 
-	const update = amount => number.text = `${Math.floor(amount)}`
+	const update = amount => {
+		number.text = `${Math.floor(Math.max(0, amount))}`
+	}
 
 	return {
 		sprite,
