@@ -61,12 +61,33 @@ const listen = {
 	construction: (colony, fn) => Binding.listen(colony, 'construction', fn),
 	bells: (colony, fn) => Binding.listen(colony, 'bells', fn),
 	buildings: (colony, fn) => Binding.listen(colony, 'buildings', fn),
+	productionBonus: (colony, fn) => Binding.listen(colony, 'productionBonus', fn),
 }
 
 const update = {
 	construction: (colony, value) => Binding.update(colony, 'construction', value),
 	buildings: (colony, value) => Binding.update(colony, 'buildings', value),
 	bells: (colony, value) => Binding.update(colony, 'bells', colony.bells + value),
+	productionBonus: (colony, value) => Binding.update(colony, 'productionBonus', value),
+}
+
+const tories = colony => {
+	const colonists = colony.colonists.length
+	const percentage = 100 - Math.min(100, Math.round(colony.bells / (colonists + 1)))
+	const number = Math.round(colonists * percentage / 100)
+
+	return {
+		percentage,
+		number
+	}
+}
+
+const rebels = colony => {
+	const tt = tories(colony)
+	return {
+		percentage: 100 - tt.percentage,
+		number: colony.colonists.length - tt.number
+	}
 }
 
 const canEmploy = (colony, building) => colony.colonists
@@ -99,6 +120,24 @@ const initialize = colony => {
 	Time.schedule(Produce.create(colony, 'colony', null))
 	Time.schedule(Deteriorate.create(colony))
 	Time.schedule(ProductionSummary.create(colony))
+	listen.colonists(colony, () => listen.bells(colony, () => {
+		let bonus = 0
+		if (tories(colony).number > 8) {
+			bonus -= 1
+		}
+		if (tories(colony).number > 5) {
+			bonus -= 1
+		}
+		if (rebels(colony).percentage >= 50) {
+			bonus += 1
+		}
+		if (rebels(colony).percentage >= 100) {
+			bonus += 1
+		}
+		if (colony.productionBonus !== bonus) {
+			update.productionBonus(colony, bonus)
+		}
+	}))
 }
 
 const create = coords => {
@@ -193,5 +232,7 @@ export default {
 	add,
 	remove,
 	listen,
-	update
+	update,
+	tories,
+	rebels
 }

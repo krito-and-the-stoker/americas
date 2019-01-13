@@ -61,39 +61,41 @@ const createBuilding = (colony, name) => {
 		return false
 	})
 
-	const unsubscribeColonists = Colony.listen.colonists(colony, colonists => {
-		const cleanupWork = Util.mergeFunctions(colonists.map(colonist => {
-			return Colonist.listen.work(colonist, work => {
-				if (work && work.building === name) {
-					const colonistSprite = ColonistView.create(colonist)
-					colonistSprite.x = work.position * 128 / 3
-					colonistSprite.y = 20
-					colonistSprite.scale.set(1.5)
-					container.addChild(colonistSprite)
+	const unsubscribeColonists = Colony.listen.productionBonus(colony, () => {	
+		return Colony.listen.colonists(colony, colonists => {
+			const cleanupWork = Util.mergeFunctions(colonists.map(colonist => {
+				return Colonist.listen.work(colonist, work => {
+					if (work && work.building === name) {
+						const colonistSprite = ColonistView.create(colonist)
+						colonistSprite.x = work.position * 128 / 3
+						colonistSprite.y = 20
+						colonistSprite.scale.set(1.5)
+						container.addChild(colonistSprite)
 
-					const production = Building.production(colony, name, colonist)
-					if (production) {
-						const productionSprites = ProductionView.create(production.good || production.type, production.amount, TILE_SIZE / 2)
-						productionSprites.forEach(s => {
-							s.position.x += work.position * 128 / 3
-							s.position.y += 20 + TILE_SIZE
-							container.addChild(s)
-						})
+						const production = Building.production(colony, name, colonist)
+						if (production) {
+							const productionSprites = ProductionView.create(production.good || production.type, production.amount, TILE_SIZE / 2)
+							productionSprites.forEach(s => {
+								s.position.x += work.position * 128 / 3
+								s.position.y += 20 + TILE_SIZE
+								container.addChild(s)
+							})
+							return () => {
+								productionSprites.forEach(s => container.removeChild(s))
+								container.removeChild(colonistSprite)
+							}
+						}
 						return () => {
-							productionSprites.forEach(s => container.removeChild(s))
 							container.removeChild(colonistSprite)
 						}
 					}
-					return () => {
-						container.removeChild(colonistSprite)
-					}
-				}
-			})
-		}))
+				})
+			}))
 
-		return () => {
-			cleanupWork()
-		}
+			return () => {
+				cleanupWork()
+			}
+		}) 
 	})
 
 	const unsubscribe = () => {

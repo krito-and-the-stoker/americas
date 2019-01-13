@@ -81,10 +81,12 @@ const production = (colony, building, colonist, scale = null) => {
 
 	const level = colony.buildings[building]
 	const type = baseProduction.good || baseProduction.type
+	const baseAmount = Math.round(colony.productionBonus * (baseProduction.amount[level] / 3) + baseProduction.amount[level])
+	const amount = expert(colonist, type) * (scale !== null ? scale * efficiency(colony, building, colonist, scale) : 1) * baseAmount
 	return {
 		good: baseProduction.good,
 		type: baseProduction.type,
-		amount: expert(colonist, type) * (scale !== null ? scale * efficiency(colony, building, colonist, scale) : 1) * baseProduction.amount[level]
+		amount: scale === null ? Math.round(amount) : amount
 	}
 }
 
@@ -97,10 +99,11 @@ const consumption = (colony, building, colonist, scale = 1) => {
 	const level = colony.buildings[building]
 	const baseProduction = Buildings[building].production
 	const type = baseProduction ? baseProduction.good || baseProduction.type : null
+	const baseAmount = Math.round(colony.productionBonus * (baseConsumption.amount[level] / 3) + baseConsumption.amount[level])
 	return {
 		good: baseConsumption.good,
 		type: baseConsumption.type,
-		amount: scale * expert(colonist, type) * efficiency(colony, building, colonist, scale) * baseConsumption.amount[level]
+		amount: scale * expert(colonist, type) * efficiency(colony, building, colonist, scale) * baseAmount
 	}
 
 }

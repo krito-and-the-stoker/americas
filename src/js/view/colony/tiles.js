@@ -85,40 +85,42 @@ const create = (colony, originalDimensions) => {
 		})
 	}))
 
-	const unsubscribeColonists = Colony.listen.colonists(colony, colonists => {
-		const cleanupWork = Util.mergeFunctions(colonists.map(colonist => {
-			return Colonist.listen.work(colonist, work => {
-				const { tile, position } = tilesAndPositions.find(({ tile }) => work && work.tile === tile) || {}
-				
-				if (position) {
-					return Tile.listen(tile, tile => {					
-						const colonistSprite = ColonistView.create(colonist)
-						colonistSprite.x = position.x
-						colonistSprite.y = position.y
-						colonistSprite.scale.set(0.75)
-						container.addChild(colonistSprite)
+	const unsubscribeColonists = Colony.listen.productionBonus(colony, () => {	
+		return Colony.listen.colonists(colony, colonists => {
+			const cleanupWork = Util.mergeFunctions(colonists.map(colonist => {
+				return Colonist.listen.work(colonist, work => {
+					const { tile, position } = tilesAndPositions.find(({ tile }) => work && work.tile === tile) || {}
+					
+					if (position) {
+						return Tile.listen(tile, tile => {					
+							const colonistSprite = ColonistView.create(colonist)
+							colonistSprite.x = position.x
+							colonistSprite.y = position.y
+							colonistSprite.scale.set(0.75)
+							container.addChild(colonistSprite)
 
-						const good = work.good
-						const productionSprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
-						productionSprites.forEach(s => {
-							s.position.x += position.x
-							s.position.y += position.y + 0.5 * TILE_SIZE
-							s.scale.set(0.5)
-							container.addChild(s)
+							const good = work.good
+							const productionSprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
+							productionSprites.forEach(s => {
+								s.position.x += position.x
+								s.position.y += position.y + 0.5 * TILE_SIZE
+								s.scale.set(0.5)
+								container.addChild(s)
+							})
+
+							return () => {
+								container.removeChild(colonistSprite)
+								productionSprites.forEach(s => container.removeChild(s))
+							}
 						})
+					}
+				})
+			}))
 
-						return () => {
-							container.removeChild(colonistSprite)
-							productionSprites.forEach(s => container.removeChild(s))
-						}
-					})
-				}
-			})
-		}))
-
-		return () => {
-			cleanupWork()
-		}
+			return () => {
+				cleanupWork()
+			}
+		})
 	})
 	
 	const unsubscribeCenter = Tile.listen(center, center => {	

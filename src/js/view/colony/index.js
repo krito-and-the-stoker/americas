@@ -20,6 +20,7 @@ import ColonyUnits from './units'
 import ColonyBuildings from './buildings'
 import ColonyProduction from './production'
 import ColonyConstruction from './construction'
+import ColonyLiberty from './liberty'
 
 
 let currentScreen = null
@@ -49,6 +50,7 @@ const create = colony => {
 	const buildings = ColonyBuildings.create(colony)
 	const production = ColonyProduction.create(colony)
 	const construction = ColonyConstruction.create(colony, originalDimensions)
+	const liberty = ColonyLiberty.create(colony)
 
 	container.addChild(colonyWoodBackground)
 	container.addChild(background.container)
@@ -58,6 +60,7 @@ const create = colony => {
 	container.addChild(storage.container)
 	container.addChild(production.container)
 	container.addChild(construction.container)
+	container.addChild(liberty.container)
 	container.addChild(units.container)
 
 
@@ -81,6 +84,7 @@ const create = colony => {
 		units.unsubscribe()
 		buildings.unsubscribe()
 		production.unsubscribe()
+		liberty.unsubscribe()
 		unsubscribeResize()
 	}
 	Click.on(colonyWoodBackground, close)

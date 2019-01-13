@@ -9,7 +9,7 @@ const create = colony => {
 
 	const totalWidth = 550
 
-	container.position.y = 710
+	container.position.y = 880
 	container.position.x = 10
 	const unsubscribe = Storage.listen(colony.productionSummary, summary => {
 		const packs = Storage.productions(summary).concat(Storage.goods(summary))
