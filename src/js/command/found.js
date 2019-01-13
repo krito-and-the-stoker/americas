@@ -14,10 +14,12 @@ const create = unit => {
 			return false
 		}
 
-		if (Tile.radius(MapEntity.tile(unit.mapCoordinates)).some(neighbor => neighbor.colony)) {
+		const tile = MapEntity.tile(unit.mapCoordinates)
+		if (Tile.radius(tile).some(neighbor => neighbor.colony)) {
 			return false
 		}
 
+		Tile.constructRoad(tile)
 		const colony = Colony.create(unit.mapCoordinates)
 		Unit.at(unit.mapCoordinates).forEach(unit => {
 			EnterColony(colony, unit)

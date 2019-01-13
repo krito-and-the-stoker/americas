@@ -10,6 +10,7 @@ import Record from '../util/record'
 import Commander from '../command/commander'
 import CutForest from '../command/cutForest'
 import Plow from '../command/plow'
+import Road from '../command/road'
 import MapEntity from '../entity/map'
 import Treasure from '../entity/treasure'
 
@@ -85,6 +86,10 @@ const handleKeydown = (e) => {
 			} else {
 				Commander.scheduleInstead(unit.commander, Plow.create(unit))
 			}
+		}
+
+		if (e.key === 'r') {
+			Commander.scheduleInstead(unit.commander, Road.create(unit))
 		}
 	}
 	// const activeUnit = Unit.get().activeUnit

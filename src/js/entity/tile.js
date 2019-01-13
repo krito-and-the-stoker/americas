@@ -179,6 +179,9 @@ const movementCost = (from, to) => {
 			return MovementCosts.river
 		}
 	}
+	if (from.road && to.road) {
+		return MovementCosts.road
+	}
 	if (to.colony) {
 		return MovementCosts.colony
 	}
@@ -286,6 +289,13 @@ const plow = tile => {
 	Background.render()
 }
 
+const constructRoad = tile => {
+	tile.road = true
+
+	Binding.update(tile)
+	Background.render()
+}
+
 const listen = (tile, fn) => Binding.listen(tile, null, fn)
 
 
@@ -306,5 +316,10 @@ export default {
 	neighborString,
 	clearForest,
 	plow,
-	listen
+	constructRoad,
+	listen,
+	left,
+	right,
+	up,
+	down
 }

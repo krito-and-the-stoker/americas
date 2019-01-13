@@ -1,5 +1,6 @@
 import Terrain from '../data/terrain.json'
 import MapEntity from '../entity/map'
+import Tile from '../entity/tile'
 
 class MapView{
 	constructor() {
@@ -284,10 +285,62 @@ class MapView{
 	}
 
 	renderTerraform(tile) {
+		const up = Tile.up(tile)
+		const right = Tile.right(tile)
+		const down = Tile.down(tile)
+		const left = Tile.left(tile)
+
+		const indices = []
 		if (tile.plowed) {
-			return [Terrain.plowed.id]
+			const plowedBase = Terrain.plowed.singleTile
+			const mod = this.getForestTileModifier(
+				up.plowed,
+				right.plowed,
+				down.plowed,
+				left.plowed
+			)
+			indices.push(plowedBase + mod);
 		}
-		return []
+		if (tile.road) {
+			const row = 16
+			const col = 1
+
+			const northSouth = [Terrain.road.id + 1*row + 4*col, Terrain.road.id + 2*row + 4*col]
+			const eastWest = [Terrain.road.id + 4*col, Terrain.road.id + 5*col]
+			const northWestSouthEast = [Terrain.road.id, Terrain.road.id + col, Terrain.road.id + row + col, Terrain.road.id + row]
+			const northEastSouthWest = northWestSouthEast.map(id => id + 2*col)
+
+			Tile.diagonalNeighbors(tile)
+				.filter(neighbor => neighbor.road)
+				.forEach(neighbor => {
+					if (neighbor.mapCoordinates.x === tile.mapCoordinates.x) {
+						indices.push(neighbor.mapCoordinates.y < tile.mapCoordinates.y ? northSouth[1] : northSouth[0])
+						return
+					}
+					if (neighbor.mapCoordinates.y === tile.mapCoordinates.y) {
+						indices.push(neighbor.mapCoordinates.x < tile.mapCoordinates.x ? eastWest[1] : eastWest[0])
+						return
+					}
+					if (neighbor.mapCoordinates.x < tile.mapCoordinates.x && neighbor.mapCoordinates.y < tile.mapCoordinates.y) {
+						indices.push(northWestSouthEast[2])
+						return
+					}
+					if	(neighbor.mapCoordinates.x > tile.mapCoordinates.x && neighbor.mapCoordinates.y > tile.mapCoordinates.y) {
+						indices.push(northWestSouthEast[0])
+						return
+					}
+					if (neighbor.mapCoordinates.x < tile.mapCoordinates.x && neighbor.mapCoordinates.y > tile.mapCoordinates.y) {
+						indices.push(northEastSouthWest[1])
+						return
+					}
+					if	(neighbor.mapCoordinates.x > tile.mapCoordinates.x && neighbor.mapCoordinates.y < tile.mapCoordinates.y) {
+						indices.push(northEastSouthWest[3])	
+						return
+					}
+					// indices.push(Terrain.road.id)
+				})
+		}
+		return indices
 	}
 
 	getCornerNames(up, rightUp, right, rightDown, down, leftDown, left, leftUp){
