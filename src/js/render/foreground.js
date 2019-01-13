@@ -51,6 +51,10 @@ const addTerrain = sprite => {
 	terrain.addChild(sprite)
 }
 
+const removeTerrain = sprite => {
+	terrain.removeChild(sprite)
+}
+
 const addUnit = sprite => {
 	units.addChild(sprite)
 }
@@ -110,6 +114,7 @@ export default {
 	openScreen,
 	closeScreen,
 	addTerrain,
+	removeTerrain,
 	addUnit,
 	removeUnit,
 	get

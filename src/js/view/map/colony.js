@@ -52,11 +52,9 @@ const create = colony => {
 	}
 }
 
-let views = []
 const initialize = () => {
 	Record.listen('colony', colony => {
 		const view = create(colony)
-		views.push(view)
 	})
 }
 

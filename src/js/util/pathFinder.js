@@ -35,6 +35,8 @@ const initialize = () => {
 			tile: () => MapEntity.tileFromIndex(center.index)
 		}, neighbors);
 	})
+
+	console.log('pathfinding initialized')
 }
 
 // const findDomainChange = (from, unit) => {

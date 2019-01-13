@@ -125,7 +125,7 @@ const createTiles = tileStacks => tileStacks.map(stack => ({
 }))
 
 const restart = () => {
-	console.log('recreating tiles')
+	console.log('reassembling tiles')
 	tiles = createTiles(MapView.instance.tileStacks)
 	numTiles = MapView.instance.numTiles
 	render()
@@ -140,7 +140,7 @@ const initialize = mapView => {
 
 	undiscovered = new PIXI.extras.TilingSprite(Ressources.get().undiscovered, layer.width, layer.height)
 
-	console.log('creating tiles')
+	console.log('assembling tiles')
 	tiles = createTiles(mapView.tileStacks)
 
 	layer.app.stage.addChild(undiscovered)

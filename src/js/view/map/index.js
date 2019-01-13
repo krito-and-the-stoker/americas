@@ -11,6 +11,7 @@ import Secondary from '../../input/secondary'
 
 import UnitView from './unit'
 import ColonyView from './colony'
+import SettlementView from './settlement'
 
 const MIN_SCALE = 0.125
 const MAX_SCALE = 4
@@ -87,6 +88,8 @@ const moveBy = (relativeCoords, moveTime) => {
 const initialize = () => {
 	ColonyView.initialize()
 	UnitView.initialize()
+	SettlementView.initialize()
+
 
 	const stage = Foreground.get().layer.app.stage
 

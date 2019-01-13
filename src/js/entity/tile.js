@@ -132,6 +132,7 @@ const discover = tile => {
 		Dialog.show('discovered')
 	}
 	tile.discovered = true
+	Binding.update(tile)
 	RenderView.render()	
 }
 

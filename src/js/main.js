@@ -18,6 +18,7 @@ import TreasureView from './view/treasure'
 import Foreground from './render/foreground'
 import Record from './util/record'
 import Util from './util/util'
+import Tribe from './entity/tribe'
 
 const update = (deltaTime) => {
 	Time.advance(deltaTime)
@@ -71,18 +72,20 @@ const initialize = () => {
 	const mapRendering = new RenderMap()
 	
 	RenderView.initialize(mapRendering)
+	MapView.initialize()
 	Dialog.initialize()
 	Tween.initialize()
-	MapView.initialize()
-	Europe.initialize()
-
 	PathFinder.initialize()
 
-	americaSmall()
-	// americaLarge()
+	Europe.initialize()
+	Tribe.createFromMap(MapEntity.get())
 
 	// for no apparent reason the layers are not available inside TreasureView
 	TreasureView.initialize(Foreground.get().permanent)
+
+	// start game!
+	americaSmall()
+	// americaLarge()
 
 	MapView.zoomBy(1/0.35, null, 0)
 	setTimeout(() => {

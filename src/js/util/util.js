@@ -16,6 +16,14 @@ const globalScale = sprite => {
 	return scale
 }
 
+const removeDuplicates = array => array
+	.reduce((arr, coords) => {
+		if (!arr.includes(coords)) {
+			arr.push(coords)
+		}
+		return arr
+	}, [])
+
 export const loadTexture = async (...files) => new Promise((resolve, reject) => {
 	PIXI.loader.reset()
 	PIXI.loader.add(files).load(() => {
@@ -54,4 +62,5 @@ export default {
 	getUid,
 	mergeFunctions,
 	makeObject,
+	removeDuplicates
 }

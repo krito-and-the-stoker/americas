@@ -43,7 +43,7 @@ const create = ({ data }) => {
 	}))
 	console.log('creating coast line')
 	createCoastLine(tiles)
-	console.log('map created.')
+	console.log('map created')
 
 	Record.add('map', { tiles, numTiles })
 }

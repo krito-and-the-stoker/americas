@@ -128,7 +128,6 @@ const purchase = option => {
 }
 
 const initialize = () => {
-	console.log('initialized europe')
 	listen.crosses(crosses => {
 		if (crosses > europe.crossesNeeded) {
 			const index = Math.floor(Math.random() * europe.pool.length)
@@ -144,6 +143,7 @@ const initialize = () => {
 			Message.send(`Religious unrest in Europe has caused a ${chosen.name} to line up for migration to the new world.`)
 		}
 	})
+	console.log('europe initialized')
 }
 
 

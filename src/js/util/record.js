@@ -10,6 +10,8 @@ import Unit from '../entity/unit'
 import Europe from '../entity/europe'
 import Treasure from '../entity/treasure'
 import Market from '../entity/market'
+import Tribe from '../entity/tribe'
+import Settlement from '../entity/settlement'
 
 import MapView from '../render/map'
 import Foreground from '../render/foreground'
@@ -127,7 +129,9 @@ const getModule = name => ({
 	colony: Colony,
 	map: MapEntity,
 	tile: Tile,
-	unit: Unit
+	unit: Unit,
+	settlement: Settlement,
+	tribe: Tribe
 })[name]
 
 const saveSingleRecord = record => ({
