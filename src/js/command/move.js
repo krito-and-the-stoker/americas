@@ -10,6 +10,7 @@ import Load from '../command/load'
 import UnitView from '../view/map/unit'
 import EnterColony from '../action/enterColony'
 import LeaveColony from '../action/leaveColony'
+import InvestigateRumors from '../action/investigateRumors'
 
 const TILE_SIZE = 64
 
@@ -124,9 +125,12 @@ const createFromData = data => {
 				EnterColony(targetTile.colony, unit)
 			}
 
-			const tile = MapEntity.tile(coords)
-			Tile.discover(tile)
-			Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))
+			if (targetTile.rumors) {
+				InvestigateRumors(unit)
+			}
+
+			Tile.discover(targetTile)
+			Tile.diagonalNeighbors(targetTile).forEach(other => Tile.discover(other))
 		}
 		if (finishedFn) {
 			finishedFn()

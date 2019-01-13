@@ -37,7 +37,8 @@ const create = ({ data }) => {
 			top: layer(data, 'terrain top').data[index],
 			riverSmall: layer(data, 'terrain river small').data[index],
 			riverLarge: layer(data, 'terrain river large').data[index],
-			bonus: layer(data, 'terrain bonus').data[index]
+			bonus: layer(data, 'terrain bonus').data[index],
+			zone: layer(data, 'zones').data[index]
 		}
 	}))
 	console.log('creating coast line')

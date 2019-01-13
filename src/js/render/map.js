@@ -503,6 +503,10 @@ class MapView{
 			bonus.push(Terrain.bonusResource[resourceName]);
 		}
 
+		if (center && center.discovered && center.rumors){
+			bonus.push(Terrain.rumors.id)
+		}
+
 		return bonus;
 	}
 

@@ -28,6 +28,7 @@ const create = ({ id, layers, index }) => {
 		riverLarge: layers.riverLarge === Terrain.largeRiver.id,
 		bonus: layers.bonus ===  Terrain.bonusResource.id,
 		mapCoordinates: MapEntity.mapCoordinates(index),
+		zone: layers.zone,
 		harvestedBy: null,
 		plowed: false,
 		road: false,
@@ -36,6 +37,7 @@ const create = ({ id, layers, index }) => {
 		discovered: false,
 	}
 
+	tile.rumors = tile.domain === 'land' && Math.random() < 0.03
 	tile.river = tile.riverLarge || tile.riverSmall
 
 	tile.hills = layers.top === Terrain.hills.id || (tile.mountains && Math.random() > 0.1)
@@ -56,8 +58,8 @@ const create = ({ id, layers, index }) => {
 
 const terrainName = tile => tile.forest ? `${tile.name}WithForest` : (tile.mountains ? 'mountains' : (tile.hills ? 'hills' : tile.name) )
 
-const keys = ['id', 'forest', 'treeVariation', 'hills', 'hillVariation', 'mountains', 'mountainVariation', 'riverSmall', 'riverLarge', 'bonus', 'plowed', 'road', 'coast', 'discovered', 'harvestedBy']
-const type = ['int','bool',   'bool',          'bool',  'bool',          'bool',      'bool',              'bool',       'bool',       'bool',  'bool',   'bool', 'bool',  'bool',       'reference']
+const keys = ['id', 'forest', 'treeVariation', 'hills', 'hillVariation', 'mountains', 'mountainVariation', 'riverSmall', 'riverLarge', 'bonus', 'plowed', 'road', 'coast', 'discovered', 'rumors', 'harvestedBy']
+const type = ['int','bool',   'bool',          'bool',  'bool',          'bool',      'bool',              'bool',       'bool',       'bool',  'bool',   'bool', 'bool',  'bool',       'bool',   'reference']
 const save = tile => ([
 	tile.id,
 	tile.forest,
@@ -73,6 +75,7 @@ const save = tile => ([
 	tile.road,
 	tile.coast,
 	tile.discovered,
+	tile.rumors,
 	Record.reference(tile.harvestedBy)
 ].map((value, index) => {
 	if (type[index] === 'bool') {
