@@ -17,6 +17,8 @@ import Member from '../util/member'
 import Produce from '../task/produce'
 import ProductionSummary from '../task/productionSummary'
 import Building from '../entity/building'
+import ShrinkFromStarvation from '../action/shrinkFromStarvation'
+import Message from '../view/ui/message'
 
 // for unknown reasons we need to wait bit until we can set the global here :/
 setTimeout(() => Record.setGlobal('colonyNames',
@@ -100,10 +102,22 @@ const initialize = colony => {
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	Tile.listen(tile, () => Util.mergeFunctions(Tile.colonyProductionGoods(tile).map(good => Time.schedule(Harvest.create(colony, tile, good)))))
 	listen.colonists(colony, colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)))
+
+	let starvationMessageSent = false
 	Storage.listen(colony.storage, storage => {
 		if (storage.food >= 200) {
 			const unit = Unit.create('settler', colony.mapCoordinates)
 			Storage.update(colony.storage, { good: 'food', amount: -200 })
+		}
+		if (storage.food < 0 && !starvationMessageSent) {
+			Message.send(`The food storage of ${colony.name} is empty. We need to produce more food quickly to prevent any losses amongst the colonists`)
+			starvationMessageSent = true
+		}
+		if (storage.food < -15) {
+			Message.send(`A colonist in ${colony.name} died due to inadequate food supplies`)
+			ShrinkFromStarvation(colony)
+			storage.food = 0
+			starvationMessageSent = false
 		}
 	})
 	listen.construction(colony, construction => {

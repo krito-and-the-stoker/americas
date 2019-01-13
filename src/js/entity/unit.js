@@ -9,6 +9,7 @@ import Storage from '../entity/storage'
 import Util from '../util/util'
 import Binding from '../util/binding'
 import EnterColony from '../action/enterColony'
+import LeaveColony from '../action/leaveColony'
 
 const create = (name, coords) => {
 	if (Units[name]) {
@@ -56,6 +57,13 @@ const create = (name, coords) => {
 		console.warn('unit type not found', name)
 		return null
 	}
+}
+
+const disband = unit => {
+	if (unit.colony) {
+		LeaveColony(unit)
+	}
+	Record.remove(unit)
 }
 
 const initialize = unit => {
@@ -207,6 +215,7 @@ const load = unit => {
 
 export default {
 	create,
+	disband,
 	listen,
 	update,
 	loadGoods,
@@ -215,5 +224,5 @@ export default {
 	unloadAllUnits,
 	save,
 	load,
-	at
+	at,
 }

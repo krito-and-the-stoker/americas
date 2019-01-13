@@ -1,5 +1,6 @@
 import LZString from 'lz-string'
 import MainLoop from 'mainloop.js'
+import Util from '../util/util'
 
 import Colonist from '../entity/colonist'
 import Colony from '../entity/colony'
@@ -38,9 +39,14 @@ const add = (type, entity) => {
 	records.push({
 		id: makeId(),
 		entity,
-		type
+		type,
+		destroy: update(type, entity)
 	})
-	update(type, entity)
+}
+
+const remove = entity => {
+	records.find(record => record.entity === entity).destroy()
+	records = records.filter(record => record.entity === entity)
 }
 
 
@@ -59,7 +65,7 @@ const update = (type, entity) => {
 	if (!listeners[type]) {
 		initListeners(type)
 	}
-	listeners[type].forEach(fn => fn(entity))
+	return Util.mergeFunctions(listeners[type].map(fn => fn(entity)).filter(fn => typeof fn === 'function'))
 }
 
 
@@ -91,9 +97,10 @@ const revive = (record) => {
 	records.push({
 		id: record.id,
 		entity: record.entity,
-		type: record.type
+		type: record.type,
+		destroy: update(record.type, record.entity)
 	})
-	update(record.type, record.entity)
+	
 
 	return record.entity
 }
@@ -208,6 +215,8 @@ const entitiesLoaded = fn => loadedListeners.push(fn)
 const load = () => {
 	console.log('loading...')
 	Foreground.shutdown()
+
+	records.forEach(record => record.destroy())
 	
 	loadedListeners = []
 	records = []
@@ -241,6 +250,7 @@ const load = () => {
 
 export default {
 	add,
+	remove,
 	listen,
 	addTile,
 	reference,

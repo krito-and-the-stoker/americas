@@ -86,6 +86,10 @@ const create = unit => {
 
 const selectedUnit = () => selectedView ? selectedView.unit : null
 
+const destroy = view => {
+	hide(view)	
+}
+
 
 const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
 const lookGrey = unit => {
@@ -139,6 +143,10 @@ const initialize = () => {
 		Unit.listen.expert(unit, () => { updateTexture(view) })
 
 		views.push(view)
+
+		return () => {
+			destroy(view)
+		}
 	})
 }
 
