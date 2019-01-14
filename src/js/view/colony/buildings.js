@@ -21,7 +21,7 @@ const createBuilding = (colony, name) => {
 	const container = new PIXI.Container()
 	const frame = Building.frame(colony, name)
 
-	if (!frame) {
+	if (!frame && frame !== 0) {
 		return {
 			container,
 			unsubscribe: () => {}
