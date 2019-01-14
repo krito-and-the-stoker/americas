@@ -17,7 +17,7 @@ const MIN_SCALE = 0.125
 const MAX_SCALE = 4
 const TILE_SIZE = 64
 
-
+let stopRollingOut = () => {}
 let moveTween = null
 const moveMap = (newCoords, moveTime = 0) => {
 	if (moveTween) {
@@ -95,6 +95,7 @@ const initialize = () => {
 
 	let initialCoords = null
 	const start = coords => {
+		stopRollingOut = () => { initialCoords = null }
 		if (!Foreground.hasOpenScreen()) {		
 			initialCoords = {
 				x: RenderView.get().coords.x - coords.x,
@@ -117,6 +118,7 @@ const initialize = () => {
 		}
 	}
 	const end = coords => {
+		stopRollingOut = () => {}
 		initialCoords = null
 	}
 
@@ -136,6 +138,7 @@ const initialize = () => {
 
 	const ZOOM_FACTOR = 0.001
 	const handleWheel = (e) => {
+		stopRollingOut()
 		zoomBy(Math.exp(-ZOOM_FACTOR * e.deltaY), { x: Math.round(e.clientX), y: Math.round(e.clientY) })
 	}
 	Wheel.on(handleWheel)
