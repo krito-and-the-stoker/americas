@@ -110,7 +110,7 @@
 		}
 	},
 	"warehouse": {
-		"frame": [null, 13, 14, 14],
+		"frame": [null, 13, 15, 15],
 		"name": ["Storage", "Warehouse", "Warehouse Expansion", "Warehouse Expansion"],
 		"cost": [{
 			"construction": 0

@@ -105,7 +105,7 @@ const initialize = colony => {
 
 	let starvationMessageSent = false
 	Storage.listen(colony.storage, storage => {
-		if (storage.food >= 200) {
+		if (storage.food >= 220) {
 			const unit = Unit.create('settler', colony.mapCoordinates)
 			Storage.update(colony.storage, { good: 'food', amount: -200 })
 		}

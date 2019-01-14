@@ -49,9 +49,9 @@ const create = (name, coords) => {
 
 		initialize(unit)
 
-		const colony = MapEntity.tile(coords).colony
-		if (colony) {
-			EnterColony(colony, unit)
+		const tile = MapEntity.tile(coords)
+		if (tile && tile.colony) {
+			EnterColony(tile.colony, unit)
 		}
 
 		Record.add('unit', unit)
@@ -75,8 +75,10 @@ const disband = unit => {
 
 const initialize = unit => {
 	const tile = MapEntity.tile(unit.mapCoordinates)
-	Tile.discover(tile)
-	Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))
+	if (tile) {	
+		Tile.discover(tile)
+		Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))
+	}
 
 	Time.schedule(unit.commander)
 	Storage.listen(unit.equipment, equipment => {

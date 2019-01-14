@@ -45,7 +45,7 @@ const createFromData = data => {
 
 	const init = currentTime => {
 		startTime = currentTime
-		startCoords = unit.mapCoordinates
+		startCoords = startCoords || unit.mapCoordinates
 
 		if(unit.offTheMap) {
 			aborted = true
@@ -101,7 +101,7 @@ const createFromData = data => {
 		}
 
 		const speed = unit.properties.speed
-		fromTile = MapEntity.tile(unit.mapCoordinates)
+		fromTile = MapEntity.tile(startCoords)
 
 		duration = Tile.movementCost(fromTile, targetTile) * Time.MOVE_BASE_TIME / speed
 		if (unloading(unit, fromTile, targetTile)) {
