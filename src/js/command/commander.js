@@ -27,11 +27,18 @@ const scheduleBehind = (commander, command) => {
 	commander.commands.push(command)
 }
 
-const clearSchedule = (commander) => {
+const clearSchedule = commander => {
 	commander.commands = []
 	if (commander.currentCommand) {
 		clearSchedule(commander.currentCommand)
 	}
+}
+
+const commandsScheduled = command => {
+		const current = command.currentCommand ? commandsScheduled(command.currentCommand) : 1
+		const other = command.commands ? command.commands.map(commandsScheduled).reduce((sum, count) => sum + count, 0) : 0
+
+		return current + other
 }
 
 const create = (args = {}) => {
@@ -94,5 +101,6 @@ export default {
 	cancel,
 	scheduleInstead,
 	scheduleBehind,
-	isIdle
+	isIdle,
+	commandsScheduled
 }

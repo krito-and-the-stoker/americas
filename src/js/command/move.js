@@ -7,7 +7,6 @@ import Time from '../timeline/time'
 import Colony from '../entity/colony'
 import Unit from '../entity/unit'
 import Load from '../command/load'
-import UnitView from '../view/map/unit'
 import EnterColony from '../action/enterColony'
 import LeaveColony from '../action/leaveColony'
 import InvestigateRumors from '../action/investigateRumors'
@@ -19,6 +18,11 @@ const unloading = (unit, fromTile, toTile) => unit.domain === 'land' && fromTile
 const canLoad = ship => (Commander.isIdle(ship.commander) ||
 	ship.commander.currentCommand.type === 'load' ||
 	ship.commander.currentCommand.type === 'unload')
+
+const canLoadTreasure = ship => (Commander.isIdle(ship.commander) ||
+	ship.commander.currentCommand.type === 'load' ||
+	ship.commander.currentCommand.type === 'unload') && ship.properties.canTransportTreasure
+
 
 const createFromData = data => {
 	const coords = data.coords
@@ -38,7 +42,6 @@ const createFromData = data => {
 	const targetTile = MapEntity.tile(coords)
 	let fromTile = null
 	let enteringShip = data.enteringShip
-	const sprite = UnitView.getView(unit).sprite
 
 	const init = currentTime => {
 		startTime = currentTime
@@ -63,7 +66,12 @@ const createFromData = data => {
 
 
 		// unload?
-		if (unit.domain === 'sea' && unit.passengers.length > 0 && targetTile.domain === 'land' && !targetTile.colony && inMoveDistance(unit.mapCoordinates, coords)) {
+		if (unit.domain === 'sea' &&
+			unit.passengers.length > 0 &&
+			targetTile.domain === 'land' &&
+			!targetTile.colony &&
+			inMoveDistance(unit.mapCoordinates, coords) &&
+			Commander.commandsScheduled(unit.commander) === 1) {
 			Commander.scheduleInstead(unit.commander, Unload.create(unit, coords, finishedFn))
 			aborted = true
 			return false
@@ -74,9 +82,9 @@ const createFromData = data => {
 		const shipsAtTarget = Unit.at(coords).filter(unit => unit.domain === 'sea')
 		if (unit.domain === 'land' &&
 				targetTile.domain === 'sea' &&
-				shipsAtTarget.some(canLoad)) {
+				shipsAtTarget.some(unit.treasure ? canLoadTreasure : canLoad)) {
 			enteringShip = true
-			const ship = shipsAtTarget.find(canLoad)
+			const ship = shipsAtTarget.find(unit.treasure ? canLoadTreasure : canLoad)
 			Commander.scheduleBehind(ship.commander, Load.create(ship, unit))
 		}
 
@@ -111,15 +119,16 @@ const createFromData = data => {
 		if (relativeTime > duration) {
 			return false
 		}
-		sprite.x = TILE_SIZE * (startCoords.x + (coords.x - startCoords.x) * relativeTime / duration)
-		sprite.y = TILE_SIZE * (startCoords.y + (coords.y - startCoords.y) * relativeTime / duration)
+		Unit.update.mapCoordinates(unit, {
+			x: startCoords.x + (coords.x - startCoords.x) * relativeTime / duration,
+			y: startCoords.y + (coords.y - startCoords.y) * relativeTime / duration
+		})
+
 		return true
 	}
 
 	const finished = () => {
 		if (!aborted) {		
-			sprite.x = TILE_SIZE * coords.x
-			sprite.y = TILE_SIZE * coords.y
 			Unit.update.mapCoordinates(unit, { ...coords })
 			if (targetTile.colony) {
 				EnterColony(targetTile.colony, unit)

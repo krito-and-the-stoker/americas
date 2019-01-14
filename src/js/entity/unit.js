@@ -10,6 +10,8 @@ import Util from '../util/util'
 import Binding from '../util/binding'
 import EnterColony from '../action/enterColony'
 import LeaveColony from '../action/leaveColony'
+import EnterEurope from '../action/enterEurope'
+import Europe from '../entity/europe'
 
 const create = (name, coords) => {
 	if (Units[name]) {
@@ -19,6 +21,7 @@ const create = (name, coords) => {
 			domain: Units[name].domain,
 			mapCoordinates: coords || { x: undefined, y: undefined },
 			passengers: [],
+			treasure: null,
 			vehicle: null,
 			colony: null,
 			expert: null,
@@ -62,6 +65,9 @@ const create = (name, coords) => {
 const disband = unit => {
 	if (unit.colony) {
 		LeaveColony(unit)
+	}
+	if (Europe.has.unit(unit)) {
+		Europe.remove.unit(unit)
 	}
 	Record.remove(unit)
 }
@@ -170,6 +176,9 @@ const unloadUnit = unit => {
 		if (unit.colony) {
 			EnterColony(unit.colony, passenger)
 		}
+		if (Europe.has.unit(unit)) {
+			EnterEurope(passenger)
+		}
 
 		return passenger
 	}
@@ -185,6 +194,7 @@ const unloadAllUnits = unit => {
 const save = unit => ({
 	name: unit.name,
 	properties: unit.properties,
+	treasure: unit.treasure,
 	domain: unit.domain,
 	mapCoordinates: unit.mapCoordinates,
 	expert: unit.expert,

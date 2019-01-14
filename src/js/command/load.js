@@ -6,9 +6,9 @@ import Record from '../util/record'
 import Unit from '../entity/unit'
 
 
-const create = (unit, cargoUnit, loadingStartedAt = null) => {
+const create = (transport, passenger, loadingStartedAt = null) => {
 	const init = currentTime => {
-		if (!loadingStartedAt) {		
+		if (!loadingStartedAt) {
 			loadingStartedAt = currentTime
 		}
 
@@ -20,14 +20,14 @@ const create = (unit, cargoUnit, loadingStartedAt = null) => {
 	}
 
 	const finished = () => {
-		Unit.loadUnit(unit, cargoUnit)
+		Unit.loadUnit(transport, passenger)
 	}
 
 	const save = () => ({
 		type: 'load',
 		loadingStartedAt,
-		unit: Record.reference(unit),
-		cargoUnit: Record.reference(cargoUnit)
+		transport: Record.reference(transport),
+		passenger: Record.reference(passenger)
 	})
 
 	return {
@@ -40,9 +40,9 @@ const create = (unit, cargoUnit, loadingStartedAt = null) => {
 }
 
 const load = data => {
-	const unit = Record.dereference(data.unit)
-	const cargoUnit = Record.dereference(data.cargoUnit)
-	return create(unit, cargoUnit, data.loadingStartedAt)
+	const transport = Record.dereference(data.transport)
+	const passenger = Record.dereference(data.passenger)
+	return create(transport, passenger, data.loadingStartedAt)
 }
 
 export default {

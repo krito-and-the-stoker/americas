@@ -37,7 +37,7 @@ const create = ({ id, layers, index }) => {
 		discovered: false,
 	}
 
-	tile.rumors = tile.domain === 'land' && Math.random() < 0.03
+	tile.rumors = tile.domain === 'land' && Math.random() < 0.07
 	tile.river = tile.riverLarge || tile.riverSmall
 
 	tile.hills = layers.top === Terrain.hills.id || (tile.mountains && Math.random() > 0.1)

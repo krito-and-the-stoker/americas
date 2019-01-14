@@ -48,7 +48,7 @@ const add = (type, entity) => {
 
 const remove = entity => {
 	records.find(record => record.entity === entity).destroy()
-	records = records.filter(record => record.entity === entity)
+	records = records.filter(record => record.entity === !entity)
 }
 
 

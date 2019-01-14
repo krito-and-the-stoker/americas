@@ -129,7 +129,7 @@ const purchase = option => {
 
 const initialize = () => {
 	listen.crosses(crosses => {
-		if (crosses > europe.crossesNeeded) {
+		if (crosses >= europe.crossesNeeded) {
 			const index = Math.floor(Math.random() * europe.pool.length)
 			const chosen = europe.pool[index]
 			europe.pool[index] = Util.choose(possibleColonists)
@@ -137,9 +137,8 @@ const initialize = () => {
 			Unit.update.expert(unit, chosen.expert)
 			Unit.update.offTheMap(unit, true)
 			add.unit(unit)
+			update.crosses(-europe.crossesNeeded)
 			europe.crossesNeeded += 1
-			europe.crosses = 0
-			update.crosses(0)
 			Message.send(`Religious unrest in Europe has caused a ${chosen.name} to line up for migration to the new world.`)
 		}
 	})
