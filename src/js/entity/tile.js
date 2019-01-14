@@ -37,11 +37,11 @@ const create = ({ id, layers, index }) => {
 		discovered: false,
 	}
 
-	tile.rumors = tile.domain === 'land' && Math.random() < 0.07
+	tile.rumors = tile.domain === 'land' && Math.random() < 0.05
 	tile.river = tile.riverLarge || tile.riverSmall
 
 	tile.hills = layers.top === Terrain.hills.id || (tile.mountains && Math.random() > 0.1)
-	tile.treeVariation = tile.riverLarge || Math.random() > (tile.river ? 0.3 : 0.9)
+	tile.treeVariation = tile.riverLarge || Math.random() > (tile.river ? 0.3 : 0.9) ? 1 : 0
 	tile.mountainVariation = Math.random() > (tile.river ? 0.2 : 0.75) && !tile.bonus || tile.mountains
 	tile.hillVariation = Math.random() > (tile.river ? 0.2 : 0.75) && !tile.bonus
 
@@ -59,7 +59,7 @@ const create = ({ id, layers, index }) => {
 const terrainName = tile => tile.forest ? `${tile.name}WithForest` : (tile.mountains ? 'mountains' : (tile.hills ? 'hills' : tile.name) )
 
 const keys = ['id', 'forest', 'treeVariation', 'hills', 'hillVariation', 'mountains', 'mountainVariation', 'riverSmall', 'riverLarge', 'bonus', 'plowed', 'road', 'coast', 'discovered', 'rumors', 'harvestedBy']
-const type = ['int','bool',   'bool',          'bool',  'bool',          'bool',      'bool',              'bool',       'bool',       'bool',  'bool',   'bool', 'bool',  'bool',       'bool',   'reference']
+const type = ['int','bool',   'int',           'bool',  'bool',          'bool',      'bool',              'bool',       'bool',       'bool',  'bool',   'bool', 'bool',  'bool',       'bool',   'reference']
 const save = tile => ([
 	tile.id,
 	tile.forest,

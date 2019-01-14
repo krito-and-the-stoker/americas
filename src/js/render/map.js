@@ -558,7 +558,7 @@ class MapView{
 						down.forest && !(center.treeVariation && down.treeVariation),
 						left.forest && !(center.treeVariation && left.treeVariation)
 					);
-					const baseForestTile = center.treeVariation ? Terrain.forest.singleTileVariation : Terrain.forest.singleTile;
+					const baseForestTile = [Terrain.forest.singleTile, Terrain.forest.singleTileVariation, Terrain.forest.singleTileVariation2][center.treeVariation]
 					topTiles.push(baseForestTile + mod);
 				}
 			}
