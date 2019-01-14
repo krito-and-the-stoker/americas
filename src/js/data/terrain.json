@@ -65,7 +65,8 @@
 	"forest":{
 		"id": 309,
 		"singleTile": 309,
-		"singleTileVariation": 373
+		"singleTileVariation": 373,
+		"singleTileVariation2": 437
 	},
 	"hills":{
 		"id": 317
