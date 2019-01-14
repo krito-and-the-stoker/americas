@@ -12,6 +12,7 @@ const create = (unit, eta = null) => {
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)
 		if (tile.name !== 'sea lane') {
+			console.warn('not going to europe', tile.name, unit, tile)
 			return false
 		}
 

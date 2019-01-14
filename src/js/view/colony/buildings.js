@@ -20,6 +20,13 @@ const TILE_SIZE = 64
 const createBuilding = (colony, name) => {
 	const container = new PIXI.Container()
 	const frame = Building.frame(colony, name)
+
+	if (!frame) {
+		return {
+			container,
+			unsubscribe: () => {}
+		}
+	}
 	const cols = 31
 	const x = 128 * (frame % cols)
 	const y = 128 * Math.floor(frame / cols)
@@ -151,39 +158,18 @@ export default { create }
 
 // ARMORY
 // ARSENAL
-// BLACKSMITH'S HOUSE
-// BLACKSMITHS'S SHOP
-// CARPENTER'S SHOP
 // CATHEDRAL
 // CHURCH
-// CIGAR FACTORY
-// COAT FACTORY
 // COLLEGE
 // CUSTOM HOUSE
-// DOCKS
 // DRYDOCKS
 // FORT
 // FORTRESS
-// FUR TRADER'S HOUSE
-// FUR TRADING POST 
-// IRON WORKS
-// LUMBER MILL
 // MAGAZINE
 // NEWSPAPER
 // PRINTING PRESS
-// RUM DISTILLER'S HOUSE
-// RUM DISTILLERY
-// RUM FACTORY
 // SCHOOLHOUSE
 // SHIPYARD
 // STABLES
 // STOCKADE
-// TEXTILE MILL
-// TOBACCONIST'S HOUSE
-// TOBACCONIST'S SHOP
-// TOWN HALL
 // UNIVERSITY
-// WAREHOUSE
-// WAREHOUSE EXPANSIONS
-// WEAVER'S HOUSE
-// WEAVER'S SHOP

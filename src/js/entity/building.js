@@ -4,6 +4,7 @@ import Util from '../util/util'
 import Colony from '../entity/colony'
 import Unit from '../entity/unit'
 import Storage from '../entity/storage'
+import Message from '../view/ui/message'
 
 const frame = (colony, name) => Buildings[name].frame[colony.buildings[name]]
 const create = () => Util.makeObject(Buildings.places.map(name => [name, 0]))
@@ -27,13 +28,27 @@ const construct = (colony, target) => {
 	if (target === 'none') {
 		return
 	}
-	if (target === 'wagontrain') {
-		Unit.create('wagontrain', colony.mapCoordinates)
+	const actions = {
+		wagontrain: () => Unit.create('wagontrain', colony.mapCoordinates),
+		warehouse: () => {
+			colony.capacity += 100
+			const buildings = colony.buildings
+			if (buildings[target] < 2 ) {
+				buildings[target] += 1
+				Colony.update.buildings(colony, buildings)
+			}
+		}
+	}
+	if (actions[target]) {
+		actions[target]()
 	} else {
 		const buildings = colony.buildings
 		buildings[target] += 1
 		Colony.update.buildings(colony, buildings)
 	}
+
+	Message.send(`colony.name has completed construction of ${colony.construction.name}.`)
+
 	const construction = colony.construction
 	construction.amount -= construction.cost.construction
 	construction.target = 'none'

@@ -65,6 +65,9 @@ const updatePosition = view => {
 const create = unit => {
 	const frame = unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
 	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
+	if (unit.domain === 'land') {
+		sprite.hitArea = new PIXI.Rectangle(TILE_SIZE / 4, 0, TILE_SIZE / 2, TILE_SIZE)
+	}
 
 	const view = {
 		sprite,

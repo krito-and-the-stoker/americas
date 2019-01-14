@@ -7,7 +7,8 @@
 		"carpenters",
 		"warehouse",
 		"weavers",
-		"rumDistillers"
+		"rumDistillers",
+		"harbour"
 	],
 	"blacksmiths": {
 		"frame": [0, 1, 2],
@@ -109,12 +110,15 @@
 		}
 	},
 	"warehouse": {
-		"frame": [13, 14, 14],
-		"name": ["Storage", "Warehouse", "Warehouse Expansion"],
+		"frame": [null, 13, 14, 14],
+		"name": ["Storage", "Warehouse", "Warehouse Expansion", "Warehouse Expansion"],
 		"cost": [{
 			"construction": 0
 		}, {
 			"construction": 80
+		}, {
+			"construction": 80,
+			"tools": 20
 		}, {
 			"construction": 80,
 			"tools": 20
@@ -167,5 +171,16 @@
 			"good": "rum",
 			"amount": [3, 6, 9]
 		}
+	},
+	"harbour": {
+		"frame": [null, 23],
+		"width": 1,
+		"workspace": 0,
+		"name": ["Beach", "Docks"],
+		"cost": [{
+			"construction": 0
+		}, {
+			"construction": 52
+		}]
 	}
 }
