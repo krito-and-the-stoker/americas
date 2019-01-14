@@ -81,11 +81,8 @@ const handleKeydown = (e) => {
 			Commander.scheduleInstead(unit.commander, Found.create(unit))
 		}
 		if (e.key === 'p') {
-			if (MapEntity.tile(unit.mapCoordinates).forest) {
-				Commander.scheduleInstead(unit.commander, CutForest.create(unit))
-			} else {
-				Commander.scheduleInstead(unit.commander, Plow.create(unit))
-			}
+			Commander.scheduleInstead(unit.commander, CutForest.create(unit))
+			Commander.scheduleBehind(unit.commander, Plow.create(unit))
 		}
 
 		if (e.key === 'r') {

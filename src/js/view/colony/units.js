@@ -32,6 +32,8 @@ const create = (colony, closeScreen, originalDimensions) => {
 			container.addChild(view.container)
 		})
 
+		const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
+		greyScaleFilter.blackAndWhite()
 		const createLandUnitsRaw = () => {
 			return Util.mergeFunctions(units
 				.filter(unit => unit.domain === 'land' && !unit.properties.cargo)
@@ -48,6 +50,10 @@ const create = (colony, closeScreen, originalDimensions) => {
 					Click.on(sprite, () => {
 						closeScreen()
 						UnitMapView.select(unit)
+					})
+
+					const unsubscribePioneering = Unit.listen.pioneering(unit, pioneering => {
+						sprite.filters = pioneering ? [greyScaleFilter] : []
 					})
 
 					const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {

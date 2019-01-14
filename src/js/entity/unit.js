@@ -26,7 +26,8 @@ const create = (name, coords) => {
 			colony: null,
 			expert: null,
 			offTheMap: false,
-			colonist: null
+			colonist: null,
+			pioneering: false
 		}
 		unit.storage = Storage.create()
 		unit.equipment = Storage.create()
@@ -127,6 +128,7 @@ const listen = {
 	properties: (unit, fn) => Binding.listen(unit, 'properties', fn),
 	name: (unit, fn) => Binding.listen(unit, 'name', fn),
 	expert: (unit, fn) => Binding.listen(unit, 'expert', fn),
+	pioneering: (unit, fn) => Binding.listen(unit, 'pioneering', fn),
 }
 
 const update = {
@@ -138,6 +140,7 @@ const update = {
 	properties: (unit, value) => Binding.update(unit, 'properties', value),
 	name: (unit, value) => Binding.update(unit, 'name', value),
 	expert: (unit, value) => Binding.update(unit, 'expert', value),
+	pioneering: (unit, value) => Binding.update(unit, 'pioneering', value),
 }
 
 const updateType = (unit, name) => {
@@ -206,6 +209,7 @@ const save = unit => ({
 	colonist: Record.reference(unit.colonist),
 	passengers: unit.passengers.map(other => Record.reference(other)),
 	vehicle: Record.reference(unit.vehicle),
+	pioneering: unit.pioneering
 })
 
 const load = unit => {

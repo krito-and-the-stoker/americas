@@ -1,7 +1,7 @@
 import Time from '../timeline/time'
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
-import UnitView from '../view/map/unit'
+import Unit from '../entity/unit'
 import Record from '../util/record'
 import Storage from '../entity/storage'
 
@@ -14,8 +14,7 @@ const create = (unit, eta) => {
 		}
 
 		if (eta) {
-			UnitView.lookGrey(unit)
-			UnitView.unselect(unit)
+			Unit.update.pioneering(unit, true)
 			return true
 		}
 
@@ -28,7 +27,7 @@ const create = (unit, eta) => {
 		if (!aborted) {
 			Storage.update(unit.equipment, { good: 'tools', amount: -20 })	
 			Tile.constructRoad(MapEntity.tile(unit.mapCoordinates))
-			UnitView.lookNormal(unit)
+			Unit.update.pioneering(unit, false)
 		}
 	}
 

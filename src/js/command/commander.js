@@ -28,7 +28,9 @@ const scheduleBehind = (commander, command) => {
 }
 
 const clearSchedule = commander => {
-	commander.commands = []
+	if (commander.commands) {
+		commander.commands = []
+	}
 	if (commander.currentCommand) {
 		clearSchedule(commander.currentCommand)
 	}

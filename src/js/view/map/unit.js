@@ -92,14 +92,12 @@ const destroy = view => {
 
 
 const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
-const lookGrey = unit => {
-	const view = getView(unit)
+const lookGrey = view => {
 	view.sprite.filters = [greyScaleFilter]
 	greyScaleFilter.blackAndWhite()
 }
 
-const lookNormal = unit => {
-	const view = getView(unit)
+const lookNormal = view => {
 	view.sprite.filters = []
 }
 
@@ -141,6 +139,14 @@ const initialize = () => {
 		Unit.listen.mapCoordinates(unit, () => { updatePosition(view) })
 		Unit.listen.properties(unit, () => { updateTexture(view) })
 		Unit.listen.expert(unit, () => { updateTexture(view) })
+		Unit.listen.pioneering(unit, pioneering => {
+			if (pioneering) {			
+				lookGrey(view)
+				unselect(unit)
+			} else {
+				lookNormal(view)
+			}
+		})
 
 		views.push(view)
 
@@ -158,8 +164,6 @@ export default {
 	selectedUnit,
 	select,
 	unselect,
-	lookGrey,
-	lookNormal,
 	load,
 	save
 }
