@@ -15,6 +15,7 @@ import PathFinder from './util/pathFinder'
 import MapView from './view/map'
 import Dialog from './view/ui/dialog'
 import TreasureView from './view/treasure'
+import YearView from './view/year'
 import Foreground from './render/foreground'
 import Record from './util/record'
 import Util from './util/util'
@@ -82,6 +83,7 @@ const initialize = () => {
 
 	// for no apparent reason the layers are not available inside TreasureView
 	TreasureView.initialize(Foreground.get().permanent)
+	YearView.initialize(Foreground.get().permanent)
 
 	// start game!
 	americaSmall()

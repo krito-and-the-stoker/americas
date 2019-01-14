@@ -288,7 +288,7 @@ const neighborString = (tile, other) => {
 
 const clearForest = tile => {
 	tile.forest = false
-	tile.bonus = Math.random() > 0.85
+	tile.bonus = Math.random() < 0.07
 	tile.terrainName = terrainName(tile)
 
 	Binding.update(tile)

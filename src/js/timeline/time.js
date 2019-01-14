@@ -1,5 +1,5 @@
+import Binding from '../util/binding'
 
-let timeScale = 1
 const MOVE_BASE_TIME = 7500
 const UNLOAD_TIME = 2500
 const LOAD_TIME = 2500
@@ -8,25 +8,33 @@ const PRODUCTION_BASE_TIME = 15000
 const CUT_FOREST = 25000
 const PLOW = 15000
 const CONSTRUCT_ROAD = 15000
+const YEAR = 80000
 
 let currentTime = 0
 let scheduled = []
 let paused = false
+
+const startYear = 1492
+const time = {
+	scale: 1,
+	year: startYear
+}
 
 const get = () => ({
 	scheduled,
 	currentTime
 })
 
-const speedUp = () => timeScale *= 1.5
-const slowDown = () => timeScale /= 1.5
-const normalize = () => timeScale = 1
+const speedUp = () => time.scale *= 1.5
+const slowDown = () => time.scale /= 1.5
+const normalize = () => time.scale = 1
 
 
 const advance = deltaTime => {
 	if (!paused) {
-		currentTime += deltaTime * timeScale
+		currentTime += deltaTime * time.scale
 	}
+	update.year(Math.round(startYear + currentTime / YEAR))
 	const readyTasks = scheduled.filter(e => e.time <= currentTime)
 	const needsInitialization = readyTasks.filter(e => !e.started && e.init)
 	const finishedAfterInit = needsInitialization.filter(e => {
@@ -52,6 +60,14 @@ const advance = deltaTime => {
 		e.cleanup = true
 	})
 	scheduled = scheduled.filter(e => !e.cleanup)
+}
+
+const listen = {
+	year: fn => Binding.listen(time, 'year', fn)
+}
+
+const update= {
+	year: value => Binding.update(time, 'year', value)
 }
 
 const schedule = (e, time = null) => {
@@ -91,6 +107,7 @@ const load = data => {
 
 export default {
 	advance,
+	listen,
 	schedule,
 	togglePause,
 	save,
