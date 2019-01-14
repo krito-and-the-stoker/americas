@@ -12,6 +12,7 @@ import Commander from '../../command/commander'
 import ColonistView from './colonist'
 import BecomeColonist from '../../action/becomeColonist'
 import JoinColony from '../../action/joinColony'
+import UnjoinColony from '../../action/unjoinColony'
 
 
 const TILE_SIZE = 64
@@ -48,6 +49,9 @@ const create = (colony, originalDimensions) => {
 				if (unit && !Commander.isIdle(unit.commander)) {
 					return false
 				}
+				if (!colony.buildings.harbour && tile.domain === 'sea') {
+					return false
+				}
 				if (!tile.harvestedBy) {
 					if (!unit && !args.colonist) {
 						return false
@@ -64,6 +68,10 @@ const create = (colony, originalDimensions) => {
 					}
 					if (colonist) {					
 						const options = Tile.fieldProductionOptions(tile, colonist)
+						if (options.length === 0) {
+							UnjoinColony(colonist)
+							return false
+						}
 						if (options.length === 1 || unit) {
 							Colonist.beginFieldWork(colonist, tile, options[0].good)
 						} else {

@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 import { loadTexture, range, rectangle } from './../util/util'
 import Layer from './layer'
 import Background from './background'
+import Context from '../view/ui/context'
 
 let container = null
 let context = null
@@ -37,6 +38,7 @@ const openScreen = screen => {
 
 const closeScreen = () => {
 	if (currentScreen) {	
+		Context.cancelAll()
 		layer.app.stage.removeChild(currentScreen)
 		layer.app.stage.addChild(container)
 		layer.app.stage.addChild(permanent)

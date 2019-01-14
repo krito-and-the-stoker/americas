@@ -15,7 +15,17 @@ const productionOption = choice => {
 	}
 }
 
-const create = (options, coords, radius = 100, scale = 1)  => new Promise(resolve => {
+const cancelAll = () => {
+	containers.forEach(c => {
+		Foreground.get().context.removeChild(c.container)
+		// c.reject()
+	})
+	containers = []
+}
+
+let containers = []
+const create = (options, coords, radius = 100, scale = 1)  => new Promise((resolve, reject) => {
+	cancelAll()
 	const container = new PIXI.Container()
 	options.forEach((option, index) => {
 		const angle = Math.PI / 2 - 2*Math.PI*index / options.length
@@ -31,9 +41,14 @@ const create = (options, coords, radius = 100, scale = 1)  => new Promise(resolv
 	container.y = coords.y
 	container.scale.set(scale)
 	Foreground.get().context.addChild(container)
+	containers.push({
+		container,
+		reject
+	})
 })
 
 export default {
 	productionOption,
-	create
+	create,
+	cancelAll
 }

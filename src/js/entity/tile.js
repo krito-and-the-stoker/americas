@@ -231,6 +231,10 @@ const	applyModifier = (tile, base, name, resource, where) => {
 
 const production = (tile, resource, colonist = null) => {
 	const where = colonist ? 'field' : 'colony'
+	if (tile.domain === 'sea' && colonist && colonist.colony && !colonist.colony.buildings.harbour) {
+		return 0
+	}
+
 	let base = applyModifier(tile, 0, 'base', resource, where)
 	if (base > 0 && colonist && colonist.colony) {
 		base += colonist.colony.productionBonus
