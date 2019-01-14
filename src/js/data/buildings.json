@@ -226,8 +226,8 @@
 			"tools": 100
 		}],
 		"production": {
-			"good": "tools",
-			"amount": [3, 6]
+			"good": "crosses",
+			"amount": [0, 3, 6]
 		}		
 	},
 	"press": {
@@ -248,7 +248,7 @@
 	"gunsmiths": {
 		"frame": [null, 61, 62, 63],
 		"width": 1,
-		"workspace": 1,
+		"workspace": 3,
 		"name": ["House", "Armory", "Magazine", "Arsenal"],
 		"cost": [{
 			"construction": 0
@@ -263,11 +263,11 @@
 		}],
 		"consumption": {
 			"good": "tools",
-			"amount": [3, 6, 6]
+			"amount": [0, 3, 6, 6]
 		},
 		"production": {
 			"good": "guns",
-			"amount": [3, 6, 9]
+			"amount": [0, 3, 6, 9]
 		}
 	},
 	"customhouse": {
@@ -289,6 +289,8 @@
 		"name": ["None", "Stockade", "Fort", "Fortress"],
 		"workspace": 0,
 		"cost": [{
+			"construction": 0
+		}, {
 			"construction": 64
 		}, {
 			"construction": 120,

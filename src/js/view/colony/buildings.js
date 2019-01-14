@@ -30,9 +30,8 @@ const createBuilding = (colony, name) => {
 			unsubscribe: () => {}
 		}
 	}
-	const cols = 31
-	const x = 128 * (frame % cols)
-	const y = 128 * Math.floor(frame / cols)
+	const x = 128 * frame
+	const y = 0
 	const width = Buildings[name].width * 128
 	const height = 128
 	const rectangle = new PIXI.Rectangle(x, y, width, height)

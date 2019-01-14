@@ -120,14 +120,18 @@ const initialize = colony => {
 			starvationMessageSent = false
 		}
 	})
+	colony.construction = {
+		amount: colony.construction.amount,
+		...Building.constructionOptions(colony).find(option => option.target === colony.construction.target) || Building.noProductionOption()
+	}
 	listen.construction(colony, construction => {
 		if (construction.amount >= construction.cost.construction) {
 			if (construction.cost.tools) {
 				if (colony.storage.tools >= construction.cost.tools) {
-					Building.construct(colony, construction.target)
+					Building.construct(colony, construction)
 				}
 			} else {
-				Building.construct(colony, construction.target)
+				Building.construct(colony, construction)
 			}
 		}
 	})
@@ -165,10 +169,6 @@ const create = coords => {
 		construction: {
 			amount: 0,
 			target: "wagontrain",
-			name: "Wagon Train",
-			cost: {
-				construction: 20
-			}
 		},
 		bells: 0
 	}
