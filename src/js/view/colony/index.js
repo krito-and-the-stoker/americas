@@ -54,14 +54,16 @@ const create = colony => {
 
 	container.addChild(colonyWoodBackground)
 	container.addChild(background.container)
-	container.addChild(tiles.container)
-	container.addChild(buildings.container)
-	container.addChild(headline.container)
-	container.addChild(storage.container)
-	container.addChild(production.container)
-	container.addChild(construction.container)
 	container.addChild(liberty.container)
+	container.addChild(headline.container)
+	container.addChild(production.container)
+	container.addChild(storage.container)
+	container.addChild(buildings.container.buildings)
+	container.addChild(construction.container.panel)
+	container.addChild(tiles.container)
+	container.addChild(buildings.container.colonists)
 	container.addChild(units.container)
+	container.addChild(construction.container.menu)
 
 
 	const unsubscribeResize = RenderView.updateWhenResized(({ dimensions }) => {

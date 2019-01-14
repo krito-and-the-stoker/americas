@@ -18,7 +18,10 @@ import BecomeColonist from '../../action/becomeColonist'
 const TILE_SIZE = 64
 
 const createBuilding = (colony, name) => {
-	const container = new PIXI.Container()
+	const container = {
+		building: new PIXI.Container(),
+		colonists: new PIXI.Container()
+	}
 	const frame = Building.frame(colony, name)
 
 	if (!frame && frame !== 0) {
@@ -35,7 +38,7 @@ const createBuilding = (colony, name) => {
 	const rectangle = new PIXI.Rectangle(x, y, width, height)
 
 	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().buildings, rectangle))
-	container.addChild(sprite)
+	container.building.addChild(sprite)
 
 	const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {
 		const { unit } = args
@@ -77,7 +80,7 @@ const createBuilding = (colony, name) => {
 						colonistSprite.x = work.position * 128 / 3
 						colonistSprite.y = 20
 						colonistSprite.scale.set(1.5)
-						container.addChild(colonistSprite)
+						container.colonists.addChild(colonistSprite)
 
 						const production = Building.production(colony, name, colonist)
 						if (production) {
@@ -85,15 +88,15 @@ const createBuilding = (colony, name) => {
 							productionSprites.forEach(s => {
 								s.position.x += work.position * 128 / 3
 								s.position.y += 20 + TILE_SIZE
-								container.addChild(s)
+								container.colonists.addChild(s)
 							})
 							return () => {
-								productionSprites.forEach(s => container.removeChild(s))
-								container.removeChild(colonistSprite)
+								productionSprites.forEach(s => container.colonists.removeChild(s))
+								container.colonists.removeChild(colonistSprite)
 							}
 						}
 						return () => {
-							container.removeChild(colonistSprite)
+							container.colonists.removeChild(colonistSprite)
 						}
 					}
 				})
@@ -117,7 +120,10 @@ const createBuilding = (colony, name) => {
 }
 
 const create = colony => {
-	const container = new PIXI.Container()
+	const container = {
+		buildings: new PIXI.Container(),
+		colonists: new PIXI.Container()
+	}
 
 	const unsubscribe = Colony.listen.buildings(colony, buildings => {
 		const cols = 4
@@ -128,23 +134,28 @@ const create = colony => {
 		return Util.mergeFunctions(Object.keys(buildings)
 			.map(name => {
 				const building = createBuilding(colony, name)
-				building.container.x = position.x * 128 + 400 / 1.6
-				building.container.y = position.y * 128 + 200 / 1.4
+				building.container.building.x = position.x * 128 + 400 / 1.6
+				building.container.building.y = position.y * 128 + 200 / 1.4
+				building.container.colonists.x = position.x * 128 + 400 / 1.6
+				building.container.colonists.y = position.y * 128 + 200 / 1.4
 				position.x += Buildings[name].width
 				if (position.x > cols) {
 					position.x = 0
 					position.y += 1
 				}
-				container.addChild(building.container)
+				container.buildings.addChild(building.container.building)
+				container.colonists.addChild(building.container.colonists)
 
 				return () => {
 					building.unsubscribe()
-					container.removeChild(building.container)
+					container.buildings.removeChild(building.container)
+					container.colonists.removeChild(building.container.colonists)
 				}
 			}))
 	})
 
-	container.scale.set(1.3)
+	container.buildings.scale.set(1.3)
+	container.colonists.scale.set(1.3)
 
 	return {
 		container,

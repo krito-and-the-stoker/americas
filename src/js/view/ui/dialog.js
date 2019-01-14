@@ -91,6 +91,7 @@ const createIndependent = (message, options, image = null, params = {}) => {
 			}
 		}
 
+		plane9.height = 300 + 80 + (options.length + 1) * 30
 		plane9.width = 200 + text.width
 		optionTexts = options.map((msg, index) => {
 			const optionText = new PIXI.Text(msg, {
@@ -101,7 +102,7 @@ const createIndependent = (message, options, image = null, params = {}) => {
 			})
 			optionText.anchor.set(0.5)
 			optionText.position.x = RenderView.getCenter().x
-			optionText.position.y = RenderView.getCenter().y + 30 + 30*index
+			optionText.position.y = RenderView.getCenter().y - plane9.height / 2 + 250 + 30*index
 			optionText.interactive = true
 			optionText.buttonMode = true
 			if (optionText.width > plane9.width + 100) {
@@ -114,9 +115,9 @@ const createIndependent = (message, options, image = null, params = {}) => {
 			container.addChild(optionText)
 			return optionText
 		})
-		plane9.height = 300 + 80 + (optionTexts.length + 1) * 30
 		plane9.position.x = RenderView.getCenter().x - plane9.width / 2
 		plane9.position.y = RenderView.getCenter().y - plane9.height / 2 + 30
+		text.position.y = RenderView.getCenter().y - plane9.height / 2 + 160
 
 		if (params.pause) {
 			Time.pause()

@@ -70,6 +70,7 @@ const disband = unit => {
 	if (Europe.has.unit(unit)) {
 		Europe.remove.unit(unit)
 	}
+	Commander.clearCommands(unit.commander)
 	Record.remove(unit)
 }
 

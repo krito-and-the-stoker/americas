@@ -9,7 +9,10 @@ import ProductionView from '../../view/production'
 
 
 const create = (colony, originalDimensions) => {
-	const container = new PIXI.Container()
+	const container = {
+		panel: new PIXI.Container(),
+		menu: new PIXI.Container()
+	}
 
 	const constructionButton = Button.create('change', () => {
 		const options = Building.constructionOptions(colony)
@@ -18,7 +21,7 @@ const create = (colony, originalDimensions) => {
 			choices,
 			null,
 			{
-				context: container,
+				context: container.menu,
 				pause: false
 			})
 		.then(decision => {
@@ -30,7 +33,7 @@ const create = (colony, originalDimensions) => {
 	})
 	constructionButton.x = originalDimensions.x - constructionButton.width - 20
 	constructionButton.y = 650
-	container.addChild(constructionButton)
+	container.panel.addChild(constructionButton)
 
 	const buildingText = new PIXI.Text(`${colony.construction.name}`, {
 		fontFamily: 'Times New Roman',
@@ -40,7 +43,7 @@ const create = (colony, originalDimensions) => {
 	})
 	buildingText.x =  originalDimensions.x - 450 + 20
 	buildingText.y = originalDimensions.y / 2 - 75
-	container.addChild(buildingText)
+	container.panel.addChild(buildingText)
 
 	Colony.listen.construction(colony, construction => {
 		const percentage = Math.min(100, Math.floor(100 * construction.amount / construction.cost.construction))
