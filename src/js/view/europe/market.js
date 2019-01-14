@@ -14,13 +14,13 @@ const create = (originalDimensions) => {
 	const container = new PIXI.Container()
 
 	const goodsBackground = new PIXI.Sprite(new PIXI.Texture(Ressources.get().goodsBackground))
-	goodsBackground.y = originalDimensions.y - 125
+	goodsBackground.y = -123
 	container.addChild(goodsBackground)
 
 	Object.values(Goods.types).map((good, index) => {	
 		const { sprite } = GoodsView.create({ good })
 		sprite.x = Math.round(index * (originalDimensions.x + 11) / Object.values(Goods.types).length)
-		sprite.y = originalDimensions.y - 121
+		sprite.y = -119
 		sprite.scale.set(1.7)
 		container.addChild(sprite)
 
@@ -36,7 +36,7 @@ const create = (originalDimensions) => {
 		const width = originalDimensions.x / Object.values(Goods.types).length
 		price.anchor.set(0.5)
 		price.position.x = (index + 0.5) * width
-		price.position.y = originalDimensions.y - width / 4
+		price.position.y = -width / 4
 		container.addChild(price)
 
 		let args = {
@@ -49,7 +49,7 @@ const create = (originalDimensions) => {
 
 	const dragTarget = new PIXI.Container()
 	container.addChild(dragTarget)
-	dragTarget.hitArea = new PIXI.Rectangle(0, originalDimensions.y - 121, originalDimensions.x, 121)
+	dragTarget.hitArea = new PIXI.Rectangle(0, -119, originalDimensions.x, 119)
 	const unsubscribe = Drag.makeDragTarget(dragTarget, args => {
 		const { good, unit, amount } = args
 		if (good && unit) {

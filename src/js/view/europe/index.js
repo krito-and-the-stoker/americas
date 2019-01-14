@@ -28,19 +28,24 @@ const close = () => {
 
 const create = () => {
 	const container = new PIXI.Container()
+	const normalContainer = new PIXI.Container()
+	const backgroundContainer = new PIXI.Container
+	container.addChild(backgroundContainer)
+	container.addChild(normalContainer)
 
 	const background = new PIXI.Sprite(new PIXI.Texture(Ressources.get().europeBackground))
 	const originalDimensions = {
 		x: background.width,
 		y: background.height
 	}
-	container.addChild(background)
+	backgroundContainer.addChild(background)
 
 	const market = MarketView.create(originalDimensions)
-	container.addChild(market.container)
+	backgroundContainer.addChild(market.container)
 
 	const units = UnitsView.create(close, originalDimensions)
-	container.addChild(units.container)
+	normalContainer.addChild(units.container.ships)
+	normalContainer.addChild(units.container.units)
 
 	const nameHeadline = new PIXI.Text('London', {
 		fontFamily: 'Times New Roman',
@@ -51,7 +56,7 @@ const create = () => {
 	nameHeadline.anchor.set(0.5)
 	nameHeadline.position.x = originalDimensions.x / 2
 	nameHeadline.position.y = 35
-	container.addChild(nameHeadline)
+	normalContainer.addChild(nameHeadline)
 
 	const recruitButton = Button.create('recruit', () => {
 		const options = Europe.recruitmentOptions()
@@ -69,7 +74,7 @@ const create = () => {
 	})
 	recruitButton.x = originalDimensions.x - recruitButton.width - 20
 	recruitButton.y = originalDimensions.y / 2
-	container.addChild(recruitButton)
+	normalContainer.addChild(recruitButton)
 
 	const purchaseButton = Button.create('purchase', () => {
 		const options = Europe.purchaseOptions()
@@ -87,21 +92,40 @@ const create = () => {
 	})
 	purchaseButton.x = originalDimensions.x - purchaseButton.width - 20
 	purchaseButton.y = originalDimensions.y / 2 + 40
-	container.addChild(purchaseButton)
+	normalContainer.addChild(purchaseButton)
 
 	RenderView.updateWhenResized(({ dimensions }) => {
 		const scale = {
 			x: dimensions.x / originalDimensions.x,
 			y: dimensions.y / originalDimensions.y,
 		} 
+		// const fitScale = Math.min(scale.x, scale.y)
+		// normalContainer.scale.set(fitScale)
 		const coverScale = Math.max(scale.x, scale.y)
-		const fitScale = Math.min(scale.x, scale.y)
-		background.scale.set(coverScale / fitScale)
-		container.scale.set(fitScale)
-		background.x = dimensions.x / fitScale - background.width
-		background.y = dimensions.y / fitScale - background.height - 125
-		market.container.y = originalDimensions.y * (scale.y - fitScale) / fitScale
-		market.container.scale.set(scale.x / fitScale)
+
+		window.units = units.container
+		window.dimensions = dimensions
+		window.recruitButton = recruitButton
+		window.coverScale = coverScale
+		window.scale = scale
+		window.background = background
+		window.nameHeadline = nameHeadline
+
+		backgroundContainer.scale.set(coverScale)
+		background.x = dimensions.x / coverScale - background.width
+		background.y = dimensions.y / coverScale - background.height - 123 * scale.x / coverScale
+		market.container.y = dimensions.y / coverScale
+		market.container.scale.set(scale.x / coverScale)
+
+		normalContainer.scale.set(coverScale)
+		units.container.units.x = Math.max(dimensions.x / coverScale - 0.4 * background.width, 64)
+		units.container.units.y = dimensions.y / coverScale - (123 * scale.x + 128 + 20) / coverScale
+		units.container.ships.x = 10
+		units.container.ships.y = dimensions.y / coverScale - (123 * scale.x + 256 + 40) / coverScale
+
+		nameHeadline.x = dimensions.x / (2 *coverScale)
+		recruitButton.x = dimensions.x / coverScale - recruitButton.width - 20
+		purchaseButton.x = dimensions.x / coverScale - purchaseButton.width - 20
 	})
 
 	const unsubscribe = () => {
