@@ -35,7 +35,7 @@ const create = (colony, originalDimensions) => {
 		}
 	})
 	const unsubscribeTiles = Util.mergeFunctions(tiles.map(tile => {
-		return Tile.listen(tile, tile => {
+		return Tile.listen.tile(tile, tile => {
 			const sprites = Background.createSpritesFromTile(tile)
 			const { position } = tilesAndPositions.find(tp => tp.tile === tile)
 			sprites.forEach(sprite => {
@@ -100,7 +100,7 @@ const create = (colony, originalDimensions) => {
 					const { tile, position } = tilesAndPositions.find(({ tile }) => work && work.tile === tile) || {}
 					
 					if (position) {
-						return Tile.listen(tile, tile => {					
+						return Tile.listen.tile(tile, tile => {					
 							const colonistSprite = ColonistView.create(colonist)
 							colonistSprite.x = position.x
 							colonistSprite.y = position.y
@@ -131,7 +131,7 @@ const create = (colony, originalDimensions) => {
 		})
 	})
 	
-	const unsubscribeCenter = Tile.listen(center, center => {	
+	const unsubscribeCenter = Tile.listen.tile(center, center => {	
 		const colonySprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(MAP_COLONY_FRAME_ID)))
 		colonySprite.position.x = TILE_SIZE
 		colonySprite.position.y = TILE_SIZE

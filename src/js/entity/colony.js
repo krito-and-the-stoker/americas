@@ -100,7 +100,7 @@ const initialize = colony => {
 	colony.productionSummary = Storage.createWithProduction()
 	colony.productionRecord = Storage.createWithProduction()
 	const tile = MapEntity.tile(colony.mapCoordinates)
-	Tile.listen(tile, () => Util.mergeFunctions(Tile.colonyProductionGoods(tile).map(good => Time.schedule(Harvest.create(colony, tile, good)))))
+	Tile.listen.tile(tile, () => Util.mergeFunctions(Tile.colonyProductionGoods(tile).map(good => Time.schedule(Harvest.create(colony, tile, good)))))
 	listen.colonists(colony, colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)))
 
 	let starvationMessageSent = false
@@ -176,7 +176,7 @@ const create = coords => {
 
 	// TODO: does the tile need to know about the colony?
 	const tile = MapEntity.tile(coords)
-	tile.colony = colony
+	Tile.update.colony(tile, colony)
 
 	// TODO: this is the wrong place for that
 	// const colonist = Colonist.create(colony, unit)

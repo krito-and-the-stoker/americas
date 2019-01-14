@@ -52,6 +52,18 @@ const create = ({ id, layers, index }) => {
 	tile.right = () => right(tile)
 	tile.down = () => down(tile)
 
+	const updateTreeVariation = colonyOrSettlement => {
+		if (colonyOrSettlement) {
+			if (tile.forest) {
+				tile.treeVariation = 2
+				updateTile(tile)
+			}
+		}
+	}
+
+	listen.settlement(tile, updateTreeVariation)
+	listen.colony(tile, updateTreeVariation)
+
 	Record.addTile(tile)
 	return tile
 }
@@ -132,8 +144,7 @@ const discover = tile => {
 		Dialog.show('discovered')
 	}
 	tile.discovered = true
-	Binding.update(tile)
-	RenderView.render()	
+	updateTile(tile)
 }
 
 const	neighbors = tile => [left(tile), up(tile), right(tile), down(tile)].filter(n => n)
@@ -286,30 +297,44 @@ const neighborString = (tile, other) => {
 	return result(tile.mapCoordinates, other.mapCoordinates)
 }
 
+const update = {
+	colony: (tile, colony) => Binding.update(tile, 'colony', colony),
+	settlement: (tile, settlement) => Binding.update(tile, 'settlement', settlement),
+	tile: tile => Binding.update(tile)
+}
+
 const clearForest = tile => {
 	tile.forest = false
 	tile.bonus = Math.random() < 0.07
 	tile.terrainName = terrainName(tile)
 
-	Binding.update(tile)
-	Background.render()
+	updateTile(tile)
 }
 
 const plow = tile => {
 	tile.plowed = true
 
-	Binding.update(tile)
-	Background.render()
+	updateTile(tile)
 }
 
 const constructRoad = tile => {
 	tile.road = true
 
-	Binding.update(tile)
+	updateTile(tile)
+}
+
+const updateTile = center => {
+	radius(center).forEach(tile => {
+		update.tile(tile)
+	})
 	Background.render()
 }
 
-const listen = (tile, fn) => Binding.listen(tile, null, fn)
+const listen = {
+	tile: (tile, fn) => Binding.listen(tile, null, fn),
+	settlement: (tile, fn) => Binding.listen(tile, 'settlement', fn),
+	colony: (tile, fn) => Binding.listen(tile, 'colony', fn)
+}
 
 
 export default {
@@ -317,6 +342,7 @@ export default {
 	discover,
 	isNextTo,
 	production,
+	update,
 	colonyProductionGoods,
 	fieldProductionOptions,
 	decideCoastTerrain,

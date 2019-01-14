@@ -22,7 +22,7 @@ const create = settlement => {
 	})
 
 	const tile = MapEntity.tile(settlement.mapCoordinates)
-	Tile.listen(tile, tile => {
+	Tile.listen.tile(tile, tile => {
 		if (tile.discovered) {
 			Foreground.addTerrain(sprite)
 		}
