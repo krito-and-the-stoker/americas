@@ -47,7 +47,7 @@ const construct = (colony, target) => {
 		Colony.update.buildings(colony, buildings)
 	}
 
-	Message.send(`colony.name has completed construction of ${colony.construction.name}.`)
+	Message.send(`${colony.name} has completed construction of ${colony.construction.name}.`)
 
 	const construction = colony.construction
 	construction.amount -= construction.cost.construction
