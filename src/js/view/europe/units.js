@@ -42,7 +42,6 @@ const create = closeFn => {
 		const unsubscribeUnits = Util.mergeFunctions(landUnits.map((unit, index) => {
 			const sprite = UnitView.create(unit)
 			sprite.scale.set(2)
-			sprite.hitArea = new PIXI.Rectangle(32, 0, 64, 128)
 			sprite.x = index * 64
 			sprite.y = 0
 			container.units.addChild(sprite)

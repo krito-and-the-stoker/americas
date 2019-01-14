@@ -47,6 +47,8 @@ const closeScreen = () => {
 	currentScreen = null
 }
 
+const hasOpenScreen = () => currentScreen ? true : false
+
 const addTerrain = sprite => {
 	terrain.addChild(sprite)
 }
@@ -113,6 +115,7 @@ export default {
 	doRenderWork,
 	openScreen,
 	closeScreen,
+	hasOpenScreen,
 	addTerrain,
 	removeTerrain,
 	addUnit,

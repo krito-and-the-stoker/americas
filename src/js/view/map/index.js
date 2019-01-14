@@ -95,9 +95,11 @@ const initialize = () => {
 
 	let initialCoords = null
 	const start = coords => {
-		initialCoords = {
-			x: RenderView.get().coords.x - coords.x,
-			y: RenderView.get().coords.y - coords.y
+		if (!Foreground.hasOpenScreen()) {		
+			initialCoords = {
+				x: RenderView.get().coords.x - coords.x,
+				y: RenderView.get().coords.y - coords.y
+			}
 		}
 	}
 	const move = coords => {
@@ -120,13 +122,15 @@ const initialize = () => {
 
 	Drag.on(stage, start, move, end, true)
 	Secondary.on(stage, coords => {
-		const selectedUnit = UnitView.selectedUnit()
-		if (selectedUnit) {
-			const target = {
-				x: Math.floor((coords.x - RenderView.get().coords.x) / (TILE_SIZE * RenderView.get().scale)),
-				y: Math.floor((coords.y - RenderView.get().coords.y) / (TILE_SIZE * RenderView.get().scale))
+		if (!Foreground.hasOpenScreen()) {		
+			const selectedUnit = UnitView.selectedUnit()
+			if (selectedUnit) {
+				const target = {
+					x: Math.floor((coords.x - RenderView.get().coords.x) / (TILE_SIZE * RenderView.get().scale)),
+					y: Math.floor((coords.y - RenderView.get().coords.y) / (TILE_SIZE * RenderView.get().scale))
+				}
+				Commander.scheduleInstead(selectedUnit.commander, MoveTo.create(selectedUnit, target))			
 			}
-			Commander.scheduleInstead(selectedUnit.commander, MoveTo.create(selectedUnit, target))			
 		}
 	})
 

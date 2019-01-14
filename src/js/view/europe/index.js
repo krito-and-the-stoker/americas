@@ -99,17 +99,7 @@ const create = () => {
 			x: dimensions.x / originalDimensions.x,
 			y: dimensions.y / originalDimensions.y,
 		} 
-		// const fitScale = Math.min(scale.x, scale.y)
-		// normalContainer.scale.set(fitScale)
 		const coverScale = Math.max(scale.x, scale.y)
-
-		window.units = units.container
-		window.dimensions = dimensions
-		window.recruitButton = recruitButton
-		window.coverScale = coverScale
-		window.scale = scale
-		window.background = background
-		window.nameHeadline = nameHeadline
 
 		backgroundContainer.scale.set(coverScale)
 		background.x = dimensions.x / coverScale - background.width

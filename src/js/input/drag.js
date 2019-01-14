@@ -14,12 +14,17 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 	let currentSpeed = null
 	let lastCoords = null
 	let rollingOut = false
+	const cancelDrag = () => {
+		possibleDragTargets = possibleDragTargets.filter(t => t !== target)
+		currentDrags = currentDrags.filter(t => t !== target)
+	}
 
 	const dragStart = e => {
 		if (possibleDragTargets.length > 0) {
 			return
 		}
 		possibleDragTargets.push(target)
+		target.on('removed', cancelDrag)
 
 		lastCoords = {
 			x: e.data.global.x,
@@ -113,11 +118,13 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 					onMove(newCoords)
 					requestAnimationFrame(rollOut)
 				} else {
+					target.off('removed', cancelDrag)
 					await onEnd(lastCoords)
 				}
 			}
 			rollOut()
 		} else {
+			target.off('removed', cancelDrag)
 			await onEnd(lastCoords)
 		}
 	}

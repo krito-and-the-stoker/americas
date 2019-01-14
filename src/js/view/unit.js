@@ -7,7 +7,13 @@ const createTexture = unit => {
 }
 
 const create = unit => {
-	return new PIXI.Sprite(createTexture(unit))
+	const sprite = new PIXI.Sprite(createTexture(unit))
+
+	if (unit.domain === 'land') {
+		sprite.hitArea = new PIXI.Rectangle(16, 0, 32, 64)
+	}
+
+	return sprite
 }
 
 
