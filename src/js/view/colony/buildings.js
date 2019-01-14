@@ -133,10 +133,10 @@ const create = colony => {
 		return Util.mergeFunctions(Object.keys(buildings)
 			.map(name => {
 				const building = createBuilding(colony, name)
-				building.container.building.x = position.x * 128 + 400 / 1.6
-				building.container.building.y = position.y * 128 + 200 / 1.4
-				building.container.colonists.x = position.x * 128 + 400 / 1.6
-				building.container.colonists.y = position.y * 128 + 200 / 1.4
+				building.container.building.x = position.x * 128 + 100
+				building.container.building.y = position.y * 128 + 100
+				building.container.colonists.x = position.x * 128 + 100
+				building.container.colonists.y = position.y * 128 + 100
 				position.x += Buildings[name].width
 				if (position.x > cols) {
 					position.x = 0
