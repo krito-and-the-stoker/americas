@@ -123,6 +123,11 @@ a {
 	pointer-events: none;
 }
 
+.disabled {
+	pointer-events: none;
+	color: #666666;
+}
+
 
 
 // @media only screen and (max-width: 600px) {

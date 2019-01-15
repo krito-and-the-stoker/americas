@@ -201,13 +201,18 @@ window.addEventListener('load', async () => {
 		})
 	})
 
-	document.querySelector('.load').addEventListener('click', () => {
-		loadingRessources.then(() => {
-			document.querySelector('.title').classList.add('hidden')
-			return loadGame()
-		}).then(() => {
-			setInterval(Record.save, 60000)
-			window.addEventListener('beforeunload', Record.save)
-		})
-	})
+	if (window.localStorage.getItem('lastSave')) {
+		document.querySelector('.load').addEventListener('click', () => {
+			loadingRessources.then(() => {
+				document.querySelector('.title').classList.add('hidden')
+				return loadGame()
+			}).then(() => {
+				setInterval(Record.save, 60000)
+				window.addEventListener('beforeunload', Record.save)
+			})
+		})		
+	} else {
+		document.querySelector('.load').classList.add('disabled')	
+	}
+
 })
