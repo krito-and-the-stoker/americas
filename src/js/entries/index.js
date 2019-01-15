@@ -145,21 +145,20 @@ const loadGame = async () => {
 
 	// const mapRendering = new RenderMap()
 	Europe.initialize()
-
-	
+	await nextFrame()
 	RenderView.initialize()
-
+	await nextFrame()
 	Dialog.initialize()
 	Tween.initialize()
-
 	MapView.initialize()
+	await nextFrame()
 
 	// for no apparent reason the layers are not available inside TreasureView
 	TreasureView.initialize(Foreground.get().permanent)
 	YearView.initialize(Foreground.get().permanent)
-
+	await nextFrame()
 	Record.load()
-
+	await nextFrame()
 
 	MapView.zoomBy(1/0.35, null, 0)
 	setTimeout(() => {
@@ -169,7 +168,7 @@ const loadGame = async () => {
 	setTimeout(() => {
 		Background.get().layer.show()
 		Foreground.get().layer.show()		
-	}, 2000)
+	}, 750)
 
 	setTimeout(() => {
 		Keyboard.initialize()
@@ -190,19 +189,24 @@ const loadGame = async () => {
 
 
 window.addEventListener('load', async () => {
-	const loadingRessources = Ressources.initialize()
-	document.querySelector('.start').addEventListener('click', () => {
-		loadingRessources.then(() => {
-			document.querySelector('.title').classList.add('hidden')
-			return newGame()
-		}).then(() => {
-			setInterval(Record.save, 60000)
-			window.addEventListener('beforeunload', Record.save)
+	const clickStart = () => {
+		document.querySelector('.start').removeEventListener('click', clickStart)
+		document.querySelector('.load').removeEventListener('click', clickResume)
+		requestAnimationFrame(() => {		
+			loadingRessources.then(() => {
+				document.querySelector('.title').classList.add('hidden')
+				return newGame()
+			}).then(() => {
+				setInterval(Record.save, 60000)
+				window.addEventListener('beforeunload', Record.save)
+			})
 		})
-	})
+	}
 
-	if (window.localStorage.getItem('lastSave')) {
-		document.querySelector('.load').addEventListener('click', () => {
+	const clickResume = () => {
+		document.querySelector('.start').removeEventListener('click', clickStart)
+		document.querySelector('.load').removeEventListener('click', clickResume)
+		requestAnimationFrame(() => {		
 			loadingRessources.then(() => {
 				document.querySelector('.title').classList.add('hidden')
 				return loadGame()
@@ -210,7 +214,14 @@ window.addEventListener('load', async () => {
 				setInterval(Record.save, 60000)
 				window.addEventListener('beforeunload', Record.save)
 			})
-		})		
+		})
+	}
+
+	const loadingRessources = Ressources.initialize()
+	document.querySelector('.start').addEventListener('click', clickStart)
+
+	if (window.localStorage.getItem('lastSave')) {
+		document.querySelector('.load').addEventListener('click', clickResume)
 	} else {
 		document.querySelector('.load').classList.add('disabled')	
 	}

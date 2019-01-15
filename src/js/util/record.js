@@ -251,6 +251,7 @@ const load = () => {
 	const mapView = new MapView()
 
 	RenderView.restart()
+	console.log('game loaded')
 }
 
 
