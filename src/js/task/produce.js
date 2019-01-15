@@ -23,6 +23,8 @@ const create = (colony, building, colonist) => {
 		if (building === 'colony') {
 			Europe.update.crosses(scale)
 			Storage.update(colony.productionRecord, { good: 'crosses', amount: scale })
+			Colony.update.bells(colony, scale)
+			Storage.update(colony.productionRecord, { good: 'bells', amount: scale })
 			return true
 		}
 

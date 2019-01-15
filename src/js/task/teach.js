@@ -57,7 +57,7 @@ const create = teacher => {
 				if (student.education.progress >= 1) {
 					Colonist.update.expert(student, student.education.profession)
 				}
-				Storage.update(teacher.colony.productionRecord, { good: 'books', amount: 2 * deltaTime * PRODUCTION_BASE_FACTOR })
+				Storage.update(teacher.colony.productionRecord, { good: 'books', amount: 1 * deltaTime * PRODUCTION_BASE_FACTOR })
 			})
 
 		teacher.colony.colonists
@@ -68,7 +68,7 @@ const create = teacher => {
 				if (student.education.progress >= 1) {
 					Colonist.update.expert(student, student.expert === 'criminal' ? 'servant' : null)
 				}
-				Storage.update(teacher.colony.productionRecord, { good: 'books', amount: 2 * deltaTime * PRODUCTION_BASE_FACTOR })
+				Storage.update(teacher.colony.productionRecord, { good: 'books', amount: 1 * deltaTime * PRODUCTION_BASE_FACTOR })
 			})
 
 		return true

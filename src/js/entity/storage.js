@@ -10,6 +10,13 @@ const update = (storage, pack) => {
 	Binding.update(storage)
 }
 
+const copy = storage => {
+	const result = {}
+	goods(storage).forEach(pack => result[pack.good] = pack.amount)
+	productions(storage).forEach(pack => result[pack.good] = pack.amount)
+
+	return result
+}
 const equals = (some, other) =>
 	some &&
 	other &&
@@ -28,7 +35,7 @@ const split = storage => goods(storage)
 			.map(amount => ({ good, amount }))
 		).flat()
 
-const transfer = (src, dest, pack = {}, supressUpdate = false) => {
+const transfer = (src, dest, pack = {}) => {
 	const move = ({ good, amount }) => {
 		if (amount) {
 			dest[good] += amount
@@ -46,15 +53,18 @@ const transfer = (src, dest, pack = {}, supressUpdate = false) => {
 			.forEach(move)
 	}
 
-	if (!supressUpdate) {
-		update(src)
-		update(dest)
-	}
+	update(src)
+	update(dest)
 }
 
 const transferWithProduction = (src, dest) => {
-	transfer(src, dest, {}, true)
-	productions(src).forEach(pack => transfer(src, dest, pack, true))
+	const move = pack => {
+		dest[pack.good] += pack.amount
+		src[pack.good] = 0
+	}
+	goods(src).forEach(move)
+	productions(src).forEach(move)
+
 	update(src)
 	update(dest)
 }
@@ -78,4 +88,5 @@ export default {
 	goods,
 	productions,
 	equals,
+	copy,
 }
