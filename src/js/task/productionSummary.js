@@ -1,6 +1,6 @@
 import Time from '../timeline/time'
 import Storage from '../entity/storage'
-import Task from '../util/task'
+
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
@@ -37,7 +37,7 @@ const create = colony => {
 	}
 
 	return {
-		update: Task.batch(update)
+		update
 	}
 }
 

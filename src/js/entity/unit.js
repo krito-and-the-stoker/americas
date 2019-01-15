@@ -12,6 +12,7 @@ import EnterColony from '../action/enterColony'
 import LeaveColony from '../action/leaveColony'
 import EnterEurope from '../action/enterEurope'
 import Europe from '../entity/europe'
+import Colonist from '../entity/colonist'
 
 const create = (name, coords) => {
 	if (Units[name]) {
@@ -120,6 +121,8 @@ const initialize = unit => {
 			}
 		}
 	})
+
+	listen.colonist(unit, colonist => colonist ? Colonist.listen.expert(colonist, expert => update.expert(unit, expert)) : null)
 }
 
 const listen = {

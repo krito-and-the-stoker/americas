@@ -9,6 +9,7 @@ import Message from '../view/ui/message'
 const frame = (colony, name) => Buildings[name].frame[colony.buildings[name]]
 const create = () => Util.makeObject(Buildings.places.map(name => [name, 0]))
 
+const workspace = (colony, building) => Buildings[building].workspace.length ? Buildings[building].workspace[colony.buildings[building]] : Buildings[building].workspace || 0
 
 const constructionOptions = colony => {
 	const buildings = Buildings.places
@@ -205,7 +206,8 @@ export default {
 	create,
 	constructionOptions,
 	noProductionOption,
-	construct
+	construct,
+	workspace
 }
 
 

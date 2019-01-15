@@ -109,7 +109,7 @@ const revive = (record) => {
 }
 
 const dump = () => {
-	Message.log(records)
+	console.log(records)
 }
 
 const reviveTile = (data, index) => {

@@ -198,7 +198,7 @@
 	"school": {
 		"frame": [null, 47, 49, 51],
 		"width": 2,
-		"workspace": 3,
+		"workspace": [0, 1, 2, 3],
 		"name": ["House", "School", "College", "University"],
 		"cost": [{
 			"construction": 0

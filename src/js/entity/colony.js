@@ -92,8 +92,30 @@ const rebels = colony => {
 	}
 }
 
-const canEmploy = (colony, building) => colony.colonists
-	.filter(colonist => colonist.work && colonist.work.building === building).length < Buildings[building].workspace
+const teachingLevelNeeded = {	
+	farmer: 1,
+	fisher: 1,
+	sugarplanter: 1,
+	tobaccoplanter: 1,
+	cottonplanter: 1,
+	furtrapper: 1,
+	lumberjack: 1,
+	oreminer: 1,
+	silverminer: 1,
+	distiller: 2,
+	tobacconist: 2,
+	weaver: 2,
+	furtrader: 2,
+	blacksmith: 2,
+	gunsmith: 2,
+	carpenter: 2,
+	statesman: 3,
+	preacher: 3,
+}
+const canTeach = (colony, expert) => expert && teachingLevelNeeded[expert] && teachingLevelNeeded[expert] <= colony.buildings.school
+const canEmploy = (colony, building, expert) => colony.colonists
+	.filter(colonist => colonist.work && colonist.work.building === building).length < Building.workspace(colony, building) &&
+	(building !== 'school' || canTeach(colony, expert))
 
 
 const initialize = colony => {

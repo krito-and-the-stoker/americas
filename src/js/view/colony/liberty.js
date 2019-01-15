@@ -32,6 +32,7 @@ const create = colony => {
 	container.addChild(toriesText)
 
 	const freedomPercentage = () => Colony.tories(colony).percentage
+	const colonySize = () => colony.colonists.length
 	const updateRebelsAndTories = () => {
 		const rebels  = Colony.rebels(colony)
 		const tories = Colony.tories(colony)
@@ -50,10 +51,12 @@ const create = colony => {
 	}
 
 	const unsubscribeBells = Colony.listen.bells(colony, Binding.map(updateRebelsAndTories, freedomPercentage))
-	const unsubscribeColonists = Colony.listen.colonists(colony, Binding.map(updateRebelsAndTories, freedomPercentage))
+	const unsubscribeColonistsPercentage = Colony.listen.colonists(colony, Binding.map(updateRebelsAndTories, freedomPercentage))
+	const unsubscribeColonistsAmount = Colony.listen.colonists(colony, Binding.map(updateRebelsAndTories, colonySize))
 
 	const unsubscribe = () => {
-		unsubscribeColonists()
+		unsubscribeColonistsPercentage()
+		unsubscribeColonistsAmount()
 		unsubscribeBells()
 	}
 

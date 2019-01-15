@@ -11,7 +11,6 @@ import ProductionView from '../../view/production'
 import Commander from '../../command/commander'
 import ColonistView from '../../view/colony/colonist'
 
-
 import JoinColony from '../../action/joinColony'
 import BecomeColonist from '../../action/becomeColonist'
 
@@ -49,11 +48,11 @@ const createBuilding = (colony, name) => {
 			return false
 		}
 
-		if (!Colony.canEmploy(colony, name)) {
-			return false
-		}
 
 		let colonist = args.colonist
+		if (!Colony.canEmploy(colony, name, unit ? unit.expert : colonist.expert)) {
+			return false
+		}
 		if (unit) {
 			if (unit.colonist) {
 				JoinColony(colony, unit.colonist)
@@ -70,42 +69,38 @@ const createBuilding = (colony, name) => {
 		return false
 	})
 
-	const unsubscribeColonists = Colony.listen.productionBonus(colony, () => {	
-		return Colony.listen.colonists(colony, colonists => {
-			const cleanupWork = Util.mergeFunctions(colonists.map(colonist => {
-				return Colonist.listen.work(colonist, work => {
-					if (work && work.building === name) {
-						const colonistSprite = ColonistView.create(colonist)
-						colonistSprite.x = work.position * 128 / 3
-						colonistSprite.y = 20
-						colonistSprite.scale.set(1.5)
-						container.colonists.addChild(colonistSprite)
+	const createColonistView = (productionBonus, colonist, work, expert) => {
+		if (work && work.building === name) {
+			const colonistSprite = ColonistView.create(colonist)
+			colonistSprite.x = work.position * 128 / 3
+			colonistSprite.y = 20
+			colonistSprite.scale.set(1.5)
+			container.colonists.addChild(colonistSprite)
 
-						const production = Building.production(colony, name, colonist)
-						if (production) {
-							const productionSprites = ProductionView.create(production.good || production.type, production.amount, TILE_SIZE / 2)
-							productionSprites.forEach(s => {
-								s.position.x += work.position * 128 / 3
-								s.position.y += 20 + TILE_SIZE
-								container.colonists.addChild(s)
-							})
-							return () => {
-								productionSprites.forEach(s => container.colonists.removeChild(s))
-								container.colonists.removeChild(colonistSprite)
-							}
-						}
-						return () => {
-							container.colonists.removeChild(colonistSprite)
-						}
-					}
+			const production = Building.production(colony, name, colonist)
+			if (production) {
+				const productionSprites = ProductionView.create(production.good || production.type, production.amount, TILE_SIZE / 2)
+				productionSprites.forEach(s => {
+					s.position.x += work.position * 128 / 3
+					s.position.y += 20 + TILE_SIZE
+					container.colonists.addChild(s)
 				})
-			}))
-
-			return () => {
-				cleanupWork()
+				return () => {
+					productionSprites.forEach(s => container.colonists.removeChild(s))
+					container.colonists.removeChild(colonistSprite)
+				}
 			}
-		}) 
-	})
+			return () => {
+				container.colonists.removeChild(colonistSprite)
+			}
+		}
+	}
+
+	const unsubscribeColonists = Colony.listen.productionBonus(colony, productionBonus => 
+		Colony.listen.colonists(colony, colonists => Util.mergeFunctions(colonists.map(colonist =>
+			Colonist.listen.work(colonist, work =>
+				Colonist.listen.expert(colonist, expert => createColonistView(productionBonus, colonist, work, expert)))))))
+
 
 	const unsubscribe = () => {
 		unsubscribeColonists()
