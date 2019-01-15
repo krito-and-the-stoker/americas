@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js'
 
+import Message from '../view/ui/message'
+
 
 const mergeFunctions = funcArray => funcArray.reduce((all, fn) => () => { all(); fn(); }, () => {})
 
@@ -24,8 +26,13 @@ const removeDuplicates = array => array
 		return arr
 	}, [])
 
+let counter = 2
 export const loadTexture = async (...files) => new Promise((resolve, reject) => {
 	PIXI.loader.reset()
+	PIXI.loader.onProgress.add(() => {
+		counter += 1
+		Message.log(`Downloading files (${counter}/25)...`)		
+	})
 	PIXI.loader.add(files).load(() => {
 		resolve(files.map(path => PIXI.loader.resources[path].texture))
 	})

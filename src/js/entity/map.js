@@ -1,6 +1,7 @@
 import Tile from './tile.js'
 import Record from '../util/record'
 import Util from '../util/util'
+import Message from '../view/ui/message'
 
 
 let numTiles = null
@@ -21,7 +22,7 @@ const get = () => ({
 
 
 const create = ({ data }) => {
-	console.log('creating map')
+	Message.log('Creating map')
 
 	const baseLayer = layer(data, 'terrain base')
 	numTiles = {
@@ -30,7 +31,7 @@ const create = ({ data }) => {
 	}
 	numTiles.total = numTiles.x * numTiles.y
 
-	console.log('creating tiles')
+	Message.log('Creating tiles')
 	tiles = layer(data, 'terrain base').data.map((id, index) => Tile.create({
 		id,
 		index,
@@ -42,9 +43,9 @@ const create = ({ data }) => {
 			zone: layer(data, 'zones').data[index]
 		}
 	}))
-	console.log('creating coast line')
+	Message.log('Creating coast line')
 	createCoastLine(tiles)
-	console.log('map created')
+	Message.log('Map created')
 
 	Record.setGlobal('numTiles', numTiles)
 }
@@ -69,7 +70,7 @@ const prepare = () => {
 }
 
 const load = () => {
-	console.log('loading map')
+	Message.log('Loading map...')
 	tiles = Util.range(numTiles.x*numTiles.y)
 		.map(index => Record.referenceTile({ index }))
 		.map(Record.dereferenceTile)

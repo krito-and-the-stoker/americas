@@ -21,15 +21,6 @@ const get = () => ({
 })
 
 const initialize = async () => {
-	[mapTiles, colonyBackground, europeBackground, undiscovered, colonyWoodBackground, goodsBackground, buildings] =
-		await Util.loadTexture('images/map.png',
-			'images/colony-screen/background.jpg',
-			'images/europe.jpg',
-			'images/undiscovered.jpg',
-			'images/colony-screen/wood-background.jpg',
-			'images/goods-background.jpg',
-			'images/colony-screen/buildings.png') 
-
 	const [up, rightup, right, rightdown, down, leftdown, left, leftup] =
 		await Util.loadTexture(
 			'images/colony-screen/coast-up.png',
@@ -49,6 +40,18 @@ const initialize = async () => {
 	colonyScreenCoast.leftdown = leftdown
 	colonyScreenCoast.left = left
 	colonyScreenCoast.leftup = leftup
+
+	[mapTiles, colonyBackground, europeBackground, undiscovered, colonyWoodBackground, goodsBackground, buildings] =
+		await Util.loadTexture('images/map.png',
+			'images/colony-screen/background.jpg',
+			'images/europe.jpg',
+			'images/undiscovered.jpg',
+			'images/colony-screen/wood-background.jpg',
+			'images/goods-background.jpg',
+			'images/colony-screen/buildings.png')
+
+
+	console.log(undiscovered)
 }
 
 

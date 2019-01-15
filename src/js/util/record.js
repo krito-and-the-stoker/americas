@@ -20,6 +20,7 @@ import RenderView from '../render/view'
 import UnitView from '../view/map/unit'
 import Time from '../timeline/time'
 import PathFinder from '../util/pathFinder'
+import Message from '../view/ui/message'
 
 const REFERENCE_KEY = 'referenceId'
 
@@ -108,7 +109,7 @@ const revive = (record) => {
 }
 
 const dump = () => {
-	console.log(records)
+	Message.log(records)
 }
 
 const reviveTile = (data, index) => {
@@ -144,7 +145,7 @@ const saveSingleTile = tile => Tile.save(tile)
 
 
 const save = () => {
-	console.log('saving...')
+	Message.log('Saving...')
 	lastSave = JSON.stringify({
 		entities: records.map(saveSingleRecord),
 		tiles: Object.values(tiles).map(saveSingleTile),
@@ -161,20 +162,20 @@ const save = () => {
 				const worker = new Worker('/worker.entry.js')
 				worker.onmessage = e => {
 					window.localStorage.setItem('lastSaveCompressed', e.data)
-					console.log('entities saved to local storage', e.data.length)
+					Message.log(`Entities saved to local storage using ${e.data.length} bytes.`)
 				}
 				worker.postMessage(lastSave)
 			} else {		
 				const compressed = LZString.compress(lastSave)
 				window.localStorage.setItem('lastSaveCompressed', compressed)
-				console.log('entities saved to local storage', compressed.length)
+				Message.log(`Entities saved to local storage using ${compressed.length} bytes.`)
 			}
 		} else {
 			window.localStorage.setItem('lastSave', lastSave)
-			console.log('entities saved to local storage', lastSave.length)
+			Message.log(`Entities saved to local storage using ${lastSave.length} bytes.`)
 		}
 	} else {
-		console.log('entities saved in memory', lastSave.length)
+					Message.log(`Entities saved in memory using ${lastSave.length} bytes.`)
 	}
 }
 
@@ -217,7 +218,7 @@ let loadedListeners = []
 const entitiesLoaded = fn => loadedListeners.push(fn)
 
 const load = () => {
-	console.log('loading...')
+	Message.log('Loading...')
 	Foreground.shutdown()
 
 	records.forEach(record => record.destroy())
@@ -251,7 +252,7 @@ const load = () => {
 	const mapView = new MapView()
 
 	RenderView.restart()
-	console.log('game loaded')
+	Message.log('Game loaded')
 }
 
 

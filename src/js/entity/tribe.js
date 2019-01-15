@@ -3,6 +3,8 @@ import Record from '../util/record'
 import Tile from '../entity/tile'
 import MapEntity from '../entity/map'
 import Settlement from '../entity/settlement'
+import Message from '../view/ui/message'
+
 
 const settlementDensity = 0.07
 let tribeNames = ['Sioux', 'Apache', 'Cherokee', 'Inca', 'Aztec', 'Navajo', 'Cheyenne', 'Ponca', 'Iroquis', 'Delaware', 'Comanche']
@@ -51,7 +53,7 @@ const createFromMap = ({ tiles, numTiles }) => {
 		const tribe = tribes.find(tribe => tribe.id === MapEntity.tile(coords).zone)
 		Settlement.create(tribe, coords)
 	})
-	console.log('tribes created')
+	Message.log('Tribes created')
 }
 
 const create = id => {

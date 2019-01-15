@@ -8,6 +8,7 @@ import Wheel from '../../input/wheel'
 import MoveTo from '../../command/moveTo'
 import Commander from '../../command/commander'
 import Secondary from '../../input/secondary'
+import Message from '../../view/ui/message'
 
 import UnitView from './unit'
 import ColonyView from './colony'
@@ -142,8 +143,6 @@ const initialize = () => {
 		zoomBy(Math.exp(-ZOOM_FACTOR * e.deltaY), { x: Math.round(e.clientX), y: Math.round(e.clientY) })
 	}
 	Wheel.on(handleWheel)
-
-	console.log('control initialized')
 }
 
 export default {

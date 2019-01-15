@@ -1,6 +1,8 @@
 import Terrain from '../data/terrain.json'
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
+import Message from '../view/ui/message'
+
 
 class MapView{
 	constructor() {
@@ -17,7 +19,9 @@ class MapView{
 			}
 		})
 		const totalSprites = this.tileStacks.reduce((count, stack) => count + stack.frames.length, 0)
-		console.log(`use total of ${totalSprites} sprites for map`)
+		if (totalSprites > 0) {
+			Message.log(`Using a total of ${totalSprites} sprites for map`)
+		}
 	}
 
 	assembleTile(tile){
@@ -214,8 +218,6 @@ class MapView{
 
 		if(!center)
 			return coastTiles;
-
-		// console.log(center, center.left)
 
 		let left = center.left();
 		let right = center.right();

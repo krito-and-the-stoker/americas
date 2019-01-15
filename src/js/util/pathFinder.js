@@ -3,6 +3,7 @@ import Util from '../util/util'
 import { FibonacciHeap } from '@tyriar/fibonacci-heap';
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
+import Message from '../view/ui/message'
 
 const UNDISCOVERED_COST = 5
 const CANNOT_MOVE_COST = 500
@@ -36,7 +37,7 @@ const initialize = () => {
 		}, neighbors);
 	})
 
-	console.log('pathfinding initialized')
+	Message.log('Pathfinding initialized')
 }
 
 // const findDomainChange = (from, unit) => {

@@ -5,6 +5,7 @@ import RenderView from './view'
 import TileCache from './tileCache'
 import Ressources from './ressources'
 import MapView from '../render/map'
+import Message from '../view/ui/message'
 
 const MAX_TILES = 30000
 
@@ -125,7 +126,7 @@ const createTiles = tileStacks => tileStacks.map(stack => ({
 }))
 
 const restart = () => {
-	console.log('reassembling tiles')
+	Message.log('Reassembling tiles')
 	tiles = createTiles(MapView.instance.tileStacks)
 	numTiles = MapView.instance.numTiles
 	render()
@@ -146,11 +147,11 @@ const initialize = () => {
 	layer.app.stop()
 
 	if (mapView) {	
-		console.log('assembling tiles')
+		Message.log('Assembling tiles')
 		tiles = createTiles(mapView.tileStacks)
 		numTiles = mapView.numTiles
 
-		console.log('first render')
+		Message.log('First render')
 		render()
 	}
 

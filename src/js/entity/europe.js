@@ -142,7 +142,7 @@ const initialize = () => {
 			Message.send(`Religious unrest in Europe has caused a ${chosen.name} to line up for migration to the new world.`)
 		}
 	})
-	console.log('europe initialized')
+	Message.log('Europe initialized')
 }
 
 

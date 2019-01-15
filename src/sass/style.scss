@@ -123,6 +123,17 @@ a {
 	pointer-events: none;
 }
 
+.loading {
+	position: absolute;
+	bottom: 4vw;
+	font-size: 36px;
+	left: 0;
+	right: 0;
+	display: block;
+	text-align: center;
+	transition: opacity 1s;
+}
+
 .disabled {
 	pointer-events: none;
 	color: #666666;
