@@ -27,7 +27,7 @@ const options = [{
 }, {
 	text: () => 'You happen upon the desperate survivors of a former colony. In exchange for badly needed supplies, they swear allegiance to you.',
 	fn: ({ unit }) => Unit.create('settler', unit.mapCoordinates),
-	probability: 1
+	probability: 0.5
 }, {
 	text: ({ random }) => `You find the ruins of a lost civilization. Within are gold and artifacts worth ${Math.round(500 + 1500*random)} gold.`,
 	fn: ({ random, unit }) => {
