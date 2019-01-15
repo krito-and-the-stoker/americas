@@ -21,7 +21,7 @@ class Layer {
 		setDimensions(this)
 
 		//Add the canvas that Pixi automatically created for you to the HTML document
-		document.body.appendChild(this.app.view)
+		document.querySelector('.canvas').appendChild(this.app.view)
 		this.resizeHandler = () => {
 			setDimensions(layer)
 		}

@@ -8,6 +8,7 @@ const webpack = require('webpack')
 const path = require('path')
 const yargs = require('yargs')
 const jimp = require('jimp')
+const fs = require('fs')
 
 md.use(mila, {
   attrs: {
@@ -30,16 +31,29 @@ const config = {
   context: path.resolve(__dirname, '../src/js/'),
 }
 
-gulp.task('js', () => {
+gulp.task('version', done => {
+  const revision = require('child_process')
+    .execSync('git rev-parse HEAD')
+    .toString().trim()
+  fs.writeFileSync(path.resolve(__dirname, '../src/version/version.json'), JSON.stringify({
+    revision,
+    date: new Date()
+  }))
+  done()
+})
+
+gulp.task('compile', () => {
   return new Promise(resolve => webpack(config, (err, stats) => {
     if (err) {
-			console.log('Webpack', err)    	
-    } 
+      console.log('Webpack', err)     
+    }
 
     console.log(stats.toString({ /* stats options */ }))
     resolve()
   }))
 })
+
+gulp.task('js', gulp.series('version', 'compile'))
 
 function swallowError (error) {
   console.log(error.toString())

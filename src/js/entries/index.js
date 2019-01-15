@@ -1,7 +1,12 @@
+import Version from '../../version/version.json'
+
 let game = null
 
 
 window.addEventListener('load', async () => {
+	console.log(Version)
+	document.querySelector('#revision').innerHTML = Version.revision
+	document.querySelector('#date').innerHTML = Version.date
 	const clickStart = () => {
 		document.querySelector('.start').removeEventListener('click', clickStart)
 		document.querySelector('.load').removeEventListener('click', clickResume)
@@ -9,10 +14,13 @@ window.addEventListener('load', async () => {
 		document.querySelector('.loading').classList.remove('hidden')
 		requestAnimationFrame(() => {		
 			loadingRessources.then(() => {
-				game.start()
+				return game.start()
 			}).then(() => {
 				setInterval(game.save, 60000)
 				window.addEventListener('beforeunload', game.save)
+				setTimeout(() => {
+					document.querySelector('.loading').classList.add('hidden')
+				}, 750)
 			})
 		})
 	}
@@ -28,6 +36,9 @@ window.addEventListener('load', async () => {
 			}).then(() => {
 				setInterval(game.save, 60000)
 				window.addEventListener('beforeunload', game.save)
+				setTimeout(() => {
+					document.querySelector('.loading').classList.add('hidden')
+				}, 750)
 			})
 		})
 	}
