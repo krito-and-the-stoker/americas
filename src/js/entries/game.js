@@ -161,8 +161,6 @@ const load = async () => {
 
 
 	// const mapRendering = new RenderMap()
-	Europe.initialize()
-	await nextFrame()
 	RenderView.initialize()
 	await nextFrame()
 	Dialog.initialize()
@@ -171,6 +169,8 @@ const load = async () => {
 	await nextFrame()
 
 	// for no apparent reason the layers are not available inside TreasureView
+	Europe.initialize()
+	await nextFrame()
 	TreasureView.initialize(Foreground.get().permanent)
 	YearView.initialize(Foreground.get().permanent)
 	Message.log('Restoring game state...')
