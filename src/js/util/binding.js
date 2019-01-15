@@ -33,6 +33,9 @@ const listen = (instance, key, fn) => {
 const update = (instance, key, value) => {
 	const listeners = listenerKey(key)
 	if (value !== undefined) {
+		if (instance[key] === value) {
+			return
+		}
 		instance[key] = value
 	}
 	if (instance[listeners]) {	

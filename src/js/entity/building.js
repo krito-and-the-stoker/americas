@@ -20,7 +20,7 @@ const constructionOptions = colony => {
 			action: () => {
 				const buildings = colony.buildings
 				buildings[name] += 1
-				Colony.update.buildings(colony, buildings)				
+				Colony.update.buildings(colony)				
 			}
 		}))
 
@@ -32,7 +32,7 @@ const constructionOptions = colony => {
 				buildings.warehouse = 0
 			}
 			buildings.warehouse += 1
-			Colony.update.buildings(colony, buildings)
+			Colony.update.buildings(colony)
 		}
 	}
 

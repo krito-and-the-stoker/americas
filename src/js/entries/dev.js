@@ -17,6 +17,7 @@ import Dialog from '../view/ui/dialog'
 import TreasureView from '../view/treasure'
 import YearView from '../view/year'
 import Foreground from '../render/foreground'
+import Background from '../render/background'
 import Record from '../util/record'
 import Util from '../util/util'
 import Tribe from '../entity/tribe'
@@ -110,6 +111,8 @@ const initialize = () => {
 	MainLoop.setDraw(draw)
 	MainLoop.start()
 
+	Background.get().layer.show()
+	Foreground.get().layer.show()		
 	// document.documentElement.requestFullscreen()
 }
 
