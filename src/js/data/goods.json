@@ -20,7 +20,8 @@
 	"productions":[
 		"construction",
 		"bells",
-		"crosses"
+		"crosses",
+		"books"
 	],
 	"food":{
 		"id": 64,
@@ -95,5 +96,8 @@
 	"crosses":{
 		"id": 114,
 		"expert": "preacher"
+	},
+	"books":{
+		"id": 134
 	}
 }

@@ -4,6 +4,7 @@ import Colonist from '../entity/colonist'
 
 
 const TEACH_BASE_FACTOR = 1.0 / Time.TEACH_BASE_TIME
+const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
 const testFieldWork = (student, good) => student.work && student.work.type === 'Field' && student.work.good === good
 const testBuildingWork = (student, building) => student.work && student.work.type === 'Building' && student.work.building === building
@@ -56,6 +57,7 @@ const create = teacher => {
 				if (student.education.progress >= 1) {
 					Colonist.update.expert(student, student.education.profession)
 				}
+				Storage.update(teacher.colony.productionRecord, { good: 'books', amount: 2 * deltaTime * PRODUCTION_BASE_FACTOR })
 			})
 
 		teacher.colony.colonists
@@ -66,6 +68,7 @@ const create = teacher => {
 				if (student.education.progress >= 1) {
 					Colonist.update.expert(student, student.expert === 'criminal' ? 'servant' : null)
 				}
+				Storage.update(teacher.colony.productionRecord, { good: 'books', amount: 2 * deltaTime * PRODUCTION_BASE_FACTOR })
 			})
 
 		return true

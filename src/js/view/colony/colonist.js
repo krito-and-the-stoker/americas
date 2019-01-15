@@ -13,6 +13,7 @@ const frames = Units.settler.frame
 const create = colonist => {
 	const frame = colonist.expert ? frames[colonist.expert] || frames.default : frames.default
 	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
+	sprite.hitArea = new PIXI.Rectangle(16, 0, 32, 64)
 
 	Click.on(sprite, async () => {
 		if (colonist.work && colonist.work.type === 'Field') {
