@@ -47,6 +47,7 @@ const create = (colony, originalDimensions) => {
 	container.panel.addChild(buildingText)
 
 	const getAmount = construction => Math.round(construction.amount)
+	const getTarget = construction => construction.target
 	const updateConstructionPanel = amount => {
 		const construction = colony.construction
 		const percentage = Math.min(100, Math.floor(100 * construction.amount / construction.cost.construction))
@@ -71,6 +72,7 @@ const create = (colony, originalDimensions) => {
 
 
 	Colony.listen.construction(colony, Binding.map(updateConstructionPanel, getAmount))
+	Colony.listen.construction(colony, Binding.map(updateConstructionPanel, getTarget))
 
 	return {
 		container
