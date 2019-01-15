@@ -17,6 +17,7 @@ import Dialog from '../view/ui/dialog'
 import TreasureView from '../view/treasure'
 import YearView from '../view/year'
 import Foreground from '../render/foreground'
+import Background from '../render/background'
 import Record from '../util/record'
 import Util from '../util/util'
 import Tribe from '../entity/tribe'
@@ -67,36 +68,112 @@ const americaLarge = () => {
 	Record.setGlobal('defaultShipArrival', startCoordinates)
 }
 
-const initialize = () => {
+const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve))
+
+const newGame = async () => {
+	await nextFrame()
+
 	MapEntity.create({ data: americaSmallMap })
 	// MapEntity.create({ data: americaLargeMap })
+
+	await nextFrame()
+
 	const mapRendering = new RenderMap()
-	
-	RenderView.initialize(mapRendering)
+
+	await nextFrame()
+
+	RenderView.initialize()
+
+	await nextFrame()
 	MapView.initialize()
+	await nextFrame()
 	Dialog.initialize()
+	await nextFrame()
 	Tween.initialize()
+	await nextFrame()
 	PathFinder.initialize()
+	await nextFrame()
 
 	Europe.initialize()
+	await nextFrame()
 	Tribe.createFromMap(MapEntity.get())
+	await nextFrame()
 
 	// for no apparent reason the layers are not available inside TreasureView
 	TreasureView.initialize(Foreground.get().permanent)
+	await nextFrame()
 	YearView.initialize(Foreground.get().permanent)
 
 	// start game!
 	americaSmall()
 	// americaLarge()
 
+	await nextFrame()
 	MapView.zoomBy(1/0.35, null, 0)
 	setTimeout(() => {
-		MapView.zoomBy(0.35, null, 100)
-	}, 50)
+		MapView.zoomBy(0.35, null, 3000)
+	}, 100)
+
+	setTimeout(() => {
+		Background.get().layer.show()
+		Foreground.get().layer.show()		
+	}, 750)
 
 	setTimeout(() => {
 		Keyboard.initialize()
-	}, 150)
+	}, 3000)
+
+	await nextFrame()
+	document.addEventListener('visibilitychange', () => {
+		if (document.hidden) {
+			MainLoop.stop()
+		} else {
+			MainLoop.start()
+		}
+	})
+
+	await nextFrame()
+	MainLoop.setUpdate(update)
+	MainLoop.setDraw(draw)
+	MainLoop.start()
+}
+
+const loadGame = async () => {
+	// MapEntity.create({ data: americaSmallMap })
+	// MapEntity.create({ data: americaLargeMap })
+
+
+	// const mapRendering = new RenderMap()
+	Europe.initialize()
+
+	
+	RenderView.initialize()
+
+	Dialog.initialize()
+	Tween.initialize()
+
+	MapView.initialize()
+
+	// for no apparent reason the layers are not available inside TreasureView
+	TreasureView.initialize(Foreground.get().permanent)
+	YearView.initialize(Foreground.get().permanent)
+
+	Record.load()
+
+
+	MapView.zoomBy(1/0.35, null, 0)
+	setTimeout(() => {
+		MapView.zoomBy(0.35, null, 3000)
+	}, 100)
+
+	setTimeout(() => {
+		Background.get().layer.show()
+		Foreground.get().layer.show()		
+	}, 2000)
+
+	setTimeout(() => {
+		Keyboard.initialize()
+	}, 3000)
 
 	document.addEventListener('visibilitychange', () => {
 		if (document.hidden) {
@@ -113,6 +190,24 @@ const initialize = () => {
 
 
 window.addEventListener('load', async () => {
-	await Ressources.initialize()
-	initialize()
+	const loadingRessources = Ressources.initialize()
+	document.querySelector('.start').addEventListener('click', () => {
+		loadingRessources.then(() => {
+			document.querySelector('.title').classList.add('hidden')
+			return newGame()
+		}).then(() => {
+			setInterval(Record.save, 60000)
+			window.addEventListener('beforeunload', Record.save)
+		})
+	})
+
+	document.querySelector('.load').addEventListener('click', () => {
+		loadingRessources.then(() => {
+			document.querySelector('.title').classList.add('hidden')
+			return loadGame()
+		}).then(() => {
+			setInterval(Record.save, 60000)
+			window.addEventListener('beforeunload', Record.save)
+		})
+	})
 })

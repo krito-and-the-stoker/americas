@@ -131,7 +131,9 @@ const restart = () => {
 	render()
 }
 
-const initialize = mapView => {
+const initialize = () => {
+	const mapView = MapView.instance
+
 	layer = new Layer({
 		transparent: true,
 		clearBeforeRender: false,
@@ -140,16 +142,17 @@ const initialize = mapView => {
 
 	undiscovered = new PIXI.extras.TilingSprite(Ressources.get().undiscovered, layer.width, layer.height)
 
-	console.log('assembling tiles')
-	tiles = createTiles(mapView.tileStacks)
-
 	layer.app.stage.addChild(undiscovered)
 	layer.app.stop()
 
-	numTiles = mapView.numTiles
+	if (mapView) {	
+		console.log('assembling tiles')
+		tiles = createTiles(mapView.tileStacks)
+		numTiles = mapView.numTiles
 
-	console.log('first render')
-	render()
+		console.log('first render')
+		render()
+	}
 
 	window.addEventListener('resize', resize)
 }

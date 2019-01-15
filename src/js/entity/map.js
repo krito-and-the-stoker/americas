@@ -19,6 +19,7 @@ const get = () => ({
 	tiles
 })
 
+
 const create = ({ data }) => {
 	console.log('creating map')
 
@@ -45,7 +46,7 @@ const create = ({ data }) => {
 	createCoastLine(tiles)
 	console.log('map created')
 
-	Record.add('map', { tiles, numTiles })
+	Record.setGlobal('numTiles', numTiles)
 }
 
 const discoverAll = () => {
@@ -63,9 +64,12 @@ const save = ({ tiles, numTiles }) => ({
 	numTiles
 })
 
-const load = map => {
+const prepare = () => {
+	numTiles = Record.getGlobal('numTiles')
+}
+
+const load = () => {
 	console.log('loading map')
-	numTiles = map.numTiles
 	tiles = Util.range(numTiles.x*numTiles.y)
 		.map(index => Record.referenceTile({ index }))
 		.map(Record.dereferenceTile)
@@ -83,5 +87,6 @@ export default {
 	tile,
 	save,
 	load,
+	prepare,
 	mapCoordinates
 }

@@ -234,7 +234,9 @@ const load = () => {
 	}
 	snapshot = JSON.parse(lastSave)
 	globals = snapshot.globals
+	MapEntity.prepare()
 	snapshot.tiles.forEach(reviveTile)
+	MapEntity.load()
 	snapshot.entities.forEach(record => record.listeners = [])
 	snapshot.entities.forEach(revive)
 	Time.load(snapshot.time)

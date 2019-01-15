@@ -7,7 +7,17 @@ body {
 	margin: 0;
 	background: url(/images/title.jpg) no-repeat center center fixed;
 	background-size: cover;
-	font-family: "Times New Roman"
+}
+
+.title {
+	transition: opacity 1s;
+	opacity: 1;
+	font-family: "Times New Roman";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
 }
 
 h1 {
@@ -32,6 +42,11 @@ h2 {
   @media (max-width: 820px) {
 		font-size: 4.2vw;
   }
+}
+
+a {
+	text-decoration: none;
+	color: black;
 }
 
 .panel {
@@ -93,15 +108,21 @@ h2 {
 				font-size: 5.3vh;
 				width: 30vw;
 			}
-			&.first {
+			&.start {
 				top: 1vw;
 			}
-			&.last {
+			&.load {
 				bottom: 1vw;
 			}
 		}
 	}
 }
+
+.hidden {
+	opacity: 0;
+	pointer-events: none;
+}
+
 
 
 // @media only screen and (max-width: 600px) {

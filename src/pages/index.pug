@@ -6,10 +6,11 @@ html(lang='de')
 		link(rel='stylesheet' href='/style.css')
 
 	body
-		h1 a game of colonization
-		h2 by Krito and the Stoker
-		.panel
-			.links
-				a.first Start new game
-				a.last Resume game
-		//- script(src='/index.entry.js')
+		.title
+			h1 a game of colonization
+			h2 by Krito and the Stoker
+			.panel
+				.links
+					a.start(href='#') Start new game
+					a.load(href='#') Resume game
+		script(src='/index.entry.js')

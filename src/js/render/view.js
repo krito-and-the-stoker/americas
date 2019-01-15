@@ -45,8 +45,8 @@ const updateScale = newScale => {
 	Background.updateScale(newScale)
 }
 
-const initialize = mapView => {
-	Background.initialize(mapView)
+const initialize = () => {
+	Background.initialize()
 	Foreground.initialize()
 	window.addEventListener('resize', () => resizeFunctions
 		.forEach(fn => fn({
