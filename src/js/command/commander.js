@@ -104,5 +104,6 @@ export default {
 	scheduleInstead,
 	scheduleBehind,
 	isIdle,
-	commandsScheduled
+	commandsScheduled,
+	clearSchedule
 }
