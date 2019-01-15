@@ -5,4 +5,58 @@ html {
 body {
 	padding: 0;
 	margin: 0;
+	background: url(/images/title.jpg) no-repeat center center fixed;
+	background-size: cover;
+	font-family: "Times New Roman"
+}
+
+h1 {
+	text-align: center;
+  margin-top: 37vh;
+  margin-bottom: 0;
+  font-weight: normal;
+  font-size: 60px;
+  margin-left: 5vw;
+}
+
+h2 {
+	margin-left: 55vw;
+	text-align: left;
+  margin-top: 0;
+  font-weight: normal;
+  font-size: 36px;
+  margin-bottom: 5vh;
+}
+
+.panel {
+	background: url(/images/status.png) no-repeat center center;
+	background-size: 100% 100%;
+	position: absolute;
+	bottom: 10vh;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 25vw;
+	height: 28vh;
+	padding: 15px;
+	div.links {
+		position: relative;
+		width: 25vw;
+		height: 28vh;
+		a {
+			position: absolute;
+			display: block;
+			font-size: 36px;
+			text-align: center;
+			&.first {
+				top: 1vw;
+				width: 10vw;
+				transform: translateX(7.5vw);
+			}
+			&.last {
+				bottom: 1vw;
+				width: 10vw;
+				transform: translateX(7.5vw);
+			}
+		}
+	}
 }

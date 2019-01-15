@@ -1,5 +1,6 @@
 import Binding from '../util/binding'
 
+
 const MOVE_BASE_TIME = 7500
 const UNLOAD_TIME = 2500
 const LOAD_TIME = 2500
