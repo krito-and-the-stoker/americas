@@ -23,7 +23,7 @@ const listen = (instance, key, fn) => {
 	
 	const remove = () => {
 		if (listener.cleanup) {
-			listener.cleanup()
+			listener.cleanup(true)
 		}
 		instance[listeners] = instance[listeners].filter(l => l !== listener)
 	}
@@ -41,7 +41,7 @@ const update = (instance, key, value) => {
 	if (instance[listeners]) {	
 		instance[listeners].forEach(listener => {
 			if (listener.cleanup) {
-				listener.cleanup()
+				listener.cleanup(false)
 			}
 			const value = key ? instance[key] : instance
 			listener.cleanup = listener.fn(value)

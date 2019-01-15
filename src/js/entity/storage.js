@@ -10,8 +10,30 @@ const update = (storage, pack) => {
 	Binding.update(storage)
 }
 
+const equals = (some, other) => Object.keys(some)
+	.filter(key => key !== 'listeners')
+	.every(key => some[key] === other[key])
 
-const listen = (storage, fn) => Binding.listen(storage, null, fn)
+const listen = (storage, fn) => {
+	let oldStorage = {}
+	let oldCleanup = null
+	const opditmizedListener = newStorage => {
+		if (!equals(newStorage, oldStorage)) {
+			oldStorage = { ...newStorage }
+			if (oldCleanup) {
+				oldCleanup()
+			}
+			oldCleanup = fn(newStorage)
+		}
+
+		return final => {
+			if (final && oldCleanup) {
+				oldCleanup()
+			}
+		}
+	}
+	return Binding.listen(storage, null, opditmizedListener)
+}
 const create = () => Goods.types.reduce((obj, name) => ({ ...obj, [name]: 0 }), {})
 const createWithProduction = () => Goods.types.concat(Goods.productions).reduce((obj, name) => ({ ...obj, [name]: 0 }), {})
 
