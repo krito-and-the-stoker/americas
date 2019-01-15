@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 
 import Storage from '../../entity/storage'
 import ProductionView from '../production'
+import Binding from '../../util/binding'
 
 
 const create = colony => {
@@ -11,7 +12,7 @@ const create = colony => {
 
 	container.position.y = 880
 	container.position.x = 10
-	const unsubscribe = Storage.listen(colony.productionSummary, summary => {
+	const updateProductionSummary = summary => {
 		const packs = Storage.productions(summary).concat(Storage.goods(summary))
 			.filter(({ amount }) => amount !== 0)
 			.sort((a, b) => b.amount - a.amount)
@@ -28,7 +29,9 @@ const create = colony => {
 		return () => {
 			views.flat().forEach(s => container.removeChild(s))
 		}
-	})
+	}
+
+	const unsubscribe = Storage.listen(colony.productionSummary, Binding.map(updateProductionSummary, x => ({ ...x }), Storage.equals))
 
 	return {
 		unsubscribe,

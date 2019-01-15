@@ -1,5 +1,6 @@
 import Time from '../timeline/time'
 import Storage from '../entity/storage'
+import Task from '../util/task'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
@@ -19,9 +20,9 @@ const create = colony => {
 		const scale = deltaTime * PRODUCTION_BASE_FACTOR
 		lastTimeCalled = currentTime
 		
-		if (deltaTimeCalled > 0) {		
+		if (deltaTimeCalled > 0) {
 			count += 1
-			if (count > 30) {
+			if (count > 3) {
 				Storage.goods(colony.productionSummary).forEach(({ good }) => colony.productionSummary[good] = 0)
 				Storage.productions(colony.productionSummary).forEach(({ good }) => colony.productionSummary[good] = 0)
 				Storage.goods(colony.productionRecord).forEach(({ good, amount }) => colony.productionRecord[good] = Math.round(amount / scale))
@@ -36,7 +37,7 @@ const create = colony => {
 	}
 
 	return {
-		update,
+		update: Task.batch(update)
 	}
 }
 

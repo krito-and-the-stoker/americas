@@ -6,6 +6,7 @@ import Dialog from '../../view/ui/dialog'
 import Button from '../../view/ui/button'
 import Util from '../../util/util'
 import ProductionView from '../../view/production'
+import Binding from '../../util/binding'
 
 
 const create = (colony, originalDimensions) => {
@@ -45,26 +46,31 @@ const create = (colony, originalDimensions) => {
 	buildingText.y = originalDimensions.y / 2 - 75
 	container.panel.addChild(buildingText)
 
-	Colony.listen.construction(colony, construction => {
+	const getAmount = construction => Math.round(construction.amount)
+	const updateConstructionPanel = amount => {
+		const construction = colony.construction
 		const percentage = Math.min(100, Math.floor(100 * construction.amount / construction.cost.construction))
 		buildingText.text = `${construction.name} (${percentage}%)`
-		// const rows = 3
-		// const goodsPerRow = Math.ceil(construction.cost.construction / rows)
-		// const goodsLastRow = construction.cost.construction - goodsPerRow * (rows - 1)
-		// const sprites = Util.range(rows).map(row => {
-		// 	const amount = Math.min(Math.floor(Math.max(0, construction.amount - row * goodsPerRow)), goodsPerRow)
-		// 	const view = ProductionView.create('construction', amount, 390)
-		// 	view.forEach(s => {
-		// 		s.y = originalDimensions.y / 2 - 35 + row * 30
-		// 		s.x += originalDimensions.x - 450 + 10
-		// 		container.addChild(s)
-		// 	})
-		// 	return view
-		// }).flat()
-		// return () => {
-		// 	sprites.forEach(s => container.removeChild(s))
-		// }
-	})
+		const rows = 3
+		const goodsPerRow = Math.ceil(construction.cost.construction / rows)
+		const goodsLastRow = construction.cost.construction - goodsPerRow * (rows - 1)
+		const sprites = Util.range(rows).map(row => {
+			const amount = Math.min(Math.floor(Math.max(0, construction.amount - row * goodsPerRow)), goodsPerRow)
+			const view = ProductionView.create('construction', amount, 390)
+			view.forEach(s => {
+				s.y = originalDimensions.y / 2 - 35 + row * 30
+				s.x += originalDimensions.x - 450 + 10
+				container.panel.addChild(s)
+			})
+			return view
+		}).flat()
+		return () => {
+			sprites.forEach(s => container.panel.removeChild(s))
+		}
+	}		
+
+
+	Colony.listen.construction(colony, Binding.map(updateConstructionPanel, getAmount))
 
 	return {
 		container

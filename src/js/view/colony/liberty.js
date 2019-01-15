@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 
 import Colony from '../../entity/colony'
+import Binding from '../../util/binding'
 
 const create = colony => {
 	const container = new PIXI.Container()
@@ -30,6 +31,7 @@ const create = colony => {
 	container.addChild(rebelText)
 	container.addChild(toriesText)
 
+	const freedomPercentage = () => Colony.tories(colony).percentage
 	const updateRebelsAndTories = () => {
 		const rebels  = Colony.rebels(colony)
 		const tories = Colony.tories(colony)
@@ -47,8 +49,8 @@ const create = colony => {
 		toriesText.style = style
 	}
 
-	const unsubscribeBells = Colony.listen.bells(colony, updateRebelsAndTories)
-	const unsubscribeColonists = Colony.listen.colonists(colony, updateRebelsAndTories)
+	const unsubscribeBells = Colony.listen.bells(colony, Binding.map(updateRebelsAndTories, freedomPercentage))
+	const unsubscribeColonists = Colony.listen.colonists(colony, Binding.map(updateRebelsAndTories, freedomPercentage))
 
 	const unsubscribe = () => {
 		unsubscribeColonists()

@@ -100,7 +100,7 @@ const create = (colony, originalDimensions) => {
 					const { tile, position } = tilesAndPositions.find(({ tile }) => work && work.tile === tile) || {}
 					
 					if (position) {
-						return Tile.listen.tile(tile, tile => {					
+						return Tile.listen.tile(tile, tile => {
 							const colonistSprite = ColonistView.create(colonist)
 							colonistSprite.x = position.x
 							colonistSprite.y = position.y

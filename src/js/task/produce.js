@@ -3,6 +3,7 @@ import Storage from '../entity/storage'
 import Time from '../timeline/time'
 import Colony from '../entity/colony'
 import Europe from '../entity/europe'
+import Task from '../util/task'
 
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
@@ -53,7 +54,7 @@ const create = (colony, building, colonist) => {
 	}
 
 	return {
-		update,
+		update: Task.batch(update)
 	}
 }
 

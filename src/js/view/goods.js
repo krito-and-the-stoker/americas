@@ -7,6 +7,7 @@ const create = ({ good, amount }) => {
 	const frame = Goods[good].id
 	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
 
+	let currentAmount = amount
 	const number = new PIXI.Text(`${amount}`, {
 		fontFamily: 'Times New Roman',
 		fontSize: 32,
@@ -15,7 +16,10 @@ const create = ({ good, amount }) => {
 	})
 
 	const update = amount => {
-		number.text = `${Math.floor(Math.max(0, amount))}`
+		if (amount !== currentAmount) {
+			currentAmount = amount
+			number.text = `${Math.floor(Math.max(0, amount))}`
+		}
 	}
 
 	return {

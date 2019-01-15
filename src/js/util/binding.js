@@ -71,9 +71,35 @@ const shared = fn => {
 	}
 }
 
+
+const map = (fn, mapping, equals = (a, b) => a === b) => {
+	let oldValue = null
+	let oldCleanup = null
+	const cleanup = final => {
+		if (final && oldCleanup) {
+			oldCleanup()
+		}
+	}
+	const optimizedListener = newValue => {
+		const mapped = mapping(newValue)
+		if (!equals(mapped, oldValue)) {
+			oldValue = mapped
+			if (oldCleanup) {
+				oldCleanup()
+			}
+			oldCleanup = fn(mapped)
+		}
+
+		return cleanup
+	}
+
+	return optimizedListener
+}
+
 export default {
 	update,
 	listen,
 	listenerKey,
-	shared
+	shared,
+	map
 }
