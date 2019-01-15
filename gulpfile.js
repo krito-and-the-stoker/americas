@@ -19,7 +19,7 @@ md.use(mila, {
 const config = {
 	mode: yargs.argv.production ? 'production' : 'development',
   entry: {
-    main: './entries/main.js',
+    index: './entries/index.js',
     dev: './entries/dev.js',
     worker: './entries/worker.js'
   },
