@@ -13,6 +13,7 @@ import Binding from '../util/binding'
 import Storage from './storage'
 import Consume from '../task/consume'
 import Deteriorate from '../task/deteriorate'
+import GrowHorses from '../task/growHorses'
 import Member from '../util/member'
 import Produce from '../task/produce'
 import ProductionSummary from '../task/productionSummary'
@@ -130,7 +131,8 @@ const initialize = colony => {
 
 	let starvationMessageSent = false
 	destroy.push(Storage.listen(colony.storage, storage => {
-		if (storage.food >= 220) {
+		const keepFood = 20
+		if (storage.food >= 200 + keepFood) {
 			const unit = Unit.create('settler', colony.mapCoordinates)
 			Storage.update(colony.storage, { good: 'food', amount: -200 })
 		}
@@ -163,6 +165,7 @@ const initialize = colony => {
 	destroy.push(Time.schedule(Produce.create(colony, 'colony', null)))
 	destroy.push(Time.schedule(Deteriorate.create(colony)))
 	destroy.push(Time.schedule(ProductionSummary.create(colony)))
+	destroy.push(Time.schedule(GrowHorses.create(colony)))
 	destroy.push(listen.colonists(colony, () => listen.bells(colony, () => {
 		let bonus = 0
 		if (tories(colony).number > 8) {

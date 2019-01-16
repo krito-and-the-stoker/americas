@@ -124,7 +124,7 @@ const create = colony => {
 	}
 
 	const unsubscribe = Colony.listen.buildings(colony, buildings => {
-		const cols = 4
+		const cols = 6
 		let position = {
 			x: 0,
 			y: 0
