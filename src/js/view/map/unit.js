@@ -20,6 +20,9 @@ let selectedView = null
 let blinkTween = null
 const select = unit => {
 	const view = getView(unit)
+	if (view.destroyed) {
+		return
+	}
 	if (view != selectedView) {
 		if (selectedView) {
 			unselect()
@@ -93,6 +96,8 @@ const create = unit => {
 const selectedUnit = () => selectedView ? selectedView.unit : null
 
 const destroy = view => {
+	unselect(view.unit)
+	view.destroyed = true
 	hide(view)	
 }
 
@@ -108,7 +113,9 @@ const lookNormal = view => {
 }
 
 const show = view => {
-	Foreground.addUnit(view.sprite)
+	if (!view.destroyed) {
+		Foreground.addUnit(view.sprite)
+	}
 }
 
 const hide = view => {
