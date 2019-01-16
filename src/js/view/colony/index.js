@@ -11,6 +11,7 @@ import ProductionView from '../../view/production'
 import Colony from '../../entity/colony'
 import Click from '../../input/click'
 import UnitView from '../../view/unit'
+import Events from '../../view/ui/events'
 
 import ColonyBackground from './background'
 import ColonyTiles from './tiles'
@@ -34,6 +35,7 @@ const close = () => {
 const open = colony => {
 	currentScreen = create(colony)
 	Foreground.openScreen(currentScreen.container)
+	Events.trigger('colonyScreen', colony)
 }
 
 const create = colony => {

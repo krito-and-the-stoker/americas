@@ -10,6 +10,7 @@ import Commander from '../../command/commander'
 import Secondary from '../../input/secondary'
 import Message from '../../view/ui/message'
 import Notification from '../../view/ui/notification'
+import Events from '../../view/ui/events'
 
 import UnitView from './unit'
 import ColonyView from './colony'
@@ -36,7 +37,16 @@ const moveMap = (newCoords, moveTime = 0) => {
 	}
 }
 
-const centerAt = ({ x, y }, moveTime) => moveMap({ x: -TILE_SIZE*x + RenderView.getDimensions().x / 2, y: -TILE_SIZE*y + RenderView.getDimensions().y / 2}, moveTime)
+const centerAt = ({ x, y }, moveTime) => {
+	const scale = RenderView.get().scale
+	const target = {
+		x: -scale*TILE_SIZE*x + RenderView.getDimensions().x / 2,
+		y: -scale*TILE_SIZE*y + RenderView.getDimensions().y / 2
+	}
+	console.log(scale)
+	moveMap(target, moveTime)
+}
+
 
 
 const sanitizeScale = scale => (scale < MIN_SCALE ? MIN_SCALE : (scale > MAX_SCALE ? MAX_SCALE : scale))
@@ -134,7 +144,8 @@ const initialize = () => {
 					x: Math.floor((coords.x - RenderView.get().coords.x) / (TILE_SIZE * RenderView.get().scale)),
 					y: Math.floor((coords.y - RenderView.get().coords.y) / (TILE_SIZE * RenderView.get().scale))
 				}
-				Commander.scheduleInstead(selectedUnit.commander, MoveTo.create(selectedUnit, target))			
+				Commander.scheduleInstead(selectedUnit.commander, MoveTo.create(selectedUnit, target))
+				Events.trigger('move', selectedUnit)
 			}
 		}
 	})

@@ -6,6 +6,7 @@ import Foreground from '../../render/foreground'
 import Europe from '../../entity/europe'
 import Treasure from '../../entity/treasure'
 import Unit from '../../entity/unit'
+import Events from '../../view/ui/events'
 
 import Button from '../../view/ui/button'
 import Dialog from '../../view/ui/dialog'
@@ -18,6 +19,7 @@ const open = () => {
 	const screen = create()
 	unsubscribe = screen.unsubscribe
 	Foreground.openScreen(screen.container)
+	Events.trigger('europeScreen')
 }
 
 const close = () => {

@@ -16,6 +16,7 @@ import ColonyView from '../../view/colony'
 import MapEntity from '../../entity/map'
 import Background from '../../render/background'
 import Dialog from './dialog'
+import Events from './events'
 
 
 const originalDimensions = {
@@ -43,10 +44,15 @@ const createEuropeNotification = unit => {
 
 	const action = () => EuropeView.open()
 
+	const dismiss = {
+		europeScreen: () => true
+	}
+
 	return {
 		container,
 		action,
-		type: 'europe'
+		type: 'europe',
+		dismiss
 	}
 }
 
@@ -68,10 +74,15 @@ const createAmericaNotification = unit => {
 		UnitMapView.select(unit)
 	}
 
+	const dismiss = {
+		select: u => u === unit
+	}
+
 	return {
 		container,
 		action,
-		type: 'america'
+		type: 'america',
+		dismiss
 	}
 }
 
@@ -90,10 +101,15 @@ const createConstructionNotification = colony => {
 
 	const action = () => ColonyView.open(colony)
 
+	const dismiss = {
+		colonyScreen: c => c === colony
+	}
+
 	return {
 		container,
 		action,
-		type: 'america'
+		type: 'america',
+		dismiss
 	}
 }
 
@@ -112,7 +128,7 @@ const createTerraformingNotification = unit => {
 	tileSprites.forEach(s => s.mask = circle)
 	const unitSprite = UnitView.create(unit)
 
-	scale = 0.5
+	const scale = 0.5
 	unitSprite.x = (1 - scale) * 64
 	unitSprite.y = (1 - scale) * 64
 	unitSprite.scale.set(scale)
@@ -125,10 +141,15 @@ const createTerraformingNotification = unit => {
 		UnitMapView.select(unit)
 	}
 
+	const dismiss = {
+		select: u => u === unit
+	}
+
 	return {
 		container,
 		action,
-		type: 'terraforming'
+		type: 'terraforming',
+		dismiss
 	}
 }
 
@@ -137,7 +158,7 @@ const createRumorNotification = (option, tile) => {
 	const rumors = createSprite(Terrain.rumors.id - 1)
 	const icon = createIcon('question')
 
-	scale = 0.5
+	const scale = 0.5
 	icon.x = (1 - scale) * 64
 	icon.y = (1 - scale) * 64
 	icon.scale.set(scale)
@@ -154,10 +175,15 @@ const createRumorNotification = (option, tile) => {
 		Background.render()
 	}
 
+	const dismiss = {
+		move: u => u === uit
+	}
+
 	return {
 		container,
 		action,
-		type: 'rumor'
+		type: 'rumor',
+		dismiss
 	}
 }
 
@@ -194,14 +220,39 @@ const initialize = () => {
 
 	RenderView.updateWhenResized(({ dimensions }) => {
 		const scale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
-		window.scale = scale
-		window.dimensions = dimensions
-		window.originalDimensions = originalDimensions
-		window.container = container
 
 		container.x = dimensions.x / 2
 		container.y = dimensions.y - 74
-		// container.scale.set(scale)
+	})
+
+	Events.listen('colonyScreen', colony => {
+		const dismiss = notifications
+			.filter(n => n.dismiss.colonyScreen)
+			.filter(n => n.dismiss.colonyScreen(colony))
+
+		dismiss.forEach(remove)
+	})
+
+	Events.listen('europeScreen', () => {
+		const dismiss = notifications
+			.filter(n => n.dismiss.europeScreen)
+			.filter(n => n.dismiss.europeScreen())
+
+		dismiss.forEach(remove)
+	})
+	Events.listen('select', unit => {
+		const dismiss = notifications
+			.filter(n => n.dismiss.select)
+			.filter(n => n.dismiss.select(unit))
+
+		dismiss.forEach(remove)
+	})
+	Events.listen('move', unit => {
+		const dismiss = notifications
+			.filter(n => n.dismiss.move)
+			.filter(n => n.dismiss.move(unit))
+
+		dismiss.forEach(remove)
 	})
 }
 

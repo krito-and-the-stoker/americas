@@ -88,6 +88,10 @@ const handleKeydown = (e) => {
 		if (e.key === 'r') {
 			Commander.scheduleInstead(unit.commander, Road.create(unit))
 		}
+
+		if (e.key === 'c') {
+			MapView.centerAt(unit.mapCoordinates, 350)
+		}
 	}
 	// const activeUnit = Unit.get().activeUnit
 	// if(activeUnit) {

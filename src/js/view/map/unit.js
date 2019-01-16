@@ -11,6 +11,7 @@ import ColonyView from '../../view/colony'
 import Unit from '../../entity/unit'
 import Europe from '../../entity/europe'
 import Colonist from '../../entity/colonist'
+import Events from '../../view/ui/events'
 
 const BLINK_TIME = 500
 const TILE_SIZE = 64
@@ -36,6 +37,8 @@ const select = unit => {
 			.repeat(Infinity)
 			.yoyo(true)
 			.start()
+
+		Events.trigger('select', view.unit)
 	}
 }
 
