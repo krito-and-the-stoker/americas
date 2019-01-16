@@ -27,9 +27,9 @@ const get = () => ({
 	currentTime
 })
 
-const speedUp = () => time.scale *= 1.5
-const slowDown = () => time.scale /= 1.5
-const normalize = () => time.scale = 1
+const speedUp = () => update.scale(time.scale * 1.5)
+const slowDown = () => update.scale(time.scale / 1.5)
+const normalize = () => update.scale(1)
 
 
 const advance = deltaTime => {
@@ -72,11 +72,13 @@ const advance = deltaTime => {
 }
 
 const listen = {
-	year: fn => Binding.listen(time, 'year', fn)
+	year: fn => Binding.listen(time, 'year', fn),
+	scale: fn => Binding.listen(time, 'scale', fn)
 }
 
-const update= {
-	year: value => Binding.update(time, 'year', value)
+const update = {
+	year: value => Binding.update(time, 'year', value),
+	scale: value => Binding.update(time, 'scale', value)
 }
 
 const schedule = (e, time = null) => {

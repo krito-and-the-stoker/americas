@@ -64,7 +64,11 @@ const find = (from, isTarget, target, freeDomainCross, unit) => {
 		if(a.key !== b.key)
 			return a.key - b.key;
 
-		//comparison by actual cost
+		if (!a.value || !b.value) {
+			return 0
+		}
+
+		//comparison by actual cost (whatever that means by now! isnt cost a function now? or is it not?)
 		if(a.value.cost !== b.value.cost)
 			return a.value.cost - b.value.cost;
 
