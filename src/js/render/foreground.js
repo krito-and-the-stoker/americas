@@ -3,6 +3,7 @@ import { loadTexture, range, rectangle } from './../util/util'
 import Layer from './layer'
 import Background from './background'
 import Context from '../view/ui/context'
+import Events from '../view/ui/events'
 
 let container = null
 let context = null
@@ -25,11 +26,13 @@ const get = () => ({
 })
 
 const hitTest = coords => layer.app.renderer.plugins.interaction.hitTest(new PIXI.Point(coords.x, coords.y), layer.app.stage)
-const openScreen = screen => {
+let currentEvent = null
+const openScreen = (screen, event) => {
 	if (currentScreen) {
 		closeScreen()
 	}
 	currentScreen = screen
+	currentEvent = event
 	layer.app.stage.addChild(screen)
 	layer.app.stage.addChild(permanent)
 	layer.app.stage.addChild(context)
@@ -37,10 +40,12 @@ const openScreen = screen => {
 	layer.app.stage.removeChild(container)
 	layer.app.stage.removeChild(dialog)
 	Background.hide()
+	Events.trigger(event.name, event.arg)
 }
 
 const closeScreen = () => {
 	if (currentScreen) {	
+		Events.trigger(currentEvent.name, currentEvent.arg)
 		Context.cancelAll()
 		layer.app.stage.removeChild(currentScreen)
 		layer.app.stage.addChild(container)
@@ -51,6 +56,7 @@ const closeScreen = () => {
 		Background.show()
 	}
 	currentScreen = null
+	currentEvent = null
 }
 
 const hasOpenScreen = () => currentScreen ? true : false

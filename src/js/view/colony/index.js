@@ -34,8 +34,7 @@ const close = () => {
 
 const open = colony => {
 	currentScreen = create(colony)
-	Foreground.openScreen(currentScreen.container)
-	Events.trigger('colonyScreen', colony)
+	Foreground.openScreen(currentScreen.container, { name: 'colonyScreen', arg: colony })
 }
 
 const create = colony => {
@@ -96,7 +95,8 @@ const create = colony => {
 	
 	return {
 		container,
-		unsubscribe
+		unsubscribe,
+		colony
 	}
 }
 

@@ -18,8 +18,7 @@ let unsubscribe = () => {}
 const open = () => {
 	const screen = create()
 	unsubscribe = screen.unsubscribe
-	Foreground.openScreen(screen.container)
-	Events.trigger('europeScreen')
+	Foreground.openScreen(screen.container, { name: 'europeScreen' })
 }
 
 const close = () => {
