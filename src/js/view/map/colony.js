@@ -10,8 +10,9 @@ const TILE_SIZE = 64
 const MAP_COLONY_FRAME_ID = 53 
 
 
+const createSprite = colony => new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(MAP_COLONY_FRAME_ID)))
 const create = colony => {
-	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(MAP_COLONY_FRAME_ID)))
+	const sprite = createSprite(colony)
 	sprite.x = TILE_SIZE * colony.mapCoordinates.x
 	sprite.y = TILE_SIZE * colony.mapCoordinates.y
 	sprite.interactive = true
@@ -72,5 +73,6 @@ const initialize = () => {
 }
 
 export default {
-	initialize
+	initialize,
+	createSprite
 }

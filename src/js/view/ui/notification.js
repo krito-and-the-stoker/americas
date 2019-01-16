@@ -9,6 +9,9 @@ import RenderView from '../../render/view'
 import Click from '../../input/click'
 import Secondary from '../../input/secondary'
 import MapView from '../../view/map'
+import UnitMapView from '../../view/map/unit'
+import ColonyMapView from '../../view/map/colony'
+import ColonyView from '../../view/colony'
 
 
 const originalDimensions = {
@@ -18,10 +21,11 @@ const originalDimensions = {
 let container = null
 let notifications = []
 
+const createIcon = name => new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(Icons[name])))
 
 const createEuropeNotification = unit => {
 	const container = new PIXI.Container()
-	const icon = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(Icons.europe)))
+	const icon = createIcon('europe')
 	const unitView = UnitView.create(unit)
 
 	const scale = 0.5
@@ -43,7 +47,7 @@ const createEuropeNotification = unit => {
 
 const createAmericaNotification = unit => {
 	const container = new PIXI.Container()
-	const icon = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(Icons.america)))
+	const icon = createIcon('america')
 	const unitView = UnitView.create(unit)
 
 	const scale = 0.5
@@ -54,13 +58,40 @@ const createAmericaNotification = unit => {
 	container.addChild(icon)
 	container.addChild(unitView)
 
-	const action = () => MapView.centerAt(unit.mapCoordinates, 350)
+	const action = () => {
+		MapView.centerAt(unit.mapCoordinates, 350)
+		UnitMapView.select(unit)
+	}
 
 	return {
 		container,
 		action,
 		type: 'america'
-	}}
+	}
+}
+
+const createConstructionNotification = (colony) => {
+	const container = new PIXI.Container()
+	const colonySprite = ColonyMapView.createSprite(colony)
+	const icon = createIcon('plus')
+
+	const scale = 0.5
+	icon.x = (1 - scale) * 64
+	icon.y = (1 - scale) * 64
+	icon.scale.set(scale)
+	
+	container.addChild(colonySprite)
+	container.addChild(icon)
+
+	const action = () => ColonyView.open(colony)
+
+	return {
+		container,
+		action,
+		type: 'america'
+	}
+}
+
 
 const remove = notification => {
 	container.removeChild(notification.container)
@@ -69,7 +100,8 @@ const remove = notification => {
 
 const createType = {
 	europe: params => createEuropeNotification(params.unit),
-	america: params => createAmericaNotification(params.unit)
+	america: params => createAmericaNotification(params.unit),
+	construction: params => createConstructionNotification(params.colony)
 }
 const create = params => {
 	const notification = createType[params.type](params)

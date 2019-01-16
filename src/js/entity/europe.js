@@ -5,6 +5,7 @@ import Member from '../util/member'
 import Binding from '../util/binding'
 import Util from '../util/util'
 import Message from '../view/ui/message'
+import Notification from '../view/ui/notification'
 
 const possibleColonists = [
 	{ unit: 'settler', 'name': 'Petty Criminals', expert: "criminal" },
@@ -139,6 +140,7 @@ const initialize = () => {
 			add.unit(unit)
 			update.crosses(-europe.crossesNeeded)
 			europe.crossesNeeded += 1
+			Notification.create({ type: 'europe', unit })
 			Message.send(`Religious unrest in Europe has caused a ${chosen.name} to line up for migration to the new world.`)
 		}
 	})

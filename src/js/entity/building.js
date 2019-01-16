@@ -5,6 +5,7 @@ import Colony from '../entity/colony'
 import Unit from '../entity/unit'
 import Storage from '../entity/storage'
 import Message from '../view/ui/message'
+import Notification from '../view/ui/notification'
 
 const frame = (colony, name) => Buildings[name].frame[colony.buildings[name]]
 const create = () => Util.makeObject(Buildings.places.map(name => [name, 0]))
@@ -121,7 +122,8 @@ const construct = (colony, construction) => {
 	}
 	construction.action()
 
-	Message.send(`${colony.name} has completed construction of ${colony.construction.name}.`)
+	Notification.create({ type: 'construction', colony, name: construction.name })
+	Message.send(`${colony.name} has completed construction of ${construction.name}.`)
 
 	construction.amount -= construction.cost.construction
 	construction.target = 'none'
