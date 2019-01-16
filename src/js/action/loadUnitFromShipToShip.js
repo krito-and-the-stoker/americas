@@ -3,7 +3,7 @@ import Europe from '../entity/europe'
 import EnterColony from './enterColony'
 
 export default (ship, passenger) => {
-	if (Unit.hasCapacity(ship)) {
+	if (ship.domain === 'sea' && Unit.hasCapacity(ship)) {
 		Unit.unloadUnit(passenger.vehicle, passenger)
 		Unit.loadUnit(ship, passenger)		
 	}
