@@ -4,6 +4,7 @@ import Tile from '../entity/tile'
 import Record from '../util/record'
 import Storage from '../entity/storage'
 import Unit from '../entity/unit'
+import Notification from '../view/ui/notification'
 
 const create = (unit, eta) => {
 	let aborted = false
@@ -28,6 +29,7 @@ const create = (unit, eta) => {
 			Storage.update(unit.equipment, { good: 'tools', amount: -20 })	
 			Tile.clearForest(MapEntity.tile(unit.mapCoordinates))
 			Unit.update.pioneering(unit, false)
+			Notification.create({ type: 'terraforming', unit })
 		}
 	}
 

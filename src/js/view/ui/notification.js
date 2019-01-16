@@ -12,6 +12,8 @@ import MapView from '../../view/map'
 import UnitMapView from '../../view/map/unit'
 import ColonyMapView from '../../view/map/colony'
 import ColonyView from '../../view/colony'
+import MapEntity from '../../entity/map'
+import Background from '../../render/background'
 
 
 const originalDimensions = {
@@ -70,7 +72,7 @@ const createAmericaNotification = unit => {
 	}
 }
 
-const createConstructionNotification = (colony) => {
+const createConstructionNotification = colony => {
 	const container = new PIXI.Container()
 	const colonySprite = ColonyMapView.createSprite(colony)
 	const icon = createIcon('plus')
@@ -92,6 +94,41 @@ const createConstructionNotification = (colony) => {
 	}
 }
 
+const createTerraformingNotification = unit => {
+	const tile = MapEntity.tile(unit.mapCoordinates)
+	
+	const container = new PIXI.Container()
+	
+	const circle = new PIXI.Graphics()
+	circle.beginFill(0xFFFFFF)
+	circle.drawCircle(32, 32, 26)
+	circle.endFill()
+	container.addChild(circle)
+
+	const tileSprites = Background.createSpritesFromTile(tile)
+	tileSprites.forEach(s => s.mask = circle)
+	const unitSprite = UnitView.create(unit)
+
+	scale = 0.5
+	unitSprite.x = (1 - scale) * 64
+	unitSprite.y = (1 - scale) * 64
+	unitSprite.scale.set(scale)
+
+	tileSprites.forEach(t => container.addChild(t))
+	container.addChild(unitSprite)
+
+	const action = () => {
+		MapView.centerAt(unit.mapCoordinates, 350)
+		UnitMapView.select(unit)
+	}
+
+	return {
+		container,
+		action,
+		type: 'terraforming'
+	}
+}
+
 
 const remove = notification => {
 	container.removeChild(notification.container)
@@ -101,7 +138,8 @@ const remove = notification => {
 const createType = {
 	europe: params => createEuropeNotification(params.unit),
 	america: params => createAmericaNotification(params.unit),
-	construction: params => createConstructionNotification(params.colony)
+	construction: params => createConstructionNotification(params.colony),
+	terraforming: params => createTerraformingNotification(params.unit)
 }
 const create = params => {
 	const notification = createType[params.type](params)
