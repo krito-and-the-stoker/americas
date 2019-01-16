@@ -199,7 +199,7 @@ const disband = unit => {
 	// TODO: make sure nothing happens when disbanding a cargoing unit
 	Commander.clearSchedule(unit.commander)
 	if (unit.colonist) {
-		Colonist.unit.update(unit.colonist, null)
+		Colonist.update.unit(unit.colonist, null)
 	}
 
 	Record.remove(unit)

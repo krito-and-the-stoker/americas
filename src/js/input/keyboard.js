@@ -13,24 +13,25 @@ import Plow from '../command/plow'
 import Road from '../command/road'
 import MapEntity from '../entity/map'
 import Treasure from '../entity/treasure'
+import Unit from '../entity/unit'
 
 const ZOOM_FACTOR = 1.25
 const ZOOM_TIME = 350
 
 
 const handleKeydown = (e) => {
-	if (e.key === 'x' || e.key === 'y') {	
-		let targetScale = RenderView.get().scale
-		if (e.key === 'x') {
-			targetScale *= ZOOM_FACTOR
-		}
-		if (e.key === 'y') {
-			targetScale /= ZOOM_FACTOR
-		}
+	// if (e.key === 'x' || e.key === 'y') {	
+	// 	let targetScale = RenderView.get().scale
+	// 	if (e.key === 'x') {
+	// 		targetScale *= ZOOM_FACTOR
+	// 	}
+	// 	if (e.key === 'y') {
+	// 		targetScale /= ZOOM_FACTOR
+	// 	}
 
-		targetScale = MapView.sanitizeScale(targetScale)
-		MapView.zoom(targetScale, ZOOM_TIME)
-	}
+	// 	targetScale = MapView.sanitizeScale(targetScale)
+	// 	MapView.zoom(targetScale, ZOOM_TIME)
+	// }
 	if (e.key === ' ') {
 		Time.togglePause()
 	}
@@ -91,6 +92,10 @@ const handleKeydown = (e) => {
 
 		if (e.key === 'c') {
 			MapView.centerAt(unit.mapCoordinates, 350)
+		}
+
+		if (e.key === 'x') {
+			Unit.disband(unit)
 		}
 	}
 	// const activeUnit = Unit.get().activeUnit

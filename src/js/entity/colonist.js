@@ -60,11 +60,21 @@ const listen = {
 	work: (colonist, fn) => Binding.listen(colonist, 'work', fn),
 	colony: (colonist, fn) => Binding.listen(colonist, 'colony', fn),
 	expert: (colonist, fn) => Binding.listen(colonist, 'expert', fn),
+	unit: (colonist, fn) => Binding.listen(colonist, 'unit', fn),
 }
 const update = {
 	work: (colonist, value) => Binding.update(colonist, 'work', value),
 	colony: (colonist, value) => Binding.update(colonist, 'colony', value),
 	expert: (colonist, value) => Binding.update(colonist, 'expert', value),
+	unit: (colonist, value) => Binding.update(colonist, 'unit', value),
+}
+
+const initialize = colonist => {
+	listen.unit(colonist, unit => {
+		if (!unit) {
+			disband(colonist)
+		}
+	})
 }
 
 const create = unit => {
@@ -79,12 +89,16 @@ const create = unit => {
 		work: null
 	}
 
+	initialize(colonist)
+
 	Record.add('colonist', colonist)
 	return colonist
 }
 
 const disband = colonist => {
-	UnjoinColony(colonist)
+	if (colonist.colony) {
+		UnjoinColony(colonist)
+	}
 	if (colonist.unit) {
 		Unit.update.colonist(colonist.unit, null)
 	}
@@ -113,6 +127,7 @@ const load = colonist => {
 	colonist.unit = Record.dereference(colonist.unit)
 
 	Record.entitiesLoaded(() => {	
+		initialize(colonist)
 		if (colonist.work) {
 			if (colonist.work.type === 'Field') {			
 				colonist.work.tile = Record.dereferenceTile(colonist.work.tile)
