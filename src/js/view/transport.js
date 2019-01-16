@@ -77,18 +77,22 @@ const create = unit => {
 
 		const unsubscribeStorage = Storage.listen(unit.storage, storage => {
 			const goods = Storage.split(unit.storage)
+			let storageIndex = {
+				x: index.x,
+				y: index.y
+			}
 			return Util.mergeFunctions(goods.map(pack => {
 				const view = GoodsView.create(pack)
-				view.sprite.x = index.x * 1.4 * 32 - 8
-				view.sprite.y = index.y * 1.2 * 32 + 80
+				view.sprite.x = storageIndex.x * 1.4 * 32 - 8
+				view.sprite.y = storageIndex.y * 1.2 * 32 + 80
 				view.sprite.scale.set(1.4)
 				if (pack.amount < 100) {
 					view.sprite.filters = [greyScaleFilter]
 				}
-				index.x += 1
-				if (index.x >= 2) {
-					index.x = 0
-					index.y += 1
+				storageIndex.x += 1
+				if (storageIndex.x >= 2) {
+					storageIndex.x = 0
+					storageIndex.y += 1
 				}
 				Drag.makeDraggable(view.sprite, { good: pack.good, amount: pack.amount, unit })
 				container.addChild(view.sprite)
