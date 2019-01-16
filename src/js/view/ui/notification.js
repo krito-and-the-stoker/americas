@@ -167,8 +167,13 @@ const createRumorNotification = (option, tile, unit) => {
 	container.addChild(icon)
 
 	const action = () => {
-		MapView.centerAt(tile.mapCoordinates, 350)
-		Dialog.createIndependent(option.text, ['ok'], null, { pause: true })
+		Dialog.createIndependent(option.text, ['ok', 'go to scout'], null, { pause: true })
+			.then(decision => {
+				if (decision === 1) {
+					MapView.centerAt(unit.mapCoordinates, 350)
+					UnitMapView.select(unit)
+				}
+			})
 
 		option.fn()
 		tile.rumors = false
