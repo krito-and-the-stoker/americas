@@ -8,6 +8,7 @@ import Foreground from '../../render/foreground'
 import RenderView from '../../render/view'
 import Click from '../../input/click'
 import Secondary from '../../input/secondary'
+import MapView from '../../view/map'
 
 
 const originalDimensions = {
@@ -15,6 +16,7 @@ const originalDimensions = {
 	y: 1080
 }
 let container = null
+let notifications = []
 
 
 const createEuropeNotification = unit => {
@@ -39,24 +41,47 @@ const createEuropeNotification = unit => {
 	}
 }
 
+const createAmericaNotification = unit => {
+	const container = new PIXI.Container()
+	const icon = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(Icons.america)))
+	const unitView = UnitView.create(unit)
+
+	const scale = 0.5
+	unitView.x = (1 - scale) * 64
+	unitView.y = (1 - scale) * 64
+	unitView.scale.set(scale)
+	
+	container.addChild(icon)
+	container.addChild(unitView)
+
+	const action = () => MapView.centerAt(unit.mapCoordinates, 350)
+
+	return {
+		container,
+		action,
+		type: 'america'
+	}}
+
 const remove = notification => {
 	container.removeChild(notification.container)
+	notifications = notifications.filter(n => n !== notification)
 }
 
+const createType = {
+	europe: params => createEuropeNotification(params.unit),
+	america: params => createAmericaNotification(params.unit)
+}
 const create = params => {
-	if (params.type === 'europe') {
-		const notification = createEuropeNotification(params.unit)
+	const notification = createType[params.type](params)
+	notification.container.x += notifications.length * 74
 
-
-		// notification.view.x = originalDimensions.x / 2
-		// notification.view.y = originalDimensions.y - 74
-		container.addChild(notification.container)
-		Click.on(notification.container, () => {
-			notification.action()
-			remove(notification)
-		})
-		Secondary.on(notification.container, () => remove(notification))
-	}
+	container.addChild(notification.container)
+	Click.on(notification.container, () => {
+		notification.action()
+		remove(notification)
+	})
+	Secondary.on(notification.container, () => remove(notification))
+	notifications.push(notification)
 }
 
 const initialize = () => {

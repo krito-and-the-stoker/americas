@@ -36,6 +36,7 @@ const advance = deltaTime => {
 	if (!paused) {
 		currentTime += deltaTime * time.scale
 	}
+	// TODO: move this away from here
 	try {
 		update.year(Math.round(startYear + currentTime / YEAR))
 		const readyTasks = scheduled.filter(e => e.time <= currentTime)
