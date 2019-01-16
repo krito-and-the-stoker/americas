@@ -14,12 +14,12 @@ const YEAR = 80000
 
 let currentTime = 0
 let scheduled = []
-let paused = false
 
 const startYear = 1492
 const time = {
 	scale: 1,
-	year: startYear
+	year: startYear,
+	paused: false
 }
 
 const get = () => ({
@@ -31,11 +31,16 @@ const speedUp = () => update.scale(time.scale * 1.5)
 const slowDown = () => update.scale(time.scale / 1.5)
 const normalize = () => update.scale(1)
 
+const pause = () => update.paused(true)
+const resume = () => update.paused(false)
+const togglePause = () => update.paused(!time.paused)
+
 
 const advance = deltaTime => {
-	if (!paused) {
-		currentTime += deltaTime * time.scale
+	if (time.paused) {
+		return
 	}
+	currentTime += deltaTime * time.scale
 	// TODO: move this away from here
 	try {
 		update.year(Math.round(startYear + currentTime / YEAR))
@@ -73,12 +78,14 @@ const advance = deltaTime => {
 
 const listen = {
 	year: fn => Binding.listen(time, 'year', fn),
-	scale: fn => Binding.listen(time, 'scale', fn)
+	scale: fn => Binding.listen(time, 'scale', fn),
+	paused: fn => Binding.listen(time, 'paused', fn),
 }
 
 const update = {
 	year: value => Binding.update(time, 'year', value),
-	scale: value => Binding.update(time, 'scale', value)
+	scale: value => Binding.update(time, 'scale', value),
+	paused: value => Binding.update(time, 'paused', value),
 }
 
 const schedule = (e, time = null) => {
@@ -98,20 +105,14 @@ const schedule = (e, time = null) => {
 	return stop
 }
 
-const pause = () => paused = true
-const resume = () => paused = false
-const togglePause = () => paused = !paused
-
 const save = () => {
 	return {
 		currentTime,
-		paused,
 	}
 }
 
 
 const load = data => {
-	paused = data.paused
 	currentTime = data.currentTime
 	scheduled = []
 }

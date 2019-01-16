@@ -41,6 +41,10 @@ const create = teacher => {
 		const scale = deltaTime * TEACH_BASE_FACTOR
 		lastUpdate = currentTime
 
+		if (!teacher.colony) {
+			return true
+		}
+
 		const profession = teacher.expert
 		if (!profession) {
 			return false

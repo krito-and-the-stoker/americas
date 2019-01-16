@@ -46,9 +46,17 @@ const createScale = () => {
 		currentDimensions = dimensions
 	})
 
-	const unsubscribe = Time.listen.scale(scale => {
-		number.text = `Gamespeed: ${Math.round(100*scale) / 100}`
-		number.x = currentDimensions.x - (number.width + 10)
+
+	const unsubscribe = Time.listen.paused(paused => {		
+		if (!paused) {		
+			return Time.listen.scale(scale => {
+				number.text = `Gamespeed: ${Math.round(100*scale) / 100}`
+				number.x = currentDimensions.x - (number.width + 10)
+			})
+		} else {
+			number.text = 'Game paused'
+			number.x = currentDimensions.x - (number.width + 10)
+		}
 	})
 
 
