@@ -1,5 +1,5 @@
 import Binding from '../util/binding'
-
+import MainLoop from 'mainloop.js'
 
 const MOVE_BASE_TIME = 8000
 const UNLOAD_TIME = 3000
@@ -36,32 +36,38 @@ const advance = deltaTime => {
 	if (!paused) {
 		currentTime += deltaTime * time.scale
 	}
-	update.year(Math.round(startYear + currentTime / YEAR))
-	const readyTasks = scheduled.filter(e => e.time <= currentTime)
-	const needsInitialization = readyTasks.filter(e => !e.started && e.init)
-	const finishedAfterInit = needsInitialization.filter(e => {
-		e.started = true
-		return !e.init(currentTime)
-	})
-	
-	const finished = readyTasks
-		.filter(e => !finishedAfterInit.includes(e))
-		.filter(e => !e.update || !e.update(currentTime))
+	try {
+		update.year(Math.round(startYear + currentTime / YEAR))
+		const readyTasks = scheduled.filter(e => e.time <= currentTime)
+		const needsInitialization = readyTasks.filter(e => !e.started && e.init)
+		const finishedAfterInit = needsInitialization.filter(e => {
+			e.started = true
+			return !e.init(currentTime)
+		})
+		
+		const finished = readyTasks
+			.filter(e => !finishedAfterInit.includes(e))
+			.filter(e => !e.update || !e.update(currentTime))
 
-	Array().concat(finished).concat(finishedAfterInit).forEach(e => {
-		if (e.finished) {
-			e.finished()
-		}
-		e.cleanup = true
-	})
-	const willStop = scheduled.filter(e => e.willStop)
-	willStop.forEach(e => {
-		if (e.stopped) {
-			e.stopped()
-		}
-		e.cleanup = true
-	})
-	scheduled = scheduled.filter(e => !e.cleanup)
+		Array().concat(finished).concat(finishedAfterInit).forEach(e => {
+			if (e.finished) {
+				e.finished()
+			}
+			e.cleanup = true
+		})
+		const willStop = scheduled.filter(e => e.willStop)
+		willStop.forEach(e => {
+			if (e.stopped) {
+				e.stopped()
+			}
+			e.cleanup = true
+		})
+		scheduled = scheduled.filter(e => !e.cleanup)
+	}
+	catch(error) {
+		MainLoop.stop()
+		throw error
+	}
 }
 
 const listen = {
