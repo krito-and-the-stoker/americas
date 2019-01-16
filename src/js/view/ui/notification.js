@@ -1,5 +1,6 @@
 import Icons from '../../data/icons.json'
 import Terrain from '../../data/terrain.json'
+import Goods from '../../data/goods.json'
 
 import EuropeView from '../europe'
 import Ressources from '../../render/ressources'
@@ -29,18 +30,48 @@ let notifications = []
 const createSprite = frame => new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
 const createIcon = name => createSprite(Icons[name])
 
-const createEuropeNotification = unit => {
+const combine = (slot1, slot2, slot3) => {
 	const container = new PIXI.Container()
+
+	const slot1Sprites = slot1.length ? slot1 : [slot1]
+	slot1Sprites.forEach(s => container.addChild(s))
+
+	let scale1 = 0.5
+	let position = {
+		x: (1 - scale1) * 64,
+		y: (1 - scale1) * 64
+	}
+
+	const slot2Sprites = slot2 ? (slot2.length ? slot2 : [slot2]) : []
+	slot2Sprites.forEach(s => {
+		s.x = position.x
+		s.y = position.y
+		s.scale.set(scale1)
+		container.addChild(s)
+	})
+
+	const scale2 = 0.4
+	position = {
+		x: (1 - scale2 - scale1) * 64,
+		y: (1 - scale2) * 64
+	}
+	const slot3Sprites = slot3 ? (slot3.length ? slot3 : [slot3]) : []
+	slot3Sprites.forEach(s => {
+		s.x = position.x
+		s.y = position.y
+		s.scale.set(scale2)
+		container.addChild(s)
+	})
+
+	return container
+}
+
+const createEurope = unit => {
 	const icon = createIcon('europe')
 	const unitView = UnitView.create(unit)
+	const arrow = unit.domain === 'sea' ? createIcon('right') : createIcon('plus')
+	const container = combine(icon, unitView, arrow)
 
-	const scale = 0.5
-	unitView.x = (1 - scale) * 64
-	unitView.y = (1 - scale) * 64
-	unitView.scale.set(scale)
-	
-	container.addChild(icon)
-	container.addChild(unitView)
 
 	const action = () => EuropeView.open()
 
@@ -56,18 +87,11 @@ const createEuropeNotification = unit => {
 	}
 }
 
-const createAmericaNotification = unit => {
-	const container = new PIXI.Container()
+const createAmerica = unit => {
 	const icon = createIcon('america')
 	const unitView = UnitView.create(unit)
-
-	const scale = 0.5
-	unitView.x = (1 - scale) * 64
-	unitView.y = (1 - scale) * 64
-	unitView.scale.set(scale)
-	
-	container.addChild(icon)
-	container.addChild(unitView)
+	const arrow = createIcon('left')
+	const container = combine(icon, unitView, arrow)
 
 	const action = () => {
 		MapView.centerAt(unit.mapCoordinates, 350)
@@ -86,18 +110,11 @@ const createAmericaNotification = unit => {
 	}
 }
 
-const createConstructionNotification = colony => {
-	const container = new PIXI.Container()
+const createConstruction = colony => {
 	const colonySprite = ColonyMapView.createSprite(colony)
+	const good = createSprite(Goods.construction.id)
 	const icon = createIcon('plus')
-
-	const scale = 0.5
-	icon.x = (1 - scale) * 64
-	icon.y = (1 - scale) * 64
-	icon.scale.set(scale)
-	
-	container.addChild(colonySprite)
-	container.addChild(icon)
+	const container = combine(colonySprite, good, icon)
 
 	const action = () => ColonyView.open(colony)
 
@@ -113,28 +130,19 @@ const createConstructionNotification = colony => {
 	}
 }
 
-const createTerraformingNotification = unit => {
+const createTerraforming = unit => {
 	const tile = MapEntity.tile(unit.mapCoordinates)
-	
-	const container = new PIXI.Container()
 	
 	const circle = new PIXI.Graphics()
 	circle.beginFill(0xFFFFFF)
 	circle.drawCircle(32, 32, 26)
 	circle.endFill()
-	container.addChild(circle)
 
 	const tileSprites = Background.createSpritesFromTile(tile)
 	tileSprites.forEach(s => s.mask = circle)
 	const unitSprite = UnitView.create(unit)
 
-	const scale = 0.5
-	unitSprite.x = (1 - scale) * 64
-	unitSprite.y = (1 - scale) * 64
-	unitSprite.scale.set(scale)
-
-	tileSprites.forEach(t => container.addChild(t))
-	container.addChild(unitSprite)
+	const container = combine(tileSprites.concat(circle), unitSprite)
 
 	const action = () => {
 		MapView.centerAt(unit.mapCoordinates, 350)
@@ -153,18 +161,11 @@ const createTerraformingNotification = unit => {
 	}
 }
 
-const createRumorNotification = (option, tile, unit) => {
-	const container = new PIXI.Container()
+const createRumor = (option, tile, unit) => {
 	const rumors = createSprite(Terrain.rumors.id - 1)
 	const icon = createIcon('question')
 
-	const scale = 0.5
-	icon.x = (1 - scale) * 64
-	icon.y = (1 - scale) * 64
-	icon.scale.set(scale)
-
-	container.addChild(rumors)
-	container.addChild(icon)
+	const container = combine(rumors, icon)
 
 	const action = () => {
 		Dialog.createIndependent(option.text, ['ok', 'go to scout'], null, { pause: true })
@@ -192,6 +193,82 @@ const createRumorNotification = (option, tile, unit) => {
 	}
 }
 
+const createSettlerBorn = (colony, unit) => {
+	const colonySprite = ColonyMapView.createSprite(colony)
+	const unitView = UnitView.create(unit)
+	const plus = createIcon('plus')
+	const container = combine(colonySprite, unitView, plus)
+
+	const action = () => ColonyView.open(colony)
+	const dismiss = {
+		colonyScreen: c => c === colony
+	}
+
+	return {
+		container,
+		action,
+		type: 'born',
+		dismiss
+	}	
+}
+
+const createStarving = colony => {
+	const colonySprite = ColonyMapView.createSprite(colony)
+	const good = createSprite(Goods.food.id)
+	const minus = createIcon('minus')
+	const exclamation = createIcon('exclamation')
+	const container = combine(colonySprite, [good, minus], exclamation)
+
+	const action = () => ColonyView.open(colony)
+	const dismiss = {
+		colonyScreen: c => c === colony
+	}
+
+	return {
+		container,
+		action,
+		type: 'starving',
+		dismiss
+	}
+}
+
+const createDied = (colony, unit) => {
+	const colonySprite = ColonyMapView.createSprite(colony)
+	const unitView = UnitView.create(unit)
+	const minus = createIcon('minus')
+	const container = combine(colonySprite, unitView, minus)
+
+	const action = () => ColonyView.open(colony)
+	const dismiss = {
+		colonyScreen: c => c === colony
+	}
+
+	return {
+		container,
+		action,
+		type: 'died',
+		dismiss
+	}
+}
+
+const createStorageEmpty = (colony, good) => {
+	const colonySprite = ColonyMapView.createSprite(colony)
+	const goodView = createSprite(Goods[good].id)
+	const exclamation = createIcon('exclamation')
+	const container = combine(colonySprite, goodView, exclamation)
+
+	const action = () => ColonyView.open(colony)
+	const dismiss = {
+		colonyScreen: c => c === colony
+	}
+
+	return {
+		container,
+		action,
+		type: 'storageEmpty',
+		dismiss
+	}
+}
 
 const remove = notification => {
 	container.removeChild(notification.container)
@@ -200,11 +277,14 @@ const remove = notification => {
 }
 
 const createType = {
-	europe: params => createEuropeNotification(params.unit),
-	america: params => createAmericaNotification(params.unit),
-	construction: params => createConstructionNotification(params.colony),
-	terraforming: params => createTerraformingNotification(params.unit),
-	rumor: params => createRumorNotification(params.option, params.tile, params.unit)
+	europe: params => createEurope(params.unit),
+	america: params => createAmerica(params.unit),
+	construction: params => createConstruction(params.colony),
+	terraforming: params => createTerraforming(params.unit),
+	rumor: params => createRumor(params.option, params.tile, params.unit),
+	born: params => createSettlerBorn(params.colony, params.unit),
+	starving: params => createStarving(params.colony),
+	died: params => createDied(params.colony, params.unit)
 }
 const create = params => {
 	const notification = createType[params.type](params)

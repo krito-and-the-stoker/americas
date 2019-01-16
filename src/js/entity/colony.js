@@ -22,6 +22,7 @@ import ShrinkFromStarvation from '../action/shrinkFromStarvation'
 import Message from '../view/ui/message'
 import UnjoinColony from '../action/unjoinColony'
 import LeaveColony from '../action/leaveColony'
+import Notification from '../view/ui/notification'
 
 // for unknown reasons we need to wait bit until we can set the global here :/
 setTimeout(() => Record.setGlobal('colonyNames',
@@ -135,6 +136,7 @@ const initialize = colony => {
 		if (storage.food >= 200 + keepFood) {
 			const unit = Unit.create('settler', colony.mapCoordinates)
 			Storage.update(colony.storage, { good: 'food', amount: -200 })
+			Notification.create({ type: 'born', colony, unit })
 		}
 		if (storage.food < 0 && !starvationMessageSent) {
 			Message.send(`The food storage of ${colony.name} is empty. We need to produce more food quickly to prevent any losses amongst the colonists`)
