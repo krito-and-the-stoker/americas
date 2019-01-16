@@ -4,6 +4,7 @@ import Background from '../render/background'
 import Unit from '../entity/unit'
 import Treasure from '../entity/treasure'
 import Europe from '../entity/europe'
+import Notification from '../view/ui/notification'
 
 // TODO: implement these
 // After choice
@@ -57,10 +58,10 @@ export default unit => {
 	const option = options.reduce((current, option) => current.sum > 0 ? { ...option, sum: current.sum - option.probability } : current, { sum: totalProbabilities * Math.random() })
 
 	const random = Math.random()
-	Message.send(option.text({ unit, random }))
-	option.fn({ unit, random })
-
 	const tile = MapEntity.tile(unit.mapCoordinates)
-	tile.rumors = false
-	Background.render()
+	const evaluatedOption = {
+		text: option.text({ unit, random }),
+		fn: () => option.fn({ unit, random })
+	}
+	Notification.create({ type: 'rumor', option: evaluatedOption, tile})
 }

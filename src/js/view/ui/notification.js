@@ -1,4 +1,5 @@
 import Icons from '../../data/icons.json'
+import Terrain from '../../data/terrain.json'
 
 import EuropeView from '../europe'
 import Ressources from '../../render/ressources'
@@ -14,6 +15,7 @@ import ColonyMapView from '../../view/map/colony'
 import ColonyView from '../../view/colony'
 import MapEntity from '../../entity/map'
 import Background from '../../render/background'
+import Dialog from './dialog'
 
 
 const originalDimensions = {
@@ -23,7 +25,8 @@ const originalDimensions = {
 let container = null
 let notifications = []
 
-const createIcon = name => new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(Icons[name])))
+const createSprite = frame => new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
+const createIcon = name => createSprite(Icons[name])
 
 const createEuropeNotification = unit => {
 	const container = new PIXI.Container()
@@ -129,17 +132,48 @@ const createTerraformingNotification = unit => {
 	}
 }
 
+const createRumorNotification = (option, tile) => {
+	const container = new PIXI.Container()
+	const rumors = createSprite(Terrain.rumors.id - 1)
+	const icon = createIcon('question')
+
+	scale = 0.5
+	icon.x = (1 - scale) * 64
+	icon.y = (1 - scale) * 64
+	icon.scale.set(scale)
+
+	container.addChild(rumors)
+	container.addChild(icon)
+
+	const action = () => {
+		MapView.centerAt(tile.mapCoordinates, 350)
+		Dialog.createIndependent(option.text, ['ok'], null, { pause: true })
+
+		option.fn()
+		tile.rumors = false
+		Background.render()
+	}
+
+	return {
+		container,
+		action,
+		type: 'rumor'
+	}
+}
+
 
 const remove = notification => {
 	container.removeChild(notification.container)
 	notifications = notifications.filter(n => n !== notification)
+	notifications.forEach((n, i) => n.container.x = i*74)
 }
 
 const createType = {
 	europe: params => createEuropeNotification(params.unit),
 	america: params => createAmericaNotification(params.unit),
 	construction: params => createConstructionNotification(params.colony),
-	terraforming: params => createTerraformingNotification(params.unit)
+	terraforming: params => createTerraformingNotification(params.unit),
+	rumor: params => createRumorNotification(params.option, params.tile)
 }
 const create = params => {
 	const notification = createType[params.type](params)
