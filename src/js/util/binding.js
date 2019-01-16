@@ -33,6 +33,7 @@ const listen = (instance, key, fn) => {
 	return () => remove(instance, key, listener)
 }
 
+// currently unused
 const once = (instance, key, fn) => {
 	const listeners = listenerKey(key)
 	const listener = {

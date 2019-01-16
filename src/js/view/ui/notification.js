@@ -7,6 +7,15 @@ import UnitView from '../unit'
 import Foreground from '../../render/foreground'
 import RenderView from '../../render/view'
 import Click from '../../input/click'
+import Secondary from '../../input/secondary'
+
+
+const originalDimensions = {
+	x: 1920,
+	y: 1080
+}
+let container = null
+
 
 const createEuropeNotification = unit => {
 	const container = new PIXI.Container()
@@ -25,26 +34,28 @@ const createEuropeNotification = unit => {
 
 	return {
 		container,
-		action
+		action,
+		type: 'europe'
 	}
 }
 
-const originalDimensions = {
-	x: 1920,
-	y: 1080
+const remove = notification => {
+	container.removeChild(notification.container)
 }
-let container = null
-let notifications = []
+
 const create = params => {
 	if (params.type === 'europe') {
-		const notification = {
-			type: params.type,
-			view: createEuropeNotification(params.unit)
-		}
+		const notification = createEuropeNotification(params.unit)
+
 
 		// notification.view.x = originalDimensions.x / 2
 		// notification.view.y = originalDimensions.y - 74
-		container.addChild(notification.view)
+		container.addChild(notification.container)
+		Click.on(notification.container, () => {
+			notification.action()
+			remove(notification)
+		})
+		Secondary.on(notification.container, () => remove(notification))
 	}
 }
 
