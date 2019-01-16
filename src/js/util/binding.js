@@ -6,13 +6,23 @@ const create = (instance, key) => {
 	instance[listeners] = []
 }
 
+const remove = (instance, key, listener) => {	
+	const listeners = listenerKey(key)
+	if (listener.cleanup) {
+		listener.cleanup(true)
+	}
+	instance[listeners] = instance[listeners].filter(l => l !== listener)
+}
+
+
 const listen = (instance, key, fn) => {
 	const listeners = listenerKey(key)
 	const value = key ? instance[key] : instance
 	const cleanup = fn(value) || doNothing
 	const listener = {
 		fn,
-		cleanup
+		cleanup,
+		keep: true
 	}
 
 	if (!instance[listeners]) {
@@ -20,14 +30,22 @@ const listen = (instance, key, fn) => {
 	}
 
 	instance[listeners].push(listener)
-	
-	const remove = () => {
-		if (listener.cleanup) {
-			listener.cleanup(true)
-		}
-		instance[listeners] = instance[listeners].filter(l => l !== listener)
+	return () => remove(instance, key, listener)
+}
+
+const once = (instance, key, fn) => {
+	const listeners = listenerKey(key)
+	const listener = {
+		fn,
+		keep: false
 	}
-	return remove
+
+	if (!instance[listeners]) {
+		create(instance, key)
+	}
+
+	instance[listeners].push(listener)
+	return () => remove(instance, key, listener)
 }
 
 const update = (instance, key, value) => {
@@ -39,13 +57,16 @@ const update = (instance, key, value) => {
 		instance[key] = value
 	}
 	if (instance[listeners]) {	
+		instance[listeners]
+			.filter(listener => listener.cleanup)
+			.forEach(listener => listener.cleanup(false))
 		instance[listeners].forEach(listener => {
-			if (listener.cleanup) {
-				listener.cleanup(false)
-			}
 			const value = key ? instance[key] : instance
 			listener.cleanup = listener.fn(value)
 		})
+		instance[listeners]
+			.filter(listener => !listener.keep)
+			.forEach(listener => remove(listener))
 	}
 }
 

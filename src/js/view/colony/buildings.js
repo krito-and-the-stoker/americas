@@ -41,7 +41,11 @@ const createBuilding = (colony, name) => {
 	const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {
 		const { unit } = args
 		if (!args.colonist && !unit) {
-			return
+			return false
+		}
+
+		if (colony.disbanded) {
+			return false
 		}
 
 		if (unit && !Commander.isIdle(unit.commander)) {

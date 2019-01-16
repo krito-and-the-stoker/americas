@@ -52,6 +52,9 @@ const create = (colony, originalDimensions) => {
 				if (!colony.buildings.harbour && tile.domain === 'sea') {
 					return false
 				}
+				if (colony.disbanded) {
+					return false
+				}
 				if (!tile.harvestedBy) {
 					if (!unit && !args.colonist) {
 						return false
@@ -69,7 +72,9 @@ const create = (colony, originalDimensions) => {
 					if (colonist) {					
 						const options = Tile.fieldProductionOptions(tile, colonist)
 						if (options.length === 0) {
-							UnjoinColony(colonist)
+							if (!colonist.colony) {
+								UnjoinColony(colonist)
+							}
 							return false
 						}
 						if (options.length === 1 || unit) {

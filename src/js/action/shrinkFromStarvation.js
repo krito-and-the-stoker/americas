@@ -1,10 +1,11 @@
 import Util from '../util/util'
 import Unit from '../entity/unit'
-import UnjoinColony from './unjoinColony'
+import Colonist from '../entity/colonist'
+import Colony from '../entity/colony'
 
 export default colony => {
 	const colonist = Util.choose(colony.colonists)
 	const unit = colonist.unit
-	UnjoinColony(colonist)
+	Colonist.disband(colonist)
 	Unit.disband(unit)
 }

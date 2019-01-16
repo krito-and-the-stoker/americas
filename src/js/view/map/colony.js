@@ -48,13 +48,26 @@ const create = colony => {
 
 	return {
 		sprite,
+		text,
+		number,
 		unsubscribe
 	}
+}
+
+const destroy = view => {
+	view.unsubscribe()
+	Foreground.removeTerrain(view.sprite)
+	Foreground.removeTerrain(view.text)
+	Foreground.removeTerrain(view.number)
 }
 
 const initialize = () => {
 	Record.listen('colony', colony => {
 		const view = create(colony)
+
+		return () => {
+			destroy(view)
+		}
 	})
 }
 

@@ -64,17 +64,6 @@ const create = (name, coords) => {
 	}
 }
 
-const disband = unit => {
-	if (unit.colony) {
-		LeaveColony(unit)
-	}
-	if (Europe.has.unit(unit)) {
-		Europe.remove.unit(unit)
-	}
-	Commander.clearSchedule(unit.commander)
-	Record.remove(unit)
-}
-
 const initialize = unit => {
 	const tile = MapEntity.tile(unit.mapCoordinates)
 	if (tile) {	
@@ -199,6 +188,23 @@ const unloadAllUnits = unit => {
 	// do not iterate over the cargo array directly because unloadUnit changes it
 	Util.range(unit.passengers.length).forEach(() => unloadUnit(unit))
 }
+
+const disband = unit => {
+	if (unit.colony) {
+		LeaveColony(unit)
+	}
+	if (Europe.has.unit(unit)) {
+		Europe.remove.unit(unit)
+	}
+	// TODO: make sure nothing happens when disbanding a cargoing unit
+	Commander.clearSchedule(unit.commander)
+	if (unit.colonist) {
+		Colonist.unit.update(unit.colonist, null)
+	}
+
+	Record.remove(unit)
+}
+
 
 const save = unit => ({
 	name: unit.name,

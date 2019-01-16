@@ -6,6 +6,7 @@ import Record from '../util/record'
 import Unit from '../entity/unit'
 import Message from '../view/ui/message'
 import EnterEurope from '../action/enterEurope'
+import Notification from '../view/ui/notification'
 
 
 const create = (unit, eta = null) => {
@@ -30,6 +31,7 @@ const create = (unit, eta = null) => {
 	const finished = () => {
 		if (eta) {
 			Message.send(`A ${unit.name} arrived in Europe.`)
+			Notification.create({ type: 'europe', unit })
 			EnterEurope(unit)
 		}
 	}

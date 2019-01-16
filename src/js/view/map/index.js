@@ -9,6 +9,7 @@ import MoveTo from '../../command/moveTo'
 import Commander from '../../command/commander'
 import Secondary from '../../input/secondary'
 import Message from '../../view/ui/message'
+import Notification from '../../view/ui/notification'
 
 import UnitView from './unit'
 import ColonyView from './colony'
@@ -90,6 +91,7 @@ const initialize = () => {
 	ColonyView.initialize()
 	UnitView.initialize()
 	SettlementView.initialize()
+	Notification.initialize()
 
 
 	const stage = Foreground.get().layer.app.stage

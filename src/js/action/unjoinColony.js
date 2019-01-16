@@ -6,4 +6,8 @@ export default colonist => {
 	Colonist.stopWorking(colonist)
 	Colony.remove.colonist(colonist)
 	Colonist.update.colony(colonist, null)
+
+	if (colony.colonists.length === 0) {
+		Colony.disband(colony)
+	}
 }

@@ -48,7 +48,12 @@ const add = (type, entity) => {
 }
 
 const remove = entity => {
-	records.find(record => record.entity === entity).destroy()
+	const record = records.find(record => record.entity === entity)
+	if (!record) {
+		console.warn('cannot remove, entity not found. Possible duplicate removal', entity)
+	} else {
+		record.destroy()
+	}
 	records = records.filter(record => record.entity !== entity)
 }
 
@@ -117,9 +122,19 @@ const reviveTile = (data, index) => {
 	tiles[tile.index] = tile
 }
 
-const reference = entity => (entity ? {
-	[REFERENCE_KEY]: records.find(record => record.entity === entity).id
-} : null)
+const reference = entity => {
+	if (!entity) {
+		return null
+	}
+	const record = records.find(record => record.entity === entity)
+	if (!record) {
+		console.warn('could not create reference, entity not found', entity)
+		return null
+	}
+	return {
+		[REFERENCE_KEY]: record.id
+	}
+}
 
 const referenceTile = tile => (tile ? {
 	tileIndex: tile.index

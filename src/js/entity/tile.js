@@ -180,13 +180,7 @@ const down = tile => MapEntity.tile({
 	y: tile.mapCoordinates.y + 1
 })
 
-const isNextTo = (tile, other) => {
-	let pos1 = tile.mapCoordinates
-	let pos2 = other.mapCoordinates
-
-	//next to each other but not diagonal
-	return Math.abs(pos1.x-pos2.x) + Math.abs(pos1.y-pos2.y) <= 1.1
-}
+const isNextTo = (tile, other) => neighbors(tile).includes(other)
 
 const movementCost = (from, to) => {
 	if (neighbors(to).includes(from)) {
@@ -323,6 +317,12 @@ const constructRoad = tile => {
 	updateTile(tile)
 }
 
+const removeRoad = tile => {
+	tile.road = false
+
+	updateTile(tile)
+}
+
 const updateTile = center => {
 	radius(center).forEach(tile => {
 		update.tile(tile)
@@ -356,6 +356,7 @@ export default {
 	clearForest,
 	plow,
 	constructRoad,
+	removeRoad,
 	listen,
 	left,
 	right,

@@ -8,6 +8,8 @@ import Record from '../util/record'
 import Binding from '../util/binding'
 import Colony from './colony'
 import Util from '../util/util'
+import Unit from '../entity/unit'
+import UnjoinColony from '../action/unjoinColony'
 
 
 const beginFieldWork = (colonist, tile, good) => {
@@ -81,6 +83,15 @@ const create = unit => {
 	return colonist
 }
 
+const disband = colonist => {
+	UnjoinColony(colonist)
+	if (colonist.unit) {
+		Unit.update.colonist(colonist.unit, null)
+	}
+
+	Record.remove(colonist)
+}
+
 const save = colonist => ({
 	colony: Record.reference(colonist.colony),
 	unit: Record.reference(colonist.unit),
@@ -123,6 +134,7 @@ const load = colonist => {
 
 export default {
 	create,
+	disband,
 	save,
 	load,
 	beginFieldWork,

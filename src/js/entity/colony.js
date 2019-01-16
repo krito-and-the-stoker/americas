@@ -19,6 +19,8 @@ import ProductionSummary from '../task/productionSummary'
 import Building from '../entity/building'
 import ShrinkFromStarvation from '../action/shrinkFromStarvation'
 import Message from '../view/ui/message'
+import UnjoinColony from '../action/unjoinColony'
+import LeaveColony from '../action/leaveColony'
 
 // for unknown reasons we need to wait bit until we can set the global here :/
 setTimeout(() => Record.setGlobal('colonyNames',
@@ -122,11 +124,12 @@ const initialize = colony => {
 	colony.productionSummary = Storage.createWithProduction()
 	colony.productionRecord = Storage.createWithProduction()
 	const tile = MapEntity.tile(colony.mapCoordinates)
-	Tile.listen.tile(tile, () => Util.mergeFunctions(Tile.colonyProductionGoods(tile).map(good => Time.schedule(Harvest.create(colony, tile, good)))))
-	listen.colonists(colony, colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)))
+	const destroy = []
+	destroy.push(Tile.listen.tile(tile, () => Util.mergeFunctions(Tile.colonyProductionGoods(tile).map(good => Time.schedule(Harvest.create(colony, tile, good))))))
+	destroy.push(listen.colonists(colony, colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length))))
 
 	let starvationMessageSent = false
-	Storage.listen(colony.storage, storage => {
+	destroy.push(Storage.listen(colony.storage, storage => {
 		if (storage.food >= 220) {
 			const unit = Unit.create('settler', colony.mapCoordinates)
 			Storage.update(colony.storage, { good: 'food', amount: -200 })
@@ -141,12 +144,12 @@ const initialize = colony => {
 			storage.food = 0
 			starvationMessageSent = false
 		}
-	})
+	}))
 	colony.construction = {
 		amount: colony.construction.amount,
 		...Building.constructionOptions(colony).find(option => option.target === colony.construction.target) || Building.noProductionOption()
 	}
-	listen.construction(colony, construction => {
+	destroy.push(listen.construction(colony, construction => {
 		if (construction.amount >= construction.cost.construction) {
 			if (construction.cost.tools) {
 				if (colony.storage.tools >= construction.cost.tools) {
@@ -156,11 +159,11 @@ const initialize = colony => {
 				Building.construct(colony, construction)
 			}
 		}
-	})
-	Time.schedule(Produce.create(colony, 'colony', null))
-	Time.schedule(Deteriorate.create(colony))
-	Time.schedule(ProductionSummary.create(colony))
-	listen.colonists(colony, () => listen.bells(colony, () => {
+	}))
+	destroy.push(Time.schedule(Produce.create(colony, 'colony', null)))
+	destroy.push(Time.schedule(Deteriorate.create(colony)))
+	destroy.push(Time.schedule(ProductionSummary.create(colony)))
+	destroy.push(listen.colonists(colony, () => listen.bells(colony, () => {
 		let bonus = 0
 		if (tories(colony).number > 8) {
 			bonus -= 1
@@ -177,7 +180,9 @@ const initialize = colony => {
 		if (colony.productionBonus !== bonus) {
 			update.productionBonus(colony, bonus)
 		}
-	}))
+	})))
+
+	colony.destroy = Util.mergeFunctions(destroy)
 }
 
 const create = coords => {
@@ -223,6 +228,19 @@ const create = coords => {
 	return colony
 }
 
+const disband = colony => {
+	colony.disbanded = true
+	colony.colonists.forEach(UnjoinColony)
+	colony.units.forEach(LeaveColony)
+	const tile = MapEntity.tile(colony.mapCoordinates)
+	Tile.update.colony(tile, null)
+	Tile.removeRoad(tile)
+	colony.destroy()
+	tile.harvestedBy = null
+
+	Record.remove(colony)
+}
+
 const save = colony => ({
 	name: colony.name,
 	units: colony.units.map(unit => Record.reference(unit)),
@@ -239,10 +257,11 @@ const load = colony => {
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	tile.colony = colony
 	colony.storage = Storage.load(colony.storage)
-	Record.entitiesLoaded(() => initialize(colony))
 
 	colony.colonists.forEach((colonist, index) => Record.dereferenceLazy(colonist, entity => colony.colonists[index] = entity))
 	colony.units.forEach((unit, index) => Record.dereferenceLazy(unit, entity => colony.units[index] = entity))
+	Record.entitiesLoaded(() => initialize(colony))
+
 	return colony	
 }
 
@@ -270,5 +289,6 @@ export default {
 	listen,
 	update,
 	tories,
-	rebels
+	rebels,
+	disband
 }
