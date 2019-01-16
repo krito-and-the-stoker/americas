@@ -153,7 +153,7 @@ const createTerraformingNotification = unit => {
 	}
 }
 
-const createRumorNotification = (option, tile) => {
+const createRumorNotification = (option, tile, unit) => {
 	const container = new PIXI.Container()
 	const rumors = createSprite(Terrain.rumors.id - 1)
 	const icon = createIcon('question')
@@ -176,7 +176,7 @@ const createRumorNotification = (option, tile) => {
 	}
 
 	const dismiss = {
-		move: u => u === uit
+		move: u => u === unit
 	}
 
 	return {
@@ -199,7 +199,7 @@ const createType = {
 	america: params => createAmericaNotification(params.unit),
 	construction: params => createConstructionNotification(params.colony),
 	terraforming: params => createTerraformingNotification(params.unit),
-	rumor: params => createRumorNotification(params.option, params.tile)
+	rumor: params => createRumorNotification(params.option, params.tile, params.unit)
 }
 const create = params => {
 	const notification = createType[params.type](params)

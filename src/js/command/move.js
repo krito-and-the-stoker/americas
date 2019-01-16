@@ -134,7 +134,7 @@ const createFromData = data => {
 				EnterColony(targetTile.colony, unit)
 			}
 
-			if (targetTile.rumors) {
+			if (targetTile.rumors && Commander.commandsScheduled(unit.commander) === 1) {
 				InvestigateRumors(unit)
 			}
 

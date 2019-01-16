@@ -43,7 +43,6 @@ const centerAt = ({ x, y }, moveTime) => {
 		x: -scale*TILE_SIZE*x + RenderView.getDimensions().x / 2,
 		y: -scale*TILE_SIZE*y + RenderView.getDimensions().y / 2
 	}
-	console.log(scale)
 	moveMap(target, moveTime)
 }
 

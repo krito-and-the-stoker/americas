@@ -63,5 +63,5 @@ export default unit => {
 		text: option.text({ unit, random }),
 		fn: () => option.fn({ unit, random })
 	}
-	Notification.create({ type: 'rumor', option: evaluatedOption, tile})
+	Notification.create({ type: 'rumor', option: evaluatedOption, tile, unit })
 }
