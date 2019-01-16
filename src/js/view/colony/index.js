@@ -89,6 +89,7 @@ const create = colony => {
 		buildings.unsubscribe()
 		production.unsubscribe()
 		liberty.unsubscribe()
+		construction.unsubscribe()
 		unsubscribeResize()
 	}
 	Click.on(colonyWoodBackground, close)

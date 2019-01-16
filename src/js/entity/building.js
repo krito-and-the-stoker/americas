@@ -126,12 +126,14 @@ const construct = (colony, construction) => {
 	Message.send(`${colony.name} has completed construction of ${construction.name}.`)
 
 	construction.amount -= construction.cost.construction
-	construction.target = 'none'
-	construction.cost.construction = 24
-	construction.name = 'No Production'
 	if (construction.cost.tools) {
 		Storage.update(colony.storage, { good: 'tools', amount: -construction.cost.tools })
 	}
+
+	construction.target = 'none'
+	construction.cost.construction = 24
+	construction.name = `${construction.name} completed`
+	construction.cost.tools = 0
 	Colony.update.construction(colony, construction)
 }
 

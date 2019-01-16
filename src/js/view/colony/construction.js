@@ -7,6 +7,7 @@ import Button from '../../view/ui/button'
 import Util from '../../util/util'
 import ProductionView from '../../view/production'
 import Binding from '../../util/binding'
+import Storage from '../../entity/storage'
 
 
 const create = (colony, originalDimensions) => {
@@ -71,11 +72,49 @@ const create = (colony, originalDimensions) => {
 	}		
 
 
-	Colony.listen.construction(colony, Binding.map(updateConstructionPanel, getAmount))
-	Colony.listen.construction(colony, Binding.map(updateConstructionPanel, getTarget))
+	const unsubscribeAmount = Colony.listen.construction(colony, Binding.map(updateConstructionPanel, getAmount))
+	const unsubscribeTarget = Colony.listen.construction(colony, Binding.map(updateConstructionPanel, getTarget))
+
+	const getTools = storage => Math.floor(storage.tools)
+	const getToolsNeeded = construction => construction.cost.tools
+	const updateToolsPanel = (have, needed) => {
+		if (!needed) {
+			return
+		}
+
+		const fraction = Math.min(have / needed, 1)
+		const haveView = ProductionView.create('tools', Math.min(have, needed), fraction * 260)
+		haveView.forEach(s => {
+			s.y = originalDimensions.y / 2 - 5 + 3 * 30
+			s.x += originalDimensions.x - 460
+			container.panel.addChild(s)
+		})
+		const needView = ProductionView.create('tools', Math.min(have - needed, 0), (1- fraction) * 260)
+		needView.forEach(s => {
+			s.y = originalDimensions.y / 2 - 5 + 3 * 30
+			s.x += originalDimensions.x - 460 + fraction * 260
+			container.panel.addChild(s)
+		})
+
+		return () => {
+			haveView.forEach(s => container.panel.removeChild(s))
+			needView.forEach(s => container.panel.removeChild(s))
+		}
+	}
+
+	const unsubscribeTools = Colony.listen.construction(colony, Binding.map(needed => 
+		Storage.listen(colony.storage, Binding.map(have =>
+			updateToolsPanel(have, needed), getTools)), getToolsNeeded))
+
+	const unsubscribe = () => {
+		unsubscribeAmount()
+		unsubscribeTarget()
+		unsubscribeTools()
+	}
 
 	return {
-		container
+		container,
+		unsubscribe
 	}
 }
 
