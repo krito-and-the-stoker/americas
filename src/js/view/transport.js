@@ -12,6 +12,7 @@ import Storage from '../entity/storage'
 
 import BuyFromEurope from '../action/buyFromEurope'
 import LoadFromColonyToShip from '../action/loadFromColonyToShip'
+import LoadUnitFromShipToShip from '../action/loadUnitFromShipToShip'
 import LoadBetweenShips from '../action/loadBetweenShips'
 import LoadUnitToShip from '../action/loadUnitToShip'
 
@@ -22,7 +23,7 @@ const create = unit => {
 	container.addChild(sprite)
 
 	const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {
-		const { good, amount, buyFromEurope, colony } = args
+		const { good, amount, buyFromEurope, colony, passenger } = args
 		const fromUnit = args.unit
 		if (good) {
 			const pack = { good, amount }
@@ -42,6 +43,10 @@ const create = unit => {
 		if (fromUnit && fromUnit !== unit) {
 			LoadUnitToShip(unit, fromUnit)
 			return false
+		}
+
+		if (passenger) {
+			LoadUnitFromShipToShip(unit, passenger)
 		}
 
 		return false

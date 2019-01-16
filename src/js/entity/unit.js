@@ -269,6 +269,7 @@ export default {
 	loadUnit,
 	unloadUnit,
 	unloadAllUnits,
+	hasCapacity,
 	save,
 	load,
 	at,
