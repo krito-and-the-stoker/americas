@@ -34,7 +34,7 @@ const create = (unit, coords) => {
 		}
 
 		const path = PathFinder.findPathXY(unit.mapCoordinates, coords, unit).filter((waypoint, index) => index > 0)
-		moveToCommander.commands = path.map(waypoint => Move.create(unit, waypoint.mapCoordinates))
+		moveToCommander.commands = path.map(waypoint => Move.create(unit, waypoint.mapCoordinates)).concat(moveToCommander.commands)
 		return true
 	}
 
