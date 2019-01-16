@@ -47,41 +47,69 @@ const create = unit => {
 		return false
 	})
 
-
 	const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
 	greyScaleFilter.blackAndWhite()
-	const unsubscribeStorage = Storage.listen(unit.storage, storage => {
+
+	const unsubscribePassengersAndStorage = Unit.listen.passengers(unit, passengers => {
 		let index = {
 			x: 0,
 			y: 0
 		}
-		const goods = Storage.split(unit.storage)
-		return Util.mergeFunctions(goods.map(pack => {
-			const view = GoodsView.create(pack)
-			view.sprite.x = index.x * 1.4 * 32 - 8
-			view.sprite.y = index.y * 1.2 * 32 + 80
-			view.sprite.visible = true
-			view.sprite.scale.set(1.4)
-			if (pack.amount < 100) {
-				view.sprite.filters = [greyScaleFilter]
-			}
+
+		const unsubscribePassengers = Util.mergeFunctions(passengers.map(passenger => {
+			const sprite = UnitView.create(passenger)
+			sprite.x = index.x * 1.4 * 32 - 8
+			sprite.y = index.y * 1.2 * 32 + 80
+			sprite.scale.set(1.4)
+			container.addChild(sprite)
+			Drag.makeDraggable(sprite, { passenger })
+
 			index.x += 1
 			if (index.x >= 2) {
 				index.x = 0
 				index.y += 1
 			}
-			Drag.makeDraggable(view.sprite, { good: pack.good, amount: pack.amount, unit })
-			container.addChild(view.sprite)
 
 			return () => {
-				container.removeChild(view.sprite)
+				container.removeChild(sprite)
 			}
 		}))
+
+		const unsubscribeStorage = Storage.listen(unit.storage, storage => {
+			const goods = Storage.split(unit.storage)
+			return Util.mergeFunctions(goods.map(pack => {
+				const view = GoodsView.create(pack)
+				view.sprite.x = index.x * 1.4 * 32 - 8
+				view.sprite.y = index.y * 1.2 * 32 + 80
+				view.sprite.scale.set(1.4)
+				if (pack.amount < 100) {
+					view.sprite.filters = [greyScaleFilter]
+				}
+				index.x += 1
+				if (index.x >= 2) {
+					index.x = 0
+					index.y += 1
+				}
+				Drag.makeDraggable(view.sprite, { good: pack.good, amount: pack.amount, unit })
+				container.addChild(view.sprite)
+
+				return () => {
+					container.removeChild(view.sprite)
+				}
+			}))
+		})
+
+		return () => {
+			unsubscribePassengers()
+			unsubscribeStorage()
+		}
 	})
+
+
 
 	const unsubscribe = () => {
 		unsubscribeDrag()
-		unsubscribeStorage()
+		unsubscribePassengersAndStorage()
 	}
 
 	return {

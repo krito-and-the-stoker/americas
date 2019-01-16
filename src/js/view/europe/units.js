@@ -11,6 +11,7 @@ import Commander from '../../command/commander'
 import America from '../../command/america'
 import Transport from '../../view/transport'
 import Util from '../../util/util'
+import LoadUnitFromShipToEurope from '../../action/loadUnitFromShipToEurope'
 
 const create = closeFn => {
 	const container = {
@@ -39,6 +40,21 @@ const create = closeFn => {
 			}
 		}))
 
+		const rect = {x: 0, y: -100, width: 648, height: 250}
+		const leaveShipZone = new PIXI.Container()
+		leaveShipZone.hitArea = new PIXI.Rectangle(
+			rect.x,
+			rect.y,
+			rect.width,
+			rect.height)
+		container.units.addChild(leaveShipZone)
+
+		const unsubscribeDrag = Drag.makeDragTarget(leaveShipZone, args => {
+			if (args.passenger) {
+				LoadUnitFromShipToEurope(args.passenger)
+			}
+		})
+
 		const unsubscribeUnits = Util.mergeFunctions(landUnits.map((unit, index) => {
 			const sprite = UnitView.create(unit)
 			sprite.scale.set(2)
@@ -54,10 +70,29 @@ const create = closeFn => {
 
 		return () => {
 			unsubscribeShips()
+			unsubscribeDrag()
 			unsubscribeUnits()
 		}
 	})
 
+	// const graphics = new PIXI.Graphics()
+	// graphics.beginFill(0x9b59b6) // Purple
+
+	// // Draw a rectangle
+	// window.rect = window.rect || {
+	// 	x: 240,
+	// 	y: 150,
+	// 	width: 75,
+	// 	height: 75
+	// }
+	// window.originalDimensions = {
+	// 	x: 1920,
+	// 	y: 1080
+	// }
+	// const rect = {x: 0, y: -100, width: 648, height: 250}
+	// graphics.drawRect(window.rect.x, window.rect.y, window.rect.width, window.rect.height)
+	// graphics.endFill()
+	// container.units.addChild(graphics)
 
 	return {
 		container,

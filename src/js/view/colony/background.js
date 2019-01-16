@@ -6,6 +6,7 @@ import Click from '../../input/click'
 import Drag from '../../input/drag'
 import Util from '../../util/util'
 import UnjoinColony from '../../action/unjoinColony'
+import LoadUnitFromShipToColony from '../../action/loadUnitFromShipToColony'
 
 const create = colony => {
 	const container = new PIXI.Container()
@@ -38,6 +39,9 @@ const create = colony => {
 	Drag.makeDragTarget(leaveColonyZone, args => {
 		if (args.colonist && args.colonist.colony) {
 			UnjoinColony(args.colonist)
+		}
+		if (args.passenger) {
+			LoadUnitFromShipToColony(colony, args.passenger)
 		}
 	})
 

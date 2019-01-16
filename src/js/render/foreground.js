@@ -11,6 +11,7 @@ let currentScreen = null
 let units = null
 let terrain = null
 let permanent = null
+let notifications = null
 
 let layer = null
 
@@ -19,7 +20,8 @@ const get = () => ({
 	dialog,
 	context,
 	permanent,
-	layer
+	layer,
+	notifications
 })
 
 const hitTest = coords => layer.app.renderer.plugins.interaction.hitTest(new PIXI.Point(coords.x, coords.y), layer.app.stage)
@@ -31,6 +33,7 @@ const openScreen = screen => {
 	layer.app.stage.addChild(screen)
 	layer.app.stage.addChild(permanent)
 	layer.app.stage.addChild(context)
+	layer.app.stage.removeChild(notifications)
 	layer.app.stage.removeChild(container)
 	layer.app.stage.removeChild(dialog)
 	Background.hide()
@@ -42,6 +45,7 @@ const closeScreen = () => {
 		layer.app.stage.removeChild(currentScreen)
 		layer.app.stage.addChild(container)
 		layer.app.stage.addChild(permanent)
+		layer.app.stage.addChild(notifications)
 		layer.app.stage.addChild(context)
 		layer.app.stage.addChild(dialog)
 		Background.show()
@@ -87,11 +91,13 @@ const initialize = () => {
 	context = new PIXI.Container()
 	dialog = new PIXI.Container()
 	permanent = new PIXI.Container()
+	notifications = new PIXI.Container()
 
 	container.addChild(terrain)
 	container.addChild(units)
 	layer.app.stage.addChild(container)
 	layer.app.stage.addChild(permanent)
+	layer.app.stage.addChild(notifications)
 	layer.app.stage.addChild(context)
 	layer.app.stage.addChild(dialog)
 	layer.app.stop()

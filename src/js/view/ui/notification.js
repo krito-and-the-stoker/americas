@@ -221,7 +221,7 @@ const create = params => {
 
 const initialize = () => {
 	container = new PIXI.Container()
-	Foreground.get().permanent.addChild(container)
+	Foreground.get().notifications.addChild(container)
 
 	RenderView.updateWhenResized(({ dimensions }) => {
 		const scale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)

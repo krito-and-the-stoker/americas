@@ -13,6 +13,7 @@ import LeaveColony from '../action/leaveColony'
 import EnterEurope from '../action/enterEurope'
 import Europe from '../entity/europe'
 import Colonist from '../entity/colonist'
+import Member from '../util/member'
 
 const create = (name, coords) => {
 	if (Units[name]) {
@@ -114,7 +115,18 @@ const initialize = unit => {
 	listen.colonist(unit, colonist => colonist ? Colonist.listen.expert(colonist, expert => update.expert(unit, expert)) : null)
 }
 
+const add = {
+	passenger: (unit, passenger) => Member.add(unit, 'passengers', passenger),
+}
+
+const remove = {
+	passenger: passenger => Member.remove(passenger.vehicle, 'passengers', passenger),
+}
+
+
+
 const listen = {
+	passengers: (unit, fn) => Binding.listen(unit, 'passengers', fn),
 	vehicle: (unit, fn) => Binding.listen(unit, 'vehicle', fn),
 	offTheMap: (unit, fn) => Binding.listen(unit, 'offTheMap', fn),
 	colonist: (unit, fn) => Binding.listen(unit, 'colonist', fn),
@@ -161,13 +173,14 @@ const loadUnit = (unit, passenger) => {
 	}
 
 	update.vehicle(passenger, unit)
-	unit.passengers.push(passenger)
+	add.passenger(unit, passenger)
 	return true
 }
 
-const unloadUnit = unit => {
-	if (unit.passengers.length > 0) {	
-		const passenger = unit.passengers.shift()
+const unloadUnit = (unit, desiredPassenger = null) => {
+	if (unit.passengers.length > 0) {
+		const passenger = unit.passengers.find(p => p === desiredPassenger) || unit.passengers[0]
+		remove.passenger(passenger)
 		update.mapCoordinates(passenger, { ...unit.mapCoordinates })
 		update.offTheMap(passenger, unit.offTheMap)
 		update.vehicle(passenger, null)
