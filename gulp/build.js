@@ -37,7 +37,7 @@ gulp.task('version', done => {
     .toString().trim()
   fs.writeFileSync(path.resolve(__dirname, '../src/version/version.json'), JSON.stringify({
     revision,
-    date: new Date()
+    date: new Date().toLocaleString()
   }))
   done()
 })
