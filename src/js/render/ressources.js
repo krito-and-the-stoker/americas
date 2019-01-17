@@ -7,10 +7,12 @@ let undiscovered = null
 let colonyWoodBackground = null
 let goodsBackground = null
 let buildings = null
+let help = null
 let colonyScreenCoast = {}
 
 const get = () => ({
 	mapTiles,
+	help,
 	colonyBackground,
 	europeBackground,
 	undiscovered,
@@ -44,7 +46,8 @@ const initialize = () => {
 		'images/undiscovered.jpg',
 		'images/colony-screen/wood-background.jpg',
 		'images/goods-background.jpg',
-		'images/colony-screen/buildings.png'
+		'images/colony-screen/buildings.png',
+		'images/help.jpg'
 	)).then(result => {
 		mapTiles = result[0]
 		colonyBackground = result[1]
@@ -53,6 +56,7 @@ const initialize = () => {
 		colonyWoodBackground = result[4]
 		goodsBackground = result[5]
 		buildings = result[6]
+		help = result[7]
 	})
 }
 

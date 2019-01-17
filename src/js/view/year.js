@@ -1,6 +1,8 @@
 import * as PIXI from 'pixi.js'
 import RenderView from '../render/view'
 import Time from '../timeline/time'
+import Click from '../input/click'
+import Help from '../view/help'
 
 const createYear = () => {
 	const number = new PIXI.Text(`${1492}`, {
@@ -65,11 +67,36 @@ const createScale = () => {
 		number
 	}
 }
+
+const createHelp = () => {
+	const text = new PIXI.Text('Help', {
+		fontFamily: 'Times new Roman',
+		fontSize: 32,
+		fill: 0xffffff,
+		align: 'center'
+	})
+
+	text.y = 116
+	const unsubscribe = RenderView.updateWhenResized(({ dimensions }) => {
+		text.x = dimensions.x - (text.width + 10)
+	})
+
+	Click.on(text, Help.open)
+	text.buttonMode = true
+
+	return {
+		unsubscribe,
+		text
+	}
+}
+
 const initialize = permanent => {
 	const year = createYear()
 	const scale = createScale()
+	const help = createHelp()
 	permanent.addChild(year.number)
 	permanent.addChild(scale.number)
+	permanent.addChild(help.text)
 }
 
 export default {

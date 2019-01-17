@@ -46,6 +46,7 @@ const dialogs = {
 	}
 }
 
+
 const show = dialogName => {
 	const dialog = dialogs[dialogName]
 	return create(dialog.msg, dialog.options, dialog.image)

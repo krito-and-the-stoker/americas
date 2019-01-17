@@ -14,6 +14,7 @@ import Road from '../command/road'
 import MapEntity from '../entity/map'
 import Treasure from '../entity/treasure'
 import Unit from '../entity/unit'
+import Help from '../view/help'
 
 const ZOOM_FACTOR = 1.25
 const ZOOM_TIME = 350
@@ -48,7 +49,7 @@ const handleKeydown = (e) => {
 		Treasure.gain(100)
 	}
 
-	if (e.key === 'm' || e.key === 'Escape') {
+	if (e.key === 'm' || e.key === 'a' || e.key === 'Escape') {
 		Foreground.closeScreen()
 	}
 
@@ -74,6 +75,10 @@ const handleKeydown = (e) => {
 
 	if (e.key === '0') {
 		Time.normalize()
+	}
+
+	if (e.key === 'h') {
+		Help.open()
 	}
 
 	const unit = UnitView.selectedUnit()

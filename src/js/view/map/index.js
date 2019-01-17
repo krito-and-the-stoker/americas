@@ -136,7 +136,7 @@ const initialize = () => {
 
 	Drag.on(stage, start, move, end, true)
 	Secondary.on(stage, coords => {
-		if (!Foreground.hasOpenScreen()) {		
+		if (!Foreground.hasOpenScreen()) {
 			const selectedUnit = UnitView.selectedUnit()
 			if (selectedUnit) {
 				const target = {
@@ -151,8 +151,10 @@ const initialize = () => {
 
 	const ZOOM_FACTOR = 0.001
 	const handleWheel = (e) => {
-		stopRollingOut()
-		zoomBy(Math.exp(-ZOOM_FACTOR * e.deltaY), { x: Math.round(e.clientX), y: Math.round(e.clientY) })
+		if (!Foreground.hasOpenScreen()) {		
+			stopRollingOut()
+			zoomBy(Math.exp(-ZOOM_FACTOR * e.deltaY), { x: Math.round(e.clientX), y: Math.round(e.clientY) })
+		}
 	}
 	Wheel.on(handleWheel)
 }
