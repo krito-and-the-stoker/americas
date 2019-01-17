@@ -22,7 +22,8 @@ const constructionOptions = colony => {
 			action: () => {
 				const buildings = colony.buildings
 				buildings[name] += 1
-				Colony.update.buildings(colony)				
+				Colony.update.buildings(colony)
+				Notification.create({ type: 'construction', colony, building: name })
 			}
 		}))
 
@@ -35,6 +36,7 @@ const constructionOptions = colony => {
 			}
 			buildings.warehouse += 1
 			Colony.update.buildings(colony)
+			Notification.create({ type: 'construction', colony, building: name })
 		}
 	}
 
@@ -42,7 +44,10 @@ const constructionOptions = colony => {
 		target: "wagontrain",
 		name: "Wagon Train",
 		cost: { construction: 39 },
-		action: () => Unit.create('wagontrain', colony.mapCoordinates)
+		action: () => {
+			const unit = Unit.create('wagontrain', colony.mapCoordinates)
+			Notification.create({ type: 'construction', colony, unit })
+		}
 	}]
 
 	const artillery = [{
@@ -52,7 +57,10 @@ const constructionOptions = colony => {
 			construction: 192,
 			tools: 40
 		},
-		action: () => Unit.create('artillery', colony.mapCoordinates)
+		action: () => {
+			const unit = Unit.create('artillery', colony.mapCoordinates)
+			Notification.create({ type: 'construction', colony, unit })
+		}
 	}]
 
 	const ships = [{
@@ -62,7 +70,10 @@ const constructionOptions = colony => {
 			construction: 128,
 			tools: 40
 		},
-		action: () => Unit.create('caravel', colony.mapCoordinates)
+		action: () => {
+			const unit = Unit.create('caravel', colony.mapCoordinates)
+			Notification.create({ type: 'construction', colony, unit })
+		}
 	}, {
 		target: "merchantman",
 		name: "Merchantman",
@@ -70,7 +81,10 @@ const constructionOptions = colony => {
 			construction: 192,
 			tools: 80
 		},
-		action: () => Unit.create('merchantman', colony.mapCoordinates)
+		action: () => {
+			const unit = Unit.create('merchantman', colony.mapCoordinates)
+			Notification.create({ type: 'construction', colony, unit })
+		}
 	}, {
 		target: "galleon",
 		name: "Galleon",
@@ -78,7 +92,10 @@ const constructionOptions = colony => {
 			construction: 320,
 			tools: 100
 		},
-		action: () => Unit.create('galleon', colony.mapCoordinates)
+		action: () => {
+			const unit = Unit.create('galleon', colony.mapCoordinates)
+			Notification.create({ type: 'construction', colony, unit })
+		}
 	}, {
 		target: "privateer",
 		name: "Privateer",
@@ -86,7 +103,10 @@ const constructionOptions = colony => {
 			construction: 256,
 			tools: 120
 		},
-		action: () => Unit.create('privateer', colony.mapCoordinates)
+		action: () => {
+			const unit = Unit.create('privateer', colony.mapCoordinates)
+			Notification.create({ type: 'construction', colony, unit })
+		}
 	}, {
 		target: "frigate",
 		name: "Frigate",
@@ -94,7 +114,10 @@ const constructionOptions = colony => {
 			construction: 512,
 			tools: 200
 		},
-		action: () => Unit.create('frigate', colony.mapCoordinates)
+		action: () => {
+			const unit = Unit.create('frigate', colony.mapCoordinates)
+			Notification.create({ type: 'construction', colony, unit })
+		}
 	}]
 
 	let options = buildings.concat(wagontrain)
@@ -122,7 +145,6 @@ const construct = (colony, construction) => {
 	}
 	construction.action()
 
-	Notification.create({ type: 'construction', colony, name: construction.name })
 	Message.send(`${colony.name} has completed construction of ${construction.name}.`)
 
 	construction.amount -= construction.cost.construction

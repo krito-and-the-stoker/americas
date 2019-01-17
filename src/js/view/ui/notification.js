@@ -1,6 +1,7 @@
 import Icons from '../../data/icons.json'
 import Terrain from '../../data/terrain.json'
 import Goods from '../../data/goods.json'
+import Buildings from '../../data/buildings.json'
 
 import EuropeView from '../europe'
 import Ressources from '../../render/ressources'
@@ -19,6 +20,7 @@ import Background from '../../render/background'
 import Dialog from './dialog'
 import Events from './events'
 import Tile from '../../entity/tile'
+import Building from '../../entity/building'
 
 
 const originalDimensions = {
@@ -42,25 +44,73 @@ const createCircleMask = () => {
 const createSprite = frame => new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
 const createIcon = name => createSprite(Icons[name])
 const colonyIcon = colony => {
+	const terrainScale = 0.33
 	const center = MapEntity.tile(colony.mapCoordinates)
 	const mask = createCircleMask()
 	const tileSprites = Tile.radius(center)
 		.map(tile => {
 			const sprites = createTileView(tile)
 			sprites.forEach(sprite => {			
-				sprite.x = 0.33 * 64 * (tile.mapCoordinates.x - center.mapCoordinates.x + 1)
-				sprite.y = 0.33 * 64 * (tile.mapCoordinates.y - center.mapCoordinates.y + 1)
-				sprite.scale.set(0.33)
+				sprite.x = terrainScale * 64 * (tile.mapCoordinates.x - center.mapCoordinates.x + 1)
+				sprite.y = terrainScale * 64 * (tile.mapCoordinates.y - center.mapCoordinates.y + 1)
+				sprite.scale.set(terrainScale)
 				sprite.mask = mask
 			})
 			return sprites
 		}).flat()
 	const colonySprite = ColonyMapView.createSprite(colony)
-	colonySprite.x = 0.33 * 64
-	colonySprite.y = 0.33 * 64
-	colonySprite.scale.set(0.33)
+	colonySprite.x = terrainScale * 64
+	colonySprite.y = terrainScale * 64
+	colonySprite.scale.set(terrainScale)
 
-	return [...tileSprites, colonySprite, mask]
+	const text = new PIXI.Text(colony.name, {
+		fontFamily: 'Times New Roman',
+		fontSize: 22,
+		fill: 0xffffff,
+		align: 'center'
+	})
+	// text.position.x = colonySprite.x + terrainScale * (64 / 2)
+	// text.position.y = colonySprite.y + terrainScale * (64 - 5)
+	text.position.x = colonySprite.x + terrainScale * (64 / 2)
+	text.position.y = colonySprite.y + terrainScale * (64 / 2)
+	text.anchor.set(0.5)
+	text.scale.set(0.5)
+	text.mask = mask
+
+	// const number = new PIXI.Text(`${colony.colonists.length}`, {
+	// 	fontFamily: 'Times New Roman',
+	// 	fontSize: 22,
+	// 	fill: 0xffffff,
+	// 	align: 'center'
+	// })
+	// number.position.x = colonySprite.x + terrainScale * (64 / 2)
+	// number.position.y = colonySprite.y + terrainScale * (64 / 2)
+	// number.scale.set(0.5)
+	// number.anchor.set(0.5)
+
+	return [...tileSprites, colonySprite, text, mask]
+}
+
+const buildingIcon = (colony, building) => {
+	const frame = Building.frame(colony, building)
+	const x = 128 * frame
+	const y = 0
+	const width = 128 * Buildings[building].width
+	const height = 128
+	const rectangle = new PIXI.Rectangle(x, y, width, height)
+	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().buildings, rectangle))
+	if (width === 128) {	
+		sprite.scale.set(0.75)
+		sprite.x = -16
+		sprite.y = -16
+	}
+	if (width === 256) {
+		sprite.scale.set(0.5)
+		sprite.x = -16
+	}
+	console.log(sprite)
+
+	return sprite
 }
 
 const combine = (slot1, slot2, slot3) => {
@@ -77,22 +127,22 @@ const combine = (slot1, slot2, slot3) => {
 
 	const slot2Sprites = slot2 ? (slot2.length ? slot2 : [slot2]) : []
 	slot2Sprites.forEach(s => {
-		s.x = position.x
-		s.y = position.y
-		s.scale.set(scale1)
+		s.x += position.x
+		s.y += position.y
+		s.scale.set(s.scale.x * scale1)
 		container.addChild(s)
 	})
 
 	const scale2 = 0.4
 	position = {
-		x: (1 - scale2 - scale1) * 64,
+		x: (1 - scale2 - 0.5*scale1) * 64,
 		y: (1 - scale2) * 64
 	}
 	const slot3Sprites = slot3 ? (slot3.length ? slot3 : [slot3]) : []
 	slot3Sprites.forEach(s => {
-		s.x = position.x
-		s.y = position.y
-		s.scale.set(scale2)
+		s.x += position.x
+		s.y += position.y
+		s.scale.set(s.scale.x * scale2)
 		container.addChild(s)
 	})
 
@@ -145,11 +195,11 @@ const createAmerica = unit => {
 	}
 }
 
-const createConstruction = colony => {
+const createConstruction = (colony, { building, unit }) => {
 	const colonyView = colonyIcon(colony)
-	const good = createSprite(Goods.construction.id)
+	const targetView = building ? buildingIcon(colony, building) : UnitView.create(unit)
 	const icon = createIcon('plus')
-	const container = combine(colonyView, good, icon)
+	const container = combine(colonyView, targetView, icon)
 
 	const action = () => ColonyView.open(colony)
 
@@ -352,7 +402,7 @@ const remove = notification => {
 const createType = {
 	europe: params => createEurope(params.unit),
 	america: params => createAmerica(params.unit),
-	construction: params => createConstruction(params.colony),
+	construction: params => createConstruction(params.colony, params),
 	terraforming: params => createTerraforming(params.unit),
 	rumor: params => createRumor(params.option, params.tile, params.unit),
 	born: params => createSettlerBorn(params.colony, params.unit),
