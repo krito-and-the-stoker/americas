@@ -95,6 +95,24 @@ const create = () => {
 	purchaseButton.y = originalDimensions.y / 2 + 40
 	normalContainer.addChild(purchaseButton)
 
+	const trainButton = Button.create('train', () => {
+		const options = Europe.trainOptions()
+		const choices = options.map(option => option.text)
+		return Dialog.createIndependent('Who would you like to train?',
+			choices,
+			null,
+			{
+				context: container,
+				pause: false
+			})
+		.then(decision => {
+			Europe.train(options[decision])
+		})
+	})
+	trainButton.x = originalDimensions.x - trainButton.width - 20
+	trainButton.y = originalDimensions.y / 2 + 80
+	normalContainer.addChild(trainButton)
+
 	RenderView.updateWhenResized(({ dimensions }) => {
 		const scale = {
 			x: dimensions.x / originalDimensions.x,
@@ -117,6 +135,7 @@ const create = () => {
 		nameHeadline.x = dimensions.x / (2 *coverScale)
 		recruitButton.x = dimensions.x / coverScale - recruitButton.width - 20
 		purchaseButton.x = dimensions.x / coverScale - purchaseButton.width - 20
+		trainButton.x = dimensions.x / coverScale - trainButton.width - 20
 	})
 
 	const unsubscribe = () => {

@@ -27,7 +27,7 @@ const possibleColonists = [
 	{ unit: 'soldier', name: "Veteran Soldier", expert: "soldier" },
 	{ unit: 'pioneer', name: "Hardened Pioneer", expert: "pioneer" },
 	{ unit: 'scout', name: "Seasoned Scout", expert: "scout" },
-	{ unit: 'missionary', name: "Missionary", expert: "missionary" },
+	{ unit: 'missionary', name: "Jesuit Missionary", expert: "missionary" },
 	{ unit: 'settler', 'name': 'Expert Farmer', expert: "farmer" },
 	{ unit: 'settler', 'name': 'Expert Lumberjack', expert: "lumberjack" },
 	{ unit: 'settler', 'name': 'Expert Oreminer', expert: "oreminer" },
@@ -42,6 +42,26 @@ const possibleColonists = [
 	{ unit: 'settler', 'name': 'Expert Gunsmith', expert: "gunsmith" },
 	{ unit: 'settler', 'name': 'Firebrand Preacher', expert: "preacher" },
 	{ unit: 'settler', 'name': 'Elder Statesman', expert: "statesman" },
+]
+
+const possibleTrainees = [
+	{ unit: 'settler', 'name': 'Expert Oreminer', expert: "oreminer", price: 600 },
+	{ unit: 'settler', 'name': 'Expert Lumberjack', expert: "lumberjack", price: 700 },
+	{ unit: 'settler', 'name': 'Expert Gunsmith', expert: "gunsmith", price: 850 },
+	{ unit: 'settler', 'name': 'Expert Silverminer', expert: "silverminer", price: 900 },
+	{ unit: 'settler', 'name': 'Master Furtrader', expert: "furtrader", price: 950 },
+	{ unit: 'settler', 'name': 'Expert Carpenter', expert: "carpenter", price: 1000 },
+	{ unit: 'settler', 'name': 'Expert Fisher', expert: "fisher", price: 1000 },
+	{ unit: 'settler', 'name': 'Expert Blacksmith', expert: "blacksmith", price: 1050 },
+	{ unit: 'settler', 'name': 'Expert Farmer', expert: "farmer", price: 1100 },
+	{ unit: 'settler', 'name': 'Master Distiller', expert: "distiller", price: 1100 },
+	{ unit: 'pioneer', name: "Hardened Pioneer", expert: "pioneer", price: 1200 },
+	{ unit: 'settler', 'name': 'Master Tobacconist', expert: "tobacconist", price: 1200 },
+	{ unit: 'settler', 'name': 'Master Weaver', expert: "weaver", price: 1300 },
+	{ unit: 'missionary', name: "Jesuit Missionary", expert: "missionary", price: 1400 },
+	{ unit: 'settler', 'name': 'Firebrand Preacher', expert: "preacher", price: 1500 },
+	{ unit: 'settler', 'name': 'Elder Statesman', expert: "statesman", price: 1900 },
+	{ unit: 'soldier', name: "Veteran Soldiers", expert: "soldier", price: 2000 },
 ]
 
 const europe = {
@@ -128,6 +148,20 @@ const purchase = option => {
 	}
 }
 
+const trainOptions = () => possibleTrainees
+	.map(({ unit, name, expert, price }) => ({ text: `${name} (${price})`, unit, expert, price }))
+	.concat({ text: 'Nothing at the moment.', price: 0 })
+	.filter(option => option.price <= Treasure.amount())
+
+const train = option => {
+	if (Treasure.spend(option.price) && option.unit) {
+		const unit = Unit.create(option.unit, Record.getGlobal('defaultShipArrival'))
+		Unit.update.expert(unit, option.expert)
+		Unit.update.offTheMap(unit, true)
+		add.unit(unit)
+	}
+}
+
 const initialize = () => {
 	listen.crosses(crosses => {
 		if (crosses >= europe.crossesNeeded) {
@@ -160,5 +194,7 @@ export default {
 	recruit,
 	purchaseOptions,
 	purchase,
+	trainOptions,
+	train,
 	initialize
 }
