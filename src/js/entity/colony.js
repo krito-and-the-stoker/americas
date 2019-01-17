@@ -131,6 +131,8 @@ const initialize = colony => {
 	destroy.push(listen.colonists(colony, colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length))))
 
 	let starvationMessageSent = false
+	const needsToSendEmptyWarning = Util.makeObject(Goods.types.map(good => [good, false]))
+	const needsToSendFullWarning = Util.makeObject(Goods.types.map(good => [good, false]))
 	destroy.push(Storage.listen(colony.storage, storage => {
 		const keepFood = 20
 		if (storage.food >= 200 + keepFood) {
@@ -140,6 +142,7 @@ const initialize = colony => {
 		}
 		if (storage.food < 0 && !starvationMessageSent) {
 			Message.send(`The food storage of ${colony.name} is empty. We need to produce more food quickly to prevent any losses amongst the colonists`)
+			Notification.create({ type: 'starving', colony })
 			starvationMessageSent = true
 		}
 		if (storage.food < -15) {
@@ -148,6 +151,34 @@ const initialize = colony => {
 			storage.food = 0
 			starvationMessageSent = false
 		}
+		Goods.types
+			.filter(good => storage[good] >= 1)
+			.filter(good => good !== 'food')
+			.forEach(good => {
+				needsToSendEmptyWarning[good] = true
+			})
+		Goods.types
+			.filter(good => storage[good] <= 0)
+			.filter(good => good !== 'food')
+			.filter(good => needsToSendEmptyWarning[good])
+			.forEach(good => {
+				Notification.create({ type: 'storageEmpty', colony, good})
+				needsToSendEmptyWarning[good] = false
+			})
+		Goods.types
+			.filter(good => storage[good] < colony.capacity)
+			.filter(good => good !== 'food')
+			.forEach(good => {
+				needsToSendFullWarning[good] = true
+			})
+		Goods.types
+			.filter(good => storage[good] > colony.capacity)
+			.filter(good => good !== 'food')
+			.filter(good => needsToSendFullWarning[good])
+			.forEach(good => {
+				Notification.create({ type: 'storageFull', colony, good })
+				needsToSendFullWarning[good] = false
+			})
 	}))
 	colony.construction = {
 		amount: colony.construction.amount,

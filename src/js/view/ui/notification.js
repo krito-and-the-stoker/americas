@@ -254,8 +254,8 @@ const createDied = (colony, unit) => {
 const createStorageEmpty = (colony, good) => {
 	const colonySprite = ColonyMapView.createSprite(colony)
 	const goodView = createSprite(Goods[good].id)
-	const exclamation = createIcon('exclamation')
-	const container = combine(colonySprite, goodView, exclamation)
+	const minus = createIcon('minus')
+	const container = combine(colonySprite, goodView, minus)
 
 	const action = () => ColonyView.open(colony)
 	const dismiss = {
@@ -268,6 +268,25 @@ const createStorageEmpty = (colony, good) => {
 		type: 'storageEmpty',
 		dismiss
 	}
+}
+
+const createStorageFull = (colony, good) => {
+	const colonySprite = ColonyMapView.createSprite(colony)
+	const goodView = createSprite(Goods[good].id)
+	const exclamation = createIcon('exclamation')
+	const container = combine(colonySprite, goodView, exclamation)
+
+	const action = () => ColonyView.open(colony)
+	const dismiss = {
+		colonyScreen: c => c === colony
+	}
+
+	return {
+		container,
+		action,
+		type: 'storageFull',
+		dismiss
+	}	
 }
 
 const remove = notification => {
@@ -284,7 +303,9 @@ const createType = {
 	rumor: params => createRumor(params.option, params.tile, params.unit),
 	born: params => createSettlerBorn(params.colony, params.unit),
 	starving: params => createStarving(params.colony),
-	died: params => createDied(params.colony, params.unit)
+	died: params => createDied(params.colony, params.unit),
+	storageEmpty: params => createStorageEmpty(params.colony, params.good),
+	storageFull: params => createStorageFull(params.colony, params.good)
 }
 const create = params => {
 	const notification = createType[params.type](params)
