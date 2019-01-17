@@ -47,6 +47,7 @@ const create = () => {
 	const units = UnitsView.create(close, originalDimensions)
 	normalContainer.addChild(units.container.ships)
 	normalContainer.addChild(units.container.units)
+	normalContainer.addChild(units.container.dialog)
 
 	const nameHeadline = new PIXI.Text('London', {
 		fontFamily: 'Times New Roman',

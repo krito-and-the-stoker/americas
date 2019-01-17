@@ -12,12 +12,21 @@ import America from '../../command/america'
 import Transport from '../../view/transport'
 import Util from '../../util/util'
 import LoadUnitFromShipToEurope from '../../action/loadUnitFromShipToEurope'
+import Dialog from '../../view/ui/dialog'
+import Record from '../../util/record'
+import PathFinder from '../../util/pathFinder'
+import MapEntity from '../../entity/map'
+import MoveTo from '../../command/moveTo'
+import TriggerEvent from '../../command/triggerEvent'
 
 const create = closeFn => {
 	const container = {
 		ships: new PIXI.Container(),
-		units: new PIXI.Container()
+		units: new PIXI.Container(),
+		dialog: new PIXI.Container(),
 	}
+	container.dialog.y = 0
+	container.dialog.x = 0
 
 
 	const unsubscribe = Europe.listen.units(units => {
@@ -25,16 +34,40 @@ const create = closeFn => {
 		const landUnits = units.filter(unit => unit.domain === 'land')
 		const unsubscribeShips = Util.mergeFunctions(ships.map(Transport.create).map((view, index) => {
 			Click.on(view.sprite, () => {
-				Commander.scheduleBehind(view.unit.commander, America.create(view.unit))
-				if (ships.length === 1) {
-					closeFn()
-				}
+				const colonies = Record.getAll('colony')
+				const colonyOptions = colonies.map(colony => colony.name)
+				Dialog.createIndependent('Where do you wish us to go?', ['Stay here', ...colonyOptions, 'Where you came from'],
+					null,
+					{
+						context: container.dialog,
+						paused: false
+					})
+					.then(decision => {
+						if (decision === 0) {
+							return
+						}
+						if (decision === colonyOptions.length + 1) {
+							Commander.scheduleBehind(view.unit.commander, America.create(view.unit))
+							Commander.scheduleBehind(view.unit.commander, TriggerEvent.create('notification', { type: 'america', unit: view.unit }))
+						} else {						
+							const colony = colonies[decision - 1]
+							const tile = MapEntity.tile(colony.mapCoordinates)
+							const path = PathFinder.findHighSeas(tile)
+							Unit.update.mapCoordinates(view.unit, path[path.length - 1].mapCoordinates)
+							Commander.scheduleBehind(view.unit.commander, America.create(view.unit))
+							Commander.scheduleBehind(view.unit.commander, MoveTo.create(view.unit, colony.mapCoordinates))
+							Commander.scheduleBehind(view.unit.commander, TriggerEvent.create('notification', { type: 'arrive', unit: view.unit, colony }))
+						}
+						if (ships.length === 1) {
+							closeFn()
+						}
+				})
 			})
 			view.container.x = index * 64 * 2
 			view.container.y = 0
 			container.ships.addChild(view.container)
 
-			return () => {			
+			return () => {
 				view.unsubscribe()
 				container.ships.removeChild(view.container)
 			}

@@ -18,17 +18,50 @@ import MapEntity from '../../entity/map'
 import Background from '../../render/background'
 import Dialog from './dialog'
 import Events from './events'
+import Tile from '../../entity/tile'
 
 
 const originalDimensions = {
 	x: 1920,
 	y: 1080
 }
-let container = null
+let notificationsContainer = null
 let notifications = []
 
+const createTileView = tile => {
+	const tileSprites = Background.createSpritesFromTile(tile)
+	return tileSprites
+}
+const createCircleMask = () => {
+	const circle = new PIXI.Graphics()
+	circle.beginFill(0xFFFFFF)
+	circle.drawCircle(32, 32, 26)
+	circle.endFill()
+	return circle	
+}
 const createSprite = frame => new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
 const createIcon = name => createSprite(Icons[name])
+const colonyIcon = colony => {
+	const center = MapEntity.tile(colony.mapCoordinates)
+	const mask = createCircleMask()
+	const tileSprites = Tile.radius(center)
+		.map(tile => {
+			const sprites = createTileView(tile)
+			sprites.forEach(sprite => {			
+				sprite.x = 0.33 * 64 * (tile.mapCoordinates.x - center.mapCoordinates.x + 1)
+				sprite.y = 0.33 * 64 * (tile.mapCoordinates.y - center.mapCoordinates.y + 1)
+				sprite.scale.set(0.33)
+				sprite.mask = mask
+			})
+			return sprites
+		}).flat()
+	const colonySprite = ColonyMapView.createSprite(colony)
+	colonySprite.x = 0.33 * 64
+	colonySprite.y = 0.33 * 64
+	colonySprite.scale.set(0.33)
+
+	return [...tileSprites, colonySprite, mask]
+}
 
 const combine = (slot1, slot2, slot3) => {
 	const container = new PIXI.Container()
@@ -62,6 +95,8 @@ const combine = (slot1, slot2, slot3) => {
 		s.scale.set(scale2)
 		container.addChild(s)
 	})
+
+	container.cacheAsBitmap = true
 
 	return container
 }
@@ -111,10 +146,10 @@ const createAmerica = unit => {
 }
 
 const createConstruction = colony => {
-	const colonySprite = ColonyMapView.createSprite(colony)
+	const colonyView = colonyIcon(colony)
 	const good = createSprite(Goods.construction.id)
 	const icon = createIcon('plus')
-	const container = combine(colonySprite, good, icon)
+	const container = combine(colonyView, good, icon)
 
 	const action = () => ColonyView.open(colony)
 
@@ -194,10 +229,10 @@ const createRumor = (option, tile, unit) => {
 }
 
 const createSettlerBorn = (colony, unit) => {
-	const colonySprite = ColonyMapView.createSprite(colony)
+	const colonyView = colonyIcon(colony)
 	const unitView = UnitView.create(unit)
 	const plus = createIcon('plus')
-	const container = combine(colonySprite, unitView, plus)
+	const container = combine(colonyView, unitView, plus)
 
 	const action = () => ColonyView.open(colony)
 	const dismiss = {
@@ -213,11 +248,11 @@ const createSettlerBorn = (colony, unit) => {
 }
 
 const createStarving = colony => {
-	const colonySprite = ColonyMapView.createSprite(colony)
+	const colonyView = colonyIcon(colony)
 	const good = createSprite(Goods.food.id)
 	const minus = createIcon('minus')
 	const exclamation = createIcon('exclamation')
-	const container = combine(colonySprite, [good, minus], exclamation)
+	const container = combine(colonyView, [good, minus], exclamation)
 
 	const action = () => ColonyView.open(colony)
 	const dismiss = {
@@ -233,10 +268,10 @@ const createStarving = colony => {
 }
 
 const createDied = (colony, unit) => {
-	const colonySprite = ColonyMapView.createSprite(colony)
+	const colonyView = colonyIcon(colony)
 	const unitView = UnitView.create(unit)
 	const minus = createIcon('minus')
-	const container = combine(colonySprite, unitView, minus)
+	const container = combine(colonyView, unitView, minus)
 
 	const action = () => ColonyView.open(colony)
 	const dismiss = {
@@ -252,10 +287,10 @@ const createDied = (colony, unit) => {
 }
 
 const createStorageEmpty = (colony, good) => {
-	const colonySprite = ColonyMapView.createSprite(colony)
+	const colonyView = colonyIcon(colony)
 	const goodView = createSprite(Goods[good].id)
 	const minus = createIcon('minus')
-	const container = combine(colonySprite, goodView, minus)
+	const container = combine(colonyView, goodView, minus)
 
 	const action = () => ColonyView.open(colony)
 	const dismiss = {
@@ -271,10 +306,10 @@ const createStorageEmpty = (colony, good) => {
 }
 
 const createStorageFull = (colony, good) => {
-	const colonySprite = ColonyMapView.createSprite(colony)
+	const colonyView = colonyIcon(colony)
 	const goodView = createSprite(Goods[good].id)
 	const exclamation = createIcon('exclamation')
-	const container = combine(colonySprite, goodView, exclamation)
+	const container = combine(colonyView, goodView, exclamation)
 
 	const action = () => ColonyView.open(colony)
 	const dismiss = {
@@ -289,8 +324,27 @@ const createStorageFull = (colony, good) => {
 	}	
 }
 
+const createArrive = (colony, unit) => {
+	const colonySprite = colonyIcon(colony)
+	const unitView = UnitView.create(unit)
+	const icon = createIcon('left')
+	const container = combine(colonySprite, unitView, icon)
+
+	const action = () => ColonyView.open(colony)
+	const dismiss = {
+		colonyScreen: c => c === colony
+	}
+
+	return {
+		container,
+		action,
+		type: 'arrive',
+		dismiss
+	}	
+}
+
 const remove = notification => {
-	container.removeChild(notification.container)
+	notificationsContainer.removeChild(notification.container)
 	notifications = notifications.filter(n => n !== notification)
 	notifications.forEach((n, i) => n.container.x = i*74)
 }
@@ -305,13 +359,14 @@ const createType = {
 	starving: params => createStarving(params.colony),
 	died: params => createDied(params.colony, params.unit),
 	storageEmpty: params => createStorageEmpty(params.colony, params.good),
-	storageFull: params => createStorageFull(params.colony, params.good)
+	storageFull: params => createStorageFull(params.colony, params.good),
+	arrive: params => createArrive(params.colony, params.unit)
 }
 const create = params => {
 	const notification = createType[params.type](params)
 	notification.container.x += notifications.length * 74
 
-	container.addChild(notification.container)
+	notificationsContainer.addChild(notification.container)
 	Click.on(notification.container, () => {
 		notification.action()
 		remove(notification)
@@ -321,14 +376,14 @@ const create = params => {
 }
 
 const initialize = () => {
-	container = new PIXI.Container()
-	Foreground.get().notifications.addChild(container)
+	notificationsContainer = new PIXI.Container()
+	Foreground.get().notifications.addChild(notificationsContainer)
 
 	RenderView.updateWhenResized(({ dimensions }) => {
 		const scale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
 
-		container.x = dimensions.x / 2
-		container.y = dimensions.y - 74
+		notificationsContainer.x = dimensions.x / 2
+		notificationsContainer.y = dimensions.y - 74
 	})
 
 	Events.listen('colonyScreen', colony => {
@@ -359,6 +414,9 @@ const initialize = () => {
 			.filter(n => n.dismiss.move(unit))
 
 		dismiss.forEach(remove)
+	})
+	Events.listen('notification', params => {
+		create(params)
 	})
 }
 

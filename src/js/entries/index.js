@@ -5,7 +5,7 @@ let game = null
 
 window.addEventListener('load', async () => {
 	console.log(`Revision: ${Version.revision}`)
-	console.log(`Built ${Version.date}`)
+	console.log(`Build from ${Version.date}`)
 	document.querySelector('#date').innerHTML = `Development build from ${Version.date}`
 	const clickStart = () => {
 		document.querySelector('.start').removeEventListener('click', clickStart)

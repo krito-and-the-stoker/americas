@@ -6,6 +6,7 @@ import Load from '../command/load'
 import Europe from '../command/europe'
 import America from '../command/america'
 import CutForest from '../command/cutForest'
+import TriggerEvent from '../command/triggerEvent'
 import Plow from '../command/plow'
 import Road from '../command/road'
 import Time from '../timeline/time'
@@ -87,6 +88,7 @@ const getModule = type => ( type ? ({
 	plow: Plow,
 	road: Road,
 	america: America,
+	triggerEvent: TriggerEvent,
 	commander: { load }
 })[type] : { load: data => console.warn('cannot load command, missing type', data) }) 
 

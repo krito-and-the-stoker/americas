@@ -27,7 +27,6 @@ const create = (unit, eta = null) => {
 	const finished = () => {
 		if (eta) {
 			Message.send(`A ${unit.name} arrived in the new world.`)
-			Notification.create({ type: 'america', unit })
 			Unit.update.offTheMap(unit, false)
 		}
 	}

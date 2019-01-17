@@ -252,7 +252,7 @@ const production = (tile, resource, colonist = null) => {
 		result = applyModifier(tile, result, 'resource', resource, where)
 	}
 	if (colonist && ((colonist.expert === Goods[resource].expert && tile.domain === 'land') || (colonist.expert === 'fisher' && tile.domain === 'sea'))) {
-		result += applyModifier(tile, result, 'expert', resource, where)
+		result = applyModifier(tile, result, 'expert', resource, where)
 	}
 
 
