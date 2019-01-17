@@ -16,11 +16,11 @@ import Notification from '../view/ui/notification'
 const options = [{
 	text: () => 'Your find nothing but rumors',
 	fn: () => {},
-	probability: 1,
+	probability: 1.5,
 }, {
 	text: () => 'Your expedition has vanished without a trace.',
 	fn: ({ unit }) => Unit.disband(unit),
-	probability: 0.5
+	probability: 0.35
 }, {
 	text: ({ random }) => `Your expedition enters a small friendly tribe. The chief offers you a gift worth ${Math.round(50 + 250*random)} gold.`,
 	fn: ({ random }) => Treasure.gain(Math.round(50 + 250*random)),
