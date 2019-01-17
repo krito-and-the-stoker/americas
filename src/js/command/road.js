@@ -10,7 +10,7 @@ const create = (unit, eta) => {
 	let aborted = false
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)
-		if (!eta && unit.properties.canTerraform && !tile.road) {
+		if (!eta && unit.properties.canTerraform && !tile.road && !tile.settlement) {
 			eta = currentTime + Time.CONSTRUCT_ROAD * (unit.expert === 'pioneer' ? 0.6 : 1)
 		}
 

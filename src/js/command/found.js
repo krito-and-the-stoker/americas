@@ -15,6 +15,9 @@ const create = unit => {
 		}
 
 		const tile = MapEntity.tile(unit.mapCoordinates)
+		if (tile.settlement) {
+			return false
+		}
 		if (Tile.radius(tile).some(neighbor => neighbor.colony)) {
 			return false
 		}

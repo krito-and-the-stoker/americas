@@ -19,6 +19,7 @@ const constructionOptions = colony => {
 			target: name,
 			name: Buildings[name].name[colony.buildings[name] + 1],
 			cost: Buildings[name].cost[colony.buildings[name] + 1],
+			population: Buildings[name].population[colony.buildings[name] + 1],
 			action: () => {
 				const buildings = colony.buildings
 				buildings[name] += 1
@@ -120,7 +121,9 @@ const constructionOptions = colony => {
 		}
 	}]
 
-	let options = buildings.concat(wagontrain)
+	let options = buildings
+		.filter(building => building.population <= colony.colonists.length)
+		.concat(wagontrain)
 	if (colony.buildings.gunsmiths) {
 		options = options.concat(artillery)
 	}
