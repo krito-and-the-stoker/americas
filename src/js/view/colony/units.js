@@ -4,6 +4,7 @@ import Colony from '../../entity/colony'
 import Colonist from '../../entity/colonist'
 import UnitView from '../../view/unit'
 import UnitMapView from '../../view/map/unit'
+import MapView from '../../view/map'
 import Click from '../../input/click'
 import Drag from '../../input/drag'
 import Unit from '../../entity/unit'
@@ -25,6 +26,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 		shipViews.forEach((view, index) => {
 			Click.on(view.sprite, () => {
 				closeScreen()
+				MapView.centerAt(view.unit.mapCoordinates, 0)
 				UnitMapView.select(view.unit)
 			})
 			view.container.x = index * 64 * 2
@@ -49,6 +51,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 
 					Click.on(sprite, () => {
 						closeScreen()
+						MapView.centerAt(unit.mapCoordinates, 0)
 						UnitMapView.select(unit)
 					})
 
