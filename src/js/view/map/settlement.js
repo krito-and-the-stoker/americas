@@ -17,10 +17,6 @@ const create = settlement => {
 	sprite.x = TILE_SIZE * settlement.mapCoordinates.x
 	sprite.y = TILE_SIZE * settlement.mapCoordinates.y
 
-	Click.on(sprite, () => {
-		Message.send(`This is a settlement of the ${settlement.tribe.name}. (${settlement.mapCoordinates.x}, ${settlement.mapCoordinates.y})`)
-	})
-
 	const tile = MapEntity.tile(settlement.mapCoordinates)
 	Tile.listen.tile(tile, tile => {
 		if (tile.discovered) {

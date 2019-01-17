@@ -69,24 +69,11 @@ const colonyIcon = colony => {
 		fill: 0xffffff,
 		align: 'center'
 	})
-	// text.position.x = colonySprite.x + terrainScale * (64 / 2)
-	// text.position.y = colonySprite.y + terrainScale * (64 - 5)
 	text.position.x = colonySprite.x + terrainScale * (64 / 2)
 	text.position.y = colonySprite.y + terrainScale * (64 / 2)
 	text.anchor.set(0.5)
 	text.scale.set(0.5)
 	text.mask = mask
-
-	// const number = new PIXI.Text(`${colony.colonists.length}`, {
-	// 	fontFamily: 'Times New Roman',
-	// 	fontSize: 22,
-	// 	fill: 0xffffff,
-	// 	align: 'center'
-	// })
-	// number.position.x = colonySprite.x + terrainScale * (64 / 2)
-	// number.position.y = colonySprite.y + terrainScale * (64 / 2)
-	// number.scale.set(0.5)
-	// number.anchor.set(0.5)
 
 	return [...tileSprites, colonySprite, text, mask]
 }
@@ -278,6 +265,35 @@ const createRumor = (option, tile, unit) => {
 	}
 }
 
+const createSettlement = (settlement, unit) => {
+	const MAP_SETTLEMENT_FRAME_ID = 59
+	const settlementView = createSprite(MAP_SETTLEMENT_FRAME_ID)
+	const icon = createIcon('question')
+
+	const container = combine(settlementView, icon)
+
+	const action = () => {
+		Dialog.createIndependent('Here do not live any natives yet.', ['ok', 'go to scout'], null, { pause: true })
+			.then(decision => {
+				if (decision === 1) {
+					MapView.centerAt(unit.mapCoordinates, 350)
+					UnitMapView.select(unit)
+				}
+			})
+	}
+
+	const dismiss = {
+		move: u => u === unit
+	}
+
+	return {
+		container,
+		action,
+		type: 'settlement',
+		dismiss
+	}
+}
+
 const createSettlerBorn = (colony, unit) => {
 	const colonyView = colonyIcon(colony)
 	const unitView = UnitView.create(unit)
@@ -410,7 +426,8 @@ const createType = {
 	died: params => createDied(params.colony, params.unit),
 	storageEmpty: params => createStorageEmpty(params.colony, params.good),
 	storageFull: params => createStorageFull(params.colony, params.good),
-	arrive: params => createArrive(params.colony, params.unit)
+	arrive: params => createArrive(params.colony, params.unit),
+	settlement: params => createSettlement(params.settlement, params.unit)
 }
 const create = params => {
 	const notification = createType[params.type](params)

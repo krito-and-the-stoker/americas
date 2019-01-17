@@ -21,6 +21,7 @@ const save = settlement => ({
 
 const load = settlement => {
 	settlement.tribe = Record.dereference(settlement.tribe)
+	Tile.update.settlement(MapEntity.tile(settlement.mapCoordinates), settlement)
 	return settlement
 }
 

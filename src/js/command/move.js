@@ -10,6 +10,7 @@ import Load from '../command/load'
 import EnterColony from '../action/enterColony'
 import LeaveColony from '../action/leaveColony'
 import InvestigateRumors from '../action/investigateRumors'
+import EnterSettlement from '../action/enterSettlement'
 
 const TILE_SIZE = 64
 
@@ -134,8 +135,14 @@ const createFromData = data => {
 				EnterColony(targetTile.colony, unit)
 			}
 
-			if (targetTile.rumors && Commander.commandsScheduled(unit.commander) === 1) {
+			const hasCommandsLeft = Commander.commandsScheduled(unit.commander) > 1
+
+			if (targetTile.rumors && !hasCommandsLeft) {
 				InvestigateRumors(unit)
+			}
+
+			if (targetTile.settlement && !hasCommandsLeft) {
+				EnterSettlement(targetTile.settlement, unit)
 			}
 
 			Tile.discover(targetTile)
