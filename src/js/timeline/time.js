@@ -108,12 +108,14 @@ const schedule = (e, time = null) => {
 const save = () => {
 	return {
 		currentTime,
+		scale: time.scale
 	}
 }
 
 
 const load = data => {
 	currentTime = data.currentTime
+	update.scale(data.scale || 1)
 	scheduled = []
 }
 
