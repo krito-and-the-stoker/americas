@@ -23,7 +23,7 @@ let slice = null
 let initialized = false
 const initialize = () => {
 	const load = async () => {		
-		[slice] = await Util.loadTexture('images/schriftrolle-nineslice.png')
+		[slice] = await Util.loadTexture('images/status.png')
 		pngs = await Util.loadTexture('images/scout.png')
 	}
 
@@ -60,7 +60,7 @@ const createIndependent = (message, options, image = null, params = {}) => {
 			sprite.position.x = RenderView.getCenter().x + images[image].x
 			sprite.position.y = RenderView.getCenter().y + images[image].y
 		}
-		const plane9 = new PIXI.mesh.NineSlicePlane(new PIXI.Texture(slice), 160, 160, 160, 160)
+		const plane9 = new PIXI.mesh.NineSlicePlane(new PIXI.Texture(slice), 100, 100, 100, 100)
 
 		let optionTexts = []
 		const container = params.context || Foreground.get().dialog
