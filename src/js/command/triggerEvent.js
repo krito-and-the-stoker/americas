@@ -13,7 +13,7 @@ const create = (name, params) => {
 		params: {
 			type: params.type,
 			unit: Record.reference(params.unit),
-			colony: Record.referene(params.colony),
+			colony: Record.reference(params.colony),
 		}
 	})
 
