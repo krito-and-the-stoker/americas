@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 
 import Message from '../view/ui/message'
+import NumberOfAssets from '../data/numberOfAssets'
 
 
 const mergeFunctions = funcArray => funcArray.reduce((all, fn) => () => { all(); fn(); }, () => {})
@@ -38,7 +39,7 @@ let doTell = false
 const tell = () => {
 	if (doTell) {	
 		counter += 1
-		Message.log(`Downloading files (${counter}/25)...`)		
+		Message.log(`Downloading files (${counter}/${NumberOfAssets.files})...`)		
 	}
 }
 export const loadTextureVerbose = async (...files) => new Promise((resolve, reject) => {

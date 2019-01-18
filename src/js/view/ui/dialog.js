@@ -5,6 +5,7 @@ import RenderView from '../../render/view'
 import Time from '../../timeline/time'
 import Util from '../../util/util'
 import Click from '../../input/click'
+import Ressources from '../../render/ressources'
 
 
 const images = {
@@ -43,9 +44,25 @@ const dialogs = {
 	europe: {
 		msg: 'Do you want to set sail for europe?',
 		options: ['yes, steady as she goes!', 'no, let us remain here.']
-	}
+	},
 }
 
+const welcome = () => new Promise(resolve => {	
+	const container = Foreground.get().dialog
+	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().welcome))
+	sprite.anchor.set(0.5)
+	container.addChild(sprite)
+	const unsubscribe = RenderView.updateWhenResized(({ dimensions }) => {
+		sprite.x = dimensions.x / 2
+		sprite.y = dimensions.y / 2
+	})
+
+	Click.on(sprite, () => {
+		unsubscribe()
+		container.removeChild(sprite)
+		resolve()
+	})
+})
 
 const show = dialogName => {
 	const dialog = dialogs[dialogName]
@@ -136,5 +153,6 @@ export default {
 	initialize,
 	create,
 	createIndependent,
-	show
+	show,
+	welcome
 }

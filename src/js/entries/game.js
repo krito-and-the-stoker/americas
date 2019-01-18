@@ -22,6 +22,7 @@ import Record from '../util/record'
 import Util from '../util/util'
 import Tribe from '../entity/tribe'
 import Message from '../view/ui/message'
+import NumberOfAssets from '../data/numberOfAssets.json'
 
 const update = (deltaTime) => {
 	Time.advance(deltaTime)
@@ -73,7 +74,7 @@ const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve))
 
 let loadingRessources = null
 const preload = () => {
-	Message.log('Downloading files (2/25)...')
+	Message.log(`Downloading files (2/${NumberOfAssets.files})...`)
 	loadingRessources = Ressources.initialize()
 }
 
@@ -122,8 +123,9 @@ const start = async () => {
 
 	await nextFrame()
 	MapView.zoomBy(1/0.35, null, 0)
-	setTimeout(() => {
+	setTimeout(async () => {
 		Message.log('Starting game...')
+		await Dialog.welcome()
 		MapView.zoomBy(0.35, null, 3000)
 	}, 100)
 
@@ -159,8 +161,6 @@ const load = async () => {
 	await loadingRessources
 	await nextFrame()
 
-
-	// const mapRendering = new RenderMap()
 	RenderView.initialize()
 	await nextFrame()
 	Dialog.initialize()
