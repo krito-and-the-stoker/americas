@@ -35,16 +35,40 @@ const pageView = () => {
 
 const newGame = () => {
 	if (process.env.ENABLE_TRACKING) {	
-		client.recordEvent('newgame', {
-			sessionId: getId()
+		client.recordEvent('game', {
+			type: 'new game',
+	    host: window.location.host,
+	    ip_address: "${keen.ip}",
+	    sessionId: getId(),
+	    keen: {
+	      addons: [{
+	        name: "keen:ip_to_geo",
+	        input: {
+	          ip: "ip_address"
+	        },
+	        output: "keen.location"
+	      }]
+	    }
 		})
 	}
 }
 
 const resumeGame = () => {
 	if (process.env.ENABLE_TRACKING) {	
-		client.recordEvent('resumegame', {
-			sessionId: getId()
+		client.recordEvent('game', {
+			type: 'resume game',
+	    host: window.location.host,
+	    ip_address: "${keen.ip}",
+	    sessionId: getId(),
+	    keen: {
+	      addons: [{
+	        name: "keen:ip_to_geo",
+	        input: {
+	          ip: "ip_address"
+	        },
+	        output: "keen.location"
+	      }]
+	    }
 		})
 	}
 }
