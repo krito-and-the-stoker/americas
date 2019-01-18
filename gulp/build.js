@@ -29,6 +29,9 @@ const config = {
     path: path.resolve(__dirname, '../dist')
   },
   context: path.resolve(__dirname, '../src/js/'),
+  plugins: [
+    new webpack.EnvironmentPlugin(['KEEN_SECRET', 'ENABLE_TRACKING'])
+  ]
 }
 
 gulp.task('version', done => {
