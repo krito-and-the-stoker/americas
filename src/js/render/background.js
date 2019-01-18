@@ -170,6 +170,9 @@ const render = () => {
 }
 
 const doRenderWork = () => {
+	if (!renderRequested) {
+		return
+	}
 	containers.forEach(container => {
 		container.removeChildren()
 	})

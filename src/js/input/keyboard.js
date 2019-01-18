@@ -81,6 +81,10 @@ const handleKeydown = (e) => {
 		Help.open()
 	}
 
+	if (e.key === 'f') {
+		MapView.toggleForestVisibility()
+	}
+
 	const unit = UnitView.selectedUnit()
 	if (unit) {
 		if (e.key === 'b') {

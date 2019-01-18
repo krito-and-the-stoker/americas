@@ -57,9 +57,7 @@ const initialize = () => {
 }
 
 const onDraw = () => {
-	if (Background.get().renderRequested) {
-		Background.doRenderWork()
-	}	
+	Background.doRenderWork()
 	Foreground.doRenderWork()
 }
 

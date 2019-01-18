@@ -2,6 +2,7 @@ import TWEEN from '@tweenjs/tween.js'
 
 import RenderView from '../../render/view'
 import Foreground from '../../render/foreground'
+import Background from '../../render/background'
 import Click from '../../input/click'
 import Drag from '../../input/drag'
 import Wheel from '../../input/wheel'
@@ -45,6 +46,22 @@ const centerAt = ({ x, y }, moveTime) => {
 	}
 	moveMap(target, moveTime)
 }
+
+
+let forestVisibility = true
+const hideForest = () => {
+	forestVisibility = false
+	Background.render()
+}
+const showForest = () => {
+	forestVisibility = true
+	Background.render()
+}
+const toggleForestVisibility = () => {
+	forestVisibility = !forestVisibility
+	Background.render()
+}
+const isForestVisible = () => forestVisibility
 
 
 
@@ -165,5 +182,9 @@ export default {
 	sanitizeScale,
 	moveMap,
 	centerAt,
-	initialize
+	initialize,
+	hideForest,
+	showForest,
+	isForestVisible,
+	toggleForestVisibility
 }

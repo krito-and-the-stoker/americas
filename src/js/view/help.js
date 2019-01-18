@@ -5,6 +5,8 @@ import Click from '../input/click'
 import Wheel from '../input/wheel'
 import Time from '../timeline/time'
 import Events from '../view/ui/events'
+import Binding from '../util/binding'
+
 
 const helpText = `AMERICAS by Krito and the Stoker
 
@@ -19,6 +21,7 @@ Show Europe screen         - Press e
 Show America map           - Press a
 Enter Colony screen        - Left click on colony
 Leave current screen       - Press Escape
+Show/hide forest on map    - Press f
 
 All units on the map:
 Select unit                - Left click on unit
@@ -52,6 +55,17 @@ restart the computer without losing the game. However, note that
 we currently only save one game, so when you start a new game,
 the old game is lost.`
 
+const help = {
+	position: 0
+}
+
+const update = {
+	position: value => Binding.update(help, 'position', value)
+}
+
+const listen = {
+	position: fn => Binding.listen(help, 'position', fn)
+}
 
 const create = () => {
 	const container = new PIXI.Container()
@@ -86,19 +100,21 @@ const create = () => {
 		helpTextView.scale.set(fitScale)
 	})
 
-	let position = 0
-	Wheel.on(e => {
-		if (isOpen) {		
-			position += e.deltaY
-			if (position < 0) {
-				position = 0
-			}
-			if (position > 600) {
-				position = 600
-			}
-
-			helpTextView.y = 100 - position
+	listen.position(position => {
+		if (position < 0) {
+			update.position(0)
+			return
 		}
+		if (position > 600) {
+			update.position(600)
+			return
+		}
+
+		helpTextView.y = 100 - position
+	})
+
+	Wheel.on(e => {
+		update.position(help.position + e.deltaY)
 	})
 
 	Click.on(background, close)
@@ -113,6 +129,7 @@ const open = () => {
 		screen = create()
 	}
 
+	update.position(0)
 	Foreground.openScreen(screen, { name: 'help' })
 	Time.pause()
 }

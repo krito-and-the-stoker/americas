@@ -2,6 +2,7 @@ import Terrain from '../data/terrain.json'
 import MapEntity from '../entity/map'
 import Tile from '../entity/tile'
 import Message from '../view/ui/message'
+import RealMapView from '../view/map'
 
 
 class MapView{
@@ -24,7 +25,7 @@ class MapView{
 		}
 	}
 
-	assembleTile(tile){
+	assembleTile(tile) {
 		return []
 			.concat(this.renderBaseBlock(tile))
 			.concat(this.renderTopTiles(tile))
@@ -520,7 +521,7 @@ class MapView{
 			let up = center.up();
 			let down = center.down();
 
-			if(left && right && up && down){			
+			if(left && right && up && down){
 				if(center.hills){
 					const peakBase = center.hillVariation ? Terrain.hillsPeak.singleTileVariation : Terrain.hillsPeak.singleTile
 					// const baseBase = center.hillVariation ? Terrain.hillsBase.singleTileVariation : Terrain.hillsBase.singleTile;
@@ -553,7 +554,7 @@ class MapView{
 					let mod = this.getForestTileModifier(up.riverLarge, right.riverLarge, down.riverLarge, left.riverLarge);
 					topTiles.push(Terrain['largeRiver'].singleTile + mod);
 				}
-				if(center.forest){
+				if(center.forest && RealMapView.isForestVisible()){
 					let mod = this.getForestTileModifier(
 						up.forest && !(center.treeVariation && up.treeVariation),
 						right.forest && !(center.treeVariation && right.treeVariation),
