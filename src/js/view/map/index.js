@@ -17,7 +17,7 @@ import UnitView from './unit'
 import ColonyView from './colony'
 import SettlementView from './settlement'
 
-const MIN_SCALE = 0.125
+const MIN_SCALE = 0.4
 const MAX_SCALE = 4
 const TILE_SIZE = 64
 
