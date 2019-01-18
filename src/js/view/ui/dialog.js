@@ -50,10 +50,16 @@ const dialogs = {
 const welcome = () => new Promise(resolve => {	
 	const container = Foreground.get().dialog
 	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().welcome))
-	sprite.anchor.set(0.5)
+	sprite.anchor.set(1, 0.5)
+	const original = {
+		x: sprite.width,
+		y: sprite.height
+	}
 	container.addChild(sprite)
 	const unsubscribe = RenderView.updateWhenResized(({ dimensions }) => {
-		sprite.x = dimensions.x / 2
+		const scale = Math.min(original.x / dimensions.x, original.y / dimensions.y)
+		sprite.scale.set(0.35 * dimensions.x / original.x)
+		sprite.x = dimensions.x
 		sprite.y = dimensions.y / 2
 	})
 
