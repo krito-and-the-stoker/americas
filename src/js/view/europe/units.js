@@ -18,6 +18,7 @@ import PathFinder from '../../util/pathFinder'
 import MapEntity from '../../entity/map'
 import MoveTo from '../../command/moveTo'
 import TriggerEvent from '../../command/triggerEvent'
+import Tile from '../../entity/tile'
 
 const create = closeFn => {
 	const container = {
@@ -34,7 +35,10 @@ const create = closeFn => {
 		const landUnits = units.filter(unit => unit.domain === 'land')
 		const unsubscribeShips = Util.mergeFunctions(ships.map(Transport.create).map((view, index) => {
 			Click.on(view.sprite, () => {
-				const colonies = Record.getAll('colony')
+				const colonies = Record.getAll('colony').filter(colony => {
+					const tile = MapEntity.tile(colony.mapCoordinates)
+					return Tile.diagonalNeighbors(tile).some(tile => tile.domain === 'sea')
+				})
 				const colonyOptions = colonies.map(colony => colony.name)
 				Dialog.createIndependent('Where do you wish us to go?', ['Stay here', ...colonyOptions, 'Where you came from'],
 					null,

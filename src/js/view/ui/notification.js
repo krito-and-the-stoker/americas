@@ -95,7 +95,6 @@ const buildingIcon = (colony, building) => {
 		sprite.scale.set(0.5)
 		sprite.x = -16
 	}
-	console.log(sprite)
 
 	return sprite
 }

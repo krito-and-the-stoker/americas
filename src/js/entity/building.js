@@ -157,7 +157,7 @@ const construct = (colony, construction) => {
 	}
 
 	construction.target = 'none'
-	construction.target.action = () => {}
+	construction.action = () => {}
 	construction.cost.construction = 24
 	construction.name = `${construction.name} completed`
 	construction.cost.tools = 0
