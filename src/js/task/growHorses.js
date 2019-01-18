@@ -12,6 +12,8 @@ const create = (colony, tile, good, colonist = null) => {
 			lastUpdate = currentTime
 			return true
 		}
+		lastUpdate = currentTime
+
 
 		// only grow when we have horses and only when the settler give them food
 		if (!colony.storage.horses ||  colony.storage.food < 20 || colony.storage.horses >= colony.capacity) {
@@ -29,7 +31,6 @@ const create = (colony, tile, good, colonist = null) => {
 		Storage.update(colony.productionRecord, { good: 'food', amount: -amount })
 		Storage.update(colony.productionRecord, { good: 'horses', amount })
 
-		lastUpdate = currentTime
 		return true
 	}
 
