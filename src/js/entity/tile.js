@@ -26,7 +26,6 @@ const create = ({ id, layers, index }) => {
 		mountains: layers.top === Terrain.mountains.id,
 		riverSmall: layers.riverSmall === Terrain.smallRiver.id,
 		riverLarge: layers.riverLarge === Terrain.largeRiver.id,
-		bonus: layers.bonus ===  Terrain.bonusResource.id,
 		mapCoordinates: MapEntity.mapCoordinates(index),
 		zone: layers.zone,
 		harvestedBy: null,
@@ -37,7 +36,7 @@ const create = ({ id, layers, index }) => {
 		discovered: false,
 	}
 
-	tile.rumors = tile.domain === 'land' && Math.random() < 0.05
+	tile.rumors = tile.domain === 'land' && Math.random() < 0.04
 	tile.river = tile.riverLarge || tile.riverSmall
 
 	tile.hills = layers.top === Terrain.hills.id || (tile.mountains && Math.random() > 0.1)
@@ -46,6 +45,7 @@ const create = ({ id, layers, index }) => {
 	tile.hillVariation = Math.random() > (tile.river ? 0.2 : 0.75) && !tile.bonus
 
 	tile.terrainName = terrainName(tile)
+	tile.bonus = (tile.terrainName !== 'sea lane') && (Math.random() < (tile.domain === 'land' ? 0.07 : 0.04))
 
 	tile.left = () => left(tile)
 	tile.up = () => up(tile)
