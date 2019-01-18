@@ -37,7 +37,7 @@ const constructionOptions = colony => {
 			}
 			buildings.warehouse += 1
 			Colony.update.buildings(colony)
-			Notification.create({ type: 'construction', colony, building: name })
+			Notification.create({ type: 'construction', colony, building: 'warehouse' })
 		}
 	}
 
@@ -146,9 +146,10 @@ const construct = (colony, construction) => {
 	if (construction.target === 'none') {
 		return
 	}
-	construction.action()
 
 	Message.send(`${colony.name} has completed construction of ${construction.name}.`)
+	construction.action()
+
 
 	construction.amount -= construction.cost.construction
 	if (construction.cost.tools) {
