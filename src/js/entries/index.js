@@ -1,4 +1,5 @@
 import Version from '../../version/version.json'
+import Tracking from '../util/tracking'
 
 let game = null
 
@@ -6,8 +7,10 @@ let game = null
 window.addEventListener('load', async () => {
 	console.log(`Revision: ${Version.revision}`)
 	console.log(`Build from ${Version.date}`)
+	Tracking.pageView()
 	document.querySelector('#date').innerHTML = `Development build from ${Version.date}`
 	const clickStart = () => {
+		Tracking.newGame()
 		document.querySelector('.start').removeEventListener('click', clickStart)
 		document.querySelector('.load').removeEventListener('click', clickResume)
 		document.querySelector('.title').classList.add('hidden')
@@ -26,6 +29,7 @@ window.addEventListener('load', async () => {
 	}
 
 	const clickResume = () => {
+		Tracking.resumeGame()
 		document.querySelector('.start').removeEventListener('click', clickStart)
 		document.querySelector('.load').removeEventListener('click', clickResume)
 		document.querySelector('.title').classList.add('hidden')
