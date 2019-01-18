@@ -53,6 +53,9 @@ const getContainer = index => {
 			container.x = containers[containers.length - 1].x
 			container.y = containers[containers.length - 1].y
 			container.scale.set(scale, scale)
+		} else {
+			updateScale(RenderView.get().scale)
+			updateCoords(RenderView.get().coords)
 		}
 		layer.app.stage.addChild(container)
 		containers.push(container)
@@ -177,7 +180,7 @@ const doRenderWork = () => {
 		container.removeChildren()
 	})
 
-	if (visible) {	
+	if (visible) {
 		const numTilesX = Math.ceil(layer.width / 64 / scale) + 1
 		const numTilesY = Math.ceil(layer.height / 64 / scale) + 1
 		const offsetX = -Math.ceil(undiscovered.tilePosition.x / 64 / scale)
@@ -200,10 +203,9 @@ const doRenderWork = () => {
 				tiles[index].sprites.forEach(sprite => tiles[index].container.addChild(sprite))
 			})
 		})
+		layer.app.render()
+		renderRequested = false
 	}
-
-	layer.app.render()
-	renderRequested = false
 }
 
 

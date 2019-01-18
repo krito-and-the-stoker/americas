@@ -123,6 +123,7 @@ const start = async () => {
 
 	await nextFrame()
 	MapView.zoomBy(1/0.35, null, 0)
+	MapView.zoomBy(1/0.35, null, 100)
 	setTimeout(async () => {
 		Message.log('Starting game...')
 		await Dialog.welcome()
