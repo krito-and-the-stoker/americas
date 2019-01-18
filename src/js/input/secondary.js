@@ -6,7 +6,7 @@ const on = (target, fn) => {
 		const handleClick = async () => {	
 			if (!Drag.isDragTarget(target)) {
 				target.interactive = false
-				await fn(e.data.global)
+				await fn({ coords: e.data.global, shiftKey: e.data.originalEvent.shiftKey })
 				target.interactive = true
 			}
 		}

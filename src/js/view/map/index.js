@@ -152,7 +152,7 @@ const initialize = () => {
 	}
 
 	Drag.on(stage, start, move, end, true)
-	Secondary.on(stage, coords => {
+	Secondary.on(stage, ({ coords, shiftKey }) => {
 		if (!Foreground.hasOpenScreen()) {
 			const selectedUnit = UnitView.selectedUnit()
 			if (selectedUnit) {
@@ -160,7 +160,12 @@ const initialize = () => {
 					x: Math.floor((coords.x - RenderView.get().coords.x) / (TILE_SIZE * RenderView.get().scale)),
 					y: Math.floor((coords.y - RenderView.get().coords.y) / (TILE_SIZE * RenderView.get().scale))
 				}
-				Commander.scheduleInstead(selectedUnit.commander, MoveTo.create(selectedUnit, target))
+
+				if (shiftKey) {
+					Commander.scheduleBehind(selectedUnit.commander, MoveTo.create(selectedUnit, target))
+				} else {
+					Commander.scheduleInstead(selectedUnit.commander, MoveTo.create(selectedUnit, target))
+				}
 				Events.trigger('move', selectedUnit)
 			}
 		}

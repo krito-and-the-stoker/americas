@@ -21,24 +21,26 @@ const ZOOM_TIME = 350
 
 
 const handleKeydown = (e) => {
-	if (e.key === 'O') {
-		Record.dump()
-	}
+	if (e.ctrlKey) {	
+		if (e.key === 'o') {
+			Record.dump()
+		}
 
-	if (e.key === 'G') {
-		Treasure.gain(100)
-	}
+		if (e.key === 'g') {
+			Treasure.gain(100)
+		}
 
-	if (e.key === 'S') {
-		Record.save()
-	}
+		if (e.key === 's') {
+			Record.save()
+		}
 
-	if (e.key === 'L') {
-		Record.load()
-	}
+		if (e.key === 'l') {
+			Record.load()
+		}
 
-	if (e.key === 'D') {
-		MapEntity.discoverAll()
+		if (e.key === 'd') {
+			MapEntity.discoverAll()
+		}
 	}
 
 	if (e.key === ' ') {
@@ -93,6 +95,18 @@ const handleKeydown = (e) => {
 
 		if (e.key === 'x') {
 			Unit.disband(unit)
+		}
+
+		if (e.key === 'B') {
+			Commander.scheduleBehind(unit.commander, Found.create(unit))
+		}
+		if (e.key === 'P') {
+			Commander.scheduleBehind(unit.commander, Plow.create(unit))
+			Commander.scheduleBehind(unit.commander, CutForest.create(unit))
+		}
+
+		if (e.key === 'R') {
+			Commander.scheduleBehind(unit.commander, Road.create(unit))
 		}
 	}
 }
