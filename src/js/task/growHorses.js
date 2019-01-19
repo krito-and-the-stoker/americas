@@ -12,15 +12,14 @@ const create = (colony, tile, good, colonist = null) => {
 			lastUpdate = currentTime
 			return true
 		}
+		const deltaTime = currentTime - lastUpdate
 		lastUpdate = currentTime
-
 
 		// only grow when we have horses and only when the settler give them food
 		if (!colony.storage.horses ||  colony.storage.food < 20 || colony.storage.horses >= colony.capacity) {
 			return true
 		}
 
-		const deltaTime = currentTime - lastUpdate
 		const amount = (colony.buildings.stables + 1) *
 			deltaTime *
 			horseGrowthRate *

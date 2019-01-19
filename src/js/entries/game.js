@@ -10,6 +10,7 @@ import Tween from '../util/tween.js'
 import Unit from '../entity/unit'
 import Ressources from '../render/ressources'
 import Europe from '../entity/europe'
+import Market from '../entity/market'
 import Time from '../timeline/time'
 import PathFinder from '../util/pathFinder'
 import MapView from '../view/map'
@@ -108,6 +109,7 @@ const start = async () => {
 	await nextFrame()
 
 	Europe.initialize()
+	Market.initialize()
 	await nextFrame()
 	Tribe.createFromMap(MapEntity.get())
 	await nextFrame()

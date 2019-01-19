@@ -8,6 +8,8 @@ import Unit from '../../entity/unit'
 import Ressources from '../../render/ressources'
 import Market from '../../entity/market'
 import SellInEurope from '../../action/sellInEurope'
+import Util from '../../util/util'
+import Binding from '../../util/binding'
 
 
 const create = (originalDimensions) => {
@@ -17,13 +19,14 @@ const create = (originalDimensions) => {
 	goodsBackground.y = -123
 	container.addChild(goodsBackground)
 
-	Object.values(Goods.types).map((good, index) => {	
+	const priceViews = Object.values(Goods.types).map((good, index) => {	
 		const { sprite } = GoodsView.create({ good })
 		sprite.x = Math.round(index * (originalDimensions.x + 11) / Object.values(Goods.types).length)
 		sprite.y = -119
 		sprite.scale.set(1.7)
 		container.addChild(sprite)
 
+		console.log(good)
 		const bid = Market.bid(good)
 		const ask = Market.ask(good)
 		const price =	 new PIXI.Text(`${bid}/${ask}`, {
@@ -45,12 +48,32 @@ const create = (originalDimensions) => {
 			buyFromEurope: true
 		}
 		Drag.makeDraggable(sprite, args)	
+
+		const unsubscribe = () => {
+			container.removeChild(sprite)
+			container.removeChild(price)
+		}
+
+		return {
+			good,
+			price,
+			unsubscribe
+		}
 	})
+
+	const unsubscribePriceViews = Util.mergeFunctions(priceViews.map(view => view.unsubscribe))
+	const perGoodMapping = Object.values(Goods.types).map(good => [good, () => Market.bid(good)])
+	const unsubscribeMarket = Util.mergeFunctions(perGoodMapping.map(([good, mapping]) => 
+		Market.listen.europe(Binding.map(bid => {
+			const ask = Market.ask(good)
+			console.log(`${bid}/${ask}`)
+			priceViews.find(view => view.good === good).price.text = `${bid}/${ask}`
+		}, mapping))))
 
 	const dragTarget = new PIXI.Container()
 	container.addChild(dragTarget)
 	dragTarget.hitArea = new PIXI.Rectangle(0, -119, originalDimensions.x, 119)
-	const unsubscribe = Drag.makeDragTarget(dragTarget, args => {
+	const unsubscribeDragTarget = Drag.makeDragTarget(dragTarget, args => {
 		const { good, unit, amount } = args
 		if (good && unit) {
 			SellInEurope(unit, {good, amount })
@@ -59,6 +82,12 @@ const create = (originalDimensions) => {
 
 		return false
 	})
+
+	const unsubscribe = () => {
+		unsubscribeMarket()
+		unsubscribeDragTarget()
+		unsubscribePriceViews()
+	}
 
 	return {
 		container,

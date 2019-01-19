@@ -1,0 +1,114 @@
+{
+	"food": {
+		"difference": 8,
+		"low": 1,
+		"high": 3,
+		"consumption": -1,
+		"capacity": 2000
+	},
+	"sugar": {
+		"difference": 2,
+		"low": 2,
+		"high": 5,
+		"consumption": 10,
+		"capacity": 400
+	},
+	"tobacco": {
+		"difference": 2,
+		"low": 2,
+		"high": 5,
+		"consumption": 10,
+		"capacity": 400
+	},
+	"cotton": {
+		"difference": 2,
+		"low": 2,
+		"high": 5,
+		"consumption": 10,
+		"capacity": 400
+	},
+	"furs": {
+		"difference": 2,
+		"low": 2,
+		"high": 5,
+		"consumption": 10,
+		"capacity": 400
+	},
+	"wood": {
+		"difference": 5,
+		"low": 2,
+		"high": 2,
+		"consumption": -1,
+		"capacity": 2000
+	},
+	"ore": {
+		"difference": 3,
+		"low": 2,
+		"high": 4,
+		"consumption": -1,
+		"capacity": 2000
+	},
+	"silver": {
+		"difference": 1,
+		"low": 19,
+		"high": 19,
+		"consumption": 1,
+		"capacity": 200
+	},
+	"horses": {
+		"difference": 1,
+		"low": 1,
+		"high": 2,
+		"consumption": 0,
+		"capacity": 200
+	},
+	"rum": {
+		"difference": 1,
+		"low": 7,
+		"high": 13,
+		"consumption": 15,
+		"capacity": 200
+	},
+	"cigars": {
+		"difference": 1,
+		"low": 7,
+		"high": 13,
+		"consumption": 15,
+		"capacity": 200
+	},
+	"cloth": {
+		"difference": 1,
+		"low": 7,
+		"high": 13,
+		"consumption": 15,
+		"capacity": 200
+	},
+	"coats": {
+		"difference": 1,
+		"low": 7,
+		"high": 13,
+		"consumption": 15,
+		"capacity": 200
+	},
+	"tradeGoods": {
+		"difference": 1,
+		"low": 1,
+		"high": 1,
+		"consumption": -10,
+		"capacity": 2000
+	},
+	"tools": {
+		"difference": 1,
+		"low": 1,
+		"high": 2,
+		"consumption": 1,
+		"capacity": 200
+	},
+	"guns": {
+		"difference": 1,
+		"low": 1,
+		"high": 2,
+		"consumption": 1,
+		"capacity": 200
+	}
+}

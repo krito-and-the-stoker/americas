@@ -1,118 +1,67 @@
+import Properties from '../data/market.json'
 import Treasure from './treasure'
 import Util from '../util/util'
 import Message from '../view/ui/message'
+import Time from '../timeline/time'
+import MarketPrice from '../task/marketPrice'
+import Binding from '../util/binding'
 
-const Market = {
-	food: {
-		difference: 8,
-		low: 1,
-		high: 3
-	},
-	sugar: {
-		difference: 2,
-		low: 2,
-		high: 5
-	},
-	tobacco: {
-		difference: 2,
-		low: 2,
-		high: 5
-	},
-	cotton: {
-		difference: 2,
-		low: 2,
-		high: 5
-	},
-	furs: {
-		difference: 2,
-		low: 2,
-		high: 5
-	},
-	wood: {
-		difference: 5,
-		low: 2,
-		high: 2
-	},
-	ore: {
-		difference: 3,
-		low: 2,
-		high: 4
-	},
-	silver: {
-		difference: 1,
-		low: 19,
-		high: 19
-	},
-	horses: {
-		difference: 1,
-		low: 1,
-		high: 2
-	},
-	rum : {
-		difference: 1,
-		low: 8,
-		high: 12
-	},
-	cigars : {
-		difference: 1,
-		low: 8,
-		high: 12
-	},
-	cloth : {
-		difference: 1,
-		low: 8,
-		high: 12
-	},
-	coats : {
-		difference: 1,
-		low: 8,
-		high: 12
-	},
-	tradeGoods: {
-		difference: 1,
-		low: 1,
-		high: 1
-	},
-	tools: {
-		difference: 1,
-		low: 1,
-		high: 2
-	},
-	guns: {
-		difference: 1,
-		low: 1,
-		high: 2
-	}
+
+const market = {
+	europe: null
 }
 
-let prices = Util.makeObject(Object.keys(Market)
-	.map(good => [good, Market[good].low + Math.floor(Math.random() * (Market[good].high - Market[good].low))]))
+const listen = {
+	europe: fn => Binding.listen(market, 'europe', fn)
+}
 
-const bid = good => prices[good]
-const ask = good => prices[good] + Market[good].difference
+const update = {
+	europe: value => Binding.update(market, 'europe', value)
+}
+
+const bid = good => market.europe[good].price
+const ask = good => market.europe[good].price + Properties[good].difference
 
 const buy = ({ good, amount }) => {
-	const pricePerGood = prices[good] + Market[good].difference
+	console.log(market.europe)
+	const pricePerGood = ask(good)
 	const price = pricePerGood * amount
 	if (Treasure.spend(price)) {
 		Message.send(`bought ${amount} ${good}`)
+		market.europe[good].storage -= amount
 		return amount
 	}
 	const actualAmount = Math.floor(Treasure.amount() / pricePerGood)
 	Treasure.spend(actualAmount * pricePerGood)
 	Message.send(`bought ${actualAmount} ${good}`)
+	market.europe[good].storage -= actualAmount
 	return actualAmount
 }
 
 const sell = ({ good, amount }) => {
-	const pricePerGood = prices[good]
+	const pricePerGood = bid(good)
 	Treasure.gain(amount * pricePerGood)
 	Message.send(`sold ${amount} ${good}`)
+	market.europe[good].storage += amount
 }
 
-const save = () => prices
+const save = () => market.europe
 const load = data => {
-	prices = data
+	market.europe = data
+}
+
+const initialize = () => {
+	market.europe = Util.makeObject(Object.keys(Properties)
+		.map(good => [good, Properties[good].low + Math.floor(Math.random() * (Properties[good].high - Properties[good].low))])
+		.map(([good, price]) => ([ good, {
+			price,
+			storage: Properties[good].capacity * Math.random(),
+			consumption: Properties[good].consumption,
+			capacity: Properties[good].capacity
+		}])))
+
+	Time.schedule(MarketPrice.create(market.europe))
+	console.log(Object.entries(market.europe).map(([good, props]) => `${good}: ${props.price}`))
 }
 
 export default {
@@ -121,5 +70,8 @@ export default {
 	ask,
 	bid,
 	save,
-	load
+	load,
+	initialize,
+	update,
+	listen
 }
