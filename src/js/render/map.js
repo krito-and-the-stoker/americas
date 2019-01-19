@@ -462,10 +462,10 @@ class MapView{
 	}
 
 	getBonusResourceName(tile){
-		if(tile.hills)
-			return 'ore';
 		if(tile.mountains)
 			return 'silver';
+		if(tile.hills)
+			return 'ore';
 
 		if(tile.name === 'plains' && !tile.forest)
 			return 'wheat';

@@ -24,7 +24,8 @@ const time = {
 
 const get = () => ({
 	scheduled,
-	currentTime
+	currentTime,
+	year: time.year
 })
 
 const speedUp = () => update.scale(time.scale * 1.5)
