@@ -61,7 +61,6 @@ const initialize = () => {
 		}])))
 
 	Time.schedule(MarketPrice.create(market.europe))
-	console.log(Object.entries(market.europe).map(([good, props]) => `${good}: ${props.price}`))
 }
 
 export default {
