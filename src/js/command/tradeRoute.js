@@ -40,13 +40,14 @@ const match = transport => {
 			good: supply.good,
 			from: supply.colony,
 			to: demand.colony,
-			amount: Math.min(demand.amount, supply.amount),
+			amount: Math.floor(Math.min(demand.amount, supply.amount)),
 			importance: 3*demand.importance + 2*supply.importance,
 			distance:
 				PathFinder.distance(transport.mapCoordinates, supply.colony.mapCoordinates, transport) +
 				PathFinder.distance(supply.colony.mapCoordinates, demand.colony.mapCoordinates, transport)
 		}))
-		.filter(route => route.distance < 50)).flat()
+		.filter(route => route.distance < 50)
+		.filter(route => route.amount > 0)).flat()
 	// console.log('demands', demands)
 	// console.log('supply', supply)
 	// console.log('routes', routes)
@@ -97,7 +98,6 @@ const create = (transport, tradeCommanderParam = null) => {
 				Message.send(`A ${transport.name} has not found any routes and stopped trading`)
 				return false
 			}
-			console.log('new route', route)
 			Commander.scheduleBehind(tradeCommander, MoveTo.create(transport, route.from.mapCoordinates))
 			Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.from, transport, { good: route.good, amount: route.amount }))
 			Commander.scheduleBehind(tradeCommander, MoveTo.create(transport, route.to.mapCoordinates))
