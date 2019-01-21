@@ -23,6 +23,17 @@ const removeForecast = (colony, pack) => {
 }
 const forecast = (colony, good) => scheduled()[colony.name] ? scheduled()[colony.name][good] : 0
 
+const loadCargo = (colony, unit, pack) => {
+	if (pack.amount > 0) {
+		const amount = Math.min(pack.amount, colony.storage[pack.good])
+		Storage.transfer(colony.storage, unit.storage, { good: pack.good, amount })
+	}
+	if (pack.amount < 0) {
+		const amount = Math.min(-pack.amount, unit.storage[pack.good])
+		Storage.transfer(unit.storage, colony.storage, { good: pack.good, amount })
+	}
+}
+
 
 const create = (colony, unit, pack, eta = null) => {
 	addForecast(colony, pack)
@@ -47,7 +58,7 @@ const create = (colony, unit, pack, eta = null) => {
 	const finished = () => {
 		removeForecast(colony, pack)
 		if (eta) {
-			Storage.transfer(colony.storage, unit.storage, pack)		
+			loadCargo(colony, unit, pack)
 		}
 	}
 

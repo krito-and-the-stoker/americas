@@ -5,6 +5,7 @@ import Record from '../util/record'
 import PathFinder from '../util/pathFinder'
 import LoadCargo from '../command/loadCargo'
 import MoveTo from '../command/moveTo'
+import Message from '../view/ui/message'
 
 const calculateDemands = () => Record.getAll('colony').map(colony =>
 	Storage.goods(colony.storage)
@@ -45,12 +46,12 @@ const match = transport => {
 				PathFinder.distance(transport.mapCoordinates, supply.colony.mapCoordinates, transport) +
 				PathFinder.distance(supply.colony.mapCoordinates, demand.colony.mapCoordinates, transport)
 		}))
-		.filter(route => route.distance < 100)).flat()
+		.filter(route => route.distance < 50)).flat()
 	// console.log('demands', demands)
 	// console.log('supply', supply)
 	// console.log('routes', routes)
-	const rate = route => (5 + route.importance) / route.distance
-	const route = routes.reduce((best, route) => rate(best) > rate(route) ? best : route, { importance: -5, distance: 1 })
+	const rate = route => route.importance / ( 5 + route.distance)
+	const route = routes.reduce((best, route) => rate(best) > rate(route) ? best : route, { importance: 0, distance: 0 })
 	return route.importance > 0 ? route : null
 }
 
@@ -93,9 +94,10 @@ const create = (transport, tradeCommanderParam = null) => {
 		if (Commander.isIdle(tradeCommander) && !tradeRoute.pleaseStop) {
 			const route = match(transport)
 			if (!route) {
-				Message.send('A ${unit.name} has not found any routes and stopped trading')
+				Message.send(`A ${transport.name} has not found any routes and stopped trading`)
 				return false
 			}
+			console.log('new route', route)
 			Commander.scheduleBehind(tradeCommander, MoveTo.create(transport, route.from.mapCoordinates))
 			Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.from, transport, { good: route.good, amount: route.amount }))
 			Commander.scheduleBehind(tradeCommander, MoveTo.create(transport, route.to.mapCoordinates))
