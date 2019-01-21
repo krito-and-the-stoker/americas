@@ -62,9 +62,8 @@ const reserve = (colony, pack) => {
 }
 
 
-const create = (transport, tradeCommanderParam = null, initialized = false) => {
+const create = (transport, tradeCommanderParam = null, initialized = false, waitingForRoute = 0) => {
 	const tradeCommander = tradeCommanderParam || Commander.create({ keep: true })
-	let waitingForRoute = 0
 
 	const init = () => {
 		if (initialized) {
@@ -116,7 +115,8 @@ const create = (transport, tradeCommanderParam = null, initialized = false) => {
 
 	const save = () => ({
 		type: 'tradeRoute',
-		initialized: initialized,
+		waitingForRoute,
+		initialized,
 		tradeCommander: tradeCommander.save(),
 		transport: Record.reference(transport)
 	})
@@ -133,7 +133,7 @@ const create = (transport, tradeCommanderParam = null, initialized = false) => {
 const load = data => {
 	console.log(data)
 	const transport = Record.dereference(data.transport)
-	const tradeRoute = create(transport, Commander.load(data.tradeCommander), data.initialized)
+	const tradeRoute = create(transport, Commander.load(data.tradeCommander), data.initialized, data.waitingForRoute)
 
 	return tradeRoute
 }
