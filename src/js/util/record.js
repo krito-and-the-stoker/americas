@@ -115,6 +115,7 @@ const revive = (record) => {
 
 const dump = () => {
 	console.log(records)
+	console.log(globals)
 }
 
 const reviveTile = (data, index) => {

@@ -6,6 +6,8 @@ import Load from '../command/load'
 import Europe from '../command/europe'
 import America from '../command/america'
 import CutForest from '../command/cutForest'
+import LoadCargo from '../command/loadCargo'
+import TradeRoute from '../command/tradeRoute'
 import TriggerEvent from '../command/triggerEvent'
 import Plow from '../command/plow'
 import Road from '../command/road'
@@ -29,12 +31,7 @@ const scheduleBehind = (commander, command) => {
 }
 
 const clearSchedule = commander => {
-	if (commander.commands) {
-		commander.commands = []
-	}
-	if (commander.currentCommand) {
-		clearSchedule(commander.currentCommand)
-	}
+	commander.pleaseStop = true
 }
 
 const commandsScheduled = command => {
@@ -52,7 +49,17 @@ const create = (args = {}) => {
 		currentCommand: null
 	}
 
-	commander.update = currentTime => {
+	commander.init = () => !commander.pleaseStop
+
+	commander.update = () => {
+		if (commander.pleaseStop) {
+			commander.commands.forEach(command => command.canceled ? command.canceled() : null)
+			commander.commands = []
+			if (commander.currentCommand) {
+				commander.currentCommand.pleaseStop = true
+			}
+			commander.pleaseStop = false
+		}
 		if (!commander.currentCommand && commander.commands.length > 0) {
 			commander.currentCommand = commander.commands.shift()
 			const originalFinished = commander.currentCommand.finished
@@ -88,6 +95,8 @@ const getModule = type => ( type ? ({
 	plow: Plow,
 	road: Road,
 	america: America,
+	tradeRoute: TradeRoute,
+	loadCargo: LoadCargo,
 	triggerEvent: TriggerEvent,
 	commander: { load }
 })[type] : { load: data => console.warn('cannot load command, missing type', data) }) 

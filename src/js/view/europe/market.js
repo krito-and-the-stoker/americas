@@ -26,7 +26,6 @@ const create = (originalDimensions) => {
 		sprite.scale.set(1.7)
 		container.addChild(sprite)
 
-		console.log(good)
 		const bid = Market.bid(good)
 		const ask = Market.ask(good)
 		const price =	 new PIXI.Text(`${bid}/${ask}`, {
@@ -66,7 +65,6 @@ const create = (originalDimensions) => {
 	const unsubscribeMarket = Util.mergeFunctions(perGoodMapping.map(([good, mapping]) => 
 		Market.listen.europe(Binding.map(bid => {
 			const ask = Market.ask(good)
-			console.log(`${bid}/${ask}`)
 			priceViews.find(view => view.good === good).price.text = `${bid}/${ask}`
 		}, mapping))))
 

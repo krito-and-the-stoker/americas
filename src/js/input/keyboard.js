@@ -8,6 +8,7 @@ import Found from '../command/found'
 import Europe from '../view/europe'
 import Record from '../util/record'
 import Commander from '../command/commander'
+import TradeRoute from '../command/tradeRoute'
 import CutForest from '../command/cutForest'
 import Plow from '../command/plow'
 import Road from '../command/road'
@@ -87,6 +88,10 @@ const handleKeydown = (e) => {
 
 		if (e.key === 'r') {
 			Commander.scheduleInstead(unit.commander, Road.create(unit))
+		}
+
+		if (e.key === 't') {
+			Commander.scheduleInstead(unit.commander, TradeRoute.create(unit))
 		}
 
 		if (e.key === 'c') {

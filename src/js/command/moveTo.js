@@ -10,7 +10,8 @@ import Dialog from '../view/ui/dialog'
 
 const create = (unit, coords) => {
 	if (unit.unloadingInProgress ||
-		coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y || (unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y)) {
+		coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y) {
+
 		return {
 			update: () => false
 		}
@@ -31,6 +32,10 @@ const create = (unit, coords) => {
 	moveToCommander.init = () => {
 		if (originalInit) {
 			originalInit()
+		}
+
+		if (unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y) {
+			return false
 		}
 
 		const path = PathFinder.findPathXY(unit.mapCoordinates, coords, unit).filter((waypoint, index) => index > 0)

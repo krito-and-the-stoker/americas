@@ -159,6 +159,7 @@ const initialize = colony => {
 			})
 		Goods.types
 			.filter(good => storage[good] <= 0)
+			.filter(good => colony.trade[good] >= 0)
 			.filter(good => good !== 'food')
 			.filter(good => needsToSendEmptyWarning[good])
 			.forEach(good => {
@@ -236,6 +237,7 @@ const create = coords => {
 		bells: 0
 	}
 	colony.storage = Storage.create()
+	colony.trade = Storage.create()
 
 	// TODO: does the tile need to know about the colony?
 	const tile = MapEntity.tile(coords)
@@ -284,15 +286,17 @@ const save = colony => ({
 	capacity: colony.capacity,
 	mapCoordinates: colony.mapCoordinates,
 	storage: Storage.save(colony.storage),
+	trade: Storage.save(colony.trade),
 	buildings: colony.buildings,
 	construction: colony.construction,
-	bells: colony.bells
+	bells: colony.bells,
 })
 
 const load = colony => {
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	tile.colony = colony
 	colony.storage = Storage.load(colony.storage)
+	colony.trade = colony.trade ? Storage.load(colony.trade) : Storage.create()
 
 	colony.colonists.forEach((colonist, index) => Record.dereferenceLazy(colonist, entity => colony.colonists[index] = entity))
 	colony.units.forEach((unit, index) => Record.dereferenceLazy(unit, entity => colony.units[index] = entity))

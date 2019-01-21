@@ -55,6 +55,16 @@ const findPath = (from, to, unit) => {
 	return find(from, target, to, false, unit)
 }
 
+const distance = (from, to, unit) => {
+	const path = findPathXY(from, to, unit)
+	return path
+		.filter((p, i) => i > 0)
+		.reduce(({ distance, from }, to) => ({
+			distance: Tile.movementCost(from, to),
+			from: to
+		}), { distance: 0, from: path[0] }).distance
+}
+
 const	tileDistance = (from, to) => {
 	const pos1 = from.mapCoordinates
 	const pos2 = to.mapCoordinates
@@ -189,5 +199,6 @@ export default {
 	initialize,
 	findPath,
 	findPathXY,
-	findHighSeas
+	findHighSeas,
+	distance
 };

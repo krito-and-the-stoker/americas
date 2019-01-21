@@ -11,6 +11,7 @@ const CUT_FOREST = 80000
 const PLOW = 80000
 const CONSTRUCT_ROAD = 80000
 const YEAR = 80000
+const CARGO_LOAD_TIME = 400
 
 let currentTime = 0
 let scheduled = []
@@ -141,5 +142,6 @@ export default {
 	CUT_FOREST,
 	PLOW,
 	CONSTRUCT_ROAD,
-	TEACH_BASE_TIME
+	TEACH_BASE_TIME,
+	CARGO_LOAD_TIME
 }

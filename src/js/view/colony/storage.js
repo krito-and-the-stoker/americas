@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 
+import Icon from '../../view/icon'
 import Goods from '../../data/goods.json'
 import Colony from '../../entity/colony'
 import Util from '../../util/util'
@@ -7,6 +8,7 @@ import Drag from '../../input/drag'
 import GoodsView from '../../view/goods'
 import Unit from '../../entity/unit'
 import Storage from '../../entity/storage'
+import Click from '../../input/click'
 
 import LoadFromShipToColony from '../../action/loadFromShipToColony'
 
@@ -32,12 +34,43 @@ const create = (colony, originalDimensions) => {
 			colony
 		}
 		Drag.makeDraggable(sprite, args)
+		Click.on(sprite, () => {
+			colony.trade[good] = colony.trade[good] > 0 ? -1 : colony.trade[good] < 0 ? 0 : 1
+			Storage.update(colony.trade)
+		})
 
 		return {
 			update,
 			args
 		}
 	})
+
+	const unsubscribeTrade = Storage.listen(colony.trade, () => 
+		Util.mergeFunctions(Storage.goods(colony.trade).map(({ good, amount }, index) => {
+			if (amount > 0) {
+				const sprite = Icon.create('plus')
+				sprite.x = Math.round(index * (originalDimensions.x + 11) / numberOfGoods) + 55
+				sprite.y = originalDimensions.y - 121
+				sprite.scale.set(0.7)
+				container.addChild(sprite)
+
+				return () => {
+					container.removeChild(sprite)
+				}
+			}
+			if (amount < 0) {
+				const sprite = Icon.create('minus')
+				sprite.x = Math.round(index * (originalDimensions.x + 11) / numberOfGoods) + 55
+				sprite.y = originalDimensions.y - 121
+				sprite.scale.set(0.7)
+				container.addChild(sprite)
+
+				return () => {
+					container.removeChild(sprite)
+				}
+			}
+			return () => {}
+		})))
 
 	const unsubscribeStorage = Storage.listen(colony.storage, storage => {
 		Storage.goods(storage).forEach(({ amount }, i) => {
@@ -59,6 +92,7 @@ const create = (colony, originalDimensions) => {
 	})
 
 	const unsubscribe = () => {
+		unsubscribeTrade()
 		unsubscribeStorage()
 		unsubscribeDrag()
 	}

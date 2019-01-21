@@ -23,7 +23,6 @@ const bid = good => market.europe[good].price
 const ask = good => market.europe[good].price + Properties[good].difference
 
 const buy = ({ good, amount }) => {
-	console.log(market.europe)
 	const pricePerGood = ask(good)
 	const price = pricePerGood * amount
 	if (Treasure.spend(price)) {

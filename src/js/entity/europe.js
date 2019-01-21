@@ -67,7 +67,7 @@ const possibleTrainees = [
 const europe = {
 	units: [],
 	crosses: 0,
-	crossesNeeded: 10,
+	crossesNeeded: 1,
 	pool: [Util.choose(possibleColonists), Util.choose(possibleColonists), Util.choose(possibleColonists)]
 }
 
