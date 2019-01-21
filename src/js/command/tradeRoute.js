@@ -15,8 +15,8 @@ const calculateDemands = () => Record.getAll('colony').map(colony =>
 		.map(({ good, amount}) => ({
 			colony,
 			good,
-			amount: colony.capacity - amount,
-			importance: 1 - amount / colony.capacity
+			amount: good === 'food' ? 100 - amount : colony.capacity - amount,
+			importance: good === 'food' ? 2*(1 - amount / 100) : 1 - amount / colony.capacity
 		}))).flat()
 
 const calculateSupply = () => Record.getAll('colony').map(colony =>
@@ -27,8 +27,8 @@ const calculateSupply = () => Record.getAll('colony').map(colony =>
 		.map(({ good, amount}) => ({
 			colony,
 			good,
-			amount,
-			importance: amount / colony.capacity
+			amount: good === 'food' ? amount - 20 : amount,
+			importance: good === 'food' ? amount / 220 : amount / colony.capacity
 		}))).flat()
 
 const match = transport => {

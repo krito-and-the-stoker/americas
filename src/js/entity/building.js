@@ -156,12 +156,18 @@ const construct = (colony, construction) => {
 		Storage.update(colony.storage, { good: 'tools', amount: -construction.cost.tools })
 	}
 
-	construction.target = 'none'
-	construction.action = () => {}
-	construction.cost.construction = 24
-	construction.name = `${construction.name} completed`
-	construction.cost.tools = 0
-	Colony.update.construction(colony, construction)
+	const newConstruction = {
+		target: 'none',
+		action: () => {},
+		name: `${construction.name} completed`,
+		cost: {
+			construction: 24,
+			tools: 0
+		},
+		amount: construction.amount
+	}
+
+	Colony.update.construction(colony, newConstruction)
 }
 
 const expert = (colonist, type) => {
