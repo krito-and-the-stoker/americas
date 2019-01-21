@@ -24,13 +24,24 @@ import Util from '../util/util'
 import Tribe from '../entity/tribe'
 import Message from '../view/ui/message'
 import NumberOfAssets from '../data/numberOfAssets.json'
+import * as Sentry from '@sentry/browser'
 
+
+Sentry.init({ dsn: 'https://5af48842d6d643d3bde7a59f2fe81b42@sentry.io/1198155' })
 const update = (deltaTime) => {
-	Time.advance(deltaTime)
+	try {
+		Time.advance(deltaTime)
+	} catch (err) {
+		Sentry.captureException(err)
+	}
 }
 
 const draw = () => {
-	RenderView.onDraw()
+	try {
+		RenderView.onDraw()
+	} catch (err) {
+		Sentry.captureException(err)
+	}
 }
 
 const americaSmall = () => {

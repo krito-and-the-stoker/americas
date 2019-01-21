@@ -6,6 +6,8 @@ import PathFinder from '../util/pathFinder'
 import LoadCargo from '../command/loadCargo'
 import MoveTo from '../command/moveTo'
 import Message from '../view/ui/message'
+import Colony from '../entity/colony'
+
 
 const calculateDemands = () => Record.getAll('colony').map(colony =>
 	Storage.goods(colony.storage)
@@ -32,20 +34,20 @@ const calculateSupply = () => Record.getAll('colony').map(colony =>
 		}))).flat()
 
 const match = transport => {
-	const demands = calculateDemands()
-	const supply = calculateSupply()
+	const demands = calculateDemands().filter(demand => transport.domain === 'land' || Colony.isCoastal(demand.colony))
+	const supply = calculateSupply().filter(supply => transport.domain === 'land' || Colony.isCoastal(supply.colony))
 	const routes = demands.map(demand => 
 		supply.filter(({ good }) => good === demand.good)
-		.map(supply => ({
-			good: supply.good,
-			from: supply.colony,
-			to: demand.colony,
-			amount: Math.floor(Math.min(demand.amount, supply.amount)),
-			importance: 3*demand.importance + 2*supply.importance,
-			distance:
-				PathFinder.distance(transport.mapCoordinates, supply.colony.mapCoordinates, transport) +
-				PathFinder.distance(supply.colony.mapCoordinates, demand.colony.mapCoordinates, transport)
-		}))
+			.map(supply => ({
+				good: supply.good,
+				from: supply.colony,
+				to: demand.colony,
+				amount: Math.floor(Math.min(demand.amount, supply.amount)),
+				importance: 3*demand.importance + 2*supply.importance,
+				distance:
+					PathFinder.distance(transport.mapCoordinates, supply.colony.mapCoordinates, transport) +
+					PathFinder.distance(supply.colony.mapCoordinates, demand.colony.mapCoordinates, transport)
+			}))
 		.filter(route => route.distance < 50)
 		.filter(route => route.amount > 0)).flat()
 	// console.log('demands', demands)

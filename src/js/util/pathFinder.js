@@ -60,7 +60,7 @@ const distance = (from, to, unit) => {
 	return path
 		.filter((p, i) => i > 0)
 		.reduce(({ distance, from }, to) => ({
-			distance: Tile.movementCost(from, to),
+			distance: Tile.movementCost(from, to) + ((from.domain === to.domain || from.colony || to.colony) ? 0 : CANNOT_MOVE_COST),
 			from: to
 		}), { distance: 0, from: path[0] }).distance
 }

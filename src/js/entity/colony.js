@@ -51,6 +51,11 @@ const getColonyName = () => {
 	return name
 }
 
+const isCoastal = colony => {
+	const center = MapEntity.tile(colony.mapCoordinates)
+	return Tile.radius(center).some(tile => tile.domain === 'sea')
+}
+
 const add = {
 	unit: (colony, unit) => Member.add(colony, 'units', unit),
 	colonist: (colony, colonist) => Member.add(colony, 'colonists', colonist)
@@ -323,6 +328,7 @@ export default {
 	save,
 	load,
 	coastalDirection,
+	isCoastal,
 	canEmploy,
 	add,
 	remove,
