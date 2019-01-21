@@ -131,7 +131,6 @@ const create = (transport, tradeCommanderParam = null, initialized = false, wait
 }
 
 const load = data => {
-	console.log(data)
 	const transport = Record.dereference(data.transport)
 	const tradeRoute = create(transport, Commander.load(data.tradeCommander), data.initialized, data.waitingForRoute)
 
