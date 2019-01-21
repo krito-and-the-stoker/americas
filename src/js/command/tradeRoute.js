@@ -62,13 +62,15 @@ const reserve = (colony, pack) => {
 }
 
 
-const create = (transport, tradeCommanderParam = null) => {
-	const tradeCommander = tradeCommanderParam || Commander.create()
+const create = (transport, tradeCommanderParam = null, initialized = false) => {
+	const tradeCommander = tradeCommanderParam || Commander.create({ keep: true })
+	let waitingForRoute = 0
 
 	const init = () => {
-		if (!Commander.isIdle(tradeCommander)) {
+		if (initialized) {
 			return true
 		}
+		initialized = true
 
 		// cannot start trade route when loaded
 		if (Storage.split(transport.storage).length > 0) {
@@ -91,26 +93,30 @@ const create = (transport, tradeCommanderParam = null) => {
 		return true
 	}
 
-	const update = () => {
-		if (Commander.isIdle(tradeCommander) && !tradeRoute.pleaseStop) {
+	const update = currentTime => {
+		if (Commander.isIdle(tradeCommander) && !tradeRoute.pleaseStop && currentTime > waitingForRoute) {
 			const route = match(transport)
-			if (!route) {
-				Message.send(`A ${transport.name} has not found any routes and stopped trading`)
-				return false
+			if (route) {
+				Commander.scheduleBehind(tradeCommander, MoveTo.create(transport, route.from.mapCoordinates))
+				Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.from, transport, { good: route.good, amount: route.amount }))
+				Commander.scheduleBehind(tradeCommander, MoveTo.create(transport, route.to.mapCoordinates))
+				Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.to, transport, { good: route.good, amount: -route.amount }))
+			} else {
+				Message.send(`A ${transport.name} has not found any routes and will look again shortly`)
+				waitingForRoute = currentTime + 2500
 			}
-			Commander.scheduleBehind(tradeCommander, MoveTo.create(transport, route.from.mapCoordinates))
-			Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.from, transport, { good: route.good, amount: route.amount }))
-			Commander.scheduleBehind(tradeCommander, MoveTo.create(transport, route.to.mapCoordinates))
-			Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.to, transport, { good: route.good, amount: -route.amount }))
 		}
 		if (tradeRoute.pleaseStop) {
 			Commander.clearSchedule(tradeCommander)
+			tradeCommander.update()
+			return !Commander.isIdle(tradeCommander)
 		}
 		return tradeCommander.update()
 	}
 
 	const save = () => ({
 		type: 'tradeRoute',
+		initialized: initialized,
 		tradeCommander: tradeCommander.save(),
 		transport: Record.reference(transport)
 	})
@@ -125,8 +131,9 @@ const create = (transport, tradeCommanderParam = null) => {
 }
 
 const load = data => {
+	console.log(data)
 	const transport = Record.dereference(data.transport)
-	const tradeRoute = create(transport, Commander.load(data.tradeCommander))
+	const tradeRoute = create(transport, Commander.load(data.tradeCommander), data.initialized)
 
 	return tradeRoute
 }
