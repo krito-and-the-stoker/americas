@@ -54,10 +54,10 @@
 		"frame": {
 			"default": 51
 		},
-		"cargo": 2,
+		"cargo": 1,
 		"domain": "land",
 		"canFound": false,
-		"speed": 2
+		"speed": 1
 	},
 	"artillery": {
 		"frame": {

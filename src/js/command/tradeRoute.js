@@ -53,7 +53,7 @@ const match = transport => {
 	// console.log('demands', demands)
 	// console.log('supply', supply)
 	// console.log('routes', routes)
-	const rate = route => route.importance / Math.sqrt(1 + route.distance)
+	const rate = route => route.importance / Math.log(1 + route.distance)
 	const route = routes.reduce((best, route) => rate(best) > rate(route) ? best : route, { importance: 0, distance: 0 })
 	return route.importance > 0 ? route : null
 }
