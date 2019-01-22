@@ -3,6 +3,9 @@
 		"frame": {
 			"default": 9
 		},
+		"name": {
+			"default": "Caravel"
+		},
 		"domain": "sea",
 		"canFound": false,
 		"speed": 8,
@@ -12,6 +15,9 @@
 	"privateer": {
 		"frame": {
 			"default": 8
+		},
+		"name": {
+			"default": "Privateer"
 		},
 		"domain": "sea",
 		"canFound": false,
@@ -23,6 +29,9 @@
 		"frame": {
 			"default": 7
 		},
+		"name": {
+			"default": "Frigate"
+		},
 		"domain": "sea",
 		"canFound": false,
 		"speed": 12,
@@ -32,6 +41,9 @@
 	"galleon": {
 		"frame": {
 			"default": 6
+		},
+		"name": {
+			"default": "Galleon"
 		},
 		"domain": "sea",
 		"canFound": false,
@@ -44,6 +56,9 @@
 		"frame": {
 			"default": 52
 		},
+		"name": {
+			"default": "Merchantman"
+		},
 		"domain": "sea",
 		"canFound": false,
 		"speed": 10,
@@ -53,6 +68,9 @@
 	"wagontrain": {
 		"frame": {
 			"default": 51
+		},
+		"name": {
+			"default": "Wagontrain"
 		},
 		"cargo": 1,
 		"domain": "land",
@@ -64,6 +82,10 @@
 			"default": 0,
 			"damaged": 1
 		},
+		"name": {
+			"default": "Artillery",
+			"damaged": "Damaged Artillery"
+		},
 		"domain": "land",
 		"canFound": false,
 		"speed": 1
@@ -72,6 +94,10 @@
 		"frame": {
 			"default": 17,
 			"pioneer": 18
+		},
+		"name": {
+			"default": "Pioneer",
+			"pioneer": "Hardened Pioneer"
 		},
 		"domain": "land",
 		"canFound": true,
@@ -105,6 +131,32 @@
 			"soldier":  45,
 			"scout": 46
 		},
+		"name": {
+			"default": "Settler",
+			"servant": "Indentured Servant",
+			"criminal": "Petty Ciriminal",
+			"farmer": "Expert Farmer",
+			"sugarplanter": "Expert Sugarplanter",
+			"tobaccoplanter": "Expert Tobaccoplanter",
+			"cottonplanter": "Expert Cottonplanter",
+			"futrtrapper": "Expert Furtrapper",
+			"lumberjack": "Expert Lumberjack",
+			"oreminer": "Expert Oreminer",
+			"silverminer": "Expert Silverminer",
+			"fisher": "Expert Fisher",
+			"distiller": "Master Rumdistiller",
+			"tobacconist": "Master Tobacconist",
+			"weaver": "Master Weaver",
+			"furtrader": "Master Furtrader",
+			"carpenter": "Master Carpenter",
+			"blacksmith": "Master Blacksmith",
+			"gunsmith": "Master Gunsmith",
+			"preacher": "Firebrand Preacher",
+			"statesman": "Elder Statesman",
+			"pioneer": "Hardened Pioneer",
+			"soldier": "Veteran Soldier",
+			"scout": "Seasoned Scout"
+		},
 		"domain": "land",
 		"canFound": true,
 		"speed": 1
@@ -113,6 +165,10 @@
 		"frame": {
 			"default": 49,
 			"scout": 50
+		},
+		"name": {
+			"default": "Scout",
+			"scout": "Seasoned Scout"
 		},
 		"domain": "land",
 		"canFound": true,
@@ -123,6 +179,10 @@
 			"default": 47,
 			"soldier": 48
 		},
+		"name": {
+			"default": "Soldier",
+			"soldier": "Veteran Soldier"
+		},
 		"domain": "land",
 		"canFound": true,
 		"speed": 1
@@ -132,6 +192,10 @@
 			"default": 4,
 			"soldier": 5
 		},
+		"name": {
+			"default": "Dragoon",
+			"soldier": "Veteran Dragoon"
+		},
 		"domain": "land",
 		"canFound": true,
 		"speed": 4
@@ -139,6 +203,9 @@
 	"treasure": {
 		"frame": {
 			"default": 21
+		},
+		"name": {
+			"default": "Treasuree"
 		},
 		"domain": "land",
 		"canFound": false,
@@ -148,6 +215,10 @@
 		"frame": {
 			"default": 15,
 			"missionary": 16
+		},
+		"name": {
+			"default": "Missionary",
+			"missionary": "Jesuit Missionary"
 		},
 		"domain": "land",
 		"canFound": true,

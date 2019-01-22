@@ -12,22 +12,35 @@ import Unit from '../../entity/unit'
 import Europe from '../../entity/europe'
 import Colonist from '../../entity/colonist'
 import Events from '../../view/ui/events'
+import Binding from '../../util/binding'
+
 
 const BLINK_TIME = 500
 const TILE_SIZE = 64
 
-let selectedView = null
+const state = {
+	selectedView: null
+}
+
+const listen = {
+	selectedView: fn => Binding.listen(state, 'selectedView', fn)
+}
+
+const update = {
+	selectedView: value => Binding.update(state, 'selectedView', value)
+}
+
 let blinkTween = null
 const select = unit => {
 	const view = getView(unit)
 	if (view.destroyed) {
 		return
 	}
-	if (view != selectedView) {
-		if (selectedView) {
+	if (view != state.selectedView) {
+		if (state.selectedView) {
 			unselect()
 		}
-		selectedView = view
+		update.selectedView(view)
 		updateVisibility(view)
 		if (blinkTween) {
 			blinkTween.stop()
@@ -46,9 +59,9 @@ const select = unit => {
 }
 
 const unselect = (unit = null) => {
-	if (!unit || (selectedView && unit === selectedView.unit)) {	
-		const previouslySelectedView = selectedView
-		selectedView = null
+	if (!unit || (state.selectedView && unit === state.selectedView.unit)) {	
+		const previouslySelectedView = state.selectedView
+		update.selectedView(null)
 		updateVisibility(previouslySelectedView)
 		if (blinkTween) {
 			blinkTween.stop()
@@ -93,7 +106,7 @@ const create = unit => {
 	return view
 }
 
-const selectedUnit = () => selectedView ? selectedView.unit : null
+const selectedUnit = () => state.selectedView ? state.selectedView.unit : null
 
 const destroy = view => {
 	unselect(view.unit)
@@ -124,7 +137,7 @@ const hide = view => {
 }
 
 const updateVisibility = view => visibleOnMap(view) ? show(view) : hide(view)
-const visibleOnMap = view => (view === selectedView || !view.unit.colony) &&
+const visibleOnMap = view => (view === state.selectedView || !view.unit.colony) &&
 	!view.unit.vehicle &&
 	!Europe.has.unit(view.unit) &&
 	!view.unit.offTheMap &&
@@ -178,5 +191,7 @@ export default {
 	select,
 	unselect,
 	load,
-	save
+	save,
+	listen,
+	update
 }

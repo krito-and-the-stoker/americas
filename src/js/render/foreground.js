@@ -13,6 +13,7 @@ let units = null
 let terrain = null
 let permanent = null
 let notifications = null
+let info = null
 
 let layer = null
 

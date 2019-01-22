@@ -16,6 +16,7 @@ import Events from '../../view/ui/events'
 import UnitView from './unit'
 import ColonyView from './colony'
 import SettlementView from './settlement'
+import InfoView from './info'
 
 const MIN_SCALE = 0.4
 const MAX_SCALE = 4
@@ -118,7 +119,7 @@ const initialize = () => {
 	UnitView.initialize()
 	SettlementView.initialize()
 	Notification.initialize()
-
+	InfoView.initialize()
 
 	const stage = Foreground.get().layer.app.stage
 

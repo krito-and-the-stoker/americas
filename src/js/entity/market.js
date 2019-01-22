@@ -47,9 +47,11 @@ const sell = ({ good, amount }) => {
 const save = () => market.europe
 const load = data => {
 	market.europe = data
-	Time.schedule(MarketPrice.create(market.europe))
+	unsubscribeMarketPrices()
+	unsubscribeMarketPrices = Time.schedule(MarketPrice.create(market.europe))
 }
 
+let unsubscribeMarketPrices = () => {}
 const initialize = () => {
 	market.europe = Util.makeObject(Object.keys(Properties)
 		.map(good => [good, Properties[good].low + Math.floor(Math.random() * (Properties[good].high - Properties[good].low))])
@@ -60,7 +62,8 @@ const initialize = () => {
 			capacity: Properties[good].capacity
 		}])))
 
-	Time.schedule(MarketPrice.create(market.europe))
+	unsubscribeMarketPrices()
+	unsubscribeMarketPrices = Time.schedule(MarketPrice.create(market.europe))
 }
 
 export default {
