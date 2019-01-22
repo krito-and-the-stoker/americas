@@ -37,6 +37,12 @@ Cut down forest           - Press p
 Plow field                - Press p
 Build road                - Press r
 
+Trade routes:
+Click on a good in the colony storage to toggle between import, export and no trade.
+Trading ships and wagon trains will come and match your goods as good as they can.
+Ships and wagon trains    - Press t
+
+
 In the colony:
 Leave colony screen  - Press Escape or a or click on wood frame
 Everything else here is pretty much click or drag and drop. We

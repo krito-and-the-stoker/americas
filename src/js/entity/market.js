@@ -47,6 +47,7 @@ const sell = ({ good, amount }) => {
 const save = () => market.europe
 const load = data => {
 	market.europe = data
+	Time.schedule(MarketPrice.create(market.europe))
 }
 
 const initialize = () => {

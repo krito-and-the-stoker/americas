@@ -58,7 +58,7 @@ const create = teacher => {
 					student.education.progress = 0
 				}
 				student.education.progress += scale
-				if (student.education.progress >= 1) {
+				if (student.education.progress >= Colony.expertLevel[profession]) {
 					Colonist.update.expert(student, student.education.profession)
 				}
 				Storage.update(teacher.colony.productionRecord, { good: 'books', amount: 1 * deltaTime * PRODUCTION_BASE_FACTOR })

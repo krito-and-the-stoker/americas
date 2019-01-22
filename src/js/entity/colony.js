@@ -101,7 +101,7 @@ const rebels = colony => {
 	}
 }
 
-const teachingLevelNeeded = {	
+const expertLevel = {	
 	farmer: 1,
 	fisher: 1,
 	sugarplanter: 1,
@@ -121,7 +121,7 @@ const teachingLevelNeeded = {
 	statesman: 3,
 	preacher: 3,
 }
-const canTeach = (colony, expert) => expert && teachingLevelNeeded[expert] && teachingLevelNeeded[expert] <= colony.buildings.school
+const canTeach = (colony, expert) => expert && expertLevel[expert] && expertLevel[expert] <= colony.buildings.school
 const canEmploy = (colony, building, expert) => colony.colonists
 	.filter(colonist => colonist.work && colonist.work.building === building).length < Building.workspace(colony, building) &&
 	(building !== 'school' || canTeach(colony, expert))
@@ -336,5 +336,6 @@ export default {
 	update,
 	tories,
 	rebels,
-	disband
+	disband,
+	expertLevel,
 }
