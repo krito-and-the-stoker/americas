@@ -1,5 +1,6 @@
 import Util from '../util/util'
 import Foreground from '../render/foreground'
+import Binding from '../util/binding'
 
 let currentDrags = []
 const isDragTarget = target => currentDrags.includes(target)
@@ -155,6 +156,12 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 		return unsubscribe
 }
 
+const drags = {
+	current: null
+}
+const listen = fn => Binding.listen(drags, 'current', fn)
+const update = value => Binding.update(drags, 'current', value)
+
 let dragTargets = []
 const makeDraggable = (sprite, entity) => {
 	let initialCoords = null
@@ -169,6 +176,7 @@ const makeDraggable = (sprite, entity) => {
 			x: sprite.x - coords.x / scale,
 			y: sprite.y - coords.y / scale
 		}
+		update(entity)
 	}
 
 	const move = coords => {
@@ -211,12 +219,14 @@ const makeDraggable = (sprite, entity) => {
 			const result = await dragTargets.find(target => targetSprite === target.sprite).fn(entity, sprite.getGlobalPosition())
 			sprite.interactive = true
 			if (result) {
+				update(null)
 				return
 			}
 		}
 		sprite.interactive = true
 		sprite.x = initialSpriteCoords.x
 		sprite.y = initialSpriteCoords.y
+		update(null)
 	}
 
 	return on(sprite, start, move, end, false)
@@ -238,5 +248,6 @@ export default {
 	isPossibleDragTarget,
 	makeDraggable,
 	makeDragTarget,
+	listen,
 	MIN_DRAG_TIME
 }

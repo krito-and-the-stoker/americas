@@ -1,9 +1,7 @@
-import UnitView from './unit'
+import UnitMapView from './unit'
 import Foreground from '../../render/foreground'
 import RenderView from '../../render/view'
-
-
-const getName = unit => unit.expert ? unit.properties.name[unit.expert] || unit.properties.name.default : unit.properties.name.default
+import UnitView from '../unit'
 
 const initialize = () => {
 	const unitName = new PIXI.Text('', {
@@ -14,9 +12,9 @@ const initialize = () => {
 	})
 	unitName.x = 10
 
-	UnitView.listen.selectedView(view => {
+	UnitMapView.listen.selectedView(view => {
 		if (view) {
-			unitName.text = `${getName(view.unit)}`
+			unitName.text = `${UnitView.getName(view.unit)}`
 			Foreground.get().notifications.addChild(unitName)
 		}
 

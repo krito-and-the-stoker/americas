@@ -22,6 +22,7 @@ import ColonyBuildings from './buildings'
 import ColonyProduction from './production'
 import ColonyConstruction from './construction'
 import ColonyLiberty from './liberty'
+import ColonyInfo from './info'
 
 
 let currentScreen = null
@@ -52,6 +53,7 @@ const create = colony => {
 	const production = ColonyProduction.create(colony)
 	const construction = ColonyConstruction.create(colony, originalDimensions)
 	const liberty = ColonyLiberty.create(colony)
+	const info = ColonyInfo.create(originalDimensions)
 
 	container.addChild(colonyWoodBackground)
 	container.addChild(background.container)
@@ -65,7 +67,7 @@ const create = colony => {
 	container.addChild(buildings.container.colonists)
 	container.addChild(units.container)
 	container.addChild(construction.container.menu)
-
+	container.addChild(info.container)
 
 	const unsubscribeResize = RenderView.updateWhenResized(({ dimensions }) => {
 		const scaleX = dimensions.x / originalDimensions.x
@@ -89,6 +91,7 @@ const create = colony => {
 		production.unsubscribe()
 		liberty.unsubscribe()
 		construction.unsubscribe()
+		info.unsubscribe()
 		unsubscribeResize()
 	}
 	Click.on(colonyWoodBackground, close)
