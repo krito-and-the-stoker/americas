@@ -9,6 +9,8 @@ const path = require('path')
 const yargs = require('yargs')
 const jimp = require('jimp')
 const fs = require('fs')
+const SentryCliPlugin = require('@sentry/webpack-plugin')
+
 
 md.use(mila, {
   attrs: {
@@ -16,6 +18,17 @@ md.use(mila, {
     rel: 'noopener'
   }
 })
+
+const plugins = [new webpack.EnvironmentPlugin(['KEEN_SECRET', 'ENABLE_TRACKING', 'SENTRY_DSN'])]
+if (yargs.argv.production) {
+  plugins.push(new SentryCliPlugin({
+    dryRun: false,
+    release: require(path.resolve(__dirname, '../src/version/version.json')).revision,
+    include: path.resolve(__dirname, '../src/js'),
+    configFile: path.resolve(__dirname, './sentry.properties'),
+    ignore: ['node_modules', 'webpack.config.js', 'sentry.properties'],
+  }))
+}
 
 const config = {
 	mode: yargs.argv.production ? 'production' : 'development',
@@ -29,9 +42,7 @@ const config = {
     path: path.resolve(__dirname, '../dist')
   },
   context: path.resolve(__dirname, '../src/js/'),
-  plugins: [
-    new webpack.EnvironmentPlugin(['KEEN_SECRET', 'ENABLE_TRACKING', 'SENTRY_DSN'])
-  ]
+  plugins: plugins
 }
 
 gulp.task('version', done => {
