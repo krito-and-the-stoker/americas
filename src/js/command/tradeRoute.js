@@ -25,7 +25,6 @@ const calculateSupply = () => Record.getAll('colony').map(colony =>
 	Storage.goods(colony.storage)
 		.filter(({ good }) => colony.trade[good] < 0)
 		.filter(({ amount }) => amount > 0)
-		.map(({ good, amount}) => ({ good, amount: amount + LoadCargo.forecast(colony,  good) }))
 		.map(({ good, amount}) => ({
 			colony,
 			good,
@@ -43,7 +42,7 @@ const match = transport => {
 				from: supply.colony,
 				to: demand.colony,
 				amount: Math.floor(Math.min(demand.amount, supply.amount)),
-				importance: 3*demand.importance + 2*supply.importance,
+				importance: (0.5 + demand.importance) * (0.5 + supply.importance),
 				distance:
 					PathFinder.distance(transport.mapCoordinates, supply.colony.mapCoordinates, transport) +
 					PathFinder.distance(supply.colony.mapCoordinates, demand.colony.mapCoordinates, transport)
@@ -52,9 +51,10 @@ const match = transport => {
 		.filter(route => route.amount > 0)).flat()
 	// console.log('demands', demands)
 	// console.log('supply', supply)
-	// console.log('routes', routes)
-	const rate = route => route.importance / Math.log(1 + route.distance)
+	console.log('routes', routes)
+	const rate = route => route.amount * route.importance / Math.sqrt(1 + route.distance)
 	const route = routes.reduce((best, route) => rate(best) > rate(route) ? best : route, { importance: 0, distance: 0 })
+	console.log('best', route)
 	return route.importance > 0 ? route : null
 }
 
