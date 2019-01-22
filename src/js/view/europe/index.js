@@ -13,6 +13,7 @@ import Dialog from '../../view/ui/dialog'
 
 import UnitsView from './units'
 import MarketView from './market'
+import InfoView from './info'
 
 let unsubscribe = () => {}
 const open = () => {
@@ -48,6 +49,9 @@ const create = () => {
 	normalContainer.addChild(units.container.ships)
 	normalContainer.addChild(units.container.units)
 	normalContainer.addChild(units.container.dialog)
+
+	const info = InfoView.create(originalDimensions)
+	normalContainer.addChild(info.container)
 
 	const nameHeadline = new PIXI.Text('London', {
 		fontFamily: 'Times New Roman',
@@ -126,6 +130,7 @@ const create = () => {
 		background.y = dimensions.y / coverScale - background.height - 123 * scale.x / coverScale
 		market.container.y = dimensions.y / coverScale
 		market.container.scale.set(scale.x / coverScale)
+		info.container.y = dimensions.y / coverScale - 123 * scale.x / coverScale - 50
 
 		normalContainer.scale.set(coverScale)
 		units.container.units.x = Math.max(dimensions.x / coverScale - 0.4 * background.width, 64)
@@ -142,6 +147,7 @@ const create = () => {
 	const unsubscribe = () => {
 		units.unsubscribe()
 		market.unsubscribe()
+		info.unsubscribe()
 	}
 
 	return {
