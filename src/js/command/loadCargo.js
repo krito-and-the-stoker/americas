@@ -14,14 +14,12 @@ const addForecast = (colony, pack) => {
 		init(colony.name)
 	}
 	scheduled()[colony.name][pack.good] -= pack.amount
-	console.log('added forecast', colony.name, pack.good, scheduled()[colony.name][pack.good])
 }
 const removeForecast = (colony, pack) => {
 	if (!scheduled()[colony.name]) {
 		init(colony.name)
 	}
 	scheduled()[colony.name][pack.good] += pack.amount
-	console.log('removed forecast', colony.name, pack.good, scheduled()[colony.name][pack.good])
 }
 const forecast = (colony, good) => scheduled()[colony.name] ? scheduled()[colony.name][good] : 0
 
