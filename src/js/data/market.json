@@ -10,28 +10,28 @@
 		"difference": 2,
 		"low": 2,
 		"high": 5,
-		"consumption": 5,
+		"consumption": 3,
 		"capacity": 400
 	},
 	"tobacco": {
 		"difference": 2,
 		"low": 2,
 		"high": 5,
-		"consumption": 5,
+		"consumption": 3,
 		"capacity": 400
 	},
 	"cotton": {
 		"difference": 2,
 		"low": 2,
 		"high": 5,
-		"consumption": 5,
+		"consumption": 3,
 		"capacity": 400
 	},
 	"furs": {
 		"difference": 2,
 		"low": 2,
 		"high": 5,
-		"consumption": 5,
+		"consumption": 3,
 		"capacity": 400
 	},
 	"wood": {
@@ -42,7 +42,7 @@
 		"capacity": 2000
 	},
 	"ore": {
-		"difference": 3,
+		"difference": 2,
 		"low": 2,
 		"high": 4,
 		"consumption": -1,
@@ -66,28 +66,28 @@
 		"difference": 1,
 		"low": 7,
 		"high": 13,
-		"consumption": 5,
+		"consumption": 3,
 		"capacity": 200
 	},
 	"cigars": {
 		"difference": 1,
 		"low": 7,
 		"high": 13,
-		"consumption": 5,
+		"consumption": 3,
 		"capacity": 200
 	},
 	"cloth": {
 		"difference": 1,
 		"low": 7,
 		"high": 13,
-		"consumption": 5,
+		"consumption": 3,
 		"capacity": 200
 	},
 	"coats": {
 		"difference": 1,
 		"low": 7,
 		"high": 13,
-		"consumption": 5,
+		"consumption": 3,
 		"capacity": 200
 	},
 	"tradeGoods": {
