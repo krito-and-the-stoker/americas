@@ -123,7 +123,8 @@ const create = (transport, tradeCommanderParam = null, initialized = false, wait
 		transport: Record.reference(transport)
 	})
 
-	const tradeRoute = {		
+	const tradeRoute = {
+		commands: tradeCommander.commands,
 		init,
 		update,
 		save
