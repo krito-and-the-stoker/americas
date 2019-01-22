@@ -13,18 +13,21 @@ import Binding from '../../util/binding'
 
 
 const create = (originalDimensions) => {
-	const container = new PIXI.Container()
+	const container = {
+		goods: new PIXI.Container(),
+		pricing: new PIXI.Container()
+	}
 
 	const goodsBackground = new PIXI.Sprite(new PIXI.Texture(Ressources.get().goodsBackground))
 	goodsBackground.y = -123
-	container.addChild(goodsBackground)
+	container.goods.addChild(goodsBackground)
 
 	const priceViews = Object.values(Goods.types).map((good, index) => {	
 		const { sprite } = GoodsView.create({ good })
 		sprite.x = Math.round(index * (originalDimensions.x + 11) / Object.values(Goods.types).length)
 		sprite.y = -119
 		sprite.scale.set(1.7)
-		container.addChild(sprite)
+		container.goods.addChild(sprite)
 
 		const bid = Market.bid(good)
 		const ask = Market.ask(good)
@@ -39,7 +42,7 @@ const create = (originalDimensions) => {
 		price.anchor.set(0.5)
 		price.position.x = (index + 0.5) * width
 		price.position.y = -width / 4
-		container.addChild(price)
+		container.goods.addChild(price)
 
 		let args = {
 			good: good,
@@ -49,8 +52,8 @@ const create = (originalDimensions) => {
 		Drag.makeDraggable(sprite, args)	
 
 		const unsubscribe = () => {
-			container.removeChild(sprite)
-			container.removeChild(price)
+			container.goods.removeChild(sprite)
+			container.goods.removeChild(price)
 		}
 
 		return {
@@ -68,13 +71,25 @@ const create = (originalDimensions) => {
 			priceViews.find(view => view.good === good).price.text = `${bid}/${ask}`
 		}, mapping))))
 
+	const text = new PIXI.Text('', {
+		fontFamily: 'Times New Roman',
+		fontSize: 36,
+		fill: 0xffffff,
+		align: 'right'
+	})
+	container.pricing.addChild(text)
+
 	const dragTarget = new PIXI.Container()
-	container.addChild(dragTarget)
+	container.goods.addChild(dragTarget)
 	dragTarget.hitArea = new PIXI.Rectangle(0, -119, originalDimensions.x, 119)
 	const unsubscribeDragTarget = Drag.makeDragTarget(dragTarget, args => {
 		const { good, unit, amount } = args
 		if (good && unit) {
-			SellInEurope(unit, {good, amount })
+			SellInEurope(unit, { good, amount })
+			const rate = Market.bid(good)
+			const price = rate * amount
+			text.text = `Sold ${amount} ${good} at ${rate}\nTotal: ${price}`
+			text.x = originalDimensions.x / 2 - text.width / 2
 			return false
 		}
 

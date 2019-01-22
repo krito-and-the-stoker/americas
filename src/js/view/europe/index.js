@@ -43,7 +43,8 @@ const create = () => {
 	backgroundContainer.addChild(background)
 
 	const market = MarketView.create(originalDimensions)
-	backgroundContainer.addChild(market.container)
+	backgroundContainer.addChild(market.container.goods)
+	backgroundContainer.addChild(market.container.pricing)
 
 	const units = UnitsView.create(close, originalDimensions)
 	normalContainer.addChild(units.container.ships)
@@ -128,8 +129,9 @@ const create = () => {
 		backgroundContainer.scale.set(coverScale)
 		background.x = dimensions.x / coverScale - background.width
 		background.y = dimensions.y / coverScale - background.height - 123 * scale.x / coverScale
-		market.container.y = dimensions.y / coverScale
-		market.container.scale.set(scale.x / coverScale)
+		market.container.goods.y = dimensions.y / coverScale
+		market.container.goods.scale.set(scale.x / coverScale)
+		market.container.pricing.y = 200
 		info.container.y = dimensions.y / coverScale - 123 * scale.x / coverScale - 50
 
 		normalContainer.scale.set(coverScale)
