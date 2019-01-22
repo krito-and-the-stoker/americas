@@ -27,12 +27,23 @@ import NumberOfAssets from '../data/numberOfAssets.json'
 import * as Sentry from '@sentry/browser'
 
 
-Sentry.init({ dsn: 'https://5af48842d6d643d3bde7a59f2fe81b42@sentry.io/1198155' })
-const update = (deltaTime) => {
+const captureException = err => {
+	if (process.env.SENTRY_DSN) {
+		Sentry.captureException(err)
+		return
+	}
+	throw err
+}
+
+if (process.env.SENTRY_DSN) {
+	Sentry.init({ dsn: 'https://5af48842d6d643d3bde7a59f2fe81b42@sentry.io/1198155' })
+}
+
+const update = deltaTime => {
 	try {
 		Time.advance(deltaTime)
 	} catch (err) {
-		Sentry.captureException(err)
+		captureException(err)
 	}
 }
 
@@ -40,7 +51,7 @@ const draw = () => {
 	try {
 		RenderView.onDraw()
 	} catch (err) {
-		Sentry.captureException(err)
+		captureException(err)
 	}
 }
 

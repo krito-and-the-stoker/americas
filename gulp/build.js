@@ -30,7 +30,7 @@ const config = {
   },
   context: path.resolve(__dirname, '../src/js/'),
   plugins: [
-    new webpack.EnvironmentPlugin(['KEEN_SECRET', 'ENABLE_TRACKING'])
+    new webpack.EnvironmentPlugin(['KEEN_SECRET', 'ENABLE_TRACKING', 'SENTRY_DSN'])
   ]
 }
 
