@@ -19,30 +19,33 @@ md.use(mila, {
   }
 })
 
-const plugins = [new webpack.EnvironmentPlugin(['KEEN_SECRET', 'ENABLE_TRACKING', 'SENTRY_DSN'])]
-if (yargs.argv.production) {
-  plugins.push(new SentryCliPlugin({
-    dryRun: false,
-    release: require(path.resolve(__dirname, '../src/version/version.json')).revision,
-    include: path.resolve(__dirname, '../src/js'),
-    configFile: path.resolve(__dirname, './sentry.properties'),
-    ignore: ['node_modules', 'webpack.config.js', 'sentry.properties'],
-  }))
-}
 
-const config = {
-	mode: yargs.argv.production ? 'production' : 'development',
-  entry: {
-    index: './entries/index.js',
-    dev: './entries/dev.js',
-    worker: './entries/worker.js'
-  },
-  output: {
-    filename: './[name].entry.js',
-    path: path.resolve(__dirname, '../dist')
-  },
-  context: path.resolve(__dirname, '../src/js/'),
-  plugins: plugins
+const config = () => {
+  const plugins = [new webpack.EnvironmentPlugin(['KEEN_SECRET', 'ENABLE_TRACKING', 'SENTRY_DSN'])]
+  if (yargs.argv.production) {
+    plugins.push(new SentryCliPlugin({
+      dryRun: false,
+      release: require(path.resolve(__dirname, '../src/version/version.json')).revision,
+      include: path.resolve(__dirname, '../src/js'),
+      configFile: path.resolve(__dirname, './sentry.properties'),
+      ignore: ['node_modules', 'webpack.config.js', 'sentry.properties'],
+    }))
+  }
+
+  return {
+  	mode: yargs.argv.production ? 'production' : 'development',
+    entry: {
+      index: './entries/index.js',
+      dev: './entries/dev.js',
+      worker: './entries/worker.js'
+    },
+    output: {
+      filename: './[name].entry.js',
+      path: path.resolve(__dirname, '../dist')
+    },
+    context: path.resolve(__dirname, '../src/js/'),
+    plugins: plugins
+  }
 }
 
 gulp.task('version', done => {
@@ -57,7 +60,7 @@ gulp.task('version', done => {
 })
 
 gulp.task('compile', () => {
-  return new Promise(resolve => webpack(config, (err, stats) => {
+  return new Promise(resolve => webpack(config(), (err, stats) => {
     if (err) {
       console.log('Webpack', err)     
     }
