@@ -359,7 +359,8 @@ const createStorageEmpty = (colony, good) => {
 
 	const action = () => ColonyView.open(colony)
 	const dismiss = {
-		colonyScreen: c => c === colony
+		colonyScreen: c => c === colony,
+		unloadGood: (c, g) => c === colony && g === good
 	}
 
 	return {
@@ -378,7 +379,8 @@ const createStorageFull = (colony, good) => {
 
 	const action = () => ColonyView.open(colony)
 	const dismiss = {
-		colonyScreen: c => c === colony
+		colonyScreen: c => c === colony,
+		loadGood: (c, g) => c === colony && g === good
 	}
 
 	return {
@@ -478,6 +480,20 @@ const initialize = () => {
 		const dismiss = notifications
 			.filter(n => n.dismiss.move)
 			.filter(n => n.dismiss.move(unit))
+
+		dismiss.forEach(remove)
+	})
+	Events.listen('loadGood', ({ colony, good }) => {
+		const dismiss = notifications
+			.filter(n => n.dismiss.loadGood)
+			.filter(n => n.dismiss.loadGood(colony, good))
+
+		dismiss.forEach(remove)
+	})
+	Events.listen('unloadGood', ({ colony, good }) => {
+		const dismiss = notifications
+			.filter(n => n.dismiss.unloadGood)
+			.filter(n => n.dismiss.unloadGood(colony, good))
 
 		dismiss.forEach(remove)
 	})

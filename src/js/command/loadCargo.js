@@ -1,6 +1,7 @@
 import Storage from '../entity/storage'
 import Record from '../util/record'
 import Time from '../timeline/time'
+import Events from '../view/ui/events'
 
 const scheduledCargoLoads = {}
 const scheduled = () => scheduledCargoLoads
@@ -27,10 +28,12 @@ const loadCargo = (colony, unit, pack) => {
 	if (pack.amount > 0) {
 		const amount = Math.min(pack.amount, colony.storage[pack.good])
 		Storage.transfer(colony.storage, unit.storage, { good: pack.good, amount })
+		Events.trigger('unloadGood', { colony, good: pack.good })
 	}
 	if (pack.amount < 0) {
 		const amount = Math.min(-pack.amount, unit.storage[pack.good])
 		Storage.transfer(unit.storage, colony.storage, { good: pack.good, amount })
+		Events.trigger('loadGood', { colony, good: pack.good })
 	}
 }
 
