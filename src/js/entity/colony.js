@@ -207,10 +207,10 @@ const initialize = colony => {
 	destroy.push(Time.schedule(GrowHorses.create(colony)))
 	destroy.push(listen.colonists(colony, () => listen.bells(colony, () => {
 		let bonus = 0
-		if (tories(colony).number > 8) {
+		if (tories(colony).number > 14) {
 			bonus -= 1
 		}
-		if (tories(colony).number > 5) {
+		if (tories(colony).number > 9) {
 			bonus -= 1
 		}
 		if (rebels(colony).percentage >= 50) {

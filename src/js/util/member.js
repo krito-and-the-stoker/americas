@@ -16,6 +16,24 @@ const	remove = (entity, key, member) => {
 
 const has = (entity, key, member) => entity[key].includes(member)
 
+const listenerKey = key => `${key}ListenerEach`
+const init = (entity, key) => {
+	entity[listenerKey(key)] = []
+}
+const updateOne = member => {
+	member.listenerEach.cleanup.forEach(fn => fn())
+	member.listenerEach.cleanup = member.listenerEach.listener.map(fn => fn())
+}
+const listenEach = (entity, key, fn) => {
+	const listener = listenerKey(key)
+	if (!entity[listener]) {
+		init(entity, key)
+	}
+
+	entity[key].forEach(member => {
+
+	})
+}
 
 export default {
 	add,

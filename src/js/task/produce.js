@@ -40,7 +40,7 @@ const create = (colony, building, colonist) => {
 		}
 		if (production && production.type) {
 			if (production.type === 'construction') {
-				colony.construction.amount += production.amount
+				colony.construction.amount += 0.5 * production.amount
 				Colony.update.construction(colony)
 			}
 			if (production.type === 'bells') {
