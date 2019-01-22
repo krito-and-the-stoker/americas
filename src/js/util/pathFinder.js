@@ -55,8 +55,11 @@ const findPath = (from, to, unit) => {
 	return find(from, target, to, false, unit)
 }
 
-const distance = (from, to, unit) => {
-	const path = findPathXY(from, to, unit)
+const distance = (fromCoords, toCoords, unit, max = CANNOT_MOVE_COST) => {
+	const from = MapEntity.tile(fromCoords)
+	const to = MapEntity.tile(toCoords)
+	const isTarget = node => (node.cost > max || node.index === to.index)
+	const path = find(from, isTarget, to, false, unit)
 	return path
 		.filter((p, i) => i > 0)
 		.reduce(({ distance, from }, to) => ({

@@ -41,11 +41,11 @@ const match = transport => {
 				good: supply.good,
 				from: supply.colony,
 				to: demand.colony,
-				amount: Math.floor(Math.min(demand.amount, supply.amount)),
+				amount: Math.min(100*transport.properties.cargo, Math.floor(Math.min(demand.amount, supply.amount))),
 				importance: (0.5 + demand.importance) * (0.5 + supply.importance),
 				distance:
-					PathFinder.distance(transport.mapCoordinates, supply.colony.mapCoordinates, transport) +
-					PathFinder.distance(supply.colony.mapCoordinates, demand.colony.mapCoordinates, transport)
+					PathFinder.distance(transport.mapCoordinates, supply.colony.mapCoordinates, transport, 8*transport.properties.speed + 1) +
+					PathFinder.distance(supply.colony.mapCoordinates, demand.colony.mapCoordinates, transport, 8*transport.properties.speed + 1)
 			}))
 		.filter(route => route.distance < 8*transport.properties.speed)
 		.filter(route => route.amount > 0)).flat()
