@@ -24,19 +24,22 @@ import Util from '../util/util'
 import Tribe from '../entity/tribe'
 import Message from '../view/ui/message'
 import NumberOfAssets from '../data/numberOfAssets.json'
+import Version from '../../version/version.json'
 import * as Sentry from '@sentry/browser'
 
 
 const captureException = err => {
 	if (process.env.SENTRY_DSN) {
 		Sentry.captureException(err)
-		return
 	}
 	throw err
 }
 
 if (process.env.SENTRY_DSN) {
-	Sentry.init({ dsn: 'https://5af48842d6d643d3bde7a59f2fe81b42@sentry.io/1198155' })
+	Sentry.init({
+		dsn: process.env.SENTRY_DSN,
+		release: Version.revision
+	})
 }
 
 const update = deltaTime => {
@@ -102,133 +105,141 @@ const preload = () => {
 }
 
 const start = async () => {
-	if (!loadingRessources) {
-		preload()
-	}
-
-	await loadingRessources
-	await nextFrame()
-
-	MapEntity.create({ data: americaSmallMap })
-	// MapEntity.create({ data: americaLargeMap })
-
-	await nextFrame()
-
-	const mapRendering = new RenderMap()
-
-	await nextFrame()
-
-	RenderView.initialize()
-
-	await nextFrame()
-	MapView.initialize()
-	await nextFrame()
-	Dialog.initialize()
-	await nextFrame()
-	Tween.initialize()
-	await nextFrame()
-	PathFinder.initialize()
-	await nextFrame()
-
-	Europe.initialize()
-	Market.initialize()
-	await nextFrame()
-	Tribe.createFromMap(MapEntity.get())
-	await nextFrame()
-
-	// for no apparent reason the layers are not available inside TreasureView
-	TreasureView.initialize(Foreground.get().permanent)
-	await nextFrame()
-	YearView.initialize(Foreground.get().permanent)
-
-	// start game!
-	americaSmall()
-	// americaLarge()
-
-	await nextFrame()
-	MapView.zoomBy(1/0.35, null, 0)
-	MapView.zoomBy(1/0.35, null, 100)
-	setTimeout(async () => {
-		Message.log('Starting game...')
-		await Dialog.welcome()
-		MapView.zoomBy(0.35, null, 3000)
-	}, 100)
-
-	setTimeout(() => {
-		Background.get().layer.show()
-		Foreground.get().layer.show()		
-	}, 750)
-
-	setTimeout(() => {
-		Keyboard.initialize()
-	}, 3000)
-
-	await nextFrame()
-	document.addEventListener('visibilitychange', () => {
-		if (document.hidden) {
-			MainLoop.stop()
-		} else {
-			MainLoop.start()
+	try {
+		if (!loadingRessources) {
+			preload()
 		}
-	})
 
-	await nextFrame()
-	MainLoop.setUpdate(update)
-	MainLoop.setDraw(draw)
-	MainLoop.start()
+		await loadingRessources
+		await nextFrame()
+
+		MapEntity.create({ data: americaSmallMap })
+		// MapEntity.create({ data: americaLargeMap })
+
+		await nextFrame()
+
+		const mapRendering = new RenderMap()
+
+		await nextFrame()
+
+		RenderView.initialize()
+
+		await nextFrame()
+		MapView.initialize()
+		await nextFrame()
+		Dialog.initialize()
+		await nextFrame()
+		Tween.initialize()
+		await nextFrame()
+		PathFinder.initialize()
+		await nextFrame()
+
+		Europe.initialize()
+		Market.initialize()
+		await nextFrame()
+		Tribe.createFromMap(MapEntity.get())
+		await nextFrame()
+
+		// for no apparent reason the layers are not available inside TreasureView
+		TreasureView.initialize(Foreground.get().permanent)
+		await nextFrame()
+		YearView.initialize(Foreground.get().permanent)
+
+		// start game!
+		americaSmall()
+		// americaLarge()
+
+		await nextFrame()
+		MapView.zoomBy(1/0.35, null, 0)
+		MapView.zoomBy(1/0.35, null, 100)
+		setTimeout(async () => {
+			Message.log('Starting game...')
+			await Dialog.welcome()
+			MapView.zoomBy(0.35, null, 3000)
+		}, 100)
+
+		setTimeout(() => {
+			Background.get().layer.show()
+			Foreground.get().layer.show()		
+		}, 750)
+
+		setTimeout(() => {
+			Keyboard.initialize()
+		}, 3000)
+
+		await nextFrame()
+		document.addEventListener('visibilitychange', () => {
+			if (document.hidden) {
+				MainLoop.stop()
+			} else {
+				MainLoop.start()
+			}
+		})
+
+		await nextFrame()
+		MainLoop.setUpdate(update)
+		MainLoop.setDraw(draw)
+		MainLoop.start()
+	} catch (err) {
+		captureException(err)
+	}
 }
 
 const load = async () => {
-	if (!loadingRessources) {
-		preload()
-	}
-
-	await loadingRessources
-	await nextFrame()
-
-	RenderView.initialize()
-	await nextFrame()
-	Dialog.initialize()
-	Tween.initialize()
-	MapView.initialize()
-	await nextFrame()
-
-	// for no apparent reason the layers are not available inside TreasureView
-	Europe.initialize()
-	await nextFrame()
-	TreasureView.initialize(Foreground.get().permanent)
-	YearView.initialize(Foreground.get().permanent)
-	Message.log('Restoring game state...')
-	await nextFrame()
-	Record.load()
-	await nextFrame()
-
-	MapView.zoomBy(1/0.35, null, 0)
-	setTimeout(() => {
-		Message.log('Starting game...')
-		MapView.zoomBy(0.35, null, 3000)
-	}, 100)
-
-	setTimeout(() => {
-		Background.get().layer.show()
-		Foreground.get().layer.show()		
-	}, 750)
-
-	setTimeout(() => {
-		Keyboard.initialize()
-	}, 3000)
-
-	document.addEventListener('visibilitychange', () => {
-		if (document.hidden) {
-			MainLoop.stop()
-		} else {
-			MainLoop.start()
+	try {
+		if (!loadingRessources) {
+			preload()
 		}
-	})
 
-	MainLoop.setUpdate(update)
-	MainLoop.setDraw(draw)
-	MainLoop.start()
+		await loadingRessources
+		await nextFrame()
+
+		RenderView.initialize()
+		await nextFrame()
+		Dialog.initialize()
+		Tween.initialize()
+		MapView.initialize()
+		await nextFrame()
+
+		// for no apparent reason the layers are not available inside TreasureView
+		Europe.initialize()
+		await nextFrame()
+		TreasureView.initialize(Foreground.get().permanent)
+		YearView.initialize(Foreground.get().permanent)
+		Message.log('Restoring game state...')
+		await nextFrame()
+		Record.load()
+		await nextFrame()
+
+		MapView.zoomBy(1/0.35, null, 0)
+		setTimeout(() => {
+			Message.log('Starting game...')
+			MapView.zoomBy(0.35, null, 3000)
+		}, 100)
+
+		setTimeout(() => {
+			Background.get().layer.show()
+			Foreground.get().layer.show()		
+		}, 750)
+
+		setTimeout(() => {
+			Keyboard.initialize()
+		}, 3000)
+
+		document.addEventListener('visibilitychange', () => {
+			if (document.hidden) {
+				MainLoop.stop()
+			} else {
+				MainLoop.start()
+			}
+		})
+
+		MainLoop.setUpdate(update)
+		MainLoop.setDraw(draw)
+		MainLoop.start()
+	} catch (err) {
+		captureException(err)
+	}
 }
 
 const save = Record.save
