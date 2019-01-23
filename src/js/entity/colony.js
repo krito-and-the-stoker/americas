@@ -16,6 +16,7 @@ import Deteriorate from '../task/deteriorate'
 import GrowHorses from '../task/growHorses'
 import Member from '../util/member'
 import Produce from '../task/produce'
+import ColonyProduction from '../task/colonyProduction'
 import ProductionSummary from '../task/productionSummary'
 import Building from '../entity/building'
 import ShrinkFromStarvation from '../action/shrinkFromStarvation'
@@ -203,7 +204,7 @@ const initialize = colony => {
 			}
 		}
 	}))
-	destroy.push(Time.schedule(Produce.create(colony, 'colony', null)))
+	destroy.push(Time.schedule(ColonyProduction.create(colony)))
 	destroy.push(Time.schedule(Deteriorate.create(colony)))
 	destroy.push(Time.schedule(ProductionSummary.create(colony)))
 	destroy.push(Time.schedule(GrowHorses.create(colony)))

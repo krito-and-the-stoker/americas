@@ -3,12 +3,22 @@ import Storage from '../entity/storage'
 import Time from '../timeline/time'
 import Colony from '../entity/colony'
 import Europe from '../entity/europe'
-
+import Colonist from '../entity/colonist'
 
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
 const create = (colony, building, colonist) => {
+	let production
+	let consumption
+	const unsubscribe = Colonist.listen.expert(colonist, () =>
+		Colony.listen.productionBonus(colony, () =>
+			Colony.listen.buildings(colony, () => {
+				production = Production.production(colony, building, colonist)
+				consumption = Production.consumption(building)
+			})))
+
+
 	let lastUpdate = null
 	const update = currentTime => {
 		if (!lastUpdate) {
@@ -20,45 +30,40 @@ const create = (colony, building, colonist) => {
 		const scale = deltaTime * PRODUCTION_BASE_FACTOR
 		lastUpdate = currentTime
 
-		if (building === 'colony') {
-			Europe.update.crosses(scale)
-			Storage.update(colony.productionRecord, { good: 'crosses', amount: scale })
-			Colony.update.bells(colony, scale)
-			Storage.update(colony.productionRecord, { good: 'bells', amount: scale })
-			return true
-		}
-
-		const production = Production.production(colony, building, colonist)
-		const consumption = Production.consumption(building)
-		production.amount = scale * production.amount
+		let productionAmount = scale * production.amount
 		if (consumption.good) {
-			production.amount = Math.min(colony.storage[consumption.good], production.amount)
-			consumption.amount = production.amount	
+			productionAmount = Math.min(colony.storage[consumption.good], productionAmount)
 		}
+		let consumptionAmount = productionAmount
 		if (consumption.good) {
-			Storage.update(colony.storage, { good: consumption.good, amount: -consumption.amount })
-			Storage.update(colony.productionRecord, { good: consumption.good, amount: -consumption.amount })
+			Storage.update(colony.storage, { good: consumption.good, amount: -consumptionAmount })
+			Storage.update(colony.productionRecord, { good: consumption.good, amount: -consumptionAmount })
 		}
 		if (production.type === 'good') {
-			Storage.update(colony.storage, { good: production.good, amount: production.amount })
+			Storage.update(colony.storage, { good: production.good, amount: productionAmount })
 		}
 		if (production.type === 'construction') {
-			colony.construction.amount += production.amount
+			colony.construction.amount += productionAmount
 			Colony.update.construction(colony)
 		}
 		if (production.type === 'bells') {
-			Colony.update.bells(colony, production.amount)
+			Colony.update.bells(colony, productionAmount)
 		}
 		if (production.type === 'crosses') {
-			Europe.update.crosses(production.amount)
+			Europe.update.crosses(productionAmount)
 		}
-		Storage.update(colony.productionRecord, { good: production.good, amount: production.amount })
+		Storage.update(colony.productionRecord, { good: production.good, amount: productionAmount })
 
 		return true
 	}
 
+	const finished = () => {
+		unsubscribe()
+	}
+
 	return {
-		update
+		update,
+		finished
 	}
 }
 
