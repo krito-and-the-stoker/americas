@@ -8,7 +8,7 @@ const create = colony => {
 
 	const tories = Colony.tories(colony)
 	const rebels  = Colony.rebels(colony)
-	const color = tories.number > 5 ? 0xFF8888 : rebels.percentage >= 100 ? 0x88FFFF : rebels.percentage >= 50 ? 0x88FF88 : 0xFFFFFF
+	const color = tories.number > 9 ? 0xFF8888 : rebels.percentage >= 100 ? 0x88FFFF : rebels.percentage >= 50 ? 0x88FF88 : 0xFFFFFF
 
 	const rebelText = new PIXI.Text(`Rebels: ${rebels.percentage}% (${rebels.number})`, {
 		fontFamily: 'Times New Roman',
@@ -36,7 +36,7 @@ const create = colony => {
 	const updateRebelsAndTories = () => {
 		const rebels  = Colony.rebels(colony)
 		const tories = Colony.tories(colony)
-		const color = tories.number > 5 ? 0xFF8888 : rebels.percentage >= 100 ? 0x88FFFF : rebels.percentage >= 50 ? 0x88FF88 : 0xFFFFFF
+		const color = tories.number > 9 ? 0xFF8888 : rebels.percentage >= 100 ? 0x88FFFF : rebels.percentage >= 50 ? 0x88FF88 : 0xFFFFFF
 		const style = {
 			fontFamily: 'Times New Roman',
 			fontSize: 32,
