@@ -14,6 +14,7 @@
     "@tyriar/fibonacci-heap": "^2.0.9",
     "babel-core": "^6.26.0",
     "browser-sync": "^2.26.3",
+    "file-saver": "^2.0.0",
     "gulp": "^4.0.0",
     "gulp-pug": "^4.0.1",
     "gulp-sass": "^4.0.2",

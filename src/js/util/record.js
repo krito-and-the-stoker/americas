@@ -1,5 +1,7 @@
 import LZString from 'lz-string'
 import MainLoop from 'mainloop.js'
+import FileSaver from 'file-saver'
+
 import Util from '../util/util'
 
 import Colonist from '../entity/colonist'
@@ -233,7 +235,7 @@ const dereferenceLazy = (ref, fn) => {
 let loadedListeners = []
 const entitiesLoaded = fn => loadedListeners.push(fn)
 
-const load = () => {
+const load = (src = null) => {
 	Message.log('Loading...')
 	Foreground.shutdown()
 
@@ -242,11 +244,15 @@ const load = () => {
 	loadedListeners = []
 	records = []
 	tiles = []
-	if (SAVE_TO_LOCAL_STORAGE) {
-		if (USE_COMPRESSION) {
-			lastSave = LZString.decompress(window.localStorage.getItem('lastSaveCompressed'))
-		} else {
-			lastSave = window.localStorage.getItem('lastSave')
+	if (src) {
+		lastSave = src
+	} else {	
+		if (SAVE_TO_LOCAL_STORAGE) {
+			if (USE_COMPRESSION) {
+				lastSave = LZString.decompress(window.localStorage.getItem('lastSaveCompressed'))
+			} else {
+				lastSave = window.localStorage.getItem('lastSave')
+			}
 		}
 	}
 	snapshot = JSON.parse(lastSave)
@@ -271,6 +277,40 @@ const load = () => {
 	Message.log('Game loaded')
 }
 
+const download = () => {
+	save()
+	var blob = new Blob([lastSave], {type: "application/json;charset=utf-8"})
+	FileSaver.saveAs(blob, "americas-save-game.json")
+}
+
+const upload = () => {
+	const input = document.createElement('input')
+	input.setAttribute('type', 'file')
+	input.setAttribute('accept', 'application/json, .json')
+	input.addEventListener('change', () => {	
+		const file = input.files[0]
+		// console.log(file)
+		if (file) {
+	    var reader = new FileReader();
+	    reader.readAsText(file, "UTF-8")
+	    reader.onload = evt => {
+	      load(evt.target.result)
+	      document.body.removeChild(input)
+	    }
+	    reader.onerror = function (evt) {
+	      console.log('oh no, something went wrong :/', evt)
+	      document.body.removeChild(input)
+	    }
+		}	
+	})
+	document.body.appendChild(input)
+
+	const evt = document.createEvent("MouseEvents")
+  evt.initEvent("click", true, false)
+  input.dispatchEvent(evt)
+
+}
+
 
 export default {
 	add,
@@ -289,5 +329,7 @@ export default {
 	load,
 	dump,
 	getAll,
+	download,
+	upload,
 	REFERENCE_KEY
 }

@@ -32,11 +32,11 @@ const handleKeydown = (e) => {
 		}
 
 		if (e.key === 's') {
-			Record.save()
+			Record.download()
 		}
 
 		if (e.key === 'l') {
-			Record.load()
+			Record.upload()
 		}
 
 		if (e.key === 'd') {
