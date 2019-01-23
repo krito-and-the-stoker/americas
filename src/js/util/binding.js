@@ -71,6 +71,11 @@ const update = (instance, key, value) => {
 	}
 }
 
+const hasListener = (instance, key) => {
+	const listeners = listenerKey(key)
+	return (instance[listeners] && instance[listeners].length > 0)	
+}
+
 const listenerKey = key => key ? `${key}Listeners` : 'listeners'
 
 const shared = fn => {
@@ -121,6 +126,7 @@ const map = (fn, mapping, equals = (a, b) => a === b) => {
 export default {
 	update,
 	listen,
+	hasListener,
 	listenerKey,
 	shared,
 	map

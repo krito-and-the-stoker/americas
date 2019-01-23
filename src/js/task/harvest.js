@@ -12,6 +12,11 @@ const create = (colony, tile, good, colonist = null) => {
 		}
 	}
 
+	let production = 0
+	Tile.listen.tile(tile, () => {
+		production = Tile.production(tile, good, colonist) * PRODUCTION_BASE_FACTOR
+	})
+
 	tile.harvestedBy = colonist || colony
 	let lastUpdate = null
 	const update = currentTime => {
@@ -21,7 +26,7 @@ const create = (colony, tile, good, colonist = null) => {
 		}
 
 		const deltaTime = currentTime - lastUpdate
-		const amount = deltaTime * Tile.production(tile, good, colonist) * PRODUCTION_BASE_FACTOR
+		const amount = deltaTime * production
 		Storage.update(colony.storage, { good, amount })
 		Storage.update(colony.productionRecord, { good, amount })
 

@@ -143,8 +143,10 @@ const discover = tile => {
 		Record.setGlobal('hasDiscoveredLand', true)
 		Dialog.show('discovered')
 	}
-	tile.discovered = true
-	updateTile(tile)
+	if (!tile.discovered) {	
+		tile.discovered = true
+		updateTile(tile)
+	}
 }
 
 const	neighbors = tile => [left(tile), up(tile), right(tile), down(tile)].filter(n => n)

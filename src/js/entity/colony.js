@@ -132,7 +132,9 @@ const initialize = colony => {
 	colony.productionRecord = Storage.createWithProduction()
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	const destroy = []
-	destroy.push(Tile.listen.tile(tile, () => Util.mergeFunctions(Tile.colonyProductionGoods(tile).map(good => Time.schedule(Harvest.create(colony, tile, good))))))
+	destroy.push(Tile.listen.tile(tile, () =>
+		Util.mergeFunctions(Tile.colonyProductionGoods(tile).map(good =>
+			Time.schedule(Harvest.create(colony, tile, good))))))
 	destroy.push(listen.colonists(colony, colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length))))
 
 	let starvationMessageSent = false

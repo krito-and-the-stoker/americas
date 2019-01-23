@@ -8,6 +8,7 @@ const updateFactor = 1.0
 const create = colony => {
 	const intermediateProductionRecord = Storage.createWithProduction()
 	let lastUpdate = null
+
 	const update = currentTime => {
 		if (!lastUpdate) {
 			lastUpdate = currentTime
@@ -17,7 +18,7 @@ const create = colony => {
 		const deltaTime = currentTime - lastUpdate
 		const scale = deltaTime * PRODUCTION_BASE_FACTOR
 		
-		if (scale > 0) {
+		if (scale > 0 && Storage.hasListener(colony.productionSummary)) {
 			Storage.goods(colony.productionRecord).forEach(({ good, amount }) =>
 				intermediateProductionRecord[good] = (1.0 - updateFactor)*intermediateProductionRecord[good] + updateFactor*amount)
 			Storage.productions(colony.productionRecord).forEach(({ good, amount }) =>

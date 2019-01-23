@@ -28,10 +28,8 @@ const create = colony => {
 			const amount = colony.construction.amount
 			const capacity = colony.construction.cost.construction
 			const loss = deltaTime * PRODUCTION_BASE_FACTOR * LOSS_FACTOR * (amount - capacity)
-			Colony.update.construction(colony, {
-				...colony.construction,
-				amount: colony.construction.amount - loss
-			})
+			colony.construction.amount -= loss
+			Colony.update.construction(colony)
 			Storage.update(colony.productionRecord, { good: 'construction', amount: -loss })
 		}
 

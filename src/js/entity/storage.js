@@ -10,6 +10,8 @@ const update = (storage, pack) => {
 	Binding.update(storage)
 }
 
+const hasListener = Binding.hasListener
+
 const copy = storage => {
 	const result = {}
 	goods(storage).forEach(pack => result[pack.good] = pack.amount)
@@ -80,6 +82,7 @@ export default {
 	createWithProduction,
 	listen,
 	update,
+	hasListener,
 	split,
 	transfer,
 	transferWithProduction,
