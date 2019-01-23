@@ -3,6 +3,7 @@ import MainLoop from 'mainloop.js'
 import FileSaver from 'file-saver'
 
 import Util from '../util/util'
+import Version from '../../version/version.json'
 
 import Colonist from '../entity/colonist'
 import Colony from '../entity/colony'
@@ -161,12 +162,32 @@ const saveSingleRecord = record => ({
 
 const saveSingleTile = tile => Tile.save(tile)
 
+let tileDictionary = {}
+let tileLookup = []
+const getTileLookup = tile => {
+	const s = tile.join('-')
+	if (!tileDictionary[s]) {
+		tileDictionary[s] = tileLookup.length
+		tileLookup.push(tile)
+	}
+
+	return tileDictionary[s]
+}
+
+// defaults to identity when no lookup table found
+const resolveLookup = index => tileLookup ? tileLookup[index] : index
 
 const save = () => {
 	Message.log('Saving...')
+	tileDictionary = {}
+	tileLookup = []
+	const tileIndices = Object.values(tiles).map(saveSingleTile).map(getTileLookup)
 	lastSave = JSON.stringify({
+		game: 'americas',
+		revision: Version.revision,
 		entities: records.map(saveSingleRecord),
-		tiles: Object.values(tiles).map(saveSingleTile),
+		tileLookup,
+		tiles: tileIndices,
 		time: Time.save(),
 		unitView: UnitView.save(),
 		europe: Europe.save(),
@@ -256,9 +277,16 @@ const load = (src = null) => {
 		}
 	}
 	snapshot = JSON.parse(lastSave)
+	if (snapshot.game !== 'americas') {
+		console.warn('The save game does not appear to be a valid americas save game.')
+	}
+	if (snapshot.revision !== Version.revision) {
+		console.warn('The save games version does not match the version of the game. If you see no errors you can ignore this warning.')
+	}
 	globals = snapshot.globals
+	tileLookup = snapshot.tileLookup
 	MapEntity.prepare()
-	snapshot.tiles.forEach(reviveTile)
+	snapshot.tiles.map(resolveLookup).forEach(reviveTile)
 	MapEntity.load()
 	const mapView = new MapView()
 	snapshot.entities.forEach(record => record.listeners = [])
@@ -289,7 +317,6 @@ const upload = () => {
 	input.setAttribute('accept', 'application/json, .json')
 	input.addEventListener('change', () => {	
 		const file = input.files[0]
-		// console.log(file)
 		if (file) {
 	    var reader = new FileReader();
 	    reader.readAsText(file, "UTF-8")

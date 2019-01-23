@@ -20,13 +20,11 @@ body {
 	top: 10px;
 	left: 10px;
 	color: white;
-	pointer-events: none
+	pointer-events: none;
+	display: inline;
 }
 
 .imprint {
-	// a {
-	// 	color: white;
-	// }
 	font-size: 22px;
 	position: absolute;
 	bottom: 1vw;
