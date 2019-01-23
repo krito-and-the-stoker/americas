@@ -7,36 +7,75 @@ const	add = (entity, key, member) => {
 	if (!entity[key].includes(member)) {
 		entity[key].push(member)
 		update(entity, key)
+		updateOne(entity, key, member)
 	}
 }
 
 const	remove = (entity, key, member) => {
 	update(entity, key, entity[key].filter(u => u !== member))
+	cleanupOne(key, member)
 }
 
 const has = (entity, key, member) => entity[key].includes(member)
 
+
+
 const listenerKey = key => `${key}ListenerEach`
+const cleanupKey = key => `${key}CleanupEach`
+
 const init = (entity, key) => {
 	entity[listenerKey(key)] = []
 }
-const updateOne = member => {
-	member.listenerEach.cleanup.forEach(fn => fn())
-	member.listenerEach.cleanup = member.listenerEach.listener.map(fn => fn())
+
+const initOne = (key, member) => {
+	member[cleanupKey(key)] = []
 }
-const listenEach = (entity, key, fn) => {
-	const listener = listenerKey(key)
-	if (!entity[listener]) {
-		init(entity, key)
+const cleanupOne = (key, member) => {
+	if (member[cleanupKey(key)]) {
+		member[cleanupKey(key)].forEach(fn => fn ? fn() : null)	
 	}
+}
+
+const updateOne = (entity, key, member) => {
+	if (entity[listenerKey(key)]) {
+		cleanupOne(key, member)
+		member[cleanupKey(key)] = entity[listenerKey(key)].map(fn => fn(member))
+	}
+}
+
+const unsubscribe = (entity, key, fn) => {
+	const index = entity[listenerKey(key)].indexOf(fn)
+	entity[listenerKey(key)] = entity[listenerKey(key)].filter(f => f !== fn)
 
 	entity[key].forEach(member => {
-
+		if (member[cleanupKey(key)][index]) {
+			member[cleanupKey(key)][index]()
+		}
+		member[cleanupKey(key)] = member[cleanupKey(key)].filter((cleanup, i) => i !== index)
 	})
 }
+
+const listenEach = (entity, key, fn) => {
+	if (!entity[listenerKey(key)]) {
+		init(entity, key)
+	}
+	entity[listenerKey(key)].push(fn)
+
+	entity[key].forEach(member => {
+		if (!member[cleanupKey(key)]) {
+			initOne(key, member)
+		}
+		member[cleanupKey(key)].push(fn(member))
+	})
+
+	return () => unsubscribe(entity, key, fn)
+}
+
+
 
 export default {
 	add,
 	remove,
+	listenEach,
 	has
 }

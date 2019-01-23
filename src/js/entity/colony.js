@@ -76,6 +76,10 @@ const listen = {
 	productionBonus: (colony, fn) => Binding.listen(colony, 'productionBonus', fn),
 }
 
+const listenEach = {
+	units: (colony, fn) => Member.listenEach(colony, 'units', fn)
+}
+
 const update = {
 	construction: (colony, value) => Binding.update(colony, 'construction', value),
 	buildings: (colony, value) => Binding.update(colony, 'buildings', value),
@@ -327,6 +331,7 @@ export default {
 	add,
 	remove,
 	listen,
+	listenEach,
 	update,
 	tories,
 	rebels,

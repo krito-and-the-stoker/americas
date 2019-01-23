@@ -20,89 +20,117 @@ import EquipUnitFromColony from '../../action/equipUnitFromColony'
 const create = (colony, closeScreen, originalDimensions) => {
 	const container = new PIXI.Container()
 
-	const unsubscribeUnits = Colony.listen.units(colony, units => {
-		const ships = units.filter(unit => unit.domain === 'sea' || unit.properties.cargo > 0)
-		const shipViews = ships.map(Transport.create)
-		shipViews.forEach((view, index) => {
+	const shipPositions = [{
+		x: 0,
+		y: 550,
+		taken: false
+	}, {
+		x: 128,
+		y: 550,
+		taken: false
+	}, {
+		x: 256,
+		y: 550,
+		taken: false
+	}, {
+		x: 3*128,
+		y: 550,
+		taken: false
+	}, {
+		x: 512,
+		y: 550,
+		taken: false
+	}]
+	const unsubscribeShips = Colony.listenEach.units(colony, unit => {
+		if (unit.domain === 'sea' || unit.properties.cargo > 0) {
+			const view = Transport.create(unit)
 			Click.on(view.sprite, () => {
 				closeScreen()
 				MapView.centerAt(view.unit.mapCoordinates, 0)
 				UnitMapView.select(view.unit)
 			})
-			view.container.x = index * 64 * 2
-			view.container.y = 10
+			const position = shipPositions.find(pos => !pos.taken)
+			if (!position) {
+				console.warn('could not display unit, no position left', unit)
+				return
+			}
+
+			position.taken = true
+			view.container.x = position.x
+			view.container.y = position.y
 			container.addChild(view.container)
-		})
 
-		const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
-		greyScaleFilter.blackAndWhite()
-		const createLandUnitsRaw = () => {
-			return Util.mergeFunctions(units
-				.filter(unit => unit.domain === 'land' && !unit.properties.cargo)
-				.filter(unit => !unit.colonist || !unit.colonist.colony)
-				.map((unit, index, all) => {
-					const shownUnits = all.length
-					const sprite = UnitView.create(unit)
-					sprite.x = 0.9* originalDimensions.x - (shownUnits - index - 1) * sprite.width
-					sprite.y = 0.9 * originalDimensions.y - 125 - sprite.height
-					sprite.scale.set(2)
-					container.addChild(sprite)
-					Drag.makeDraggable(sprite, { unit })
-
-					Click.on(sprite, () => {
-						closeScreen()
-						MapView.centerAt(unit.mapCoordinates, 0)
-						UnitMapView.select(unit)
-					})
-
-					const unsubscribePioneering = Unit.listen.pioneering(unit, pioneering => {
-						sprite.filters = pioneering ? [greyScaleFilter] : []
-					})
-
-					const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {
-						const { good, amount, colony } = args
-						const fromUnit = args.unit
-						if (fromUnit) {
-							EquipUnitFromShip(fromUnit, unit, { good, amount })
-							sprite.texture = UnitView.createTexture(unit)
-						}
-						if (colony) {
-							EquipUnitFromColony(colony, unit, { good, amount })
-							sprite.texture = UnitView.createTexture(unit)
-						}
-
-						return false
-					})
-					return () => {
-						unsubscribeDrag()				
-						container.removeChild(sprite)
-					}
-				}))
-		}
-		const createLandUnits = Binding.shared(createLandUnitsRaw)
-		const unsubscribeLandUnits = Util.mergeFunctions(units
-			.filter(unit => unit.domain === 'land')
-			.map(unit => {
-				return Unit.listen.colonist(unit,
-					colonist => {
-						if (colonist) {
-							return Colonist.listen.colony(colonist, createLandUnits)
-						}
-						return createLandUnits()
-					})
-			}))
-
-		return () => {
-			shipViews.forEach(view => {
+			return () => {
+				position.taken = false
 				view.unsubscribe()
 				container.removeChild(view.container)
-			})
-			unsubscribeLandUnits()
+			}
+		}
+	})
+
+	const landPositions = Util.range(25).map(index => ({
+		x: 0.9 * originalDimensions.x - index * 64,
+		y: 0.9 * originalDimensions.y - 125 - 64,
+		taken: false
+	}))
+	const drawLandUnit = unit => {
+		const position = landPositions.find(pos => !pos.taken)
+		if (!position) {
+			console.warn('could not display unit, no position left', unit)
+			return
+		}
+		position.taken = true
+
+		const sprite = UnitView.create(unit)
+		sprite.x = position.x
+		sprite.y = position.y
+		sprite.scale.set(2)
+		container.addChild(sprite)
+
+		Drag.makeDraggable(sprite, { unit })
+
+		Click.on(sprite, () => {
+			closeScreen()
+			MapView.centerAt(unit.mapCoordinates, 0)
+			UnitMapView.select(unit)
+		})
+
+		const unsubscribePioneering = Unit.listen.pioneering(unit, pioneering => {
+			sprite.filters = pioneering ? [greyScaleFilter] : []
+		})
+
+		const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {
+			const { good, amount, colony } = args
+			const fromUnit = args.unit
+			if (fromUnit) {
+				EquipUnitFromShip(fromUnit, unit, { good, amount })
+				sprite.texture = UnitView.createTexture(unit)
+			}
+			if (colony) {
+				EquipUnitFromColony(colony, unit, { good, amount })
+				sprite.texture = UnitView.createTexture(unit)
+			}
+
+			return false
+		})
+
+		return () => {
+			unsubscribeDrag()				
+			container.removeChild(sprite)
+		}
+	}
+
+	const unsubscribeLandUnits = Colony.listenEach.units(colony, unit => {
+		if (unit.domain === 'land' && !unit.properties.cargo) {
+			return Unit.listen.colonist(unit, colonist =>
+				colonist ? Colonist.listen.colony(colonist, colony => 
+					colony ? null : drawLandUnit(unit)) : drawLandUnit(unit))
 		}
 	})
 
 	const unsubscribe = () => {
-		unsubscribeUnits()
+		unsubscribeLandUnits()
+		unsubscribeShips()
 	}
 
 	return {
