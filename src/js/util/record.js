@@ -254,6 +254,7 @@ const load = () => {
 	MapEntity.prepare()
 	snapshot.tiles.forEach(reviveTile)
 	MapEntity.load()
+	const mapView = new MapView()
 	snapshot.entities.forEach(record => record.listeners = [])
 	snapshot.entities.forEach(revive)
 	Time.load(snapshot.time)
@@ -265,7 +266,6 @@ const load = () => {
 
 	loadedListeners.forEach(fn => fn())
 
-	const mapView = new MapView()
 
 	RenderView.restart()
 	Message.log('Game loaded')
