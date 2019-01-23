@@ -33,7 +33,7 @@
 		"workspace": 3,
 		"consumption": {
 			"good": "ore",
-			"amount": [3, 6, 6]
+			"amount": [3, 6, 9]
 		},
 		"production": {
 			"good": "tools",
@@ -57,7 +57,7 @@
 		"workspace": 3,
 		"consumption": {
 			"good": "tobacco",
-			"amount": [3, 6, 6]
+			"amount": [3, 6, 9]
 		},
 		"production": {
 			"good": "cigars",
@@ -81,7 +81,7 @@
 		"workspace": 3,
 		"consumption": {
 			"good": "furs",
-			"amount": [3, 6, 6]
+			"amount": [3, 6, 9]
 		},
 		"production": {
 			"good": "coats",
@@ -155,7 +155,7 @@
 		"workspace": 3,
 		"consumption": {
 			"good": "cotton",
-			"amount": [3, 6, 6]
+			"amount": [3, 6, 9]
 		},
 		"production": {
 			"good": "cloth",
@@ -179,7 +179,7 @@
 		"workspace": 3,
 		"consumption": {
 			"good": "sugar",
-			"amount": [3, 6, 6]
+			"amount": [3, 6, 9]
 		},
 		"production": {
 			"good": "rum",
@@ -276,7 +276,7 @@
 		}],
 		"consumption": {
 			"good": "tools",
-			"amount": [0, 3, 6, 6]
+			"amount": [0, 3, 6, 9]
 		},
 		"production": {
 			"good": "guns",
