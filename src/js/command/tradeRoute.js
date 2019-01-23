@@ -48,7 +48,7 @@ const match = transport => {
 					PathFinder.distance(supply.colony.mapCoordinates, demand.colony.mapCoordinates, transport, 8*transport.properties.speed + 1)
 			}))
 		.filter(route => route.distance < 8*transport.properties.speed)
-		.filter(route => route.amount > 0)).flat()
+		.filter(route => route.amount >= 10)).flat()
 	// console.log('demands', demands)
 	// console.log('supply', supply)
 	// console.log('routes', routes)
