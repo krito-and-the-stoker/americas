@@ -77,7 +77,7 @@ const handleKeydown = (e) => {
 	}
 
 	const unit = UnitView.selectedUnit()
-	if (unit) {
+	if (unit && !e.ctrlKey && !e.metaKey) {
 		if (e.key === 'b') {
 			Commander.scheduleInstead(unit.commander, Found.create(unit))
 		}

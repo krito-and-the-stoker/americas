@@ -8,7 +8,7 @@ import Record from '../util/record'
 import Dialog from '../view/ui/dialog'
 
 
-const create = (unit, coords) => {
+const create = (unit, coords, moveToCommander = null) => {
 	if (unit.unloadingInProgress ||
 		coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y) {
 
@@ -17,7 +17,9 @@ const create = (unit, coords) => {
 		}
 	}
 
-	const moveToCommander = Commander.create()
+	if (!moveToCommander) {
+		moveToCommander = Commander.create()
+	}
 
 	const target = MapEntity.tile(coords)
 	if (target.name === 'sea lane') {	
@@ -28,40 +30,56 @@ const create = (unit, coords) => {
 		})
 	}
 
-	const originalInit = moveToCommander.init
-	moveToCommander.init = () => {
-		if (originalInit) {
-			originalInit()
+	const update = () => {
+		if (moveTo.pleaseStop) {
+			moveToCommander.pleaseStop = true
+		}
+
+		return moveToCommander.update()
+	}
+
+	const init = () => {
+		if (moveToCommander.init) {
+			moveToCommander.init()
 		}
 
 		if (unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y) {
 			return false
 		}
 
-		const path = PathFinder.findPathXY(unit.mapCoordinates, coords, unit).filter((waypoint, index) => index > 0)
-		moveToCommander.commands = path.map(waypoint => Move.create(unit, waypoint.mapCoordinates)).concat(moveToCommander.commands)
+		if (Commander.isIdle(moveToCommander)) {		
+			const path = PathFinder.findPathXY(unit.mapCoordinates, coords, unit).filter((waypoint, index) => index > 0)
+			moveToCommander.commands = path.map(waypoint => Move.create(unit, waypoint.mapCoordinates)).concat(moveToCommander.commands)
+		}
+
 		return true
 	}
 
-	moveToCommander.save = () => ({
+	const save = () => ({
 		type: 'moveTo',
-		commands: moveToCommander.commands.map(cmd => cmd.save()),
-		currentCommand: moveToCommander.currentCommand ? moveToCommander.currentCommand.save() : null,
 		coords,
+		moveToCommander: moveToCommander.save(),
 		unit: Record.reference(unit)
 	})
 
-	return moveToCommander
+	const moveTo = {
+		init,
+		update,
+		priority: true,
+		currentCommand: moveToCommander.currentCommand,
+		commands: moveToCommander.commands,
+		save
+	}
+
+	return moveTo
 }
 
 const load = data => {
-	if (data.commands) {
-		const commands = (data.currentCommand ? [data.currentCommand, ...data.commands] : data.commands).map(cmd => Commander.getModule(cmd.type).load(cmd))
-		return Commander.create({ commands })
-	} else {
-		const unit = Record.dereference(data.unit)
-		return create(unit, data.coords)
-	}
+	console.log(data)
+	const unit = Record.dereference(data.unit)
+	const commander = Commander.load(data.moveToCommander)
+	const coords = data.coords
+	return create(unit, data.coords, commander)
 }
 
 
