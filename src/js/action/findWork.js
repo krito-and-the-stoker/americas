@@ -17,5 +17,7 @@ export default colonist => {
 		{ production: -1 })
 	if (winner.tile) {
 		Colonist.beginFieldWork(colonist, winner.tile, 'food')
+	} else {
+		Colonist.beginColonyWork(colonist, 'townhall')
 	}
 }
