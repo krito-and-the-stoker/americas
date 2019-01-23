@@ -46,6 +46,7 @@ const create = (args = {}) => {
 	const commands = args.commands || []
 	const commander = {
 		commands,
+		priority: true,
 		currentCommand: null
 	}
 

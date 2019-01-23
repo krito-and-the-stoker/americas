@@ -1,4 +1,4 @@
-import Building from '../entity/building'
+import Production from '../entity/production'
 import Storage from '../entity/storage'
 import Time from '../timeline/time'
 import Colony from '../entity/colony'
@@ -28,29 +28,31 @@ const create = (colony, building, colonist) => {
 			return true
 		}
 
-		const consumption = Building.consumption(colony, building, colonist, scale)
-		const production = Building.production(colony, building, colonist, scale)
-		if (consumption) {
+		const production = Production.production(colony, building, colonist)
+		const consumption = Production.consumption(building)
+		production.amount = scale * production.amount
+		if (consumption.good) {
+			production.amount = Math.min(colony.storage[consumption.good], production.amount)
+			consumption.amount = production.amount	
+		}
+		if (consumption.good) {
 			Storage.update(colony.storage, { good: consumption.good, amount: -consumption.amount })
 			Storage.update(colony.productionRecord, { good: consumption.good, amount: -consumption.amount })
 		}
-		if (production && production.good) {
+		if (production.type === 'good') {
 			Storage.update(colony.storage, { good: production.good, amount: production.amount })
-			Storage.update(colony.productionRecord, { good: production.good, amount: production.amount })
 		}
-		if (production && production.type) {
-			if (production.type === 'construction') {
-				colony.construction.amount += 0.5 * production.amount
-				Colony.update.construction(colony)
-			}
-			if (production.type === 'bells') {
-				Colony.update.bells(colony, production.amount)
-			}
-			if (production.type === 'crosses') {
-				Europe.update.crosses(production.amount)
-			}
-			Storage.update(colony.productionRecord, { good: production.type, amount: production.amount })
+		if (production.type === 'construction') {
+			colony.construction.amount += production.amount
+			Colony.update.construction(colony)
 		}
+		if (production.type === 'bells') {
+			Colony.update.bells(colony, production.amount)
+		}
+		if (production.type === 'crosses') {
+			Europe.update.crosses(production.amount)
+		}
+		Storage.update(colony.productionRecord, { good: production.good, amount: production.amount })
 
 		return true
 	}

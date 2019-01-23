@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 import Goods from '../../data/goods.json'
 import Buildings from '../../data/buildings.json'
 import Building from '../../entity/building'
+import Production from '../../entity/production'
 import Ressources from '../../render/ressources'
 import Util from '../../util/util'
 import Drag from '../../input/drag'
@@ -81,9 +82,9 @@ const createBuilding = (colony, name) => {
 			colonistSprite.scale.set(1.5)
 			container.colonists.addChild(colonistSprite)
 
-			const production = Building.production(colony, name, colonist)
+			const production = Production.production(colony, name, colonist)
 			if (production) {
-				const productionSprites = ProductionView.create(production.good || production.type, production.amount, TILE_SIZE / 2)
+				const productionSprites = ProductionView.create(production.good, production.amount, TILE_SIZE / 2)
 				productionSprites.forEach(s => {
 					s.position.x += work.position * 128 / 3
 					s.position.y += 20 + TILE_SIZE
@@ -162,23 +163,3 @@ const create = colony => {
 }
 
 export default { create }
-
-
-
-// ARMORY
-// ARSENAL
-// CATHEDRAL
-// CHURCH
-// COLLEGE
-// CUSTOM HOUSE
-// DRYDOCKS
-// FORT
-// FORTRESS
-// MAGAZINE
-// NEWSPAPER
-// PRINTING PRESS
-// SCHOOLHOUSE
-// SHIPYARD
-// STABLES
-// STOCKADE
-// UNIVERSITY

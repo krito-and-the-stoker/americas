@@ -170,75 +170,9 @@ const construct = (colony, construction) => {
 	Colony.update.construction(colony, newConstruction)
 }
 
-const expert = (colonist, type) => {
-	if (colonist && colonist.expert === 'criminal') {
-		return .33
-	}
 
-	if (colonist && colonist.expert === 'servant') {
-		return .66
-	}
-
-	return type && colonist && colonist.expert === Goods[type].expert ? 2 : 1
-}
-
-const efficiency = (colony, building, colonist, scale = 1) => {
-	const level = colony.buildings[building]
-	const type = Buildings[building].consumption ? Buildings[building].consumption.good || Buildings[building].consumption.type : null
-	const consumption = Buildings[building].consumption
-
-	if (scale === 0) {
-		return 0
-	}
-
-	//are there enough goods?
-	return consumption ? Math.min(1, colony.storage[consumption.good] / (scale * expert(colonist, type) * consumption.amount[level])) : 1
-}
-const production = (colony, building, colonist, scale = null) => {
-	const baseProduction = Buildings[building].production
-	if (!baseProduction) {
-		return null
-	}
-
-	if (scale === 0) {
-		return {}
-	}
-
-	const level = colony.buildings[building]
-	const type = baseProduction.good || baseProduction.type
-	const baseAmount = Math.round(colony.productionBonus * (baseProduction.amount[level] / 3) + baseProduction.amount[level])
-	const amount = expert(colonist, type) *
-		(scale !== null ? scale * efficiency(colony, building, colonist, scale) : 1) *
-		( type === 'bells' ? (1 + 0.5*colony.buildings.press) : 1) *
-		baseAmount
-	return {
-		good: baseProduction.good,
-		type: baseProduction.type,
-		amount: scale === null ? Math.round(amount) : amount
-	}
-}
-
-const consumption = (colony, building, colonist, scale = 1) => {
-	const baseConsumption = Buildings[building].consumption
-	if (!baseConsumption) {
-		return null
-	}
-
-	const level = colony.buildings[building]
-	const baseProduction = Buildings[building].production
-	const type = baseProduction ? baseProduction.good || baseProduction.type : null
-	const baseAmount = Math.round(colony.productionBonus * (baseConsumption.amount[level] / 3) + baseConsumption.amount[level])
-	return {
-		good: baseConsumption.good,
-		type: baseConsumption.type,
-		amount: scale * expert(colonist, type) * efficiency(colony, building, colonist, scale) * baseAmount
-	}
-
-}
 
 export default {
-	production,
-	consumption,
 	frame,
 	create,
 	constructionOptions,
@@ -246,43 +180,3 @@ export default {
 	construct,
 	workspace
 }
-
-
-// ARMORY
-// ARSENAL
-// BLACKSMITH'S HOUSE
-// BLACKSMITHS'S SHOP
-// CARPENTER'S SHOP
-// CATHEDRAL
-// CHURCH
-// CIGAR FACTORY
-// COAT FACTORY
-// COLLEGE
-// CUSTOM HOUSE
-// DOCKS
-// DRYDOCKS
-// FORT
-// FORTRESS
-// FUR TRADER'S HOUSE
-// FUR TRADING POST 
-// IRON WORKS
-// LUMBER MILL
-// MAGAZINE
-// NEWSPAPER
-// PRINTING PRESS
-// RUM DISTILLER'S HOUSE
-// RUM DISTILLERY
-// RUM FACTORY
-// SCHOOLHOUSE
-// SHIPYARD
-// STABLES
-// STOCKADE
-// TEXTILE MILL
-// TOBACCONIST'S HOUSE
-// TOBACCONIST'S SHOP
-// TOWN HALL
-// UNIVERSITY
-// WAREHOUSE
-// WAREHOUSE EXPANSIONS
-// WEAVER'S HOUSE
-// WEAVER'S SHOP

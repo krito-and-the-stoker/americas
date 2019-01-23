@@ -12,7 +12,7 @@ const PLOW = 80000
 const CONSTRUCT_ROAD = 80000
 const YEAR = 40000
 const CARGO_LOAD_TIME = 400
-const LOW_PRIORITY_FACTOR = 6
+const LOW_PRIORITY_FACTOR = 30
 
 let currentTime = 0
 let scheduled = []
@@ -38,6 +38,7 @@ const pause = () => update.paused(true)
 const resume = () => update.paused(false)
 const togglePause = () => update.paused(!time.paused)
 
+
 let step = 0
 const advance = deltaTime => {
 	if (time.paused) {
@@ -46,65 +47,44 @@ const advance = deltaTime => {
 	currentTime += deltaTime * time.scale
 	// TODO: move this away from here
 	try {
-		if (step < LOW_PRIORITY_FACTOR) {
-			step += 1
-			const tasks = scheduled
-				.filter(e => e.priority)
-				.filter(e => e.time <= currentTime)
-				.filter(e => e.started || !e.init)
-				.filter(e => e.update)
-
-			tasks
-				.filter(e => !e.update(currentTime))
-				.forEach(e => {
-					if (e.finished) {
-						e.finished()
-					}
-					e.cleanup = true					
-				})
-
-			tasks
-				.filter(e => e.willStop)
-				.forEach(e => {
-					if (e.stopped) {
-						e.stopped()
-					}
-					e.cleanup = true
-				})
-
-			scheduled = scheduled.filter(e => !e.cleanup)
-		} else {
+		step += 1
+		if (step === LOW_PRIORITY_FACTOR) {
 			step = 0
-
 			update.year(Math.round(startYear + currentTime / YEAR))
-			const readyTasks = scheduled.filter(e => e.time <= currentTime)
-			const needsInitialization = readyTasks.filter(e => !e.started && e.init)
-			const finishedAfterInit = needsInitialization.filter(e => {
-				e.started = true
-				return !e.init(currentTime)
+		}
+
+		const tasks = scheduled
+			.filter(e => !step || e.priority)
+			.filter(e => {
+				if (!e.started && e.init) {
+					e.alive = e.init(currentTime)
+					e.started = true
+				} else {
+					e.alive = true
+				}
+				return e.started || !e.init
 			})
 			
-			const finished = readyTasks
-				.filter(e => !finishedAfterInit.includes(e))
-				.filter(e => !e.update || !e.update(currentTime))
-
-			Array().concat(finished).concat(finishedAfterInit).forEach(e => {
+		tasks
+			.filter(e => !e.alive || !e.update || !e.update(currentTime))
+			.forEach(e => {
 				if (e.finished) {
 					e.finished()
 				}
 				e.cleanup = true
 			})
-			const willStop = scheduled.filter(e => e.willStop)
-			willStop.forEach(e => {
+
+		scheduled
+			.filter(e => e.willStop)
+			.forEach(e => {
 				if (e.stopped) {
 					e.stopped()
 				}
 				e.cleanup = true
 			})
-			scheduled = scheduled.filter(e => !e.cleanup)
-		}
-	}
-	catch(error) {
+
+		scheduled = scheduled.filter(e => !e.cleanup)
+	}	catch(error) {
 		MainLoop.stop()
 		throw error
 	}
@@ -122,13 +102,12 @@ const update = {
 	paused: value => Binding.update(time, 'paused', value),
 }
 
-const schedule = (e, time = null) => {
+const schedule = e => {
 	const task = {
 		...e,
 		started: false,
 		cleanup: false,
 		willStop: false,
-		time: time || currentTime
 	}
 	scheduled.push(task)
 
