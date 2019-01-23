@@ -23,11 +23,11 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 64,
-			"tools": 20
+			"construction": 120,
+			"tools": 40
 		}, {
-			"construction": 240,
-			"tools": 100
+			"construction": 480,
+			"tools": 200
 		}],
 		"width": 1,
 		"workspace": 3,
@@ -46,11 +46,11 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 64,
-			"tools": 20
+			"construction": 120,
+			"tools": 40
 		}, {
-			"construction": 160,
-			"tools": 100
+			"construction": 320,
+			"tools": 200
 		}],
 		"width": 1,
 		"workspace": 3,
@@ -69,11 +69,11 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 56,
-			"tools": 20
+			"construction": 110,
+			"tools": 40
 		}, {
-			"construction": 160,
-			"tools": 100
+			"construction": 320,
+			"tools": 200
 		}],
 		"width": 1,
 		"workspace": 3,
@@ -92,7 +92,7 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 52
+			"construction": 100
 		}],
 		"width": 1,
 		"workspace": 3,
@@ -123,13 +123,13 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 80
+			"construction": 160
 		}, {
-			"construction": 80,
-			"tools": 20
+			"construction": 160,
+			"tools": 40
 		}, {
-			"construction": 80,
-			"tools": 20
+			"construction": 160,
+			"tools": 40
 		}],
 		"width": 2,
 		"workspace": 0
@@ -141,11 +141,11 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 64,
-			"tools": 20
+			"construction": 120,
+			"tools": 40
 		}, {
-			"construction": 160,
-			"tools": 100
+			"construction": 320,
+			"tools": 200
 		}],
 		"width": 1,
 		"workspace": 3,
@@ -164,11 +164,11 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 64,
-			"tools": 20
+			"construction": 120,
+			"tools": 40
 		}, {
-			"construction": 160,
-			"tools": 100
+			"construction": 320,
+			"tools": 200
 		}],
 		"width": 1,
 		"workspace": 3,
@@ -189,13 +189,13 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 52
+			"construction": 100
 		}, {
-			"construction": 80,
+			"construction": 160,
 			"tools": 50
 		}, {
-			"construction": 240,
-			"tools": 100
+			"construction": 480,
+			"tools": 200
 		}]
 	},
 	"school": {
@@ -207,13 +207,13 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 64
+			"construction": 120
 		}, {
-			"construction": 160,
-			"tools": 50
-		}, {
-			"construction": 200,
+			"construction": 320,
 			"tools": 100
+		}, {
+			"construction": 400,
+			"tools": 200
 		}]
 	},
 	"church": {
@@ -225,10 +225,10 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 64
+			"construction": 120
 		}, {
-			"construction": 178,
-			"tools": 100
+			"construction": 350,
+			"tools": 200
 		}],
 		"production": {
 			"good": "crosses",
@@ -244,11 +244,11 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 52,
-			"tools": 20
+			"construction": 100,
+			"tools": 40
 		}, {
-			"construction": 120,
-			"tools": 50
+			"construction": 240,
+			"tools": 100
 		}]
 	},
 	"gunsmiths": {
@@ -260,13 +260,13 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 52
-		}, {
-			"construction": 120,
-			"tools": 50
+			"construction": 100
 		}, {
 			"construction": 240,
 			"tools": 100
+		}, {
+			"construction": 480,
+			"tools": 200
 		}],
 		"consumption": {
 			"good": "tools"
@@ -286,8 +286,8 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 160,
-			"tools": 50
+			"construction": 320,
+			"tools": 100
 		}]
 	},
 	"fortifications": {
@@ -299,13 +299,13 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 64
+			"construction": 120
 		}, {
-			"construction": 120,
-			"tools": 100
-		}, {
-			"construction": 320,
+			"construction": 240,
 			"tools": 200
+		}, {
+			"construction": 640,
+			"tools": 400
 		}]
 	},
 	"stables": {
@@ -317,7 +317,7 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 64
+			"construction": 120
 		}]
 	}
 }

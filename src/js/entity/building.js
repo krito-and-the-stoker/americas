@@ -44,7 +44,7 @@ const constructionOptions = colony => {
 	const wagontrain = [{
 		target: "wagontrain",
 		name: "Wagon Train",
-		cost: { construction: 40 },
+		cost: { construction: 80 },
 		action: () => {
 			const unit = Unit.create('wagontrain', colony.mapCoordinates)
 			Notification.create({ type: 'construction', colony, unit })
@@ -55,8 +55,8 @@ const constructionOptions = colony => {
 		target: "artillery",
 		name: "Artillery",
 		cost: {
-			construction: 192,
-			tools: 40
+			construction: 400,
+			tools: 80
 		},
 		action: () => {
 			const unit = Unit.create('artillery', colony.mapCoordinates)
@@ -68,8 +68,8 @@ const constructionOptions = colony => {
 		target: "caravel",
 		name: "Caravel",
 		cost: {
-			construction: 128,
-			tools: 40
+			construction: 250,
+			tools: 80
 		},
 		action: () => {
 			const unit = Unit.create('caravel', colony.mapCoordinates)
@@ -79,8 +79,8 @@ const constructionOptions = colony => {
 		target: "merchantman",
 		name: "Merchantman",
 		cost: {
-			construction: 192,
-			tools: 80
+			construction: 400,
+			tools: 160
 		},
 		action: () => {
 			const unit = Unit.create('merchantman', colony.mapCoordinates)
@@ -90,8 +90,8 @@ const constructionOptions = colony => {
 		target: "galleon",
 		name: "Galleon",
 		cost: {
-			construction: 320,
-			tools: 100
+			construction: 640,
+			tools: 200
 		},
 		action: () => {
 			const unit = Unit.create('galleon', colony.mapCoordinates)
@@ -101,8 +101,8 @@ const constructionOptions = colony => {
 		target: "privateer",
 		name: "Privateer",
 		cost: {
-			construction: 256,
-			tools: 120
+			construction: 500,
+			tools: 240
 		},
 		action: () => {
 			const unit = Unit.create('privateer', colony.mapCoordinates)
@@ -112,8 +112,8 @@ const constructionOptions = colony => {
 		target: "frigate",
 		name: "Frigate",
 		cost: {
-			construction: 512,
-			tools: 200
+			construction: 1000,
+			tools: 400
 		},
 		action: () => {
 			const unit = Unit.create('frigate', colony.mapCoordinates)
@@ -137,7 +137,7 @@ const constructionOptions = colony => {
 const noProductionOption = () => ({
 	target: 'none',
 	cost: {
-		construction: 24
+		construction: 50
 	},
 	name: 'No Production'
 })
@@ -161,7 +161,7 @@ const construct = (colony, construction) => {
 		action: () => {},
 		name: `${construction.name} completed`,
 		cost: {
-			construction: 24,
+			construction: 50,
 			tools: 0
 		},
 		amount: construction.amount
