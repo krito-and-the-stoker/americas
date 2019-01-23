@@ -113,8 +113,8 @@ const start = async () => {
 		await loadingRessources
 		await nextFrame()
 
-		MapEntity.create({ data: americaSmallMap })
-		// MapEntity.create({ data: americaLargeMap })
+		// MapEntity.create({ data: americaSmallMap })
+		MapEntity.create({ data: americaLargeMap })
 
 		await nextFrame()
 
@@ -146,8 +146,8 @@ const start = async () => {
 		YearView.initialize(Foreground.get().permanent)
 
 		// start game!
-		americaSmall()
-		// americaLarge()
+		// americaSmall()
+		americaLarge()
 
 		await nextFrame()
 		MapView.zoomBy(1/0.35, null, 0)
