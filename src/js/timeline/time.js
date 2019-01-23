@@ -12,6 +12,7 @@ const PLOW = 80000
 const CONSTRUCT_ROAD = 80000
 const YEAR = 40000
 const CARGO_LOAD_TIME = 400
+const LOW_PRIORITY_FACTOR = 6
 
 let currentTime = 0
 let scheduled = []
@@ -37,7 +38,7 @@ const pause = () => update.paused(true)
 const resume = () => update.paused(false)
 const togglePause = () => update.paused(!time.paused)
 
-
+let step = 0
 const advance = deltaTime => {
 	if (time.paused) {
 		return
@@ -45,32 +46,63 @@ const advance = deltaTime => {
 	currentTime += deltaTime * time.scale
 	// TODO: move this away from here
 	try {
-		update.year(Math.round(startYear + currentTime / YEAR))
-		const readyTasks = scheduled.filter(e => e.time <= currentTime)
-		const needsInitialization = readyTasks.filter(e => !e.started && e.init)
-		const finishedAfterInit = needsInitialization.filter(e => {
-			e.started = true
-			return !e.init(currentTime)
-		})
-		
-		const finished = readyTasks
-			.filter(e => !finishedAfterInit.includes(e))
-			.filter(e => !e.update || !e.update(currentTime))
+		if (step < LOW_PRIORITY_FACTOR) {
+			step += 1
+			const tasks = scheduled
+				.filter(e => e.priority)
+				.filter(e => e.time <= currentTime)
+				.filter(e => e.started || !e.init)
+				.filter(e => e.update)
 
-		Array().concat(finished).concat(finishedAfterInit).forEach(e => {
-			if (e.finished) {
-				e.finished()
-			}
-			e.cleanup = true
-		})
-		const willStop = scheduled.filter(e => e.willStop)
-		willStop.forEach(e => {
-			if (e.stopped) {
-				e.stopped()
-			}
-			e.cleanup = true
-		})
-		scheduled = scheduled.filter(e => !e.cleanup)
+			tasks
+				.filter(e => !e.update(currentTime))
+				.forEach(e => {
+					if (e.finished) {
+						e.finished()
+					}
+					e.cleanup = true					
+				})
+
+			tasks
+				.filter(e => e.willStop)
+				.forEach(e => {
+					if (e.stopped) {
+						e.stopped()
+					}
+					e.cleanup = true
+				})
+
+			scheduled = scheduled.filter(e => !e.cleanup)
+		} else {
+			step = 0
+
+			update.year(Math.round(startYear + currentTime / YEAR))
+			const readyTasks = scheduled.filter(e => e.time <= currentTime)
+			const needsInitialization = readyTasks.filter(e => !e.started && e.init)
+			const finishedAfterInit = needsInitialization.filter(e => {
+				e.started = true
+				return !e.init(currentTime)
+			})
+			
+			const finished = readyTasks
+				.filter(e => !finishedAfterInit.includes(e))
+				.filter(e => !e.update || !e.update(currentTime))
+
+			Array().concat(finished).concat(finishedAfterInit).forEach(e => {
+				if (e.finished) {
+					e.finished()
+				}
+				e.cleanup = true
+			})
+			const willStop = scheduled.filter(e => e.willStop)
+			willStop.forEach(e => {
+				if (e.stopped) {
+					e.stopped()
+				}
+				e.cleanup = true
+			})
+			scheduled = scheduled.filter(e => !e.cleanup)
+		}
 	}
 	catch(error) {
 		MainLoop.stop()

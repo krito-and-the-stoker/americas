@@ -22,7 +22,7 @@ const create = colony => {
 		
 		if (deltaTimeCalled > 0) {
 			count += 1
-			if (count > 30) {
+			if (count > 12) {
 				Storage.goods(colony.productionSummary).forEach(({ good }) => colony.productionSummary[good] = 0)
 				Storage.productions(colony.productionSummary).forEach(({ good }) => colony.productionSummary[good] = 0)
 				Storage.goods(colony.productionRecord).forEach(({ good, amount }) => colony.productionRecord[good] = Math.round(amount / scale))

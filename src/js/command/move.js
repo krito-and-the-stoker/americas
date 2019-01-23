@@ -168,7 +168,8 @@ const createFromData = data => {
 		init,
 		update,
 		finished,
-		save
+		save,
+		priority: true,
 	}
 	
 }
