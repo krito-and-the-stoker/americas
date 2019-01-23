@@ -9,19 +9,23 @@ const create = colony => {
 	const container = new PIXI.Container()
 
 	const totalWidth = 550
+	const rows = 3
+	const height = 60
 
-	container.position.y = 880
+	container.position.y = 930 - height * rows
 	container.position.x = 10
 	const updateProductionSummary = summary => {
 		const packs = Storage.productions(summary).concat(Storage.goods(summary))
 			.filter(({ amount }) => amount !== 0)
 			.sort((a, b) => b.amount - a.amount)
-		const width = totalWidth / packs.length
+		const cols = Math.ceil(packs.length / rows)
+		const width = totalWidth / cols
 		const views = packs.map(pack => ProductionView.create(pack.good, pack.amount, width))
 
 		views.forEach((view, index) => {
 			view.forEach(s => {
-				s.x += index * width
+				s.x += (index % cols) * width
+				s.y += Math.floor(index / cols) * height
 				container.addChild(s)
 			})
 		})
