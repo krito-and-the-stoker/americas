@@ -15,6 +15,35 @@ const	createCoastLine = tiles => {
 	tiles.forEach(Tile.decideCoastalSea)
 }
 
+const createAreas = tiles => {
+	let currentArea = 0
+	const markArea = tile => {
+		tile.area = currentArea
+		let areaSize = 1
+		let neighbors = Tile.diagonalNeighbors(tile)
+			.filter(neighbor => !neighbor.area)
+			.filter(neighbor => neighbor.domain === tile.domain)
+		while(neighbors.length > 0) {
+			areaSize += neighbors.length
+			neighbors.forEach(n => n.area = currentArea)
+			neighbors = neighbors.map(n =>
+				Tile.diagonalNeighbors(n)
+					.filter(neighbor => !neighbor.area)
+					.filter(neighbor => neighbor.domain === tile.domain))
+					.flat()
+					.filter(Util.unique)
+		}
+	}
+	tiles.forEach(tile => {
+		if (!tile.area) {
+			currentArea += 1
+			markArea(tile)
+		}
+	})
+
+	Message.log(`Found ${currentArea} seperate areas`)
+}
+
 const get = () => ({
 	numTiles,
 	tiles
@@ -44,6 +73,7 @@ const create = ({ data }) => {
 	}))
 	Message.log('Creating coast line')
 	createCoastLine(tiles)
+	createAreas(tiles)
 	Message.log('Map created')
 
 	Record.setGlobal('numTiles', numTiles)
@@ -54,7 +84,7 @@ const discoverAll = () => {
 }
 
 const tileFromIndex = index => tiles[index]
-const	tile = ({ x, y }) => x > 0 && x < numTiles.x && y > 0 && y < numTiles.y ? tiles[y * numTiles.x + x] : null
+const	tile = ({ x, y }) => x >= 0 && x < numTiles.x && y >= 0 && y < numTiles.y ? tiles[y * numTiles.x + x] : null
 const	mapCoordinates = index => ({
 	x: (index % numTiles.x),
 	y: Math.floor(index / numTiles.x)
@@ -75,6 +105,7 @@ const load = () => {
 		.map(Record.dereferenceTile)
 
 	createCoastLine(tiles)
+	createAreas(tiles)
 
 	return { numTiles, tiles }
 }

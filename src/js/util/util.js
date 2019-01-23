@@ -65,6 +65,7 @@ export const rectangle = (index) => {
 }
 
 const choose = array => array[Math.floor(Math.random() * array.length)]
+const unique = (value, index, self) => self.indexOf(value) === index
 
 
 let currentId = 0
@@ -85,5 +86,6 @@ export default {
 	getUid,
 	mergeFunctions,
 	makeObject,
-	removeDuplicates
+	removeDuplicates,
+	unique
 }

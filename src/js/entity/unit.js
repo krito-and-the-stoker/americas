@@ -166,6 +166,15 @@ const hasCapacity = (unit, pack) => {
 	return Storage.split(testStorage).length + unit.passengers.length <= unit.properties.cargo
 }
 
+const area = unit => {
+	const tile = MapEntity.tile(unit.mapCoordinates)
+	if (tile.domain === unit.domain) {
+		return tile.area
+	}
+	return Tile.radius(tile)
+			.find(neighbor => neighbor.domain === unit.domain).area
+}
+
 const loadGoods = (unit, pack) => {
 	if (!hasCapacity(unit, pack) && pack.amount > 0) {
 		return false
@@ -273,4 +282,5 @@ export default {
 	save,
 	load,
 	at,
+	area,
 }

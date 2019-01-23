@@ -7,6 +7,7 @@ import LoadCargo from '../command/loadCargo'
 import MoveTo from '../command/moveTo'
 import Message from '../view/ui/message'
 import Colony from '../entity/colony'
+import Unit from '../entity/unit'
 
 
 const calculateDemands = () => Record.getAll('colony').map(colony =>
@@ -36,7 +37,11 @@ const match = transport => {
 	const demands = calculateDemands().filter(demand => transport.domain === 'land' || Colony.isCoastal(demand.colony))
 	const supply = calculateSupply().filter(supply => transport.domain === 'land' || Colony.isCoastal(supply.colony))
 	const routes = demands.map(demand => 
-		supply.filter(({ good }) => good === demand.good)
+		supply
+			.filter(({ good }) => good === demand.good)
+			.filter(({ colony }) =>
+				Colony.area(colony, transport.domain) === Colony.area(demand.colony, transport.domain) && 
+				Colony.area(colony, transport.domain) === Unit.area(transport))
 			.map(supply => ({
 				good: supply.good,
 				from: supply.colony,
@@ -52,7 +57,7 @@ const match = transport => {
 	// console.log('demands', demands)
 	// console.log('supply', supply)
 	// console.log('routes', routes)
-	const rate = route => route.amount * route.importance / Math.sqrt(1 + route.distance)
+	const rate = route => route.amount * route.importance / (1 + route.distance)
 	const route = routes.reduce((best, route) => rate(best) > rate(route) ? best : route, { importance: 0, distance: 0 })
 	// console.log('best', route)
 	return route.importance > 0 ? route : null

@@ -158,6 +158,9 @@ const diagonalNeighbors = tile => {
 	if (down(tile)) {
 		result = result.concat([left(down(tile)), right(down(tile))])
 	}
+	if (!up(tile) && !down(tile)) {
+		console.warn('tile has no vertical neighbors', tile)
+	}
 	return result.filter(n => n)
 }
 const radius = tile => diagonalNeighbors(tile).concat([tile])

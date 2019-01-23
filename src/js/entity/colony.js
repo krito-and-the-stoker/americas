@@ -83,6 +83,12 @@ const update = {
 	productionBonus: (colony, value) => Binding.update(colony, 'productionBonus', value),
 }
 
+const area = (colony, domain) =>
+	Tile.radius(MapEntity.tile(colony.mapCoordinates))
+		.filter(tile => tile.domain === domain)
+		.map(tile => tile.area)
+		.find(tile => true)
+
 const tories = colony => {
 	const colonists = colony.colonists.length
 	const percentage = 100 - Math.min(100, Math.round(colony.bells / (colonists + 1)))
@@ -251,22 +257,6 @@ const create = coords => {
 	const tile = MapEntity.tile(coords)
 	Tile.update.colony(tile, colony)
 
-	// TODO: this is the wrong place for that
-	// const colonist = Colonist.create(colony, unit)
-	// const winner = Tile.diagonalNeighbors(tile)
-	// 	.filter(neighbor => !neighbor.harvestedBy)
-	// 	.reduce((winner, neighbor) => {
-	// 		const production = Tile.production(neighbor, 'food', colonist)
-	// 		return production > winner.production ? {
-	// 			production,
-	// 			tile: neighbor
-	// 		 } : winner
-	// 	},
-	// 	{ production: -1 })
-	// if (winner.tile) {
-	// 	Colonist.beginFieldWork(colonist, winner.tile, 'food')
-	// }
-
 
 	initialize(colony)
 
@@ -330,6 +320,7 @@ export default {
 	create,
 	save,
 	load,
+	area,
 	coastalDirection,
 	isCoastal,
 	canEmploy,

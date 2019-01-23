@@ -18,7 +18,6 @@ const create = (colony, building, colonist) => {
 				consumption = Production.consumption(building)
 			})))
 
-
 	let lastUpdate = null
 	const update = currentTime => {
 		if (!lastUpdate) {
