@@ -50,6 +50,7 @@ const create = (unit, coords, moveToCommander = null, hasPath = false) => {
 
 			if (!MapEntity.tile(unit.mapCoordinates)) {
 				console.warn('unit is adrift', unit.mapCoordinates, unit)
+				return false
 			}
 
 			if (!hasPath) {
