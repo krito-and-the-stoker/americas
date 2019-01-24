@@ -85,13 +85,16 @@ const create = closeFn => {
 			const view = Transport.create(unit)
 
 			Click.on(view.sprite, () =>
-				selectTarget(unit, container.dialog).then(() => {
-					Europe.listen.units(units => {
-						if (!units.some(unit => unit.domain === 'sea')) {
-							setTimeout(closeFn, 1000)
-						}
-					})()
-				}))
+				selectTarget(unit, container.dialog)
+					.then(() => new Promise(resolve => {
+						const unsubscribe = Europe.listen.units(units => {
+							if (units.filter(unit => unit.domain === 'sea').length === 1) {
+								setTimeout(closeFn, 1500)
+							}
+						})
+						unsubscribe()
+						resolve()
+					})))
 
 			const position = shipPositions.find(pos => !pos.taken)
 			position.taken = unit
