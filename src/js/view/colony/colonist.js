@@ -22,10 +22,12 @@ const create = colonist => {
 			if (options.length > 1) {			
 				const coords = sprite.getGlobalPosition()
 				const scale = Util.globalScale(sprite)
-				coords.y += 0.5 * sprite.height / 2
+				coords.y += 0.5 * sprite.height / 2 - 7
 
 				const optionsView = options.map(Context.productionOption)
-				const decision = await Context.create(optionsView, coords, 80, 0.5 * scale)
+				sprite.visible = false
+				const decision = await Context.create(optionsView, coords, 64, 0.5 * scale)
+				sprite.visible = true
 				Colonist.beginFieldWork(colonist, tile, decision.good)
 			}
 		}

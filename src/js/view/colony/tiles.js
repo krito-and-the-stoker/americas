@@ -80,10 +80,10 @@ const create = (colony, originalDimensions) => {
 						if (options.length === 1 || unit) {
 							Colonist.beginFieldWork(colonist, tile, options[0].good)
 						} else {
-							coords.y += 0.5 * TILE_SIZE / 2
+							coords.y += 0.5 * TILE_SIZE / 2 - 7
 
 							const optionsView = options.map(Context.productionOption)
-							const decision = await Context.create(optionsView, coords, 80, 0.5)
+							const decision = await Context.create(optionsView, coords, 64, 0.5)
 							Colonist.beginFieldWork(colonist, tile, decision.good)
 						}
 						return true
