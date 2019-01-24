@@ -33,6 +33,7 @@ const initOne = (key, member) => {
 const cleanupOne = (key, member) => {
 	if (member[cleanupKey(key)]) {
 		member[cleanupKey(key)].forEach(fn => fn ? fn() : null)	
+		member[cleanupKey(key)] = []
 	}
 }
 

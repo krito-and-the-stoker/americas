@@ -113,6 +113,10 @@ const remove = {
 	unit: unit => Member.remove(europe, 'units', unit)
 }
 
+const listenEach = {
+	units: fn => Member.listenEach(europe, 'units', fn)
+}
+
 const has = {
 	unit: unit => Member.has(europe, 'units', unit)
 }
@@ -221,6 +225,7 @@ export default {
 	remove,
 	has,
 	listen,
+	listenEach,
 	update,
 	save,
 	load,

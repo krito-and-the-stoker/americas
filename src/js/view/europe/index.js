@@ -136,9 +136,9 @@ const create = () => {
 
 		normalContainer.scale.set(coverScale)
 		units.container.units.x = Math.max(dimensions.x / coverScale - 0.4 * background.width, 64)
-		units.container.units.y = dimensions.y / coverScale - (123 * scale.x + 128 + 20) / coverScale
-		units.container.ships.x = 10
-		units.container.ships.y = dimensions.y / coverScale - (123 * scale.x + 256 + 40) / coverScale
+		units.container.units.y = dimensions.y / coverScale - (123 * scale.x + 148) / coverScale
+		units.container.ships.x = Math.max(dimensions.x / coverScale - 0.6 * background.width, 64)
+		units.container.ships.y = dimensions.y / coverScale - (123 * scale.x + 148 + 32 + 64) / coverScale
 
 		nameHeadline.x = dimensions.x / (2 *coverScale)
 		recruitButton.x = dimensions.x / coverScale - recruitButton.width - 20

@@ -20,6 +20,40 @@ import MoveTo from '../../command/moveTo'
 import TriggerEvent from '../../command/triggerEvent'
 import Tile from '../../entity/tile'
 
+const selectTarget = unit => {
+	const colonies = Record.getAll('colony').filter(colony => {
+		const tile = MapEntity.tile(colony.mapCoordinates)
+		return Tile.diagonalNeighbors(tile).some(tile => tile.domain === 'sea')
+	})
+	const colonyOptions = colonies.map(colony => colony.name)
+	Dialog.createIndependent('Where do you wish us to go?', ['Stay here', ...colonyOptions, 'Where you came from'],
+		null,
+		{
+			context: container.dialog,
+			paused: false
+		})
+		.then(decision => {
+			if (decision === 0) {
+				return
+			}
+			if (decision === colonyOptions.length + 1) {
+				Commander.scheduleBehind(unit.commander, America.create(unit))
+				Commander.scheduleBehind(unit.commander, TriggerEvent.create('notification', { type: 'america', unit: unit }))
+			} else {						
+				const colony = colonies[decision - 1]
+				const tile = MapEntity.tile(colony.mapCoordinates)
+				const path = PathFinder.findHighSeas(tile)
+				Unit.update.mapCoordinates(unit, path[path.length - 1].mapCoordinates)
+				Commander.scheduleBehind(unit.commander, America.create(unit))
+				Commander.scheduleBehind(unit.commander, MoveTo.create(unit, colony.mapCoordinates))
+				Commander.scheduleBehind(unit.commander, TriggerEvent.create('notification', { type: 'arrive', unit: unit, colony }))
+			}
+			if (ships.length === 1) {
+				closeFn()
+			}
+	})
+}
+
 const create = closeFn => {
 	const container = {
 		ships: new PIXI.Container(),
@@ -30,87 +64,77 @@ const create = closeFn => {
 	container.dialog.x = 0
 
 
-	const unsubscribe = Europe.listen.units(units => {
-		const ships = units.filter(unit => unit.domain === 'sea')
-		const landUnits = units.filter(unit => unit.domain === 'land')
-		const unsubscribeShips = Util.mergeFunctions(ships.map(Transport.create).map((view, index) => {
-			Click.on(view.sprite, () => {
-				const colonies = Record.getAll('colony').filter(colony => {
-					const tile = MapEntity.tile(colony.mapCoordinates)
-					return Tile.diagonalNeighbors(tile).some(tile => tile.domain === 'sea')
-				})
-				const colonyOptions = colonies.map(colony => colony.name)
-				Dialog.createIndependent('Where do you wish us to go?', ['Stay here', ...colonyOptions, 'Where you came from'],
-					null,
-					{
-						context: container.dialog,
-						paused: false
-					})
-					.then(decision => {
-						if (decision === 0) {
-							return
-						}
-						if (decision === colonyOptions.length + 1) {
-							Commander.scheduleBehind(view.unit.commander, America.create(view.unit))
-							Commander.scheduleBehind(view.unit.commander, TriggerEvent.create('notification', { type: 'america', unit: view.unit }))
-						} else {						
-							const colony = colonies[decision - 1]
-							const tile = MapEntity.tile(colony.mapCoordinates)
-							const path = PathFinder.findHighSeas(tile)
-							Unit.update.mapCoordinates(view.unit, path[path.length - 1].mapCoordinates)
-							Commander.scheduleBehind(view.unit.commander, America.create(view.unit))
-							Commander.scheduleBehind(view.unit.commander, MoveTo.create(view.unit, colony.mapCoordinates))
-							Commander.scheduleBehind(view.unit.commander, TriggerEvent.create('notification', { type: 'arrive', unit: view.unit, colony }))
-						}
-						if (ships.length === 1) {
-							closeFn()
-						}
-				})
-			})
-			view.container.x = index * 64 * 2
-			view.container.y = 0
+	const shipPositions = Util.range(20).map(index => ({
+		x: -index * 128,
+		y: 0,
+		taken: false
+	}))
+
+	const landPositions = Util.range(20).map(index => ({
+		x: index * 64,
+		y: 0,
+		taken: false
+	}))
+
+	const unsubscribeUnits = Europe.listenEach.units(unit => {
+		if (unit.domain === 'sea') {
+			const view = Transport.create(unit)
+
+			Click.on(view.sprite, () => selectTarget(unit))
+
+			const position = shipPositions.find(pos => !pos.taken)
+			position.taken = unit
+
+			view.container.x = position.x
+			view.container.y = position.y
+			view.container.scale.set(1.25)
 			container.ships.addChild(view.container)
 
 			return () => {
+				position.taken = false
 				view.unsubscribe()
 				container.ships.removeChild(view.container)
 			}
-		}))
+		}
 
-		const rect = {x: 0, y: -100, width: 648, height: 250}
-		const leaveShipZone = new PIXI.Container()
-		leaveShipZone.hitArea = new PIXI.Rectangle(
-			rect.x,
-			rect.y,
-			rect.width,
-			rect.height)
-		container.units.addChild(leaveShipZone)
-
-		const unsubscribeDrag = Drag.makeDragTarget(leaveShipZone, args => {
-			if (args.passenger) {
-				LoadUnitFromShipToEurope(args.passenger)
-			}
-		})
-
-		const unsubscribeUnits = Util.mergeFunctions(landUnits.map((unit, index) => {
+		if (unit.domain === 'land') {
 			const sprite = UnitView.create(unit)
+
+			const position = landPositions.find(pos => !pos.taken)
+			position.taken = unit
+
+			sprite.x = position.x
+			sprite.y = position.y
 			sprite.scale.set(2)
-			sprite.x = index * 64
-			sprite.y = 0
 			container.units.addChild(sprite)
 			Drag.makeDraggable(sprite, { unit })
 
 			return () => {
+				position.taken = false
 				container.units.removeChild(sprite)
 			}
-		}))
-
-		return () => {
-			unsubscribeShips()
-			unsubscribeDrag()
-			unsubscribeUnits()
 		}
 	})
+
+	const rect = { x: 0, y: -100, width: 648, height: 250}
+	const leaveShipZone = new PIXI.Container()
+	leaveShipZone.hitArea = new PIXI.Rectangle(
+		rect.x,
+		rect.y,
+		rect.width,
+		rect.height)
+	container.units.addChild(leaveShipZone)
+
+	const unsubscribeDrag = Drag.makeDragTarget(leaveShipZone, args => {
+		if (args.passenger) {
+			LoadUnitFromShipToEurope(args.passenger)
+		}
+	})
+
+	const unsubscribe = () => {
+		unsubscribeDrag()
+		unsubscribeUnits()
+	}
 
 	// const graphics = new PIXI.Graphics()
 	// graphics.beginFill(0x9b59b6) // Purple
