@@ -4,7 +4,7 @@ export default (colony, unit, pack) => {
 	if (unit.name === 'settler') {
 		if (good === 'tools') {
 			const maximumAmount = Math.min(amount, 100 - unit.equipment.tools)
-			const roundedAmount = 5 * Math.floor(maximumAmount / 5)
+			const roundedAmount = 20 * Math.floor(maximumAmount / 20)
 			if (roundedAmount > 0) {
 				Storage.transfer(colony.storage, unit.equipment, { good: 'tools', amount: roundedAmount })
 			}
