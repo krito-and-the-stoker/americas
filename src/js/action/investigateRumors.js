@@ -16,7 +16,7 @@ import Notification from '../view/ui/notification'
 const options = [{
 	text: () => 'Your find nothing but rumors',
 	fn: () => {},
-	probability: 1.5,
+	probability: 3,
 }, {
 	text: () => 'Your expedition has vanished without a trace.',
 	fn: ({ unit }) => Unit.disband(unit),
@@ -35,18 +35,18 @@ const options = [{
 		const treasure = Unit.create('treasure', unit.mapCoordinates)
 		treasure.treasure = Math.round(500 + 1500*random)
 	},
-	probability: 0.25
+	probability: 0.2
 }, {
 	text: ({ random }) => `You have found one of the Seven Cities of Cibola! Treasure worth ${Math.round(3000 + 4000*random)} gold unearthed in the ruins! It will take a Galleon to get this treasure back to Europe!`,
 	fn: ({ random, unit }) => {
 		const treasure = Unit.create('treasure', unit.mapCoordinates)
 		treasure.treasure = Math.round(3000 + 4000*random)
 	},
-	probability: 0.1
+	probability: 0.05
 }, {
 	text: () => 'You have discovered a Fountain of Youth! Rumors fly in Europe! Immigrants line the docks to seek perpetual youth in the New World!',
 	fn: () => Europe.update.crosses(150),
-	probability: 0.1
+	probability: 0.05
 }, {
 	text: () => 'You are trespassing near our holy shrines!',
 	fn: () => {},
