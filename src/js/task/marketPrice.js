@@ -6,6 +6,7 @@ const MIN_PRICE = 1
 const MAX_PRICE = 19
 
 const capacityFactor = () => 1.0 + 0.25*Math.random()
+const consumptionFactor = () => 1.2
 const log2 = Math.log(2)
 const consumption = (base, year) => base * Math.exp(log2 * (year - 1492) / 50)
 
@@ -26,11 +27,13 @@ const create = market => {
 					market[good].price += 1
 					market[good].capacity /= capacityFactor()
 					market[good].storage += market[good].capacity
+					market[good].consumption /= consumptionFactor()
 				}
 				if (market[good].storage > market[good].capacity && market[good].price > MIN_PRICE) {
 					market[good].price -= 1
 					market[good].storage -= market[good].capacity
 					market[good].capacity *= capacityFactor()
+					market[good].consumption *= consumptionFactor()
 				}
 			})
 			Market.update.europe()
