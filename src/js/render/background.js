@@ -5,7 +5,10 @@ import RenderView from './view'
 import TileCache from './tileCache'
 import Ressources from './ressources'
 import MapView from '../render/map'
+import MapEntity from '../entity/map'
 import Message from '../view/ui/message'
+import Util from '../util/util'
+import Tile from '../entity/tile'
 
 const MAX_TILES = 30000
 
@@ -109,15 +112,18 @@ const createTiles = tileStacks => tileStacks.map(stack => ({
 	},
 	update: (tile, coords) => {
 		if (tile.initialized) {
-			const newStack = MapView.instance.assembleTileXY(coords)
-			if (newStack.length !== tile.stack.frames.length || !newStack.every((frame, i) => frame === tile.stack.frames[i])) {
-				tile.stack.frames = newStack
-				tile.initialized = false
+			if (tile.dirty) {
+				const newStack = MapView.instance.assembleTileXY(coords)
+				if (newStack.length !== tile.stack.frames.length || !newStack.every((frame, i) => frame === tile.stack.frames[i])) {
+					tile.stack.frames = newStack
+					tile.initialized = false
+				} else {
+					tile.dirty = false
+				}
 			}
-			else {
-				tile.stack.frames = newStack
-				tile.initialized = false					
-			}
+		} else {
+			tile.stack.frames = MapView.instance.assembleTileXY(coords)
+			tile.initialized = false					
 		}
 	},
 	initialize: tile => {
@@ -125,13 +131,20 @@ const createTiles = tileStacks => tileStacks.map(stack => ({
 		const index = TileCache.getTextureIndex(tile.stack.frames)
 		tile.container = getContainer(index)
 		tile.initialized = true
+		tile.dirty = false
 	}
 }))
 
+let unsubscribeTiles = () => {}
 const restart = () => {
 	Message.log('Reassembling tiles')
 	tiles = createTiles(MapView.instance.tileStacks)
 	numTiles = MapView.instance.numTiles
+
+	unsubscribeTiles()
+	unsubscribeTiles = Util.mergeFunctions(tiles.map((tile, index) => 
+		Tile.listen.tile(MapEntity.get().tiles[index], () => tile.dirty = true)))
+
 	render()
 }
 
@@ -153,6 +166,10 @@ const initialize = () => {
 		Message.log('Assembling tiles')
 		tiles = createTiles(mapView.tileStacks)
 		numTiles = mapView.numTiles
+
+		unsubscribeTiles()
+		unsubscribeTiles = Util.mergeFunctions(tiles.map((tile, index) => 
+			Tile.listen.tile(MapEntity.get().tiles[index], () => tile.dirty = true)))
 
 		Message.log('First render')
 		render()
@@ -200,7 +217,9 @@ const doRenderWork = () => {
 				if (!tiles[index].initialized) {
 					tiles[index].initialize(tiles[index])
 				}
-				tiles[index].sprites.forEach(sprite => tiles[index].container.addChild(sprite))
+				tiles[index].sprites.forEach(sprite => {
+					tiles[index].container.addChild(sprite)
+				})
 			})
 		})
 		layer.app.render()

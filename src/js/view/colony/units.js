@@ -75,6 +75,9 @@ const create = (colony, closeScreen, originalDimensions) => {
 		}
 	})
 
+	const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
+	greyScaleFilter.blackAndWhite()
+
 	const landPositions = Util.range(25).map(index => ({
 		x: 0.9 * originalDimensions.x - index * 64,
 		y: 0.9 * originalDimensions.y - 125 - 64,
@@ -128,6 +131,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 
 		return () => {
 			position.taken = false
+			unsubscribePioneering()
 			unsubscribeDrag()				
 			container.removeChild(sprite)
 		}
