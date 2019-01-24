@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 
-import Ressources from '../../render/ressources'
+import Resources from '../../render/resources'
 import RenderView from '../../render/view'
 import Foreground from '../../render/foreground'
 import Europe from '../../entity/europe'
@@ -35,7 +35,7 @@ const create = () => {
 	container.addChild(backgroundContainer)
 	container.addChild(normalContainer)
 
-	const background = new PIXI.Sprite(new PIXI.Texture(Ressources.get().europeBackground))
+	const background = Resources.sprite('europeBackground')
 	const originalDimensions = {
 		x: background.width,
 		y: background.height

@@ -18,7 +18,7 @@ window.addEventListener('load', async () => {
 			document.querySelector('.title').classList.add('hidden')
 			document.querySelector('.loading').classList.remove('hidden')
 			requestAnimationFrame(() => {		
-				loadingRessources.then(() => {
+				loadingResources.then(() => {
 					return game.start()
 				}).then(() => {
 					setInterval(game.save, 60000)
@@ -37,7 +37,7 @@ window.addEventListener('load', async () => {
 			document.querySelector('.title').classList.add('hidden')
 			document.querySelector('.loading').classList.remove('hidden')
 			requestAnimationFrame(() => {		
-				loadingRessources.then(() => {
+				loadingResources.then(() => {
 					return game.load()
 				}).then(() => {
 					setInterval(game.save, 60000)
@@ -50,7 +50,7 @@ window.addEventListener('load', async () => {
 		}
 
 
-		const loadingRessources = import(/* webpackChunkName: "game" */ './game.js').then(module => {
+		const loadingResources = import(/* webpackChunkName: "game" */ './game.js').then(module => {
 			game = module.default
 			return module.default.preload()
 		})

@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 
 import Foreground from '../../render/foreground'
-import Ressources from '../../render/ressources'
+import Resources from '../../render/resources'
 import ProductionView from '../../view/production'
 import Click from '../../input/click'
 
@@ -28,7 +28,7 @@ let containers = []
 const create = (options, coords, radius = 100, scale = 1)  => new Promise((resolve, reject) => {
 	cancelAll()
 	const container = new PIXI.Container()
-	const ring = new PIXI.Sprite(new PIXI.Texture(Ressources.get().ring))
+	const ring = Resources.sprite('ring')
 	ring.width = 2.2*radius
 	ring.height = 2.2*radius
 	container.addChild(ring)

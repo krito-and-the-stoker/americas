@@ -8,7 +8,7 @@ import americaSmallMap from '../data/america-small.json'
 import americaLargeMap from '../data/america-large.json'
 import Tween from '../util/tween.js'
 import Unit from '../entity/unit'
-import Ressources from '../render/ressources'
+import Resources from '../render/resources'
 import Europe from '../entity/europe'
 import Time from '../timeline/time'
 import PathFinder from '../util/pathFinder'
@@ -118,6 +118,6 @@ const initialize = () => {
 
 
 window.addEventListener('load', async () => {
-	await Ressources.initialize()
+	await Resources.initialize()
 	initialize()
 })

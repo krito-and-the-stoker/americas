@@ -1,22 +1,20 @@
 import * as PIXI from 'pixi.js'
 
-import Ressources from '../../render/ressources'
+import Resources from '../../render/resources'
 import Colony from '../../entity/colony'
 import Click from '../../input/click'
 import Drag from '../../input/drag'
-import Util from '../../util/util'
 import UnjoinColony from '../../action/unjoinColony'
 import LoadUnitFromShipToColony from '../../action/loadUnitFromShipToColony'
 
 const create = colony => {
 	const container = new PIXI.Container()
-	const background = new PIXI.Sprite(new PIXI.Texture(Ressources.get().colonyBackground))
+	const background = Resources.sprite('colonyBackground')
 	container.addChild(background)
 
 	const coastalDirection = Colony.coastalDirection(colony)
-	let coast = null
-	if (coastalDirection) {	
-		coast = new PIXI.Sprite(new PIXI.Texture(Ressources.get().colonyScreenCoast[coastalDirection]))
+	if (coastalDirection) {
+		const coast = Resources.sprite(`coast${coastalDirection}`)
 		container.addChild(coast)
 	}
 

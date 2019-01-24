@@ -27,31 +27,6 @@ const removeDuplicates = array => array
 		return arr
 	}, [])
 
-export const loadTexture = async (...files) => new Promise((resolve, reject) => {
-	PIXI.loader.reset()
-	PIXI.loader.add(files).load(() => {
-		resolve(files.map(path => PIXI.loader.resources[path].texture))
-	})
-});
-
-let counter = 2
-let doTell = false
-const tell = () => {
-	if (doTell) {	
-		counter += 1
-		Message.log(`Downloading files (${counter}/${NumberOfAssets.files})...`)		
-	}
-}
-export const loadTextureVerbose = async (...files) => new Promise((resolve, reject) => {
-	doTell = true
-	PIXI.loader.reset()
-	PIXI.loader.onLoad.add(tell)
-	PIXI.loader.add(files).load(() => {
-		doTell = false
-		resolve(files.map(path => PIXI.loader.resources[path].texture))
-	})
-});
-
 
 export const range = n => [...Array(n).keys()]
 
@@ -76,8 +51,6 @@ const getUid = () => {
 
 
 export default {
-	loadTexture,
-	loadTextureVerbose,
 	makeObject,
 	globalScale,
 	range,

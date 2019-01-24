@@ -1,11 +1,10 @@
 import Goods from '../data/goods.json'
-import Ressources from '../render/ressources'
+import Resources from '../render/resources'
 import Util from '../util/util'
 
 
 const create = ({ good, amount }) => {
-	const frame = Goods[good].id
-	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
+	const sprite = Resources.sprite('map', { frame: Goods[good].id })
 	sprite.hitArea = new PIXI.Rectangle(16, 0, 32, 64)
 
 	let currentAmount = amount

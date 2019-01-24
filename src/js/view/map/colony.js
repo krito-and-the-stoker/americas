@@ -1,6 +1,6 @@
 import ColonyView from '../colony'
 import Record from '../../util/record'
-import Ressources from '../../render/ressources'
+import Resources from '../../render/resources'
 import Util from '../../util/util'
 import Foreground from '../../render/foreground'
 import Click from '../../input/click'
@@ -10,7 +10,7 @@ const TILE_SIZE = 64
 const MAP_COLONY_FRAME_ID = 53 
 
 
-const createSprite = colony => new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(MAP_COLONY_FRAME_ID)))
+const createSprite = colony => Resources.sprite('map', { frame: MAP_COLONY_FRAME_ID })
 const create = colony => {
 	const sprite = createSprite(colony)
 	sprite.x = TILE_SIZE * colony.mapCoordinates.x

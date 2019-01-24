@@ -1,6 +1,6 @@
 import Units from '../../data/units.json'
 import Util from '../../util/util'
-import Ressources from '../../render/ressources'
+import Resources from '../../render/resources'
 import Click from '../../input/click'
 import Drag from '../../input/drag'
 import Tile from '../../entity/tile'
@@ -12,7 +12,7 @@ const frames = Units.settler.frame
 
 const create = colonist => {
 	const frame = colonist.expert ? frames[colonist.expert] || frames.default : frames.default
-	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
+	const sprite = Resources.sprite('map', { frame })
 	sprite.hitArea = new PIXI.Rectangle(16, 0, 32, 64)
 
 	Click.on(sprite, async () => {

@@ -3,7 +3,7 @@ import { loadTexture, range, rectangle } from './../util/util'
 import Layer from './layer'
 import RenderView from './view'
 import TileCache from './tileCache'
-import Ressources from './ressources'
+import Resources from './resources'
 import MapView from '../render/map'
 import MapEntity from '../entity/map'
 import Message from '../view/ui/message'
@@ -82,7 +82,7 @@ const show = () => {
 }
 
 const createSpriteFromFrames = frames => frames.map(frame => {
-	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, rectangle(Math.abs(frame) - 1)))
+	const sprite = Resources.sprite('map', { frame: Math.abs(frame) - 1 })
 	sprite.blendMode = frame > 0 ? PIXI.BLEND_MODES.NORMAL : PIXI.BLEND_MODES.OVERLAY
 	return sprite
 })
@@ -95,7 +95,7 @@ const createTiles = tileStacks => tileStacks.map(stack => ({
 	container: null,
 	initialized: false,
 	createSprites: () => stack.frames.map(frame => {
-		const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, rectangle(Math.abs(frame) - 1)))
+		const sprite = Resources.sprite('map', { frame: Math.abs(frame) - 1 })
 		sprite.x = stack.position.x
 		sprite.y = stack.position.y
 		sprite.blendMode = frame > 0 ? PIXI.BLEND_MODES.NORMAL : PIXI.BLEND_MODES.OVERLAY
@@ -157,7 +157,7 @@ const initialize = () => {
 		preserveDrawingBuffer: true,
 	})
 
-	undiscovered = new PIXI.extras.TilingSprite(Ressources.get().undiscovered, layer.width, layer.height)
+	undiscovered = new PIXI.extras.TilingSprite(Resources.texture('undiscovered'), layer.width, layer.height)
 
 	layer.app.stage.addChild(undiscovered)
 	layer.app.stop()

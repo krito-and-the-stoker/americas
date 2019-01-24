@@ -5,7 +5,7 @@ import GoodsView from '../../view/goods'
 import Drag from '../../input/drag'
 import Europe from '../../entity/europe'
 import Unit from '../../entity/unit'
-import Ressources from '../../render/ressources'
+import Resources from '../../render/resources'
 import Market from '../../entity/market'
 import SellInEurope from '../../action/sellInEurope'
 import Util from '../../util/util'
@@ -18,7 +18,7 @@ const create = (originalDimensions) => {
 		pricing: new PIXI.Container()
 	}
 
-	const goodsBackground = new PIXI.Sprite(new PIXI.Texture(Ressources.get().goodsBackground))
+	const goodsBackground = Resources.sprite('goodsBackground')
 	goodsBackground.y = -123
 	container.goods.addChild(goodsBackground)
 

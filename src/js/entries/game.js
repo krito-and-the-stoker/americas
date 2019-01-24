@@ -8,7 +8,7 @@ import americaSmallMap from '../data/america-small.json'
 import americaLargeMap from '../data/america-large.json'
 import Tween from '../util/tween.js'
 import Unit from '../entity/unit'
-import Ressources from '../render/ressources'
+import Resources from '../render/resources'
 import Europe from '../entity/europe'
 import Market from '../entity/market'
 import Time from '../timeline/time'
@@ -98,19 +98,19 @@ const americaLarge = () => {
 
 const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve))
 
-let loadingRessources = null
+let loadingResources = null
 const preload = () => {
 	Message.log(`Downloading files (2/${NumberOfAssets.files})...`)
-	loadingRessources = Ressources.initialize()
+	loadingResources = Resources.initialize()
 }
 
 const start = async () => {
 	try {
-		if (!loadingRessources) {
+		if (!loadingResources) {
 			preload()
 		}
 
-		await loadingRessources
+		await loadingResources
 		await nextFrame()
 
 		// MapEntity.create({ data: americaSmallMap })
@@ -187,11 +187,11 @@ const start = async () => {
 
 const load = async () => {
 	try {
-		if (!loadingRessources) {
+		if (!loadingResources) {
 			preload()
 		}
 
-		await loadingRessources
+		await loadingResources
 		await nextFrame()
 
 		RenderView.initialize()

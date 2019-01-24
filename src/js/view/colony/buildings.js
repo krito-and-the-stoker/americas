@@ -3,7 +3,7 @@ import Goods from '../../data/goods.json'
 import Buildings from '../../data/buildings.json'
 import Building from '../../entity/building'
 import Production from '../../entity/production'
-import Ressources from '../../render/ressources'
+import Resources from '../../render/resources'
 import Util from '../../util/util'
 import Drag from '../../input/drag'
 import Colonist from '../../entity/colonist'
@@ -35,8 +35,7 @@ const createBuilding = (colony, name) => {
 	const width = Buildings[name].width * 128
 	const height = 128
 	const rectangle = new PIXI.Rectangle(x, y, width, height)
-
-	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().buildings, rectangle))
+	const sprite = Resources.sprite('buildings', { rectangle })
 	container.building.addChild(sprite)
 
 	const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {

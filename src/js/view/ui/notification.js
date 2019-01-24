@@ -1,10 +1,9 @@
-import Icons from '../../data/icons.json'
 import Terrain from '../../data/terrain.json'
 import Goods from '../../data/goods.json'
 import Buildings from '../../data/buildings.json'
 
 import EuropeView from '../europe'
-import Ressources from '../../render/ressources'
+import Resources from '../../render/resources'
 import Util from '../../util/util'
 import UnitView from '../unit'
 import Foreground from '../../render/foreground'
@@ -21,6 +20,7 @@ import Dialog from './dialog'
 import Events from './events'
 import Tile from '../../entity/tile'
 import Building from '../../entity/building'
+import Icon from '../icon'
 
 
 const originalDimensions = {
@@ -41,8 +41,7 @@ const createCircleMask = () => {
 	circle.endFill()
 	return circle	
 }
-const createSprite = frame => new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
-const createIcon = name => createSprite(Icons[name])
+
 const colonyIcon = colony => {
 	const terrainScale = 0.33
 	const center = MapEntity.tile(colony.mapCoordinates)
@@ -85,7 +84,7 @@ const buildingIcon = (colony, building) => {
 	const width = 128 * Buildings[building].width
 	const height = 128
 	const rectangle = new PIXI.Rectangle(x, y, width, height)
-	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().buildings, rectangle))
+	const sprite = Resources.sprite('buildings', { rectangle })
 	if (width === 128) {	
 		sprite.scale.set(0.75)
 		sprite.x = -16
@@ -138,9 +137,9 @@ const combine = (slot1, slot2, slot3) => {
 }
 
 const createEurope = unit => {
-	const icon = createIcon('europe')
+	const icon = Icon.create('europe')
 	const unitView = UnitView.create(unit)
-	const arrow = unit.domain === 'sea' ? createIcon('right') : createIcon('plus')
+	const arrow = unit.domain === 'sea' ? Icon.create('right') : Icon.create('plus')
 	const container = combine(icon, unitView, arrow)
 
 
@@ -159,9 +158,9 @@ const createEurope = unit => {
 }
 
 const createAmerica = unit => {
-	const icon = createIcon('america')
+	const icon = Icon.create('america')
 	const unitView = UnitView.create(unit)
-	const arrow = createIcon('left')
+	const arrow = Icon.create('left')
 	const container = combine(icon, unitView, arrow)
 
 	const action = () => {
@@ -184,7 +183,7 @@ const createAmerica = unit => {
 const createConstruction = (colony, { building, unit }) => {
 	const colonyView = colonyIcon(colony)
 	const targetView = building ? buildingIcon(colony, building) : UnitView.create(unit)
-	const icon = createIcon('plus')
+	const icon = Icon.create('plus')
 	const container = combine(colonyView, targetView, icon)
 
 	const action = () => ColonyView.open(colony)
@@ -234,7 +233,7 @@ const createTerraforming = unit => {
 
 const createRumor = (option, tile, unit) => {
 	const rumors = createSprite(Terrain.rumors.id - 1)
-	const icon = createIcon('question')
+	const icon = Icon.create('question')
 
 	const container = combine(rumors, icon)
 
@@ -267,7 +266,7 @@ const createRumor = (option, tile, unit) => {
 const createSettlement = (settlement, unit) => {
 	const MAP_SETTLEMENT_FRAME_ID = 59
 	const settlementView = createSprite(MAP_SETTLEMENT_FRAME_ID)
-	const icon = createIcon('question')
+	const icon = Icon.create('question')
 
 	const container = combine(settlementView, icon)
 
@@ -296,7 +295,7 @@ const createSettlement = (settlement, unit) => {
 const createSettlerBorn = (colony, unit) => {
 	const colonyView = colonyIcon(colony)
 	const unitView = UnitView.create(unit)
-	const plus = createIcon('plus')
+	const plus = Icon.create('plus')
 	const container = combine(colonyView, unitView, plus)
 
 	const action = () => ColonyView.open(colony)
@@ -315,8 +314,8 @@ const createSettlerBorn = (colony, unit) => {
 const createStarving = colony => {
 	const colonyView = colonyIcon(colony)
 	const good = createSprite(Goods.food.id)
-	const minus = createIcon('minus')
-	const exclamation = createIcon('exclamation')
+	const minus = Icon.create('minus')
+	const exclamation = Icon.create('exclamation')
 	const container = combine(colonyView, [good, minus], exclamation)
 
 	const action = () => ColonyView.open(colony)
@@ -335,7 +334,7 @@ const createStarving = colony => {
 const createDied = (colony, unit) => {
 	const colonyView = colonyIcon(colony)
 	const unitView = UnitView.create(unit)
-	const minus = createIcon('minus')
+	const minus = Icon.create('minus')
 	const container = combine(colonyView, unitView, minus)
 
 	const action = () => ColonyView.open(colony)
@@ -354,7 +353,7 @@ const createDied = (colony, unit) => {
 const createStorageEmpty = (colony, good) => {
 	const colonyView = colonyIcon(colony)
 	const goodView = createSprite(Goods[good].id)
-	const minus = createIcon('minus')
+	const minus = Icon.create('minus')
 	const container = combine(colonyView, goodView, minus)
 
 	const action = () => ColonyView.open(colony)
@@ -374,7 +373,7 @@ const createStorageEmpty = (colony, good) => {
 const createStorageFull = (colony, good) => {
 	const colonyView = colonyIcon(colony)
 	const goodView = createSprite(Goods[good].id)
-	const exclamation = createIcon('exclamation')
+	const exclamation = Icon.create('exclamation')
 	const container = combine(colonyView, goodView, exclamation)
 
 	const action = () => ColonyView.open(colony)
@@ -394,7 +393,7 @@ const createStorageFull = (colony, good) => {
 const createArrive = (colony, unit) => {
 	const colonySprite = colonyIcon(colony)
 	const unitView = UnitView.create(unit)
-	const icon = createIcon('left')
+	const icon = Icon.create('left')
 	const container = combine(colonySprite, unitView, icon)
 
 	const action = () => ColonyView.open(colony)

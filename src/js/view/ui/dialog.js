@@ -5,30 +5,22 @@ import RenderView from '../../render/view'
 import Time from '../../timeline/time'
 import Util from '../../util/util'
 import Click from '../../input/click'
-import Ressources from '../../render/ressources'
+import Resources from '../../render/resources'
 
 
 const images = {
 	scout: {
 		x: - 300,
 		y: 0,
-		png: () => pngs[0],
 		placement: 'front'
 	}
 }
 
-let pngs = null
 let currentDialog = null
 
-let slice = null
 let initialized = false
 const initialize = () => {
-	const load = async () => {		
-		[slice] = await Util.loadTexture('images/status.png')
-		pngs = await Util.loadTexture('images/scout.png')
-	}
-
-	currentDialog = load()
+	currentDialog = Promise.resolve()
 }
 
 const dialogs = {
@@ -49,7 +41,7 @@ const dialogs = {
 
 const welcome = () => new Promise(resolve => {	
 	const container = Foreground.get().dialog
-	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().welcome))
+	const sprite = Resources.sprite('welcome')
 	sprite.anchor.set(1, 0.5)
 	const original = {
 		x: sprite.width,
@@ -78,13 +70,13 @@ const show = dialogName => {
 const createIndependent = (message, options, image = null, params = {}) => {
 	return new Promise(resolve => {
 		let sprite = null
-		if (image && images[image]) {
-			sprite = new PIXI.Sprite(new PIXI.Texture(images[image].png()))
+		if (image) {
+			sprite = Resources.sprite(image)
 			sprite.anchor.set(0.5)
 			sprite.position.x = RenderView.getCenter().x + images[image].x
 			sprite.position.y = RenderView.getCenter().y + images[image].y
 		}
-		const plane9 = new PIXI.mesh.NineSlicePlane(new PIXI.Texture(slice), 100, 100, 100, 100)
+		const plane9 = new PIXI.mesh.NineSlicePlane(Resoure.texture('status'), 100, 100, 100, 100)
 
 		let optionTexts = []
 		const container = params.context || Foreground.get().dialog

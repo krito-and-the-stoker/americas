@@ -1,6 +1,6 @@
 import Background from '../../render/background'
 import Colonist from '../../entity/colonist'
-import Ressources from '../../render/ressources'
+import Resources from '../../render/resources'
 import MapEntity from '../../entity/map'
 import Util from '../../util/util'
 import Tile from '../../entity/tile'
@@ -134,7 +134,7 @@ const create = (colony, originalDimensions) => {
 
 	
 	const unsubscribeCenter = Tile.listen.tile(center, center => {	
-		const colonySprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(MAP_COLONY_FRAME_ID)))
+		const colonySprite = Resources.sprite('map', { frame: MAP_COLONY_FRAME_ID })
 		colonySprite.position.x = TILE_SIZE
 		colonySprite.position.y = TILE_SIZE
 		container.position.x = (originalDimensions.x - 450)

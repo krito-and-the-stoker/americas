@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 
 import Record from '../../util/record'
-import Ressources from '../../render/ressources'
+import Resources from '../../render/resources'
 import Util from '../../util/util'
 import Foreground from '../../render/foreground'
 import Click from '../../input/click'
@@ -13,7 +13,7 @@ const TILE_SIZE = 64
 const MAP_SETTLEMENT_FRAME_ID = 59
 
 const create = settlement => {
-	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(MAP_SETTLEMENT_FRAME_ID)))
+	const sprite = Resources.sprite('map', { frame: MAP_SETTLEMENT_FRAME_ID })
 	sprite.x = TILE_SIZE * settlement.mapCoordinates.x
 	sprite.y = TILE_SIZE * settlement.mapCoordinates.y
 

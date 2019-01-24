@@ -3,7 +3,7 @@ import TWEEN from '@tweenjs/tween.js'
 
 import Util from '../../util/util'
 import Foreground from '../../render/foreground'
-import Ressources from '../../render/ressources'
+import Resources from '../../render/resources'
 import Click from '../../input/click'
 import Secondary from '../../input/secondary'
 import Record from '../../util/record'
@@ -72,8 +72,7 @@ const unselect = (unit = null) => {
 
 const updateTexture = view => {
 	const frame = view.unit.expert ? view.unit.properties.frame[view.unit.expert] || view.unit.properties.frame.default : view.unit.properties.frame.default
-	const texture = new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame))
-	view.sprite.texture = texture
+	view.sprite.texture = Resources.texture('map', { frame })
 }
 
 const updatePosition = view => {
@@ -83,7 +82,7 @@ const updatePosition = view => {
 
 const create = unit => {
 	const frame = unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
-	const sprite = new PIXI.Sprite(new PIXI.Texture(Ressources.get().mapTiles, Util.rectangle(frame)))
+	const sprite = Resources.sprite('map', { frame })
 	if (unit.domain === 'land') {
 		sprite.hitArea = new PIXI.Rectangle(TILE_SIZE / 4, 0, TILE_SIZE / 2, TILE_SIZE)
 	}

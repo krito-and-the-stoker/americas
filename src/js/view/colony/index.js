@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js'
 
 import Foreground from '../../render/foreground'
 import Background from '../../render/background'
-import Ressources from '../../render/ressources'
+import Resources from '../../render/resources'
 import RenderView from '../../render/view'
 import MapEntity from '../../entity/map'
 import Util from '../../util/util'
@@ -40,7 +40,7 @@ const open = colony => {
 
 const create = colony => {
 	const container = new PIXI.Container()
-	const colonyWoodBackground = new PIXI.extras.TilingSprite(Ressources.get().colonyWoodBackground, RenderView.getDimensions().x, RenderView.getDimensions().y)
+	const colonyWoodBackground = new PIXI.extras.TilingSprite(Resources.texture('colonyWoodBackground'), RenderView.getDimensions().x, RenderView.getDimensions().y)
 	
 	const background = ColonyBackground.create(colony)
 	const originalDimensions = background.originalDimensions

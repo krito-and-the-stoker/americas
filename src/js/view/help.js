@@ -1,4 +1,4 @@
-import Ressources from '../render/ressources'
+import Resources from '../render/resources'
 import Foreground from '../render/foreground'
 import RenderView from '../render/view'
 import Click from '../input/click'
@@ -75,7 +75,7 @@ const listen = {
 
 const create = () => {
 	const container = new PIXI.Container()
-	const background = new PIXI.Sprite(new PIXI.Texture(Ressources.get().help))
+	const background = Resources.sprite('help')
 	const originalDimensions = {
 		x: 800,
 		y: 575
