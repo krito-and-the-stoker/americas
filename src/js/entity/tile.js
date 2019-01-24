@@ -245,7 +245,7 @@ const production = (tile, resource, colonist = null) => {
 		return 0
 	}
 
-	let base = applyModifier(tile, 0, 'base', resource, where) - 1
+	let base = applyModifier(tile, 0, 'base', resource, where)
 	if (base > 0 && colonist && colonist.colony) {
 		base += colonist.colony.productionBonus
 	}
