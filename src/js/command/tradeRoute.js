@@ -26,6 +26,7 @@ const calculateSupply = () => Record.getAll('colony').map(colony =>
 	Storage.goods(colony.storage)
 		.filter(({ good }) => colony.trade[good] < 0)
 		.filter(({ amount }) => amount > 0)
+		.map(({ good, amount }) => ({ good, amount: amount + LoadCargo.forecast(colony, good) }))
 		.map(({ good, amount}) => ({
 			colony,
 			good,

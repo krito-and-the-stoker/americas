@@ -80,7 +80,8 @@ const create = (colony, closeScreen, originalDimensions) => {
 		y: 0.9 * originalDimensions.y - 125 - 64,
 		taken: false
 	}))
-	const drawLandUnit = unit => {
+
+	const drawLandUnit = (unit, added) => {
 		const position = landPositions.find(pos => !pos.taken)
 		if (!position) {
 			console.warn('could not display unit, no position left', unit)
@@ -93,6 +94,10 @@ const create = (colony, closeScreen, originalDimensions) => {
 		sprite.y = position.y
 		sprite.scale.set(2)
 		container.addChild(sprite)
+
+		if (added) {
+			Tween.fadeIn(sprite, 1000)
+		}
 
 		Drag.makeDraggable(sprite, { unit })
 
@@ -122,16 +127,17 @@ const create = (colony, closeScreen, originalDimensions) => {
 		})
 
 		return () => {
+			position.taken = false
 			unsubscribeDrag()				
 			container.removeChild(sprite)
 		}
 	}
 
-	const unsubscribeLandUnits = Colony.listenEach.units(colony, unit => {
+	const unsubscribeLandUnits = Colony.listenEach.units(colony, (unit, added) => {
 		if (unit.domain === 'land' && !unit.properties.cargo) {
 			return Unit.listen.colonist(unit, colonist =>
 				colonist ? Colonist.listen.colony(colonist, colony => 
-					colony ? null : drawLandUnit(unit)) : drawLandUnit(unit))
+					colony ? null : drawLandUnit(unit, added)) : drawLandUnit(unit, added))
 		}
 	})
 
