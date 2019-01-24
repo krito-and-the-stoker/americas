@@ -12,6 +12,8 @@ import Secondary from '../../input/secondary'
 import Message from '../../view/ui/message'
 import Notification from '../../view/ui/notification'
 import Events from '../../view/ui/events'
+import MapEntity from '../../entity/map'
+import Tile from '../../entity/tile'
 
 import UnitView from './unit'
 import ColonyView from './colony'
@@ -52,14 +54,23 @@ const centerAt = ({ x, y }, moveTime) => {
 let forestVisibility = true
 const hideForest = () => {
 	forestVisibility = false
+	MapEntity.get().tiles
+		.filter(tile => tile.forest)
+		.forEach(tile => Tile.update.tile(tile))
 	Background.render()
 }
 const showForest = () => {
 	forestVisibility = true
+	MapEntity.get().tiles
+		.filter(tile => tile.forest)
+		.forEach(tile => Tile.update.tile(tile))
 	Background.render()
 }
 const toggleForestVisibility = () => {
 	forestVisibility = !forestVisibility
+	MapEntity.get().tiles
+		.filter(tile => tile.forest)
+		.forEach(tile => Tile.update.tile(tile))
 	Background.render()
 }
 const isForestVisible = () => forestVisibility

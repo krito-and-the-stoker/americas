@@ -106,7 +106,7 @@ const revive = (record) => {
 	record.listeners.forEach(fn => fn(record.entity))	
 	records.push(record)
 	
-	entitiesLoaded(() => {
+	beforeEntitiesLoaded(() => {
 		record.destroy = update(record.type, record.entity)
 	})
 
@@ -250,8 +250,10 @@ const dereferenceLazy = (ref, fn) => {
 	}
 }
 
+let beforeLoadedListeners = []
 let loadedListeners = []
 const entitiesLoaded = fn => loadedListeners.push(fn)
+const beforeEntitiesLoaded = fn => beforeLoadedListeners.push(fn)
 
 const load = (src = null) => {
 	Message.log('Loading...')
@@ -292,6 +294,7 @@ const load = (src = null) => {
 	Treasure.load(snapshot.treasure)
 	Market.load(snapshot.market)
 	Europe.load(snapshot.europe)
+	beforeLoadedListeners.forEach(fn => fn())
 	loadedListeners.forEach(fn => fn())
 
 	PathFinder.initialize()
