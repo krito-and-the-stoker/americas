@@ -156,6 +156,7 @@ const initialize = () => {
 	Record.listen('unit', unit => {
 		const view = create(unit)
 		const updateBoundVisibility = () => { updateVisibility(view) }
+
 		Unit.listen.vehicle(unit, updateBoundVisibility)
 		Unit.listen.offTheMap(unit, updateBoundVisibility)
 		Unit.listen.colony(unit, updateBoundVisibility)

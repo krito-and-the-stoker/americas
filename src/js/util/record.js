@@ -103,15 +103,12 @@ const revive = (record) => {
 	}
 
 	record.entity = getModule(record.type).load(record.data)
-	record.listeners.forEach(fn => fn(record.entity))
+	record.listeners.forEach(fn => fn(record.entity))	
+	records.push(record)
 	
-	records.push({
-		id: record.id,
-		entity: record.entity,
-		type: record.type,
-		destroy: update(record.type, record.entity)
+	entitiesLoaded(() => {
+		record.destroy = update(record.type, record.entity)
 	})
-	
 
 	return record.entity
 }
@@ -295,11 +292,10 @@ const load = (src = null) => {
 	Treasure.load(snapshot.treasure)
 	Market.load(snapshot.market)
 	Europe.load(snapshot.europe)
-	UnitView.load(snapshot.unitView)
-	PathFinder.initialize()
-
 	loadedListeners.forEach(fn => fn())
 
+	PathFinder.initialize()
+	UnitView.load(snapshot.unitView)
 
 	RenderView.restart()
 	Message.log('Game loaded')
