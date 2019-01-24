@@ -31,7 +31,7 @@ const moveTo = (sprite, to, time) => new Promise(resolve => {
 
 	const tween = new TWEEN.Tween(from)
 		.to(to, time)
-		.easing(TWEEN.Easing.Quadratic.Out)
+		.easing(TWEEN.Easing.Quadratic.InOut)
 		.onUpdate(({ x, y }) => {
 			sprite.x = x
 			sprite.y = y
@@ -55,7 +55,7 @@ const moveFrom = (sprite, from, time) => new Promise(resolve => {
 
 	const tween = new TWEEN.Tween(from)
 		.to(to, time)
-		.easing(TWEEN.Easing.Quadratic.Out)
+		.easing(TWEEN.Easing.Quadratic.InOut)
 		.onUpdate(({ x, y }) => {
 			sprite.x = x
 			sprite.y = y
