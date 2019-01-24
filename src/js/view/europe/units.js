@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js'
+import Tween from '../../util/tween'
 
 import Colony from '../../entity/colony'
 import UnitView from '../../view/unit'
@@ -20,7 +21,7 @@ import MoveTo from '../../command/moveTo'
 import TriggerEvent from '../../command/triggerEvent'
 import Tile from '../../entity/tile'
 
-const selectTarget = unit => {
+const selectTarget = (unit, context) => {
 	const colonies = Record.getAll('colony').filter(colony => {
 		const tile = MapEntity.tile(colony.mapCoordinates)
 		return Tile.diagonalNeighbors(tile).some(tile => tile.domain === 'sea')
@@ -29,7 +30,7 @@ const selectTarget = unit => {
 	Dialog.createIndependent('Where do you wish us to go?', ['Stay here', ...colonyOptions, 'Where you came from'],
 		null,
 		{
-			context: container.dialog,
+			context,
 			paused: false
 		})
 		.then(decision => {
@@ -76,11 +77,11 @@ const create = closeFn => {
 		taken: false
 	}))
 
-	const unsubscribeUnits = Europe.listenEach.units(unit => {
+	const unsubscribeUnits = Europe.listenEach.units((unit, added) => {
 		if (unit.domain === 'sea') {
 			const view = Transport.create(unit)
 
-			Click.on(view.sprite, () => selectTarget(unit))
+			Click.on(view.sprite, () => selectTarget(unit, container.dialog))
 
 			const position = shipPositions.find(pos => !pos.taken)
 			position.taken = unit
@@ -90,10 +91,16 @@ const create = closeFn => {
 			view.container.scale.set(1.25)
 			container.ships.addChild(view.container)
 
+			if (added) {
+				Tween.moveFrom(view.container, { x: - 1000, y: -300 }, 5000)
+			}
+
 			return () => {
 				position.taken = false
 				view.unsubscribe()
-				container.ships.removeChild(view.container)
+				Tween.moveTo(view.container, { x: - 1000, y: -300 }, 5000).then(() => {
+					container.ships.removeChild(view.container)
+				})
 			}
 		}
 
@@ -108,6 +115,8 @@ const create = closeFn => {
 			sprite.scale.set(2)
 			container.units.addChild(sprite)
 			Drag.makeDraggable(sprite, { unit })
+
+			Tween.fadeIn(sprite, 350)
 
 			return () => {
 				position.taken = false

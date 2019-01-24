@@ -40,7 +40,7 @@ const cleanupOne = (key, member) => {
 const updateOne = (entity, key, member) => {
 	if (entity[listenerKey(key)]) {
 		cleanupOne(key, member)
-		member[cleanupKey(key)] = entity[listenerKey(key)].map(fn => fn(member))
+		member[cleanupKey(key)] = entity[listenerKey(key)].map(fn => fn(member, true))
 	}
 }
 
@@ -66,7 +66,7 @@ const listenEach = (entity, key, fn) => {
 		if (!member[cleanupKey(key)]) {
 			initOne(key, member)
 		}
-		member[cleanupKey(key)].push(fn(member))
+		member[cleanupKey(key)].push(fn(member, false))
 	})
 
 	return () => unsubscribe(entity, key, fn)
