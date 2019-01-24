@@ -224,5 +224,15 @@
 		"canFound": true,
 		"canMission": true,
 		"speed": 2
+	},
+	"native": {
+		"frame": {
+			"default": 13
+		},
+		"name": {
+			"default": "Native Warrior"
+		},
+		"domain": "land",
+		"speed": 2
 	}
 }

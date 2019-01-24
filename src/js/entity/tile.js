@@ -36,6 +36,9 @@ const create = ({ id, layers, index }) => {
 		discovered: false,
 	}
 
+	if (tile.domain === 'sea') {
+		tile.forest = false
+	}
 	tile.rumors = tile.domain === 'land' && Math.random() < 0.04
 	tile.river = tile.riverLarge || tile.riverSmall
 
@@ -68,7 +71,10 @@ const create = ({ id, layers, index }) => {
 	return tile
 }
 
-const terrainName = tile => tile.forest ? `${tile.name}WithForest` : (tile.mountains ? 'mountains' : (tile.hills ? 'hills' : tile.name) )
+const terrainName = tile =>
+	(tile.forest && tile.domain === 'land') ? `${tile.name}WithForest` :
+		(tile.mountains ? 'mountains' :
+			(tile.hills ? 'hills' : tile.name))
 
 const keys = ['id', 'forest', 'treeVariation', 'hills', 'hillVariation', 'mountains', 'mountainVariation', 'riverSmall', 'riverLarge', 'bonus', 'plowed', 'road', 'coast', 'discovered', 'rumors', 'harvestedBy']
 const type = ['int','bool',   'int',           'bool',  'bool',          'bool',      'bool',              'bool',       'bool',       'bool',  'bool',   'bool', 'bool',  'bool',       'bool',   'reference']
@@ -197,7 +203,11 @@ const movementCost = (from, to) => {
 		return MovementCosts.road
 	}
 	if (to.colony) {
-		return MovementCosts.colony
+		if (from.domain === 'sea') {
+			return MovementCosts.harbour
+		} else {
+			return MovementCosts.colony
+		}
 	}
 	return MovementCosts[to.terrainName]
 }
@@ -300,6 +310,7 @@ const update = {
 	colony: (tile, colony) => Binding.update(tile, 'colony', colony),
 	settlement: (tile, settlement) => Binding.update(tile, 'settlement', settlement),
 	tile: tile => Binding.update(tile)
+	// rumors: (tile, value) => Binding.update(tile, 'rumors', value)
 }
 
 const clearForest = tile => {
@@ -324,6 +335,12 @@ const constructRoad = tile => {
 
 const removeRoad = tile => {
 	tile.road = false
+
+	updateTile(tile)
+}
+
+const updateRumors = (tile, value) => {
+	tile.rumors = value
 
 	updateTile(tile)
 }
@@ -358,6 +375,7 @@ export default {
 	save,
 	load,
 	neighborString,
+	updateRumors,
 	clearForest,
 	plow,
 	constructRoad,

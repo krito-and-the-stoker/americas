@@ -27,7 +27,7 @@ const selectTarget = (unit, context) => {
 		return Tile.diagonalNeighbors(tile).some(tile => tile.domain === 'sea')
 	})
 	const colonyOptions = colonies.map(colony => colony.name)
-	Dialog.createIndependent('Where do you wish us to go?', ['Stay here', ...colonyOptions, 'Where you came from'],
+	return Dialog.createIndependent('Where do you wish us to go?', ['Stay here', ...colonyOptions, 'Where you came from'],
 		null,
 		{
 			context,
@@ -48,9 +48,6 @@ const selectTarget = (unit, context) => {
 				Commander.scheduleBehind(unit.commander, America.create(unit))
 				Commander.scheduleBehind(unit.commander, MoveTo.create(unit, colony.mapCoordinates))
 				Commander.scheduleBehind(unit.commander, TriggerEvent.create('notification', { type: 'arrive', unit: unit, colony }))
-			}
-			if (ships.length === 1) {
-				closeFn()
 			}
 	})
 }
@@ -77,11 +74,24 @@ const create = closeFn => {
 		taken: false
 	}))
 
+	const unsibscribeClose = Europe.listen.units(units => () => {
+		if (!units.some(unit => unit.domain === 'sea')) {
+			setTimeout(closeFn, 1000)
+		}
+	})
+
 	const unsubscribeUnits = Europe.listenEach.units((unit, added) => {
 		if (unit.domain === 'sea') {
 			const view = Transport.create(unit)
 
-			Click.on(view.sprite, () => selectTarget(unit, container.dialog))
+			Click.on(view.sprite, () =>
+				selectTarget(unit, container.dialog).then(() => {
+					Europe.listen.units(units => {
+						if (!units.some(unit => unit.domain === 'sea')) {
+							setTimeout(closeFn, 1000)
+						}
+					})()
+				}))
 
 			const position = shipPositions.find(pos => !pos.taken)
 			position.taken = unit
@@ -143,6 +153,7 @@ const create = closeFn => {
 	const unsubscribe = () => {
 		unsubscribeDrag()
 		unsubscribeUnits()
+		unsibscribeClose()
 	}
 
 	// const graphics = new PIXI.Graphics()

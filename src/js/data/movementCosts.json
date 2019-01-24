@@ -23,5 +23,6 @@
 	"tundraWithForest": 2,
 	"road": 0.33,
 	"river": 0.33,
-	"colony": 1
+	"colony": 1,
+	"harbour": 3
 }

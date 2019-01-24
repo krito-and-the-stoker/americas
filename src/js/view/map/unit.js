@@ -93,8 +93,6 @@ const create = unit => {
 		unit
 	}
 
-	Foreground.addUnit(sprite)
-
 	Click.on(sprite, () => {
 		if (unit.colony) {
 			unit.colony.screen = ColonyView.open(unit.colony)

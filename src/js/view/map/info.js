@@ -47,7 +47,7 @@ const initialize = () => {
 
 				const storage = unit.properties.cargo > 0 ? unit.storage : unit.equipment
 				const unsubscribeStorage = Storage.listen(storage, storage => {
-					const goods = Storage.split(storage)
+					const goods = Storage.goods(storage).filter(pack => pack.amount > 0)
 					let storageIndex = 0
 
 					return Util.mergeFunctions(goods.map(pack => {

@@ -248,7 +248,7 @@ const createRumor = (option, tile, unit) => {
 			})
 
 		option.fn()
-		tile.rumors = false
+		Tile.updateRumors(tile)
 		Background.render()
 	}
 
