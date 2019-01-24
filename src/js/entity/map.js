@@ -1,7 +1,7 @@
 import Tile from './tile.js'
-import Record from '../util/record'
-import Util from '../util/util'
-import Message from '../view/ui/message'
+import Record from 'util/record'
+import Util from 'util/util'
+import Message from 'view/ui/message'
 
 
 let numTiles = null

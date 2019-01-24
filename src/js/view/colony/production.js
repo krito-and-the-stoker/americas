@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js'
 
-import Storage from '../../entity/storage'
-import ProductionView from '../production'
-import Binding from '../../util/binding'
+import Storage from 'entity/storage'
+import ProductionView from 'view/production'
+import Binding from 'util/binding'
 
 
 const create = colony => {

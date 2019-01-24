@@ -1,9 +1,9 @@
-import Dialog from '../view/ui/dialog'
-import Time from '../timeline/time'
+import Dialog from 'view/ui/dialog'
+import Time from 'timeline/time'
 import Move from './move'
 import Commander from './commander'
-import Record from '../util/record'
-import Unit from '../entity/unit'
+import Record from 'util/record'
+import Unit from 'entity/unit'
 
 
 const create = (transport, passenger, loadingStartedAt = null) => {

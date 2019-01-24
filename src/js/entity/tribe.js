@@ -1,9 +1,9 @@
-import Util from '../util/util'
-import Record from '../util/record'
-import Tile from '../entity/tile'
-import MapEntity from '../entity/map'
-import Settlement from '../entity/settlement'
-import Message from '../view/ui/message'
+import Util from 'util/util'
+import Record from 'util/record'
+import Tile from 'entity/tile'
+import MapEntity from 'entity/map'
+import Settlement from 'entity/settlement'
+import Message from 'view/ui/message'
 
 
 const settlementDensity = 0.07

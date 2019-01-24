@@ -1,10 +1,10 @@
-import MapEntity from '../entity/map'
-import Message from '../view/ui/message'
-import Background from '../render/background'
-import Unit from '../entity/unit'
-import Treasure from '../entity/treasure'
-import Europe from '../entity/europe'
-import Notification from '../view/ui/notification'
+import MapEntity from 'entity/map'
+import Message from 'view/ui/message'
+import Background from 'render/background'
+import Unit from 'entity/unit'
+import Treasure from 'entity/treasure'
+import Europe from 'entity/europe'
+import Notification from 'view/ui/notification'
 
 // TODO: implement these
 // After choice

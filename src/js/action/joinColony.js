@@ -1,6 +1,6 @@
-import Colony from '../entity/colony'
-import Storage from '../entity/storage'
-import Colonist from '../entity/colonist'
+import Colony from 'entity/colony'
+import Storage from 'entity/storage'
+import Colonist from 'entity/colonist'
 
 export default (colony, colonist) => {
 	Colonist.update.colony(colonist, colony)

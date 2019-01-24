@@ -1,4 +1,4 @@
-import Text from 'src/render/text'
+import Text from 'render/text'
 
 const create = (colony, originalDimensions) => {
 	const nameHeadline = Text.create(colony.name, {

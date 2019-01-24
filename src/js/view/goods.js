@@ -1,7 +1,7 @@
-import Goods from '../data/goods.json'
-import Resources from '../render/resources'
-import Util from '../util/util'
-import Text from 'src/render/text'
+import Goods from 'data/goods.json'
+import Resources from 'render/resources'
+import Util from 'util/util'
+import Text from 'render/text'
 
 
 const create = ({ good, amount }) => {

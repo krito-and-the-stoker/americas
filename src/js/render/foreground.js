@@ -1,9 +1,9 @@
 import * as PIXI from 'pixi.js'
-import { loadTexture, range, rectangle } from './../util/util'
+import { loadTexture, range, rectangle } from 'util/util'
 import Layer from './layer'
 import Background from './background'
-import Context from '../view/ui/context'
-import Events from '../view/ui/events'
+import Context from 'view/ui/context'
+import Events from 'view/ui/events'
 
 let container = null
 let context = null

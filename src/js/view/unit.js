@@ -1,5 +1,5 @@
-import Resources from '../render/resources'
-import Util from '../util/util'
+import Resources from 'render/resources'
+import Util from 'util/util'
 
 const getName = unit => unit.expert ? unit.properties.name[unit.expert] || unit.properties.name.default : unit.properties.name.default
 const createTexture = unit => {

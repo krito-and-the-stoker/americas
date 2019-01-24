@@ -1,4 +1,4 @@
-import Unit from '../entity/unit'
+import Unit from 'entity/unit'
 
 export default (src, dest, pack) => {
 	if (Unit.loadGoods(dest, pack)) {

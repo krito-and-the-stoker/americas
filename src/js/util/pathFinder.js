@@ -1,9 +1,9 @@
-import Graph from '../util/graph'
-import Util from '../util/util'
+import Graph from 'util/graph'
+import Util from 'util/util'
 import { FibonacciHeap } from '@tyriar/fibonacci-heap'
-import MapEntity from '../entity/map'
-import Tile from '../entity/tile'
-import Message from '../view/ui/message'
+import MapEntity from 'entity/map'
+import Tile from 'entity/tile'
+import Message from 'view/ui/message'
 
 const UNDISCOVERED_COST = 5
 const CANNOT_MOVE_COST = 500

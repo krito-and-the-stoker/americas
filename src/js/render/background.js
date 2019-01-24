@@ -1,14 +1,14 @@
 import * as PIXI from 'pixi.js'
-import { loadTexture, range, rectangle } from './../util/util'
+import { loadTexture, range, rectangle } from 'util/util'
 import Layer from './layer'
 import RenderView from './view'
 import TileCache from './tileCache'
 import Resources from './resources'
-import MapView from '../render/map'
-import MapEntity from '../entity/map'
-import Message from '../view/ui/message'
-import Util from '../util/util'
-import Tile from '../entity/tile'
+import MapView from 'render/map'
+import MapEntity from 'entity/map'
+import Message from 'view/ui/message'
+import Util from 'util/util'
+import Tile from 'entity/tile'
 
 const MAX_TILES = 30000
 

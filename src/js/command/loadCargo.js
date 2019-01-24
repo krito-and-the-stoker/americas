@@ -1,7 +1,7 @@
-import Storage from '../entity/storage'
-import Record from '../util/record'
-import Time from '../timeline/time'
-import Events from '../view/ui/events'
+import Storage from 'entity/storage'
+import Record from 'util/record'
+import Time from 'timeline/time'
+import Events from 'view/ui/events'
 
 const scheduledCargoLoads = {}
 const scheduled = () => scheduledCargoLoads

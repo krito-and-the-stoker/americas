@@ -1,6 +1,6 @@
-import Goods from '../data/goods.json'
-import Binding from '../util/binding'
-import Util from '../util/util'
+import Goods from 'data/goods'
+import Binding from 'util/binding'
+import Util from 'util/util'
 
 
 const update = (storage, pack) => {

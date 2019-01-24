@@ -1,11 +1,11 @@
-import Time from '../timeline/time'
-import PathFinder from '../util/pathFinder'
-import MapEntity from '../entity/map'
+import Time from 'timeline/time'
+import PathFinder from 'util/pathFinder'
+import MapEntity from 'entity/map'
 import Move from './move'
 import Commander from './commander'
 import Europe from './europe'
-import Record from '../util/record'
-import Dialog from '../view/ui/dialog'
+import Record from 'util/record'
+import Dialog from 'view/ui/dialog'
 
 
 const create = (unit, coords, moveToCommander = null, hasPath = false) => {

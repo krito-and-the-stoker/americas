@@ -1,5 +1,5 @@
-import Time from '../timeline/time'
-import Market from '../entity/market'
+import Time from 'timeline/time'
+import Market from 'entity/market'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const MIN_PRICE = 1

@@ -1,12 +1,12 @@
-import Colony from '../entity/colony'
-import Record from '../util/record'
-import MapEntity from '../entity/map'
-import Tile from '../entity/tile'
-import Colonist from '../entity/colonist'
-import BecomeColonist from '../action/becomeColonist'
-import FindWork from '../action/findWork'
-import EnterColony from '../action/enterColony'
-import Unit from '../entity/unit'
+import Colony from 'entity/colony'
+import Record from 'util/record'
+import MapEntity from 'entity/map'
+import Tile from 'entity/tile'
+import Colonist from 'entity/colonist'
+import BecomeColonist from 'action/becomeColonist'
+import FindWork from 'action/findWork'
+import EnterColony from 'action/enterColony'
+import Unit from 'entity/unit'
 
 const create = unit => {
 	const init = () => {

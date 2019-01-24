@@ -1,6 +1,6 @@
-import Storage from '../entity/storage'
-import Colony from '../entity/colony'
-import Time from '../timeline/time'
+import Storage from 'entity/storage'
+import Colony from 'entity/colony'
+import Time from 'timeline/time'
 
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME

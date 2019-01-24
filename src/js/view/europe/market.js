@@ -1,16 +1,16 @@
 import * as PIXI from 'pixi.js'
 
-import Goods from '../../data/goods'
-import GoodsView from '../../view/goods'
-import Drag from '../../input/drag'
-import Europe from '../../entity/europe'
-import Unit from '../../entity/unit'
-import Resources from '../../render/resources'
-import Market from '../../entity/market'
-import SellInEurope from '../../action/sellInEurope'
-import Util from '../../util/util'
-import Binding from '../../util/binding'
-import Text from 'src/render/text'
+import Goods from 'data/goods'
+import GoodsView from 'view/goods'
+import Drag from 'input/drag'
+import Europe from 'entity/europe'
+import Unit from 'entity/unit'
+import Resources from 'render/resources'
+import Market from 'entity/market'
+import SellInEurope from 'action/sellInEurope'
+import Util from 'util/util'
+import Binding from 'util/binding'
+import Text from 'render/text'
 
 
 const create = (originalDimensions) => {

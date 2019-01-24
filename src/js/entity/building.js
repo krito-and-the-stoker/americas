@@ -1,11 +1,11 @@
-import Buildings from '../data/buildings.json'
-import Goods from '../data/goods.json'
-import Util from '../util/util'
-import Colony from '../entity/colony'
-import Unit from '../entity/unit'
-import Storage from '../entity/storage'
-import Message from '../view/ui/message'
-import Notification from '../view/ui/notification'
+import Buildings from 'data/buildings.json'
+import Goods from 'data/goods.json'
+import Util from 'util/util'
+import Colony from 'entity/colony'
+import Unit from 'entity/unit'
+import Storage from 'entity/storage'
+import Message from 'view/ui/message'
+import Notification from 'view/ui/notification'
 
 const frame = (colony, name) => Buildings[name].frame[colony.buildings[name]]
 const create = () => Util.makeObject(Buildings.places.map(name => [name, 0]))

@@ -1,6 +1,6 @@
 import Background from './background.js'
 import Foreground from './foreground.js'
-import Record from '../util/record'
+import Record from 'util/record'
 
 Record.setGlobal('scale', 1)
 Record.setGlobal('coords', {

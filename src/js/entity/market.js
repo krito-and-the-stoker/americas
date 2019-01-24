@@ -1,10 +1,10 @@
-import Properties from '../data/market.json'
+import Properties from 'data/market.json'
 import Treasure from './treasure'
-import Util from '../util/util'
-import Message from '../view/ui/message'
-import Time from '../timeline/time'
-import MarketPrice from '../task/marketPrice'
-import Binding from '../util/binding'
+import Util from 'util/util'
+import Message from 'view/ui/message'
+import Time from 'timeline/time'
+import MarketPrice from 'task/marketPrice'
+import Binding from 'util/binding'
 
 
 const market = {

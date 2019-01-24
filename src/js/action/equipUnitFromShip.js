@@ -1,4 +1,4 @@
-import Storage from '../entity/storage'
+import Storage from 'entity/storage'
 export default (ship, unit, pack) => {
 	const { good, amount } = pack
 	if (unit.name === 'settler') {

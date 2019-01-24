@@ -1,13 +1,13 @@
 import Commander from './commander'
-import MapEntity from '../entity/map'
-import Storage from '../entity/storage'
-import Record from '../util/record'
-import PathFinder from '../util/pathFinder'
-import LoadCargo from '../command/loadCargo'
-import MoveTo from '../command/moveTo'
-import Message from '../view/ui/message'
-import Colony from '../entity/colony'
-import Unit from '../entity/unit'
+import MapEntity from 'entity/map'
+import Storage from 'entity/storage'
+import Record from 'util/record'
+import PathFinder from 'util/pathFinder'
+import LoadCargo from 'command/loadCargo'
+import MoveTo from 'command/moveTo'
+import Message from 'view/ui/message'
+import Colony from 'entity/colony'
+import Unit from 'entity/unit'
 
 
 const calculateDemands = () => Record.getAll('colony').map(colony =>

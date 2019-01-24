@@ -1,13 +1,13 @@
 import * as PIXI from 'pixi.js'
 
-import Record from '../../util/record'
-import Resources from '../../render/resources'
-import Util from '../../util/util'
-import Foreground from '../../render/foreground'
-import Click from '../../input/click'
-import Message from '../../view/ui/message'
-import MapEntity from '../../entity/map'
-import Tile from '../../entity/tile'
+import Record from 'util/record'
+import Resources from 'render/resources'
+import Util from 'util/util'
+import Foreground from 'render/foreground'
+import Click from 'input/click'
+import Message from 'view/ui/message'
+import MapEntity from 'entity/map'
+import Tile from 'entity/tile'
 
 const TILE_SIZE = 64
 const MAP_SETTLEMENT_FRAME_ID = 59

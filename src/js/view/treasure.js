@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
-import Treasure from '../entity/treasure'
-import RenderView from '../render/view'
-import Text from 'src/render/text'
+import Treasure from 'entity/treasure'
+import RenderView from 'render/view'
+import Text from 'render/text'
 
 const create = () => {
 	const number = Text.create(Treasure.amount())

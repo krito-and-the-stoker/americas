@@ -1,6 +1,6 @@
-import Record from '../util/record'
-import Tile from '../entity/tile'
-import MapEntity from '../entity/map'
+import Record from 'util/record'
+import Tile from 'entity/tile'
+import MapEntity from 'entity/map'
 
 const create = (tribe, coords) => {
 	const settlement = {

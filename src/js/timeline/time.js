@@ -1,4 +1,4 @@
-import Binding from '../util/binding'
+import Binding from 'util/binding'
 import MainLoop from 'mainloop.js'
 
 const MOVE_BASE_TIME = 8000

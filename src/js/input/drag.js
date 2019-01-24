@@ -1,6 +1,6 @@
-import Util from '../util/util'
-import Foreground from '../render/foreground'
-import Binding from '../util/binding'
+import Util from 'util/util'
+import Foreground from 'render/foreground'
+import Binding from 'util/binding'
 
 let currentDrags = []
 const isDragTarget = target => currentDrags.includes(target)

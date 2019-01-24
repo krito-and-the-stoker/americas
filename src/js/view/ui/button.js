@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
-import Click from '../../input/click'
-import Resources from '../../render/resources'
-import Text from 'src/render/text'
+import Click from 'input/click'
+import Resources from 'render/resources'
+import Text from 'render/text'
 
 const create = (text, fn) => {
 	const container = new PIXI.Container()

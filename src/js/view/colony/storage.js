@@ -1,16 +1,16 @@
 import * as PIXI from 'pixi.js'
 
-import Icon from '../../view/icon'
-import Goods from '../../data/goods.json'
-import Colony from '../../entity/colony'
-import Util from '../../util/util'
-import Drag from '../../input/drag'
-import GoodsView from '../../view/goods'
-import Unit from '../../entity/unit'
-import Storage from '../../entity/storage'
-import Click from '../../input/click'
+import Goods from 'data/goods'
+import Colony from 'entity/colony'
+import Util from 'util/util'
+import Drag from 'input/drag'
+import Icon from 'view/ui/icon'
+import GoodsView from 'view/goods'
+import Unit from 'entity/unit'
+import Storage from 'entity/storage'
+import Click from 'input/click'
 
-import LoadFromShipToColony from '../../action/loadFromShipToColony'
+import LoadFromShipToColony from 'action/loadFromShipToColony'
 
 const create = (colony, originalDimensions) => {
 	const container = new PIXI.Container()

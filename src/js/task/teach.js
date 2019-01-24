@@ -1,7 +1,7 @@
-import Time from '../timeline/time'
-import Storage from '../entity/storage'
-import Colonist from '../entity/colonist'
-import Colony from '../entity/colony'
+import Time from 'timeline/time'
+import Storage from 'entity/storage'
+import Colonist from 'entity/colonist'
+import Colony from 'entity/colony'
 
 
 const TEACH_BASE_FACTOR = 1.0 / Time.TEACH_BASE_TIME

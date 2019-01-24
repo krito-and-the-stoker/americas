@@ -1,10 +1,10 @@
-import Time from '../timeline/time'
-import MapEntity from '../entity/map'
-import Tile from '../entity/tile'
-import Unit from '../entity/unit'
-import Record from '../util/record'
-import Storage from '../entity/storage'
-import Notification from '../view/ui/notification'
+import Time from 'timeline/time'
+import MapEntity from 'entity/map'
+import Tile from 'entity/tile'
+import Unit from 'entity/unit'
+import Record from 'util/record'
+import Storage from 'entity/storage'
+import Notification from 'view/ui/notification'
 
 const create = (unit, eta) => {
 	let aborted = false

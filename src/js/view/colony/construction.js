@@ -1,14 +1,14 @@
 import * as PIXI from 'pixi.js'
 
-import Colony from '../../entity/colony'
-import Building from '../../entity/building'
-import Dialog from '../../view/ui/dialog'
-import Button from '../../view/ui/button'
-import Util from '../../util/util'
-import ProductionView from '../../view/production'
-import Binding from '../../util/binding'
-import Storage from '../../entity/storage'
-import Text from 'src/render/text'
+import Colony from 'entity/colony'
+import Building from 'entity/building'
+import Dialog from 'view/ui/dialog'
+import Button from 'view/ui/button'
+import Util from 'util/util'
+import ProductionView from 'view/production'
+import Binding from 'util/binding'
+import Storage from 'entity/storage'
+import Text from 'render/text'
 
 
 const create = (colony, originalDimensions) => {

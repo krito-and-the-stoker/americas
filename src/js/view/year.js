@@ -1,9 +1,9 @@
 import * as PIXI from 'pixi.js'
-import RenderView from '../render/view'
-import Time from '../timeline/time'
-import Click from '../input/click'
-import Help from '../view/help'
-import Text from 'src/render/text'
+import RenderView from 'render/view'
+import Time from 'timeline/time'
+import Click from 'input/click'
+import Help from 'view/help'
+import Text from 'render/text'
 
 const createYear = () => {
 	const number = Text.create(1492)

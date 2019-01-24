@@ -1,10 +1,10 @@
 import * as PIXI from 'pixi.js'
 
-import Goods from '../data/goods.json'
+import Goods from 'data/goods.json'
 
-import Util from '../util/util'
-import Resources from '../render/resources'
-import Text from 'src/render/text'
+import Util from 'util/util'
+import Resources from 'render/resources'
+import Text from 'render/text'
 
 
 const MIN_DISTANCE = 4

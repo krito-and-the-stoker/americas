@@ -1,13 +1,13 @@
-import Terrain from '../data/terrain.json';
-import MovementCosts from '../data/movementCosts'
-import RenderView from '../render/view'
-import Dialog from '../view/ui/dialog'
-import MapEntity from '../entity/map'
-import Yield from '../data/yield'
-import Record from '../util/record'
-import Goods from '../data/goods'
-import Background from '../render/background'
-import Binding from '../util/binding'
+import Terrain from 'data/terrain.json';
+import MovementCosts from 'data/movementCosts'
+import RenderView from 'render/view'
+import Dialog from 'view/ui/dialog'
+import MapEntity from 'entity/map'
+import Yield from 'data/yield'
+import Record from 'util/record'
+import Goods from 'data/goods'
+import Background from 'render/background'
+import Binding from 'util/binding'
 
 const create = ({ id, layers, index }) => {
 	const [name, terrain] = Object.entries(Terrain).find(([name, terrain]) => terrain.id === id)

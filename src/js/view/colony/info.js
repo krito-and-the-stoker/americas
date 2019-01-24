@@ -1,6 +1,6 @@
-import Drag from '../../input/drag'
-import UnitView from '../../view/unit'
-import Text from 'src/render/text'
+import Drag from 'input/drag'
+import UnitView from 'view/unit'
+import Text from 'render/text'
 
 
 const create = originalDimensions => {

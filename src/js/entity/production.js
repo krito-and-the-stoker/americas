@@ -1,5 +1,5 @@
-import Buildings from '../data/buildings.json'
-import Goods from '../data/goods.json'
+import Buildings from 'data/buildings.json'
+import Goods from 'data/goods.json'
 
 
 const production = (colony, building, colonist) => {

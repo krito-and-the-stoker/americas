@@ -1,11 +1,11 @@
-import Record from '../util/record'
+import Record from 'util/record'
 import Treasure from './treasure'
 import Unit from './unit'
-import Member from '../util/member'
-import Binding from '../util/binding'
-import Util from '../util/util'
-import Message from '../view/ui/message'
-import Notification from '../view/ui/notification'
+import Member from 'util/member'
+import Binding from 'util/binding'
+import Util from 'util/util'
+import Message from 'view/ui/message'
+import Notification from 'view/ui/notification'
 
 const possibleColonists = [
 	{ unit: 'settler', 'name': 'Petty Criminals', expert: "criminal" },

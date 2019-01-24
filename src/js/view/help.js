@@ -1,12 +1,12 @@
-import Resources from '../render/resources'
-import Foreground from '../render/foreground'
-import RenderView from '../render/view'
-import Click from '../input/click'
-import Wheel from '../input/wheel'
-import Time from '../timeline/time'
-import Events from '../view/ui/events'
-import Binding from '../util/binding'
-import Text from 'src/render/text'
+import Resources from 'render/resources'
+import Foreground from 'render/foreground'
+import RenderView from 'render/view'
+import Click from 'input/click'
+import Wheel from 'input/wheel'
+import Time from 'timeline/time'
+import Events from 'view/ui/events'
+import Binding from 'util/binding'
+import Text from 'render/text'
 
 
 const helpText = `AMERICAS by Krito and the Stoker

@@ -1,6 +1,6 @@
-import Version from '../../version/version.json'
-import Tracking from '../util/tracking'
-import NumberOfAssets from '../data/numberOfAssets.json'
+import Version from 'version/version.json'
+import Tracking from 'util/tracking'
+import NumberOfAssets from 'data/numberOfAssets.json'
 import isMobile from 'is-mobile'
 
 let game = null

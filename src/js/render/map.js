@@ -1,8 +1,8 @@
-import Terrain from '../data/terrain.json'
-import MapEntity from '../entity/map'
-import Tile from '../entity/tile'
-import Message from '../view/ui/message'
-import RealMapView from '../view/map'
+import Terrain from 'data/terrain.json'
+import MapEntity from 'entity/map'
+import Tile from 'entity/tile'
+import Message from 'view/ui/message'
+import RealMapView from 'view/map'
 
 
 class MapView{

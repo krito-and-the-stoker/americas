@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
-import Message from '../view/ui/message'
-import Util from '../util/util'
+import Message from 'view/ui/message'
+import Util from 'util/util'
 
 
 let counter = 2

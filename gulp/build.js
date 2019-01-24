@@ -32,11 +32,15 @@ const config = () => {
     }))
   }
 
+  const directories = ['action', 'command', 'data', 'entity', 'input', 'render', 'task', 'timeline', 'util', 'view']
+  const aliases = directories.map(dir => ({
+    [dir]: path.resolve(__dirname, `../src/js/${dir}`)
+  })).reduce((all, one) => ({ ...all, ...one }), {})
+
   return {
   	mode: yargs.argv.production ? 'production' : 'development',
     entry: {
       index: './entries/index.js',
-      dev: './entries/dev.js',
       worker: './entries/worker.js'
     },
     output: {
@@ -45,7 +49,8 @@ const config = () => {
     },
     resolve: {
       alias: {
-        src: path.resolve(__dirname, '../src/js')
+        version: path.resolve(__dirname, '../src/version'),
+        ...aliases
       }
     },
     devtool: yargs.argv.production ? 'eval' : 'source-map',

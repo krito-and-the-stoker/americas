@@ -1,12 +1,12 @@
-import UnitMapView from './unit'
-import Foreground from '../../render/foreground'
-import RenderView from '../../render/view'
-import UnitView from '../unit'
-import Unit from '../../entity/unit'
-import Util from '../../util/util'
-import Storage from '../../entity/storage'
-import GoodsView from '../../view/goods'
-import Text from 'src/render/text'
+import UnitMapView from 'view/map/unit'
+import Foreground from 'render/foreground'
+import RenderView from 'render/view'
+import UnitView from 'view/unit'
+import Unit from 'entity/unit'
+import Util from 'util/util'
+import Storage from 'entity/storage'
+import GoodsView from 'view/goods'
+import Text from 'render/text'
 
 const cargoScale = .6
 

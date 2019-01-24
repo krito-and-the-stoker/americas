@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js'
 
-import Colony from '../../entity/colony'
-import Binding from '../../util/binding'
-import Text from 'src/render/text'
+import Colony from 'entity/colony'
+import Binding from 'util/binding'
+import Text from 'render/text'
 
 const create = colony => {
 	const container = new PIXI.Container()

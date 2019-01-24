@@ -1,27 +1,34 @@
-import Terrain from '../../data/terrain.json'
-import Goods from '../../data/goods.json'
-import Buildings from '../../data/buildings.json'
+import Terrain from 'data/terrain'
+import Goods from 'data/goods'
+import Buildings from 'data/buildings'
 
-import EuropeView from '../europe'
-import Resources from '../../render/resources'
-import Util from '../../util/util'
-import UnitView from '../unit'
-import Foreground from '../../render/foreground'
-import RenderView from '../../render/view'
-import Click from '../../input/click'
-import Secondary from '../../input/secondary'
-import MapView from '../../view/map'
-import UnitMapView from '../../view/map/unit'
-import ColonyMapView from '../../view/map/colony'
-import ColonyView from '../../view/colony'
-import MapEntity from '../../entity/map'
-import Background from '../../render/background'
-import Dialog from './dialog'
-import Events from './events'
-import Tile from '../../entity/tile'
-import Building from '../../entity/building'
-import Icon from '../icon'
-import Text from 'src/render/text'
+import Tile from 'entity/tile'
+import MapEntity from 'entity/map'
+import Building from 'entity/building'
+
+import Resources from 'render/resources'
+import Foreground from 'render/foreground'
+import RenderView from 'render/view'
+import Background from 'render/background'
+import Text from 'render/text'
+
+import Util from 'util/util'
+
+import Secondary from 'input/secondary'
+import Click from 'input/click'
+
+import UnitView from 'view/unit'
+import EuropeView from 'view/europe'
+import ColonyView from 'view/colony'
+
+import MapView from 'view/map'
+import UnitMapView from 'view/map/unit'
+import ColonyMapView from 'view/map/colony'
+
+import Dialog from 'view/ui/dialog'
+import Events from 'view/ui/events'
+import Icon from 'view/ui/icon'
+
 
 
 const originalDimensions = {

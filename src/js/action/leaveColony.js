@@ -1,5 +1,5 @@
-import Unit from '../entity/unit'
-import Colony from '../entity/colony'
+import Unit from 'entity/unit'
+import Colony from 'entity/colony'
 
 export default unit => {
 	const colony = unit.colony

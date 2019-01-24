@@ -1,9 +1,9 @@
-import Production from '../entity/production'
-import Storage from '../entity/storage'
-import Time from '../timeline/time'
-import Colony from '../entity/colony'
-import Europe from '../entity/europe'
-import Colonist from '../entity/colonist'
+import Production from 'entity/production'
+import Storage from 'entity/storage'
+import Time from 'timeline/time'
+import Colony from 'entity/colony'
+import Europe from 'entity/europe'
+import Colonist from 'entity/colonist'
 
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME

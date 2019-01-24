@@ -1,5 +1,5 @@
-import Market from '../entity/market'
-import Unit from '../entity/unit'
+import Market from 'entity/market'
+import Unit from 'entity/unit'
 
 
 export default (unit, pack) => {	
