@@ -7,6 +7,7 @@ import Europe from '../../entity/europe'
 import Treasure from '../../entity/treasure'
 import Unit from '../../entity/unit'
 import Events from '../../view/ui/events'
+import Text from 'src/render/text'
 
 import Button from '../../view/ui/button'
 import Dialog from '../../view/ui/dialog'
@@ -54,11 +55,8 @@ const create = () => {
 	const info = InfoView.create(originalDimensions)
 	normalContainer.addChild(info.container)
 
-	const nameHeadline = new PIXI.Text('London', {
-		fontFamily: 'Times New Roman',
+	const nameHeadline = Text.create('London', {
 		fontSize: 50,
-		fill: 0xffffff,
-		align: 'center'
 	})
 	nameHeadline.anchor.set(0.5)
 	nameHeadline.position.x = originalDimensions.x / 2

@@ -4,6 +4,8 @@ import Goods from '../data/goods.json'
 
 import Util from '../util/util'
 import Resources from '../render/resources'
+import Text from 'src/render/text'
+
 
 const MIN_DISTANCE = 4
 const MAX_DISTANCE = 30
@@ -27,11 +29,8 @@ const	create = (resource, amount, width = 100) => {
 			return sprite
 		})
 		if (result.length >= 6) {
-			const number = new PIXI.Text(`${absoluteAmount}`, {
-				fontFamily: 'Times New Roman',
-				fontSize: 32,
+			const number = Text.create(absoluteAmount, {
 				fill: amount > 0 ? 0xffffff : 0xFF6666,
-				align: 'center'
 			})
 			number.x = width / 2
 			number.y = 10

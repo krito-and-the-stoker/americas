@@ -10,6 +10,7 @@ import Market from '../../entity/market'
 import SellInEurope from '../../action/sellInEurope'
 import Util from '../../util/util'
 import Binding from '../../util/binding'
+import Text from 'src/render/text'
 
 
 const create = (originalDimensions) => {
@@ -31,12 +32,7 @@ const create = (originalDimensions) => {
 
 		const bid = Market.bid(good)
 		const ask = Market.ask(good)
-		const price =	 new PIXI.Text(`${bid}/${ask}`, {
-			fontFamily: 'Times New Roman',
-			fontSize: 32,
-			fill: 0xffffff,
-			align: 'center'
-		})
+		const price =	 Text.create(`${bid}/${ask}`)
 
 		const width = originalDimensions.x / Object.values(Goods.types).length
 		price.anchor.set(0.5)
@@ -71,11 +67,8 @@ const create = (originalDimensions) => {
 			priceViews.find(view => view.good === good).price.text = `${bid}/${ask}`
 		}, mapping))))
 
-	const text = new PIXI.Text('', {
-		fontFamily: 'Times New Roman',
-		fontSize: 36,
-		fill: 0xffffff,
-		align: 'right'
+	const text = Text.create('', {
+		fontSize: 36
 	})
 	container.pricing.addChild(text)
 

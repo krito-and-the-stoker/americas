@@ -8,6 +8,7 @@ import Util from '../../util/util'
 import ProductionView from '../../view/production'
 import Binding from '../../util/binding'
 import Storage from '../../entity/storage'
+import Text from 'src/render/text'
 
 
 const create = (colony, originalDimensions) => {
@@ -37,12 +38,7 @@ const create = (colony, originalDimensions) => {
 	constructionButton.y = 650
 	container.panel.addChild(constructionButton)
 
-	const buildingText = new PIXI.Text(`${colony.construction.name}`, {
-		fontFamily: 'Times New Roman',
-		fontSize: 32,
-		fill: 0xffffff,
-		align: 'center'
-	})
+	const buildingText = Text.create(colony.construction.name)
 	buildingText.x =  originalDimensions.x - 450 + 20
 	buildingText.y = originalDimensions.y / 2 - 75
 	container.panel.addChild(buildingText)

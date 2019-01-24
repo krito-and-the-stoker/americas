@@ -2,15 +2,11 @@ import * as PIXI from 'pixi.js'
 import Drag from '../../input/drag'
 import UnitView from '../../view/unit'
 import Market from '../../entity/market'
+import Text from 'src/render/text'
 
 const create = originalDimensions => {
 	const container = new PIXI.Container()
-	const text = new PIXI.Text('', {
-		fontFamily: 'Times New Roman',
-		fontSize: 32,
-		fill: 0xffffff,
-		align: 'center'
-	})
+	const text = Text.create()
 	text.x = 20
 	text.y = 0
 

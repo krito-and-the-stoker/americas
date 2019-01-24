@@ -6,15 +6,13 @@ import Unit from '../../entity/unit'
 import Util from '../../util/util'
 import Storage from '../../entity/storage'
 import GoodsView from '../../view/goods'
+import Text from 'src/render/text'
 
 const cargoScale = .6
 
 const initialize = () => {
-	const unitName = new PIXI.Text('', {
-		fontFamily: 'Times New Roman',
+	const unitName = Text.create('', {
 		fontSize: 32,
-		fill: 0xffffff,
-		align: 'center'
 	})
 	unitName.x = 10
 

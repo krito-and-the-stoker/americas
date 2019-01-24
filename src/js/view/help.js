@@ -6,6 +6,7 @@ import Wheel from '../input/wheel'
 import Time from '../timeline/time'
 import Events from '../view/ui/events'
 import Binding from '../util/binding'
+import Text from 'src/render/text'
 
 
 const helpText = `AMERICAS by Krito and the Stoker
@@ -81,10 +82,9 @@ const create = () => {
 		y: 575
 	}
 
-	const helpTextView = new PIXI.Text(helpText, {
+	const helpTextView = Text.create(helpText, {
 		fontFamily: 'Courier',
 		fontSize: 14,
-		fill: 0xFFFFFF,
 		align: 'left'
 	})
 

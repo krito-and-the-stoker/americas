@@ -6,6 +6,7 @@ import Time from '../../timeline/time'
 import Util from '../../util/util'
 import Click from '../../input/click'
 import Resources from '../../render/resources'
+import Text from 'src/render/text'
 
 
 const images = {
@@ -76,15 +77,13 @@ const createIndependent = (message, options, image = null, params = {}) => {
 			sprite.position.x = RenderView.getCenter().x + images[image].x
 			sprite.position.y = RenderView.getCenter().y + images[image].y
 		}
-		const plane9 = new PIXI.mesh.NineSlicePlane(Resoure.texture('status'), 100, 100, 100, 100)
+		const plane9 = new PIXI.mesh.NineSlicePlane(Resources.texture('status'), 100, 100, 100, 100)
 
 		let optionTexts = []
 		const container = params.context || Foreground.get().dialog
-		const text = new PIXI.Text(message, {
-			fontFamily: 'Times New Roman',
+		const text = Text.create(message, {
 			fontSize: 24,
 			fill: 0x000000,
-			align: 'center'
 		})
 		container.addChild(plane9)
 		if (sprite) {
@@ -110,11 +109,9 @@ const createIndependent = (message, options, image = null, params = {}) => {
 		plane9.height = 300 + 80 + (options.length + 1) * 30
 		plane9.width = 200 + text.width
 		optionTexts = options.map((msg, index) => {
-			const optionText = new PIXI.Text(msg, {
-				fontFamily: 'Times New Roman',
+			const optionText = Text.create(msg, {
 				fontSize: 24,
 				fill: 0x000000,
-				align: 'center'
 			})
 			optionText.anchor.set(0.5)
 			optionText.position.x = RenderView.getCenter().x

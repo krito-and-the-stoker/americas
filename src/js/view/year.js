@@ -3,14 +3,10 @@ import RenderView from '../render/view'
 import Time from '../timeline/time'
 import Click from '../input/click'
 import Help from '../view/help'
+import Text from 'src/render/text'
 
 const createYear = () => {
-	const number = new PIXI.Text(`${1492}`, {
-		fontFamily: 'Times New Roman',
-		fontSize: 32,
-		fill: 0xffffff,
-		align: 'center'
-	})
+	const number = Text.create(1492)
 
 	number.y = 42
 
@@ -33,12 +29,7 @@ const createYear = () => {
 }
 
 const createScale = () => {
-	const number = new PIXI.Text(`${1}`, {
-		fontFamily: 'Times New Roman',
-		fontSize: 32,
-		fill: 0xffffff,
-		align: 'center'
-	})
+	const number = Text.create(1)
 
 	number.y = 74
 

@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 
 import Colony from '../../entity/colony'
 import Binding from '../../util/binding'
+import Text from 'src/render/text'
 
 const create = colony => {
 	const container = new PIXI.Container()
@@ -10,18 +11,12 @@ const create = colony => {
 	const rebels  = Colony.rebels(colony)
 	const color = tories.number > 9 ? 0xFF8888 : rebels.percentage >= 100 ? 0x88FFFF : rebels.percentage >= 50 ? 0x88FF88 : 0xFFFFFF
 
-	const rebelText = new PIXI.Text(`Rebels: ${rebels.percentage}% (${rebels.number})`, {
-		fontFamily: 'Times New Roman',
-		fontSize: 32,
+	const rebelText = Text.create(`Rebels: ${rebels.percentage}% (${rebels.number})`, {
 		fill: color,
-		align: 'center'
 	})
 
-	const toriesText = new PIXI.Text(`Tories: ${tories.percentage}% (${tories.number})`, {
-		fontFamily: 'Times New Roman',
-		fontSize: 32,
+	const toriesText = Text.create(`Tories: ${tories.percentage}% (${tories.number})`, {
 		fill: color,
-		align: 'center'
 	})
 
 	rebelText.x = 10

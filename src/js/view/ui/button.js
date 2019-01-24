@@ -1,14 +1,12 @@
 import * as PIXI from 'pixi.js'
 import Click from '../../input/click'
 import Resources from '../../render/resources'
+import Text from 'src/render/text'
 
 const create = (text, fn) => {
 	const container = new PIXI.Container()
-	const button = new PIXI.Text(text, {
-		fontFamily: 'Times New Roman',
-		fontSize: 32,
+	const button = Text.create(text, {
 		fill: 0x000000,
-		align: 'center'
 	})
 	const background = Resources.sprite('buttonBackground')
 	background.width = button.width

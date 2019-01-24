@@ -21,6 +21,7 @@ import Events from './events'
 import Tile from '../../entity/tile'
 import Building from '../../entity/building'
 import Icon from '../icon'
+import Text from 'src/render/text'
 
 
 const originalDimensions = {
@@ -62,11 +63,8 @@ const colonyIcon = colony => {
 	colonySprite.y = terrainScale * 64
 	colonySprite.scale.set(terrainScale)
 
-	const text = new PIXI.Text(colony.name, {
-		fontFamily: 'Times New Roman',
+	const text = Text.create(colony.name, {
 		fontSize: 22,
-		fill: 0xffffff,
-		align: 'center'
 	})
 	text.position.x = colonySprite.x + terrainScale * (64 / 2)
 	text.position.y = colonySprite.y + terrainScale * (64 / 2)

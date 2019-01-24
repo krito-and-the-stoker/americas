@@ -43,6 +43,11 @@ const config = () => {
       filename: './[name].entry.js',
       path: path.resolve(__dirname, '../dist')
     },
+    resolve: {
+      alias: {
+        src: path.resolve(__dirname, '../src/js')
+      }
+    },
     devtool: yargs.argv.production ? 'eval' : 'source-map',
     context: path.resolve(__dirname, '../src/js/'),
     plugins: plugins

@@ -1,11 +1,8 @@
-import * as PIXI from 'pixi.js'
+import Text from 'src/render/text'
 
 const create = (colony, originalDimensions) => {
-	const nameHeadline = new PIXI.Text(colony.name, {
-		fontFamily: 'Times New Roman',
+	const nameHeadline = Text.create(colony.name, {
 		fontSize: 50,
-		fill: 0xffffff,
-		align: 'center'
 	})
 	nameHeadline.anchor.set(0.5)
 	nameHeadline.position.y = 35
