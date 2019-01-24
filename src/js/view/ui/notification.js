@@ -237,7 +237,7 @@ const createTerraforming = unit => {
 }
 
 const createRumor = (option, tile, unit) => {
-	const rumors = createSprite(Terrain.rumors.id - 1)
+	const rumors = Resources.sprite('map', { frame: Terrain.rumors.id - 1 })
 	const icon = Icon.create('question')
 
 	const container = combine(rumors, icon)
