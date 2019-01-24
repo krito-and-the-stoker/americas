@@ -3,6 +3,9 @@ import Goods from '../data/goods.json'
 
 
 const production = (colony, building, colonist) => {
+	if (!Buildings[building].production) {
+		return null
+	}
 	const level = colony.buildings[building]
 	const good = Buildings[building].production.good
 	const type = ['crosses', 'bells', 'construction'].includes(good) ? good : 'good'
