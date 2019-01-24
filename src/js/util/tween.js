@@ -19,6 +19,7 @@ const fadeIn = (sprite, time) => new Promise(resolve => {
 			sprite.alpha = 1
 			resolve()
 		})
+		.onComplete(resolve)
 		.start()
 })
 
@@ -41,6 +42,7 @@ const moveTo = (sprite, to, time) => new Promise(resolve => {
 			sprite.y = to.y
 			resolve()
 		})
+		.onComplete(resolve)
 		.start()
 })
 
@@ -65,6 +67,7 @@ const moveFrom = (sprite, from, time) => new Promise(resolve => {
 			sprite.y = to.y
 			resolve()
 		})
+		.onComplete(resolve)
 		.start()
 })
 

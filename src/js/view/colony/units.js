@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 
+import Tween from '../../util/tween'
 import Colony from '../../entity/colony'
 import Colonist from '../../entity/colonist'
 import UnitView from '../../view/unit'
@@ -41,7 +42,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 		y: 550,
 		taken: false
 	}]
-	const unsubscribeShips = Colony.listenEach.units(colony, unit => {
+	const unsubscribeShips = Colony.listenEach.units(colony, (unit, added) => {
 		if (unit.domain === 'sea' || unit.properties.cargo > 0) {
 			const view = Transport.create(unit)
 			Click.on(view.sprite, () => {
@@ -60,10 +61,16 @@ const create = (colony, closeScreen, originalDimensions) => {
 			view.container.y = position.y
 			container.addChild(view.container)
 
+			if (added) {
+				Tween.moveFrom(view.container, { x: - 120, y: 500 }, 1500)
+			}
+
 			return () => {
 				position.taken = false
 				view.unsubscribe()
-				container.removeChild(view.container)
+				Tween.moveTo(view.container, { x: - 120, y: 500 }, 1500).then(() => {
+					container.removeChild(view.container)
+				})
 			}
 		}
 	})

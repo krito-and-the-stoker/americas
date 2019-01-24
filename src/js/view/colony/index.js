@@ -69,6 +69,12 @@ const create = colony => {
 	container.addChild(construction.container.menu)
 	container.addChild(info.container)
 
+	const mask = new PIXI.Graphics()
+	mask.beginFill(0xFFFFFF)
+	mask.drawRect(0, 0, originalDimensions.x, originalDimensions.y)
+	units.container.mask = mask
+	container.addChild(mask)
+
 	const unsubscribeResize = RenderView.updateWhenResized(({ dimensions }) => {
 		const scaleX = dimensions.x / originalDimensions.x
 		const scaleY = dimensions.y / originalDimensions.y
