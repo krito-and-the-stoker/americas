@@ -35,7 +35,12 @@ const paths = {
 	coastleftdown: 'images/colony-screen/coast-leftdown.png',
 	coastleft: 'images/colony-screen/coast-left.png',
 	coastleftup: 'images/colony-screen/coast-leftup.png',
-	scout: 'images/scout.png',
+	admiral: 'images/dialog-characters/admiral.png',
+	govenor: 'images/dialog-characters/govenor.png',
+	kingJames: 'images/dialog-characters/king-james.png',
+	marshall: 'images/dialog-characters/marshall.png',
+	religion: 'images/dialog-characters/religion.png',
+	scout: 'images/dialog-characters/scout.png',
 	status: 'images/status.png'
 }
 
@@ -121,5 +126,6 @@ const initialize = () => {
 export default {
 	initialize,
 	sprite,
-	texture
+	texture,
+	numberOfAssets
 }

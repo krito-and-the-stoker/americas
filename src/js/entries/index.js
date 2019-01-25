@@ -1,6 +1,5 @@
 import Version from 'version/version.json'
 import Tracking from 'util/tracking'
-import NumberOfAssets from 'data/numberOfAssets.json'
 import isMobile from 'is-mobile'
 
 let game = null
@@ -8,7 +7,7 @@ window.addEventListener('load', async () => {
 	if (!isMobile()) {
 		console.log(`Revision: ${Version.revision}`)
 		console.log(`Build from ${Version.date}`)
-		document.querySelector('#log').innerHTML = `Loading files 0/${NumberOfAssets.files}...`
+		document.querySelector('#log').innerHTML = `Loading files...`
 		Tracking.pageView()
 		document.querySelector('#date').innerHTML = `Development build from ${Version.date}`
 		const clickStart = () => {

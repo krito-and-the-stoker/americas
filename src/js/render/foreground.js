@@ -17,6 +17,7 @@ let info = null
 
 let layer = null
 
+// TODO: get rid of get becuase fugly ://
 const get = () => ({
 	container,
 	dialog,
@@ -78,6 +79,14 @@ const removeUnit = sprite => {
 	units.removeChild(sprite)
 }
 
+const add = {
+	dialog: element => dialog.addChild(element)
+}
+
+const remove = {
+	dialog: element => dialog.removeChild(element)
+}
+
 const updateCoords = ({ x, y }) => {
 	container.x = x
 	container.y = y
@@ -135,5 +144,7 @@ export default {
 	removeTerrain,
 	addUnit,
 	removeUnit,
-	get
+	get,
+	add,
+	remove
 }

@@ -1,153 +1,144 @@
-import * as PIXI from 'pixi.js'
-
 import Foreground from 'render/foreground'
 import RenderView from 'render/view'
-import Time from 'timeline/time'
-import Util from 'util/util'
-import Click from 'input/click'
-import Resources from 'render/resources'
 import Text from 'render/text'
+import Resources from 'render/resources'
+import Time from 'timeline/time'
+import Click from 'input/click'
+import MapView from 'view/map'
 
-
-const images = {
-	scout: {
-		x: - 300,
-		y: 0,
-		placement: 'front'
+const padding = 40
+const emptyLine = 26
+const clickBlockTime = 300
+const types = {
+	menu: {
+		align: 'center',
+		pause: false,
+		width: 0.33
+	},
+	naval: {
+		align: 'left',
+		width: 0.25,
+		centerMap: {
+			x: 0.7,
+			y: 0.5
+		},
+		image: 'admiral'
 	}
 }
 
-let currentDialog = null
-
-let initialized = false
-const initialize = () => {
-	currentDialog = Promise.resolve()
-}
-
-const dialogs = {
-	discovered: {
-		msg: 'Land Ahoy!\nYou have discovered a new continent',
-		options: ['Splendid!', 'Marvellous!', 'What a surprise!'],
-		image: 'scout'
+const align = {
+	center: (plane, dimensions) => {
+		plane.x = dimensions.x / 2 - plane.width / 2
+		plane.y = dimensions.y / 2 - plane.height / 2
 	},
-	unload: {
-		msg: 'Do you want to disembark here?',
-		options: ['make landfall', 'stay on board']
-	},
-	europe: {
-		msg: 'Do you want to set sail for europe?',
-		options: ['yes, steady as she goes!', 'no, let us remain here.']
-	},
-}
-
-const welcome = () => new Promise(resolve => {	
-	const container = Foreground.get().dialog
-	const sprite = Resources.sprite('welcome')
-	sprite.anchor.set(1, 0.5)
-	const original = {
-		x: sprite.width,
-		y: sprite.height
-	}
-	container.addChild(sprite)
-	const unsubscribe = RenderView.updateWhenResized(({ dimensions }) => {
-		const scale = Math.min(original.x / dimensions.x, original.y / dimensions.y)
-		sprite.scale.set(0.35 * dimensions.x / original.x)
-		sprite.x = dimensions.x
-		sprite.y = dimensions.y / 2
-	})
-
-	Click.on(sprite, () => {
-		unsubscribe()
-		container.removeChild(sprite)
-		resolve()
-	})
-})
-
-const show = dialogName => {
-	const dialog = dialogs[dialogName]
-	return create(dialog.msg, dialog.options, dialog.image)
-}
-
-const createIndependent = (message, options, image = null, params = {}) => {
-	return new Promise(resolve => {
-		let sprite = null
+	left: (plane, image, dimensions) => {
+		plane.x = dimensions.x / 2 - plane.width
+		plane.y = dimensions.y / 2 - plane.height / 2
 		if (image) {
-			sprite = Resources.sprite(image)
-			sprite.anchor.set(0.5)
-			sprite.position.x = RenderView.getCenter().x + images[image].x
-			sprite.position.y = RenderView.getCenter().y + images[image].y
+			const width = 3 * dimensions.x / 12
+			const height = width
+			image.width = width
+			image.height = height
+			image.x = 0.25 * dimensions.x - 0.75 * width
+			image.y = 0.5 * dimensions.y - 0.5 * height
 		}
-		const plane9 = new PIXI.mesh.NineSlicePlane(Resources.texture('status'), 100, 100, 100, 100)
+	},
+	right: (plane, image, dimensions) => {
+		plane.x = dimensions.x / 2
+		plane.y = dimensions.y / 2 - plane.height / 2
+	}
+}
 
-		let optionTexts = []
-		const container = params.context || Foreground.get().dialog
-		const text = Text.create(message, {
-			fontSize: 24,
-			fill: 0x000000,
+
+
+const create = ({ type, text, options, coords, pause }) => {
+	let clickAllowed = false
+	setTimeout(() => { clickAllowed = true }, clickBlockTime)
+
+	const closePlane = new PIXI.Container()
+	const plane9 = new PIXI.mesh.NineSlicePlane(Resources.texture('status'), 100, 100, 100, 100)
+	const config = types[type]
+
+	const textView = Text.create(text)
+	textView.y = padding
+	plane9.addChild(textView)
+
+	const image = config.image ? Resources.sprite(config.image) : null
+
+	const optionViews = options.map(option => ({
+		...option,
+		text: Text.create(option.text)
+	}))
+
+	if (coords && config.centerMap) {
+		MapView.centerAt(coords, 500, config.centerMap)
+	}
+
+	optionViews.forEach(option => {
+		Click.on(option.text, () => {
+			if (clickAllowed) {
+				option.action()
+				close()
+			}
 		})
-		container.addChild(plane9)
-		if (sprite) {
-			container.addChild(sprite)
-		}
-		container.addChild(text)
-		text.anchor.set(0.5)
-		text.position.x = RenderView.getCenter().x
-		text.position.y = RenderView.getCenter().y - 50
+		option.text.buttonMode = true
+		plane9.addChild(option.text)
+	})
 
-		const destroy = () => {
-			container.removeChild(text)
-			container.removeChild(plane9)
-			if (sprite) {
-				container.removeChild(sprite)
-			}
-			optionTexts.forEach(optionText => container.removeChild(optionText))
-			if (params.pause) {
-				Time.resume()
-			}
-		}
+	const unsubscribeDimensions = RenderView.listen.dimensions(dimensions => {
+		closePlane.hitArea = new PIXI.Rectangle(0, 0, dimensions.x, dimensions.y)
 
-		plane9.height = 300 + 80 + (options.length + 1) * 30
-		plane9.width = 200 + text.width
-		optionTexts = options.map((msg, index) => {
-			const optionText = Text.create(msg, {
-				fontSize: 24,
-				fill: 0x000000,
-			})
-			optionText.anchor.set(0.5)
-			optionText.position.x = RenderView.getCenter().x
-			optionText.position.y = RenderView.getCenter().y - plane9.height / 2 + 250 + 30*index
-			optionText.interactive = true
-			optionText.buttonMode = true
-			if (optionText.width > plane9.width + 100) {
-				plane9.width = optionText.width + 100
-			}
-			Click.on(optionText, () => {
-				destroy()
-				resolve(index)
-			})
-			container.addChild(optionText)
-			return optionText
+		let currentHeight = padding
+		textView.style = {
+			...textView.style,
+			wordWrap: true,
+			wordWrapWidth: config.width * dimensions.x
+		}
+		textView.x = padding + (config.width * dimensions.x - textView.width) / 2
+		currentHeight += textView.height + emptyLine
+
+		optionViews.forEach((option, index) => {
+			option.text.style = textView.style
+			option.text.x = padding + (config.width * dimensions.x - option.text.width) / 2
+			option.text.y = currentHeight
+			currentHeight += option.text.height
 		})
-		plane9.position.x = RenderView.getCenter().x - plane9.width / 2
-		plane9.position.y = RenderView.getCenter().y - plane9.height / 2 + 30
-		text.position.y = RenderView.getCenter().y - plane9.height / 2 + 160
 
-		if (params.pause) {
-			Time.pause()
+		plane9.width = config.width * dimensions.x + 2*padding
+		plane9.height = currentHeight + padding
+		align[config.align](plane9, image, dimensions)
+	})
+
+	Foreground.add.dialog(closePlane)
+	Foreground.add.dialog(plane9)
+	if (image) {	
+		Foreground.add.dialog(image)
+	}
+
+	if (pause) {
+		Time.pause()
+	}
+
+	const close = () => {
+		unsubscribeDimensions()
+		Foreground.remove.dialog(closePlane)
+		Foreground.remove.dialog(plane9)
+		if (image) {	
+			Foreground.remove.dialog(image)
+		}
+		if (pause) {
+			Time.resume()
+		}
+	}
+
+	Click.on(closePlane, () => {
+		if (clickAllowed) {		
+			options.find(option => option.default).action()
+			close()
 		}
 	})
+
+	return close
 }
 
-
-const create = (message, options, image) => {
-	currentDialog = currentDialog.then(() => createIndependent(message, options, image, { pause: true }))
-	return currentDialog
-}
-
-export default {
-	initialize,
-	create,
-	createIndependent,
-	show,
-	welcome
-}
+export default { create }

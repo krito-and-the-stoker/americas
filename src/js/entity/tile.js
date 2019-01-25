@@ -1,7 +1,6 @@
 import Terrain from 'data/terrain.json';
 import MovementCosts from 'data/movementCosts'
 import RenderView from 'render/view'
-import Dialog from 'view/ui/dialog'
 import MapEntity from 'entity/map'
 import Yield from 'data/yield'
 import Record from 'util/record'
@@ -147,7 +146,6 @@ const load = (data, index) => {
 const discover = tile => {
 	if (tile.domain === 'land' && !Record.getGlobal('hasDiscoveredLand')) {
 		Record.setGlobal('hasDiscoveredLand', true)
-		Dialog.show('discovered')
 	}
 	if (!tile.discovered) {	
 		tile.discovered = true

@@ -41,11 +41,11 @@ const moveMap = (newCoords, moveTime = 0) => {
 	}
 }
 
-const centerAt = ({ x, y }, moveTime) => {
+const centerAt = ({ x, y }, moveTime, screen = { x: 0.5, y: 0.5 }) => {
 	const scale = RenderView.get().scale
 	const target = {
-		x: -scale*TILE_SIZE*x + RenderView.getDimensions().x / 2,
-		y: -scale*TILE_SIZE*y + RenderView.getDimensions().y / 2
+		x: -scale*TILE_SIZE*x + screen.x * RenderView.getDimensions().x,
+		y: -scale*TILE_SIZE*y + screen.y * RenderView.getDimensions().y
 	}
 	moveMap(target, moveTime)
 }

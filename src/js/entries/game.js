@@ -23,7 +23,6 @@ import Record from 'util/record'
 import Util from 'util/util'
 import Tribe from 'entity/tribe'
 import Message from 'view/ui/message'
-import NumberOfAssets from 'data/numberOfAssets.json'
 import Version from 'version/version.json'
 import * as Sentry from '@sentry/browser'
 
@@ -100,7 +99,7 @@ const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve))
 
 let loadingResources = null
 const preload = () => {
-	Message.log(`Downloading files (2/${NumberOfAssets.files})...`)
+	Message.log(`Downloading files (2/${Resources.numberOfAssets()})...`)
 	loadingResources = Resources.initialize()
 }
 
@@ -127,8 +126,6 @@ const start = async () => {
 		await nextFrame()
 		MapView.initialize()
 		await nextFrame()
-		Dialog.initialize()
-		await nextFrame()
 		Tween.initialize()
 		await nextFrame()
 		PathFinder.initialize()
@@ -154,7 +151,7 @@ const start = async () => {
 		MapView.zoomBy(1/0.35, null, 100)
 		setTimeout(async () => {
 			Message.log('Starting game...')
-			await Dialog.welcome()
+			// await Dialog.welcome()
 			MapView.zoomBy(0.35, null, 3000)
 		}, 100)
 
@@ -196,7 +193,6 @@ const load = async () => {
 
 		RenderView.initialize()
 		await nextFrame()
-		Dialog.initialize()
 		Tween.initialize()
 		MapView.initialize()
 		await nextFrame()

@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js'
 
 import Message from 'view/ui/message'
-import NumberOfAssets from 'data/numberOfAssets'
 
 
 const mergeFunctions = funcArray => funcArray.reduce((all, fn) => () => { all(); fn(); }, () => {})

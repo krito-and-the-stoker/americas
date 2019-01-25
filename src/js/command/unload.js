@@ -25,7 +25,20 @@ const create = (unit, coords) => {
 	let decision = null
 	let unloadingStartedAt = null
 	let landingUnit = null
-	Dialog.show('unload').then(result => { decision = result })
+
+	Dialog.create({
+		type: 'naval',
+		text: 'Would you like to disembark here?',
+		coords: unit.mapCoordinates,
+		options: [{
+			text: 'Make landfall',
+			action: () => decision = 0
+		}, {
+			text: 'Stay with the ships',
+			action: () => decision = 1,
+			default: true
+		}]
+	})
 
 	const update = currentTime => {
 		if (unloadingStartedAt) {

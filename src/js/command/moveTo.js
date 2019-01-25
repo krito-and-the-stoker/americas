@@ -23,10 +23,18 @@ const create = (unit, coords, moveToCommander = null, hasPath = false) => {
 
 	const target = MapEntity.tile(coords)
 	if (target.name === 'sea lane' && !hasPath) {	
-		Dialog.show('europe').then(decision => {
-			if (decision === 0) {
-				Commander.scheduleBehind(moveToCommander, Europe.create(unit))
-			}
+		Dialog.create({
+			type: 'naval',
+			text: 'Would you like to set sail for Europe?',
+			options: [{
+				text: 'Yes, steady as she goes!',
+				action: () => Commander.scheduleBehind(moveToCommander, Europe.create(unit))
+			}, {
+				text: 'No let as remain here',
+				action: () => {},
+				default: true
+			}],
+			coords: unit.mapCoordinates
 		})
 	}
 

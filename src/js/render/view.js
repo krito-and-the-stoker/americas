@@ -1,6 +1,7 @@
 import Background from './background.js'
 import Foreground from './foreground.js'
 import Record from 'util/record'
+import Binding from 'util/binding'
 
 Record.setGlobal('scale', 1)
 Record.setGlobal('coords', {
@@ -48,6 +49,8 @@ const updateScale = newScale => {
 const initialize = () => {
 	Background.initialize()
 	Foreground.initialize()
+	// TODO: clean this up and use the binding system all the way through
+	updateWhenResized(({ dimensions }) => update.dimensions(dimensions))
 	window.addEventListener('resize', () => resizeFunctions
 		.forEach(fn => fn({
 			dimensions: getDimensions(),
@@ -60,6 +63,21 @@ const onDraw = () => {
 	Background.doRenderWork()
 	Foreground.doRenderWork()
 }
+
+const state = {
+	dimensions: null,
+	scale: null,
+	coords: null
+}
+
+const listen = {
+	dimensions: fn => Binding.listen(state, 'dimensions', fn)
+}
+
+const update = {
+	dimensions: value => Binding.update(state, 'dimensions', value)
+}
+
 
 const updateWhenResized = fn => {
 	fn({
@@ -83,5 +101,6 @@ export default {
 	restart,
 	onDraw,
 	render,
+	listen,
 	get
 }
