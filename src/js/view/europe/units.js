@@ -95,49 +95,54 @@ const create = () => {
 
 	const unsubscribeUnits = Europe.listenEach.units((unit, added) => {
 		if (unit.domain === 'sea') {
-			const view = Transport.create(unit)
-
-			Click.on(view.sprite, () =>
-				selectTarget(unit))
 
 			const position = shipPositions.find(pos => !pos.taken)
-			position.taken = unit
+			if (position) {
+				const view = Transport.create(unit)
 
-			view.container.x = position.x
-			view.container.y = position.y
-			view.container.scale.set(1.25)
-			container.ships.addChild(view.container)
+				Click.on(view.sprite, () =>
+					selectTarget(unit))
 
-			if (added) {
-				Tween.moveFrom(view.container, { x: - 1000, y: -300 }, 5000)
-			}
+				position.taken = unit
 
-			return () => {
-				position.taken = false
-				view.unsubscribe()
-				Tween.moveTo(view.container, { x: - 1000, y: -300 }, 5000).then(() => {
-					container.ships.removeChild(view.container)
-				})
+				view.container.x = position.x
+				view.container.y = position.y
+				view.container.scale.set(1.25)
+				container.ships.addChild(view.container)
+
+				if (added) {
+					Tween.moveFrom(view.container, { x: - 1000, y: -300 }, 5000)
+				}
+
+				return () => {
+					position.taken = false
+					view.unsubscribe()
+					Tween.moveTo(view.container, { x: - 1000, y: -300 }, 5000).then(() => {
+						container.ships.removeChild(view.container)
+					})
+				}
 			}
 		}
 
 		if (unit.domain === 'land') {
-			const sprite = UnitView.create(unit)
-
 			const position = landPositions.find(pos => !pos.taken)
-			position.taken = unit
+			if (position) {
+				const sprite = UnitView.create(unit)
 
-			sprite.x = position.x
-			sprite.y = position.y
-			sprite.scale.set(2)
-			container.units.addChild(sprite)
-			Drag.makeDraggable(sprite, { unit })
+				position.taken = unit
 
-			Tween.fadeIn(sprite, 350)
+				sprite.x = position.x
+				sprite.y = position.y
+				sprite.scale.set(2)
+				container.units.addChild(sprite)
+				Drag.makeDraggable(sprite, { unit })
 
-			return () => {
-				position.taken = false
-				container.units.removeChild(sprite)
+				Tween.fadeIn(sprite, 350)
+
+				return () => {
+					position.taken = false
+					container.units.removeChild(sprite)
+				}
 			}
 		}
 	})
