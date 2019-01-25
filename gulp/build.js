@@ -21,8 +21,10 @@ md.use(mila, {
 
 
 const config = () => {
-  const plugins = [new webpack.EnvironmentPlugin(['KEEN_SECRET', 'ENABLE_TRACKING', 'SENTRY_DSN'])]
-  // if (yargs.argv.production) {
+  const plugins = []
+  if (yargs.argv.production) {
+    plugins.push(new webpack.EnvironmentPlugin(['KEEN_SECRET', 'ENABLE_TRACKING', 'SENTRY_DSN']))
+  }
   //   plugins.push(new SentryCliPlugin({
   //     dryRun: false,
   //     release: require(path.resolve(__dirname, '../src/version/version.json')).revision,
