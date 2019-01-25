@@ -22,14 +22,14 @@ md.use(mila, {
 
 const config = () => {
   const plugins = [new webpack.EnvironmentPlugin(['KEEN_SECRET', 'ENABLE_TRACKING', 'SENTRY_DSN'])]
-  if (yargs.argv.production) {
-    plugins.push(new SentryCliPlugin({
-      dryRun: false,
-      release: require(path.resolve(__dirname, '../src/version/version.json')).revision,
-      include: path.resolve(__dirname, '../src/js'),
-      configFile: path.resolve(__dirname, './sentry.properties'),
-      ignore: ['node_modules', 'webpack.config.js', 'sentry.properties'],
-    }))
+  // if (yargs.argv.production) {
+  //   plugins.push(new SentryCliPlugin({
+  //     dryRun: false,
+  //     release: require(path.resolve(__dirname, '../src/version/version.json')).revision,
+  //     include: path.resolve(__dirname, '../src/js'),
+  //     configFile: path.resolve(__dirname, './sentry.properties'),
+  //     ignore: ['node_modules', 'webpack.config.js', 'sentry.properties'],
+  //   }))
   }
 
   const directories = ['action', 'command', 'data', 'entity', 'input', 'render', 'task', 'timeline', 'util', 'view']
@@ -38,7 +38,7 @@ const config = () => {
   })).reduce((all, one) => ({ ...all, ...one }), {})
 
   return {
-  	mode: yargs.argv.production ? 'production' : 'development',
+  	mode: (yargs.argv.production || yargs.argv.staging) ? 'production' : 'development',
     entry: {
       index: './entries/index.js',
       worker: './entries/worker.js'
@@ -53,7 +53,7 @@ const config = () => {
         ...aliases
       }
     },
-    devtool: yargs.argv.production ? 'eval' : 'source-map',
+    devtool: (yargs.argv.production || yargs.argv.staging) ? 'eval' : 'source-map',
     context: path.resolve(__dirname, '../src/js/'),
     plugins: plugins
   }
