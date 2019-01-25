@@ -93,12 +93,6 @@ const create = () => {
 		taken: false
 	}))
 
-	const unsibscribeClose = Europe.listen.units(units => () => {
-		if (!units.some(unit => unit.domain === 'sea')) {
-			setTimeout(closeFn, 1000)
-		}
-	})
-
 	const unsubscribeUnits = Europe.listenEach.units((unit, added) => {
 		if (unit.domain === 'sea') {
 			const view = Transport.create(unit)
@@ -166,27 +160,7 @@ const create = () => {
 	const unsubscribe = () => {
 		unsubscribeDrag()
 		unsubscribeUnits()
-		unsibscribeClose()
 	}
-
-	// const graphics = new PIXI.Graphics()
-	// graphics.beginFill(0x9b59b6) // Purple
-
-	// // Draw a rectangle
-	// window.rect = window.rect || {
-	// 	x: 240,
-	// 	y: 150,
-	// 	width: 75,
-	// 	height: 75
-	// }
-	// window.originalDimensions = {
-	// 	x: 1920,
-	// 	y: 1080
-	// }
-	// const rect = {x: 0, y: -100, width: 648, height: 250}
-	// graphics.drawRect(window.rect.x, window.rect.y, window.rect.width, window.rect.height)
-	// graphics.endFill()
-	// container.units.addChild(graphics)
 
 	return {
 		container,

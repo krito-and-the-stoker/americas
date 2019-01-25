@@ -35,7 +35,7 @@ const openScreen = (screen, event) => {
 	}
 	currentScreen = screen
 	currentEvent = event
-	layer.app.stage.addChild(screen)
+	layer.app.stage.addChild(screen.container)
 	layer.app.stage.addChild(permanent)
 	layer.app.stage.addChild(context)
 	layer.app.stage.addChild(dialog)
@@ -48,11 +48,11 @@ const openScreen = (screen, event) => {
 const closeScreen = () => {
 	if (currentScreen) {
 		if (currentScreen.unsubscribe) {
-			currentScreen.sunbuscribe()
+			currentScreen.unsubscribe()
 		}
 		Events.trigger(currentEvent.name, currentEvent.arg)
 		Context.cancelAll()
-		layer.app.stage.removeChild(currentScreen)
+		layer.app.stage.removeChild(currentScreen.container)
 		layer.app.stage.addChild(container)
 		layer.app.stage.addChild(permanent)
 		layer.app.stage.addChild(context)

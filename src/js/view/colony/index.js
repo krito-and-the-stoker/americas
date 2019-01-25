@@ -30,8 +30,7 @@ const close = () => {
 }
 
 const open = colony => {
-	currentScreen = create(colony)
-	Foreground.openScreen(currentScreen, { name: 'colonyScreen', arg: colony })
+	Foreground.openScreen(create(colony), { name: 'colonyScreen', arg: colony })
 }
 
 const create = colony => {
