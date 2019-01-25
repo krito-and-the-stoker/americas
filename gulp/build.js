@@ -30,7 +30,7 @@ const config = () => {
   //     configFile: path.resolve(__dirname, './sentry.properties'),
   //     ignore: ['node_modules', 'webpack.config.js', 'sentry.properties'],
   //   }))
-  }
+  // }
 
   const directories = ['action', 'command', 'data', 'entity', 'input', 'render', 'task', 'timeline', 'util', 'view']
   const aliases = directories.map(dir => ({
