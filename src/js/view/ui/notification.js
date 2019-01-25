@@ -243,17 +243,20 @@ const createRumor = (option, tile, unit) => {
 	const container = combine(rumors, icon)
 
 	const action = () => {
-		Dialog.createIndependent(option.text, ['ok', 'go to scout'], null, { pause: true })
-			.then(decision => {
-				if (decision === 1) {
-					MapView.centerAt(unit.mapCoordinates, 350)
-					UnitMapView.select(unit)
-				}
-			})
-
-		option.fn()
+		UnitMapView.select(unit)
 		Tile.updateRumors(tile)
-		Background.render()
+		Dialog.create({
+			type: 'scout',
+			text: option.text,
+			options: [{
+				action: () => {
+					option.action()
+				},
+				default: true
+			}],
+			coords: unit.mapCoordinates,
+			pause: true
+		})
 	}
 
 	const dismiss = {

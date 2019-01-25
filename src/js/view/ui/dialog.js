@@ -32,6 +32,15 @@ const types = {
 			y: 0.5
 		},
 		image: 'kingJames'
+	},
+	scout: {
+		align: 'left',
+		width: 0.25,
+		centerMap: {
+			x: 0.7,
+			y: 0.5
+		},
+		image: 'scout'
 	}
 }
 

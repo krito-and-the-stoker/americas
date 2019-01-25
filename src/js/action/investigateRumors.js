@@ -15,41 +15,41 @@ import Notification from 'view/ui/notification'
 
 const options = [{
 	text: () => 'Your find nothing but rumors',
-	fn: () => {},
+	action: () => {},
 	probability: 3,
 }, {
 	text: () => 'Your expedition has vanished without a trace.',
-	fn: ({ unit }) => Unit.disband(unit),
-	probability: 0.35
+	action: ({ unit }) => Unit.disband(unit),
+	probability: 0.2
 }, {
 	text: ({ random }) => `Your expedition enters a small friendly tribe. The chief offers you a gift worth ${Math.round(50 + 250*random)} gold.`,
-	fn: ({ random }) => Treasure.gain(Math.round(50 + 250*random)),
+	action: ({ random }) => Treasure.gain(Math.round(50 + 250*random)),
 	probability: 1.5
 }, {
 	text: () => 'You happen upon the desperate survivors of a former colony. In exchange for badly needed supplies, they swear allegiance to you.',
-	fn: ({ unit }) => Unit.create('settler', unit.mapCoordinates),
+	action: ({ unit }) => Unit.create('settler', unit.mapCoordinates),
 	probability: 0.5
 }, {
 	text: ({ random }) => `You find the ruins of a lost civilization. Within are gold and artifacts worth ${Math.round(500 + 1500*random)} gold.`,
-	fn: ({ random, unit }) => {
+	action: ({ random, unit }) => {
 		const treasure = Unit.create('treasure', unit.mapCoordinates)
 		treasure.treasure = Math.round(500 + 1500*random)
 	},
 	probability: 0.2
 }, {
 	text: ({ random }) => `You have found one of the Seven Cities of Cibola! Treasure worth ${Math.round(3000 + 4000*random)} gold unearthed in the ruins! It will take a Galleon to get this treasure back to Europe!`,
-	fn: ({ random, unit }) => {
+	action: ({ random, unit }) => {
 		const treasure = Unit.create('treasure', unit.mapCoordinates)
 		treasure.treasure = Math.round(3000 + 4000*random)
 	},
 	probability: 0.05
 }, {
 	text: () => 'You have discovered a Fountain of Youth! Rumors fly in Europe! Immigrants line the docks to seek perpetual youth in the New World!',
-	fn: () => Europe.update.crosses(150),
+	action: () => Europe.update.crosses(150),
 	probability: 0.05
 }, {
 	text: () => 'You are trespassing near our holy shrines!',
-	fn: () => {},
+	action: () => {},
 	probability: 0.1
 }]
 
@@ -61,7 +61,7 @@ export default unit => {
 	const tile = MapEntity.tile(unit.mapCoordinates)
 	const evaluatedOption = {
 		text: option.text({ unit, random }),
-		fn: () => option.fn({ unit, random })
+		action: () => option.action({ unit, random })
 	}
 	Notification.create({ type: 'rumor', option: evaluatedOption, tile, unit })
 }

@@ -21,34 +21,50 @@ import MoveTo from 'command/moveTo'
 import TriggerEvent from 'command/triggerEvent'
 import Tile from 'entity/tile'
 
-const selectTarget = (unit, context) => {
+const closeIfNoShips = () => {
+	return
+	const unsubscribe = Europe.listen.units(units => {
+		if (units.filter(unit => unit.domain === 'sea').length === 1) {
+			setTimeout(closeFn, 1500)
+		}
+	})
+	unsubscribe()	
+}
+
+const selectTarget = unit => {
 	const colonies = Record.getAll('colony').filter(colony => {
 		const tile = MapEntity.tile(colony.mapCoordinates)
 		return Tile.diagonalNeighbors(tile).some(tile => tile.domain === 'sea')
 	})
-	const colonyOptions = colonies.map(colony => colony.name)
-	return Dialog.createIndependent('Where do you wish us to go?', ['Stay here', ...colonyOptions, 'Where you came from'],
-		null,
-		{
-			context,
-			paused: false
-		})
-		.then(decision => {
-			if (decision === 0) {
-				return
-			}
-			if (decision === colonyOptions.length + 1) {
-				Commander.scheduleBehind(unit.commander, America.create(unit))
-				Commander.scheduleBehind(unit.commander, TriggerEvent.create('notification', { type: 'america', unit: unit }))
-			} else {						
-				const colony = colonies[decision - 1]
-				const tile = MapEntity.tile(colony.mapCoordinates)
-				const path = PathFinder.findHighSeas(tile)
-				Unit.update.mapCoordinates(unit, path[path.length - 1].mapCoordinates)
-				Commander.scheduleBehind(unit.commander, America.create(unit))
-				Commander.scheduleBehind(unit.commander, MoveTo.create(unit, colony.mapCoordinates))
-				Commander.scheduleBehind(unit.commander, TriggerEvent.create('notification', { type: 'arrive', unit: unit, colony }))
-			}
+	const options = [{
+		text: 'Where you came from',
+		action: () => {
+			Commander.scheduleBehind(unit.commander, America.create(unit))
+			Commander.scheduleBehind(unit.commander, TriggerEvent.create('notification', { type: 'america', unit: unit }))
+			closeIfNoShips()
+		}
+	}].concat(colonies.map((colony, index) => ({
+		margin: !index && colonies.length > 1,
+		text: colony.name,
+		action: () => {
+			const tile = MapEntity.tile(colony.mapCoordinates)
+			const path = PathFinder.findHighSeas(tile)
+			Unit.update.mapCoordinates(unit, path[path.length - 1].mapCoordinates)
+			Commander.scheduleBehind(unit.commander, America.create(unit))
+			Commander.scheduleBehind(unit.commander, MoveTo.create(unit, colony.mapCoordinates))
+			Commander.scheduleBehind(unit.commander, TriggerEvent.create('notification', { type: 'arrive', unit: unit, colony }))
+			closeIfNoShips()
+		}
+	}))).concat([{
+		text: 'Stay here',
+		default: true,
+		margin: true
+	}])
+
+	Dialog.create({
+		type: 'naval',
+		text: 'Where do you wish us to go?',
+		options,
 	})
 }
 
@@ -85,16 +101,7 @@ const create = closeFn => {
 			const view = Transport.create(unit)
 
 			Click.on(view.sprite, () =>
-				selectTarget(unit, container.dialog)
-					.then(() => new Promise(resolve => {
-						const unsubscribe = Europe.listen.units(units => {
-							if (units.filter(unit => unit.domain === 'sea').length === 1) {
-								setTimeout(closeFn, 1500)
-							}
-						})
-						unsubscribe()
-						resolve()
-					})))
+				selectTarget(unit))
 
 			const position = shipPositions.find(pos => !pos.taken)
 			position.taken = unit
