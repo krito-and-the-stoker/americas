@@ -279,13 +279,16 @@ const createSettlement = (settlement, unit) => {
 	const container = combine(settlementView, icon)
 
 	const action = () => {
-		Dialog.createIndependent('Here do not live any natives yet.', ['ok', 'go to scout'], null, { pause: true })
-			.then(decision => {
-				if (decision === 1) {
-					MapView.centerAt(unit.mapCoordinates, 350)
-					UnitMapView.select(unit)
-				}
-			})
+		Dialog.create({
+			type: 'natives',
+			text: 'Here do not live any natives yet',
+			pause: true,
+			coords: unit.mapCoordinates,
+			options: [{
+				default: true,
+				action: () => UnitMapView.select(unit)
+			}]
+		})
 	}
 
 	const dismiss = {

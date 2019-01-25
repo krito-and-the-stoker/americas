@@ -41,8 +41,18 @@ const types = {
 			y: 0.5
 		},
 		image: 'scout'
+	},
+	natives: {
+		align: 'left',
+		width: 0.25,
+		centerMap: {
+			x: 0.7,
+			y: 0.5,
+		},
+		image: 'scout'
 	}
 }
+
 
 const align = {
 	center: (plane, image, dimensions) => {
