@@ -16,8 +16,8 @@ window.addEventListener('load', async () => {
 			document.querySelector('.load').removeEventListener('click', clickResume)
 			document.querySelector('.title').classList.add('hidden')
 			document.querySelector('.loading').classList.remove('hidden')
-			requestAnimationFrame(() => {		
-				loadingResources.then(() => {
+			requestAnimationFrame(async () => {		
+				await loadingGameCode.then(() => {
 					return game.start()
 				}).then(() => {
 					setInterval(game.save, 60000)
@@ -35,8 +35,8 @@ window.addEventListener('load', async () => {
 			document.querySelector('.load').removeEventListener('click', clickResume)
 			document.querySelector('.title').classList.add('hidden')
 			document.querySelector('.loading').classList.remove('hidden')
-			requestAnimationFrame(() => {		
-				loadingResources.then(() => {
+			requestAnimationFrame(async () => {		
+				await loadingGameCode.then(() => {
 					return game.load()
 				}).then(() => {
 					setInterval(game.save, 60000)
@@ -49,7 +49,7 @@ window.addEventListener('load', async () => {
 		}
 
 
-		const loadingResources = import(/* webpackChunkName: "game" */ './game.js').then(module => {
+		const loadingGameCode = import(/* webpackChunkName: "game" */ './game.js').then(module => {
 			game = module.default
 			return module.default.preload()
 		})

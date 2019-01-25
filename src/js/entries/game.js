@@ -111,10 +111,8 @@ const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve))
 
 let loadingResources = null
 const preload = () => {
-	requestAnimationFrame(() => {	
-		Message.log(`Downloading files (2/${Resources.numberOfAssets()})...`)
-		loadingResources = Resources.initialize()
-	})
+	Message.log(`Downloading files (2/${Resources.numberOfAssets()})...`)
+	loadingResources = Resources.initialize()
 }
 
 const start = async () => {

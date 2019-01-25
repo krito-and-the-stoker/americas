@@ -45,9 +45,7 @@ const paths = {
 	status: 'images/status.png'
 }
 
-const textures = {
-	buttonBackground: PIXI.Texture.WHITE
-}
+const textures = {}
 
 
 const texture = (name, options = {}) => {
