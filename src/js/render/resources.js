@@ -41,6 +41,7 @@ const paths = {
 	marshall: 'images/dialog-characters/marshall.png',
 	religion: 'images/dialog-characters/religion.png',
 	scout: 'images/dialog-characters/scout.png',
+	native: 'images/dialog-characters/native-north-east-a.png',
 	status: 'images/status.png'
 }
 
@@ -73,8 +74,11 @@ const loadAll = () => {
 			})).then(({ key, texture }) => {
 		textures[key] = texture
 	})))
-	PIXI.loader.load()
+
 	PIXI.loader.onLoad.add(logDownloadProgress)
+	requestAnimationFrame(() => {
+		PIXI.loader.load()
+	})
 
 	return loadingPromise
 }

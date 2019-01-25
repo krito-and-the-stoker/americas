@@ -71,4 +71,15 @@ const moveFrom = (sprite, from, time) => new Promise(resolve => {
 		.start()
 })
 
-export default { initialize, fadeIn, moveTo, moveFrom }
+const scaleTo = (sprite, scale, time) => new Promise(resolve => {
+	const initialScale = sprite.scale.x
+	const tween = new TWEEN.Tween({ scale: initialScale })
+		.to({ scale })
+		.easing(TWEEN.Easing.Quadratic.InOut)
+		.onUpdate(({ scale }) => sprite.scale.set(scale))
+		.onStop(() => sprite.scale.set(scale))
+		.onComplete(resolve)
+		.start()
+})
+
+export default { initialize, fadeIn, moveTo, moveFrom, scaleTo }

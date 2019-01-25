@@ -49,7 +49,11 @@ const types = {
 			x: 0.7,
 			y: 0.5,
 		},
-		image: 'scout'
+		image: 'native'
+	},
+	notification: {
+		align: 'center',
+		width: 0.4,
 	}
 }
 
@@ -88,6 +92,8 @@ const align = {
 
 
 const create = ({ type, text, options, coords, pause }) => {
+	Foreground.closeScreen()
+
 	let clickAllowed = false
 	setTimeout(() => { clickAllowed = true }, clickBlockTime)
 

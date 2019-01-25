@@ -13,6 +13,8 @@ import Background from 'render/background'
 import Text from 'render/text'
 
 import Util from 'util/util'
+import Tween from 'util/tween'
+import Record from 'util/record'
 
 import Secondary from 'input/secondary'
 import Click from 'input/click'
@@ -442,7 +444,35 @@ const createType = {
 }
 const create = params => {
 	const notification = createType[params.type](params)
-	notification.container.x += notifications.length * 74
+
+	// TODO: Move this down to initialization. This is only here for save game compatibility
+	if (!Record.getGlobal('notificationSeen')) {
+		Record.setGlobal('notificationSeen', {})
+	}
+	if (Record.getGlobal('notificationSeen')[params.type]) {
+		notification.container.x += notifications.length * 74
+	} else {
+		Dialog.create({
+			type: 'notification',
+			text: 'You see this notification for the first time in your life!',
+			pause: true,
+			options: [{
+				default: true,
+				text: 'Ok, I get it.',
+				action: () => {
+					unsubscribePositioning()
+					Tween.scaleTo(notification.container, 1, 1500)
+					Tween.moveTo(notification.container, { x: notifications.length * 74, y: 0 }, 1500)
+				}
+			}]
+		})
+
+		notification.container.scale.set(2)
+		const unsubscribePositioning = RenderView.listen.dimensions(dimensions => {
+			notification.container.x = -dimensions.x / 4
+			notification.container.y = 74 - dimensions.y / 2
+		})
+	}
 
 	notificationsContainer.addChild(notification.container)
 	Click.on(notification.container, () => {
@@ -451,6 +481,7 @@ const create = params => {
 	})
 	Secondary.on(notification.container, () => remove(notification))
 	notifications.push(notification)
+	Record.getGlobal('notificationSeen')[params.type] = true
 }
 
 const initialize = () => {

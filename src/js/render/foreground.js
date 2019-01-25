@@ -52,9 +52,9 @@ const closeScreen = () => {
 		layer.app.stage.removeChild(currentScreen)
 		layer.app.stage.addChild(container)
 		layer.app.stage.addChild(permanent)
-		layer.app.stage.addChild(notifications)
 		layer.app.stage.addChild(context)
 		layer.app.stage.addChild(dialog)
+		layer.app.stage.addChild(notifications)
 		Background.show()
 	}
 	currentScreen = null
@@ -113,9 +113,9 @@ const initialize = () => {
 	container.addChild(units)
 	layer.app.stage.addChild(container)
 	layer.app.stage.addChild(permanent)
-	layer.app.stage.addChild(notifications)
 	layer.app.stage.addChild(context)
 	layer.app.stage.addChild(dialog)
+	layer.app.stage.addChild(notifications)
 	layer.app.stop()
 }
 
