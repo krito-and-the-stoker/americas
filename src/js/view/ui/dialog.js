@@ -43,13 +43,14 @@ const types = {
 		image: 'scout'
 	},
 	natives: {
-		align: 'left',
-		width: 0.25,
+		align: 'broadLeft',
+		width: 0.45,
 		centerMap: {
 			x: 0.7,
 			y: 0.5,
 		},
-		image: 'native'
+		image: 'native',
+		imageBehindText: true,
 	},
 	notification: {
 		align: 'center',
@@ -85,6 +86,18 @@ const align = {
 			image.height = height
 			image.x = 0.75 * dimensions.x - 0.25 * width
 			image.y = 0.5 * dimensions.y - 0.5 * height
+		}
+	},
+	broadLeft: (plane, image, dimensions) => {
+		const width = 0.5 * 0.45 * dimensions.x
+		const height = 4 * width / 5
+		plane.x = 0.025 * dimensions.x
+		plane.y = dimensions.y / 2 - width / 3
+		if (image) {
+			image.width = width
+			image.height = height
+			image.x = dimensions.x / 4 - width / 2
+			image.y = dimensions.y / 2 - height - width / 3 + 10
 		}
 	}
 }
@@ -166,8 +179,11 @@ const create = ({ type, text, options, coords, pause }) => {
 	})
 
 	Foreground.add.dialog(closePlane)
+	if (image && config.imageBehindText) {
+		Foreground.add.dialog(image)
+	}
 	Foreground.add.dialog(plane9)
-	if (image) {	
+	if (image && !config.imageBehindText) {
 		Foreground.add.dialog(image)
 	}
 

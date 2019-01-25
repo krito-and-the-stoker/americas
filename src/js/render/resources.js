@@ -65,22 +65,25 @@ const texture = (name, options = {}) => {
 
 const sprite = (name, options) => new PIXI.Sprite(texture(name, options))
 
+let loadAllPromise = null
 const loadAll = () => {
-	const loadingPromise = Promise.all(Object.entries(paths)
-		.map(([key, path]) => 
-			queueTextureVerbose(path).then(texture => ({
-				key,
-				texture
-			})).then(({ key, texture }) => {
-		textures[key] = texture
-	})))
+	if (!loadAllPromise) {	
+		loadAllPromise = Promise.all(Object.entries(paths)
+			.map(([key, path]) => 
+				queueTextureVerbose(path).then(texture => ({
+					key,
+					texture
+				})).then(({ key, texture }) => {
+			textures[key] = texture
+		})))
 
-	PIXI.loader.onLoad.add(logDownloadProgress)
-	requestAnimationFrame(() => {
-		PIXI.loader.load()
-	})
+		PIXI.loader.onLoad.add(logDownloadProgress)
+		requestAnimationFrame(() => {
+			PIXI.loader.load()
+		})
+	}
 
-	return loadingPromise
+	return loadAllPromise
 }
 
 const initialize = () => {
