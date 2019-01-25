@@ -133,6 +133,13 @@ const create = colony => {
 					container.colonists.removeChild(buildingView.container.colonists)
 				}
 			}
+			if (building.name === 'fortifications' && building.level > 0) {
+				const sprite = Resources.sprite(['stockade', 'fort', 'fortress'][building.level])
+				container.buildings.addChild(sprite)
+				return () => {
+					container.buildings.removeChild(sprite)
+				}
+			}
 		})))
 
 	return {

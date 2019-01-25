@@ -42,7 +42,10 @@ const paths = {
 	religion: 'images/dialog-characters/religion.png',
 	scout: 'images/dialog-characters/scout.png',
 	native: 'images/dialog-characters/native-north-east-a.png',
-	status: 'images/status.png'
+	status: 'images/status.png',
+	stockade: 'images/colony-screen/stockade.png',
+	fort: 'images/colony-screen/fort.png',
+	fortress: 'images/colony-screen/fortress.png'
 }
 
 const textures = {}

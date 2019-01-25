@@ -85,6 +85,9 @@ const colonyIcon = colony => {
 }
 
 const buildingIcon = (colony, building) => {
+	if (building.name === 'fortifications') {
+		return new PIXI.Container()
+	}
 	const rectangle = Building.rectangle(colony, building)
 	const sprite = Resources.sprite('buildings', { rectangle })
 	console.log(rectangle)
