@@ -38,9 +38,9 @@ const openScreen = (screen, event) => {
 	layer.app.stage.addChild(screen)
 	layer.app.stage.addChild(permanent)
 	layer.app.stage.addChild(context)
+	layer.app.stage.addChild(dialog)
 	layer.app.stage.removeChild(notifications)
 	layer.app.stage.removeChild(container)
-	layer.app.stage.removeChild(dialog)
 	Background.hide()
 	Events.trigger(event.name, event.arg)
 }

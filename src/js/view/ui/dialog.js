@@ -13,7 +13,7 @@ const types = {
 	menu: {
 		align: 'center',
 		pause: false,
-		width: 0.33
+		width: 0.4
 	},
 	naval: {
 		align: 'left',
@@ -23,11 +23,20 @@ const types = {
 			y: 0.5
 		},
 		image: 'admiral'
+	},
+	king: {
+		align: 'right',
+		width: 0.25,
+		centerMap: {
+			x: 0.3,
+			y: 0.5
+		},
+		image: 'kingJames'
 	}
 }
 
 const align = {
-	center: (plane, dimensions) => {
+	center: (plane, image, dimensions) => {
 		plane.x = dimensions.x / 2 - plane.width / 2
 		plane.y = dimensions.y / 2 - plane.height / 2
 	},
@@ -46,6 +55,14 @@ const align = {
 	right: (plane, image, dimensions) => {
 		plane.x = dimensions.x / 2
 		plane.y = dimensions.y / 2 - plane.height / 2
+		if (image) {
+			const width = 3 * dimensions.x / 12
+			const height = width
+			image.width = width
+			image.height = height
+			image.x = 0.75 * dimensions.x - 0.25 * width
+			image.y = 0.5 * dimensions.y - 0.5 * height
+		}
 	}
 }
 
@@ -65,7 +82,7 @@ const create = ({ type, text, options, coords, pause }) => {
 
 	const image = config.image ? Resources.sprite(config.image) : null
 
-	const optionViews = options.map(option => ({
+	const optionViews = options.filter(option => option.text).map(option => ({
 		...option,
 		text: Text.create(option.text)
 	}))
@@ -75,13 +92,17 @@ const create = ({ type, text, options, coords, pause }) => {
 	}
 
 	optionViews.forEach(option => {
-		Click.on(option.text, () => {
-			if (clickAllowed) {
-				option.action()
-				close()
-			}
-		})
-		option.text.buttonMode = true
+		if (!option.disabled) {		
+			Click.on(option.text, () => {
+				if (clickAllowed) {
+					if (option.action) {
+						option.action()
+					}
+					close()
+				}
+			})
+			option.text.buttonMode = true
+		}
 		plane9.addChild(option.text)
 	})
 
@@ -98,8 +119,18 @@ const create = ({ type, text, options, coords, pause }) => {
 		currentHeight += textView.height + emptyLine
 
 		optionViews.forEach((option, index) => {
-			option.text.style = textView.style
+			if (option.disabled) {
+				option.text.style = {
+					...textView.style,
+					fill: 0xDDCCBB
+				}
+			} else {
+				option.text.style = textView.style
+			}
 			option.text.x = padding + (config.width * dimensions.x - option.text.width) / 2
+			if (option.margin) {
+				currentHeight += emptyLine
+			}
 			option.text.y = currentHeight
 			currentHeight += option.text.height
 		})
@@ -132,8 +163,11 @@ const create = ({ type, text, options, coords, pause }) => {
 	}
 
 	Click.on(closePlane, () => {
-		if (clickAllowed) {		
-			options.find(option => option.default).action()
+		if (clickAllowed) {
+			const defaultOption = options.find(option => option.default)
+			if (defaultOption && defaultOption.action) {
+				defaultOption.action()
+			}
 			close()
 		}
 	})

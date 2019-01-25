@@ -270,7 +270,7 @@ const createRumor = (option, tile, unit) => {
 
 const createSettlement = (settlement, unit) => {
 	const MAP_SETTLEMENT_FRAME_ID = 59
-	const settlementView = createSprite(MAP_SETTLEMENT_FRAME_ID)
+	const settlementView = Resources.sprite('map', { frame: MAP_SETTLEMENT_FRAME_ID })
 	const icon = Icon.create('question')
 
 	const container = combine(settlementView, icon)
@@ -318,7 +318,7 @@ const createSettlerBorn = (colony, unit) => {
 
 const createStarving = colony => {
 	const colonyView = colonyIcon(colony)
-	const good = createSprite(Goods.food.id)
+	const good = Resources.sprite('map', { frame: Goods.food.id })
 	const minus = Icon.create('minus')
 	const exclamation = Icon.create('exclamation')
 	const container = combine(colonyView, [good, minus], exclamation)
@@ -357,7 +357,7 @@ const createDied = (colony, unit) => {
 
 const createStorageEmpty = (colony, good) => {
 	const colonyView = colonyIcon(colony)
-	const goodView = createSprite(Goods[good].id)
+	const goodView = Resources.sprite('map', { frame: Goods[good].id })
 	const minus = Icon.create('minus')
 	const container = combine(colonyView, goodView, minus)
 
@@ -377,7 +377,7 @@ const createStorageEmpty = (colony, good) => {
 
 const createStorageFull = (colony, good) => {
 	const colonyView = colonyIcon(colony)
-	const goodView = createSprite(Goods[good].id)
+	const goodView = Resources.sprite('map', { frame: Goods[good].id })
 	const exclamation = Icon.create('exclamation')
 	const container = combine(colonyView, goodView, exclamation)
 

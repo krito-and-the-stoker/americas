@@ -148,12 +148,14 @@ const load = data => {
 
 const recruitmentCost = () => Math.round(100 + 500 * Math.max(1 - Math.floor(europe.crosses) / europe.crossesNeeded, 0))
 
-const recruitmentOptions = () => {
-	const price = recruitmentCost()
-	return Treasure.amount() >= price ?
-		europe.pool.map(({ unit, name, expert }) => ({ text: `${name} (${price})`, unit, expert })).concat([{ text: 'No one at the moment.' }]) :
-		[{ text: `We cannot afford a new colonist (${price})` }]
-}
+const recruitmentOptions = () => europe.pool.map(({ unit, name, expert }, index) => ({
+	text: `${name} (${recruitmentCost()})`,
+	disabled: recruitmentCost() > Treasure.amount(),
+	action: () => recruit({ unit, expert }, index)
+})).concat([{
+	text: 'No one at the moment.',
+	margin: true
+}])
 
 const recruit = (option, index) => {
 	if (option.unit && Treasure.spend(recruitmentCost())) {
@@ -169,14 +171,18 @@ const recruit = (option, index) => {
 }
 
 const purchaseOptions = () => [
-		{ text: 'Artillery (500)', unit: 'artillery', price: 500 },
-		{ text: 'Caravel (1000)', unit: 'caravel', price: 1000 },
-		{ text: 'Privateer (2000)', unit: 'privateer', price: 2000 },
-		{ text: 'Merchantman (2000)', unit: 'merchantman', price: 2000 },
-		{ text: 'Galleon (3000)', unit: 'galleon', price: 3000 },
-		{ text: 'Frigate (5000)', unit: 'frigate', price: 5000 },
-		{ text: 'Nothing at the moment.', price: 0 }
-	].filter(option => option.price <= Treasure.amount())
+	{ text: 'Artillery (500)', unit: 'artillery', price: 500 },
+	{ text: 'Caravel (1000)', unit: 'caravel', price: 1000 },
+	{ text: 'Privateer (2000)', unit: 'privateer', price: 2000 },
+	{ text: 'Merchantman (2000)', unit: 'merchantman', price: 2000 },
+	{ text: 'Galleon (3000)', unit: 'galleon', price: 3000 },
+	{ text: 'Frigate (5000)', unit: 'frigate', price: 5000 },
+	{ text: 'Nothing at the moment.', margin: true, price: 0 }
+].map(option => ({
+	...option,
+	disabled: Treasure.amount() < option.price,
+	action: () => purchase(option)
+}))
 
 const purchase = option => {
 	if (Treasure.spend(option.price) && option.unit) {
@@ -187,9 +193,15 @@ const purchase = option => {
 }
 
 const trainOptions = () => possibleTrainees
-	.map(({ unit, name, expert, price }) => ({ text: `${name} (${price})`, unit, expert, price }))
-	.concat({ text: 'Nothing at the moment.', price: 0 })
-	.filter(option => option.price <= Treasure.amount())
+	.map(({ unit, name, expert, price }) => ({
+		text: `${name} (${price})`,
+		disabled: Treasure.amount() < price,
+		action: () => train({ unit, expert, price })
+	}))
+	.concat({
+		text: 'Nothing at the moment.',
+		margin: true
+	})
 
 const train = option => {
 	if (Treasure.spend(option.price) && option.unit) {

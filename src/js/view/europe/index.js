@@ -63,58 +63,31 @@ const create = () => {
 	nameHeadline.position.y = 35
 	normalContainer.addChild(nameHeadline)
 
-	const recruitButton = Button.create('recruit', () => {
-		const options = Europe.recruitmentOptions()
-		const choices = options.map(option => option.text)
-		return Dialog.createIndependent('Who would you like to recruit?',
-			choices,
-			null,
-			{
-				context: container,
-				pause: false
-			})
-		.then(decision => {
-			Europe.recruit(options[decision], decision)
-		})
-	})
+	const recruitButton = Button.create('recruit', () => Dialog.create({
+		type: 'menu',
+		text: 'Who would you like to recruit?',
+		options: Europe.recruitmentOptions()
+	}))
 	recruitButton.x = originalDimensions.x - recruitButton.width - 20
 	recruitButton.y = originalDimensions.y / 2
 	normalContainer.addChild(recruitButton)
 
-	const purchaseButton = Button.create('purchase', () => {
-		const options = Europe.purchaseOptions()
-		const choices = options.map(option => option.text)
-		return Dialog.createIndependent('What would you like to purchase?',
-			choices,
-			null,
-			{
-				context: container,
-				pause: false
-			})
-		.then(decision => {
-			Europe.purchase(options[decision])
-		})
-	})
+	const purchaseButton = Button.create('purchase', () => Dialog.create({
+		type: 'menu',
+		text: 'What would you like to purchase?',
+		options: Europe.purchaseOptions()
+	}))
 	purchaseButton.x = originalDimensions.x - purchaseButton.width - 20
-	purchaseButton.y = originalDimensions.y / 2 + 40
+	purchaseButton.y = originalDimensions.y / 2 + 60
 	normalContainer.addChild(purchaseButton)
 
-	const trainButton = Button.create('train', () => {
-		const options = Europe.trainOptions()
-		const choices = options.map(option => option.text)
-		return Dialog.createIndependent('Who would you like to train?',
-			choices,
-			null,
-			{
-				context: container,
-				pause: false
-			})
-		.then(decision => {
-			Europe.train(options[decision])
-		})
-	})
+	const trainButton = Button.create('train', () => Dialog.create({
+		type: 'menu',
+		text: 'Who would you like to train?',
+		options: Europe.trainOptions()
+	}))
 	trainButton.x = originalDimensions.x - trainButton.width - 20
-	trainButton.y = originalDimensions.y / 2 + 80
+	trainButton.y = originalDimensions.y / 2 + 120
 	normalContainer.addChild(trainButton)
 
 	RenderView.updateWhenResized(({ dimensions }) => {

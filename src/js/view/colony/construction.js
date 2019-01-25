@@ -19,19 +19,17 @@ const create = (colony, originalDimensions) => {
 
 	const constructionButton = Button.create('change', () => {
 		const options = Building.constructionOptions(colony)
-		const choices = options.map(option => `${option.name} (${option.cost.construction})`)
-		return Dialog.createIndependent('What would you like to construct?',
-			choices,
-			null,
-			{
-				context: container.menu,
-				pause: false
+		const choices = options.map(option => ({
+			text: `${option.name} (${option.cost.construction})`,
+			action: () => Colony.update.construction(colony, {
+				amount: colony.construction.amount / 2 + Math.min(colony.construction.amount / 2, 12),
+				...option
 			})
-		.then(decision => {
-			Colony.update.construction(colony, {
-				amount: colony.construction.amount,
-				...options[decision]
-			})
+		}))
+		return Dialog.create({
+			type: 'menu',
+			text: 'What would you like to construct?',
+			options: choices,
 		})
 	})
 	constructionButton.x = originalDimensions.x - constructionButton.width - 20

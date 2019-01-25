@@ -3,6 +3,7 @@ import MainLoop from 'mainloop.js'
 import MapEntity from 'entity/map.js'
 import RenderMap from 'render/map.js'
 import RenderView from 'render/view.js'
+import UnitMapView from 'view/map/unit'
 import Keyboard from 'input/keyboard.js'
 import americaSmallMap from 'data/america-small.json'
 import americaLargeMap from 'data/america-large.json'
@@ -69,8 +70,14 @@ const americaSmall = () => {
 	const caravel = Unit.create('caravel', startCoordinates)
 	Unit.loadUnit(caravel, pioneer)
 	Unit.loadUnit(caravel, soldier)
-	MapView.centerAt(startCoordinates)
+	MapView.centerAt(startCoordinates, 0, {
+		x: 0.3,
+		y: 0.5
+	})
+	UnitMapView
 	Record.setGlobal('defaultShipArrival', startCoordinates)
+
+	return caravel
 }
 
 const americaLarge = () => {
@@ -90,17 +97,24 @@ const americaLarge = () => {
 	const caravel = Unit.create('caravel', startCoordinates)
 	Unit.loadUnit(caravel, pioneer)
 	Unit.loadUnit(caravel, soldier)
-	MapView.centerAt(startCoordinates)
+	MapView.centerAt(startCoordinates, 0, {
+		x: 0.3,
+		y: 0.5
+	})
 	MapView.zoomBy(1/0.35, null, 0)
 	Record.setGlobal('defaultShipArrival', startCoordinates)
+
+	return caravel
 }
 
 const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve))
 
 let loadingResources = null
 const preload = () => {
-	Message.log(`Downloading files (2/${Resources.numberOfAssets()})...`)
-	loadingResources = Resources.initialize()
+	requestAnimationFrame(() => {	
+		Message.log(`Downloading files (2/${Resources.numberOfAssets()})...`)
+		loadingResources = Resources.initialize()
+	})
 }
 
 const start = async () => {
@@ -143,15 +157,14 @@ const start = async () => {
 		YearView.initialize(Foreground.get().permanent)
 
 		// start game!
-		// americaSmall()
-		americaLarge()
+		// const caravel = americaSmall()
+		const caravel = americaLarge()
 
 		await nextFrame()
 		MapView.zoomBy(1/0.35, null, 0)
 		MapView.zoomBy(1/0.35, null, 100)
 		setTimeout(async () => {
 			Message.log('Starting game...')
-			// await Dialog.welcome()
 			MapView.zoomBy(0.35, null, 3000)
 		}, 100)
 
@@ -162,7 +175,17 @@ const start = async () => {
 
 		setTimeout(() => {
 			Keyboard.initialize()
-		}, 3000)
+			Dialog.create({
+				type: 'king',
+				text: 'Welcome to Americas!\n\nYou made it here to find a new world in the west\n\npress "h" for any help',
+				options: [{
+					default: true,
+					action: () => UnitMapView.select(caravel)
+				}],
+				coords: caravel.mapCoordinates,
+				pause: true
+			})
+		}, 3500)
 
 		await nextFrame()
 		document.addEventListener('visibilitychange', () => {
