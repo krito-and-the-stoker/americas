@@ -126,7 +126,9 @@ const create = () => {
 	Click.on(background, close)
 	Events.listen('help', () => Time.resume())
 
-	return container
+	return {
+		container
+	}
 }
 
 let screen = null

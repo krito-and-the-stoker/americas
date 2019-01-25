@@ -25,17 +25,13 @@ import ColonyLiberty from './liberty'
 import ColonyInfo from './info'
 
 
-let currentScreen = null
 const close = () => {
-	if (currentScreen) {	
-		currentScreen.unsubscribe()
-		Foreground.closeScreen()
-	}
+	Foreground.closeScreen()
 }
 
 const open = colony => {
 	currentScreen = create(colony)
-	Foreground.openScreen(currentScreen.container, { name: 'colonyScreen', arg: colony })
+	Foreground.openScreen(currentScreen, { name: 'colonyScreen', arg: colony })
 }
 
 const create = colony => {
@@ -104,8 +100,7 @@ const create = colony => {
 	
 	return {
 		container,
-		unsubscribe,
-		colony
+		unsubscribe
 	}
 }
 

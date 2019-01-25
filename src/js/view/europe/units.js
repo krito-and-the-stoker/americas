@@ -20,15 +20,17 @@ import MapEntity from 'entity/map'
 import MoveTo from 'command/moveTo'
 import TriggerEvent from 'command/triggerEvent'
 import Tile from 'entity/tile'
+import Foreground from 'render/foreground'
 
 const closeIfNoShips = () => {
-	return
-	const unsubscribe = Europe.listen.units(units => {
-		if (units.filter(unit => unit.domain === 'sea').length === 1) {
-			setTimeout(closeFn, 1500)
-		}
-	})
-	unsubscribe()	
+	setTimeout(() => {
+		const unsubscribe = Europe.listen.units(units => {
+			if (units.filter(unit => unit.domain === 'sea').length === 0) {
+				Foreground.closeScreen()
+			}
+		})
+		unsubscribe()	
+	}, 1500)
 }
 
 const selectTarget = unit => {
@@ -64,11 +66,12 @@ const selectTarget = unit => {
 	Dialog.create({
 		type: 'naval',
 		text: 'Where do you wish us to go?',
+		closeScreen: false,
 		options,
 	})
 }
 
-const create = closeFn => {
+const create = () => {
 	const container = {
 		ships: new PIXI.Container(),
 		units: new PIXI.Container(),

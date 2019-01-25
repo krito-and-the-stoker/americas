@@ -38,7 +38,7 @@ const paths = {
 	admiral: 'images/dialog-characters/admiral.png',
 	govenor: 'images/dialog-characters/govenor.png',
 	kingJames: 'images/dialog-characters/king-james.png',
-	marshall: 'images/dialog-characters/marshall.png',
+	marshal: 'images/dialog-characters/marshal.png',
 	religion: 'images/dialog-characters/religion.png',
 	scout: 'images/dialog-characters/scout.png',
 	native: 'images/dialog-characters/native-north-east-a.png',

@@ -16,16 +16,12 @@ import UnitsView from './units'
 import MarketView from './market'
 import InfoView from './info'
 
-let unsubscribe = () => {}
 const open = () => {
 	const screen = create()
-	unsubscribe = screen.unsubscribe
 	Foreground.openScreen(screen.container, { name: 'europeScreen' })
 }
 
 const close = () => {
-	unsubscribe()
-	unsubscribe = () => {}
 	Foreground.closeScreen()
 }
 

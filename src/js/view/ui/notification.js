@@ -156,12 +156,17 @@ const createEurope = unit => {
 		europeScreen: () => true
 	}
 
+	const dialog = {
+		text: `A ${UnitView.getName(unit)} has arrived in Europe.`,
+		type: 'naval'
+	}
+
 	return {
 		container,
 		action,
 		type: 'europe',
 		dismiss,
-		text: `A ${UnitView.getName(unit)} has arrived in Europe.`
+		dialog
 	}
 }
 
@@ -178,12 +183,17 @@ const createImmigration = unit => {
 		europeScreen: () => true
 	}
 
+	const dialog = {
+		text: `Religous unrest has caused immigration from Europe. A new ${UnitView.getName(unit)} is waiting to be picked up in London.`,
+		type: 'religion'
+	}
+
 	return {
 		container,
 		action,
 		type: 'immigration',
 		dismiss,
-		text: `Religous unrest has caused immigration from Europe. A new ${UnitView.getName(unit)} is waiting to be picked up in London.`
+		dialog
 	}	
 }
 
@@ -202,13 +212,18 @@ const createAmerica = unit => {
 		select: u => u === unit
 	}
 
+	const dialog = {
+		text: `A ${UnitView.getName(unit)} has arrived in Europe.`,
+		coords: unit.mapCoordinates,
+		type: 'naval'
+	}
+
 	return {
 		container,
 		action,
 		type: 'america',
 		dismiss,
-		text: `A ${UnitView.getName(unit)} has arrived in Europe.`,
-		coords: unit.mapCoordinates
+		dialog
 	}
 }
 
@@ -225,14 +240,18 @@ const createConstruction = (colony, { building, unit }) => {
 	}
 
 	const buildingName = Buildings[building].name[colony.buildings[building]]
+	const dialog = {
+		text: `${colony.name} has finished the construction of a ${bulidingName}.`,
+		coords: colony.mapCoordinates,
+		type: 'govenor'
+	}
 
 	return {
 		container,
 		action,
 		type: 'america',
 		dismiss,
-		text: `${colony.name} has finished the construction of a ${bulidingName}.`,
-		coords: colony.mapCoordinates
+		dialog
 	}
 }
 
@@ -259,13 +278,18 @@ const createTerraforming = unit => {
 		select: u => u === unit
 	}
 
+	const dialog = {
+		text: `A ${UnitView.getName(unit)} has finished working on a tile`,
+		coords: unit.mapCoordinates,
+		type: 'scout'	
+	}
+
 	return {
 		container,
 		action,
 		type: 'terraforming',
 		dismiss,
-		text: `A ${UnitView.getName(unit)} has finished working on a tile`,
-		coords: unit.mapCoordinates
+		dialog
 	}
 }
 
@@ -296,13 +320,18 @@ const createRumor = (option, tile, unit) => {
 		move: u => u === unit
 	}
 
+	const dialog = {
+		text: `A ${UnitView.getName(unit)} has found a rumor.`,
+		coord: unit.mapCoordinates,
+		type: 'scout'
+	}
+
 	return {
 		container,
 		action,
 		type: 'rumor',
 		dismiss,
-		text: `A ${UnitView.getName(unit)} has found a rumor.`,
-		coord: unit.mapCoordinates
+		dialog
 	}
 }
 
@@ -330,13 +359,18 @@ const createSettlement = (settlement, unit) => {
 		move: u => u === unit
 	}
 
+	const dialog = {
+		text: `A ${UnitView.getName(unit)} has entered a native village`,
+		coords: settlement.mapCoordinates,
+		type: 'scout'
+	}
+
 	return {
 		container,
 		action,
 		type: 'settlement',
 		dismiss,
-		text: `A ${UnitView.getName(unit)} has entered a native village`,
-		coords: settlement.mapCoordinates
+		dialog
 	}
 }
 
@@ -351,13 +385,18 @@ const createSettlerBorn = (colony, unit) => {
 		colonyScreen: c => c === colony
 	}
 
+	const dialog = {
+		text: `A new settler has been born in ${colony.name}`,
+		coords: colony.mapCoordinates,
+		type: 'govenor'
+	}
+
 	return {
 		container,
 		action,
 		type: 'born',
 		dismiss,
-		text: `A new settler has been born in ${colony.name}`,
-		coords: colony.mapCoordinates
+		dialog
 	}	
 }
 
@@ -373,13 +412,18 @@ const createStarving = colony => {
 		colonyScreen: c => c === colony
 	}
 
+	const dialog = {
+		text: `The food storage of ${colony.name} is empty and the settlers are starving! Make sure they have enough food to support themselves immediatly.`,
+		coord: colony.mapCoordinates,
+		type: 'govenor'
+	}
+
 	return {
 		container,
 		action,
 		type: 'starving',
 		dismiss,
-		text: `The food storage of ${colony.name} is empty and the settlers are starving! Make sure they have enough food to support themselves immediatly.`,
-		coord: colony.mapCoordinates
+		dialog
 	}
 }
 
@@ -394,13 +438,18 @@ const createDied = (colony, unit) => {
 		colonyScreen: c => c === colony
 	}
 
+	const dialog = {
+		text: `A ${UnitView.getName(unit)} has died of starvation in ${colony.name}`,
+		coords: colony.mapCoordinates,
+		type: 'govenor'
+	}
+
 	return {
 		container,
 		action,
 		type: 'died',
 		dismiss,
-		text: `A ${UnitView.getName(unit)} has died of starvation in ${colony.name}`,
-		coords: colony.mapCoordinates
+		dialog
 	}
 }
 
@@ -416,13 +465,18 @@ const createStorageEmpty = (colony, good) => {
 		unloadGood: (c, g) => c === colony && g === good
 	}
 
+	const dialog = {
+		text: `${colony.name} has run out of ${good}.`,
+		coords: colony.mapCoordinates,
+		type: 'govenor'		
+	}
+
 	return {
 		container,
 		action,
 		type: 'storageEmpty',
 		dismiss,
-		text: `${colony.name} has run out of ${good}.`,
-		coords: colony.mapCoordinates
+		dialog
 	}
 }
 
@@ -438,13 +492,17 @@ const createStorageFull = (colony, good) => {
 		loadGood: (c, g) => c === colony && g === good
 	}
 
+	const dialog = {
+		text: `The storage of ${colony.name} is full! Adding more goods will lead to loss.`,
+		coords: colony.mapCoordinates,
+		type: 'govenor'
+	}
+
 	return {
 		container,
 		action,
 		type: 'storageFull',
 		dismiss,
-		text: `The storage of ${colony.name} is full! Adding more goods will lead to loss.`,
-		coords: colony.mapCoordinates
 	}	
 }
 
@@ -459,13 +517,18 @@ const createArrive = (colony, unit) => {
 		colonyScreen: c => c === colony
 	}
 
+	const dialog = {
+		text: `A ${UnitView.getName(unit)} has arrived in ${colony.name}`,
+		coords: colony.mapCoordinates,
+		type: 'naval'
+	}
+
 	return {
 		container,
 		action,
 		type: 'arrive',
 		dismiss,
-		text: `A ${UnitView.getName(unit)} has arrived in ${colony.name}`,
-		coords: colony.mapCoordinates
+		dialog
 	}	
 }
 
@@ -502,24 +565,23 @@ const create = params => {
 	} else {
 		Dialog.create({
 			type: 'notification',
-			text: notification.text,
-			coords: notification.coords,
 			pause: true,
+			...notification.dialog,
 			options: [{
 				default: true,
 				text: 'Ok, thank you.',
 				action: () => {
 					unsubscribePositioning()
 					Tween.scaleTo(notification.container, 1, 1500)
-					Tween.moveTo(notification.container, { x: notifications.length * 74, y: 0 }, 1500)
+					Tween.moveTo(notification.container, { x: (notifications.length-1) * 74, y: 0 }, 1500)
 				}
 			}]
 		})
 
 		notification.container.scale.set(2)
 		const unsubscribePositioning = RenderView.listen.dimensions(dimensions => {
-			notification.container.x = -dimensions.x / 4
-			notification.container.y = 74 - dimensions.y / 2
+			notification.container.x = - 64
+			notification.container.y = - -64 - dimensions.y / 2
 		})
 	}
 

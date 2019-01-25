@@ -46,7 +46,10 @@ const openScreen = (screen, event) => {
 }
 
 const closeScreen = () => {
-	if (currentScreen) {	
+	if (currentScreen) {
+		if (currentScreen.unsubscribe) {
+			currentScreen.sunbuscribe()
+		}
 		Events.trigger(currentEvent.name, currentEvent.arg)
 		Context.cancelAll()
 		layer.app.stage.removeChild(currentScreen)

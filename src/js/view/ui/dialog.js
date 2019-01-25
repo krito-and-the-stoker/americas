@@ -9,6 +9,37 @@ import MapView from 'view/map'
 const padding = 40
 const emptyLine = 26
 const clickBlockTime = 300
+
+const left = {
+	align: 'left',
+	width: 0.25,
+	centerMap: {
+		x: 0.7,
+		y: 0.5
+	},
+	closeScreen: true
+}
+
+const right = {
+	align: 'right',
+	width: 0.25,
+	centerMap: {
+		x: 0.3,
+		y: 0.5
+	},
+	closeScreen: true
+}
+
+const broadLeft = {
+	align: 'broadLeft',
+	width: 0.45,
+	centerMap: {
+		x: 0.7,
+		y: 0.5,
+	},
+	imageBehindText: true,	
+}
+
 const types = {
 	menu: {
 		align: 'center',
@@ -16,45 +47,37 @@ const types = {
 		width: 0.4
 	},
 	naval: {
-		align: 'left',
-		width: 0.25,
-		centerMap: {
-			x: 0.7,
-			y: 0.5
-		},
-		image: 'admiral'
+		...left,
+		image: 'admiral',
 	},
 	king: {
-		align: 'right',
-		width: 0.25,
-		centerMap: {
-			x: 0.3,
-			y: 0.5
-		},
-		image: 'kingJames'
+		...right,
+		image: 'kingJames',
 	},
 	scout: {
-		align: 'left',
-		width: 0.25,
-		centerMap: {
-			x: 0.7,
-			y: 0.5
-		},
-		image: 'scout'
+		...left,
+		image: 'scout',
 	},
 	natives: {
-		align: 'broadLeft',
-		width: 0.45,
-		centerMap: {
-			x: 0.7,
-			y: 0.5,
-		},
+		...broadLeft,
 		image: 'native',
-		imageBehindText: true,
+	},
+	religion: {
+		...left,
+		image: 'religion',
+	},
+	marshal: {
+		...left,
+		image: 'marshal'
+	},
+	govenor: {
+		...left,
+		image: 'govenor'
 	},
 	notification: {
 		align: 'center',
 		width: 0.4,
+		closeScreen: true
 	}
 }
 
@@ -104,15 +127,25 @@ const align = {
 
 
 
-const create = ({ type, text, options, coords, pause }) => {
-	Foreground.closeScreen()
-
+const create = ({ type, text, options, coords, pause, closeScreen, centerMap }) => {
 	let clickAllowed = false
 	setTimeout(() => { clickAllowed = true }, clickBlockTime)
 
 	const closePlane = new PIXI.Container()
 	const plane9 = new PIXI.mesh.NineSlicePlane(Resources.texture('status'), 100, 100, 100, 100)
-	const config = types[type]
+	const config = {
+		...types[type],
+	}
+	if (typeof closeScreen !== undefined) {
+		config.closeScreen = closeScreen
+	}
+	if (typeof centerMap !== undefined) {
+		config.centerMap = centerMap
+	}
+
+	if (config.closeScreen) {
+		Foreground.closeScreen()
+	}
 
 	const textView = Text.create(text)
 	textView.y = padding
