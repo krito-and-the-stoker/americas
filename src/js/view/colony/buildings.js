@@ -17,24 +17,17 @@ import BecomeColonist from 'action/becomeColonist'
 
 const TILE_SIZE = 64
 
-const createBuilding = (colony, name) => {
+const createBuilding = (colony, building) => {
 	const container = {
 		building: new PIXI.Container(),
 		colonists: new PIXI.Container()
 	}
-	const frame = Building.frame(colony, name)
 
-	if (!frame && frame !== 0) {
-		return {
-			container,
-			unsubscribe: () => {}
-		}
+	const name = building.name
+	const rectangle = Building.rectangle(colony, building)
+	if (!rectangle || !building.position) {		
+		return null
 	}
-	const x = 128 * frame
-	const y = 0
-	const width = Buildings[name].width * 128
-	const height = 128
-	const rectangle = new PIXI.Rectangle(x, y, width, height)
 	const sprite = Resources.sprite('buildings', { rectangle })
 	container.building.addChild(sprite)
 
@@ -123,37 +116,24 @@ const create = colony => {
 		colonists: new PIXI.Container()
 	}
 
-	const unsubscribe = Colony.listen.buildings(colony, buildings => {
-		const cols = 6
-		let position = {
-			x: 0,
-			y: 0
-		}
-		return Util.mergeFunctions(Object.keys(buildings)
-			.map(name => {
-				const building = createBuilding(colony, name)
-				building.container.building.x = position.x * 128 + 100
-				building.container.building.y = position.y * 128 + 100
-				building.container.colonists.x = position.x * 128 + 100
-				building.container.colonists.y = position.y * 128 + 100
-				position.x += Buildings[name].width
-				if (position.x > cols) {
-					position.x = 0
-					position.y += 1
-				}
-				container.buildings.addChild(building.container.building)
-				container.colonists.addChild(building.container.colonists)
+	const unsubscribe = Colony.listen.buildings(colony, buildings =>
+		Util.mergeFunctions(Object.values(buildings).map(building => {
+			const buildingView = createBuilding(colony, building)
+			if (buildingView) {			
+				buildingView.container.building.x = building.position.x * 128
+				buildingView.container.building.y = building.position.y * 128
+				buildingView.container.colonists.x = building.position.x * 128
+				buildingView.container.colonists.y = building.position.y * 128
+				container.buildings.addChild(buildingView.container.building)
+				container.colonists.addChild(buildingView.container.colonists)
 
 				return () => {
-					building.unsubscribe()
-					container.buildings.removeChild(building.container)
-					container.colonists.removeChild(building.container.colonists)
+					buildingView.unsubscribe()
+					container.buildings.removeChild(buildingView.container.building)
+					container.colonists.removeChild(buildingView.container.colonists)
 				}
-			}))
-	})
-
-	container.buildings.scale.set(1.3)
-	container.colonists.scale.set(1.3)
+			}
+		})))
 
 	return {
 		container,

@@ -249,7 +249,7 @@ const	applyModifier = (tile, base, name, resource, where) => {
 
 const production = (tile, resource, colonist = null) => {
 	const where = colonist ? 'field' : 'colony'
-	if (tile.domain === 'sea' && colonist && colonist.colony && !colonist.colony.buildings.harbour) {
+	if (tile.domain === 'sea' && colonist && colonist.colony && !colonist.colony.buildings.harbour.level) {
 		return 0
 	}
 

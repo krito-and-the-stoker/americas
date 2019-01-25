@@ -7,37 +7,102 @@ import Storage from 'entity/storage'
 import Message from 'view/ui/message'
 import Notification from 'view/ui/notification'
 
-const frame = (colony, name) => Buildings[name].frame[colony.buildings[name]]
-const create = () => Util.makeObject(Buildings.places.map(name => [name, 0]))
+const frame = (colony, building) => Buildings[building.name].frame[colony.buildings[building.name].level] ? Buildings[building.name].frame[colony.buildings[building.name].level] - 1 : null
+const rectangle = (colony, building) => {
+	if (frame(colony, building) === null) {
+		return null
+	}
 
-const workspace = (colony, building) => Buildings[building].workspace.length ? Buildings[building].workspace[colony.buildings[building]] : Buildings[building].workspace || 0
+	const fr = frame(colony, building)
+	const cols = 13
+	const x = 128 * (fr % cols)
+	const y = 128 * Math.floor(fr / cols)
+	const width = Buildings[building.name].width * 128
+	const height = 128
+	return new PIXI.Rectangle(x, y, width, height)	
+}
+
+const create = () => {
+	const positions = Util.range(11).map(x =>
+		Util.range(5).map(y => ({
+			x,
+			y,
+			width: (x >= 4 && x <= 6) ? 2 : 1,
+			taken: false,
+		}))).flat().filter(({ x, y}) =>
+			x >= 3 &&
+			y >= 1 &&
+			x <= 8 &&
+			y <= 3 &&
+			(x >= 4 || y === 2) &&
+			(x <= 7 || y >= 2))
+	console.log(positions)
+
+
+	const buildings = Buildings.places.map(name => ({
+		name,
+		level: 0,
+		width: Buildings[name].width
+	}))
+	if (buildings.filter(building => building.width === 2).length < 2 * buildings.filter(building => building.width === 2)) {
+		console.warn('There might not be enough slots for double width buildings left', buildings, positions)
+	}
+	buildings.filter(building => building.width === 2).forEach(building => {
+		building.position = Util.choose(positions.filter(pos => !pos.taken && pos.width >= 2))
+		building.position.taken = true
+		const left = positions.find(pos => pos.x === building.position.x - 1 && pos.y === building.position.y)
+		if (left) {
+			left.width = 1
+			console.log('updating left width', left)
+		}
+		const right = positions.find(pos => pos.x === building.position.x + 1 && pos.y === building.position.y)
+		if (right) {
+			right.taken = true
+			console.log('updating right taken', right)
+		}
+		console.log(building.name, positions.map(pos => ({ ...pos })), building.position)
+	})
+	if (buildings.filter(building => building.width === 1).length > positions.filter(pos => !pos.taken).length) {
+		console.warn('There is not enough slots left for buildings with size 1', buildings, positions)
+	}
+	buildings.filter(building => building.width === 1).forEach(building => {
+		building.position = Util.choose(positions.filter(pos => !pos.taken))
+		building.position.taken = true
+		console.log(building.name, positions.map(pos => ({ ...pos })), building.position)
+	})
+
+	return Util.makeObject(buildings.map(building => [building.name, building]))
+}
+
+const getName = (colony, building) => Buildings[building.name].name[building.level]
+const workspace = (colony, building) => Buildings[building].workspace.length ? Buildings[building].workspace[colony.buildings[building].level] : Buildings[building].workspace || 0
 
 const constructionOptions = colony => {
 	const buildings = Buildings.places
-		.filter(name => Buildings[name].name.length > colony.buildings[name] + 1)
+		.filter(name => Buildings[name].name.length > colony.buildings[name].level + 1)
 		.map(name => ({
 			target: name,
-			name: Buildings[name].name[colony.buildings[name] + 1],
-			cost: Buildings[name].cost[colony.buildings[name] + 1],
-			population: Buildings[name].population[colony.buildings[name] + 1],
+			name: Buildings[name].name[colony.buildings[name].level + 1],
+			cost: Buildings[name].cost[colony.buildings[name].level + 1],
+			population: Buildings[name].population[colony.buildings[name].level + 1],
 			action: () => {
 				const buildings = colony.buildings
-				buildings[name] += 1
+				buildings[name].level += 1
 				Colony.update.buildings(colony)
-				Notification.create({ type: 'construction', colony, building: name })
+				Notification.create({ type: 'construction', colony, building: colony.buildings[name] })
 			}
 		}))
 
 	buildings.find(b => b.target === 'warehouse').action = () => {
 		colony.capacity += 100
-		if (colony.buildings.warehouse < 2) {
+		if (colony.buildings.warehouse.level < 2) {
 			const buildings = colony.buildings
-			if (!buildings.warehouse) {
-				buildings.warehouse = 0
+			if (!buildings.warehouse.level) {
+				buildings.warehouse.level = 0
 			}
-			buildings.warehouse += 1
+			buildings.warehouse.level += 1
 			Colony.update.buildings(colony)
-			Notification.create({ type: 'construction', colony, building: 'warehouse' })
+			Notification.create({ type: 'construction', colony, building: colony.buildings['warehouse'] })
 		}
 	}
 
@@ -124,10 +189,10 @@ const constructionOptions = colony => {
 	let options = buildings
 		.filter(building => building.population <= colony.colonists.length)
 		.concat(wagontrain)
-	if (colony.buildings.gunsmiths) {
+	if (colony.buildings.gunsmiths.level) {
 		options = options.concat(artillery)
 	}
-	if (colony.buildings.harbour >= 3) {
+	if (colony.buildings.harbour.level >= 3) {
 		options = options.concat(ships)
 	}
 
@@ -173,7 +238,8 @@ const construct = (colony, construction) => {
 
 
 export default {
-	frame,
+	rectangle,
+	getName,
 	create,
 	constructionOptions,
 	noProductionOption,

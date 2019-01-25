@@ -85,19 +85,15 @@ const colonyIcon = colony => {
 }
 
 const buildingIcon = (colony, building) => {
-	const frame = Building.frame(colony, building)
-	const x = 128 * frame
-	const y = 0
-	const width = 128 * Buildings[building].width
-	const height = 128
-	const rectangle = new PIXI.Rectangle(x, y, width, height)
+	const rectangle = Building.rectangle(colony, building)
 	const sprite = Resources.sprite('buildings', { rectangle })
-	if (width === 128) {	
+	console.log(rectangle)
+	if (rectangle.width === 128) {	
 		sprite.scale.set(0.75)
 		sprite.x = -16
 		sprite.y = -16
 	}
-	if (width === 256) {
+	if (rectangle.width === 256) {
 		sprite.scale.set(0.5)
 		sprite.x = -16
 	}
@@ -239,9 +235,9 @@ const createConstruction = (colony, { building, unit }) => {
 		colonyScreen: c => c === colony
 	}
 
-	const buildingName = Buildings[building].name[colony.buildings[building]]
+	const constructionName = building ? Building.getName(colony, building) : UnitView.getName(unit)
 	const dialog = {
-		text: `${colony.name} has finished the construction of a ${bulidingName}.`,
+		text: `${colony.name} has finished the construction of a ${constructionName}.`,
 		coords: colony.mapCoordinates,
 		type: 'govenor'
 	}

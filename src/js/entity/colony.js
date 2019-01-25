@@ -132,7 +132,7 @@ const expertLevel = {
 	statesman: 3,
 	preacher: 3,
 }
-const canTeach = (colony, expert) => expert && expertLevel[expert] && expertLevel[expert] <= colony.buildings.school
+const canTeach = (colony, expert) => expert && expertLevel[expert] && expertLevel[expert] <= colony.buildings.school.level
 const canEmploy = (colony, building, expert) => colony.colonists
 	.filter(colonist => colonist.work && colonist.work.building === building).length < Building.workspace(colony, building) &&
 	(building !== 'school' || canTeach(colony, expert))

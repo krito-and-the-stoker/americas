@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js'
 import Message from 'view/ui/message'
 
 
-const mergeFunctions = funcArray => funcArray.reduce((all, fn) => () => { all(); fn(); }, () => {})
+const mergeFunctions = funcArray => funcArray.filter(fn => fn).reduce((all, fn) => () => { all(); fn(); }, () => {})
 
 const makeObject = arr => arr.reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
 

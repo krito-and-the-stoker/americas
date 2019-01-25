@@ -49,7 +49,7 @@ const create = (colony, originalDimensions) => {
 				if (unit && !Commander.isIdle(unit.commander)) {
 					return false
 				}
-				if (!colony.buildings.harbour && tile.domain === 'sea') {
+				if (!colony.buildings.harbour.level && tile.domain === 'sea') {
 					return false
 				}
 				if (colony.disbanded) {

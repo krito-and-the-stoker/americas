@@ -20,7 +20,7 @@ const create = (colony, tile, good, colonist = null) => {
 			return true
 		}
 
-		const amount = (colony.buildings.stables + 1) *
+		const amount = (colony.buildings.stables.level + 1) *
 			deltaTime *
 			horseGrowthRate *
 			colony.storage.horses *

@@ -129,7 +129,8 @@ gulp.task('serve', done => {
 })
 
 gulp.task('assets', resolve => {
-  const images = 70
+  const images = 139
+  const cols = 13
   const base = 128
   const pad = (n, width, z) => {
     z = z || '0';
@@ -137,11 +138,11 @@ gulp.task('assets', resolve => {
     return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
   }
   const position = (index) => ({
-    x: base * index,
-    y: 0
+    x: base * (index % cols),
+    y: base * Math.floor(index / cols)
   })
 
-  new jimp(base*images, base, (err, result) => {  
+  new jimp(base*cols, base * Math.ceil(images / cols), (err, result) => {  
     Promise.all(Array.from({length: images}, (x,i) => i)
       .map(n => `src/assets/buildings/colony_building_${pad(n+1, 4, 0)}.png`)
       .map(filename => jimp.read(filename)))
