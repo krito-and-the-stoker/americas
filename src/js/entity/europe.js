@@ -224,7 +224,7 @@ const initialize = () => {
 			add.unit(unit)
 			update.crosses(-europe.crossesNeeded)
 			europe.crossesNeeded += 2
-			Notification.create({ type: 'europe', unit })
+			Notification.create({ type: 'immigration', unit })
 			Message.send(`Religious unrest in Europe has caused a ${chosen.name} to line up for migration to the new world.`)
 		}
 	})

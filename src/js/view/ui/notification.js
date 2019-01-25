@@ -146,7 +146,7 @@ const combine = (slot1, slot2, slot3) => {
 const createEurope = unit => {
 	const icon = Icon.create('europe')
 	const unitView = UnitView.create(unit)
-	const arrow = unit.domain === 'sea' ? Icon.create('right') : Icon.create('plus')
+	const arrow = Icon.create('right')
 	const container = combine(icon, unitView, arrow)
 
 
@@ -160,8 +160,31 @@ const createEurope = unit => {
 		container,
 		action,
 		type: 'europe',
-		dismiss
+		dismiss,
+		text: `A ${UnitView.getName(unit)} has arrived in Europe.`
 	}
+}
+
+const createImmigration = unit => {
+	const icon = Icon.create('europe')
+	const unitView = UnitView.create(unit)
+	const arrow = Icon.create('plus')
+	const container = combine(icon, unitView, arrow)
+
+
+	const action = () => EuropeView.open()
+
+	const dismiss = {
+		europeScreen: () => true
+	}
+
+	return {
+		container,
+		action,
+		type: 'immigration',
+		dismiss,
+		text: `Religous unrest has caused immigration from Europe. A new ${UnitView.getName(unit)} is waiting to be picked up in London.`
+	}	
 }
 
 const createAmerica = unit => {
@@ -183,7 +206,9 @@ const createAmerica = unit => {
 		container,
 		action,
 		type: 'america',
-		dismiss
+		dismiss,
+		text: `A ${UnitView.getName(unit)} has arrived in Europe.`,
+		coords: unit.mapCoordinates
 	}
 }
 
@@ -199,11 +224,15 @@ const createConstruction = (colony, { building, unit }) => {
 		colonyScreen: c => c === colony
 	}
 
+	const buildingName = Buildings[building].name[colony.buildings[building]]
+
 	return {
 		container,
 		action,
 		type: 'america',
-		dismiss
+		dismiss,
+		text: `${colony.name} has finished the construction of a ${bulidingName}.`,
+		coords: colony.mapCoordinates
 	}
 }
 
@@ -234,7 +263,9 @@ const createTerraforming = unit => {
 		container,
 		action,
 		type: 'terraforming',
-		dismiss
+		dismiss,
+		text: `A ${UnitView.getName(unit)} has finished working on a tile`,
+		coords: unit.mapCoordinates
 	}
 }
 
@@ -269,7 +300,9 @@ const createRumor = (option, tile, unit) => {
 		container,
 		action,
 		type: 'rumor',
-		dismiss
+		dismiss,
+		text: `A ${UnitView.getName(unit)} has found a rumor.`,
+		coord: unit.mapCoordinates
 	}
 }
 
@@ -301,7 +334,9 @@ const createSettlement = (settlement, unit) => {
 		container,
 		action,
 		type: 'settlement',
-		dismiss
+		dismiss,
+		text: `A ${UnitView.getName(unit)} has entered a native village`,
+		coords: settlement.mapCoordinates
 	}
 }
 
@@ -320,7 +355,9 @@ const createSettlerBorn = (colony, unit) => {
 		container,
 		action,
 		type: 'born',
-		dismiss
+		dismiss,
+		text: `A new settler has been born in ${colony.name}`,
+		coords: colony.mapCoordinates
 	}	
 }
 
@@ -340,7 +377,9 @@ const createStarving = colony => {
 		container,
 		action,
 		type: 'starving',
-		dismiss
+		dismiss,
+		text: `The food storage of ${colony.name} is empty and the settlers are starving! Make sure they have enough food to support themselves immediatly.`,
+		coord: colony.mapCoordinates
 	}
 }
 
@@ -359,7 +398,9 @@ const createDied = (colony, unit) => {
 		container,
 		action,
 		type: 'died',
-		dismiss
+		dismiss,
+		text: `A ${UnitView.getName(unit)} has died of starvation in ${colony.name}`,
+		coords: colony.mapCoordinates
 	}
 }
 
@@ -379,7 +420,9 @@ const createStorageEmpty = (colony, good) => {
 		container,
 		action,
 		type: 'storageEmpty',
-		dismiss
+		dismiss,
+		text: `${colony.name} has run out of ${good}.`,
+		coords: colony.mapCoordinates
 	}
 }
 
@@ -399,7 +442,9 @@ const createStorageFull = (colony, good) => {
 		container,
 		action,
 		type: 'storageFull',
-		dismiss
+		dismiss,
+		text: `The storage of ${colony.name} is full! Adding more goods will lead to loss.`,
+		coords: colony.mapCoordinates
 	}	
 }
 
@@ -418,7 +463,9 @@ const createArrive = (colony, unit) => {
 		container,
 		action,
 		type: 'arrive',
-		dismiss
+		dismiss,
+		text: `A ${UnitView.getName(unit)} has arrived in ${colony.name}`,
+		coords: colony.mapCoordinates
 	}	
 }
 
@@ -430,6 +477,7 @@ const remove = notification => {
 
 const createType = {
 	europe: params => createEurope(params.unit),
+	immigration: params => createImmigration(params.unit),
 	america: params => createAmerica(params.unit),
 	construction: params => createConstruction(params.colony, params),
 	terraforming: params => createTerraforming(params.unit),
@@ -454,11 +502,12 @@ const create = params => {
 	} else {
 		Dialog.create({
 			type: 'notification',
-			text: 'You see this notification for the first time in your life!',
+			text: notification.text,
+			coords: notification.coords,
 			pause: true,
 			options: [{
 				default: true,
-				text: 'Ok, I get it.',
+				text: 'Ok, thank you.',
 				action: () => {
 					unsubscribePositioning()
 					Tween.scaleTo(notification.container, 1, 1500)
