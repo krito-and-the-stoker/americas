@@ -84,6 +84,7 @@ const initialize = () => {
 				})
 
 				return () => {
+					unsubscribeTreasure()
 					unsubscribePassengers()
 					unsubscribeStorage()
 				}
