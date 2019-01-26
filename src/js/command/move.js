@@ -138,11 +138,11 @@ const createFromData = data => {
 
 			const hasCommandsLeft = Commander.commandsScheduled(unit.commander) > 1
 
-			if (targetTile.rumors && !hasCommandsLeft) {
+			if (unit.owner.input && targetTile.rumors && !hasCommandsLeft) {
 				InvestigateRumors(unit)
 			}
 
-			if (targetTile.settlement && !hasCommandsLeft) {
+			if (unit.owner.input && targetTile.settlement && !hasCommandsLeft) {
 				EnterSettlement(targetTile.settlement, unit)
 			}
 

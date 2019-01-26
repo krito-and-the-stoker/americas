@@ -43,6 +43,19 @@ const initialize = () => {
 					}
 				}))
 
+				let unsubscribeTreasure = () => {}
+				if (unit.treasure) {
+					const treasureText = Text.create(unit.treasure)
+					treasureText.x = 10
+					Foreground.get().notifications.addChild(treasureText)
+					unsubscribeTreasure = Util.mergeFunctions([
+						RenderView.listen.dimensions(dimensions => {
+							treasureText.y = dimensions.y - 60
+						}),
+						() =>	Foreground.get().notifications.removeChild(treasureText)
+					])
+				}
+
 				const storage = unit.properties.cargo > 0 ? unit.storage : unit.equipment
 				const unsubscribeStorage = Storage.listen(storage, storage => {
 					const goods = Storage.goods(storage).filter(pack => pack.amount > 0)

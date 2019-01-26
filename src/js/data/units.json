@@ -205,7 +205,7 @@
 			"default": 21
 		},
 		"name": {
-			"default": "Treasuree"
+			"default": "Treasure"
 		},
 		"domain": "land",
 		"canFound": false,
