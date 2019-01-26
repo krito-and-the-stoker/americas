@@ -14,6 +14,7 @@ import Colonist from 'entity/colonist'
 import Events from 'view/ui/events'
 import Binding from 'util/binding'
 import Owner from 'entity/owner'
+import Tile from 'entity/tile'
 
 
 const BLINK_TIME = 500
@@ -88,19 +89,9 @@ const create = unit => {
 		sprite.hitArea = new PIXI.Rectangle(TILE_SIZE / 4, 0, TILE_SIZE / 2, TILE_SIZE)
 	}
 
-	const unsubscribe = Owner.listen.input(unit.owner, input =>
-		input ? Click.on(sprite, () => {
-		if (unit.colony && unit.colony.owner === unit.owner) {
-			unit.colony.screen = ColonyView.open(unit.colony)
-		} else {
-			select(unit)
-		}
-	}) : null)
-
 	const view = {
 		sprite,
 		unit,
-		unsubscribe
 	}
 
 	return view
@@ -143,7 +134,8 @@ const visibleOnMap = view => (view === state.selectedView || !view.unit.colony) 
 	!Europe.has.unit(view.unit) &&
 	!view.unit.offTheMap &&
 	!(view.unit.colonist && view.unit.colonist.colony) &&
-	(view.unit.owner.visible || view.unit.tile.discovered())
+	(view.unit.owner.visible || view.unit.tile.discovered()) &&
+	!view.destroyed
 
 const save = () => Record.reference(selectedUnit())
 const load = data => {
@@ -159,24 +151,40 @@ const initialize = () => {
 		const view = create(unit)
 		const updateBoundVisibility = () => { updateVisibility(view) }
 
-		Unit.listen.vehicle(unit, updateBoundVisibility)
-		Unit.listen.offTheMap(unit, updateBoundVisibility)
-		Unit.listen.colony(unit, updateBoundVisibility)
-		Owner.listen.visible(unit.owner, updateBoundVisibility)
-		Unit.listen.colonist(unit, colonist =>
-			colonist ? Colonist.listen.colony(colonist, updateBoundVisibility) : updateBoundVisibility())
+		view.unsubscribe = Util.mergeFunctions([
+			Unit.listen.vehicle(unit, updateBoundVisibility),
+			Unit.listen.offTheMap(unit, updateBoundVisibility),
+			Unit.listen.colony(unit, updateBoundVisibility),
+			Owner.listen.visible(unit.owner, updateBoundVisibility),
 
-		Unit.listen.mapCoordinates(unit, () => { updatePosition(view) })
-		Unit.listen.properties(unit, () => { updateTexture(view) })
-		Unit.listen.expert(unit, () => { updateTexture(view) })
-		Unit.listen.pioneering(unit, pioneering => {
-			if (pioneering) {			
-				lookGrey(view)
-				unselect(unit)
-			} else {
-				lookNormal(view)
-			}
-		})
+			Unit.listen.tile(unit, tile =>
+				tile ? Tile.listen.discovered(tile, updateBoundVisibility) : null),
+
+			Unit.listen.colonist(unit, colonist =>
+				colonist ? Colonist.listen.colony(colonist, updateBoundVisibility) : updateBoundVisibility()),
+
+			Unit.listen.mapCoordinates(unit, () => { updatePosition(view) }),
+			Unit.listen.properties(unit, () => { updateTexture(view) }),
+			Unit.listen.expert(unit, () => { updateTexture(view) }),
+
+			Unit.listen.pioneering(unit, pioneering => {
+				if (pioneering) {			
+					lookGrey(view)
+					unselect(unit)
+				} else {
+					lookNormal(view)
+				}
+			}),
+
+			Owner.listen.input(unit.owner, input =>
+					input ? Click.on(view.sprite, () => {
+					if (unit.colony && unit.colony.owner === unit.owner) {
+						unit.colony.screen = ColonyView.open(unit.colony)
+					} else {
+						select(unit)
+					}
+				}) : null)
+		])
 
 		views.push(view)
 

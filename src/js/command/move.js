@@ -131,7 +131,7 @@ const createFromData = data => {
 	const finished = () => {
 		if (!aborted) {		
 			Unit.update.mapCoordinates(unit, { ...coords })
-			unit.tile = targetTile
+			Unit.update.tile(unit, targetTile)
 			if (targetTile.colony) {
 				EnterColony(targetTile.colony, unit)
 			}

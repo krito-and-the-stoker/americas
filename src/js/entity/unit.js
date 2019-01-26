@@ -136,6 +136,7 @@ const listen = {
 	name: (unit, fn) => Binding.listen(unit, 'name', fn),
 	expert: (unit, fn) => Binding.listen(unit, 'expert', fn),
 	pioneering: (unit, fn) => Binding.listen(unit, 'pioneering', fn),
+	tile: (unit, fn) => Binding.listen(unit, 'tile', fn),
 }
 
 const update = {
@@ -148,6 +149,7 @@ const update = {
 	name: (unit, value) => Binding.update(unit, 'name', value),
 	expert: (unit, value) => Binding.update(unit, 'expert', value),
 	pioneering: (unit, value) => Binding.update(unit, 'pioneering', value),
+	tile: (unit, value) => Binding.update(unit, 'tile', value),
 }
 
 const updateType = (unit, name) => {
