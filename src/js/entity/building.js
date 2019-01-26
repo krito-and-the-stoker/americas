@@ -36,7 +36,6 @@ const create = () => {
 			y <= 3 &&
 			(x >= 4 || y === 2) &&
 			(x <= 7 || y >= 2))
-	console.log(positions)
 
 
 	const buildings = Buildings.places.map(name => ({
@@ -53,14 +52,11 @@ const create = () => {
 		const left = positions.find(pos => pos.x === building.position.x - 1 && pos.y === building.position.y)
 		if (left) {
 			left.width = 1
-			console.log('updating left width', left)
 		}
 		const right = positions.find(pos => pos.x === building.position.x + 1 && pos.y === building.position.y)
 		if (right) {
 			right.taken = true
-			console.log('updating right taken', right)
 		}
-		console.log(building.name, positions.map(pos => ({ ...pos })), building.position)
 	})
 	if (buildings.filter(building => building.width === 1).length > positions.filter(pos => !pos.taken).length) {
 		console.warn('There is not enough slots left for buildings with size 1', buildings, positions)
@@ -68,7 +64,6 @@ const create = () => {
 	buildings.filter(building => building.width === 1).forEach(building => {
 		building.position = Util.choose(positions.filter(pos => !pos.taken))
 		building.position.taken = true
-		console.log(building.name, positions.map(pos => ({ ...pos })), building.position)
 	})
 
 	return Util.makeObject(buildings.map(building => [building.name, building]))

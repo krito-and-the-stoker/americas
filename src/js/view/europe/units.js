@@ -30,7 +30,7 @@ const closeIfNoShips = () => {
 			}
 		})
 		unsubscribe()	
-	}, 1500)
+	}, 1000)
 }
 
 const selectTarget = unit => {

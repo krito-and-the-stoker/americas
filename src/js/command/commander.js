@@ -9,6 +9,7 @@ import CutForest from 'command/cutForest'
 import LoadCargo from 'command/loadCargo'
 import TradeRoute from 'command/tradeRoute'
 import TriggerEvent from 'command/triggerEvent'
+import Disband from 'command/disband'
 import Plow from 'command/plow'
 import Road from 'command/road'
 import Time from 'timeline/time'
@@ -99,6 +100,7 @@ const getModule = type => ( type ? ({
 	tradeRoute: TradeRoute,
 	loadCargo: LoadCargo,
 	triggerEvent: TriggerEvent,
+	disband: Disband,
 	commander: { load }
 })[type] : { load: data => console.warn('cannot load command, missing type', data) }) 
 

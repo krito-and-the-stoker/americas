@@ -41,6 +41,7 @@ export const rectangle = (index) => {
 const choose = array => array[Math.floor(Math.random() * array.length)]
 const unique = (value, index, self) => self.indexOf(value) === index
 
+const distance = (coords1, coords2) => Math.sqrt((coords1.x - coords2.x) * (coords1.x - coords2.x) + (coords1.y - coords2.y) * (coords1.y - coords2.y))
 
 let currentId = 0
 const getUid = () => {
@@ -59,5 +60,6 @@ export default {
 	mergeFunctions,
 	makeObject,
 	removeDuplicates,
-	unique
+	unique,
+	distance
 }
