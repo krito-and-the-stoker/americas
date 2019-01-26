@@ -7,6 +7,7 @@ import Record from 'util/record'
 import Goods from 'data/goods'
 import Background from 'render/background'
 import Binding from 'util/binding'
+import Owner from 'entity/owner'
 
 const create = ({ id, layers, index }) => {
 	const [name, terrain] = Object.entries(Terrain).find(([name, terrain]) => terrain.id === id)
@@ -32,7 +33,7 @@ const create = ({ id, layers, index }) => {
 		road: false,
 		coast: false,
 		coastTerrain: null,
-		discovered: false,
+		discoveredBy: [],
 	}
 
 	if (tile.domain === 'sea') {
@@ -53,6 +54,7 @@ const create = ({ id, layers, index }) => {
 	tile.up = () => up(tile)
 	tile.right = () => right(tile)
 	tile.down = () => down(tile)
+	tile.discovered = () => discovered(tile)
 
 	const updateTreeVariation = colonyOrSettlement => {
 		if (colonyOrSettlement) {
@@ -75,8 +77,8 @@ const terrainName = tile =>
 		(tile.mountains ? 'mountains' :
 			(tile.hills ? 'hills' : tile.name))
 
-const keys = ['id', 'forest', 'treeVariation', 'hills', 'hillVariation', 'mountains', 'mountainVariation', 'riverSmall', 'riverLarge', 'bonus', 'plowed', 'road', 'coast', 'discovered', 'rumors', 'harvestedBy']
-const type = ['int','bool',   'int',           'bool',  'bool',          'bool',      'bool',              'bool',       'bool',       'bool',  'bool',   'bool', 'bool',  'bool',       'bool',   'reference']
+const keys = ['id', 'forest', 'treeVariation', 'hills', 'hillVariation', 'mountains', 'mountainVariation', 'riverSmall', 'riverLarge', 'bonus', 'plowed', 'road', 'coast', 'discoveredBy', 'rumors', 'harvestedBy', 'currentlyVisible']
+const type = ['int','bool',   'int',           'bool',  'bool',          'bool',      'bool',              'bool',       'bool',       'bool',  'bool',   'bool', 'bool',  'references',   'bool',   'reference',   'bool']
 const save = tile => ([
 	tile.id,
 	tile.forest,
@@ -91,7 +93,7 @@ const save = tile => ([
 	tile.plowed,
 	tile.road,
 	tile.coast,
-	tile.discovered,
+	tile.discoveredBy.map(Record.reference),
 	tile.rumors,
 	Record.reference(tile.harvestedBy)
 ].map((value, index) => {
@@ -100,6 +102,9 @@ const save = tile => ([
 	}
 	if (type[index] === 'reference') {
 		return value ? value[Record.REFERENCE_KEY] : 0
+	}
+	if (type[index] === 'references') {
+		return value.map(one => one ? one[Record.REFERENCE_KEY] : 0).join('-')
 	}
 	return value
 }))
@@ -114,6 +119,11 @@ const load = (data, index) => {
 				return value ? {
 					[Record.REFERENCE_KEY]: value
 				} : null
+			}
+			if (type[key] === 'references') {
+				return value.split('-').filter(x => x.length > 0).map(one => one ? ({
+					[Record.REFERENCE_KEY]: Number(one)
+				}) : null)
 			}
 			return value
 		})
@@ -136,23 +146,43 @@ const load = (data, index) => {
 	tile.up = () => up(tile)
 	tile.right = () => right(tile)
 	tile.down = () => down(tile)
+	tile.discovered = () => tile.currentlyVisible
 
 	Record.dereferenceLazy(tile.harvestedyBy, entity => tile.harvestedBy = entity)
+	
+	Record.entitiesLoaded(() => {
+		tile.discoveredBy = tile.discoveredBy.map(Record.dereference)
+		tile.discovered = () => discovered(tile)
+
+		tile.discoveredBy.forEach(owner =>
+			Owner.listen.visible(owner, () => {
+				if (tile.currentlyDiscovered !== discovered(tile)) {
+					update.currentlyDiscovered(tile, discovered(tile))
+					updateTile(tile)
+				}
+			}))
+	})
 
 	return tile	
 }
 
 
-const discover = tile => {
-	if (tile.domain === 'land' && !Record.getGlobal('hasDiscoveredLand')) {
-		Record.setGlobal('hasDiscoveredLand', true)
-	}
-	if (!tile.discovered) {	
-		tile.discovered = true
-		updateTile(tile)
+const discover = (tile, owner) => {
+	// if (tile.domain === 'land' && !Record.getGlobal('hasDiscoveredLand')) {
+	// 	Record.setGlobal('hasDiscoveredLand', true)
+	// }
+	if (!tile.discoveredBy.includes(owner)) {	
+		tile.discoveredBy.push(owner)
+		Owner.listen.visible(owner, () => {		
+			if (tile.currentlyDiscovered !== discovered(tile)) {
+				update.currentlyDiscovered(tile, discovered(tile))
+				updateTile(tile)
+			}
+		})
 	}
 }
 
+const discovered = tile => tile.discoveredBy.some(owner => owner.visible)
 const	neighbors = tile => [left(tile), up(tile), right(tile), down(tile)].filter(n => n)
 const diagonalNeighbors = tile => {
 	let result = neighbors(tile)
@@ -307,7 +337,8 @@ const neighborString = (tile, other) => {
 const update = {
 	colony: (tile, colony) => Binding.update(tile, 'colony', colony),
 	settlement: (tile, settlement) => Binding.update(tile, 'settlement', settlement),
-	tile: tile => Binding.update(tile)
+	tile: tile => Binding.update(tile),
+	currentlyDiscovered: (tile, value) => Binding.update(tile, 'currentlyDiscovered', value)
 	// rumors: (tile, value) => Binding.update(tile, 'rumors', value)
 }
 
@@ -353,7 +384,8 @@ const updateTile = center => {
 const listen = {
 	tile: (tile, fn) => Binding.listen(tile, null, fn),
 	settlement: (tile, fn) => Binding.listen(tile, 'settlement', fn),
-	colony: (tile, fn) => Binding.listen(tile, 'colony', fn)
+	colony: (tile, fn) => Binding.listen(tile, 'colony', fn),
+	discovered: (tile, fn) => Binding.listen(tile, 'currentlyDiscovered', fn)
 }
 
 

@@ -27,19 +27,19 @@ const options = [{
 	probability: 1.5
 }, {
 	text: () => 'You happen upon the desperate survivors of a former colony. In exchange for badly needed supplies, they swear allegiance to you.',
-	action: ({ unit }) => Unit.create('settler', unit.mapCoordinates),
+	action: ({ unit }) => Unit.create('settler', unit.mapCoordinates, unit.owner),
 	probability: 0.5
 }, {
 	text: ({ random }) => `You find the ruins of a lost civilization. Within are gold and artifacts worth ${Math.round(500 + 1500*random)} gold.`,
 	action: ({ random, unit }) => {
-		const treasure = Unit.create('treasure', unit.mapCoordinates)
+		const treasure = Unit.create('treasure', unit.mapCoordinates, unit.owner)
 		treasure.treasure = Math.round(500 + 1500*random)
 	},
 	probability: 0.2
 }, {
 	text: ({ random }) => `You have found one of the Seven Cities of Cibola! Treasure worth ${Math.round(3000 + 4000*random)} gold unearthed in the ruins! It will take a Galleon to get this treasure back to Europe!`,
 	action: ({ random, unit }) => {
-		const treasure = Unit.create('treasure', unit.mapCoordinates)
+		const treasure = Unit.create('treasure', unit.mapCoordinates, unit.owner)
 		treasure.treasure = Math.round(3000 + 4000*random)
 	},
 	probability: 0.05

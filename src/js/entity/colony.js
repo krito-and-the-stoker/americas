@@ -25,6 +25,7 @@ import UnjoinColony from 'action/unjoinColony'
 import LeaveColony from 'action/leaveColony'
 import Notification from 'view/ui/notification'
 
+
 // for unknown reasons we need to wait bit until we can set the global here :/
 setTimeout(() => Record.setGlobal('colonyNames',
 	['Jamestown',
@@ -154,7 +155,7 @@ const initialize = colony => {
 	destroy.push(Storage.listen(colony.storage, storage => {
 		const keepFood = 20
 		if (storage.food >= 200 + keepFood) {
-			const unit = Unit.create('settler', colony.mapCoordinates)
+			const unit = Unit.create('settler', colony.mapCoordinates, colony.owner)
 			Storage.update(colony.storage, { good: 'food', amount: -200 })
 			Notification.create({ type: 'born', colony, unit })
 		}
@@ -240,9 +241,10 @@ const initialize = colony => {
 	colony.destroy = Util.mergeFunctions(destroy)
 }
 
-const create = coords => {
+const create = (coords, owner) => {
 	const colony = {
 		name: getColonyName(),
+		owner,
 		units: [],
 		colonists: [],
 		buildings: Building.create(),
@@ -292,6 +294,7 @@ const save = colony => ({
 	buildings: colony.buildings,
 	construction: colony.construction,
 	bells: colony.bells,
+	owner: Record.reference(colony.owner)
 })
 
 const load = colony => {
@@ -299,6 +302,7 @@ const load = colony => {
 	tile.colony = colony
 	colony.storage = Storage.load(colony.storage)
 	colony.trade = colony.trade ? Storage.load(colony.trade) : Storage.create()
+	colony.owner = Record.dereference(colony.owner)
 
 	colony.colonists.forEach((colonist, index) => Record.dereferenceLazy(colonist, entity => colony.colonists[index] = entity))
 	colony.units.forEach((unit, index) => Record.dereferenceLazy(unit, entity => colony.units[index] = entity))

@@ -4,6 +4,7 @@ import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Settlement from 'entity/settlement'
 import Message from 'view/ui/message'
+import Owner from 'entity/owner'
 
 
 const settlementDensity = 0.07
@@ -15,7 +16,7 @@ const createFromMap = ({ tiles, numTiles }) => {
 	tiles.forEach(tile => {
 		if (tile.zone) {
 			if (!tribes.map(tribe => tribe.id).includes(tile.zone)) {
-				tribes.push(create(tile.zone))
+				tribes.push(create(tile.zone, Owner.create('native')))
 			}
 		}
 	})
@@ -51,14 +52,15 @@ const createFromMap = ({ tiles, numTiles }) => {
 
 	possibleLocations.forEach(coords => {
 		const tribe = tribes.find(tribe => tribe.id === MapEntity.tile(coords).zone)
-		Settlement.create(tribe, coords)
+		Settlement.create(tribe, coords, tribe.owner)
 	})
 	Message.log('Tribes created')
 }
 
-const create = id => {
+const create = (id, owner) => {
 	const tribe = {
 		id,
+		owner,
 	}
 
 	tribe.name = Util.choose(tribeNames)
@@ -70,10 +72,14 @@ const create = id => {
 
 const save = tribe => ({
 	id: tribe.id,
-	name: tribe.name
+	name: tribe.name,
+	owner: Record.reference(tribe.owner)
 })
 
-const load = tribe => tribe
+const load = tribe => {
+	tribe.owner = Record.dereference(tribe.owner)
+	return tribe
+}
 
 export default {
 	create,

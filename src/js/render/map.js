@@ -43,7 +43,7 @@ class MapView{
 	renderBaseBlock(center){
 		let indices = [];
 
-		if(!center || !center.discovered)
+		if(!center || !center.discovered())
 			return indices;
 
 		let left = center.left();
@@ -122,7 +122,7 @@ class MapView{
 	renderUndiscovered(center){
 		let undiscovered = [];
 
-		if(!center || !center.discovered)
+		if(!center || !center.discovered())
 			return undiscovered;
 
 		let left = center.left();
@@ -132,7 +132,7 @@ class MapView{
 
 
 		if(up && right && down && left){		
-			let name = this.neighborToName(!up.discovered, !right.discovered, !down.discovered, !left.discovered);
+			let name = this.neighborToName(!up.discovered(), !right.discovered(), !down.discovered(), !left.discovered());
 			if(name !== null)
 				undiscovered.push(Terrain.undiscovered[name]);
 
@@ -143,14 +143,14 @@ class MapView{
 
 			if(leftUp && leftDown && rightUp && rightDown){
 				let cornerNames = this.getCornerNames(
-					!up.discovered,
-					!rightUp.discovered,
-					!right.discovered,
-					!rightDown.discovered,
-					!down.discovered,
-					!leftDown.discovered,
-					!left.discovered,
-					!leftUp.discovered
+					!up.discovered(),
+					!rightUp.discovered(),
+					!right.discovered(),
+					!rightDown.discovered(),
+					!down.discovered(),
+					!leftDown.discovered(),
+					!left.discovered(),
+					!leftUp.discovered()
 				);
 				for(let name of cornerNames){
 					// console.error(tile, name);
@@ -186,7 +186,7 @@ class MapView{
 
 		if(
 			center &&
-			center.discovered &&
+			center.discovered() &&
 			left &&
 			right &&
 			up &&
@@ -226,7 +226,7 @@ class MapView{
 		let down = center.down();
 
 		if(
-			center.discovered &&
+			center.discovered() &&
 			left &&
 			right &&
 			up &&
@@ -252,7 +252,7 @@ class MapView{
 
 		if(center){
 			//no corners on land tiles
-			if(center.terrain.domain === 'land' || !center.discovered)
+			if(center.terrain.domain === 'land' || !center.discovered())
 				return corners;
 
 			let left = center.left();
@@ -501,12 +501,12 @@ class MapView{
 
 	renderBonusResources(center){
 		let bonus = [];
-		if(center && center.discovered && center.bonus){
+		if(center && center.discovered() && center.bonus){
 			let resourceName = this.getBonusResourceName(center);
 			bonus.push(Terrain.bonusResource[resourceName]);
 		}
 
-		if (center && center.discovered && center.rumors){
+		if (center && center.discovered() && center.rumors){
 			bonus.push(Terrain.rumors.id)
 		}
 
@@ -515,7 +515,7 @@ class MapView{
 
 	renderTopTiles(center){
 		let topTiles = [];
-		if(center && center.discovered){
+		if(center && center.discovered()){
 			let left = center.left();
 			let right = center.right();
 			let up = center.up();

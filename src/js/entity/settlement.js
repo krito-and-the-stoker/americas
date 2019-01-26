@@ -11,10 +11,11 @@ import Disband from 'command/disband'
 import Binding from 'util/binding'
 
 const UNIT_PRODUCTION_COST = 10
-const create = (tribe, coords) => {
+const create = (tribe, coords, owner) => {
 	const settlement = {
 		mapCoordinates: coords,
 		tribe,
+		owner,
 		production: UNIT_PRODUCTION_COST * Math.random(),
 		productivity: 3 * Math.random(),
 	}
@@ -41,11 +42,10 @@ const initialize = settlement => {
 						.concat(Record.getAll('colony'))
 						.filter(t => {
 							const distance = Util.distance(t.mapCoordinates, settlement.mapCoordinates)
-							console.log(distance)
 							return distance > 0 && distance < 10
 						}))
 				if (target) {
-					const unit = Unit.create('native', settlement.mapCoordinates)
+					const unit = Unit.create('native', settlement.mapCoordinates, settlement.owner)
 					Commander.scheduleBehind(unit.commander, MoveTo.create(unit, target.mapCoordinates))
 					Commander.scheduleBehind(unit.commander, Disband.create(unit))
 				}
@@ -66,15 +66,17 @@ const update = {
 const save = settlement => ({
 	mapCoordinates: settlement.mapCoordinates,
 	tribe: Record.reference(settlement.tribe),
+	owner: Record.reference(settlement.owner),
 	production: settlement.production,
 	productivity: settlement.productivity
 })
 
 const load = settlement => {
 	settlement.tribe = Record.dereference(settlement.tribe)
+	settlement.owner = Record.dereference(settlement.owner)
 	Tile.update.settlement(MapEntity.tile(settlement.mapCoordinates), settlement)
 
-	initialize(settlement)
+	Record.entitiesLoaded(() => initialize(settlement))
 	return settlement
 }
 

@@ -13,29 +13,35 @@ const TILE_SIZE = 64
 const MAP_SETTLEMENT_FRAME_ID = 59
 
 const create = settlement => {
-	const sprite = Resources.sprite('map', { frame: MAP_SETTLEMENT_FRAME_ID })
-	sprite.x = TILE_SIZE * settlement.mapCoordinates.x
-	sprite.y = TILE_SIZE * settlement.mapCoordinates.y
-
 	const tile = MapEntity.tile(settlement.mapCoordinates)
-	Tile.listen.tile(tile, tile => {
-		if (tile.discovered) {
+	const unsubscribe = Tile.listen.discovered(tile, discovered => {
+		if (discovered) {
+			const sprite = Resources.sprite('map', { frame: MAP_SETTLEMENT_FRAME_ID })
+			sprite.x = TILE_SIZE * settlement.mapCoordinates.x
+			sprite.y = TILE_SIZE * settlement.mapCoordinates.y
 			Foreground.addTerrain(sprite)
-		}
-
-		return () => {
-			Foreground.removeTerrain(sprite)
+			return () => {
+				Foreground.removeTerrain(sprite)
+			}
 		}
 	})
 
 	return {
-		sprite,
+		unsubscribe,
 	}
+}
+
+const destroy = view => {
+	view.unsubscribe()
 }
 
 const initialize = () => {
 	Record.listen('settlement', settlement => {
 		const view = create(settlement)
+
+		return () => {
+			destroy(view)
+		}
 	})
 }
 

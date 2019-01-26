@@ -32,7 +32,7 @@ const initialize = () => {
 
 
 const findHighSeas = from => {
-	const target = node => node.tile().terrainName === 'sea lane' && node.tile().discovered
+	const target = node => node.tile().terrainName === 'sea lane' && node.tile().discovered()
 	return find(from, target, null, { domain: 'sea' })
 }
 const findPathXY = (from, to, unit) => findPath(MapEntity.tile(from), MapEntity.tile(to), unit)

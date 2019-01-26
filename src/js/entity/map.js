@@ -2,6 +2,8 @@ import Tile from './tile.js'
 import Record from 'util/record'
 import Util from 'util/util'
 import Message from 'view/ui/message'
+import Owner from 'entity/owner'
+import Background from 'render/background'
 
 
 let numTiles = null
@@ -80,7 +82,7 @@ const create = ({ data }) => {
 }
 
 const discoverAll = () => {
-	tiles.forEach(Tile.discover)
+	tiles.forEach(tile => Tile.discover(tile, Owner.player()))
 }
 
 const tileFromIndex = index => tiles[index]
@@ -119,5 +121,5 @@ export default {
 	save,
 	load,
 	prepare,
-	mapCoordinates
+	mapCoordinates,
 }

@@ -15,6 +15,7 @@ import Treasure from 'entity/treasure'
 import Market from 'entity/market'
 import Tribe from 'entity/tribe'
 import Settlement from 'entity/settlement'
+import Owner from 'entity/owner'
 
 import MapView from 'render/map'
 import Foreground from 'render/foreground'
@@ -105,7 +106,7 @@ const revive = (record) => {
 	record.entity = getModule(record.type).load(record.data)
 	record.listeners.forEach(fn => fn(record.entity))	
 	records.push(record)
-	
+
 	beforeEntitiesLoaded(() => {
 		record.destroy = update(record.type, record.entity)
 	})
@@ -116,6 +117,39 @@ const revive = (record) => {
 const dump = () => {
 	console.log(records)
 	console.log(globals)
+	window.Record = {
+		add,
+		remove,
+		listen,
+		addTile,
+		reference,
+		referenceTile,
+		dereferenceTile,
+		dereference,
+		dereferenceLazy,
+		entitiesLoaded,
+		setGlobal,
+		getGlobal,
+		save,
+		load,
+		dump,
+		getAll,
+		download,
+		upload,
+		REFERENCE_KEY
+	}
+
+	window.Colonist = Colonist
+	window.Colony = Colony
+	window.MapEntity = MapEntity
+	window.Tile = Tile
+	window.Unit = Unit
+	window.Europe = Europe
+	window.Treasure = Treasure
+	window.Market = Market
+	window.Tribe = Tribe
+	window.Settlement = Settlement
+	window.Owner = Owner
 }
 
 const reviveTile = (data, index) => {
@@ -148,7 +182,8 @@ const getModule = name => ({
 	tile: Tile,
 	unit: Unit,
 	settlement: Settlement,
-	tribe: Tribe
+	tribe: Tribe,
+	owner: Owner
 })[name]
 
 const saveSingleRecord = record => ({
@@ -238,13 +273,16 @@ const dereference = ref => {
 const dereferenceLazy = (ref, fn) => {
 	if (!ref) {
 		fn(null)
-	} else {	
+	} else {
 		const referenceId = ref[REFERENCE_KEY]
 		const alive = records.find(record => record.id === referenceId)
 		if (alive) {
 			fn(alive.entity)
 		} else {
 			const dead = snapshot.entities.find(record => record.id === referenceId)
+			if (!dead) {
+				console.warn('Could ot find reference for', ref)
+			}
 			dead.listeners.push(fn)
 		}
 	}
@@ -284,11 +322,11 @@ const load = (src = null) => {
 	}
 	globals = snapshot.globals
 	tileLookup = snapshot.tileLookup
+	snapshot.entities.forEach(record => record.listeners = [])
 	MapEntity.prepare()
 	snapshot.tiles.map(resolveLookup).forEach(reviveTile)
 	MapEntity.load()
 	const mapView = new MapView()
-	snapshot.entities.forEach(record => record.listeners = [])
 	snapshot.entities.forEach(revive)
 	Time.load(snapshot.time)
 	Treasure.load(snapshot.treasure)

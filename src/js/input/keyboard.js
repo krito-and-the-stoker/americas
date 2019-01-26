@@ -16,11 +16,12 @@ import MapEntity from 'entity/map'
 import Treasure from 'entity/treasure'
 import Unit from 'entity/unit'
 import Help from 'view/help'
+import Owner from 'entity/owner'
 
 const ZOOM_FACTOR = 1.25
 const ZOOM_TIME = 350
 
-
+let controlAllPlayers = false
 const handleKeydown = (e) => {
 	if (e.ctrlKey) {	
 		if (e.key === 'o') {
@@ -41,6 +42,24 @@ const handleKeydown = (e) => {
 
 		if (e.key === 'd') {
 			MapEntity.discoverAll()
+		}
+
+		if (e.key === 'a') {
+			if (!controlAllPlayers) {
+				console.log('now controlling everyone')
+				Record.getAll('owner').forEach(owner => {
+					Owner.update.visible(owner, true)
+					Owner.update.input(owner, true)
+				})
+			}
+			if (controlAllPlayers) {
+				console.log('now controlling only player')
+				Record.getAll('owner').forEach(owner => {
+					Owner.update.visible(owner, owner === Owner.player())
+					Owner.update.input(owner, owner === Owner.player())
+				})
+			}
+			controlAllPlayers = !controlAllPlayers
 		}
 	}
 

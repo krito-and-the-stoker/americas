@@ -13,6 +13,7 @@ import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
 import Events from 'view/ui/events'
 import Binding from 'util/binding'
+import Owner from 'entity/owner'
 
 
 const BLINK_TIME = 500
@@ -87,18 +88,20 @@ const create = unit => {
 		sprite.hitArea = new PIXI.Rectangle(TILE_SIZE / 4, 0, TILE_SIZE / 2, TILE_SIZE)
 	}
 
-	const view = {
-		sprite,
-		unit
-	}
-
-	Click.on(sprite, () => {
-		if (unit.colony) {
+	const unsubscribe = Owner.listen.input(unit.owner, input =>
+		input ? Click.on(sprite, () => {
+		if (unit.colony && unit.colony.owner === unit.owner) {
 			unit.colony.screen = ColonyView.open(unit.colony)
 		} else {
 			select(unit)
 		}
-	})
+	}) : null)
+
+	const view = {
+		sprite,
+		unit,
+		unsubscribe
+	}
 
 	return view
 }
@@ -108,6 +111,7 @@ const selectedUnit = () => state.selectedView ? state.selectedView.unit : null
 const destroy = view => {
 	unselect(view.unit)
 	view.destroyed = true
+	view.unsubscribe()
 	hide(view)	
 }
 
@@ -138,7 +142,8 @@ const visibleOnMap = view => (view === state.selectedView || !view.unit.colony) 
 	!view.unit.vehicle &&
 	!Europe.has.unit(view.unit) &&
 	!view.unit.offTheMap &&
-	!(view.unit.colonist && view.unit.colonist.colony)
+	!(view.unit.colonist && view.unit.colonist.colony) &&
+	(view.unit.owner.visible || view.unit.tile.discovered())
 
 const save = () => Record.reference(selectedUnit())
 const load = data => {
@@ -157,6 +162,7 @@ const initialize = () => {
 		Unit.listen.vehicle(unit, updateBoundVisibility)
 		Unit.listen.offTheMap(unit, updateBoundVisibility)
 		Unit.listen.colony(unit, updateBoundVisibility)
+		Owner.listen.visible(unit.owner, updateBoundVisibility)
 		Unit.listen.colonist(unit, colonist =>
 			colonist ? Colonist.listen.colony(colonist, updateBoundVisibility) : updateBoundVisibility())
 

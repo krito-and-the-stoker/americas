@@ -6,6 +6,7 @@ import Binding from 'util/binding'
 import Util from 'util/util'
 import Message from 'view/ui/message'
 import Notification from 'view/ui/notification'
+import Owner from 'entity/owner'
 
 const possibleColonists = [
 	{ unit: 'settler', 'name': 'Petty Criminals', expert: "criminal" },
@@ -159,7 +160,7 @@ const recruitmentOptions = () => europe.pool.map(({ unit, name, expert }, index)
 
 const recruit = (option, index) => {
 	if (option.unit && Treasure.spend(recruitmentCost())) {
-		const unit = Unit.create(option.unit, Record.getGlobal('defaultShipArrival'))
+		const unit = Unit.create(option.unit, Record.getGlobal('defaultShipArrival'), Owner.player())
 		Unit.update.offTheMap(unit, true)
 		Unit.update.expert(unit, option.expert)
 		add.unit(unit)
@@ -186,7 +187,7 @@ const purchaseOptions = () => [
 
 const purchase = option => {
 	if (Treasure.spend(option.price) && option.unit) {
-		const unit = Unit.create(option.unit, Record.getGlobal('defaultShipArrival'))
+		const unit = Unit.create(option.unit, Record.getGlobal('defaultShipArrival'), Owner.player())
 		Unit.update.offTheMap(unit, true)
 		add.unit(unit)
 	}
@@ -205,7 +206,7 @@ const trainOptions = () => possibleTrainees
 
 const train = option => {
 	if (Treasure.spend(option.price) && option.unit) {
-		const unit = Unit.create(option.unit, Record.getGlobal('defaultShipArrival'))
+		const unit = Unit.create(option.unit, Record.getGlobal('defaultShipArrival'), Owner.player())
 		Unit.update.expert(unit, option.expert)
 		Unit.update.offTheMap(unit, true)
 		add.unit(unit)
@@ -218,7 +219,7 @@ const initialize = () => {
 			const index = Math.floor(Math.random() * europe.pool.length)
 			const chosen = europe.pool[index]
 			europe.pool[index] = Util.choose(possibleColonists)
-			const unit = Unit.create(chosen.unit, Record.getGlobal('defaultShipArrival'))
+			const unit = Unit.create(chosen.unit, Record.getGlobal('defaultShipArrival'), Owner.player())
 			Unit.update.expert(unit, chosen.expert)
 			Unit.update.offTheMap(unit, true)
 			add.unit(unit)

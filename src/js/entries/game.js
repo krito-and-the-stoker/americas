@@ -1,4 +1,5 @@
 import MainLoop from 'mainloop.js'
+import * as Sentry from '@sentry/browser'
 
 import MapEntity from 'entity/map.js'
 import RenderMap from 'render/map.js'
@@ -25,7 +26,7 @@ import Util from 'util/util'
 import Tribe from 'entity/tribe'
 import Message from 'view/ui/message'
 import Version from 'version/version.json'
-import * as Sentry from '@sentry/browser'
+import Owner from 'entity/owner'
 
 
 const captureException = err => {
@@ -65,9 +66,9 @@ const americaSmall = () => {
 	{ x: 168, y: 117 },
 	{ x: 159, y: 152 },
 	{ x: 132, y: 55 }])
-	const pioneer = Unit.create('pioneer', startCoordinates)
-	const soldier = Unit.create('soldier', startCoordinates)
-	const caravel = Unit.create('caravel', startCoordinates)
+	const pioneer = Unit.create('pioneer', startCoordinates, Owner.player())
+	const soldier = Unit.create('soldier', startCoordinates, Owner.player())
+	const caravel = Unit.create('caravel', startCoordinates, Owner.player())
 	Unit.loadUnit(caravel, pioneer)
 	Unit.loadUnit(caravel, soldier)
 	MapView.centerAt(startCoordinates, 0, {
@@ -92,9 +93,9 @@ const americaLarge = () => {
 	{ x: 286, y: 243 },
 	{ x: 275, y: 296 },
 	{ x: 235, y: 354 }])
-	const pioneer = Unit.create('pioneer', startCoordinates)
-	const soldier = Unit.create('soldier', startCoordinates)
-	const caravel = Unit.create('caravel', startCoordinates)
+	const pioneer = Unit.create('pioneer', startCoordinates, Owner.player())
+	const soldier = Unit.create('soldier', startCoordinates, Owner.player())
+	const caravel = Unit.create('caravel', startCoordinates, Owner.player())
 	Unit.loadUnit(caravel, pioneer)
 	Unit.loadUnit(caravel, soldier)
 	MapView.centerAt(startCoordinates, 0, {
@@ -123,6 +124,8 @@ const start = async () => {
 
 		await loadingResources
 		await nextFrame()
+
+		Owner.initialize()
 
 		// MapEntity.create({ data: americaSmallMap })
 		MapEntity.create({ data: americaLargeMap })

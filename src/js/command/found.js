@@ -23,7 +23,7 @@ const create = unit => {
 		}
 
 		Tile.constructRoad(tile)
-		const colony = Colony.create(unit.mapCoordinates)
+		const colony = Colony.create(unit.mapCoordinates, unit.owner)
 		Unit.at(unit.mapCoordinates).forEach(unit => {
 			EnterColony(colony, unit)
 		})

@@ -106,7 +106,7 @@ const constructionOptions = colony => {
 		name: "Wagon Train",
 		cost: { construction: 80 },
 		action: () => {
-			const unit = Unit.create('wagontrain', colony.mapCoordinates)
+			const unit = Unit.create('wagontrain', colony.mapCoordinates, colony.owner)
 			Notification.create({ type: 'construction', colony, unit })
 		}
 	}]
@@ -119,7 +119,7 @@ const constructionOptions = colony => {
 			tools: 80
 		},
 		action: () => {
-			const unit = Unit.create('artillery', colony.mapCoordinates)
+			const unit = Unit.create('artillery', colony.mapCoordinates, colony.owner)
 			Notification.create({ type: 'construction', colony, unit })
 		}
 	}]
@@ -132,7 +132,7 @@ const constructionOptions = colony => {
 			tools: 80
 		},
 		action: () => {
-			const unit = Unit.create('caravel', colony.mapCoordinates)
+			const unit = Unit.create('caravel', colony.mapCoordinates, colony.owner)
 			Notification.create({ type: 'construction', colony, unit })
 		}
 	}, {
@@ -143,7 +143,7 @@ const constructionOptions = colony => {
 			tools: 160
 		},
 		action: () => {
-			const unit = Unit.create('merchantman', colony.mapCoordinates)
+			const unit = Unit.create('merchantman', colony.mapCoordinates, colony.owner)
 			Notification.create({ type: 'construction', colony, unit })
 		}
 	}, {
@@ -154,7 +154,7 @@ const constructionOptions = colony => {
 			tools: 200
 		},
 		action: () => {
-			const unit = Unit.create('galleon', colony.mapCoordinates)
+			const unit = Unit.create('galleon', colony.mapCoordinates, colony.owner)
 			Notification.create({ type: 'construction', colony, unit })
 		}
 	}, {
@@ -165,7 +165,7 @@ const constructionOptions = colony => {
 			tools: 240
 		},
 		action: () => {
-			const unit = Unit.create('privateer', colony.mapCoordinates)
+			const unit = Unit.create('privateer', colony.mapCoordinates, colony.owner)
 			Notification.create({ type: 'construction', colony, unit })
 		}
 	}, {
@@ -176,7 +176,7 @@ const constructionOptions = colony => {
 			tools: 400
 		},
 		action: () => {
-			const unit = Unit.create('frigate', colony.mapCoordinates)
+			const unit = Unit.create('frigate', colony.mapCoordinates, colony.owner)
 			Notification.create({ type: 'construction', colony, unit })
 		}
 	}]

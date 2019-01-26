@@ -131,6 +131,7 @@ const createFromData = data => {
 	const finished = () => {
 		if (!aborted) {		
 			Unit.update.mapCoordinates(unit, { ...coords })
+			unit.tile = targetTile
 			if (targetTile.colony) {
 				EnterColony(targetTile.colony, unit)
 			}
@@ -145,8 +146,8 @@ const createFromData = data => {
 				EnterSettlement(targetTile.settlement, unit)
 			}
 
-			Tile.discover(targetTile)
-			Tile.diagonalNeighbors(targetTile).forEach(other => Tile.discover(other))
+			Tile.discover(targetTile, unit.owner)
+			Tile.diagonalNeighbors(targetTile).forEach(other => Tile.discover(other, unit.owner))
 		}
 		if (finishedFn) {
 			finishedFn()

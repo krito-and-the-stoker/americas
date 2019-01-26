@@ -15,10 +15,12 @@ import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
 import Member from 'util/member'
 
-const create = (name, coords) => {
+const create = (name, coords, owner) => {
 	if (Units[name]) {
 		const unit = {
 			name,
+			owner,
+			tile: MapEntity.tile(coords),
 			properties: Units[name],
 			domain: Units[name].domain,
 			mapCoordinates: coords || { x: undefined, y: undefined },
@@ -51,9 +53,8 @@ const create = (name, coords) => {
 
 		initialize(unit)
 
-		const tile = MapEntity.tile(coords)
-		if (tile && tile.colony) {
-			EnterColony(tile.colony, unit)
+		if (unit.tile && unit.tile.colony) {
+			EnterColony(unit.tile.colony, unit)
 		}
 
 		Record.add('unit', unit)
@@ -66,10 +67,9 @@ const create = (name, coords) => {
 }
 
 const initialize = unit => {
-	const tile = MapEntity.tile(unit.mapCoordinates)
-	if (tile) {	
-		Tile.discover(tile)
-		Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other))
+	if (unit.tile) {	
+		Tile.discover(unit.tile, unit.owner)
+		Tile.diagonalNeighbors(unit.tile).forEach(other => Tile.discover(other, unit.owner))
 	}
 
 	Time.schedule(unit.commander)
@@ -251,13 +251,17 @@ const save = unit => ({
 	colonist: Record.reference(unit.colonist),
 	passengers: unit.passengers.map(other => Record.reference(other)),
 	vehicle: Record.reference(unit.vehicle),
-	pioneering: unit.pioneering
+	pioneering: unit.pioneering,
+	tile: Record.referenceTile(unit.tile),
+	owner: Record.reference(unit.owner)
 })
 
 const load = unit => {
 	unit.storage = Storage.load(unit.storage)
 	unit.equipment = Storage.load(unit.equipment)
 	unit.passengers = unit.passengers.map(Record.dereference)
+	unit.owner = Record.dereference(unit.owner)
+	unit.tile = Record.dereferenceTile(unit.tile)
 	Record.dereferenceLazy(unit.colony, colony => unit.colony = colony)
 	Record.dereferenceLazy(unit.colonist, colonist => unit.colonist = colonist)
 	Record.dereferenceLazy(unit.vehicle, vehicle => unit.vehicle = vehicle)
