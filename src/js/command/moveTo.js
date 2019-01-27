@@ -107,11 +107,13 @@ const create = (unit, coords, moveToCommander = null, hasPath = false) => {
 			target.domain === 'land' &&
 			!target.colony) {
 			const targetCoords = Tile.diagonalNeighbors(MapEntity.tile(unit.mapCoordinates))
+				.filter(n => n.domain === 'land')
 				.map(n => n.mapCoordinates)
 				.reduce((min, c) => Util.distance(unit.mapCoordinates, c) < Util.distance(unit.mapCoordinates, min) ? c : min, coords)
-			Commander.scheduleInstead(unit.commander, Unload.create(unit, targetCoords))
+			if (inMoveDistance(unit.tile.mapCoordinates, targetCoords)) {
+				Commander.scheduleInstead(unit.commander, Unload.create(unit, targetCoords))
+			}
 		}
-
 	}
 
 	const save = () => ({

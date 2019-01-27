@@ -26,19 +26,23 @@ const create = (unit, coords) => {
 	let unloadingStartedAt = null
 	let landingUnit = null
 
-	Dialog.create({
-		type: 'naval',
-		text: 'Would you like to disembark here?',
-		coords: unit.mapCoordinates,
-		options: [{
-			text: 'Make landfall',
-			action: () => decision = 0
-		}, {
-			text: 'Stay with the ships',
-			action: () => decision = 1,
-			default: true
-		}]
-	})
+	const init = () => {	
+		Dialog.create({
+			type: 'naval',
+			text: 'Would you like to disembark here?',
+			coords: unit.mapCoordinates,
+			options: [{
+				text: 'Make landfall',
+				action: () => decision = 0
+			}, {
+				text: 'Stay with the ships',
+				action: () => decision = 1,
+				default: true
+			}]
+		})
+
+		return true
+	}
 
 	const update = currentTime => {
 		if (unloadingStartedAt) {
@@ -71,8 +75,8 @@ const create = (unit, coords) => {
 	})
 
 	return {
-		type: 'unload',
 		update,
+		init,
 		save
 	}
 }
