@@ -4,7 +4,7 @@ import MainLoop from 'mainloop.js'
 const MOVE_BASE_TIME = 8000
 const UNLOAD_TIME = 3000
 const LOAD_TIME = 3000
-const EUROPE_SAIL_TIME = 15000
+const EUROPE_SAIL_TIME = 20000
 const PRODUCTION_BASE_TIME = 30000
 const TEACH_BASE_TIME = 300000
 const CUT_FOREST = 80000
