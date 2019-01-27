@@ -12,7 +12,7 @@ const PLOW = 80000
 const CONSTRUCT_ROAD = 80000
 const YEAR = 40000
 const CARGO_LOAD_TIME = 400
-const LOW_PRIORITY_FACTOR = 30
+const LOW_PRIORITY_DELTA_TIME = 500
 
 let currentTime = 0
 let scheduled = []
@@ -39,7 +39,7 @@ const resume = () => update.paused(false)
 const togglePause = () => update.paused(!time.paused)
 
 
-let step = 0
+let lowPrioDeltaTime = 0
 const advance = deltaTime => {
 	if (time.paused) {
 		return
@@ -47,14 +47,14 @@ const advance = deltaTime => {
 	currentTime += deltaTime * time.scale
 	// TODO: move this away from here
 	try {
-		step += 1
-		if (step === LOW_PRIORITY_FACTOR) {
-			step = 0
+		lowPrioDeltaTime += deltaTime
+		if (lowPrioDeltaTime >= LOW_PRIORITY_DELTA_TIME) {
+			lowPrioDeltaTime = 0
 			update.year(Math.round(startYear + currentTime / YEAR))
 		}
 
 		const tasks = scheduled
-			.filter(e => !step || e.priority)
+			.filter(e => !lowPrioDeltaTime || e.priority)
 			.filter(e => {
 				if (!e.started && e.init) {
 					e.alive = e.init(currentTime)
