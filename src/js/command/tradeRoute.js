@@ -9,6 +9,7 @@ import Message from 'view/ui/message'
 import Colony from 'entity/colony'
 import Unit from 'entity/unit'
 
+const TRADE_ROUTE_DISTANCE_CAP = 15
 
 const calculateDemands = () => Record.getAll('colony').map(colony =>
 	Storage.goods(colony.storage)
@@ -50,10 +51,10 @@ const match = transport => {
 				amount: Math.min(100*transport.properties.cargo, Math.floor(Math.min(demand.amount, supply.amount))),
 				importance: (0.5 + demand.importance) * (0.5 + supply.importance),
 				distance:
-					PathFinder.distance(transport.mapCoordinates, supply.colony.mapCoordinates, transport, 8*transport.properties.speed + 1) +
-					PathFinder.distance(supply.colony.mapCoordinates, demand.colony.mapCoordinates, transport, 8*transport.properties.speed + 1)
+					PathFinder.distance(transport.mapCoordinates, supply.colony.mapCoordinates, transport, TRADE_ROUTE_DISTANCE_CAP*transport.properties.speed + 1) +
+					PathFinder.distance(supply.colony.mapCoordinates, demand.colony.mapCoordinates, transport, TRADE_ROUTE_DISTANCE_CAP*transport.properties.speed + 1)
 			}))
-		.filter(route => route.distance < 15*transport.properties.speed)
+		.filter(route => route.distance < TRADE_ROUTE_DISTANCE_CAP*transport.properties.speed)
 		.filter(route => route.amount >= 5)).flat()
 	// console.log('demands', demands)
 	// console.log('supply', supply)
