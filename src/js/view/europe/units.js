@@ -47,7 +47,7 @@ const selectTarget = unit => {
 		}
 	}].concat(colonies.map((colony, index) => ({
 		margin: !index && colonies.length > 1,
-		text: colony.name,
+		text: `${colony.name} (${colony.colonists.length})`,
 		action: () => {
 			const tile = MapEntity.tile(colony.mapCoordinates)
 			const path = PathFinder.findHighSeas(tile)
