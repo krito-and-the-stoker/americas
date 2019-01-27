@@ -30,7 +30,7 @@ const create = (unit, profession) => {
 			student.education.profession = profession
 			student.education.progress = 0
 		}
-		student.education.progress += scale
+		student.education.progress += 3 * scale
 		if (student.education.progress >= Colony.expertLevel[profession]) {
 			return false
 		}

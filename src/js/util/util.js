@@ -29,6 +29,15 @@ const removeDuplicates = array => array
 
 export const range = n => [...Array(n).keys()]
 
+const quantizedRadius = (coords, radius) => range(2 * radius)
+	.map(x => Math.round(x + coords.x - radius))
+	.map(x =>
+		range(2 * radius)
+			.map(y => Math.round(y + coords.y - radius))
+			.map(y => ({ x, y }))).flat()
+	.filter(({ x, y }) => (x - coords.x) * (x - coords.x) + (y - coords.y) * (y - coords.y) <= radius*radius)
+
+
 export const rectangle = (index) => {
 	const width = 64
 	const height = 64
@@ -61,5 +70,6 @@ export default {
 	makeObject,
 	removeDuplicates,
 	unique,
-	distance
+	distance,
+	quantizedRadius
 }

@@ -7,6 +7,7 @@ import Binding from 'util/binding'
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Unit from 'entity/unit'
+import Treasure from 'entity/treasure'
 
 import Commander from 'command/commander'
 import MoveTo from 'command/moveTo'
@@ -34,6 +35,7 @@ const create = (tribe, coords, owner) => {
 		mapCoordinates: coords,
 		tribe,
 		owner,
+		presentGiven: false,
 		expert: Util.choose(Object.keys(experts)),
 		production: UNIT_PRODUCTION_COST * Math.random(),
 		productivity: 3 * Math.random(),
@@ -76,9 +78,45 @@ const initialize = settlement => {
 
 const dialog = (settlement, unit, answer) => {
 	if (answer === 'chief') {
+		const welcomeText = `Welcome stranger! We are well known for our ${experts[settlement.expert]}.`
+		if (settlement.presentGiven) {		
+			return {
+				text: `${welcomeText} We are always pleased to welcome English travelers.`,
+				type: 'natives'
+			}
+		}
+		const choice = Math.random()
+		if (choice < 0.65) {
+			return {
+				text: `${welcomeText} Come sit by the fire and we tell you about nearby lands.`,
+				type: 'natives',
+				options: [{
+					default: true,
+					action: () => {
+						settlement.presentGiven = true
+						const radius = Math.round(7 + 5 * Math.random())
+						// console.log(radius, unit.mapCoordinates, Util.quantizedRadius(unit.mapCoordinates, radius))
+						const tiles = Util.quantizedRadius(unit.mapCoordinates, radius).map(MapEntity.tile)
+						tiles.forEach(tile => {
+							if (Math.random() > 0.35) {
+								Tile.discover(tile, unit.owner)
+							}
+						})
+					}
+				}]
+			}
+		}
+		const worth = Math.round(50 + 200*Math.random())
 		return {
-			text: 'We are always pleased to welcome strangers.',
-			type: 'natives'
+			text: `${welcomeText} Have these valuable beads (${worth}) as our gift.`,
+			type: 'natives',
+			options: [{
+				default: true,
+				action: () => {
+					settlement.presentGiven = true
+					Treasure.gain(worth)
+				}
+			}]
 		}
 	}
 	if (answer === 'live') {
