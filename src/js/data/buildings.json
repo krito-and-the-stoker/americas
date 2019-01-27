@@ -91,7 +91,7 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 100
+			"construction": 180
 		}],
 		"width": 1,
 		"workspace": 3,
@@ -130,13 +130,13 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 160
+			"construction": 80
 		}, {
 			"construction": 160,
 			"tools": 40
 		}, {
-			"construction": 160,
-			"tools": 40
+			"construction": 200,
+			"tools": 60
 		}],
 		"width": 2,
 		"workspace": 0
@@ -196,7 +196,7 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 100
+			"construction": 50
 		}, {
 			"construction": 160,
 			"tools": 50
@@ -214,7 +214,7 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 120
+			"construction": 90
 		}, {
 			"construction": 320,
 			"tools": 100
@@ -232,7 +232,7 @@
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 120
+			"construction": 90
 		}, {
 			"construction": 350,
 			"tools": 200
