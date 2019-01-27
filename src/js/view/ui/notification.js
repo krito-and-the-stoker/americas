@@ -88,9 +88,14 @@ const buildingIcon = (colony, building) => {
 	if (building.name === 'fortifications') {
 		return new PIXI.Container()
 	}
+
+	// TODO: fixme, this is unacceptable
 	const rectangle = Building.rectangle(colony, building)
+	if (!rectangle) {
+		return new PIXI.Container()
+	}
+
 	const sprite = Resources.sprite('buildings', { rectangle })
-	console.log(rectangle)
 	if (rectangle.width === 128) {	
 		sprite.scale.set(0.75)
 		sprite.x = -16
