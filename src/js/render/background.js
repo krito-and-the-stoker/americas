@@ -171,7 +171,6 @@ const initialize = () => {
 		unsubscribeTiles = Util.mergeFunctions(tiles.map((tile, index) => 
 			Tile.listen.tile(MapEntity.get().tiles[index], () => { tile.dirty = true })))
 
-		Message.log('First render')
 		render()
 	}
 

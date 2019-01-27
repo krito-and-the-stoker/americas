@@ -34,9 +34,10 @@ const initialize = () => {
 	Message.log('Pathfinding initialized')
 }
 
-const findArea = (from, area) => {
+const findNextToArea = (from, area) => {
 	const path = find(from, node => node.area === area, null, null)
-	return path[path.length - 1]
+	console.log(path)
+	return path.length > 1 ? path[path.length - 2] : from
 }
 
 const findHighSeas = from => {
@@ -69,14 +70,22 @@ const	tileDistance = (from, to) => {
 
 
 const find = (from, isTarget, target, area = null) => {
-	if (target && area && target.area !== area && !target.colony) {
-		const newTarget = findArea(target, area)
-		return find(from, isTarget, newTarget, area)
-	}
-
 	if (!isTarget) {
 		isTarget = node => node.index === target.index
 	}
+
+	if (target && area && target.area !== area && !target.colony) {
+		const newTarget = findNextToArea(target, area)
+		const newIsTarget = node => node.neighbors.some(n => n.index === newTarget.index)
+		// console.log(newTarget)
+		// console.log(Tile.radius(newTarget).map(tile => tile.area))
+		// console.log(Tile.radius(newTarget)
+		// 	.filter(tile => tile.area === area)
+		// 	.some(tile => newIsTarget(graph.node(tile.index))))
+
+		return find(from, newIsTarget, { ...newTarget, area }, area)
+	}
+
 
 	const frontier = new FibonacciHeap((a, b) => {
 		//comparison by used cost
@@ -155,14 +164,10 @@ const find = (from, isTarget, target, area = null) => {
 }
 
 const estimate = (from, to) => {
-	if(from.domain === 'land' && to.domain === 'land'){
-		return MIN_TERRAIN_COST * tileDistance(from, to)
-	}
-	if ((from.domain === 'sea' || from.colony) && (to.domain === 'sea' || to.colony)) {
+	if (from.domain === 'sea') {
 		return tileDistance(from, to)
 	}
 
-	console.warn('from and to domain change within area but no colony. This should not happen', from, to)
 	return MIN_TERRAIN_COST * tileDistance(from, to)
 }
 

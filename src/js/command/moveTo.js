@@ -24,7 +24,7 @@ const canLoadTreasure = ship => (Commander.isIdle(ship.commander) ||
 const inMoveDistance = (coords1, coords2) => Math.abs(coords1.x - coords2.x) <= 1 && Math.abs(coords1.y - coords2.y) <= 1
 
 
-const create = (unit, coords, moveToCommander = null, hasPath = false) => {
+const create = (unit, coords, moveToCommander = null, hasPath = false, lastPoint = null) => {
 	if (unit.unloadingInProgress ||
 		coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y) {
 
@@ -80,6 +80,7 @@ const create = (unit, coords, moveToCommander = null, hasPath = false) => {
 			if (!hasPath) {
 				const path = PathFinder.findPathXY(unit.mapCoordinates, coords, unit).filter((waypoint, index) => index > 0)
 				moveToCommander.commands = path.map(waypoint => Move.create(unit, waypoint.mapCoordinates)).concat(moveToCommander.commands)
+				lastPoint = path.length > 0 ? path[path.length - 1].mapCoordinates : unit.mapCoordinates
 				hasPath = true
 			}
 		}
@@ -105,14 +106,13 @@ const create = (unit, coords, moveToCommander = null, hasPath = false) => {
 		if (unit.domain === 'sea' &&
 			unit.passengers.length > 0 &&
 			target.domain === 'land' &&
-			!target.colony) {
+			!target.colony
+			&& Util.distance(unit.mapCoordinates, lastPoint) < 1) {
 			const targetCoords = Tile.diagonalNeighbors(MapEntity.tile(unit.mapCoordinates))
 				.filter(n => n.domain === 'land')
 				.map(n => n.mapCoordinates)
-				.reduce((min, c) => Util.distance(unit.mapCoordinates, c) < Util.distance(unit.mapCoordinates, min) ? c : min, coords)
-			if (inMoveDistance(unit.tile.mapCoordinates, targetCoords)) {
-				Commander.scheduleInstead(unit.commander, Unload.create(unit, targetCoords))
-			}
+				.reduce((min, c) => Util.distance(coords, c) < Util.distance(coords, min) ? c : min, unit.mapCoordinates)
+			Commander.scheduleInstead(unit.commander, Unload.create(unit, targetCoords))
 		}
 	}
 
@@ -121,7 +121,8 @@ const create = (unit, coords, moveToCommander = null, hasPath = false) => {
 		coords,
 		hasPath,
 		moveToCommander: moveToCommander.save(),
-		unit: Record.reference(unit)
+		unit: Record.reference(unit),
+		lastPoint,
 	})
 
 	const moveTo = {
@@ -141,7 +142,7 @@ const load = data => {
 	const unit = Record.dereference(data.unit)
 	const commander = Commander.load(data.moveToCommander)
 	const coords = data.coords
-	return create(unit, data.coords, commander, data.hasPath)
+	return create(unit, data.coords, commander, data.hasPath, data.lastPoint)
 }
 
 
