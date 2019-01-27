@@ -48,14 +48,17 @@ const create = () => {
 	}
 	buildings.filter(building => building.width === 2).forEach(building => {
 		building.position = Util.choose(positions.filter(pos => !pos.taken && pos.width >= 2))
-		building.position.taken = true
-		const left = positions.find(pos => pos.x === building.position.x - 1 && pos.y === building.position.y)
-		if (left) {
-			left.width = 1
-		}
-		const right = positions.find(pos => pos.x === building.position.x + 1 && pos.y === building.position.y)
-		if (right) {
-			right.taken = true
+		// TODO: This is super buggy and will sometimes not work and lead to bugs. just plz plz refactor it!
+		if (building.position) {		
+			building.position.taken = true
+			const left = positions.find(pos => pos.x === building.position.x - 1 && pos.y === building.position.y)
+			if (left) {
+				left.width = 1
+			}
+			const right = positions.find(pos => pos.x === building.position.x + 1 && pos.y === building.position.y)
+			if (right) {
+				right.taken = true
+			}
 		}
 	})
 	if (buildings.filter(building => building.width === 1).length > positions.filter(pos => !pos.taken).length) {

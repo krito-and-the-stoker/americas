@@ -76,7 +76,7 @@ const createBuilding = (colony, building) => {
 
 			const production = Production.production(colony, name, colonist)
 			if (production) {
-				const productionSprites = ProductionView.create(production.good, production.amount, TILE_SIZE / 2)
+				const productionSprites = ProductionView.create(production.good, Math.round(production.amount), TILE_SIZE / 2)
 				productionSprites.forEach(s => {
 					s.position.x += work.position * 128 / 3
 					s.position.y += 20 + TILE_SIZE
