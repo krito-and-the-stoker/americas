@@ -218,7 +218,7 @@ const createAmerica = unit => {
 	}
 
 	const dialog = {
-		text: `A ${UnitView.getName(unit)} has arrived in Europe.`,
+		text: `A ${UnitView.getName(unit)} has arrived in the new world.`,
 		coords: unit.mapCoordinates,
 		type: 'naval'
 	}
