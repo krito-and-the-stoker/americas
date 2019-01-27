@@ -10,21 +10,21 @@
 		"difference": 2,
 		"low": 2,
 		"high": 5,
-		"consumption": 2,
+		"consumption": 1,
 		"capacity": 400
 	},
 	"tobacco": {
 		"difference": 2,
 		"low": 2,
 		"high": 5,
-		"consumption": 2,
+		"consumption": 1,
 		"capacity": 400
 	},
 	"cotton": {
 		"difference": 2,
 		"low": 2,
 		"high": 5,
-		"consumption": 2,
+		"consumption": 1,
 		"capacity": 400
 	},
 	"furs": {
@@ -32,7 +32,7 @@
 		"low": 2,
 		"high": 5,
 		"consumption": 2,
-		"capacity": 400
+		"capacity": 200
 	},
 	"wood": {
 		"difference": 5,
@@ -52,7 +52,7 @@
 		"difference": 1,
 		"low": 19,
 		"high": 19,
-		"consumption": 1,
+		"consumption": 0,
 		"capacity": 200
 	},
 	"horses": {
