@@ -200,7 +200,7 @@ const dialog = (settlement, unit, answer) => {
 			}
 		}
 		return {
-			text: 'The natives great you',
+			text: 'The natives greet you.',
 			type: 'natives',
 			options: [{
 				text: 'Leave'

@@ -14,7 +14,13 @@ import Plow from 'command/plow'
 import Road from 'command/road'
 import LearnFromNatives from 'command/learnFromNatives'
 
+import InvestigateRumors from 'action/investigateRumors'
+import EnterSettlement from 'action/enterSettlement'
+
 import Time from 'timeline/time'
+
+import Record from 'util/record'
+
 
 const cancel = () => ({
 	update: () => false
@@ -46,11 +52,17 @@ const commandsScheduled = command => {
 
 const create = (args = {}) => {
 	const keep = args.keep || false
+	const unit = args.unit || null
 	const commands = args.commands || []
 	const commander = {
 		commands,
 		priority: true,
 		currentCommand: null
+	}
+
+	let done = {
+		investigateRumors: false,
+		enterSettlement: false
 	}
 
 	commander.init = () => !commander.pleaseStop
@@ -74,7 +86,23 @@ const create = (args = {}) => {
 				commander.currentCommand = null
 			}
 			Time.schedule(commander.currentCommand)
+
+			done.investigateRumors = false
+			done.enterSettlement = false
 		}
+
+		if (unit && !commander.currentCommand && commander.commands.length === 0) {
+			if (unit.owner.input && unit.tile.rumors && !done.investigateRumors) {
+				done.investigateRumors = true
+				InvestigateRumors(unit)
+			}
+
+			if (unit.owner.input && unit.tile.settlement && !done.enterSettlement) {
+				done.enterSettlement = true
+				EnterSettlement(unit.tile.settlement, unit)
+			}			
+		}
+
 		return keep || commander.currentCommand || commander.commands.length > 0
 	}
 
@@ -83,6 +111,7 @@ const create = (args = {}) => {
 		currentCommand: commander.currentCommand ? commander.currentCommand.save() : null,
 		type: 'commander',
 		keep,
+		unit: Record.reference(unit)
 	})
 
 	return commander
@@ -110,7 +139,8 @@ const getModule = type => ( type ? ({
 
 const load = data => {
 	const commands = (data.currentCommand ? [data.currentCommand, ...data.commands] : data.commands).map(cmd => getModule(cmd.type).load(cmd))
-	return create({ keep: data.keep, commands })
+	const unit = Record.dereference(data.unit)
+	return create({ keep: data.keep, commands, unit })
 }
 
 export default {

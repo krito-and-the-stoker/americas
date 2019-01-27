@@ -53,25 +53,6 @@ const createFromData = data => {
 			return false
 		}
 
-		// unload?
-		// if (unit.domain === 'sea' &&
-		// 	unit.passengers.length > 0 &&
-		// 	targetTile.domain === 'land' &&
-		// 	!targetTile.colony &&
-		// 	inMoveDistance(unit.mapCoordinates, coords) &&
-		// 	Commander.commandsScheduled(unit.commander) === 1) {
-		// 	Commander.scheduleInstead(unit.commander, Unload.create(unit, coords, finishedFn))
-		// 	aborted = true
-		// 	return false
-		// }
-
-		// cannot move here
-		// if (!enteringShip && unit.domain !== targetTile.domain && !targetTile.colony) {
-		// 	aborted = true
-		// 	return false
-		// }
-
-
 		if (unit.colony) {
 			LeaveColony(unit)
 		}
@@ -109,16 +90,6 @@ const createFromData = data => {
 			Unit.update.tile(unit, targetTile)
 			if (targetTile.colony) {
 				EnterColony(targetTile.colony, unit)
-			}
-
-			const hasCommandsLeft = Commander.commandsScheduled(unit.commander) > 1
-
-			if (unit.owner.input && targetTile.rumors && !hasCommandsLeft) {
-				InvestigateRumors(unit)
-			}
-
-			if (unit.owner.input && targetTile.settlement && !hasCommandsLeft) {
-				EnterSettlement(targetTile.settlement, unit)
 			}
 
 			Tile.discover(targetTile, unit.owner)

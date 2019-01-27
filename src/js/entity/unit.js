@@ -35,7 +35,7 @@ const create = (name, coords, owner) => {
 		}
 		unit.storage = Storage.create()
 		unit.equipment = Storage.create()
-		unit.commander = Commander.create({ keep: true })
+		unit.commander = Commander.create({ keep: true, unit })
 
 		if (name === 'pioneer') {
 			unit.equipment.tools = 100
