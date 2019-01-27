@@ -138,13 +138,15 @@ const update = {
 const save = () => ({
 	units: europe.units.map(Record.reference),
 	crosses: europe.crosses,
-	crossesNeeded: europe.crossesNeeded
+	crossesNeeded: europe.crossesNeeded,
+	pool: europe.pool
 })
 
 const load = data => {
 	europe.units = data.units.map(Record.dereference)
 	europe.crosses = data.crosses
 	europe.crossesNeeded = data.crossesNeeded
+	europe.pool = data.pool
 }
 
 const recruitmentCost = () => Math.round(100 + 500 * Math.max(1 - Math.floor(europe.crosses) / europe.crossesNeeded, 0))
