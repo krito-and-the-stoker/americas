@@ -349,7 +349,7 @@ const createSettlement = (settlement, unit) => {
 	const action = () => {
 		Dialog.create({
 			type: 'natives',
-			text: 'Here do not live any natives yet',
+			text: 'The natives cannot talk to you yet.',
 			pause: true,
 			coords: unit.mapCoordinates,
 			options: [{
