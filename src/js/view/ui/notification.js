@@ -566,6 +566,11 @@ const create = params => {
 	}
 	if (Record.getGlobal('notificationSeen')[params.type]) {
 		notification.container.x += notifications.length * 74
+		Click.on(notification.container, () => {
+			notification.action()
+			remove(notification)
+		})
+		Secondary.on(notification.container, () => remove(notification))
 	} else {
 		Dialog.create({
 			type: 'notification',
@@ -578,6 +583,11 @@ const create = params => {
 					unsubscribePositioning()
 					Tween.scaleTo(notification.container, 1, 1500)
 					Tween.moveTo(notification.container, { x: (notifications.length-1) * 74, y: 0 }, 1500)
+					Click.on(notification.container, () => {
+							notification.action()
+							remove(notification)
+						})
+						Secondary.on(notification.container, () => remove(notification))
 				}
 			}]
 		})
@@ -590,11 +600,6 @@ const create = params => {
 	}
 
 	notificationsContainer.addChild(notification.container)
-	Click.on(notification.container, () => {
-		notification.action()
-		remove(notification)
-	})
-	Secondary.on(notification.container, () => remove(notification))
 	notifications.push(notification)
 	Record.getGlobal('notificationSeen')[params.type] = true
 }
