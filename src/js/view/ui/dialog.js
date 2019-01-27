@@ -136,10 +136,12 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap }) 
 	const config = {
 		...types[type],
 	}
-	if (typeof closeScreen !== undefined) {
+
+	if (typeof closeScreen !== 'undefined') {
 		config.closeScreen = closeScreen
 	}
-	if (typeof centerMap !== undefined) {
+	if (typeof centerMap !== 'undefined') {
+		console.log('updating center map', centerMap)
 		config.centerMap = centerMap
 	}
 

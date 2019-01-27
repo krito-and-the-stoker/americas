@@ -41,7 +41,7 @@ const findArea = (from, area) => {
 
 const findHighSeas = from => {
 	const target = node => node.tile().terrainName === 'sea lane' && node.tile().discovered()
-	return find(from, target, null, from.colony ? Colony.area('sea') : null)
+	return find(from, target, null, from.colony ? Colony.area(from.colony, 'sea') : null)
 }
 const findPathXY = (from, to, unit) => findPath(MapEntity.tile(from), MapEntity.tile(to), unit)
 const findPath = (from, to, unit) => {
