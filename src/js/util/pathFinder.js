@@ -4,6 +4,8 @@ import { FibonacciHeap } from '@tyriar/fibonacci-heap'
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Message from 'view/ui/message'
+import Colony from 'entity/colony'
+import Unit from 'entity/unit'
 
 const UNDISCOVERED_COST = 5
 const CANNOT_MOVE_COST = 500
@@ -17,12 +19,14 @@ const initialize = () => {
 		const center = tiles[index]
 		const neighbors = Tile.diagonalNeighbors(center).map(tile => ({
 			index: tile.index,
+			area: tile.area,
 			cost: () => Tile.movementCost(center, tile),
 			tile: () => MapEntity.tileFromIndex(tile.index),
 		}))
 
 		graph.addNode({
 			index: center.index,
+			area: center.area,
 			tile: () => MapEntity.tileFromIndex(center.index)
 		}, neighbors)
 	})
@@ -30,22 +34,25 @@ const initialize = () => {
 	Message.log('Pathfinding initialized')
 }
 
+const findArea = (from, area) => {
+	const path = find(from, node => node.area === area, null, null)
+	return path[path.length - 1]
+}
 
 const findHighSeas = from => {
 	const target = node => node.tile().terrainName === 'sea lane' && node.tile().discovered()
-	return find(from, target, null, { domain: 'sea' })
+	return find(from, target, null, from.colony ? Colony.area('sea') : null)
 }
 const findPathXY = (from, to, unit) => findPath(MapEntity.tile(from), MapEntity.tile(to), unit)
 const findPath = (from, to, unit) => {
-	const target = node => node.index === to.index
-	return find(from, target, to, unit)
+	return find(from, null, to, Unit.area(unit))
 }
 
 const distance = (fromCoords, toCoords, unit, max = CANNOT_MOVE_COST) => {
 	const from = MapEntity.tile(fromCoords)
 	const to = MapEntity.tile(toCoords)
 	const isTarget = node => (node.cost > max || node.index === to.index)
-	const path = find(from, isTarget, to, unit)
+	const path = find(from, isTarget, to, Unit.area(unit))
 	return path
 		.filter((p, i) => i > 0)
 		.reduce(({ distance, from }, to) => ({
@@ -61,7 +68,16 @@ const	tileDistance = (from, to) => {
 }
 
 
-const find = (from, isTarget, target, unit) => {
+const find = (from, isTarget, target, area = null) => {
+	if (target && area && target.area !== area) {
+		const newTarget = findArea(target, area)
+		return find(from, isTarget, newTarget, area)
+	}
+
+	if (!isTarget) {
+		isTarget = node => node.index === target.index
+	}
+
 	const frontier = new FibonacciHeap((a, b) => {
 		//comparison by used cost
 		if(a.key !== b.key)
@@ -85,7 +101,7 @@ const find = (from, isTarget, target, unit) => {
 		return 0
 	})
 
-	const relativeEstimate = tile => target ? estimate(tile, target, unit) - estimate(from, target, unit) : 0
+	const relativeEstimate = tile => target ? estimate(tile, target) - estimate(from, target) : 0
 
 	let node = graph.node(from.index)
 	const explored = {}
@@ -96,7 +112,6 @@ const find = (from, isTarget, target, unit) => {
 	inFrontier[node.value.index] = true
 
 	while (!frontier.isEmpty()) {
-
 		node = frontier.extractMinimum()
 		inFrontier[node.value.index] = false
 		if (isTarget(node.value)) {
@@ -111,12 +126,9 @@ const find = (from, isTarget, target, unit) => {
 
 		explored[node.value.index] = true
 		node.value.neighbors.forEach(neighbor => {
-			if (!explored[neighbor.index]) {
-				let neighborNode = graph.node(neighbor.index)
-				let newCost = node.value.cost + neighbor.cost()
-				if (unit.domain !== node.value.tile().domain && !node.value.tile().colony) {
-					newCost += CANNOT_MOVE_COST
-				}
+			if (!explored[neighbor.index] && (!area || neighbor.area === area)) {
+				const neighborNode = graph.node(neighbor.index)
+				const newCost = node.value.cost + neighbor.cost()
 
 				if (!inFrontier[neighbor.index]) {
 					neighborNode.prev = node
@@ -142,15 +154,16 @@ const find = (from, isTarget, target, unit) => {
 	return [from]
 }
 
-const estimate = (from, to, unit) => {
+const estimate = (from, to) => {
 	if(from.domain === 'land' && to.domain === 'land'){
 		return MIN_TERRAIN_COST * tileDistance(from, to)
 	}
-	if(from.domain === 'sea' && to.domain === 'sea' || to.colony){
+	if ((from.domain === 'sea' || from.colony) && (to.domain === 'sea' || to.colony)) {
 		return tileDistance(from, to)
 	}
 
-	return MIN_TERRAIN_COST * tileDistance(from, to) + CANNOT_MOVE_COST
+	console.warn('from and to domain change within area but no colony. This should not happen', from, to)
+	return MIN_TERRAIN_COST * tileDistance(from, to)
 }
 
 

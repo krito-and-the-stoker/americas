@@ -18,7 +18,7 @@ const	createCoastLine = tiles => {
 }
 
 const createAreas = tiles => {
-	let currentArea = 0
+	let currentArea = 1
 	const markArea = tile => {
 		tile.area = currentArea
 		let areaSize = 1
@@ -38,12 +38,12 @@ const createAreas = tiles => {
 	}
 	tiles.forEach(tile => {
 		if (!tile.area) {
-			currentArea += 1
 			markArea(tile)
+			currentArea += 1
 		}
 	})
 
-	Message.log(`Found ${currentArea} seperate areas`)
+	Message.log(`Found ${currentArea - 1} seperate areas`)
 }
 
 const get = () => ({
