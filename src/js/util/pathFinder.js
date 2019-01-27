@@ -69,7 +69,7 @@ const	tileDistance = (from, to) => {
 
 
 const find = (from, isTarget, target, area = null) => {
-	if (target && area && target.area !== area) {
+	if (target && area && target.area !== area && !target.colony) {
 		const newTarget = findArea(target, area)
 		return find(from, isTarget, newTarget, area)
 	}
@@ -126,7 +126,7 @@ const find = (from, isTarget, target, area = null) => {
 
 		explored[node.value.index] = true
 		node.value.neighbors.forEach(neighbor => {
-			if (!explored[neighbor.index] && (!area || neighbor.area === area)) {
+			if (!explored[neighbor.index] && (!area || neighbor.area === area || neighbor.tile().colony)) {
 				const neighborNode = graph.node(neighbor.index)
 				const newCost = node.value.cost + neighbor.cost()
 

@@ -6,7 +6,6 @@ import Record from 'util/record'
 import Time from 'timeline/time'
 import Colony from 'entity/colony'
 import Unit from 'entity/unit'
-import Load from 'command/load'
 import EnterColony from 'action/enterColony'
 import LeaveColony from 'action/leaveColony'
 import InvestigateRumors from 'action/investigateRumors'
@@ -16,14 +15,6 @@ const TILE_SIZE = 64
 
 const inMoveDistance = (coords1, coords2) => Math.abs(coords1.x - coords2.x) <= 1 && Math.abs(coords1.y - coords2.y) <= 1
 const unloading = (unit, fromTile, toTile) => unit.domain === 'land' && fromTile.domain === 'sea' && toTile.domain === 'land'
-const canLoad = ship => (Commander.isIdle(ship.commander) ||
-	ship.commander.currentCommand.type === 'load' ||
-	ship.commander.currentCommand.type === 'unload')
-
-const canLoadTreasure = ship => (Commander.isIdle(ship.commander) ||
-	ship.commander.currentCommand.type === 'load' ||
-	ship.commander.currentCommand.type === 'unload') && ship.properties.canTransportTreasure
-
 
 const createFromData = data => {
 	const coords = data.coords
@@ -53,18 +44,15 @@ const createFromData = data => {
 			return false
 		}
 
-
 		if (!inMoveDistance(startCoords, coords)) {
 			aborted = true
 			return false
 		}
 
-
 		if (startCoords.x === coords.x && startCoords.y === coords.y) {
 			aborted = true
 			return false
 		}
-
 
 		// unload?
 		if (unit.domain === 'sea' &&
@@ -78,23 +66,11 @@ const createFromData = data => {
 			return false
 		}
 
-
-		// load?
-		const shipsAtTarget = Unit.at(coords).filter(unit => unit.domain === 'sea')
-		if (unit.domain === 'land' &&
-				targetTile.domain === 'sea' &&
-				shipsAtTarget.some(unit.treasure ? canLoadTreasure : canLoad)) {
-			enteringShip = true
-			const ship = shipsAtTarget.find(unit.treasure ? canLoadTreasure : canLoad)
-			Commander.scheduleBehind(ship.commander, Load.create(ship, unit))
-		}
-
-
 		// cannot move here
-		if (!enteringShip && unit.domain !== targetTile.domain && !targetTile.colony) {
-			aborted = true
-			return false
-		}
+		// if (!enteringShip && unit.domain !== targetTile.domain && !targetTile.colony) {
+		// 	aborted = true
+		// 	return false
+		// }
 
 
 		if (unit.colony) {

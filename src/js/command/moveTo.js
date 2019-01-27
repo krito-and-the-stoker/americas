@@ -6,6 +6,19 @@ import Commander from './commander'
 import Europe from './europe'
 import Record from 'util/record'
 import Dialog from 'view/ui/dialog'
+import Unit from 'entity/unit'
+import Load from 'command/load'
+
+
+const canLoad = ship => (Commander.isIdle(ship.commander) ||
+	ship.commander.currentCommand.type === 'load' ||
+	ship.commander.currentCommand.type === 'unload')
+
+const canLoadTreasure = ship => (Commander.isIdle(ship.commander) ||
+	ship.commander.currentCommand.type === 'load' ||
+	ship.commander.currentCommand.type === 'unload') && ship.properties.canTransportTreasure
+
+const inMoveDistance = (coords1, coords2) => Math.abs(coords1.x - coords2.x) <= 1 && Math.abs(coords1.y - coords2.y) <= 1
 
 
 const create = (unit, coords, moveToCommander = null, hasPath = false) => {
@@ -71,6 +84,22 @@ const create = (unit, coords, moveToCommander = null, hasPath = false) => {
 		return true
 	}
 
+	const finished = () => {
+		if (moveToCommander.finished) {
+			moveToCommander.finished()
+		}
+
+		const shipsAtTarget = Unit.at(coords).filter(unit => unit.domain === 'sea')
+		if (unit.domain === 'land' &&
+				target.domain === 'sea' &&
+				shipsAtTarget.some(unit.treasure ? canLoadTreasure : canLoad) &&
+				inMoveDistance(unit.tile.mapCoordinates, coords)) {
+			const ship = shipsAtTarget.find(unit.treasure ? canLoadTreasure : canLoad)
+			Commander.scheduleBehind(ship.commander, Load.create(ship, unit))
+			Commander.scheduleInstead(unit.commander, Move.create(unit, coords))
+		}				
+	}
+
 	const save = () => ({
 		type: 'moveTo',
 		coords,
@@ -82,6 +111,7 @@ const create = (unit, coords, moveToCommander = null, hasPath = false) => {
 	const moveTo = {
 		init,
 		update,
+		finished,
 		priority: true,
 		currentCommand: moveToCommander.currentCommand,
 		commands: moveToCommander.commands,

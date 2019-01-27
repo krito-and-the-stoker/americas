@@ -237,6 +237,9 @@ const movementCost = (from, to) => {
 			return MovementCosts.colony
 		}
 	}
+	if (from.domain === 'sea' || to.domain === 'sea') {
+		return MovementCosts.ocean
+	}
 	return MovementCosts[to.terrainName]
 }
 
