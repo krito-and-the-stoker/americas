@@ -2,6 +2,7 @@ import Time from 'timeline/time'
 import Storage from 'entity/storage'
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
+import Notification from 'view/ui/notification'
 
 
 const TEACH_BASE_FACTOR = 1.0 / Time.TEACH_BASE_TIME
@@ -61,6 +62,7 @@ const create = teacher => {
 				student.education.progress += scale
 				if (student.education.progress >= Colony.expertLevel[profession]) {
 					Colonist.update.expert(student, student.education.profession)
+					Notification.create({ type: 'learned', colonist: student, colony: teacher.colony })
 				}
 				Storage.update(teacher.colony.productionRecord, { good: 'books', amount: 1 * deltaTime * PRODUCTION_BASE_FACTOR })
 			})
@@ -72,6 +74,7 @@ const create = teacher => {
 				student.education.progress += scale
 				if (student.education.progress >= 1) {
 					Colonist.update.expert(student, student.expert === 'criminal' ? 'servant' : null)
+					Notification.create({ type: 'learned', colonist: student, colony: teacher.colony })
 				}
 				Storage.update(teacher.colony.productionRecord, { good: 'books', amount: 1 * deltaTime * PRODUCTION_BASE_FACTOR })
 			})

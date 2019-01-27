@@ -536,6 +536,33 @@ const createArrive = (colony, unit) => {
 	}	
 }
 
+const createLearned = (colony, colonist) => {
+	const unit = colonist.unit
+	const colonySprite = colonyIcon(colony)
+	const unitView = UnitView.create(unit)
+	const book = Resources.sprite('map', { frame: Goods.books.id })
+	const container = combine(colonySprite, unitView, book)
+
+	const action = () => ColonyView.open(colony)
+	const dismiss = {
+		colonyScreen: c => c === colony
+	}
+
+	const dialog = {
+		text: `A colonist has learned a new profession and is now considered a ${UnitView.getName(unit)}.`,
+		coords: colony.mapCoordinates,
+		type: 'govenor'
+	}
+
+	return {
+		container,
+		action,
+		type: 'learned',
+		dismiss,
+		dialog
+	}
+}
+
 const remove = notification => {
 	notificationsContainer.removeChild(notification.container)
 	notifications = notifications.filter(n => n !== notification)
@@ -555,7 +582,8 @@ const createType = {
 	storageEmpty: params => createStorageEmpty(params.colony, params.good),
 	storageFull: params => createStorageFull(params.colony, params.good),
 	arrive: params => createArrive(params.colony, params.unit),
-	settlement: params => createSettlement(params.settlement, params.unit)
+	settlement: params => createSettlement(params.settlement, params.unit),
+	learned: params => createLearned(params.colony, params.colonist)
 }
 const create = params => {
 	const notification = createType[params.type](params)
