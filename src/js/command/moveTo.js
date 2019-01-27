@@ -8,6 +8,9 @@ import Record from 'util/record'
 import Dialog from 'view/ui/dialog'
 import Unit from 'entity/unit'
 import Load from 'command/load'
+import Unload from './unload'
+import Tile from 'entity/tile'
+import Util from 'util/util'
 
 
 const canLoad = ship => (Commander.isIdle(ship.commander) ||
@@ -97,7 +100,18 @@ const create = (unit, coords, moveToCommander = null, hasPath = false) => {
 			const ship = shipsAtTarget.find(unit.treasure ? canLoadTreasure : canLoad)
 			Commander.scheduleBehind(ship.commander, Load.create(ship, unit))
 			Commander.scheduleInstead(unit.commander, Move.create(unit, coords))
-		}				
+		}
+
+		if (unit.domain === 'sea' &&
+			unit.passengers.length > 0 &&
+			target.domain === 'land' &&
+			!target.colony) {
+			const targetCoords = Tile.diagonalNeighbors(MapEntity.tile(unit.mapCoordinates))
+				.map(n => n.mapCoordinates)
+				.reduce((min, c) => Util.distance(unit.mapCoordinates, c) < Util.distance(unit.mapCoordinates, min) ? c : min, coords)
+			Commander.scheduleInstead(unit.commander, Unload.create(unit, targetCoords))
+		}
+
 	}
 
 	const save = () => ({

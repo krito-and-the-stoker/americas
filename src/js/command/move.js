@@ -1,6 +1,5 @@
 import Commander from './commander'
 import MapEntity from 'entity/map'
-import Unload from './unload'
 import Tile from 'entity/tile'
 import Record from 'util/record'
 import Time from 'timeline/time'
@@ -55,16 +54,16 @@ const createFromData = data => {
 		}
 
 		// unload?
-		if (unit.domain === 'sea' &&
-			unit.passengers.length > 0 &&
-			targetTile.domain === 'land' &&
-			!targetTile.colony &&
-			inMoveDistance(unit.mapCoordinates, coords) &&
-			Commander.commandsScheduled(unit.commander) === 1) {
-			Commander.scheduleInstead(unit.commander, Unload.create(unit, coords, finishedFn))
-			aborted = true
-			return false
-		}
+		// if (unit.domain === 'sea' &&
+		// 	unit.passengers.length > 0 &&
+		// 	targetTile.domain === 'land' &&
+		// 	!targetTile.colony &&
+		// 	inMoveDistance(unit.mapCoordinates, coords) &&
+		// 	Commander.commandsScheduled(unit.commander) === 1) {
+		// 	Commander.scheduleInstead(unit.commander, Unload.create(unit, coords, finishedFn))
+		// 	aborted = true
+		// 	return false
+		// }
 
 		// cannot move here
 		// if (!enteringShip && unit.domain !== targetTile.domain && !targetTile.colony) {
