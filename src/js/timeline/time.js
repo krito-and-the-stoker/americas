@@ -21,7 +21,7 @@ const startYear = 1492
 const time = {
 	scale: 1,
 	year: startYear,
-	paused: false
+	paused: 0
 }
 
 const get = () => ({
@@ -34,9 +34,9 @@ const speedUp = () => update.scale(time.scale * 1.5)
 const slowDown = () => update.scale(time.scale / 1.5)
 const normalize = () => update.scale(1)
 
-const pause = () => update.paused(true)
-const resume = () => update.paused(false)
-const togglePause = () => update.paused(!time.paused)
+const pause = () => update.paused(time.paused + 1)
+const resume = () => update.paused(Math.max(time.paused - 1, 0))
+const togglePause = () => update.paused(time.paused ? 0 : 1)
 
 
 let lowPrioDeltaTime = 0
@@ -47,14 +47,10 @@ const advance = deltaTime => {
 	currentTime += deltaTime * time.scale
 	// TODO: move this away from here
 	try {
-		lowPrioDeltaTime += deltaTime
-		if (lowPrioDeltaTime >= LOW_PRIORITY_DELTA_TIME) {
-			lowPrioDeltaTime = 0
-			update.year(Math.round(startYear + currentTime / YEAR))
-		}
+		lowPrioDeltaTime += deltaTime * time.scale
 
 		const tasks = scheduled
-			.filter(e => !lowPrioDeltaTime || e.priority)
+			.filter(e => e.priority || lowPrioDeltaTime >= LOW_PRIORITY_DELTA_TIME)
 			.filter(e => {
 				if (!e.started && e.init) {
 					e.alive = e.init(currentTime)
@@ -66,7 +62,7 @@ const advance = deltaTime => {
 			})
 			
 		tasks
-			.filter(e => !e.alive || !e.update || !e.update(currentTime))
+			.filter(e => !e.alive || !e.update || !e.update(currentTime, e.priority ? deltaTime : lowPrioDeltaTime))
 			.forEach(e => {
 				if (e.finished) {
 					e.finished()
@@ -87,6 +83,11 @@ const advance = deltaTime => {
 	}	catch(error) {
 		MainLoop.stop()
 		throw error
+	}
+
+	if (lowPrioDeltaTime >= LOW_PRIORITY_DELTA_TIME) {
+		lowPrioDeltaTime = 0
+		update.year(Math.round(startYear + currentTime / YEAR))
 	}
 }
 

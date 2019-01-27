@@ -12,6 +12,8 @@ import TriggerEvent from 'command/triggerEvent'
 import Disband from 'command/disband'
 import Plow from 'command/plow'
 import Road from 'command/road'
+import LearnFromNatives from 'command/learnFromNatives'
+
 import Time from 'timeline/time'
 
 const cancel = () => ({
@@ -101,6 +103,7 @@ const getModule = type => ( type ? ({
 	loadCargo: LoadCargo,
 	triggerEvent: TriggerEvent,
 	disband: Disband,
+	learnFromNatives: LearnFromNatives,
 	commander: { load }
 })[type] : { load: data => console.warn('cannot load command, missing type', data) }) 
 

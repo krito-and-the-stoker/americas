@@ -33,15 +33,8 @@ const willLearn = {
 
 const create = teacher => {
 	let lastUpdate = null
-	const update = currentTime => {
-		if (!lastUpdate) {
-			lastUpdate = currentTime
-			return true
-		}
-
-		const deltaTime = currentTime - lastUpdate
+	const update = (currentTime, deltaTime) => {
 		const scale = deltaTime * TEACH_BASE_FACTOR
-		lastUpdate = currentTime
 
 		if (!teacher.colony) {
 			return true

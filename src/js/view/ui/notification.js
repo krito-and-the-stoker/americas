@@ -5,6 +5,7 @@ import Buildings from 'data/buildings'
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Building from 'entity/building'
+import Settlement from 'entity/settlement'
 
 import Resources from 'render/resources'
 import Foreground from 'render/foreground'
@@ -339,6 +340,27 @@ const createRumor = (option, tile, unit) => {
 	}
 }
 
+const createSettlementDialog = (settlement, unit, answer) => {
+	const dialog = {
+		pause: true,
+		coords: unit.mapCoordinates,
+		...Settlement.dialog(settlement, unit, answer)
+	}
+	dialog.options = dialog.options ? dialog.options.map(option => ({
+		...option,
+		action: () => {
+			if (option.action) {
+				option.action()
+			}
+			if (option.answer) {
+				createSettlementDialog(settlement, unit, option.answer)
+			}
+		}
+	})) : []
+
+	Dialog.create(dialog)
+}
+
 const createSettlement = (settlement, unit) => {
 	const MAP_SETTLEMENT_FRAME_ID = 59
 	const settlementView = Resources.sprite('map', { frame: MAP_SETTLEMENT_FRAME_ID })
@@ -347,16 +369,7 @@ const createSettlement = (settlement, unit) => {
 	const container = combine(settlementView, icon)
 
 	const action = () => {
-		Dialog.create({
-			type: 'natives',
-			text: 'The natives cannot talk to you yet.',
-			pause: true,
-			coords: unit.mapCoordinates,
-			options: [{
-				default: true,
-				action: () => UnitMapView.select(unit)
-			}]
-		})
+		createSettlementDialog(settlement, unit, 'enter')
 	}
 
 	const dismiss = {
@@ -536,21 +549,23 @@ const createArrive = (colony, unit) => {
 	}	
 }
 
-const createLearned = (colony, colonist) => {
-	const unit = colonist.unit
-	const colonySprite = colonyIcon(colony)
+const createLearned = ({ colony, colonist, unit }) => {
+	const colonySprite = colony ? colonyIcon(colony) : null
+	unit = unit || colonist.unit
 	const unitView = UnitView.create(unit)
 	const book = Resources.sprite('map', { frame: Goods.books.id })
-	const container = combine(colonySprite, unitView, book)
 
-	const action = () => ColonyView.open(colony)
+	const container = colony ? combine(colonySprite, unitView, book) : combine(unitView, book)
+
+	const action = () => colony ? ColonyView.open(colony) : UnitMapView.select(unit)
 	const dismiss = {
-		colonyScreen: c => c === colony
+		colonyScreen: c => colony && c === colony,
+		select: u => unit && u === unit
 	}
 
 	const dialog = {
 		text: `A colonist has learned a new profession and is now considered a ${UnitView.getName(unit)}.`,
-		coords: colony.mapCoordinates,
+		coords: unit.mapCoordinates,
 		type: 'govenor'
 	}
 
@@ -583,7 +598,7 @@ const createType = {
 	storageFull: params => createStorageFull(params.colony, params.good),
 	arrive: params => createArrive(params.colony, params.unit),
 	settlement: params => createSettlement(params.settlement, params.unit),
-	learned: params => createLearned(params.colony, params.colonist)
+	learned: params => createLearned(params)
 }
 const create = params => {
 	const notification = createType[params.type](params)

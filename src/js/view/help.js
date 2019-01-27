@@ -124,10 +124,14 @@ const create = () => {
 	})
 
 	Click.on(background, close)
-	Events.listen('help', () => Time.resume())
+
+	const unsubscribe = () => {
+		Time.resume()		
+	}
 
 	return {
-		container
+		container,
+		unsubscribe
 	}
 }
 
@@ -142,13 +146,6 @@ const open = () => {
 	Time.pause()
 }
 
-const close = () => {
-	Time.resume()
-	Foreground.closeScreen()
-}
-
-
 export default {
 	open,
-	close
 }
