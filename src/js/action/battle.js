@@ -1,7 +1,16 @@
 import Unit from 'entity/unit'
 import Time from 'timeline/time'
+import Record from 'util/record'
+import Util from 'util/util'
 
-export default (attacker, defender) => {
+export default (attacker, other) => {
+	console.log('attacking', other)
+	const defender = Record.getAll('unit')
+		.filter(unit => unit.owner === other.owner)
+		.filter(unit => Util.inBattleDistance(unit, attacker))
+		.reduce((best, unit) => Unit.strength(best) < Unit.strength(unit) ? unit : best, other)
+
+	console.log('defended by', defender)
 	let probability = {
 		attacker: Math.pow(Unit.strength(attacker), 2),
 		defender: Math.pow(Unit.strength(defender), 2),

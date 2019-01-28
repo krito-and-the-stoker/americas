@@ -278,6 +278,7 @@ const create = (coords, owner) => {
 	const tile = MapEntity.tile(coords)
 	Tile.update.colony(tile, colony)
 
+	listen.units(colony, console.log)
 
 	initialize(colony)
 
