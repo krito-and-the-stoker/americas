@@ -36,7 +36,7 @@ const initialize = () => {
 
 const findNextToArea = (from, area) => {
 	const path = find(from, node => node.area === area, null, null)
-	console.log(path)
+	// console.log(path)
 	return path.length > 1 ? path[path.length - 2] : from
 }
 
