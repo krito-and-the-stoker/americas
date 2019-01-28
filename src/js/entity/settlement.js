@@ -14,6 +14,7 @@ import MoveTo from 'command/moveTo'
 import Disband from 'command/disband'
 import LearnFromNatives from 'command/learnFromNatives'
 import CommunicateTension from 'command/communicateTension'
+import Attack from 'command/attack'
 
 import ProduceUnit from 'task/produceUnit'
 
@@ -31,6 +32,7 @@ const experts = {
 
 const INTEREST_GROWTH_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const TENSION_GROWTH_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
+const INTEREST_THRESHOLD = 0.5
 const create = (tribe, coords, owner) => {
 	const settlement = {
 		mapCoordinates: coords,
@@ -39,8 +41,8 @@ const create = (tribe, coords, owner) => {
 		presentGiven: false,
 		hasLearned: false,
 		expert: Util.choose(Object.keys(experts)),
-		interest: 5 * Math.random(),
-		tension: 0,
+		interest: INTEREST_THRESHOLD * Math.random(),
+		tension: 100,
 		colonies: []
 	}
 
@@ -83,14 +85,19 @@ const initialize = settlement => {
 
 	settlement.destroy = Util.mergeFunctions([
 		listen.interest(settlement, interest => {
-			if (interest > 5) {
-				update.interest(settlement, interest - 5)
+			if (interest > INTEREST_THRESHOLD) {
+				update.interest(settlement, interest - INTEREST_THRESHOLD)
 				const colony = Util.choose(settlement.colonies)
 				const unit = Unit.create('native', settlement.mapCoordinates, settlement.owner)
-				Commander.scheduleInstead(unit.commander, MoveTo.create(unit, colony.mapCoordinates))
-				Commander.scheduleBehind(unit.commander, CommunicateTension.create(colony, settlement, unit))
-				Commander.scheduleBehind(unit.commander, MoveTo.create(unit, settlement.mapCoordinates))
-				Commander.scheduleBehind(unit.commander, Disband.create(unit))
+				if (settlement.tension < 25) {				
+					Commander.scheduleInstead(unit.commander, MoveTo.create(unit, colony.mapCoordinates))
+					Commander.scheduleBehind(unit.commander, CommunicateTension.create(colony, settlement, unit))
+					Commander.scheduleBehind(unit.commander, MoveTo.create(unit, settlement.mapCoordinates))
+					Commander.scheduleBehind(unit.commander, Disband.create(unit))
+				} else {
+					Commander.scheduleInstead(unit.commander, Attack.create(unit, { colony }))
+					update.tension(settlement, settlement.tension / 2)
+				}
 			}
 		}),
 		Record.listen('colony', colony => {

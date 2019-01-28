@@ -83,16 +83,11 @@ const americaSmall = () => {
 
 const americaLarge = () => {
 	const startCoordinates = Util.choose([
-	{ x: 172, y: 113 },
-	{ x: 182, y: 102 },
-	{ x: 167, y: 141 },
-	{ x: 171, y: 160 },
-	{ x: 181, y: 168 },
-	{ x: 200, y: 180 },
-	{ x: 231, y: 206 },
-	{ x: 286, y: 243 },
-	{ x: 275, y: 296 },
-	{ x: 235, y: 354 }])
+		{ x: 151, y: 152 },
+		{ x: 142, y: 144 },
+		{ x: 176, y: 170 },
+		{ x: 209, y: 186 },
+	])
 	const pioneer = Unit.create('pioneer', startCoordinates, Owner.player())
 	const soldier = Unit.create('soldier', startCoordinates, Owner.player())
 	const caravel = Unit.create('caravel', startCoordinates, Owner.player())

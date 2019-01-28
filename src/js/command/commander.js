@@ -55,6 +55,7 @@ const create = (args = {}) => {
 	const keep = args.keep || false
 	const unit = args.unit || null
 	const commands = args.commands || []
+	let unschedule = null
 	const commander = {
 		commands,
 		priority: true,
@@ -86,7 +87,7 @@ const create = (args = {}) => {
 				}
 				commander.currentCommand = null
 			}
-			Time.schedule(commander.currentCommand)
+			unschedule = Time.schedule(commander.currentCommand)
 
 			done.investigateRumors = false
 			done.enterSettlement = false
@@ -107,12 +108,23 @@ const create = (args = {}) => {
 		return keep || commander.currentCommand || commander.commands.length > 0
 	}
 
+	commander.stopped = () => {
+		if (commander.currentCommand) {
+			console.log('should stop current command')
+			if (unschedule) {
+				console.log('can unschedule')
+				unschedule()
+				console.log('did unschedule')
+			}
+		}
+	}
+
 	commander.save = () => ({
 		commands: commander.commands.map(command => command.save()),
 		currentCommand: commander.currentCommand ? commander.currentCommand.save() : null,
 		type: 'commander',
 		keep,
-		unit: Record.reference(unit)
+		unit: Record.reference(unit),
 	})
 
 	return commander

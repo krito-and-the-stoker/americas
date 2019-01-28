@@ -58,6 +58,16 @@ const isCoastal = colony => {
 	return Tile.radius(center).some(tile => tile.domain === 'sea')
 }
 
+const defender = colony => {
+	const strength = colony.units
+		.filter(unit => unit.domain === 'land')
+		.reduce((strength, unit) => Math.max(strength, Unit.strength(unit)), 0)
+
+	return Util.choose(colony.units
+		.filter(unit => unit.domain === 'land')
+		.filter(unit => Unit.strength(unit) === strength))
+}
+
 const add = {
 	unit: (colony, unit) => Member.add(colony, 'units', unit),
 	colonist: (colony, colonist) => Member.add(colony, 'colonists', colonist)
@@ -276,6 +286,7 @@ const create = (coords, owner) => {
 }
 
 const disband = colony => {
+	console.log('disbanding', colony)
 	colony.disbanded = true
 	colony.colonists.forEach(UnjoinColony)
 	colony.units.forEach(LeaveColony)
@@ -346,4 +357,5 @@ export default {
 	rebels,
 	disband,
 	expertLevel,
+	defender
 }

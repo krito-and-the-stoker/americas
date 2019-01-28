@@ -34,6 +34,7 @@ const update = {
 
 let blinkTween = null
 const select = unit => {
+	console.log(unit)
 	const view = getView(unit)
 	if (view.destroyed) {
 		return
@@ -92,9 +93,11 @@ const create = unit => {
 	}
 
 	const circle = new PIXI.Graphics()
-	circle.lineStyle(2, unit.owner.color)
+	// circle.lineStyle(2, unit.owner.color)
+	circle.beginFill(unit.owner.color, 0.3)
 	circle.drawCircle(0, 0, TILE_SIZE)
 	circle.endFill()
+	// circle.alpha = 0.5
 
 	const view = {
 		sprite,

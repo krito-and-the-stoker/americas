@@ -14,6 +14,7 @@ import EnterEurope from 'action/enterEurope'
 import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
 import Member from 'util/member'
+import Battle from 'action/battle'
 
 const RADIUS_GROWTH = 1.0 / 2500
 const create = (name, coords, owner) => {
@@ -33,7 +34,8 @@ const create = (name, coords, owner) => {
 			offTheMap: false,
 			colonist: null,
 			pioneering: false,
-			radius: 0
+			radius: 0,
+			hostiles: []
 		}
 		unit.storage = Storage.create()
 		unit.equipment = Storage.create()
@@ -94,6 +96,14 @@ const initialize = unit => {
 			return true
 		}, priority: true }),
 
+		listenEach.hostiles(unit, hostile =>
+			listen.mapCoordinates(hostile, () =>
+				listen.mapCoordinates(unit, () => {
+					if (Util.inBattleDistance(unit, hostile)) {
+						Battle(unit, hostile)
+					}
+				}))),
+
 		Storage.listen(unit.equipment, equipment => {
 			// lose status
 			if (unit.name === 'pioneer' && equipment.tools < 20) {
@@ -139,13 +149,17 @@ const initialize = unit => {
 
 const add = {
 	passenger: (unit, passenger) => Member.add(unit, 'passengers', passenger),
+	hostile: (unit, hostile) => Member.add(unit, 'hostiles', hostile),
 }
 
 const remove = {
 	passenger: passenger => Member.remove(passenger.vehicle, 'passengers', passenger),
+	hostile: (unit, hostile) => Member.remove(unit, 'hostiles', hostile),
 }
 
-
+const listenEach = {
+	hostiles: (unit, fn) => Member.listenEach(unit, 'hostiles', fn),
+}
 
 const listen = {
 	passengers: (unit, fn) => Binding.listen(unit, 'passengers', fn),
@@ -202,6 +216,8 @@ const area = unit => {
 			.find(neighbor => neighbor.domain === unit.domain).area
 }
 
+const strength = unit => unit.properties.combat || 0.5
+
 const loadGoods = (unit, pack) => {
 	if (!hasCapacity(unit, pack) && pack.amount > 0) {
 		return false
@@ -226,6 +242,7 @@ const unloadUnit = (unit, desiredPassenger = null) => {
 		const passenger = unit.passengers.find(p => p === desiredPassenger) || unit.passengers[0]
 		remove.passenger(passenger)
 		update.mapCoordinates(passenger, { ...unit.mapCoordinates })
+		update.tile(passenger, unit.tile)
 		update.offTheMap(passenger, unit.offTheMap)
 		update.vehicle(passenger, null)
 		if (unit.colony) {
@@ -247,6 +264,7 @@ const unloadAllUnits = unit => {
 }
 
 const disband = unit => {
+	console.log('disband', unit)
 	if (unit.colony) {
 		LeaveColony(unit)
 	}
@@ -259,7 +277,11 @@ const disband = unit => {
 		Colonist.update.unit(unit.colonist, null)
 	}
 
-	unit.destroy()
+	if (unit.destroy) {
+		unit.destroy()
+	} else {
+		console.warn('destroy failed on', unit)
+	}
 	Record.remove(unit)
 }
 
@@ -282,7 +304,8 @@ const save = unit => ({
 	pioneering: unit.pioneering,
 	tile: Record.referenceTile(unit.tile),
 	owner: Record.reference(unit.owner),
-	radius: unit.radius
+	radius: unit.radius,
+	hostiles: unit.hostiles.map(Record.reference)
 })
 
 const load = unit => {
@@ -295,6 +318,7 @@ const load = unit => {
 	Record.dereferenceLazy(unit.colonist, colonist => unit.colonist = colonist)
 	Record.dereferenceLazy(unit.vehicle, vehicle => unit.vehicle = vehicle)
 	Record.entitiesLoaded(() => {
+		unit.hostiles = unit.hostiles.map(Record.dereference)
 		unit.commander = Commander.load(unit.commander)
 		unit.destroy = initialize(unit)
 	})
@@ -306,6 +330,9 @@ export default {
 	create,
 	disband,
 	listen,
+	listenEach,
+	add,
+	remove,
 	update,
 	loadGoods,
 	loadUnit,
@@ -316,4 +343,5 @@ export default {
 	load,
 	at,
 	area,
+	strength
 }

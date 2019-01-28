@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 
 import Message from 'view/ui/message'
 
+const inBattleDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < unit.radius
 
 const mergeFunctions = funcArray => funcArray.filter(fn => fn).reduce((all, fn) => () => { all(); fn(); }, () => {})
 
@@ -71,5 +72,6 @@ export default {
 	removeDuplicates,
 	unique,
 	distance,
-	quantizedRadius
+	quantizedRadius,
+	inBattleDistance
 }
