@@ -10,7 +10,8 @@
 		"canFound": false,
 		"speed": 8,
 		"cargo": 2,
-		"combat": 2
+		"combat": 2,
+		"radius": 1
 	},
 	"privateer": {
 		"frame": {
@@ -23,7 +24,8 @@
 		"canFound": false,
 		"speed": 16,
 		"cargo": 2,
-		"combat": 8
+		"combat": 8,
+		"radius": 2
 	},
 	"frigate": {
 		"frame": {
@@ -36,7 +38,8 @@
 		"canFound": false,
 		"speed": 12,
 		"cargo": 4,
-		"combat": 16
+		"combat": 16,
+		"radius": 3
 	},
 	"galleon": {
 		"frame": {
@@ -50,7 +53,8 @@
 		"canTransportTreasure": true,
 		"speed": 12,
 		"cargo": 6,
-		"combat": 10
+		"combat": 10,
+		"radius": 1
 	},
 	"merchantman": {
 		"frame": {
@@ -63,7 +67,8 @@
 		"canFound": false,
 		"speed": 10,
 		"cargo": 4,
-		"combat": 6
+		"combat": 6,
+		"radius": 1
 	},
 	"wagontrain": {
 		"frame": {
@@ -75,7 +80,8 @@
 		"cargo": 1,
 		"domain": "land",
 		"canFound": false,
-		"speed": 1
+		"speed": 1,
+		"radius": 0.5
 	},
 	"artillery": {
 		"frame": {
@@ -88,7 +94,9 @@
 		},
 		"domain": "land",
 		"canFound": false,
-		"speed": 1
+		"speed": 1,
+		"combat": 5,
+		"radius": 2
 	},
 	"pioneer": {
 		"frame": {
@@ -102,7 +110,8 @@
 		"domain": "land",
 		"canFound": true,
 		"canTerraform": true,
-		"speed": 1
+		"speed": 1,
+		"radius": 0.5
 	},
 	"settler": {
 		"frame": {
@@ -159,7 +168,8 @@
 		},
 		"domain": "land",
 		"canFound": true,
-		"speed": 1
+		"speed": 1,
+		"radius": 0.5
 	},
 	"scout": {
 		"frame": {
@@ -172,7 +182,9 @@
 		},
 		"domain": "land",
 		"canFound": true,
-		"speed": 4
+		"speed": 4,
+		"combat": 1,
+		"radius": 1.5
 	},
 	"soldier": {
 		"frame": {
@@ -185,7 +197,9 @@
 		},
 		"domain": "land",
 		"canFound": true,
-		"speed": 1
+		"speed": 1,
+		"combat": 2,
+		"radius": 1.25
 	},
 	"dragoon": {
 		"frame": {
@@ -198,7 +212,9 @@
 		},
 		"domain": "land",
 		"canFound": true,
-		"speed": 4
+		"speed": 4,
+		"combat": 3,
+		"radius": 1.5
 	},
 	"treasure": {
 		"frame": {
@@ -209,7 +225,8 @@
 		},
 		"domain": "land",
 		"canFound": false,
-		"speed": 1
+		"speed": 1,
+		"radius": 0.5
 	},
 	"missionary": {
 		"frame": {
@@ -223,7 +240,8 @@
 		"domain": "land",
 		"canFound": true,
 		"canMission": true,
-		"speed": 2
+		"speed": 2,
+		"radius": 0.5
 	},
 	"native": {
 		"frame": {
@@ -233,6 +251,8 @@
 			"default": "Native Warrior"
 		},
 		"domain": "land",
-		"speed": 2
+		"speed": 2,
+		"combat": 1,
+		"radius": 1.25
 	}
 }

@@ -7,7 +7,7 @@ import Message from 'view/ui/message'
 import Owner from 'entity/owner'
 
 
-const settlementDensity = 0.04
+const settlementDensity = 0.06
 let tribeNames = ['Sioux', 'Apache', 'Cherokee', 'Inca', 'Aztec', 'Navajo', 'Cheyenne', 'Ponca', 'Iroquis', 'Delaware', 'Comanche']
 const SPEED = 3
 

@@ -15,6 +15,7 @@ import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
 import Member from 'util/member'
 
+const RADIUS_GROWTH = 1.0 / 2500
 const create = (name, coords, owner) => {
 	if (Units[name]) {
 		const unit = {
@@ -31,7 +32,8 @@ const create = (name, coords, owner) => {
 			expert: null,
 			offTheMap: false,
 			colonist: null,
-			pioneering: false
+			pioneering: false,
+			radius: 0
 		}
 		unit.storage = Storage.create()
 		unit.equipment = Storage.create()
@@ -51,7 +53,7 @@ const create = (name, coords, owner) => {
 			unit.equipment.guns = 50
 		}
 
-		initialize(unit)
+		unit.destroy = initialize(unit)
 
 		if (unit.tile && unit.tile.colony) {
 			EnterColony(unit.tile.colony, unit)
@@ -72,47 +74,67 @@ const initialize = unit => {
 		Tile.diagonalNeighbors(unit.tile).forEach(other => Tile.discover(other, unit.owner))
 	}
 
-	Time.schedule(unit.commander)
-	Storage.listen(unit.equipment, equipment => {
-		// lose status
-		if (unit.name === 'pioneer' && equipment.tools < 20) {
-			updateType(unit, 'settler')
-		}
-		if (unit.name === 'scout' && equipment.horses < 50) {
-			updateType(unit, 'settler')
-		}
-		if (unit.name === 'dragoon' && equipment.horses <= 0) {
-			updateType(unit, 'soldier')
-		}
-		if (unit.name === 'soldier' && equipment.guns <= 0) {
-			updateType(unit, 'settler')
-		}
-
-		// gain status
-		if (unit.name === 'settler') {
-			if (equipment.tools >= 20) {
-				updateType(unit, 'pioneer')
+	return Util.mergeFunctions([
+		Time.schedule(unit.commander),
+		Time.schedule({ update: (currentTime, deltaTime) => {
+			if (unit.vehicle) {
+				if (unit.radius > 0) {
+					update.radius(unit, 0)
+				}
+				return true
 			}
-			if (equipment.guns > 0) {
-				if (equipment.horses > 0) {
-					updateType(unit, 'dragoon')
-				} else {
-					updateType(unit, 'soldier')
+			if (unit.domain !== unit.tile.domain) {
+				update.radius(unit, 0)
+				return true
+			}
+			if (unit.radius < unit.properties.radius) {
+				update.radius(unit, Math.min(unit.radius + RADIUS_GROWTH*deltaTime, unit.properties.radius))
+			}
+
+			return true
+		}, priority: true }),
+
+		Storage.listen(unit.equipment, equipment => {
+			// lose status
+			if (unit.name === 'pioneer' && equipment.tools < 20) {
+				updateType(unit, 'settler')
+			}
+			if (unit.name === 'scout' && equipment.horses < 50) {
+				updateType(unit, 'settler')
+			}
+			if (unit.name === 'dragoon' && equipment.horses <= 0) {
+				updateType(unit, 'soldier')
+			}
+			if (unit.name === 'soldier' && equipment.guns <= 0) {
+				updateType(unit, 'settler')
+			}
+
+			// gain status
+			if (unit.name === 'settler') {
+				if (equipment.tools >= 20) {
+					updateType(unit, 'pioneer')
+				}
+				if (equipment.guns > 0) {
+					if (equipment.horses > 0) {
+						updateType(unit, 'dragoon')
+					} else {
+						updateType(unit, 'soldier')
+					}
+				}
+				if (equipment.horses >= 50) {
+					updateType(unit, 'scout')
 				}
 			}
-			if (equipment.horses >= 50) {
-				updateType(unit, 'scout')
-			}
-		}
 
-		if (unit.name === 'soldier') {
-			if (equipment.horses > 0 && equipment.guns > 0) {
-				updateType(unit, 'dragoon')
+			if (unit.name === 'soldier') {
+				if (equipment.horses > 0 && equipment.guns > 0) {
+					updateType(unit, 'dragoon')
+				}
 			}
-		}
-	})
+		}),
 
-	listen.colonist(unit, colonist => colonist ? Colonist.listen.expert(colonist, expert => update.expert(unit, expert)) : null)
+		listen.colonist(unit, colonist => colonist ? Colonist.listen.expert(colonist, expert => update.expert(unit, expert)) : null)
+	])
 }
 
 const add = {
@@ -137,6 +159,7 @@ const listen = {
 	expert: (unit, fn) => Binding.listen(unit, 'expert', fn),
 	pioneering: (unit, fn) => Binding.listen(unit, 'pioneering', fn),
 	tile: (unit, fn) => Binding.listen(unit, 'tile', fn),
+	radius: (unit, fn) => Binding.listen(unit, 'radius', fn),
 }
 
 const update = {
@@ -150,11 +173,13 @@ const update = {
 	expert: (unit, value) => Binding.update(unit, 'expert', value),
 	pioneering: (unit, value) => Binding.update(unit, 'pioneering', value),
 	tile: (unit, value) => Binding.update(unit, 'tile', value),
+	radius: (unit, value) => Binding.update(unit, 'radius', value),
 }
 
 const updateType = (unit, name) => {
 	update.name(unit, name)
 	update.properties(unit, Units[name])
+	update.radius(unit, 0)
 }
 
 const at = coords => Record.getAll('unit').filter(unit => unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y)
@@ -228,12 +253,13 @@ const disband = unit => {
 	if (Europe.has.unit(unit)) {
 		Europe.remove.unit(unit)
 	}
-	// TODO: make sure nothing happens when disbanding a cargoing unit
+	unit.passengers.forEach(disband)
 	Commander.clearSchedule(unit.commander)
 	if (unit.colonist) {
 		Colonist.update.unit(unit.colonist, null)
 	}
 
+	unit.destroy()
 	Record.remove(unit)
 }
 
@@ -255,7 +281,8 @@ const save = unit => ({
 	vehicle: Record.reference(unit.vehicle),
 	pioneering: unit.pioneering,
 	tile: Record.referenceTile(unit.tile),
-	owner: Record.reference(unit.owner)
+	owner: Record.reference(unit.owner),
+	radius: unit.radius
 })
 
 const load = unit => {
@@ -269,7 +296,7 @@ const load = unit => {
 	Record.dereferenceLazy(unit.vehicle, vehicle => unit.vehicle = vehicle)
 	Record.entitiesLoaded(() => {
 		unit.commander = Commander.load(unit.commander)
-		initialize(unit)
+		unit.destroy = initialize(unit)
 	})
 
 	return unit

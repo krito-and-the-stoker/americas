@@ -107,7 +107,7 @@ const constructionOptions = colony => {
 	const wagontrain = [{
 		target: "wagontrain",
 		name: "Wagon Train",
-		cost: { construction: 80 },
+		cost: { construction: 40 },
 		action: () => {
 			const unit = Unit.create('wagontrain', colony.mapCoordinates, colony.owner)
 			Notification.create({ type: 'construction', colony, unit })

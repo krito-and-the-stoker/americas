@@ -1,11 +1,14 @@
 import Terrain from 'data/terrain'
 import Goods from 'data/goods'
 import Buildings from 'data/buildings'
+import Units from 'data/units'
 
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Building from 'entity/building'
 import Settlement from 'entity/settlement'
+import Unit from 'entity/unit'
+import Treasure from 'entity/treasure'
 
 import Resources from 'render/resources'
 import Foreground from 'render/foreground'
@@ -578,6 +581,56 @@ const createLearned = ({ colony, colonist, unit }) => {
 	}
 }
 
+const createTreasure = (colony, unit) => {
+	const treasureView = UnitView.create(unit)
+	const galleonView = Resources.sprite('map', { frame: Units.galleon.frame.default })
+	const icon = Icon.create('right')
+	const container = combine(treasureView, galleonView, icon)
+
+	const action = () => {
+		const hasGalleon = Record.getAll('unit')
+			.filter(unit => unit.owner.input)
+			.some(unit => unit.name === 'galleon')
+		
+		if (hasGalleon) {
+			MapView.centerAt(unit.mapCoordinates, 350)
+			UnitMapView.select(unit)
+		} else {
+			Dialog.create({
+				type: 'king',
+				text: 'You do not seem to have a galleon ready for transport. Would you like us to take care of the transport? The crown would, of course, take a fair share for its efforts.',
+				coords: unit.mapCoordinates,
+				options: [{
+					text: 'Yes, please transport the treasure for us and take your share.',
+					action: () => {
+						const amount = Math.ceil(0.5 * unit.treasure)
+						Unit.disband(unit)
+						Treasure.gain(amount)
+					}
+				}, {
+					text: 'No thank you, we will transport our valuables ourself.'
+				}]
+			})
+		}
+	}
+
+	const dismiss = {}
+
+	const dialog = {
+		text: 'We have secured the treasure in on of our colonies. However, we need a galleon to transport it to Europe.',
+		type: 'govenor',
+		coords: unit.mapCoordinates
+	}
+
+	return {
+		container,
+		action,
+		type: 'treasure',
+		dismiss,
+		dialog,
+	}
+}
+
 const remove = notification => {
 	notificationsContainer.removeChild(notification.container)
 	notifications = notifications.filter(n => n !== notification)
@@ -598,7 +651,8 @@ const createType = {
 	storageFull: params => createStorageFull(params.colony, params.good),
 	arrive: params => createArrive(params.colony, params.unit),
 	settlement: params => createSettlement(params.settlement, params.unit),
-	learned: params => createLearned(params)
+	learned: params => createLearned(params),
+	treasure: params => createTreasure(params.colony, params.unit)
 }
 const create = params => {
 	const notification = createType[params.type](params)

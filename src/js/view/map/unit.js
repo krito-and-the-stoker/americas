@@ -78,6 +78,8 @@ const updateTexture = view => {
 }
 
 const updatePosition = view => {
+	view.circle.x = TILE_SIZE * view.unit.mapCoordinates.x + TILE_SIZE / 2
+	view.circle.y = TILE_SIZE * view.unit.mapCoordinates.y + TILE_SIZE / 2
 	view.sprite.x = TILE_SIZE * view.unit.mapCoordinates.x
 	view.sprite.y = TILE_SIZE * view.unit.mapCoordinates.y
 }
@@ -89,8 +91,14 @@ const create = unit => {
 		sprite.hitArea = new PIXI.Rectangle(TILE_SIZE / 4, 0, TILE_SIZE / 2, TILE_SIZE)
 	}
 
+	const circle = new PIXI.Graphics()
+	circle.lineStyle(2, unit.owner.color)
+	circle.drawCircle(0, 0, TILE_SIZE)
+	circle.endFill()
+
 	const view = {
 		sprite,
+		circle,
 		unit,
 	}
 
@@ -119,13 +127,19 @@ const lookNormal = view => {
 
 const show = view => {
 	if (!view.destroyed) {
+		Foreground.addUnit(view.circle)
 		Foreground.addUnit(view.sprite)
 	}
 }
 
 const hide = view => {
 	unselect(view.unit)
+	Foreground.removeUnit(view.circle)
 	Foreground.removeUnit(view.sprite)
+}
+
+const updateRadius = view => {
+	view.circle.scale.set(0.5 * view.unit.radius)
 }
 
 const updateVisibility = view => visibleOnMap(view) ? show(view) : hide(view)
@@ -166,6 +180,7 @@ const initialize = () => {
 			Unit.listen.mapCoordinates(unit, () => { updatePosition(view) }),
 			Unit.listen.properties(unit, () => { updateTexture(view) }),
 			Unit.listen.expert(unit, () => { updateTexture(view) }),
+			Unit.listen.radius(unit, () => { updateRadius(view)} ),
 
 			Unit.listen.pioneering(unit, pioneering => {
 				if (pioneering) {			

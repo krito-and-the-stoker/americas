@@ -13,6 +13,7 @@ import Disband from 'command/disband'
 import Plow from 'command/plow'
 import Road from 'command/road'
 import LearnFromNatives from 'command/learnFromNatives'
+import CommunicateTension from 'command/communicateTension'
 
 import InvestigateRumors from 'action/investigateRumors'
 import EnterSettlement from 'action/enterSettlement'
@@ -133,6 +134,7 @@ const getModule = type => ( type ? ({
 	triggerEvent: TriggerEvent,
 	disband: Disband,
 	learnFromNatives: LearnFromNatives,
+	communicateTension: CommunicateTension,
 	commander: { load }
 })[type] : { load: data => console.warn('cannot load command, missing type', data) }) 
 

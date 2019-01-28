@@ -148,6 +148,11 @@ const initialize = colony => {
 		Util.mergeFunctions(Tile.colonyProductionGoods(tile).map(good =>
 			Time.schedule(Harvest.create(colony, tile, good))))))
 	destroy.push(listen.colonists(colony, colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length))))
+	destroy.push(listenEach.units(colony, (unit, added) => {
+		if (added && unit.treasure) {
+				Notification.create({ type: 'treasure', colony, unit })
+			}
+		}))
 
 	let starvationMessageSent = false
 	const needsToSendEmptyWarning = Util.makeObject(Goods.types.map(good => [good, false]))
@@ -160,11 +165,11 @@ const initialize = colony => {
 			Notification.create({ type: 'born', colony, unit })
 		}
 		if (storage.food < -1 && !starvationMessageSent) {
-			Message.send(`The food storage of ${colony.name} is empty. We need to produce more food quickly to prevent any losses amongst the colonists`)
+			Message.send(`The food storage of ${colony.name} is empty. We need to get food quickly to prevent losses amongst the colonists`)
 			Notification.create({ type: 'starving', colony })
 			starvationMessageSent = true
 		}
-		if (storage.food < -15) {
+		if (storage.food < -5) {
 			Message.send(`A colonist in ${colony.name} died due to inadequate food supplies`)
 			ShrinkFromStarvation(colony)
 			storage.food = 0

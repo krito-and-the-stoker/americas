@@ -13,6 +13,7 @@ import Commander from 'command/commander'
 import MoveTo from 'command/moveTo'
 import Disband from 'command/disband'
 import LearnFromNatives from 'command/learnFromNatives'
+import CommunicateTension from 'command/communicateTension'
 
 import ProduceUnit from 'task/produceUnit'
 
@@ -28,8 +29,8 @@ const experts = {
 	fisher: "Expert Fisher",
 }
 
-
-const UNIT_PRODUCTION_COST = 10
+const INTEREST_GROWTH_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
+const TENSION_GROWTH_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const create = (tribe, coords, owner) => {
 	const settlement = {
 		mapCoordinates: coords,
@@ -38,16 +39,41 @@ const create = (tribe, coords, owner) => {
 		presentGiven: false,
 		hasLearned: false,
 		expert: Util.choose(Object.keys(experts)),
-		production: UNIT_PRODUCTION_COST * Math.random(),
-		productivity: 3 * Math.random(),
+		interest: 5 * Math.random(),
+		tension: 0,
+		colonies: []
 	}
 
 	Tile.update.settlement(MapEntity.tile(coords), settlement)
+	Tile.radius(MapEntity.tile(coords)).forEach(tile => Tile.discover(tile, owner))
 
 	initialize(settlement)
 
 	Record.add('settlement', settlement)
 	return settlement
+}
+
+const watchColony = (colony, settlement) => {
+	const distance = Util.distance(colony.mapCoordinates, settlement.mapCoordinates)
+	if (Util.distance(colony.mapCoordinates, settlement.mapCoordinates) < 5) {
+		return Util.mergeFunctions([
+			Time.schedule({ update: (currentTime, deltaTime) => {
+				// grow interest
+				update.interest(settlement, settlement.interest + INTEREST_GROWTH_FACTOR * deltaTime / distance)
+				return true
+			}}),
+			Util.mergeFunctions(Util.quantizedRadius(settlement.mapCoordinates, 4).map(coords => {
+				const tileDistance = Util.distance(settlement.mapCoordinates, coords)
+				return Tile.listen.tile(MapEntity.tile(coords), tile =>
+					(tile.road || tile.plowed) ? Time.schedule({ update: (currentTime, deltaTime) => {
+						// grow tension
+						const scale = deltaTime * TENSION_GROWTH_FACTOR
+						update.tension(settlement, settlement.tension + scale * ((tile.road ? 1:0) + (tile.plowed ? 1:0)) / tileDistance)
+						return true
+					}}) : null)
+			}))
+		])
+	}
 }
 
 const initialize = settlement => {
@@ -56,24 +82,22 @@ const initialize = settlement => {
 	}
 
 	settlement.destroy = Util.mergeFunctions([
-		// Time.schedule(ProduceUnit.create(settlement)),
-		listen.production(settlement, production => {
-			if (production > UNIT_PRODUCTION_COST) {
-				const target = Util.choose(
-					Record.getAll('settlement')
-						.concat(Record.getAll('colony'))
-						.filter(t => {
-							const distance = Util.distance(t.mapCoordinates, settlement.mapCoordinates)
-							return distance > 0 && distance < 10
-						}))
-				if (target) {
-					const unit = Unit.create('native', settlement.mapCoordinates, settlement.owner)
-					Commander.scheduleBehind(unit.commander, MoveTo.create(unit, target.mapCoordinates))
-					Commander.scheduleBehind(unit.commander, Disband.create(unit))
-				}
-				settlement.production -= UNIT_PRODUCTION_COST
+		listen.interest(settlement, interest => {
+			if (interest > 5) {
+				update.interest(settlement, interest - 5)
+				const colony = Util.choose(settlement.colonies)
+				const unit = Unit.create('native', settlement.mapCoordinates, settlement.owner)
+				Commander.scheduleInstead(unit.commander, MoveTo.create(unit, colony.mapCoordinates))
+				Commander.scheduleBehind(unit.commander, CommunicateTension.create(colony, settlement, unit))
+				Commander.scheduleBehind(unit.commander, MoveTo.create(unit, settlement.mapCoordinates))
+				Commander.scheduleBehind(unit.commander, Disband.create(unit))
 			}
-		})
+		}),
+		Record.listen('colony', colony => {
+			settlement.colonies.push(colony)
+			return watchColony(colony, settlement)
+		}),
+		Util.mergeFunctions(settlement.colonies.map(colony => watchColony(colony, settlement)))
 	])
 }
 
@@ -230,25 +254,31 @@ const dialog = (settlement, unit, answer) => {
 
 
 const listen = {
-	production: (settlement, fn) => Binding.listen(settlement, 'production', fn)
+	interest: (settlement, fn) => Binding.listen(settlement, 'interest', fn),
+	tension: (settlement, fn) => Binding.listen(settlement, 'tension', fn),
 }
 
 const update = {
-	production: (settlement, value) => Binding.update(settlement, 'production', value)
+	interest: (settlement, value) => Binding.update(settlement, 'interest', value),
+	tension: (settlement, value) => Binding.update(settlement, 'tension', value),
 }
 
 const save = settlement => ({
 	mapCoordinates: settlement.mapCoordinates,
 	tribe: Record.reference(settlement.tribe),
 	owner: Record.reference(settlement.owner),
-	production: settlement.production,
-	productivity: settlement.productivity,
-	expert: settlement.expert
+	expert: settlement.expert,
+	presentGiven: settlement.presentGiven,
+	hasLearned: settlement.hasLearned,
+	interest: settlement.interest,
+	tension: settlement.tension,
+	colonies: settlement.colonies.map(Record.reference)
 })
 
 const load = settlement => {
 	settlement.tribe = Record.dereference(settlement.tribe)
 	settlement.owner = Record.dereference(settlement.owner)
+	settlement.colonies = settlement.colonies.map(Record.dereference)
 	Tile.update.settlement(MapEntity.tile(settlement.mapCoordinates), settlement)
 
 	Record.entitiesLoaded(() => initialize(settlement))
