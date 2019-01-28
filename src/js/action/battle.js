@@ -10,14 +10,14 @@ export default (attacker, defender) => {
 	const chance = Math.random() * (probability.attacker + probability.defender)
 	console.log('attacker', attacker, Unit.strength(attacker), probability.attacker)
 	console.log('defender', defender, Unit.strength(defender), probability.defender)
+	Unit.remove.hostile(attacker, defender)
 	if (chance < probability.attacker) {
 		console.log('battle won by attacker')
-		Time.schedule({ init: () => Unit.disband(defender) })
-		Unit.remove.hostile(attacker, defender)
+		Time.schedule({ init: () => Unit.disband(defender), priority: true })
 		Unit.update.radius(attacker, 0)
 	} else {
 		console.log('battle won by defender')
-		Time.schedule({ init: () => Unit.disband(attacker) })
+		Time.schedule({ init: () => Unit.disband(attacker), priority: true })
 		Unit.update.radius(defender, 0)
 	}
 }
