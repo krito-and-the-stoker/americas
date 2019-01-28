@@ -21,7 +21,7 @@ const createFromMap = ({ tiles, numTiles }) => {
 		}
 	})
 
-	const zone = tiles.filter(tile => tile.zone).filter(tile => !tile.rumors)
+	const zone = tiles.filter(tile => tile.zone).filter(tile => !tile.rumors).filter(tile => tile.domain === 'land')
 	let possibleLocations = Util.removeDuplicates(Util.range(Math.round(settlementDensity * zone.length))
 		.map(() => Util.choose(zone).mapCoordinates))
 
