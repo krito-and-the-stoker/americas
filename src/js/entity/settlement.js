@@ -36,6 +36,7 @@ const create = (tribe, coords, owner) => {
 		tribe,
 		owner,
 		presentGiven: false,
+		hasLearned: false,
 		expert: Util.choose(Object.keys(experts)),
 		production: UNIT_PRODUCTION_COST * Math.random(),
 		productivity: 3 * Math.random(),
@@ -55,7 +56,7 @@ const initialize = settlement => {
 	}
 
 	settlement.destroy = Util.mergeFunctions([
-		Time.schedule(ProduceUnit.create(settlement)),
+		// Time.schedule(ProduceUnit.create(settlement)),
 		listen.production(settlement, production => {
 			if (production > UNIT_PRODUCTION_COST) {
 				const target = Util.choose(
@@ -151,7 +152,16 @@ const dialog = (settlement, unit, answer) => {
 			}
 		}
 		if (unit.name === 'settler') {
-			if (!unit.expert || unit.expert === 'servant') {		
+			if (!unit.expert || unit.expert === 'servant') {
+				if (settlement.hasLearned) {
+					return {
+						text: `We have already shared our knowledge with you. Now go your way and spread it amongst your people.`,
+						type: 'natives',
+						options: [{
+							text: 'Leave'
+						}]
+					}
+				}
 				const expert = experts[settlement.expert]
 				return {
 					text: `You seem unskilled and do not understand the way of the nature around you. We invite you to live among us and we will teach you to be a ${expert}.`,
@@ -173,8 +183,17 @@ const dialog = (settlement, unit, answer) => {
 					}]
 				}
 			}
+			if (unit.expert === settlement.expert) {
+				return {
+					text: `Fare well fellow ${experts[settlement.expert]}.`,
+					type: 'natives',
+					options: [{
+						text: 'Leave'
+					}]
+				}
+			}
 			return {
-				text: 'We are delighted to meet a skilled ${unit.name}. Unfortunately, we cannot teach you anything.',
+				text: `You are skilled and already know your way. We cannot teach you anything.`,
 				type: 'natives',
 				options: [{
 					text: 'Leave'
