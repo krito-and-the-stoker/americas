@@ -135,6 +135,10 @@ const create = () => {
 	}
 }
 
+const close = () => {
+	Foreground.closeScreen()
+}
+
 let screen = null
 const open = () => {
 	if (!screen) {
