@@ -49,9 +49,6 @@ const unsubscribe = (entity, key, fn) => {
 	entity[listenerKey(key)] = entity[listenerKey(key)].filter(f => f !== fn)
 
 	entity[key].forEach(member => {
-		if (!member[cleanupKey(key)]) {
-			console.warn('no cleanup key in member', entity, key, member)
-		}
 		if (member[cleanupKey(key)][index]) {
 			member[cleanupKey(key)][index]()
 		}

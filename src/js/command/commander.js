@@ -110,7 +110,7 @@ const create = (args = {}) => {
 
 	commander.stopped = () => {
 		if (commander.currentCommand) {
-			console.log('should stop current command')
+			console.log('should stop current command', commander.currentCommand)
 			if (unschedule) {
 				console.log('can unschedule')
 				unschedule()

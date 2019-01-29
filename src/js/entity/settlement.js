@@ -16,6 +16,9 @@ import LearnFromNatives from 'command/learnFromNatives'
 import CommunicateTension from 'command/communicateTension'
 import Attack from 'command/attack'
 
+import GrowTension from 'task/growTension'
+import GrowInterest from 'task/growInterest'
+
 import ProduceUnit from 'task/produceUnit'
 
 const experts = {
@@ -30,8 +33,6 @@ const experts = {
 	fisher: "Expert Fisher",
 }
 
-const INTEREST_GROWTH_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
-const TENSION_GROWTH_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const INTEREST_THRESHOLD = 0.5
 const create = (tribe, coords, owner) => {
 	const settlement = {
@@ -43,7 +44,6 @@ const create = (tribe, coords, owner) => {
 		expert: Util.choose(Object.keys(experts)),
 		interest: INTEREST_THRESHOLD * Math.random(),
 		tension: 100,
-		colonies: []
 	}
 
 	Tile.update.settlement(MapEntity.tile(coords), settlement)
@@ -55,28 +55,6 @@ const create = (tribe, coords, owner) => {
 	return settlement
 }
 
-const watchColony = (colony, settlement) => {
-	const distance = Util.distance(colony.mapCoordinates, settlement.mapCoordinates)
-	if (Util.distance(colony.mapCoordinates, settlement.mapCoordinates) < 5) {
-		return Util.mergeFunctions([
-			Time.schedule({ update: (currentTime, deltaTime) => {
-				// grow interest
-				update.interest(settlement, settlement.interest + INTEREST_GROWTH_FACTOR * deltaTime / distance)
-				return true
-			}}),
-			Util.mergeFunctions(Util.quantizedRadius(settlement.mapCoordinates, 4).map(coords => {
-				const tileDistance = Util.distance(settlement.mapCoordinates, coords)
-				return Tile.listen.tile(MapEntity.tile(coords), tile =>
-					(tile.road || tile.plowed) ? Time.schedule({ update: (currentTime, deltaTime) => {
-						// grow tension
-						const scale = deltaTime * TENSION_GROWTH_FACTOR
-						update.tension(settlement, settlement.tension + scale * ((tile.road ? 1:0) + (tile.plowed ? 1:0)) / tileDistance)
-						return true
-					}}) : null)
-			}))
-		])
-	}
-}
 
 const initialize = settlement => {
 	if (settlement.destroy) {
@@ -87,7 +65,10 @@ const initialize = settlement => {
 		listen.interest(settlement, interest => {
 			if (interest > INTEREST_THRESHOLD) {
 				update.interest(settlement, interest - INTEREST_THRESHOLD)
-				const colony = Util.choose(settlement.colonies)
+				const colony = Util.choose(Util.quantizedRadius(settlement.mapCoordinates, 5)
+					.map(coords => MapEntity.tile(coords))
+					.filter(tile => tile.colony)
+					.map(tile => tile.colony))
 				const unit = Unit.create('native', settlement.mapCoordinates, settlement.owner)
 				if (settlement.tension < 25) {				
 					Commander.scheduleInstead(unit.commander, MoveTo.create(unit, colony.mapCoordinates))
@@ -96,16 +77,22 @@ const initialize = settlement => {
 					Commander.scheduleBehind(unit.commander, Disband.create(unit))
 				} else {
 					Commander.scheduleInstead(unit.commander, Attack.create(unit, { colony }))
+					Commander.scheduleBehind(unit.commander, MoveTo.create(unit, settlement.mapCoordinates))
+					Commander.scheduleBehind(unit.commander, Disband.create(unit))
 					update.tension(settlement, settlement.tension / 2)
 				}
 			}
 		}),
-		Record.listen('colony', colony => {
-			settlement.colonies.push(colony)
-			return watchColony(colony, settlement)
-		}),
-		Util.mergeFunctions(settlement.colonies.map(colony => watchColony(colony, settlement)))
-	])
+
+		Util.quantizedRadius(settlement.mapCoordinates, 5).map(coords =>
+			Tile.listen.tile(MapEntity.tile(coords), tile => {
+				const tension = (tile.road ? 1 : 0) + (tile.plowed ? 1 : 0)
+				return Util.mergeFunctions([
+					tension ? Time.schedule(GrowTension.create(settlement, tension)) : null,
+					tile.colony ? Time.schedule(GrowInterest.create(settlement, 1)) : null
+				].filter(fn => fn))
+			}))
+	].flat())
 }
 
 const dialog = (settlement, unit, answer) => {
@@ -279,13 +266,11 @@ const save = settlement => ({
 	hasLearned: settlement.hasLearned,
 	interest: settlement.interest,
 	tension: settlement.tension,
-	colonies: settlement.colonies.map(Record.reference)
 })
 
 const load = settlement => {
 	settlement.tribe = Record.dereference(settlement.tribe)
 	settlement.owner = Record.dereference(settlement.owner)
-	settlement.colonies = settlement.colonies.map(Record.dereference)
 	Tile.update.settlement(MapEntity.tile(settlement.mapCoordinates), settlement)
 
 	Record.entitiesLoaded(() => initialize(settlement))

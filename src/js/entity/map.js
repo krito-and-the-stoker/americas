@@ -73,6 +73,7 @@ const create = ({ data }) => {
 			zone: layer(data, 'zones').data[index]
 		}
 	}))
+	tiles.forEach(Tile.initialize)
 	Message.log('Creating coast line')
 	createCoastLine(tiles)
 	createAreas(tiles)

@@ -54,22 +54,32 @@ const create = ({ id, layers, index }) => {
 	tile.up = () => up(tile)
 	tile.right = () => right(tile)
 	tile.down = () => down(tile)
+
 	tile.discovered = () => discovered(tile)
 
+	Record.addTile(tile)
+	return tile
+}
+
+const initialize = tile => {
 	const updateTreeVariation = colonyOrSettlement => {
 		if (colonyOrSettlement) {
 			if (tile.forest) {
 				tile.treeVariation = 2
-				updateTile(tile)
 			}
 		}
+		updateTile(tile)
 	}
 
 	listen.settlement(tile, updateTreeVariation)
 	listen.colony(tile, updateTreeVariation)
-
-	Record.addTile(tile)
-	return tile
+	
+	// listen.colony(tile, () => {
+	// 	Tile.update.tile(tile)
+	// })
+	// listen.settlement(tile, () => {
+	// 	Tile.update.tile(tile)
+	// })
 }
 
 const terrainName = tile =>
@@ -161,6 +171,8 @@ const load = (data, index) => {
 					updateTile(tile)
 				}
 			}))
+
+		initialize(tile)
 	})
 
 	return tile	
@@ -393,6 +405,7 @@ const listen = {
 
 
 export default {
+	initialize,
 	create,
 	discover,
 	isNextTo,

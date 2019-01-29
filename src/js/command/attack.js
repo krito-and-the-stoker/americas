@@ -3,17 +3,11 @@ import MoveTo from 'command/moveTo'
 import Unit from 'entity/unit'
 import Colony from 'entity/colony'
 
-const create = (unit, { colony }) => {
-	let defender
-	// Colony.listen.units(colony, units => {
-		defender = Colony.defender(colony)
-		Unit.add.hostile(unit, defender)
-	// 	return () => {
-	// 		Unit.remove.hostile(unit, defender)
-	// 	}
-	// })
+const create = (attacker, { colony, unit }) => {
+	const	defender = colony ? Colony.defender(colony) : unit
+	Unit.add.hostile(attacker, defender)
 
-	return MoveTo.create(unit, colony.mapCoordinates)
+	return MoveTo.create(attacker, colony.mapCoordinates)
 }
 
 const load = data => MoveTo.load(data)

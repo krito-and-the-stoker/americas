@@ -76,6 +76,14 @@ const initialize = unit => {
 		Tile.diagonalNeighbors(unit.tile).forEach(other => Tile.discover(other, unit.owner))
 	}
 
+	const decideBattle = (unit, hostile) => {
+		if (Util.inBattleDistance(unit, hostile)) {
+			Battle(unit, hostile)
+		} else {
+			// console.log(unit.mapCoordinates, Util.distance(unit.mapCoordinates, hostile.mapCoordinates), unit.radius)
+		}		
+	}
+
 	return Util.mergeFunctions([
 		Time.schedule(unit.commander),
 		Time.schedule({ update: (currentTime, deltaTime) => {
@@ -96,13 +104,11 @@ const initialize = unit => {
 			return true
 		}, priority: true }),
 
-		listenEach.hostiles(unit, hostile =>
-			listen.mapCoordinates(hostile, () =>
-				listen.mapCoordinates(unit, () => {
-					if (Util.inBattleDistance(unit, hostile)) {
-						Battle(unit, hostile)
-					}
-				}))),
+		listen.hostiles(unit, hostiles =>
+			Util.mergeFunctions(hostiles.map(hostile => [
+				listen.mapCoordinates(unit, () => decideBattle(unit, hostile)),
+				listen.mapCoordinates(hostile, () => decideBattle(unit, hostile))
+			]).flat())),
 
 		Storage.listen(unit.equipment, equipment => {
 			// lose status
@@ -174,6 +180,7 @@ const listen = {
 	pioneering: (unit, fn) => Binding.listen(unit, 'pioneering', fn),
 	tile: (unit, fn) => Binding.listen(unit, 'tile', fn),
 	radius: (unit, fn) => Binding.listen(unit, 'radius', fn),
+	hostiles: (unit, fn) => Binding.listen(unit, 'hostiles', fn),
 }
 
 const update = {
@@ -276,6 +283,10 @@ const disband = unit => {
 	if (unit.colonist) {
 		Colonist.update.unit(unit.colonist, null)
 	}
+
+	Record.getAll('unit')
+		.filter(other => other.hostiles.includes(unit))
+		.forEach(other => remove.hostile(other, unit))
 
 	if (unit.destroy) {
 		unit.destroy()

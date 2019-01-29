@@ -88,6 +88,10 @@ const create = (unit, coords, moveToCommander = null, hasPath = false, lastPoint
 		return true
 	}
 
+	const stopped = () => {
+		moveToCommander.stopped()
+	}
+
 	const finished = () => {
 		if (moveToCommander.finished) {
 			moveToCommander.finished()

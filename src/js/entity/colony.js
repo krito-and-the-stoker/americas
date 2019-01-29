@@ -58,15 +58,7 @@ const isCoastal = colony => {
 	return Tile.radius(center).some(tile => tile.domain === 'sea')
 }
 
-const defender = colony => {
-	const strength = colony.units
-		.filter(unit => unit.domain === 'land')
-		.reduce((strength, unit) => Math.max(strength, Unit.strength(unit)), 0)
-
-	return Util.choose(colony.units
-		.filter(unit => unit.domain === 'land')
-		.filter(unit => Unit.strength(unit) === strength))
-}
+const defender = colony => Util.choose(colony.units.filter(unit => unit.domain === 'land'))
 
 const add = {
 	unit: (colony, unit) => Member.add(colony, 'units', unit),
@@ -274,13 +266,12 @@ const create = (coords, owner) => {
 	colony.storage = Storage.create()
 	colony.trade = Storage.create()
 
-	// TODO: does the tile need to know about the colony?
 	const tile = MapEntity.tile(coords)
 	Tile.update.colony(tile, colony)
 
-	listen.units(colony, console.log)
-
 	initialize(colony)
+
+	listen.units(colony, console.warn)
 
 	Record.add('colony', colony)
 	return colony
