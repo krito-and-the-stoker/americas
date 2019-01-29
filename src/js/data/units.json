@@ -198,7 +198,7 @@
 		"domain": "land",
 		"canFound": true,
 		"speed": 1,
-		"combat": 3,
+		"combat": 2,
 		"radius": 1.25
 	},
 	"dragoon": {

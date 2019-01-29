@@ -220,7 +220,7 @@ const initialize = () => {
 							options: [{
 								text: 'Attack!',
 								action: () => {
-									Commander.scheduleInstead(selectedUnit().commander, Attack.create(selectedUnit(), unit))
+									Commander.scheduleInstead(selectedUnit().commander, Attack.create(selectedUnit(), { unit }))
 								}
 							}, {
 								text: 'No'
