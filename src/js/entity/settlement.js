@@ -232,7 +232,7 @@ const dialog = (settlement, unit, answer) => {
 		}
 		if (unit.name === 'artillery' || unit.name === 'soldier' || unit.name === 'dragoon') {
 			return {
-				text: 'We cannot attack the natives yet.',
+				text: 'We cannot attack the native settlements yet.',
 				type: 'marshal',
 				options: [{
 					text: 'Leave'

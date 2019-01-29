@@ -118,10 +118,10 @@ const initialize = unit => {
 			if (unit.name === 'scout' && equipment.horses < 50) {
 				updateType(unit, 'settler')
 			}
-			if (unit.name === 'dragoon' && equipment.horses <= 0) {
+			if (unit.name === 'dragoon' && equipment.horses < 50) {
 				updateType(unit, 'soldier')
 			}
-			if (unit.name === 'soldier' && equipment.guns <= 0) {
+			if (unit.name === 'soldier' && equipment.guns < 50) {
 				updateType(unit, 'settler')
 			}
 
@@ -130,8 +130,8 @@ const initialize = unit => {
 				if (equipment.tools >= 20) {
 					updateType(unit, 'pioneer')
 				}
-				if (equipment.guns > 0) {
-					if (equipment.horses > 0) {
+				if (equipment.guns >= 50) {
+					if (equipment.horses >= 50) {
 						updateType(unit, 'dragoon')
 					} else {
 						updateType(unit, 'soldier')
@@ -142,8 +142,14 @@ const initialize = unit => {
 				}
 			}
 
+			if (unit.name === 'scout') {
+				if (equipment.guns >= 50) {
+					updateType(unit, 'dragoon')
+				}
+			}
+
 			if (unit.name === 'soldier') {
-				if (equipment.horses > 0 && equipment.guns > 0) {
+				if (equipment.horses >= 50 && equipment.guns >= 50) {
 					updateType(unit, 'dragoon')
 				}
 			}
