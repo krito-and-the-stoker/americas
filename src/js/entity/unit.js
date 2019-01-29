@@ -223,7 +223,7 @@ const area = unit => {
 			.find(neighbor => neighbor.domain === unit.domain).area
 }
 
-const strength = unit => unit.properties.combat || 0.5
+const strength = unit => unit.properties.combat || 1
 
 const loadGoods = (unit, pack) => {
 	if (!hasCapacity(unit, pack) && pack.amount > 0) {

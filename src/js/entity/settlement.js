@@ -33,7 +33,7 @@ const experts = {
 	fisher: "Expert Fisher",
 }
 
-const INTEREST_THRESHOLD = 0.5
+const INTEREST_THRESHOLD = 5
 const create = (tribe, coords, owner) => {
 	const settlement = {
 		mapCoordinates: coords,
@@ -43,7 +43,7 @@ const create = (tribe, coords, owner) => {
 		hasLearned: false,
 		expert: Util.choose(Object.keys(experts)),
 		interest: INTEREST_THRESHOLD * Math.random(),
-		tension: 100,
+		tension: 0,
 	}
 
 	Tile.update.settlement(MapEntity.tile(coords), settlement)
