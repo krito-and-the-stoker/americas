@@ -271,7 +271,6 @@ const unloadAllUnits = unit => {
 }
 
 const disband = unit => {
-	console.log('disband', unit)
 	if (unit.colony) {
 		LeaveColony(unit)
 	}

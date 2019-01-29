@@ -276,7 +276,6 @@ const create = (coords, owner) => {
 }
 
 const disband = colony => {
-	console.log('disbanding', colony)
 	colony.disbanded = true
 	colony.colonists.forEach(UnjoinColony)
 	colony.units.forEach(LeaveColony)

@@ -1,20 +1,29 @@
 import * as PIXI from 'pixi.js'
 import TWEEN from '@tweenjs/tween.js'
 
-import Util from 'util/util'
 import Foreground from 'render/foreground'
 import Resources from 'render/resources'
+
 import Click from 'input/click'
 import Secondary from 'input/secondary'
-import Record from 'util/record'
-import ColonyView from 'view/colony'
+
 import Unit from 'entity/unit'
 import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
-import Events from 'view/ui/events'
-import Binding from 'util/binding'
 import Owner from 'entity/owner'
 import Tile from 'entity/tile'
+
+import ColonyView from 'view/colony'
+import Events from 'view/ui/events'
+
+import Util from 'util/util'
+import Record from 'util/record'
+import Binding from 'util/binding'
+
+import Commander from 'command/commander'
+import Attack from 'command/attack'
+
+import Dialog from 'view/ui/dialog'
 
 
 const BLINK_TIME = 500
@@ -34,7 +43,6 @@ const update = {
 
 let blinkTween = null
 const select = unit => {
-	console.log(unit)
 	const view = getView(unit)
 	if (view.destroyed) {
 		return
@@ -195,11 +203,29 @@ const initialize = () => {
 			}),
 
 			Owner.listen.input(unit.owner, input =>
-					input ? Click.on(view.sprite, () => {
+				input ? Click.on(view.sprite, () => {
 					if (unit.colony && unit.colony.owner === unit.owner) {
 						unit.colony.screen = ColonyView.open(unit.colony)
 					} else {
 						select(unit)
+					}
+				}) : null),
+
+			Owner.listen.input(unit.owner, input =>
+				!input ? Secondary.on(view.sprite, () => {
+					if (selectedUnit()) {
+						Dialog.create({
+							type: 'marshal',
+							text: 'Shall we attack?',
+							options: [{
+								text: 'Attack!',
+								action: () => {
+									Commander.scheduleInstead(selectedUnit().commander, Attack.create(selectedUnit(), unit))
+								}
+							}, {
+								text: 'No'
+							}]
+						})
 					}
 				}) : null)
 		])

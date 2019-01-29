@@ -126,7 +126,7 @@ const create = (unit, coords, moveToCommander = null, hasPath = false, lastPoint
 		hasPath,
 		moveToCommander: moveToCommander.save(),
 		unit: Record.reference(unit),
-		lastPoint,
+		lastPoint
 	})
 
 	const moveTo = {
@@ -136,7 +136,8 @@ const create = (unit, coords, moveToCommander = null, hasPath = false, lastPoint
 		priority: true,
 		currentCommand: moveToCommander.currentCommand,
 		commands: moveToCommander.commands,
-		save
+		save,
+		stopped
 	}
 
 	return moveTo

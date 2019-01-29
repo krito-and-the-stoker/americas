@@ -184,7 +184,7 @@
 		"canFound": true,
 		"speed": 4,
 		"combat": 1,
-		"radius": 1.5
+		"radius": 2
 	},
 	"soldier": {
 		"frame": {
@@ -198,7 +198,7 @@
 		"domain": "land",
 		"canFound": true,
 		"speed": 1,
-		"combat": 2,
+		"combat": 3,
 		"radius": 1.25
 	},
 	"dragoon": {
@@ -214,7 +214,7 @@
 		"canFound": true,
 		"speed": 4,
 		"combat": 3,
-		"radius": 1.5
+		"radius": 2
 	},
 	"treasure": {
 		"frame": {
@@ -253,6 +253,6 @@
 		"domain": "land",
 		"speed": 2,
 		"combat": 1,
-		"radius": 1.25
+		"radius": 1.5
 	}
 }
