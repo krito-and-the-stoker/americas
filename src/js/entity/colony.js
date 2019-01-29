@@ -271,8 +271,6 @@ const create = (coords, owner) => {
 
 	initialize(colony)
 
-	listen.units(colony, console.warn)
-
 	Record.add('colony', colony)
 	return colony
 }

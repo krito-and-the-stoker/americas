@@ -4,11 +4,17 @@ import Record from 'util/record'
 import Util from 'util/util'
 
 export default (attacker, other) => {
-	Unit.update.radius(attacker, 0)
 	Time.schedule({ priority: true, init: () => {	
+		if (!Util.inBattleDistance(attacker, other)) {
+			return false
+		}
+
+		Unit.update.radius(attacker, 0)
+
 		console.log('radius', attacker.radius)
 		console.log('attacker', attacker)
 		console.log('attacking', other)
+
 		const defender = Record.getAll('unit')
 			.filter(unit => unit.owner === other.owner)
 			.filter(unit => Util.inBattleDistance(unit, attacker))

@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js'
 
 import Message from 'view/ui/message'
 
-const inBattleDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < unit.radius
+const inBattleDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
 
 const mergeFunctions = funcArray => funcArray.filter(fn => fn).reduce((all, fn) => () => { all(); fn(); }, () => {})
 
@@ -51,7 +51,7 @@ export const rectangle = (index) => {
 const choose = array => array[Math.floor(Math.random() * array.length)]
 const unique = (value, index, self) => self.indexOf(value) === index
 
-const distance = (coords1, coords2) => Math.sqrt((coords1.x - coords2.x) * (coords1.x - coords2.x) + (coords1.y - coords2.y) * (coords1.y - coords2.y))
+const distance = (first, second) => Math.sqrt((first.x - second.x) * (first.x - second.x) + (first.y - second.y) * (first.y - second.y))
 
 let currentId = 0
 const getUid = () => {
