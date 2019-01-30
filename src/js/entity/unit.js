@@ -221,7 +221,7 @@ const hasCapacity = (unit, pack) => {
 }
 
 const area = unit => {
-	const tile = MapEntity.tile(unit.mapCoordinates)
+	const tile = unit.tile
 	if (tile.domain === unit.domain) {
 		return tile.area
 	}

@@ -194,7 +194,7 @@ const initialize = () => {
 			Unit.listen.radius(unit, () => { updateRadius(view)} ),
 
 			Unit.listen.pioneering(unit, pioneering => {
-				if (pioneering) {			
+				if (pioneering) {
 					lookGrey(view)
 					unselect(unit)
 				} else {

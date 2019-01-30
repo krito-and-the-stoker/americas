@@ -91,7 +91,6 @@ const initialize = () => {
 					Commander.scheduleInstead(unit.commander, TradeRoute.create(unit))
 				}),
 				Click.on(gotoText, () => {
-					console.log('click on goto')
 					if (unit.domain === 'sea') {
 						const colonies = Record.getAll('colony').filter(Colony.isCoastal)
 						Dialog.create({
@@ -108,11 +107,23 @@ const initialize = () => {
 								action: () => {
 									const pathToHighSeas = PathFinder.findHighSeas(unit.tile)
 									const target = pathToHighSeas[pathToHighSeas.length - 1]
-									console.log(target)
 									Commander.scheduleInstead(unit.commander, MoveTo.create(unit, target.mapCoordinates))
 									Commander.scheduleBehind(unit.commander, Europe.create(unit))
 								}
 							}])
+						})
+					} else {
+						const colonies = Record.getAll('colony')
+							.filter(colony => Colony.area(colony, 'land') === Unit.area(unit))
+						Dialog.create({
+							type: 'scout',
+							text: 'Where shall we go?',
+							options: colonies.map(colony => ({
+								text: `${colony.name} (${colony.colonists.length})`,
+								action: () => {
+									Commander.scheduleInstead(unit.commander, MoveTo.create(unit, colony.mapCoordinates))
+								}
+							}))
 						})
 					}
 				})
