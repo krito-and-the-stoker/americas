@@ -12,13 +12,13 @@ import Text from 'render/text'
 import Button from 'view/ui/button'
 import Dialog from 'view/ui/dialog'
 
-import UnitsView from './units'
-import MarketView from './market'
-import InfoView from './info'
+import UnitsView from 'view/europe/units'
+import MarketView from 'view/europe/market'
+import InfoView from 'view/europe/info'
 
 const open = () => {
 	const screen = create()
-	Foreground.openScreen(screen, { name: 'europeScreen' })
+	Foreground.openScreen(screen, {name: 'europe' })
 }
 
 const close = () => {

@@ -1,7 +1,10 @@
 import * as PIXI from 'pixi.js'
-import { loadTexture, range, rectangle } from 'util/util'
-import Layer from './layer'
-import Background from './background'
+
+import Binding from 'util/binding'
+
+import Layer from 'render/layer'
+import Background from 'render/background'
+
 import Context from 'view/ui/context'
 import Events from 'view/ui/events'
 
@@ -17,7 +20,7 @@ let info = null
 
 let layer = null
 
-// TODO: get rid of get becuase fugly ://
+// TODO: get rid of get because fugly ://
 const get = () => ({
 	container,
 	dialog,
@@ -27,32 +30,45 @@ const get = () => ({
 	notifications
 })
 
+const update = {
+	screen: value => Binding.update(state, 'screen', value)
+}
+
+const listen = {
+	screen: fn => Binding.listen(state, 'screen', fn)
+}
+
 const hitTest = coords => layer.app.renderer.plugins.interaction.hitTest(new PIXI.Point(coords.x, coords.y), layer.app.stage)
-let currentEvent = null
-const openScreen = (screen, event) => {
+const state = {
+	screen: null
+}
+
+const openScreen = (view, params) => {
 	if (currentScreen) {
 		closeScreen()
 	}
-	currentScreen = screen
-	currentEvent = event
-	layer.app.stage.addChild(screen.container)
+	update.screen({
+		...view,
+		params
+	})
+	layer.app.stage.addChild(view.container)
 	layer.app.stage.addChild(permanent)
 	layer.app.stage.addChild(context)
 	layer.app.stage.addChild(dialog)
 	layer.app.stage.removeChild(notifications)
 	layer.app.stage.removeChild(container)
 	Background.hide()
-	Events.trigger(event.name, event.arg)
+	Events.trigger('openScreen', params)
 }
 
 const closeScreen = () => {
-	if (currentScreen) {
-		if (currentScreen.unsubscribe) {
-			currentScreen.unsubscribe()
+	if (state.screen) {
+		if (state.screen.unsubscribe) {
+			state.screen.unsubscribe()
 		}
-		Events.trigger(currentEvent.name, currentEvent.arg)
+		Events.trigger('closeScreen', state.screen.params)
 		Context.cancelAll()
-		layer.app.stage.removeChild(currentScreen.container)
+		layer.app.stage.removeChild(state.screen.container)
 		layer.app.stage.addChild(container)
 		layer.app.stage.addChild(permanent)
 		layer.app.stage.addChild(context)
@@ -60,8 +76,7 @@ const closeScreen = () => {
 		layer.app.stage.addChild(notifications)
 		Background.show()
 	}
-	currentScreen = null
-	currentEvent = null
+	update.screen(null)
 }
 
 const hasOpenScreen = () => currentScreen ? true : false
@@ -135,6 +150,8 @@ const doRenderWork = () => layer.app.render()
 
 export default {
 	initialize,
+	listen,
+	update,
 	hitTest,
 	shutdown,
 	updateCoords,

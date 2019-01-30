@@ -22,6 +22,8 @@ const listen = (instance, key, fn) => {
 	const listener = {
 		fn,
 		cleanup,
+		// instance,
+		// key,
 		keep: true
 	}
 
@@ -49,6 +51,7 @@ const once = (instance, key, fn) => {
 	return () => remove(instance, key, listener)
 }
 
+// let scheduled = new Set()
 const update = (instance, key, value) => {
 	const listeners = listenerKey(key)
 	if (value !== undefined) {
@@ -64,12 +67,23 @@ const update = (instance, key, value) => {
 		instance[listeners].forEach(listener => {
 			const value = key ? instance[key] : instance
 			listener.cleanup = listener.fn(value)
+			// scheduled.add(listener)
 		})
 		instance[listeners]
 			.filter(listener => !listener.keep)
 			.forEach(listener => remove(listener))
 	}
 }
+
+// const doUpdate = () => {
+// 	scheduled.forEach(listener => {
+// 		const value = listener.key ? listener.instance[listener.key] : listener.instance
+// 		listener.cleanup = listener.fn(value)
+// 	})
+// 	scheduled.clear()
+// 	setTimeout(doUpdate, 250)
+// }
+// setTimeout(doUpdate, 250)
 
 const hasListener = (instance, key) => {
 	const listeners = listenerKey(key)

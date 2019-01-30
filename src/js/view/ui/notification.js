@@ -719,20 +719,37 @@ const initialize = () => {
 		notificationsContainer.y = dimensions.y - 74
 	})
 
-	Events.listen('colonyScreen', colony => {
-		const dismiss = notifications
-			.filter(n => n.dismiss.colonyScreen)
-			.filter(n => n.dismiss.colonyScreen(colony))
+	Events.listen('openScreen', ({ name, colony }) => {
+		if (name === 'europe') {
+			const dismiss = notifications
+				.filter(n => n.dismiss.europeScreen)
+				.filter(n => n.dismiss.europeScreen())
 
-		dismiss.forEach(remove)
+			dismiss.forEach(remove)
+		}
+		if (name === 'colony') {		
+			const dismiss = notifications
+				.filter(n => n.dismiss.colonyScreen)
+				.filter(n => n.dismiss.colonyScreen(colony))
+
+			dismiss.forEach(remove)
+		}
 	})
+	Events.listen('closeScreen', ({ name, colony }) => {
+		if (name === 'europe') {
+			const dismiss = notifications
+				.filter(n => n.dismiss.europeScreen)
+				.filter(n => n.dismiss.europeScreen())
 
-	Events.listen('europeScreen', () => {
-		const dismiss = notifications
-			.filter(n => n.dismiss.europeScreen)
-			.filter(n => n.dismiss.europeScreen())
+			dismiss.forEach(remove)
+		}
+		if (name === 'colony') {		
+			const dismiss = notifications
+				.filter(n => n.dismiss.colonyScreen)
+				.filter(n => n.dismiss.colonyScreen(colony))
 
-		dismiss.forEach(remove)
+			dismiss.forEach(remove)
+		}
 	})
 	Events.listen('select', unit => {
 		const dismiss = notifications

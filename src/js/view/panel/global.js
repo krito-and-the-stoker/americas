@@ -1,115 +1,161 @@
 import * as PIXI from 'pixi.js'
-import RenderView from 'render/view'
+
 import Time from 'timeline/time'
-import Click from 'input/click'
-import Help from 'view/help'
-import Text from 'render/text'
+
+import Util from 'util/util'
+
 import Treasure from 'entity/treasure'
+
+import Click from 'input/click'
+
+import RenderView from 'render/view'
+import Foreground from 'render/foreground'
+import Text from 'render/text'
+
+import Help from 'view/help'
+import Europe from 'view/europe'
 
 
 const createTreasure = () => {
-	const number = Text.create(Treasure.amount())
-
-	number.y = 10
+	const container = Text.create(Treasure.amount())
 
 	let currentDimensions = null
-	RenderView.updateWhenResized(({ dimensions }) => {
-		number.x = dimensions.x - (number.width + 10)
+	RenderView.listen.dimensions(dimensions => {
+		container.x = dimensions.x - (container.width + 10)
 		currentDimensions = dimensions
 	})
 	const unsubscribe = Treasure.bind(amount => {
-		number.text = `Treasure: ${amount}`
-		number.x = currentDimensions.x - (number.width + 10)
+		container.text = `Treasure: ${amount}`
+		container.x = currentDimensions.x - (container.width + 10)
 	})
 
 
 	return {
 		unsubscribe,
-		number
+		container
 	}
 }
 
 
 const createYear = () => {
-	const number = Text.create(1492)
-
-	number.y = 42
+	const container = Text.create(1492)
 
 	let currentDimensions = null
-	RenderView.updateWhenResized(({ dimensions }) => {
-		number.x = dimensions.x - (number.width + 10)
+	RenderView.listen.dimensions(dimensions => {
+		container.x = dimensions.x - (container.width + 10)
 		currentDimensions = dimensions
 	})
 
 	const unsubscribe = Time.listen.year(year => {
-		number.text = `${year} A.D.`
-		number.x = currentDimensions.x - (number.width + 10)
+		container.text = `${year} A.D.`
+		container.x = currentDimensions.x - (container.width + 10)
 	})
 
 
 	return {
 		unsubscribe,
-		number
+		container
 	}
 }
 
-const createScale = () => {
-	const number = Text.create(1)
-
-	number.y = 74
+const createEurope = () => {
+	const container = Text.create('London')
+	container.buttonMode = true
 
 	let currentDimensions = null
-	RenderView.updateWhenResized(({ dimensions }) => {
-		number.x = dimensions.x - (number.width + 10)
-		currentDimensions = dimensions
-	})
+	const unsubscribe = Util.mergeFunctions([
+		RenderView.listen.dimensions(dimensions => {
+			container.x = dimensions.x - (container.width + 10)
+			currentDimensions = dimensions
+		}),
 
+		Foreground.listen.screen(screen => {
+			if (screen && screen.params.name === 'europe') {
+				container.text = 'Americas'
+				container.x = currentDimensions.x - (container.width + 10)
+				return Click.on(container, () => {
+					Europe.close()
+				})
+			} else {
+				container.text = 'London'
+				container.x = currentDimensions.x - (container.width + 10)
+				return Click.on(container, () => {
+					Europe.open()
+				})
+			}
+		})
+	])
 
-	const unsubscribe = Time.listen.paused(paused => {		
-		if (!paused) {		
-			return Time.listen.scale(scale => {
-				number.text = `Gamespeed: ${Math.round(100*scale) / 100}`
-				number.x = currentDimensions.x - (number.width + 10)
-			})
-		} else {
-			number.text = 'Game paused'
-			number.x = currentDimensions.x - (number.width + 10)
-		}
-	})
+	return {
+		unsubscribe,
+		container
+	}	
+}
+
+const createScale = () => {
+	const container = Text.create(1)
+
+	let currentDimensions = null
+	const unsubscribe = Util.mergeFunctions([
+		RenderView.listen.dimensions(dimensions => {
+			container.x = dimensions.x - (container.width + 10)
+			currentDimensions = dimensions
+		}),
+
+		Time.listen.paused(paused => {		
+			if (!paused) {		
+				return Time.listen.scale(scale => {
+					container.text = `Gamespeed: ${Math.round(100*scale) / 100}`
+					container.x = currentDimensions.x - (container.width + 10)
+				})
+			} else {
+				container.text = 'Game paused'
+				container.x = currentDimensions.x - (container.width + 10)
+			}
+		})
+	])
 
 
 	return {
 		unsubscribe,
-		number
+		container
 	}
 }
 
 const createHelp = () => {
-	const text = Text.create('Help')
+	const container = Text.create('Help')
 
-	text.y = 116
-	const unsubscribe = RenderView.updateWhenResized(({ dimensions }) => {
-		text.x = dimensions.x - (text.width + 10)
+	const unsubscribe = RenderView.listen.dimensions(dimensions => {
+		container.x = dimensions.x - (container.width + 10)
 	})
 
-	Click.on(text, Help.open)
-	text.buttonMode = true
+	Click.on(container, Help.open)
+	container.buttonMode = true
 
 	return {
 		unsubscribe,
-		text
+		container
 	}
 }
 
 const initialize = permanent => {
 	const treasure = createTreasure()
+	const europe = createEurope()
 	const year = createYear()
 	const scale = createScale()
 	const help = createHelp()
-	permanent.addChild(treasure.number)
-	permanent.addChild(year.number)
-	permanent.addChild(scale.number)
-	permanent.addChild(help.text)
+	const offset = 10
+	const lineHeight = 32
+	year.container.y = offset
+	treasure.container.y = offset + lineHeight
+	europe.container.y = offset + 2*lineHeight
+	scale.container.y = offset + 3*lineHeight
+	help.container.y = offset + 4*lineHeight
+	permanent.addChild(treasure.container)
+	permanent.addChild(year.container)
+	permanent.addChild(europe.container)
+	permanent.addChild(scale.container)
+	permanent.addChild(help.container)
 }
 
 export default {
