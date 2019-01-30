@@ -18,7 +18,7 @@ import InfoView from 'view/europe/info'
 
 const open = () => {
 	const screen = create()
-	Foreground.openScreen(screen, {name: 'europe' })
+	Foreground.openScreen(screen, { name: 'europe' })
 }
 
 const close = () => {

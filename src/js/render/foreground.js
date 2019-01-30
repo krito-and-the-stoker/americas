@@ -11,7 +11,6 @@ import Events from 'view/ui/events'
 let container = null
 let context = null
 let dialog = null
-let currentScreen = null
 let units = null
 let terrain = null
 let permanent = null
@@ -44,7 +43,7 @@ const state = {
 }
 
 const openScreen = (view, params) => {
-	if (currentScreen) {
+	if (state.screen) {
 		closeScreen()
 	}
 	update.screen({
@@ -79,7 +78,7 @@ const closeScreen = () => {
 	update.screen(null)
 }
 
-const hasOpenScreen = () => currentScreen ? true : false
+const hasOpenScreen = () => state.screen ? true : false
 
 const addTerrain = sprite => {
 	terrain.addChild(sprite)
