@@ -207,7 +207,9 @@ const initialize = () => {
 					if (unit.colony && unit.colony.owner === unit.owner) {
 						unit.colony.screen = ColonyView.open(unit.colony)
 					} else {
-						select(unit)
+						if (!unit.pioneering) {
+							select(unit)
+						}
 					}
 				}) : null),
 
