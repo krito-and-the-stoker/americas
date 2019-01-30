@@ -1,24 +1,30 @@
 import TWEEN from '@tweenjs/tween.js'
 
-import RenderView from 'render/view'
-import Foreground from 'render/foreground'
-import Background from 'render/background'
-import Click from 'input/click'
-import Drag from 'input/drag'
-import Wheel from 'input/wheel'
-import MoveTo from 'command/moveTo'
-import Commander from 'command/commander'
-import Secondary from 'input/secondary'
-import Message from 'view/ui/message'
-import Notification from 'view/ui/notification'
-import Events from 'view/ui/events'
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 
-import UnitView from './unit'
-import ColonyView from './colony'
-import SettlementView from './settlement'
-import InfoView from './info'
+import MoveTo from 'command/moveTo'
+import Commander from 'command/commander'
+
+import Click from 'input/click'
+import Drag from 'input/drag'
+import Wheel from 'input/wheel'
+import Secondary from 'input/secondary'
+
+import RenderView from 'render/view'
+import Foreground from 'render/foreground'
+import Background from 'render/background'
+
+import UnitView from 'view/map/unit'
+import ColonyView from 'view/map/colony'
+import SettlementView from 'view/map/settlement'
+
+import Events from 'view/ui/events'
+import Message from 'view/ui/message'
+import Notification from 'view/ui/notification'
+
+import UnitPanel from 'view/panel/unit'
+
 
 const MIN_SCALE = 0.4
 const MAX_SCALE = 4
@@ -130,7 +136,7 @@ const initialize = () => {
 	UnitView.initialize()
 	SettlementView.initialize()
 	Notification.initialize()
-	InfoView.initialize()
+	UnitPanel.initialize()
 
 	const stage = Foreground.get().layer.app.stage
 

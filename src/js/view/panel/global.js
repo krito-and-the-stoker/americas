@@ -4,6 +4,31 @@ import Time from 'timeline/time'
 import Click from 'input/click'
 import Help from 'view/help'
 import Text from 'render/text'
+import Treasure from 'entity/treasure'
+
+
+const createTreasure = () => {
+	const number = Text.create(Treasure.amount())
+
+	number.y = 10
+
+	let currentDimensions = null
+	RenderView.updateWhenResized(({ dimensions }) => {
+		number.x = dimensions.x - (number.width + 10)
+		currentDimensions = dimensions
+	})
+	const unsubscribe = Treasure.bind(amount => {
+		number.text = `Treasure: ${amount}`
+		number.x = currentDimensions.x - (number.width + 10)
+	})
+
+
+	return {
+		unsubscribe,
+		number
+	}
+}
+
 
 const createYear = () => {
 	const number = Text.create(1492)
@@ -60,12 +85,7 @@ const createScale = () => {
 }
 
 const createHelp = () => {
-	const text = new PIXI.Text('Help', {
-		fontFamily: 'Times new Roman',
-		fontSize: 32,
-		fill: 0xffffff,
-		align: 'center'
-	})
+	const text = Text.create('Help')
 
 	text.y = 116
 	const unsubscribe = RenderView.updateWhenResized(({ dimensions }) => {
@@ -82,9 +102,11 @@ const createHelp = () => {
 }
 
 const initialize = permanent => {
+	const treasure = createTreasure()
 	const year = createYear()
 	const scale = createScale()
 	const help = createHelp()
+	permanent.addChild(treasure.number)
 	permanent.addChild(year.number)
 	permanent.addChild(scale.number)
 	permanent.addChild(help.text)

@@ -1,32 +1,40 @@
 import MainLoop from 'mainloop.js'
 import * as Sentry from '@sentry/browser'
 
-import MapEntity from 'entity/map.js'
-import RenderMap from 'render/map.js'
-import RenderView from 'render/view.js'
-import UnitMapView from 'view/map/unit'
-import Keyboard from 'input/keyboard.js'
+import Version from 'version/version.json'
+
 import americaSmallMap from 'data/america-small.json'
 import americaLargeMap from 'data/america-large.json'
+
 import Tween from 'util/tween.js'
-import Unit from 'entity/unit'
-import Resources from 'render/resources'
-import Europe from 'entity/europe'
-import Market from 'entity/market'
-import Time from 'timeline/time'
 import PathFinder from 'util/pathFinder'
-import MapView from 'view/map'
-import Dialog from 'view/ui/dialog'
-import TreasureView from 'view/treasure'
-import YearView from 'view/year'
-import Foreground from 'render/foreground'
-import Background from 'render/background'
 import Record from 'util/record'
 import Util from 'util/util'
+
+import Time from 'timeline/time'
+
+import MapEntity from 'entity/map.js'
+import Unit from 'entity/unit'
+import Europe from 'entity/europe'
+import Market from 'entity/market'
 import Tribe from 'entity/tribe'
-import Message from 'view/ui/message'
-import Version from 'version/version.json'
 import Owner from 'entity/owner'
+
+import Keyboard from 'input/keyboard.js'
+
+import Resources from 'render/resources'
+import RenderMap from 'render/map.js'
+import RenderView from 'render/view.js'
+import Foreground from 'render/foreground'
+import Background from 'render/background'
+
+import UnitMapView from 'view/map/unit'
+import MapView from 'view/map'
+
+import Dialog from 'view/ui/dialog'
+import Message from 'view/ui/message'
+
+import GlobalPanel from 'view/panel/global'
 
 
 const captureException = err => {
@@ -147,10 +155,7 @@ const start = async () => {
 		Tribe.createFromMap(MapEntity.get())
 		await nextFrame()
 
-		// for no apparent reason the layers are not available inside TreasureView
-		TreasureView.initialize(Foreground.get().permanent)
-		await nextFrame()
-		YearView.initialize(Foreground.get().permanent)
+		GlobalPanel.initialize(Foreground.get().permanent)
 
 		// start game!
 		// const caravel = americaSmall()
