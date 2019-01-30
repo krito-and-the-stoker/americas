@@ -16,6 +16,7 @@ const LOW_PRIORITY_DELTA_TIME = 500
 
 let currentTime = 0
 let scheduled = []
+let prioritized = []
 
 const startYear = 1492
 const time = {
@@ -49,8 +50,7 @@ const advance = deltaTime => {
 	try {
 		lowPrioDeltaTime += deltaTime * time.scale
 
-		const tasks = scheduled
-			.filter(e => e.priority || lowPrioDeltaTime >= LOW_PRIORITY_DELTA_TIME)
+		const tasks = (lowPrioDeltaTime >= LOW_PRIORITY_DELTA_TIME ? scheduled : prioritized)
 			.filter(e => {
 				if (!e.started && e.init) {
 					e.alive = e.init(currentTime)
@@ -80,6 +80,7 @@ const advance = deltaTime => {
 			})
 
 		scheduled = scheduled.filter(e => !e.cleanup)
+		prioritized = prioritized.filter(e => !e.cleanup)
 	}	catch(error) {
 		MainLoop.stop()
 		throw error
@@ -110,7 +111,11 @@ const schedule = e => {
 		cleanup: false,
 		willStop: false,
 	}
+
 	scheduled.push(task)
+	if (task.priority) {
+		prioritized.push(task)
+	}
 
 	const stop = () => {
 		task.willStop = true
@@ -131,6 +136,7 @@ const load = data => {
 	currentTime = data.currentTime
 	update.scale(data.scale || 1)
 	scheduled = []
+	prioritized = []
 }
 
 export default {
