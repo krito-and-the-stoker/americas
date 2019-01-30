@@ -1,12 +1,19 @@
-import UnitMapView from 'view/map/unit'
+import Util from 'util/util'
+
+import Unit from 'entity/unit'
+import Storage from 'entity/storage'
+
+import Click from 'input/click'
+
 import Foreground from 'render/foreground'
 import RenderView from 'render/view'
-import UnitView from 'view/unit'
-import Unit from 'entity/unit'
-import Util from 'util/util'
-import Storage from 'entity/storage'
-import GoodsView from 'view/goods'
 import Text from 'render/text'
+
+import GoodsView from 'view/goods'
+import UnitView from 'view/unit'
+import MapView from 'view/map'
+import UnitMapView from 'view/map/unit'
+
 
 const cargoScale = .6
 
@@ -23,6 +30,10 @@ const initialize = () => {
 		if (view) {
 			const unit = view.unit
 			unitName.text = `${UnitView.getName(unit)}`
+			unitName.buttonMode = true
+			Click.on(unitName, () => {
+				MapView.centerAt(unit.mapCoordinates, 350)
+			})
 
 			Foreground.get().notifications.addChild(unitName)
 			Foreground.get().notifications.addChild(container)
