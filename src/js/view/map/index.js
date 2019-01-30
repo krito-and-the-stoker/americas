@@ -5,6 +5,7 @@ import Tile from 'entity/tile'
 
 import MoveTo from 'command/moveTo'
 import Commander from 'command/commander'
+import Europe from 'command/europe'
 
 import Click from 'input/click'
 import Drag from 'input/drag'
@@ -22,6 +23,7 @@ import SettlementView from 'view/map/settlement'
 import Events from 'view/ui/events'
 import Message from 'view/ui/message'
 import Notification from 'view/ui/notification'
+import Dialog from 'view/ui/dialog'
 
 import UnitPanel from 'view/panel/unit'
 
@@ -183,6 +185,22 @@ const initialize = () => {
 					Commander.scheduleBehind(selectedUnit.commander, MoveTo.create(selectedUnit, target))
 				} else {
 					Commander.scheduleInstead(selectedUnit.commander, MoveTo.create(selectedUnit, target))
+				}
+				const targetTile = MapEntity.tile(target)
+				if (targetTile.name === 'sea lane') {	
+					Dialog.create({
+						type: 'naval',
+						text: 'Would you like to set sail for Europe?',
+						options: [{
+							text: 'Yes, steady as she goes!',
+							action: () => Commander.scheduleBehind(selectedUnit.commander, Europe.create(selectedUnit))
+						}, {
+							text: 'No let as remain here',
+							action: () => {},
+							default: true
+						}],
+						coords: selectedUnit.mapCoordinates
+					})
 				}
 				Events.trigger('move', selectedUnit)
 			}

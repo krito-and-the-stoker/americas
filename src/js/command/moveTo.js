@@ -38,22 +38,6 @@ const create = (unit, coords, moveToCommander = null, hasPath = false, lastPoint
 	}
 
 	const target = MapEntity.tile(coords)
-	if (target.name === 'sea lane' && !hasPath) {	
-		Dialog.create({
-			type: 'naval',
-			text: 'Would you like to set sail for Europe?',
-			options: [{
-				text: 'Yes, steady as she goes!',
-				action: () => Commander.scheduleBehind(moveToCommander, Europe.create(unit))
-			}, {
-				text: 'No let as remain here',
-				action: () => {},
-				default: true
-			}],
-			coords: unit.mapCoordinates
-		})
-	}
-
 	const update = () => {
 		if (moveTo.pleaseStop) {
 			moveToCommander.pleaseStop = true
@@ -79,7 +63,7 @@ const create = (unit, coords, moveToCommander = null, hasPath = false, lastPoint
 
 			if (!hasPath) {
 				const path = PathFinder.findPathXY(unit.mapCoordinates, coords, unit).filter((waypoint, index) => index > 0)
-				moveToCommander.commands = path.map(waypoint => Move.create(unit, waypoint.mapCoordinates)).concat(moveToCommander.commands)
+				moveToCommander.commands = path.map(waypoint => Move.create(unit, waypoint.mapCoordinates))
 				lastPoint = path.length > 0 ? path[path.length - 1].mapCoordinates : unit.mapCoordinates
 				hasPath = true
 			}

@@ -1,8 +1,11 @@
 import Util from 'util/util'
+import Record from 'util/record'
+import PathFinder from 'util/pathFinder'
 
 import Tile from 'entity/tile'
 import Unit from 'entity/unit'
 import Storage from 'entity/storage'
+import Colony from 'entity/colony'
 
 import Commander from 'command/commander'
 import Found from 'command/found'
@@ -10,6 +13,8 @@ import Road from 'command/road'
 import Plow from 'command/plow'
 import CutForest from 'command/cutForest'
 import TradeRoute from 'command/tradeRoute'
+import MoveTo from 'command/moveTo'
+import Europe from 'command/europe'
 
 import Click from 'input/click'
 
@@ -17,11 +22,12 @@ import Foreground from 'render/foreground'
 import RenderView from 'render/view'
 import Text from 'render/text'
 
-
 import GoodsView from 'view/goods'
 import UnitView from 'view/unit'
 import MapView from 'view/map'
 import UnitMapView from 'view/map/unit'
+
+import Dialog from 'view/ui/dialog'
 
 
 const cargoScale = .6
@@ -84,6 +90,32 @@ const initialize = () => {
 				Click.on(trade, () => {
 					Commander.scheduleInstead(unit.commander, TradeRoute.create(unit))
 				}),
+				Click.on(gotoText, () => {
+					console.log('click on goto')
+					if (unit.domain === 'sea') {
+						const colonies = Record.getAll('colony').filter(Colony.isCoastal)
+						Dialog.create({
+							type: 'naval',
+							text: 'Where shall we go?',
+							options: colonies.map(colony => ({
+								text: `${colony.name} (${colony.colonists.length})`,
+								action: () => {
+									Commander.scheduleInstead(unit.commander, MoveTo.create(unit, colony.mapCoordinates))
+								}
+							})).concat([{
+								text: 'London',
+								margin: true,
+								action: () => {
+									const pathToHighSeas = PathFinder.findHighSeas(unit.tile)
+									const target = pathToHighSeas[pathToHighSeas.length - 1]
+									console.log(target)
+									Commander.scheduleInstead(unit.commander, MoveTo.create(unit, target.mapCoordinates))
+									Commander.scheduleBehind(unit.commander, Europe.create(unit))
+								}
+							}])
+						})
+					}
+				})
 			])
 
 
@@ -171,6 +203,7 @@ const initialize = () => {
 					unsubscribeStorage()
 					unsubscribeCoords()
 					unsubscribeTile()
+					unsubscribeClick()
 				}
 			})
 
