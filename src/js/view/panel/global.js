@@ -93,7 +93,11 @@ const createEurope = () => {
 }
 
 const createScale = () => {
-	const container = Text.create(1)
+	const container = Text.create('Gamespeed: 1')
+	container.buttonMode = true
+	Click.on(container, () => {
+		Time.togglePause()
+	})
 
 	let currentDimensions = null
 	const unsubscribe = Util.mergeFunctions([
