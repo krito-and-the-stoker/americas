@@ -224,8 +224,7 @@ const load = async () => {
 		// for no apparent reason the layers are not available inside TreasureView
 		Europe.initialize()
 		await nextFrame()
-		TreasureView.initialize(Foreground.get().permanent)
-		YearView.initialize(Foreground.get().permanent)
+		GlobalPanel.initialize(Foreground.get().permanent)
 		Message.log('Restoring game state...')
 		await nextFrame()
 		Record.load()

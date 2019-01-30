@@ -79,8 +79,8 @@ const initialize = settlement => {
 					Commander.scheduleInstead(unit.commander, Attack.create(unit, { colony }))
 					Commander.scheduleBehind(unit.commander, MoveTo.create(unit, settlement.mapCoordinates))
 					Commander.scheduleBehind(unit.commander, Disband.create(unit))
-					update.tension(settlement, settlement.tension / 2)
 				}
+				update.tension(settlement, 0.5*settlement.tension)
 			}
 		}),
 
@@ -88,8 +88,8 @@ const initialize = settlement => {
 			Tile.listen.tile(MapEntity.tile(coords), tile => {
 				const tension = (tile.road ? 1 : 0) + (tile.plowed ? 1 : 0)
 				return Util.mergeFunctions([
-					tension ? Time.schedule(GrowTension.create(settlement, tension)) : null,
-					tile.colony ? Time.schedule(GrowInterest.create(settlement, 1)) : null
+					tension ? Time.schedule(GrowTension.create(settlement, tension / Util.distance(settlement.mapCoordinates, coords))) : null,
+					tile.colony ? Time.schedule(GrowInterest.create(settlement, 1.0 / Util.distance(settlement.mapCoordinates, coords))) : null
 				].filter(fn => fn))
 			}))
 	].flat())

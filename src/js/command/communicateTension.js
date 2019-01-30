@@ -14,7 +14,7 @@ const create = (colony, settlement, unit) => {
 	const init = () => {
 		if (settlement.tension < 5) {
 			const good = Util.choose(goods)
-			const amount = 1 + Math.round(Math.random() * 15)
+			const amount = 2 + Math.round(Math.random() * 15)
 
 			Dialog.create({
 				text: `As a sign of our friendship and peace take these ${amount} ${good} as a gift.`,

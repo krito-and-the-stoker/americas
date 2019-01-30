@@ -560,7 +560,15 @@ const createLearned = ({ colony, colonist, unit }) => {
 
 	const container = colony ? combine(colonySprite, unitView, book) : combine(unitView, book)
 
-	const action = () => colony ? ColonyView.open(colony) : UnitMapView.select(unit)
+	const action = () => {
+		if (colony) {
+			ColonyView.open(colony)
+		} else {
+			MapView.centerAt(unit.mapCoordinates, 350)
+			UnitMapView.select(unit)
+		}
+	}
+
 	const dismiss = {
 		colonyScreen: c => colony && c === colony,
 		select: u => unit && u === unit
@@ -592,10 +600,9 @@ const createTreasure = (colony, unit) => {
 			.filter(unit => unit.owner.input)
 			.some(unit => unit.name === 'galleon')
 		
-		if (hasGalleon) {
-			MapView.centerAt(unit.mapCoordinates, 350)
-			UnitMapView.select(unit)
-		} else {
+		MapView.centerAt(unit.mapCoordinates, 350)
+		UnitMapView.select(unit)
+		if (!hasGalleon) {
 			Dialog.create({
 				type: 'king',
 				text: 'You do not seem to have a galleon ready for transport. Would you like us to take care of the transport? The crown would, of course, take a fair share for its efforts.',
