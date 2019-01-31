@@ -1,13 +1,20 @@
 import * as PIXI from 'pixi.js'
 
-import Record from 'util/record'
-import Resources from 'render/resources'
+import Goods from 'data/goods'
+
 import Util from 'util/util'
-import Foreground from 'render/foreground'
+import Record from 'util/record'
+
 import Click from 'input/click'
-import Message from 'view/ui/message'
+
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
+import Settlement from 'entity/settlement'
+
+import Resources from 'render/resources'
+import Foreground from 'render/foreground'
+
+import Message from 'view/ui/message'
 
 const TILE_SIZE = 64
 const MAP_SETTLEMENT_FRAME_ID = 59
@@ -22,8 +29,24 @@ const create = settlement => {
 
 			Click.on(sprite, () => console.log(settlement))
 			Foreground.addTerrain(sprite)
+
+			const unsubscribeMission = Settlement.listen.mission(settlement, mission => {
+				if (mission) {
+					const missionSymbol = Resources.sprite('map', { frame: Goods.crosses.id })
+					missionSymbol.x = sprite.x + 16
+					missionSymbol.y = sprite.y + 16
+					missionSymbol.scale.set(0.5)
+					Foreground.addTerrain(missionSymbol)
+
+					return () => {
+						Foreground.removeTerrain(missionSymbol)
+					}
+				}
+			})
+
 			return () => {
 				Foreground.removeTerrain(sprite)
+				unsubscribeMission()
 			}
 		}
 	})

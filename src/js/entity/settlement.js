@@ -44,6 +44,7 @@ const create = (tribe, coords, owner) => {
 		expert: Util.choose(Object.keys(experts)),
 		interest: 0.5 * INTEREST_THRESHOLD * Math.random(),
 		tension: 0,
+		mission: false,
 	}
 
 	Tile.update.settlement(MapEntity.tile(coords), settlement)
@@ -88,18 +89,32 @@ const initialize = settlement => {
 			}
 		}),
 
-		Util.quantizedRadius(settlement.mapCoordinates, 5).map(coords =>
-			Tile.listen.tile(MapEntity.tile(coords), tile => {
-				const tension = (tile.road ? 1 : 0) + (tile.plowed ? 1 : 0)
-				return Util.mergeFunctions([
-					tension ? Time.schedule(GrowTension.create(settlement, tension / Util.distance(settlement.mapCoordinates, coords))) : null,
-					tile.colony ? Time.schedule(GrowInterest.create(settlement, 1.0 / Util.distance(settlement.mapCoordinates, coords))) : null
-				].filter(fn => fn))
-			}))
+		listen.mission(settlement, mission =>
+			Util.mergeFunctions(Util.quantizedRadius(settlement.mapCoordinates, 5).map(coords =>
+				Tile.listen.tile(MapEntity.tile(coords), tile => {
+					const tension = (tile.road ? 1 : 0) + (tile.plowed ? 1 : 0)
+					return Util.mergeFunctions([
+						tension ? Time.schedule(GrowTension.create(settlement, (mission ?0.5:1) * tension / Util.distance(settlement.mapCoordinates, coords))) : null,
+						tile.colony ? Time.schedule(GrowInterest.create(settlement, 1.0 / Util.distance(settlement.mapCoordinates, coords))) : null
+					].filter(fn => fn))
+				}))))
 	].flat())
 }
 
 const dialog = (settlement, unit, answer) => {
+	if (answer === 'mission') {
+		return {
+			text: 'The natives come to your mission with curiousity.',
+			type: 'religion',
+			options: [{
+				default: true,			
+				action: () => {
+					update.mission(settlement, true)
+					Unit.disband(unit)
+				}
+			}]
+		}
+	}
 	if (answer === 'chief') {
 		const welcomeText = `Welcome stranger! We are well known for our ${experts[settlement.expert]}.`
 		const choice = Math.random()
@@ -118,7 +133,6 @@ const dialog = (settlement, unit, answer) => {
 					action: () => {
 						settlement.presentGiven = true
 						const radius = Math.round(3 + 3 * Math.random())
-						// console.log(radius, unit.mapCoordinates, Util.quantizedRadius(unit.mapCoordinates, radius))
 						const tiles = Util.quantizedRadius(unit.mapCoordinates, radius).map(MapEntity.tile)
 						tiles.forEach(tile => {
 							if (Math.random() > 0.4) {
@@ -243,6 +257,18 @@ const dialog = (settlement, unit, answer) => {
 				}]
 			}
 		}
+		if (unit.name === 'missionary') {
+			return {
+				text: 'The native watch you curiously when you enter the settlement',
+				type: 'religion',
+				options: [{
+					text: 'Establish mission',
+					answer: 'mission'
+				}, {
+					text: 'Leave'
+				}]
+			}
+		}
 		return {
 			text: 'The natives greet you.',
 			type: 'natives',
@@ -257,11 +283,13 @@ const dialog = (settlement, unit, answer) => {
 const listen = {
 	interest: (settlement, fn) => Binding.listen(settlement, 'interest', fn),
 	tension: (settlement, fn) => Binding.listen(settlement, 'tension', fn),
+	mission: (settlement, fn) => Binding.listen(settlement, 'mission', fn),
 }
 
 const update = {
 	interest: (settlement, value) => Binding.update(settlement, 'interest', value),
 	tension: (settlement, value) => Binding.update(settlement, 'tension', value),
+	mission: (settlement, value) => Binding.update(settlement, 'mission', value),
 }
 
 const save = settlement => ({
@@ -273,6 +301,7 @@ const save = settlement => ({
 	hasLearned: settlement.hasLearned,
 	interest: settlement.interest,
 	tension: settlement.tension,
+	mission: settlement.mission,
 })
 
 const load = settlement => {
