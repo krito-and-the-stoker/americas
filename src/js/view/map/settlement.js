@@ -16,7 +16,7 @@ const create = settlement => {
 	const tile = MapEntity.tile(settlement.mapCoordinates)
 	const unsubscribe = Tile.listen.discovered(tile, discovered => {
 		if (discovered) {
-			const sprite = Resources.sprite('map', { frame: settlement.tribe.id })
+			const sprite = Resources.sprite('map', { frame: settlement.tribe.id - 1 })
 			sprite.x = TILE_SIZE * settlement.mapCoordinates.x
 			sprite.y = TILE_SIZE * settlement.mapCoordinates.y
 
