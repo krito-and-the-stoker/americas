@@ -33,7 +33,7 @@ const experts = {
 	fisher: "Expert Fisher",
 }
 
-const INTEREST_THRESHOLD = 5
+const INTEREST_THRESHOLD = 2.5
 const create = (tribe, coords, owner) => {
 	const settlement = {
 		mapCoordinates: coords,
@@ -42,7 +42,7 @@ const create = (tribe, coords, owner) => {
 		presentGiven: false,
 		hasLearned: false,
 		expert: Util.choose(Object.keys(experts)),
-		interest: INTEREST_THRESHOLD * Math.random(),
+		interest: 0.5 * INTEREST_THRESHOLD * Math.random(),
 		tension: 0,
 	}
 
