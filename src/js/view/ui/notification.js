@@ -146,7 +146,7 @@ const combine = (slot1, slot2, slot3) => {
 		container.addChild(s)
 	})
 
-	container.cacheAsBitmap = true
+	container.scale.set(1.5)
 
 	return container
 }
@@ -639,9 +639,11 @@ const createTreasure = (colony, unit) => {
 }
 
 const remove = notification => {
-	notificationsContainer.removeChild(notification.container)
-	notifications = notifications.filter(n => n !== notification)
-	notifications.forEach((n, i) => n.container.x = i*74)
+	Tween.fadeOut(notification.container, 500).then(() => {	
+		notificationsContainer.removeChild(notification.container)
+		notifications = notifications.filter(n => n !== notification)
+		notifications.forEach((n, i) => n.container.x = i*74)
+	})
 }
 
 const createType = {
@@ -661,15 +663,17 @@ const createType = {
 	learned: params => createLearned(params),
 	treasure: params => createTreasure(params.colony, params.unit)
 }
+
+const iconSize = 1.5*64
+const iconMargin = 10
 const create = params => {
 	const notification = createType[params.type](params)
 
-	// TODO: Move this down to initialization. This is only here for save game compatibility
-	if (!Record.getGlobal('notificationSeen')) {
-		Record.setGlobal('notificationSeen', {})
-	}
 	if (Record.getGlobal('notificationSeen')[params.type]) {
-		notification.container.x += notifications.length * 74
+		notification.container.x += notifications.length * (iconSize + iconMargin)
+		Tween.fadeIn(notification.container, 500).then(() => {
+			notification.container.cacheAsBitmap = true
+		})
 		Click.on(notification.container, () => {
 			notification.action()
 			remove(notification)
@@ -685,8 +689,9 @@ const create = params => {
 				text: 'Ok, thank you.',
 				action: () => {
 					unsubscribePositioning()
-					Tween.scaleTo(notification.container, 1, 1500)
-					Tween.moveTo(notification.container, { x: (notifications.length-1) * 74, y: 0 }, 1500)
+					notification.container.cacheAsBitmap = true
+					Tween.scaleTo(notification.container, 1.5, 1500)
+					Tween.moveTo(notification.container, { x: (notifications.length-1) * (iconSize + iconMargin), y: 0 }, 1500)
 					Click.on(notification.container, () => {
 							notification.action()
 							remove(notification)
@@ -698,8 +703,8 @@ const create = params => {
 
 		notification.container.scale.set(2)
 		const unsubscribePositioning = RenderView.listen.dimensions(dimensions => {
-			notification.container.x = - 64
-			notification.container.y = - -64 - dimensions.y / 2
+			notification.container.x = - iconSize
+			notification.container.y = - iconSize - dimensions.y / 2
 		})
 	}
 
@@ -709,6 +714,10 @@ const create = params => {
 }
 
 const initialize = () => {
+	if (!Record.getGlobal('notificationSeen')) {
+		Record.setGlobal('notificationSeen', {})
+	}
+
 	notificationsContainer = new PIXI.Container()
 	Foreground.get().notifications.addChild(notificationsContainer)
 
@@ -716,7 +725,7 @@ const initialize = () => {
 		const scale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
 
 		notificationsContainer.x = dimensions.x / 2
-		notificationsContainer.y = dimensions.y - 74
+		notificationsContainer.y = dimensions.y - (iconSize + iconMargin)
 	})
 
 	Events.listen('openScreen', ({ name, colony }) => {

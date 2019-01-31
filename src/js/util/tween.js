@@ -9,19 +9,23 @@ const initialize = () => {
 	requestAnimationFrame(updateTween)
 }
 
-const fadeIn = (sprite, time) => new Promise(resolve => {	
+const fadeIn = (sprite, time) => {
 	sprite.alpha = 0
-	const tween = new TWEEN.Tween({ alpha: 0 })
-		.to({ alpha: 1 }, time)
-		.easing(TWEEN.Easing.Quadratic.Out)
-		.onUpdate(({ alpha }) => sprite.alpha = alpha)
-		.onStop(() => {
-			sprite.alpha = 1
-			resolve()
-		})
-		.onComplete(resolve)
-		.start()
-})
+	return new Promise(resolve => {
+		const tween = new TWEEN.Tween({ alpha: 0 })
+			.to({ alpha: 1 }, time)
+			.easing(TWEEN.Easing.Quadratic.In)
+			.onUpdate(({ alpha }) => {
+				sprite.alpha = alpha
+			})
+			.onStop(() => {
+				sprite.alpha = 1
+				resolve()
+			})
+			.onComplete(resolve)
+			.start()
+	})
+}
 
 const fadeOut = (sprite, time) => new Promise(resolve => {	
 	sprite.alpha = 1
