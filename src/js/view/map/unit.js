@@ -1,6 +1,8 @@
 import * as PIXI from 'pixi.js'
 import TWEEN from '@tweenjs/tween.js'
 
+import Tween from 'util/tween'
+
 import Foreground from 'render/foreground'
 import Resources from 'render/resources'
 
@@ -122,7 +124,10 @@ const destroy = view => {
 	unselect(view.unit)
 	view.destroyed = true
 	view.unsubscribe()
-	hide(view)	
+	Tween.fadeOut(view.sprite, 1000)
+	Tween.fadeOut(view.circle, 1000).then(() => {
+		hide(view)	
+	})
 }
 
 
