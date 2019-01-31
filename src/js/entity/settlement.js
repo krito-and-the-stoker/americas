@@ -98,14 +98,14 @@ const initialize = settlement => {
 const dialog = (settlement, unit, answer) => {
 	if (answer === 'chief') {
 		const welcomeText = `Welcome stranger! We are well known for our ${experts[settlement.expert]}.`
-		if (settlement.presentGiven) {		
+		const choice = Math.random()
+		if (settlement.presentGiven || choice < 0.3) {		
 			return {
 				text: `${welcomeText} We are always pleased to welcome English travelers.`,
 				type: 'natives'
 			}
 		}
-		const choice = Math.random()
-		if (choice < 0.65) {
+		if (choice < 0..8) {
 			return {
 				text: `${welcomeText} Come sit by the fire and we tell you about nearby lands.`,
 				type: 'natives',
@@ -113,11 +113,11 @@ const dialog = (settlement, unit, answer) => {
 					default: true,
 					action: () => {
 						settlement.presentGiven = true
-						const radius = Math.round(7 + 5 * Math.random())
+						const radius = Math.round(3 + 3 * Math.random())
 						// console.log(radius, unit.mapCoordinates, Util.quantizedRadius(unit.mapCoordinates, radius))
 						const tiles = Util.quantizedRadius(unit.mapCoordinates, radius).map(MapEntity.tile)
 						tiles.forEach(tile => {
-							if (Math.random() > 0.35) {
+							if (Math.random() > 0.4) {
 								Tile.discover(tile, unit.owner)
 							}
 						})
