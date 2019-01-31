@@ -56,6 +56,22 @@ const createCircleMask = () => {
 	return circle	
 }
 
+const tileIcon = center => {
+	const terrainScale = 0.33
+	const mask = createCircleMask()
+	return Tile.radius(center)
+		.map(tile => {
+			const sprites = createTileView(tile)
+			sprites.forEach(sprite => {			
+				sprite.x = terrainScale * 64 * (tile.mapCoordinates.x - center.mapCoordinates.x + 1)
+				sprite.y = terrainScale * 64 * (tile.mapCoordinates.y - center.mapCoordinates.y + 1)
+				sprite.scale.set(terrainScale)
+				sprite.mask = mask
+			})
+			return sprites
+		}).flat().concat([mask])
+}
+
 const colonyIcon = colony => {
 	const terrainScale = 0.33
 	const center = MapEntity.tile(colony.mapCoordinates)
@@ -638,6 +654,65 @@ const createTreasure = (colony, unit) => {
 	}
 }
 
+const createCombat = (attacker, defender, loser) => {
+	const coords = {
+		x: Math.round((attacker.mapCoordinates.x + defender.mapCoordinates.x) / 2),
+		y: Math.round((attacker.mapCoordinates.y + defender.mapCoordinates.y) / 2)
+	}
+	const tile = MapEntity.tile(coords)
+	const tileView = tileIcon(tile)
+	const attackerView = UnitView.create(attacker)
+	const defenderView = UnitView.create(defender)
+	const combatIcon = Icon.create('combat')
+	const xIcon = Icon.create('cancel')
+
+	const container = new PIXI.Container()
+
+	tileView.forEach(tile => container.addChild(tile))
+	
+	attackerView.scale.set(0.5)
+	attackerView.x = 0
+	attackerView.y = 32
+	container.addChild(attackerView)
+	
+	defenderView.scale.set(0.5)
+	defenderView.x = 32
+	defenderView.y = 32
+	container.addChild(defenderView)
+
+	combatIcon.scale.set(0.25)
+	combatIcon.x = 24
+	combatIcon.y = 40
+	container.addChild(combatIcon)
+
+	xIcon.scale.set(0.5)
+	xIcon.x = loser === attacker ? attackerView.x : defenderView.x
+	xIcon.y = 32
+	container.addChild(xIcon)
+
+	container.scale.set(1.5)
+
+	const action = () => {
+		MapView.centerAt(coords, 350)
+	}
+
+	const dismiss = {}
+
+	const dialog = {
+		type: 'marshal',
+		'text': 'There has been a fight!',
+		coords,
+	}
+
+	return {
+		container,
+		action,
+		type: 'combat',
+		dismiss,
+		dialog
+	}
+}
+
 const remove = notification => {
 	Tween.fadeOut(notification.container, 500).then(() => {	
 		notificationsContainer.removeChild(notification.container)
@@ -661,7 +736,8 @@ const createType = {
 	arrive: params => createArrive(params.colony, params.unit),
 	settlement: params => createSettlement(params.settlement, params.unit),
 	learned: params => createLearned(params),
-	treasure: params => createTreasure(params.colony, params.unit)
+	treasure: params => createTreasure(params.colony, params.unit),
+	combat: params => createCombat(params.attacker, params.defender, params.loser)
 }
 
 const iconSize = 1.5*64

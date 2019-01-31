@@ -1,9 +1,14 @@
-import Unit from 'entity/unit'
-import Time from 'timeline/time'
 import Record from 'util/record'
 import Util from 'util/util'
-import Message from 'view/ui/message'
+
+import Time from 'timeline/time'
+
+import Unit from 'entity/unit'
+
 import UnitView from 'view/unit'
+
+import Message from 'view/ui/message'
+import Notification from 'view/ui/notification'
 
 export default (attacker, other) => {
 	Time.schedule({ priority: true, init: () => {	
@@ -50,9 +55,11 @@ export default (attacker, other) => {
 		const defenderName = UnitView.getName(defender)
 		if (chance < probability.attacker) {
 			Message.send(`A ${attackerName} defeated a ${defenderName} on the battle field`)
+			Notification.create({ type: 'combat', attacker, defender, loser: defender })
 			Unit.disband(defender)
 		} else {
 			Message.send(`A ${defenderName} defeated a ${attackerName} on the battle field`)
+			Notification.create({ type: 'combat', attacker, defender, loser: attacker })
 			Unit.disband(attacker)
 		}
 	}})

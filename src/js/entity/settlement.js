@@ -69,6 +69,10 @@ const initialize = settlement => {
 					.map(coords => MapEntity.tile(coords))
 					.filter(tile => tile.colony)
 					.map(tile => tile.colony))
+				if (!colony) {
+					console.warn('no colony in range of settlement', settlement)
+					return
+				}
 				const unit = Unit.create('native', settlement.mapCoordinates, settlement.owner)
 				if (settlement.tension < 25) {				
 					Commander.scheduleInstead(unit.commander, MoveTo.create(unit, colony.mapCoordinates))
