@@ -30,6 +30,7 @@ import Background from 'render/background'
 
 import UnitMapView from 'view/map/unit'
 import MapView from 'view/map'
+import AutosaveView from 'view/autosave'
 
 import Dialog from 'view/ui/dialog'
 import Message from 'view/ui/message'
@@ -155,6 +156,7 @@ const start = async () => {
 		Tribe.createFromMap(MapEntity.get())
 		await nextFrame()
 
+		AutosaveView.initialize()
 		GlobalPanel.initialize(Foreground.get().permanent)
 
 		// start game!
@@ -229,6 +231,7 @@ const load = async () => {
 		await nextFrame()
 		Record.load()
 		await nextFrame()
+		AutosaveView.initialize()
 
 		MapView.zoomBy(1/0.35, null, 0)
 		setTimeout(() => {

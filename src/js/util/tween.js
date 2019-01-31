@@ -23,6 +23,19 @@ const fadeIn = (sprite, time) => new Promise(resolve => {
 		.start()
 })
 
+const fadeOut = (sprite, time) => new Promise(resolve => {	
+	sprite.alpha = 1
+	const tween = new TWEEN.Tween({ alpha: 1 })
+		.to({ alpha: 0 }, time)
+		.easing(TWEEN.Easing.Quadratic.Out)
+		.onUpdate(({ alpha }) => sprite.alpha = alpha)
+		.onStop(() => {
+			sprite.alpha = 0
+			resolve()
+		})
+		.onComplete(resolve)
+		.start()
+})
 
 const moveTo = (sprite, to, time) => new Promise(resolve => {	
 	const from = {
@@ -82,4 +95,11 @@ const scaleTo = (sprite, scale, time) => new Promise(resolve => {
 		.start()
 })
 
-export default { initialize, fadeIn, moveTo, moveFrom, scaleTo }
+export default {
+	initialize,
+	fadeIn,
+	fadeOut,
+	moveTo,
+	moveFrom,
+	scaleTo
+}

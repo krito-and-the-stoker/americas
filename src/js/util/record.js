@@ -25,6 +25,7 @@ import UnitView from 'view/map/unit'
 import Time from 'timeline/time'
 import PathFinder from 'util/pathFinder'
 import Message from 'view/ui/message'
+import Events from 'view/ui/events'
 
 const REFERENCE_KEY = 'referenceId'
 
@@ -248,6 +249,7 @@ const save = () => {
 	} else {
 					Message.log(`Entities saved in memory using ${lastSave.length} bytes.`)
 	}
+	Events.trigger('save')
 }
 
 
