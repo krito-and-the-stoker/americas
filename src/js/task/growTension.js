@@ -1,7 +1,7 @@
 import Time from 'timeline/time'
 import Settlement from 'entity/settlement'
 
-const TENSION_GROWTH_FACTOR = 0.5 / Time.PRODUCTION_BASE_TIME
+const TENSION_GROWTH_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const create = (settlement, amount) => {
 	return {
 		update: (currentTime, deltaTime) => {

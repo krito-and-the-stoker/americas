@@ -105,7 +105,7 @@ const dialog = (settlement, unit, answer) => {
 				type: 'natives'
 			}
 		}
-		if (choice < 0..8) {
+		if (choice < 0.8) {
 			return {
 				text: `${welcomeText} Come sit by the fire and we tell you about nearby lands.`,
 				type: 'natives',
