@@ -9,32 +9,13 @@ import UnitView from 'view/unit'
 
 import Message from 'view/ui/message'
 import Notification from 'view/ui/notification'
+import Events from 'view/ui/events'
 
 export default (attacker, other) => {
 	Time.schedule({ priority: true, init: () => {	
 		if (!Util.inBattleDistance(attacker, other)) {
 			return false
 		}
-
-		// console.log('radius', attacker.radius)
-		// console.log('attacker', attacker)
-		// console.log('attacking', other)
-
-		// console.log(Record.getAll('unit')
-		// 	.filter(unit => unit.owner === other.owner))
-		// console.log(Record.getAll('unit')
-		// 	.filter(unit => unit.owner === other.owner)
-		// 	.map(unit => unit.radius))
-		// console.log(Record.getAll('unit')
-		// 	.filter(unit => unit.owner === other.owner)
-		// 	.map(unit => Util.distance(unit.mapCoordinates, attacker.mapCoordinates)))
-		// console.log(Record.getAll('unit')
-		// 	.filter(unit => unit.owner === other.owner)
-		// 	.filter(unit => Util.inBattleDistance(unit, attacker)))
-		// console.log(Record.getAll('unit')
-		// 	.filter(unit => unit.owner === other.owner)
-		// 	.filter(unit => Util.inBattleDistance(unit, attacker))
-		// 	.reduce((best, unit) => Unit.strength(best) < Unit.strength(unit) ? unit : best, other))
 
 		const defender = Record.getAll('unit')
 			.filter(unit => unit.owner === other.owner)
@@ -62,5 +43,10 @@ export default (attacker, other) => {
 			Notification.create({ type: 'combat', attacker, defender, loser: attacker })
 			Unit.disband(attacker)
 		}
+		const coords = {
+			x: (attacker.mapCoordinates.x + defender.mapCoordinates.x) / 2,
+			y: (attacker.mapCoordinates.y + defender.mapCoordinates.y) / 2,
+		}
+		Events.trigger('combat', coords)
 	}})
 }

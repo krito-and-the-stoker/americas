@@ -1,5 +1,7 @@
 import TWEEN from '@tweenjs/tween.js'
 
+import Tween from 'util/tween'
+
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 
@@ -20,6 +22,7 @@ import UnitView from 'view/map/unit'
 import ColonyView from 'view/map/colony'
 import SettlementView from 'view/map/settlement'
 
+import Icon from 'view/ui/icon'
 import Events from 'view/ui/events'
 import Message from 'view/ui/message'
 import Notification from 'view/ui/notification'
@@ -215,6 +218,19 @@ const initialize = () => {
 		}
 	}
 	Wheel.on(handleWheel)
+
+	Events.listen('combat', coords => {
+		const icon = Icon.create('combat')
+		icon.x = TILE_SIZE * (coords.x + 0.5)
+		icon.y = TILE_SIZE * (coords.y + 0.5)
+		icon.anchor.set(0.5)
+		Foreground.addUnit(icon)
+
+		Tween.fadeOut(icon, 3000)
+		Tween.scaleTo(icon, 1.5, 3000).then(() => {
+			Foreground.removeUnit(icon)
+		})
+	})
 }
 
 export default {
