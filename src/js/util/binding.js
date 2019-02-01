@@ -22,8 +22,8 @@ const listen = (instance, key, fn) => {
 	const listener = {
 		fn,
 		cleanup,
-		// instance,
-		// key,
+		instance,
+		key,
 		keep: true
 	}
 
@@ -51,7 +51,9 @@ const listen = (instance, key, fn) => {
 // 	return () => remove(instance, key, listener)
 // }
 
-// let scheduled = new Set()
+let resolve = null
+let promise = new Promise(res => { resolve = res })
+let scheduled = new Set()
 const update = (instance, key, value) => {
 	const listeners = listenerKey(key)
 	if (value !== undefined) {
@@ -65,25 +67,28 @@ const update = (instance, key, value) => {
 			.filter(listener => listener.cleanup)
 			.forEach(listener => listener.cleanup(false))
 		instance[listeners].forEach(listener => {
-			const value = key ? instance[key] : instance
-			listener.cleanup = listener.fn(value)
-			// scheduled.add(listener)
+			// const value = key ? instance[key] : instance
+			// listener.cleanup = listener.fn(value)
+			scheduled.add(listener)
 		})
 		instance[listeners]
 			.filter(listener => !listener.keep)
 			.forEach(listener => remove(listener))
 	}
+
+	return promise
 }
 
-// const doUpdate = () => {
-// 	scheduled.forEach(listener => {
-// 		const value = listener.key ? listener.instance[listener.key] : listener.instance
-// 		listener.cleanup = listener.fn(value)
-// 	})
-// 	scheduled.clear()
-// 	setTimeout(doUpdate, 250)
-// }
-// setTimeout(doUpdate, 250)
+const applyUpdate = () => {
+	scheduled.forEach(listener => {
+		const value = listener.key ? listener.instance[listener.key] : listener.instance
+		listener.cleanup = listener.fn(value)
+	})
+	scheduled.clear()
+
+	resolve()
+	promise = new Promise(res => { resolve = res })
+}
 
 const hasListener = (instance, key) => {
 	const listeners = listenerKey(key)
@@ -143,5 +148,6 @@ export default {
 	hasListener,
 	listenerKey,
 	shared,
-	map
+	map,
+	applyUpdate
 }

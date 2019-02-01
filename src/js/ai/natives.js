@@ -32,9 +32,7 @@ const create = owner => {
 		hasMetPlayer: false
 	}
 
-	requestAnimationFrame(() => {
-		initialize(ai)
-	})
+	initialize(ai)
 
 	return ai
 }
@@ -43,9 +41,7 @@ const load = ai => {
 	ai.settlements = []
 	Record.dereferenceLazy(ai.owner, owner => { ai.owner = owner })
 	Record.entitiesLoaded(() => {
-		requestAnimationFrame(() => {
-			initialize(ai)
-		})
+		initialize(ai)
 	})
 
 	return ai

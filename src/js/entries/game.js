@@ -10,6 +10,7 @@ import Tween from 'util/tween.js'
 import PathFinder from 'util/pathFinder'
 import Record from 'util/record'
 import Util from 'util/util'
+import Binding from 'util/binding'
 
 import Time from 'timeline/time'
 
@@ -77,6 +78,7 @@ const initialize = () => {
 		const deltaTime = t - timeStamp
 		timeStamp = t
 		update(deltaTime)
+		Binding.applyUpdate()
 		draw()
 		requestAnimationFrame(loop)
 	}
