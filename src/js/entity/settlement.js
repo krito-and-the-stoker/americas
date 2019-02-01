@@ -34,7 +34,7 @@ const experts = {
 	fisher: 'Expert Fisher',
 }
 
-const INTEREST_THRESHOLD = 7.5
+const INTEREST_THRESHOLD = 10
 const create = (tribe, coords, owner) => {
 	const settlement = {
 		mapCoordinates: coords,
