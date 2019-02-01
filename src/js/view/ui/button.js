@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js'
+
 import Click from 'input/click'
 import Resources from 'render/resources'
 import Text from 'render/text'

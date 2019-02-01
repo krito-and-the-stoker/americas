@@ -36,20 +36,20 @@ const listen = (instance, key, fn) => {
 }
 
 // currently unused
-const once = (instance, key, fn) => {
-	const listeners = listenerKey(key)
-	const listener = {
-		fn,
-		keep: false
-	}
+// const once = (instance, key, fn) => {
+// 	const listeners = listenerKey(key)
+// 	const listener = {
+// 		fn,
+// 		keep: false
+// 	}
 
-	if (!instance[listeners]) {
-		create(instance, key)
-	}
+// 	if (!instance[listeners]) {
+// 		create(instance, key)
+// 	}
 
-	instance[listeners].push(listener)
-	return () => remove(instance, key, listener)
-}
+// 	instance[listeners].push(listener)
+// 	return () => remove(instance, key, listener)
+// }
 
 // let scheduled = new Set()
 const update = (instance, key, value) => {

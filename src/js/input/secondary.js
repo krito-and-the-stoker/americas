@@ -31,14 +31,14 @@ const on = (target, fn) => {
 	const unsubscribe = () => {
 		target
 			.off('rightdown', handler)
-		}
+	}
 
 	return unsubscribe
 }
 
 const initialize = () => {
 	window.oncontextmenu = (e) => {
-	  e.preventDefault();
+		e.preventDefault()
 	}
 }
 

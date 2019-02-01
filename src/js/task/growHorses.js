@@ -5,17 +5,9 @@ import Time from 'timeline/time'
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
 const horseGrowthRate = 1 / 20
-const create = (colony, tile, good, colonist = null) => {
+const create = (colony) => {
 	let lastFoodWithoutHorses = colony.storage.food
-	let lastUpdate = null
-	const update = currentTime => {
-		if (!lastUpdate) {
-			lastUpdate = currentTime
-			return true
-		}
-		const deltaTime = currentTime - lastUpdate
-		lastUpdate = currentTime
-
+	const update = (currentTime, deltaTime) => {
 		const deltaFoodWithoutHorses = colony.storage.food - lastFoodWithoutHorses
 
 		// only grow when we have horses and only when the settler give them food

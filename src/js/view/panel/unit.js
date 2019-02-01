@@ -1,3 +1,5 @@
+import * as PIXI from 'pixi.js'
+
 import Util from 'util/util'
 import Record from 'util/record'
 import PathFinder from 'util/pathFinder'

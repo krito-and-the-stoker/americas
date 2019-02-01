@@ -1,16 +1,11 @@
-import Commander from './commander'
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Record from 'util/record'
 import Time from 'timeline/time'
-import Colony from 'entity/colony'
 import Unit from 'entity/unit'
 import EnterColony from 'action/enterColony'
 import LeaveColony from 'action/leaveColony'
-import InvestigateRumors from 'action/investigateRumors'
-import EnterSettlement from 'action/enterSettlement'
 
-const TILE_SIZE = 64
 
 const inMoveDistance = (coords1, coords2) => Math.abs(coords1.x - coords2.x) <= 1 && Math.abs(coords1.y - coords2.y) <= 1
 const unloading = (unit, fromTile, toTile) => unit.domain === 'land' && fromTile.domain === 'sea' && toTile.domain === 'land'

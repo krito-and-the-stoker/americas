@@ -1,3 +1,5 @@
+import * as PIXI from 'pixi.js'
+
 import Drag from 'input/drag'
 import UnitView from 'view/unit'
 import Text from 'render/text'

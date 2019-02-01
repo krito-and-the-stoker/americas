@@ -3,11 +3,13 @@ import Foreground from './foreground.js'
 import Record from 'util/record'
 import Binding from 'util/binding'
 
-Record.setGlobal('scale', 1)
-Record.setGlobal('coords', {
-	x: 0,
-	y: 0,
-})
+setTimeout(() => {
+	Record.setGlobal('scale', 1)
+	Record.setGlobal('coords', {
+		x: 0,
+		y: 0,
+	})
+}, 0)
 
 const get = () => ({
 	scale: Record.getGlobal('scale'),
@@ -89,7 +91,9 @@ const updateWhenResized = fn => {
 	return () => resizeFunctions = resizeFunctions.filter(func => func !== fn)
 }
 
-const render = Background.render
+const render = () => {
+	Background.render()
+}
 
 export default {
 	updateMapCoords,

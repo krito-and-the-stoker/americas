@@ -1,12 +1,10 @@
 import Goods from 'data/goods.json'
-import Buildings from 'data/buildings.json'
 
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Harvest from 'task/harvest'
 import Time from 'timeline/time'
 import Util from 'util/util'
-import Colonist from 'entity/colonist'
 import Record from 'util/record'
 import Unit from 'entity/unit'
 import Binding from 'util/binding'
@@ -15,7 +13,6 @@ import Consume from 'task/consume'
 import Deteriorate from 'task/deteriorate'
 import GrowHorses from 'task/growHorses'
 import Member from 'util/member'
-import Produce from 'task/produce'
 import ColonyProduction from 'task/colonyProduction'
 import ProductionSummary from 'task/productionSummary'
 import Building from 'entity/building'
@@ -29,22 +26,22 @@ import Notification from 'view/ui/notification'
 // for unknown reasons we need to wait bit until we can set the global here :/
 setTimeout(() => Record.setGlobal('colonyNames',
 	['Jamestown',
-	'Roanoke',
-	'Virginia',
-	"Cuper's Cove",
-	"St. John's",
-	'Henricus',
-	'Delaware',
-	'Pennsylvania',
-	'Massachusetts Bay Colony',
-	'Maine',
-	'New Jersey',
-	'Connecticut',
-	'Maryland',
-	'South Carolina',
-	'New Hampshire',
-	'North Carolina',
-	'Rhode Island']), 0)
+		'Roanoke',
+		'Virginia',
+		"Cuper's Cove",
+		"St. John's",
+		'Henricus',
+		'Delaware',
+		'Pennsylvania',
+		'Massachusetts Bay Colony',
+		'Maine',
+		'New Jersey',
+		'Connecticut',
+		'Maryland',
+		'South Carolina',
+		'New Hampshire',
+		'North Carolina',
+		'Rhode Island']), 0)
 
 const getColonyName = () => {
 	let colonyNames = Record.getGlobal('colonyNames')
@@ -93,8 +90,7 @@ const update = {
 const area = (colony, domain) =>
 	Tile.radius(MapEntity.tile(colony.mapCoordinates))
 		.filter(tile => tile.domain === domain)
-		.map(tile => tile.area)
-		.find(tile => true)
+		.map(tile => tile.area)[0]
 
 const tories = colony => {
 	const colonists = colony.colonists.length
@@ -152,13 +148,13 @@ const initialize = colony => {
 	destroy.push(listen.colonists(colony, colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length))))
 	destroy.push(listenEach.units(colony, (unit, added) => {
 		if (added && unit.treasure) {
-				Notification.create({ type: 'treasure', colony, unit })
-			}
-		}))
+			Notification.create({ type: 'treasure', colony, unit })
+		}
+	}))
 
 	let starvationMessageSent = false
-	const needsToSendEmptyWarning = Util.makeObject(Goods.types.map(good => [good, false]))
-	const needsToSendFullWarning = Util.makeObject(Goods.types.map(good => [good, false]))
+	// const needsToSendEmptyWarning = Util.makeObject(Goods.types.map(good => [good, false]))
+	// const needsToSendFullWarning = Util.makeObject(Goods.types.map(good => [good, false]))
 	destroy.push(Storage.listen(colony.storage, storage => {
 		const keepFood = 20
 		if (storage.food >= 200 + keepFood) {
@@ -259,7 +255,7 @@ const create = (coords, owner) => {
 		mapCoordinates: { ...coords },
 		construction: {
 			amount: 0,
-			target: "wagontrain",
+			target: 'wagontrain',
 		},
 		bells: 0
 	}

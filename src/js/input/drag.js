@@ -134,26 +134,26 @@ const on = (target, onStart, onMove, onEnd, rollout = false) => {
 	target
 		.on('mousedown', dragStart)
 		.on('touchstart', dragStart)
-    .on('mousemove', dragMove)
-    .on('touchmove', dragMove)
-    .on('mouseup', dragEnd)
-    .on('mouseupoutside', dragEnd)
-    .on('touchend', dragEnd)
-    .on('touchendoutside', dragEnd)
+		.on('mousemove', dragMove)
+		.on('touchmove', dragMove)
+		.on('mouseup', dragEnd)
+		.on('mouseupoutside', dragEnd)
+		.on('touchend', dragEnd)
+		.on('touchendoutside', dragEnd)
 
-   const unsubscribe = () => {
-			target
-				.off('mousedown', dragStart)
-				.off('touchstart', dragStart)
-		    .off('mousemove', dragMove)
-		    .off('touchmove', dragMove)
-		    .off('mouseup', dragEnd)
-		    .off('mouseupoutside', dragEnd)
-		    .off('touchend', dragEnd)
-		    .off('touchendoutside', dragEnd)
-		}
+	const unsubscribe = () => {
+		target
+			.off('mousedown', dragStart)
+			.off('touchstart', dragStart)
+			.off('mousemove', dragMove)
+			.off('touchmove', dragMove)
+			.off('mouseup', dragEnd)
+			.off('mouseupoutside', dragEnd)
+			.off('touchend', dragEnd)
+			.off('touchendoutside', dragEnd)
+	}
 
-		return unsubscribe
+	return unsubscribe
 }
 
 const drags = {

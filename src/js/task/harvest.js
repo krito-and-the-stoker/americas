@@ -22,19 +22,11 @@ const create = (colony, tile, good, colonist = null) => {
 	const unsubscribe = colonist ? Colonist.listen.expert(colonist, calculate) : calculate()
 
 	tile.harvestedBy = colonist || colony
-	let lastUpdate = null
-	const update = currentTime => {
-		if (!lastUpdate) {
-			lastUpdate = currentTime
-			return true
-		}
-
-		const deltaTime = currentTime - lastUpdate
+	const update = (currentTime, deltaTime) => {
 		const amount = deltaTime * production
 		Storage.update(colony.storage, { good, amount })
 		Storage.update(colony.productionRecord, { good, amount })
 
-		lastUpdate = currentTime
 		return true
 	}
 

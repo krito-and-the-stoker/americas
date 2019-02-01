@@ -1,6 +1,5 @@
 import Util from 'util/util'
 import Record from 'util/record'
-import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Settlement from 'entity/settlement'
 import Message from 'view/ui/message'
@@ -11,7 +10,7 @@ const settlementDensity = 0.06
 let tribeNames = ['Sioux', 'Apache', 'Cherokee', 'Inca', 'Aztec', 'Navajo', 'Cheyenne', 'Ponca', 'Iroquis', 'Delaware', 'Comanche']
 const SPEED = 3
 
-const createFromMap = ({ tiles, numTiles }) => {
+const createFromMap = ({ tiles }) => {
 	const tribes = []
 	tiles.forEach(tile => {
 		if (tile.zone) {

@@ -21,19 +21,17 @@ const createAreas = tiles => {
 	let currentArea = 1
 	const markArea = tile => {
 		tile.area = currentArea
-		let areaSize = 1
 		let neighbors = Tile.diagonalNeighbors(tile)
 			.filter(neighbor => !neighbor.area)
 			.filter(neighbor => neighbor.domain === tile.domain)
 		while(neighbors.length > 0) {
-			areaSize += neighbors.length
 			neighbors.forEach(n => n.area = currentArea)
 			neighbors = neighbors.map(n =>
 				Tile.diagonalNeighbors(n)
 					.filter(neighbor => !neighbor.area)
 					.filter(neighbor => neighbor.domain === tile.domain))
-					.flat()
-					.filter(Util.unique)
+				.flat()
+				.filter(Util.unique)
 		}
 	}
 	tiles.forEach(tile => {
@@ -93,7 +91,7 @@ const	mapCoordinates = index => ({
 	y: Math.floor(index / numTiles.x)
 })
 
-const save = ({ tiles, numTiles }) => ({
+const save = ({ numTiles }) => ({
 	numTiles
 })
 

@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/browser'
 
 import Version from 'version/version.json'
 
-import americaSmallMap from 'data/america-small.json'
+// import americaSmallMap from 'data/america-small.json'
 import americaLargeMap from 'data/america-large.json'
 
 import Tween from 'util/tween.js'
@@ -68,27 +68,27 @@ const draw = () => {
 	}
 }
 
-const americaSmall = () => {
-	const startCoordinates = Util.choose([
-	{ x: 135, y: 82 },
-	{ x: 152, y: 105 },
-	{ x: 168, y: 117 },
-	{ x: 159, y: 152 },
-	{ x: 132, y: 55 }])
-	const pioneer = Unit.create('pioneer', startCoordinates, Owner.player())
-	const soldier = Unit.create('soldier', startCoordinates, Owner.player())
-	const caravel = Unit.create('caravel', startCoordinates, Owner.player())
-	Unit.loadUnit(caravel, pioneer)
-	Unit.loadUnit(caravel, soldier)
-	MapView.centerAt(startCoordinates, 0, {
-		x: 0.3,
-		y: 0.5
-	})
-	UnitMapView
-	Record.setGlobal('defaultShipArrival', startCoordinates)
+// const americaSmall = () => {
+// 	const startCoordinates = Util.choose([
+// 		{ x: 135, y: 82 },
+// 		{ x: 152, y: 105 },
+// 		{ x: 168, y: 117 },
+// 		{ x: 159, y: 152 },
+// 		{ x: 132, y: 55 }])
+// 	const pioneer = Unit.create('pioneer', startCoordinates, Owner.player())
+// 	const soldier = Unit.create('soldier', startCoordinates, Owner.player())
+// 	const caravel = Unit.create('caravel', startCoordinates, Owner.player())
+// 	Unit.loadUnit(caravel, pioneer)
+// 	Unit.loadUnit(caravel, soldier)
+// 	MapView.centerAt(startCoordinates, 0, {
+// 		x: 0.3,
+// 		y: 0.5
+// 	})
+// 	UnitMapView
+// 	Record.setGlobal('defaultShipArrival', startCoordinates)
 
-	return caravel
-}
+// 	return caravel
+// }
 
 const americaLarge = () => {
 	const startCoordinates = Util.choose([
@@ -97,7 +97,7 @@ const americaLarge = () => {
 		{ x: 176, y: 170 },
 		{ x: 209, y: 186 },
 	])
-	const pioneer = Unit.create('pioneer', startCoordinates, Owner.player())
+	const pioneer = Unit.create('missionary', startCoordinates, Owner.player())
 	const soldier = Unit.create('soldier', startCoordinates, Owner.player())
 	const caravel = Unit.create('caravel', startCoordinates, Owner.player())
 	Unit.loadUnit(caravel, pioneer)
@@ -136,7 +136,7 @@ const start = async () => {
 
 		await nextFrame()
 
-		const mapRendering = new RenderMap()
+		new RenderMap()
 
 		await nextFrame()
 

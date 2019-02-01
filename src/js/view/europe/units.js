@@ -1,12 +1,10 @@
 import * as PIXI from 'pixi.js'
 import Tween from 'util/tween'
 
-import Colony from 'entity/colony'
 import UnitView from 'view/unit'
 import Click from 'input/click'
 import Drag from 'input/drag'
 import Unit from 'entity/unit'
-import GoodsView from 'view/goods'
 import Europe from 'entity/europe'
 import Commander from 'command/commander'
 import America from 'command/america'

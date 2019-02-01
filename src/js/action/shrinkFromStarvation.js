@@ -1,7 +1,6 @@
 import Util from 'util/util'
 import Unit from 'entity/unit'
 import Colonist from 'entity/colonist'
-import Colony from 'entity/colony'
 import Notification from 'view/ui/notification'
 
 export default colony => {

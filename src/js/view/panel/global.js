@@ -1,5 +1,3 @@
-import * as PIXI from 'pixi.js'
-
 import Time from 'timeline/time'
 
 import Util from 'util/util'

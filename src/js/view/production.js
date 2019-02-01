@@ -1,5 +1,3 @@
-import * as PIXI from 'pixi.js'
-
 import Goods from 'data/goods.json'
 
 import Util from 'util/util'

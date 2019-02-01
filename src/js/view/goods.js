@@ -1,6 +1,7 @@
+import * as PIXI from 'pixi.js'
+
 import Goods from 'data/goods.json'
 import Resources from 'render/resources'
-import Util from 'util/util'
 import Text from 'render/text'
 
 

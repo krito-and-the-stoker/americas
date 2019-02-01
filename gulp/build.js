@@ -9,7 +9,7 @@ const path = require('path')
 const yargs = require('yargs')
 const jimp = require('jimp')
 const fs = require('fs')
-const SentryCliPlugin = require('@sentry/webpack-plugin')
+// const SentryCliPlugin = require('@sentry/webpack-plugin')
 
 
 md.use(mila, {
@@ -40,7 +40,7 @@ const config = () => {
   })).reduce((all, one) => ({ ...all, ...one }), {})
 
   return {
-  	mode: (yargs.argv.production || yargs.argv.staging) ? 'production' : 'development',
+    mode: (yargs.argv.production || yargs.argv.staging) ? 'production' : 'development',
     entry: {
       index: './entries/index.js',
       worker: './entries/worker.js'
@@ -92,30 +92,30 @@ function swallowError (error) {
 
 
 gulp.task('static', () => {
-	return gulp.src('src/static/**/*')
-		.pipe(gulp.dest('dist'))
+  return gulp.src('src/static/**/*')
+    .pipe(gulp.dest('dist'))
 })
  
 gulp.task('pug', () => {
-	return gulp.src('src/pages/**/*.pug')
-		.pipe(pug({
-			filters: {
-				markdown: (input) => {
-					return md.render(input)
-				}
-			}
-		})).on('error', swallowError)
-		.pipe(gulp.dest('dist'))
+  return gulp.src('src/pages/**/*.pug')
+    .pipe(pug({
+      filters: {
+        markdown: (input) => {
+          return md.render(input)
+        }
+      }
+    })).on('error', swallowError)
+    .pipe(gulp.dest('dist'))
     .pipe(browserSync.reload({
       stream: true
     }))
 })
 
 gulp.task('sass', () => {
-	return gulp.src('src/sass/**/*.scss')
-		.pipe(sass()).on('error', swallowError)
-		.pipe(gulp.dest('dist'))
-		.pipe(browserSync.stream())
+  return gulp.src('src/sass/**/*.scss')
+    .pipe(sass()).on('error', swallowError)
+    .pipe(gulp.dest('dist'))
+    .pipe(browserSync.stream())
 })
 
 gulp.task('serve', done => {
@@ -133,9 +133,9 @@ gulp.task('assets', resolve => {
   const cols = 13
   const base = 128
   const pad = (n, width, z) => {
-    z = z || '0';
-    n = n + '';
-    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+    z = z || '0'
+    n = n + ''
+    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n
   }
   const position = (index) => ({
     x: base * (index % cols),
@@ -159,13 +159,13 @@ gulp.task('assets', resolve => {
 gulp.task('build', gulp.parallel(['pug', 'js', 'sass', 'static', 'assets']))
 
 gulp.task('watch', () => {
-	gulp.watch('src/pages/**/*.pug', gulp.series('pug'))
+  gulp.watch('src/pages/**/*.pug', gulp.series('pug'))
   gulp.watch('src/js/**/*.js', gulp.series('js'))
-	gulp.watch('src/js/**/*.json', gulp.series('js'))
-	gulp.watch('src/content/**/*.md', gulp.series('pug'))
-	gulp.watch('src/sass/**/*.scss', gulp.series('sass'))
+  gulp.watch('src/js/**/*.json', gulp.series('js'))
+  gulp.watch('src/content/**/*.md', gulp.series('pug'))
+  gulp.watch('src/sass/**/*.scss', gulp.series('sass'))
   gulp.watch('src/static/**/*', gulp.series('static'))
-	gulp.watch('src/assets/**/*', gulp.series('assets'))
+  gulp.watch('src/assets/**/*', gulp.series('assets'))
 })
 
 gulp.task('default', gulp.series('build', 'serve', 'watch'))

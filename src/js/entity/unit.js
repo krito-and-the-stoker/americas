@@ -4,7 +4,6 @@ import Tile from 'entity/tile'
 import Record from 'util/record'
 import Commander from 'command/commander'
 import Time from 'timeline/time'
-import Colony from 'entity/colony'
 import Storage from 'entity/storage'
 import Util from 'util/util'
 import Binding from 'util/binding'
@@ -226,7 +225,7 @@ const area = unit => {
 		return tile.area
 	}
 	return Tile.radius(tile)
-			.find(neighbor => neighbor.domain === unit.domain).area
+		.find(neighbor => neighbor.domain === unit.domain).area
 }
 
 const strength = unit => unit.properties.combat || 1

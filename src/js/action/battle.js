@@ -12,7 +12,7 @@ import Notification from 'view/ui/notification'
 import Events from 'view/ui/events'
 
 export default (attacker, other) => {
-	Time.schedule({ priority: true, init: () => {	
+	Time.schedule({ priority: true, init: () => { 
 		if (!Util.inBattleDistance(attacker, other)) {
 			return false
 		}

@@ -3,10 +3,7 @@ import * as PIXI from 'pixi.js'
 import UnitView from 'view/unit'
 import Unit from 'entity/unit'
 import Drag from 'input/drag'
-import Europe from 'entity/europe'
 import GoodsView from 'view/goods'
-import Colony from 'entity/colony'
-import Market from 'entity/market'
 import Util from 'util/util'
 import Storage from 'entity/storage'
 
@@ -81,7 +78,7 @@ const create = unit => {
 		}))
 
 		const unsubscribeStorage = Storage.listen(unit.storage, storage => {
-			const goods = Storage.split(unit.storage)
+			const goods = Storage.split(storage)
 			let storageIndex = {
 				x: index.x,
 				y: index.y

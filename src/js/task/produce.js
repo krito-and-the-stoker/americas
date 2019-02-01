@@ -18,16 +18,8 @@ const create = (colony, building, colonist) => {
 				consumption = Production.consumption(building)
 			})))
 
-	let lastUpdate = null
-	const update = currentTime => {
-		if (!lastUpdate) {
-			lastUpdate = currentTime
-			return true
-		}
-
-		const deltaTime = currentTime - lastUpdate
+	const update = (currentTime, deltaTime) => {
 		const scale = deltaTime * PRODUCTION_BASE_FACTOR
-		lastUpdate = currentTime
 
 		let productionAmount = scale * production.amount
 		if (consumption.good) {

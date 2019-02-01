@@ -1,7 +1,6 @@
 import ColonyView from 'view/colony'
 import Record from 'util/record'
 import Resources from 'render/resources'
-import Util from 'util/util'
 import Foreground from 'render/foreground'
 import Click from 'input/click'
 import Colony from 'entity/colony'
@@ -14,7 +13,7 @@ const TILE_SIZE = 64
 const MAP_COLONY_FRAME_ID = 53 
 
 
-const createSprite = colony => Resources.sprite('map', { frame: MAP_COLONY_FRAME_ID })
+const createSprite = () => Resources.sprite('map', { frame: MAP_COLONY_FRAME_ID })
 const create = colony => {
 	const  unsubscribe = Tile.listen.discovered(MapEntity.tile(colony.mapCoordinates), discovered => {
 		if (discovered) {		

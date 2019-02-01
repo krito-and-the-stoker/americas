@@ -9,7 +9,7 @@ const logDownloadProgress = () => {
 	Message.log(`Downloading files (${counter}/${numberOfAssets()})...`)		
 }
 
-const queueTextureVerbose = async path => new Promise((resolve, reject) => {
+const queueTextureVerbose = async path => new Promise(resolve => {
 	PIXI.loader.onComplete.add(() => resolve(PIXI.loader.resources[path].texture))
 	PIXI.loader.add(path)
 })
@@ -75,8 +75,8 @@ const loadAll = () => {
 					key,
 					texture
 				})).then(({ key, texture }) => {
-			textures[key] = texture
-		})))
+					textures[key] = texture
+				})))
 
 		PIXI.loader.onLoad.add(logDownloadProgress)
 		requestAnimationFrame(() => {

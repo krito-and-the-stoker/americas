@@ -7,22 +7,16 @@ const MARGIN = 2
 const renderTextureSize = {
 	x: 2048,
 	y: 2048
-};
+}
 
 const textures = {}
 let numFrames = 0
-let numStencils = 0
 const renderTextures = []
-const baseTextures = []
 const tiles = {
 	x: Math.floor(renderTextureSize.x / (TILE_SIZE + 2*MARGIN)),
 	y: Math.floor(renderTextureSize.y / (TILE_SIZE + 2*MARGIN))
-};
+}
 const textureSize = tiles.x * tiles.y
-const rescale = {
-	x: (TILE_SIZE + 2.0*MARGIN) / TILE_SIZE,
-	y: (TILE_SIZE + 2.0*MARGIN) / TILE_SIZE,
-};
 
 const addRenderTexture = () => {
 	// if (baseTextures.length > 0) {
@@ -50,8 +44,8 @@ const getXYFromFrame = frame => ({
 	y : Math.floor(frame / tiles.y) * (TILE_SIZE + 2*MARGIN) + MARGIN
 })
 const getRectFromFrame = frame => {
-	const { x, y } = getXYFromFrame(frame);
-	return new PIXI.Rectangle(x, y, TILE_SIZE, TILE_SIZE);
+	const { x, y } = getXYFromFrame(frame)
+	return new PIXI.Rectangle(x, y, TILE_SIZE, TILE_SIZE)
 }
 
 const addStencil = indices => {
@@ -64,7 +58,6 @@ const addStencil = indices => {
 	textures[hash(indices)] = {
 		used: 0
 	}
-	numStencils++
 
 	return true
 }
@@ -96,9 +89,9 @@ const renderStencil = (createSprites, indices) => {
 	group.position.set(nextFrame.x, nextFrame.y)
 	renderer.render(group, currentRenderTexture())
 
-	getStencil(indices).texture = new PIXI.Texture(currentRenderTexture(), getRectFromFrame(currentFrame()), getRectFromFrame(currentFrame()));
+	getStencil(indices).texture = new PIXI.Texture(currentRenderTexture(), getRectFromFrame(currentFrame()), getRectFromFrame(currentFrame()))
 	getStencil(indices).textureIndex = currentRenderTextureIndex()
-	numFrames++;
+	numFrames++
 }
 
 const createCachedSprite = (createSprites, indices) => {

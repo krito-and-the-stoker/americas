@@ -1,6 +1,4 @@
 import MapEntity from 'entity/map'
-import Message from 'view/ui/message'
-import Background from 'render/background'
 import Unit from 'entity/unit'
 import Treasure from 'entity/treasure'
 import Europe from 'entity/europe'

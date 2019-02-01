@@ -2,7 +2,6 @@ import Util from 'util/util'
 import Record from 'util/record'
 
 import Dialog from 'view/ui/dialog'
-import Message from 'view/ui/message'
 
 import Storage from 'entity/storage'
 import Settlement from 'entity/settlement'
@@ -34,7 +33,7 @@ const create = (colony, settlement, unit) => {
 
 		if (settlement.tension < 20) {
 			Dialog.create({
-				text: `Although we are glad to see your colonies prosper, we are concerned with your overuse of land.`,
+				text: 'Although we are glad to see your colonies prosper, we are concerned with your overuse of land.',
 				type: 'natives',
 				coords: colony.mapCoordinates,
 				options: [{
@@ -48,7 +47,7 @@ const create = (colony, settlement, unit) => {
 		}
 
 		Dialog.create({
-			text: `We cannot tolerate your careless exploitation of our ancestors land any longer.`,
+			text: 'We cannot tolerate your careless exploitation of our ancestors land any longer.',
 			type: 'natives',
 			coords: colony.mapCoordinates,
 			options: [{

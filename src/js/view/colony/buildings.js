@@ -1,6 +1,4 @@
 import * as PIXI from 'pixi.js'
-import Goods from 'data/goods.json'
-import Buildings from 'data/buildings.json'
 import Building from 'entity/building'
 import Production from 'entity/production'
 import Resources from 'render/resources'
@@ -66,7 +64,7 @@ const createBuilding = (colony, building) => {
 		return false
 	})
 
-	const createColonistView = (productionBonus, colonist, work, expert) => {
+	const createColonistView = (productionBonus, colonist, work) => {
 		if (work && work.building === name) {
 			const colonistSprite = ColonistView.create(colonist)
 			colonistSprite.x = work.position * 128 / 3
@@ -96,7 +94,7 @@ const createBuilding = (colony, building) => {
 	const unsubscribeColonists = Colony.listen.productionBonus(colony, productionBonus => 
 		Colony.listen.colonists(colony, colonists => Util.mergeFunctions(colonists.map(colonist =>
 			Colonist.listen.work(colonist, work =>
-				Colonist.listen.expert(colonist, expert => createColonistView(productionBonus, colonist, work, expert)))))))
+				Colonist.listen.expert(colonist, () => createColonistView(productionBonus, colonist, work)))))))
 
 
 	const unsubscribe = () => {

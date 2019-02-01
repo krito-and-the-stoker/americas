@@ -7,16 +7,8 @@ const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
 
 const create = colony => {
-	let lastUpdate = null
-	const update = currentTime => {
-		if (!lastUpdate) {
-			lastUpdate = currentTime
-			return true
-		}
-
-		const deltaTime = currentTime - lastUpdate
+	const update = (currentTime, deltaTime) => {
 		const scale = deltaTime * PRODUCTION_BASE_FACTOR
-		lastUpdate = currentTime
 
 		Europe.update.crosses(scale)
 		Storage.update(colony.productionRecord, { good: 'crosses', amount: scale })

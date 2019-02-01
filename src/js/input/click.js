@@ -31,7 +31,7 @@ const on = (target, fn) => {
 		target
 			.off('mousedown', handler)
 			.off('touchstart', handler)
-		}
+	}
 
 	return unsubscribe
 }

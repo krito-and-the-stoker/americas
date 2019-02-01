@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import { loadTexture, range, rectangle } from 'util/util'
+import Util from 'util/util'
 import Layer from './layer'
 import RenderView from './view'
 import TileCache from './tileCache'
@@ -7,7 +7,6 @@ import Resources from './resources'
 import MapView from 'render/map'
 import MapEntity from 'entity/map'
 import Message from 'view/ui/message'
-import Util from 'util/util'
 import Tile from 'entity/tile'
 
 const MAX_TILES = 30000
@@ -202,10 +201,10 @@ const doRenderWork = () => {
 		const offsetX = -Math.ceil(undiscovered.tilePosition.x / 64 / scale)
 		const offsetY = -Math.ceil(undiscovered.tilePosition.y / 64 / scale)
 
-		const xIndices = range(numTilesX)
+		const xIndices = Util.range(numTilesX)
 			.map(x => x + offsetX)
 			.filter(x => x >= 0 && x < numTiles.x)
-		const yIndices = range(numTilesY)
+		const yIndices = Util.range(numTilesY)
 			.map(y => y + offsetY)
 			.filter(y => y >= 0 && y < numTiles.y)
 

@@ -4,7 +4,7 @@ import UnitView from 'view/unit'
 import Market from 'entity/market'
 import Text from 'render/text'
 
-const create = originalDimensions => {
+const create = () => {
 	const container = new PIXI.Container()
 	const text = Text.create()
 	text.x = 20

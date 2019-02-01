@@ -1,4 +1,3 @@
-import Unit from 'entity/unit'
 import Storage from 'entity/storage'
 
 export default (colony, unit, pack) => {	

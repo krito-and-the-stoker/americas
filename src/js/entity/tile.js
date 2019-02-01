@@ -1,6 +1,5 @@
-import Terrain from 'data/terrain.json';
+import Terrain from 'data/terrain.json'
 import MovementCosts from 'data/movementCosts'
-import RenderView from 'render/view'
 import MapEntity from 'entity/map'
 import Yield from 'data/yield'
 import Record from 'util/record'
@@ -10,7 +9,7 @@ import Binding from 'util/binding'
 import Owner from 'entity/owner'
 
 const create = ({ id, layers, index }) => {
-	const [name, terrain] = Object.entries(Terrain).find(([name, terrain]) => terrain.id === id)
+	const [name, terrain] = Object.entries(Terrain).find(([, terrain]) => terrain.id === id)
 	if (!terrain) {
 		console.warn(`No terrain type found for id ${id}.`)
 		throw new Error(`No terrain type found for id ${id}.`)
@@ -139,10 +138,10 @@ const load = (data, index) => {
 		})
 		.reduce((tile, value, index) => ({ ...tile, [keys[index]]: value }), {})
 	tile.index = index
-	const [name, terrain] = Object.entries(Terrain).find(([name, terrain]) => terrain.id === tile.id)
+	const [name, terrain] = Object.entries(Terrain).find(([, terrain]) => terrain.id === tile.id)
 	if (!terrain) {
-		console.warn(`No terrain type found for id ${id}.`)
-		throw new Error(`No terrain type found for id ${id}.`)
+		console.warn(`No terrain type found for id ${tile.id}.`)
+		throw new Error(`No terrain type found for id ${tile.id}.`)
 	}
 	tile.name = name
 	tile.terrain = terrain

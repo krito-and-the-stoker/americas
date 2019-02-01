@@ -1,9 +1,7 @@
-import RenderView from 'render/view'
 import Foreground from 'render/foreground'
 import MapView from 'view/map'
 import UnitView from 'view/map/unit'
 import Time from 'timeline/time'
-import Move from 'command/move'
 import Found from 'command/found'
 import Europe from 'view/europe'
 import Record from 'util/record'
@@ -17,9 +15,6 @@ import Treasure from 'entity/treasure'
 import Unit from 'entity/unit'
 import Help from 'view/help'
 import Owner from 'entity/owner'
-
-const ZOOM_FACTOR = 1.25
-const ZOOM_TIME = 350
 
 let controlAllPlayers = false
 const handleKeydown = (e) => {

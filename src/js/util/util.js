@@ -1,10 +1,9 @@
 import * as PIXI from 'pixi.js'
 
-import Message from 'view/ui/message'
 
 const inBattleDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
 
-const mergeFunctions = funcArray => funcArray.filter(fn => fn).reduce((all, fn) => () => { all(); fn(); }, () => {})
+const mergeFunctions = funcArray => funcArray.filter(fn => fn).reduce((all, fn) => () => { all(); fn() }, () => {})
 
 const makeObject = arr => arr.reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
 
@@ -28,7 +27,7 @@ const removeDuplicates = array => array
 	}, [])
 
 
-export const range = n => [...Array(n).keys()]
+const range = n => [...Array(n).keys()]
 
 const quantizedRadius = (coords, radius) => range(2 * radius)
 	.map(x => Math.round(x + coords.x - radius))
@@ -39,7 +38,7 @@ const quantizedRadius = (coords, radius) => range(2 * radius)
 	.filter(({ x, y }) => (x - coords.x) * (x - coords.x) + (y - coords.y) * (y - coords.y) <= radius*radius)
 
 
-export const rectangle = (index) => {
+const rectangle = (index) => {
 	const width = 64
 	const height = 64
 	const tilesPerRow = Math.floor(1024 / width)
@@ -68,7 +67,6 @@ export default {
 	rectangle,
 	getUid,
 	mergeFunctions,
-	makeObject,
 	removeDuplicates,
 	unique,
 	distance,

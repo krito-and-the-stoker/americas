@@ -54,8 +54,8 @@ const match = transport => {
 					PathFinder.distance(transport.mapCoordinates, supply.colony.mapCoordinates, transport, TRADE_ROUTE_DISTANCE_CAP*transport.properties.speed + 1) +
 					PathFinder.distance(supply.colony.mapCoordinates, demand.colony.mapCoordinates, transport, TRADE_ROUTE_DISTANCE_CAP*transport.properties.speed + 1)
 			}))
-		.filter(route => route.distance < TRADE_ROUTE_DISTANCE_CAP*transport.properties.speed)
-		.filter(route => route.amount >= 5)).flat()
+			.filter(route => route.distance < TRADE_ROUTE_DISTANCE_CAP*transport.properties.speed)
+			.filter(route => route.amount >= 5)).flat()
 	// console.log('demands', demands)
 	// console.log('supply', supply)
 	// console.log('routes', routes)
@@ -63,11 +63,6 @@ const match = transport => {
 	const route = routes.reduce((best, route) => rate(best) > rate(route) ? best : route, { importance: 0, distance: 0 })
 	// console.log('best', route)
 	return route.importance > 0 ? route : null
-}
-
-let reserved = []
-const reserve = (colony, pack) => {
-	reserved.push({ colony, ...pack })
 }
 
 

@@ -10,14 +10,8 @@ const log2 = Math.log(2)
 const consumption = (base, year) => base * Math.exp(log2 * (year - 1492) / 50)
 
 const create = market => {
-	let lastUpdate = null
-	const update = currentTime => {
-		if (!lastUpdate) {
-			lastUpdate = currentTime
-			return true
-		}
-		const scale = PRODUCTION_BASE_FACTOR * (currentTime - lastUpdate)
-		lastUpdate = currentTime
+	const update = (currentTime, deltaTime) => {
+		const scale = PRODUCTION_BASE_FACTOR * deltaTime
 		
 		if (scale > 0) {
 			Object.keys(market).forEach(good => {

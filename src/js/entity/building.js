@@ -1,5 +1,6 @@
+import * as PIXI from 'pixi.js'
+
 import Buildings from 'data/buildings.json'
-import Goods from 'data/goods.json'
 import Util from 'util/util'
 import Colony from 'entity/colony'
 import Unit from 'entity/unit'
@@ -29,7 +30,9 @@ const create = () => {
 			y,
 			width: (x >= 4 && x <= 6) ? 2 : 1,
 			taken: false,
-		}))).flat().filter(({ x, y}) =>
+		})))
+		.flat()
+		.filter(({ x, y}) =>
 			x >= 3 &&
 			y >= 1 &&
 			x <= 8 &&

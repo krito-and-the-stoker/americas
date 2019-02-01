@@ -1,3 +1,5 @@
+import * as PIXI from 'pixi.js'
+
 import Units from 'data/units.json'
 import Util from 'util/util'
 import Resources from 'render/resources'

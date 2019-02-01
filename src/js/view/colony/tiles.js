@@ -1,3 +1,5 @@
+import * as PIXI from 'pixi.js'
+
 import Background from 'render/background'
 import Colonist from 'entity/colonist'
 import Resources from 'render/resources'
@@ -98,7 +100,7 @@ const create = (colony, originalDimensions) => {
 		})
 	}))
 
-	const createColonistView = (productionBonus, colonist, work, expert) => {
+	const createColonistView = (productionBonus, colonist, work) => {
 		const { tile, position } = tilesAndPositions.find(({ tile }) => work && work.tile === tile) || {}
 		
 		if (position) {
@@ -130,7 +132,7 @@ const create = (colony, originalDimensions) => {
 		Colony.listen.colonists(colony, colonists => 
 			Util.mergeFunctions(colonists.map(colonist => 
 				Colonist.listen.work(colonist, work =>
-					Colonist.listen.expert(colonist, expert => createColonistView(productionBonus, colonist, work, expert)))))))
+					Colonist.listen.expert(colonist, () => createColonistView(productionBonus, colonist, work)))))))
 
 	
 	const unsubscribeCenter = Tile.listen.tile(center, center => {	

@@ -1,7 +1,5 @@
 import MapEntity from 'entity/map'
 import Time from 'timeline/time'
-import Europe from 'entity/europe'
-import UnitView from 'view/unit'
 import Record from 'util/record'
 import Unit from 'entity/unit'
 import Message from 'view/ui/message'

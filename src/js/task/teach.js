@@ -32,7 +32,6 @@ const willLearn = {
 }
 
 const create = teacher => {
-	let lastUpdate = null
 	const update = (currentTime, deltaTime) => {
 		const scale = deltaTime * TEACH_BASE_FACTOR
 

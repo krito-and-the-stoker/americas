@@ -1,3 +1,5 @@
+import * as PIXI from 'pixi.js'
+
 import Foreground from 'render/foreground'
 import RenderView from 'render/view'
 import Text from 'render/text'
@@ -190,7 +192,7 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap }) 
 		textView.x = padding + (config.width * dimensions.x - textView.width) / 2
 		currentHeight += textView.height + emptyLine
 
-		optionViews.forEach((option, index) => {
+		optionViews.forEach(option => {
 			if (option.disabled) {
 				option.text.style = {
 					...textView.style,

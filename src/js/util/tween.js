@@ -3,7 +3,7 @@ import TWEEN from '@tweenjs/tween.js'
 const initialize = () => {
 	const updateTween = time => {
 		requestAnimationFrame(updateTween)
-    TWEEN.update(time);		
+		TWEEN.update(time)
 	}
 
 	requestAnimationFrame(updateTween)
@@ -12,7 +12,7 @@ const initialize = () => {
 const fadeIn = (sprite, time) => {
 	sprite.alpha = 0
 	return new Promise(resolve => {
-		const tween = new TWEEN.Tween({ alpha: 0 })
+		new TWEEN.Tween({ alpha: 0 })
 			.to({ alpha: 1 }, time)
 			.easing(TWEEN.Easing.Quadratic.In)
 			.onUpdate(({ alpha }) => {
@@ -29,7 +29,7 @@ const fadeIn = (sprite, time) => {
 
 const fadeOut = (sprite, time) => new Promise(resolve => {	
 	sprite.alpha = 1
-	const tween = new TWEEN.Tween({ alpha: 1 })
+	new TWEEN.Tween({ alpha: 1 })
 		.to({ alpha: 0 }, time)
 		.easing(TWEEN.Easing.Quadratic.Out)
 		.onUpdate(({ alpha }) => sprite.alpha = alpha)
@@ -47,7 +47,7 @@ const moveTo = (sprite, to, time) => new Promise(resolve => {
 		y: sprite.y
 	}
 
-	const tween = new TWEEN.Tween(from)
+	new TWEEN.Tween(from)
 		.to(to, time)
 		.easing(TWEEN.Easing.Quadratic.InOut)
 		.onUpdate(({ x, y }) => {
@@ -72,7 +72,7 @@ const moveFrom = (sprite, from, time) => new Promise(resolve => {
 	sprite.x = from.x
 	sprite.y = from.y
 
-	const tween = new TWEEN.Tween(from)
+	new TWEEN.Tween(from)
 		.to(to, time)
 		.easing(TWEEN.Easing.Quadratic.InOut)
 		.onUpdate(({ x, y }) => {
@@ -90,8 +90,8 @@ const moveFrom = (sprite, from, time) => new Promise(resolve => {
 
 const scaleTo = (sprite, scale, time) => new Promise(resolve => {
 	const initialScale = sprite.scale.x
-	const tween = new TWEEN.Tween({ scale: initialScale })
-		.to({ scale })
+	new TWEEN.Tween({ scale: initialScale })
+		.to({ scale }, time)
 		.easing(TWEEN.Easing.Quadratic.InOut)
 		.onUpdate(({ scale }) => sprite.scale.set(scale))
 		.onStop(() => sprite.scale.set(scale))

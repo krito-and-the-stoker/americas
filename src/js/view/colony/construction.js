@@ -43,13 +43,12 @@ const create = (colony, originalDimensions) => {
 
 	const getAmount = construction => Math.round(construction.amount)
 	const getTarget = construction => construction.target
-	const updateConstructionPanel = amount => {
+	const updateConstructionPanel = () => {
 		const construction = colony.construction
 		const percentage = Math.min(100, Math.floor(100 * construction.amount / construction.cost.construction))
 		buildingText.text = `${construction.name} (${percentage}%)`
 		const rows = 3
 		const goodsPerRow = Math.ceil(construction.cost.construction / rows)
-		const goodsLastRow = construction.cost.construction - goodsPerRow * (rows - 1)
 		const sprites = Util.range(rows).map(row => {
 			const amount = Math.min(Math.floor(Math.max(0, construction.amount - row * goodsPerRow)), goodsPerRow)
 			const view = ProductionView.create('construction', amount, 390)

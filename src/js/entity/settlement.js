@@ -19,18 +19,16 @@ import Attack from 'command/attack'
 import GrowTension from 'task/growTension'
 import GrowInterest from 'task/growInterest'
 
-import ProduceUnit from 'task/produceUnit'
-
 const experts = {
-	farmer: "Expert Farmer",
-	sugarplanter: "Expert Sugarplanter",
-	tobaccoplanter: "Expert Tobaccoplanter",
-	cottonplanter: "Expert Cottonplanter",
-	furtrapper: "Expert Furtrapper",
-	lumberjack: "Expert Lumberjack",
-	oreminer: "Expert Oreminer",
-	silverminer: "Expert Silverminer",
-	fisher: "Expert Fisher",
+	farmer: 'Expert Farmer',
+	sugarplanter: 'Expert Sugarplanter',
+	tobaccoplanter: 'Expert Tobaccoplanter',
+	cottonplanter: 'Expert Cottonplanter',
+	furtrapper: 'Expert Furtrapper',
+	lumberjack: 'Expert Lumberjack',
+	oreminer: 'Expert Oreminer',
+	silverminer: 'Expert Silverminer',
+	fisher: 'Expert Fisher',
 }
 
 const INTEREST_THRESHOLD = 2.5
@@ -194,7 +192,7 @@ const dialog = (settlement, unit, answer) => {
 			if (!unit.expert || unit.expert === 'servant') {
 				if (settlement.hasLearned) {
 					return {
-						text: `We have already shared our knowledge with you. Now go your way and spread it amongst your people.`,
+						text: 'We have already shared our knowledge with you. Now go your way and spread it amongst your people.',
 						type: 'natives',
 						options: [{
 							text: 'Leave'

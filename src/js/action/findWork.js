@@ -12,7 +12,7 @@ export default colonist => {
 			return production > winner.production ? {
 				production,
 				tile: neighbor
-			 } : winner
+			} : winner
 		},
 		{ production: -1 })
 	if (winner.tile) {

@@ -9,7 +9,6 @@ import MoveTo from 'command/moveTo'
 import Commander from 'command/commander'
 import Europe from 'command/europe'
 
-import Click from 'input/click'
 import Drag from 'input/drag'
 import Wheel from 'input/wheel'
 import Secondary from 'input/secondary'
@@ -24,7 +23,6 @@ import SettlementView from 'view/map/settlement'
 
 import Icon from 'view/ui/icon'
 import Events from 'view/ui/events'
-import Message from 'view/ui/message'
 import Notification from 'view/ui/notification'
 import Dialog from 'view/ui/dialog'
 
@@ -127,14 +125,14 @@ const zoomBy = (relativeScale, center, scaleTime) => {
 		zoom(targetScale, center, scaleTime)
 	}
 }
-const moveBy = (relativeCoords, moveTime) => {
-	const currentCoords = RenderView.get().coords
-	const targetCoords = {
-		x: currentCoords.x + relativeCoords.x,
-		y: currentCoords.y + relativeCoords.y
-	}
-	moveMap(targetCoords, moveTime)
-}
+// const moveBy = (relativeCoords, moveTime) => {
+// 	const currentCoords = RenderView.get().coords
+// 	const targetCoords = {
+// 		x: currentCoords.x + relativeCoords.x,
+// 		y: currentCoords.y + relativeCoords.y
+// 	}
+// 	moveMap(targetCoords, moveTime)
+// }
 
 const initialize = () => {
 	ColonyView.initialize()
@@ -157,7 +155,6 @@ const initialize = () => {
 	}
 	const move = coords => {
 		if (initialCoords) {		
-			const from = RenderView.get().coords
 			const target = {
 				x: initialCoords.x + coords.x,
 				y: initialCoords.y + coords.y
@@ -169,7 +166,7 @@ const initialize = () => {
 			}
 		}
 	}
-	const end = coords => {
+	const end = () => {
 		stopRollingOut = () => {}
 		initialCoords = null
 	}

@@ -1,6 +1,7 @@
+import * as PIXI from 'pixi.js'
+
 import Terrain from 'data/terrain'
 import Goods from 'data/goods'
-import Buildings from 'data/buildings'
 import Units from 'data/units'
 
 import Tile from 'entity/tile'
@@ -16,7 +17,6 @@ import RenderView from 'render/view'
 import Background from 'render/background'
 import Text from 'render/text'
 
-import Util from 'util/util'
 import Tween from 'util/tween'
 import Record from 'util/record'
 
@@ -539,6 +539,7 @@ const createStorageFull = (colony, good) => {
 		action,
 		type: 'storageFull',
 		dismiss,
+		dialog
 	}	
 }
 
@@ -769,10 +770,10 @@ const create = params => {
 					Tween.scaleTo(notification.container, 1.5, 1500)
 					Tween.moveTo(notification.container, { x: (notifications.length-1) * (iconSize + iconMargin), y: 0 }, 1500)
 					Click.on(notification.container, () => {
-							notification.action()
-							remove(notification)
-						})
-						Secondary.on(notification.container, () => remove(notification))
+						notification.action()
+						remove(notification)
+					})
+					Secondary.on(notification.container, () => remove(notification))
 				}
 			}]
 		})
@@ -798,8 +799,6 @@ const initialize = () => {
 	Foreground.get().notifications.addChild(notificationsContainer)
 
 	RenderView.updateWhenResized(({ dimensions }) => {
-		const scale = Math.min(dimensions.x / originalDimensions.x, dimensions.y / originalDimensions.y)
-
 		notificationsContainer.x = dimensions.x / 2
 		notificationsContainer.y = dimensions.y - (iconSize + iconMargin)
 	})

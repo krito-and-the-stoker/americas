@@ -1,17 +1,9 @@
 import * as PIXI from 'pixi.js'
 
 import Foreground from 'render/foreground'
-import Background from 'render/background'
 import Resources from 'render/resources'
 import RenderView from 'render/view'
-import MapEntity from 'entity/map'
-import Util from 'util/util'
-import Tile from 'entity/tile'
-import ProductionView from 'view/production'
-import Colony from 'entity/colony'
 import Click from 'input/click'
-import UnitView from 'view/unit'
-import Events from 'view/ui/events'
 
 import ColonyBackground from './background'
 import ColonyTiles from './tiles'

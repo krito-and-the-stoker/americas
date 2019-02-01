@@ -7,7 +7,6 @@ import Message from 'view/ui/message'
 import Colony from 'entity/colony'
 import Unit from 'entity/unit'
 
-const UNDISCOVERED_COST = 5
 const CANNOT_MOVE_COST = 500
 const MIN_TERRAIN_COST = 0.33
 const graph = Graph.create()
@@ -171,31 +170,6 @@ const estimate = (from, to) => {
 	return MIN_TERRAIN_COST * tileDistance(from, to)
 }
 
-
-// const findReverse = (from, to, unit) => {
-// 	const domain = unit.domain
-// 	if(to.isNextToOrDiagonal(from)){
-// 		if(to.domain === domain)
-// 			return [to]
-// 		else
-// 			return []
-// 	}
-// 	else{
-// 		let target = to
-// 		if(unit.domain !== to.domain && !to.colony){
-// 			target = findDomainChange(to, unit).pop()
-// 		}
-// 		let path = findPath(from, target, unit)
-// 		if(path){
-// 			path.reverse()
-// 			path.pop() //remove last element (this is the current position)
-
-// 			return path
-// 		}
-
-// 		return []
-// 	}
-// }
 
 
 export default {

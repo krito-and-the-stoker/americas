@@ -1,5 +1,4 @@
 import LZString from 'lz-string'
-import MainLoop from 'mainloop.js'
 import FileSaver from 'file-saver'
 
 import Util from 'util/util'
@@ -19,7 +18,6 @@ import Owner from 'entity/owner'
 
 import MapView from 'render/map'
 import Foreground from 'render/foreground'
-import Background from 'render/background'
 import RenderView from 'render/view'
 import UnitView from 'view/map/unit'
 import Time from 'timeline/time'
@@ -247,7 +245,7 @@ const save = () => {
 			Message.log(`Entities saved to local storage using ${lastSave.length} bytes.`)
 		}
 	} else {
-					Message.log(`Entities saved in memory using ${lastSave.length} bytes.`)
+		Message.log(`Entities saved in memory using ${lastSave.length} bytes.`)
 	}
 	Events.trigger('save')
 }
@@ -328,7 +326,7 @@ const load = (src = null) => {
 	MapEntity.prepare()
 	snapshot.tiles.map(resolveLookup).forEach(reviveTile)
 	MapEntity.load()
-	const mapView = new MapView()
+	new MapView()
 	snapshot.entities.forEach(revive)
 	Time.load(snapshot.time)
 	Treasure.load(snapshot.treasure)
@@ -346,8 +344,8 @@ const load = (src = null) => {
 
 const download = () => {
 	save()
-	var blob = new Blob([lastSave], {type: "application/json;charset=utf-8"})
-	FileSaver.saveAs(blob, "americas-save-game.json")
+	var blob = new Blob([lastSave], { type: 'application/json;charset=utf-8' })
+	FileSaver.saveAs(blob, 'americas-save-game.json')
 }
 
 const upload = () => {
@@ -357,23 +355,23 @@ const upload = () => {
 	input.addEventListener('change', () => {	
 		const file = input.files[0]
 		if (file) {
-	    var reader = new FileReader();
-	    reader.readAsText(file, "UTF-8")
-	    reader.onload = evt => {
-	      load(evt.target.result)
-	      document.body.removeChild(input)
-	    }
-	    reader.onerror = function (evt) {
-	      console.log('oh no, something went wrong :/', evt)
-	      document.body.removeChild(input)
-	    }
+			var reader = new FileReader()
+			reader.readAsText(file, 'UTF-8')
+			reader.onload = evt => {
+				load(evt.target.result)
+				document.body.removeChild(input)
+			}
+			reader.onerror = function (evt) {
+				console.log('oh no, something went wrong :/', evt)
+				document.body.removeChild(input)
+			}
 		}	
 	})
 	document.body.appendChild(input)
 
-	const evt = document.createEvent("MouseEvents")
-  evt.initEvent("click", true, false)
-  input.dispatchEvent(evt)
+	const evt = document.createEvent('MouseEvents')
+	evt.initEvent('click', true, false)
+	input.dispatchEvent(evt)
 
 }
 

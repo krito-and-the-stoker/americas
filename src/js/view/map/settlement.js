@@ -1,8 +1,5 @@
-import * as PIXI from 'pixi.js'
-
 import Goods from 'data/goods'
 
-import Util from 'util/util'
 import Record from 'util/record'
 
 import Click from 'input/click'
@@ -14,10 +11,8 @@ import Settlement from 'entity/settlement'
 import Resources from 'render/resources'
 import Foreground from 'render/foreground'
 
-import Message from 'view/ui/message'
 
 const TILE_SIZE = 64
-const MAP_SETTLEMENT_FRAME_ID = 59
 
 const create = settlement => {
 	const tile = MapEntity.tile(settlement.mapCoordinates)

@@ -35,7 +35,7 @@ const split = storage => goods(storage)
 		Util.range(Math.ceil(amount / 100))
 			.map(i => Math.min(100*(i+1), amount - 100*i))
 			.map(amount => ({ good, amount }))
-		).flat()
+	).flat()
 
 const transfer = (src, dest, pack = {}) => {
 	const move = ({ good, amount }) => {
