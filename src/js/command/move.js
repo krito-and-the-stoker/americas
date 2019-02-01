@@ -3,8 +3,8 @@ import Tile from 'entity/tile'
 import Record from 'util/record'
 import Time from 'timeline/time'
 import Unit from 'entity/unit'
-import EnterColony from 'action/enterColony'
-import LeaveColony from 'action/leaveColony'
+import EnterColony from 'interaction/enterColony'
+import LeaveColony from 'interaction/leaveColony'
 
 
 const inMoveDistance = (coords1, coords2) => Math.abs(coords1.x - coords2.x) <= 1 && Math.abs(coords1.y - coords2.y) <= 1

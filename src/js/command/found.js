@@ -2,9 +2,9 @@ import Colony from 'entity/colony'
 import Record from 'util/record'
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
-import BecomeColonist from 'action/becomeColonist'
-import FindWork from 'action/findWork'
-import EnterColony from 'action/enterColony'
+import BecomeColonist from 'interaction/becomeColonist'
+import FindWork from 'interaction/findWork'
+import EnterColony from 'interaction/enterColony'
 import Unit from 'entity/unit'
 
 const create = unit => {

@@ -3,7 +3,7 @@ import Time from 'timeline/time'
 import Record from 'util/record'
 import Unit from 'entity/unit'
 import Message from 'view/ui/message'
-import EnterEurope from 'action/enterEurope'
+import EnterEurope from 'interaction/enterEurope'
 import Notification from 'view/ui/notification'
 
 

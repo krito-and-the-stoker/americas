@@ -15,8 +15,8 @@ import Road from 'command/road'
 import LearnFromNatives from 'command/learnFromNatives'
 import CommunicateTension from 'command/communicateTension'
 
-import InvestigateRumors from 'action/investigateRumors'
-import EnterSettlement from 'action/enterSettlement'
+import InvestigateRumors from 'interaction/investigateRumors'
+import EnterSettlement from 'interaction/enterSettlement'
 
 import Time from 'timeline/time'
 

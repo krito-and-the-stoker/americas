@@ -7,11 +7,11 @@ import GoodsView from 'view/goods'
 import Util from 'util/util'
 import Storage from 'entity/storage'
 
-import BuyFromEurope from 'action/buyFromEurope'
-import LoadFromColonyToShip from 'action/loadFromColonyToShip'
-import LoadUnitFromShipToShip from 'action/loadUnitFromShipToShip'
-import LoadBetweenShips from 'action/loadBetweenShips'
-import LoadUnitToShip from 'action/loadUnitToShip'
+import BuyFromEurope from 'interaction/buyFromEurope'
+import LoadFromColonyToShip from 'interaction/loadFromColonyToShip'
+import LoadUnitFromShipToShip from 'interaction/loadUnitFromShipToShip'
+import LoadBetweenShips from 'interaction/loadBetweenShips'
+import LoadUnitToShip from 'interaction/loadUnitToShip'
 
 const create = unit => {
 	const container = new PIXI.Container()

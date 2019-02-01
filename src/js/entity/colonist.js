@@ -7,7 +7,7 @@ import Record from 'util/record'
 import Binding from 'util/binding'
 import Util from 'util/util'
 import Unit from 'entity/unit'
-import UnjoinColony from 'action/unjoinColony'
+import UnjoinColony from 'interaction/unjoinColony'
 
 
 const beginFieldWork = (colonist, tile, good) => {

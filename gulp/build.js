@@ -34,7 +34,7 @@ const config = () => {
 	//   }))
 	// }
 
-	const directories = ['action', 'ai', 'command', 'data', 'entity', 'input', 'render', 'task', 'timeline', 'util', 'view']
+	const directories = ['ai', 'command', 'data', 'entity', 'input', 'interaction', 'render', 'task', 'timeline', 'util', 'view']
 	const aliases = directories.map(dir => ({
 		[dir]: path.resolve(__dirname, `../src/js/${dir}`)
 	})).reduce((all, one) => ({ ...all, ...one }), {})

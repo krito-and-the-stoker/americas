@@ -16,10 +16,10 @@ import Member from 'util/member'
 import ColonyProduction from 'task/colonyProduction'
 import ProductionSummary from 'task/productionSummary'
 import Building from 'entity/building'
-import ShrinkFromStarvation from 'action/shrinkFromStarvation'
+import ShrinkFromStarvation from 'interaction/shrinkFromStarvation'
 import Message from 'view/ui/message'
-import UnjoinColony from 'action/unjoinColony'
-import LeaveColony from 'action/leaveColony'
+import UnjoinColony from 'interaction/unjoinColony'
+import LeaveColony from 'interaction/leaveColony'
 import Notification from 'view/ui/notification'
 
 

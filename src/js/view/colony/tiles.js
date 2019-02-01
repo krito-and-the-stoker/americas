@@ -12,9 +12,9 @@ import Context from 'view/ui/context'
 import Colony from 'entity/colony'
 import Commander from 'command/commander'
 import ColonistView from './colonist'
-import BecomeColonist from 'action/becomeColonist'
-import JoinColony from 'action/joinColony'
-import UnjoinColony from 'action/unjoinColony'
+import BecomeColonist from 'interaction/becomeColonist'
+import JoinColony from 'interaction/joinColony'
+import UnjoinColony from 'interaction/unjoinColony'
 
 
 const TILE_SIZE = 64

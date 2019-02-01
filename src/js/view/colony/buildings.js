@@ -10,8 +10,8 @@ import ProductionView from 'view/production'
 import Commander from 'command/commander'
 import ColonistView from 'view/colony/colonist'
 
-import JoinColony from 'action/joinColony'
-import BecomeColonist from 'action/becomeColonist'
+import JoinColony from 'interaction/joinColony'
+import BecomeColonist from 'interaction/becomeColonist'
 
 const TILE_SIZE = 64
 

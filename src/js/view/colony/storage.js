@@ -8,7 +8,7 @@ import GoodsView from 'view/goods'
 import Storage from 'entity/storage'
 import Click from 'input/click'
 
-import LoadFromShipToColony from 'action/loadFromShipToColony'
+import LoadFromShipToColony from 'interaction/loadFromShipToColony'
 
 const create = (colony, originalDimensions) => {
 	const container = new PIXI.Container()

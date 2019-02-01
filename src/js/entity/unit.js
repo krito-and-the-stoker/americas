@@ -7,13 +7,13 @@ import Time from 'timeline/time'
 import Storage from 'entity/storage'
 import Util from 'util/util'
 import Binding from 'util/binding'
-import EnterColony from 'action/enterColony'
-import LeaveColony from 'action/leaveColony'
-import EnterEurope from 'action/enterEurope'
+import EnterColony from 'interaction/enterColony'
+import LeaveColony from 'interaction/leaveColony'
+import EnterEurope from 'interaction/enterEurope'
 import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
 import Member from 'util/member'
-import Battle from 'action/battle'
+import Battle from 'interaction/battle'
 
 const RADIUS_GROWTH = 1.0 / 2500
 const create = (name, coords, owner) => {

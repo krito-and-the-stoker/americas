@@ -4,8 +4,8 @@ import Resources from 'render/resources'
 import Colony from 'entity/colony'
 import Click from 'input/click'
 import Drag from 'input/drag'
-import UnjoinColony from 'action/unjoinColony'
-import LoadUnitFromShipToColony from 'action/loadUnitFromShipToColony'
+import UnjoinColony from 'interaction/unjoinColony'
+import LoadUnitFromShipToColony from 'interaction/loadUnitFromShipToColony'
 
 const create = colony => {
 	const container = new PIXI.Container()

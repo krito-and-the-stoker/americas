@@ -12,8 +12,8 @@ import Unit from 'entity/unit'
 import Transport from 'view/transport'
 import Util from 'util/util'
 
-import EquipUnitFromShip from 'action/equipUnitFromShip'
-import EquipUnitFromColony from 'action/equipUnitFromColony'
+import EquipUnitFromShip from 'interaction/equipUnitFromShip'
+import EquipUnitFromColony from 'interaction/equipUnitFromColony'
 
 
 const create = (colony, closeScreen, originalDimensions) => {
