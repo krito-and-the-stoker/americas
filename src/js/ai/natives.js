@@ -18,7 +18,7 @@ const initialize = ai => {
 			Tile.listen.units(tile, units => {
 				units
 					.filter(unit => unit.owner.type === 'player')
-					.filter(unit => unit.domain === 'sea')
+					.filter(unit => unit.domain !== 'sea')
 					.forEach(unit =>
 						console.log('unit in range', unit))
 			}))
@@ -43,7 +43,9 @@ const load = ai => {
 	ai.settlements = []
 	Record.dereferenceLazy(ai.owner, owner => { ai.owner = owner })
 	Record.entitiesLoaded(() => {
-		initialize(ai)
+		requestAnimationFrame(() => {
+			initialize(ai)
+		})
 	})
 
 	return ai
