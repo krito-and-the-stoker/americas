@@ -57,6 +57,7 @@ const update = deltaTime => {
 		Time.advance(deltaTime)
 	} catch (err) {
 		captureException(err)
+		throw err
 	}
 }
 
@@ -65,7 +66,25 @@ const draw = () => {
 		RenderView.onDraw()
 	} catch (err) {
 		captureException(err)
+		throw err
 	}
+}
+
+const initialize = () => {
+	let timeStamp = 0
+
+	const loop = t => {
+		const deltaTime = t - timeStamp
+		timeStamp = t
+		update(deltaTime)
+		draw()
+		requestAnimationFrame(loop)
+	}
+
+	requestAnimationFrame(t => {
+		timeStamp = t
+		requestAnimationFrame(loop)
+	})
 }
 
 // const americaSmall = () => {
@@ -97,7 +116,7 @@ const americaLarge = () => {
 		{ x: 176, y: 170 },
 		{ x: 209, y: 186 },
 	])
-	const pioneer = Unit.create('missionary', startCoordinates, Owner.player())
+	const pioneer = Unit.create('pioneer', startCoordinates, Owner.player())
 	const soldier = Unit.create('soldier', startCoordinates, Owner.player())
 	const caravel = Unit.create('caravel', startCoordinates, Owner.player())
 	Unit.loadUnit(caravel, pioneer)
@@ -200,9 +219,7 @@ const start = async () => {
 		})
 
 		await nextFrame()
-		MainLoop.setUpdate(update)
-		MainLoop.setDraw(draw)
-		MainLoop.start()
+		initialize()
 	} catch (err) {
 		captureException(err)
 	}
@@ -248,17 +265,15 @@ const load = async () => {
 			Keyboard.initialize()
 		}, 3000)
 
-		document.addEventListener('visibilitychange', () => {
-			if (document.hidden) {
-				MainLoop.stop()
-			} else {
-				MainLoop.start()
-			}
-		})
+		// document.addEventListener('visibilitychange', () => {
+		// 	if (document.hidden) {
+		// 		MainLoop.stop()
+		// 	} else {
+		// 		MainLoop.start()
+		// 	}
+		// })
 
-		MainLoop.setUpdate(update)
-		MainLoop.setDraw(draw)
-		MainLoop.start()
+		initialize()
 	} catch (err) {
 		captureException(err)
 	}

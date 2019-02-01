@@ -3,14 +3,6 @@ import Foreground from './foreground.js'
 import Record from 'util/record'
 import Binding from 'util/binding'
 
-setTimeout(() => {
-	Record.setGlobal('scale', 1)
-	Record.setGlobal('coords', {
-		x: 0,
-		y: 0,
-	})
-}, 0)
-
 const get = () => ({
 	scale: Record.getGlobal('scale'),
 	coords: Record.getGlobal('coords')
@@ -49,6 +41,12 @@ const updateScale = newScale => {
 }
 
 const initialize = () => {
+	Record.setGlobal('scale', 1)
+	Record.setGlobal('coords', {
+		x: 0,
+		y: 0,
+	})
+
 	Background.initialize()
 	Foreground.initialize()
 	// TODO: clean this up and use the binding system all the way through

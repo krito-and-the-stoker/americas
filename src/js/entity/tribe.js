@@ -15,7 +15,7 @@ const createFromMap = ({ tiles }) => {
 	tiles.forEach(tile => {
 		if (tile.zone) {
 			if (!tribes.map(tribe => tribe.id).includes(tile.zone)) {
-				tribes.push(create(tile.zone, Owner.create('native')))
+				tribes.push(create(tile.zone, Owner.create('natives')))
 			}
 		}
 	})

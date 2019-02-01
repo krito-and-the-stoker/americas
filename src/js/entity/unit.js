@@ -78,8 +78,6 @@ const initialize = unit => {
 	const decideBattle = (unit, hostile) => {
 		if (Util.inBattleDistance(unit, hostile)) {
 			Battle(unit, hostile)
-		} else {
-			// console.log(unit.mapCoordinates, Util.distance(unit.mapCoordinates, hostile.mapCoordinates), unit.radius)
 		}		
 	}
 
@@ -102,6 +100,9 @@ const initialize = unit => {
 
 			return true
 		}, priority: true }),
+
+		listen.tile(unit, tile =>
+			Tile.add.unit(tile, unit)),
 
 		listen.hostiles(unit, hostiles =>
 			Util.mergeFunctions(hostiles.map(hostile => [

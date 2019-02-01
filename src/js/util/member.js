@@ -9,6 +9,8 @@ const	add = (entity, key, member) => {
 		update(entity, key)
 		updateOne(entity, key, member)
 	}
+
+	return () => remove(entity, key, member)
 }
 
 const	remove = (entity, key, member) => {

@@ -1,12 +1,17 @@
 import Terrain from 'data/terrain.json'
 import MovementCosts from 'data/movementCosts'
-import MapEntity from 'entity/map'
 import Yield from 'data/yield'
-import Record from 'util/record'
 import Goods from 'data/goods'
-import Background from 'render/background'
+
+import Member from 'util/member'
+import Record from 'util/record'
 import Binding from 'util/binding'
+
 import Owner from 'entity/owner'
+import MapEntity from 'entity/map'
+
+import Background from 'render/background'
+
 
 const create = ({ id, layers, index }) => {
 	const [name, terrain] = Object.entries(Terrain).find(([, terrain]) => terrain.id === id)
@@ -33,6 +38,7 @@ const create = ({ id, layers, index }) => {
 		coast: false,
 		coastTerrain: null,
 		discoveredBy: [],
+		units: [],
 	}
 
 	if (tile.domain === 'sea') {
@@ -156,6 +162,8 @@ const load = (data, index) => {
 	tile.right = () => right(tile)
 	tile.down = () => down(tile)
 	tile.discovered = () => tile.currentlyVisible
+
+	tile.units = []
 
 	Record.dereferenceLazy(tile.harvestedyBy, entity => tile.harvestedBy = entity)
 	
@@ -348,6 +356,10 @@ const neighborString = (tile, other) => {
 	return result(tile.mapCoordinates, other.mapCoordinates)
 }
 
+const add = {
+	unit: (tile, unit) => Member.add(tile, 'units', unit)
+}
+
 const update = {
 	colony: (tile, colony) => Binding.update(tile, 'colony', colony),
 	settlement: (tile, settlement) => Binding.update(tile, 'settlement', settlement),
@@ -399,6 +411,7 @@ const listen = {
 	tile: (tile, fn) => Binding.listen(tile, null, fn),
 	settlement: (tile, fn) => Binding.listen(tile, 'settlement', fn),
 	colony: (tile, fn) => Binding.listen(tile, 'colony', fn),
+	units: (tile, fn) => Binding.listen(tile, 'units', fn),
 	discovered: (tile, fn) => Binding.listen(tile, 'currentlyDiscovered', fn)
 }
 
@@ -429,5 +442,6 @@ export default {
 	left,
 	right,
 	up,
-	down
+	down,
+	add
 }

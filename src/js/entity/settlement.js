@@ -19,6 +19,9 @@ import Attack from 'command/attack'
 import GrowTension from 'task/growTension'
 import GrowInterest from 'task/growInterest'
 
+import Natives from 'ai/natives'
+
+
 const experts = {
 	farmer: 'Expert Farmer',
 	sugarplanter: 'Expert Sugarplanter',
@@ -31,7 +34,7 @@ const experts = {
 	fisher: 'Expert Fisher',
 }
 
-const INTEREST_THRESHOLD = 2.5
+const INTEREST_THRESHOLD = 7.5
 const create = (tribe, coords, owner) => {
 	const settlement = {
 		mapCoordinates: coords,
@@ -59,6 +62,7 @@ const initialize = settlement => {
 	if (settlement.destroy) {
 		settlement.destroy()
 	}
+	Natives.add.settlement(settlement.owner.ai, settlement)
 
 	settlement.destroy = Util.mergeFunctions([
 		listen.interest(settlement, interest => {
@@ -230,7 +234,7 @@ const dialog = (settlement, unit, answer) => {
 				}
 			}
 			return {
-				text: `You are skilled and already know your way. We cannot teach you anything.`,
+				text: 'You are skilled and already know your way. We cannot teach you anything.',
 				type: 'natives',
 				options: [{
 					text: 'Leave'
