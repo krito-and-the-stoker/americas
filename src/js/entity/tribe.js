@@ -8,7 +8,7 @@ import Owner from 'entity/owner'
 
 const settlementDensity = 0.06
 let tribeNames = ['Sioux', 'Apache', 'Cherokee', 'Inca', 'Aztec', 'Navajo', 'Cheyenne', 'Ponca', 'Iroquis', 'Delaware', 'Comanche']
-let images = Util.range(10).map(i => `native${i}`)
+let images = Util.range(9).map(i => `native${i+1}`)
 const SPEED = 3
 
 const createFromMap = ({ tiles }) => {
