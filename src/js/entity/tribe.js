@@ -75,6 +75,7 @@ const create = (id, owner) => {
 const save = tribe => ({
 	id: tribe.id,
 	name: tribe.name,
+	image: tribe.image,
 	owner: Record.reference(tribe.owner)
 })
 
