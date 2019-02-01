@@ -75,7 +75,7 @@ const initialize = () => {
 	let timeStamp = 0
 
 	const loop = t => {
-		const deltaTime = t - timeStamp
+		const deltaTime = Math.min(t - timeStamp, 150)
 		timeStamp = t
 		update(deltaTime)
 		Binding.applyUpdate()
