@@ -18,6 +18,7 @@ const create = (colony, settlement, unit) => {
 			Dialog.create({
 				text: `As a sign of our friendship and peace take these ${amount} ${good} as a gift.`,
 				type: 'natives',
+				image: settlement.tribe.image,
 				coords: colony.mapCoordinates,
 				options: [{
 					text: 'Thank you!',
@@ -35,6 +36,7 @@ const create = (colony, settlement, unit) => {
 			Dialog.create({
 				text: 'Although we are glad to see your colonies prosper, we are concerned with your overuse of land.',
 				type: 'natives',
+				image: settlement.tribe.image,
 				coords: colony.mapCoordinates,
 				options: [{
 					text: 'Good to know.'
@@ -49,6 +51,7 @@ const create = (colony, settlement, unit) => {
 		Dialog.create({
 			text: 'We cannot tolerate your careless exploitation of our ancestors land any longer.',
 			type: 'natives',
+			image: settlement.tribe.image,
 			coords: colony.mapCoordinates,
 			options: [{
 				text: 'Is that so?'

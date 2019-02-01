@@ -41,11 +41,20 @@ const paths = {
 	marshal: 'images/dialog-characters/marshal.png',
 	religion: 'images/dialog-characters/religion.png',
 	scout: 'images/dialog-characters/scout.png',
-	native: 'images/dialog-characters/native-north-east-a.png',
 	status: 'images/status.png',
 	stockade: 'images/colony-screen/stockade.png',
 	fort: 'images/colony-screen/fort.png',
-	fortress: 'images/colony-screen/fortress.png'
+	fortress: 'images/colony-screen/fortress.png',
+	native1: 'images/characters-head/native-1.png',
+	native2: 'images/characters-head/native-2.png',
+	native3: 'images/characters-head/native-3.png',
+	native4: 'images/characters-head/native-4.png',
+	native5: 'images/characters-head/native-5.png',
+	native6: 'images/characters-head/native-6.png',
+	native7: 'images/characters-head/native-7.png',
+	native8: 'images/characters-head/native-8.png',
+	native9: 'images/characters-head/native-9.png',
+	native10: 'images/characters-head/native-10.png',
 }
 
 const textures = {}

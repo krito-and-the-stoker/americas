@@ -8,6 +8,7 @@ import Owner from 'entity/owner'
 
 const settlementDensity = 0.06
 let tribeNames = ['Sioux', 'Apache', 'Cherokee', 'Inca', 'Aztec', 'Navajo', 'Cheyenne', 'Ponca', 'Iroquis', 'Delaware', 'Comanche']
+let images = Util.range(10).map(i => `native${i}`)
 const SPEED = 3
 
 const createFromMap = ({ tiles }) => {
@@ -64,6 +65,8 @@ const create = (id, owner) => {
 
 	tribe.name = Util.choose(tribeNames)
 	tribeNames = tribeNames.filter(name => name !== tribe.name)
+	tribe.image = Util.choose(images)
+	images = images.filter(name => name !== tribe.image)
 
 	Record.add('tribe', tribe)
 	return tribe

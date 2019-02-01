@@ -123,13 +123,15 @@ const dialog = (settlement, unit, answer) => {
 		if (settlement.presentGiven || choice < 0.3) {		
 			return {
 				text: `${welcomeText} We are always pleased to welcome English travelers.`,
-				type: 'natives'
+				type: 'natives',
+				image: settlement.tribe.image,
 			}
 		}
 		if (choice < 0.8) {
 			return {
 				text: `${welcomeText} Come sit by the fire and we tell you about nearby lands.`,
 				type: 'natives',
+				image: settlement.tribe.image,
 				options: [{
 					default: true,
 					action: () => {
@@ -149,6 +151,7 @@ const dialog = (settlement, unit, answer) => {
 		return {
 			text: `${welcomeText} Have these valuable beads (${worth}) as our gift.`,
 			type: 'natives',
+			image: settlement.tribe.image,
 			options: [{
 				default: true,
 				action: () => {
@@ -162,6 +165,7 @@ const dialog = (settlement, unit, answer) => {
 		return {
 			text: 'We gladly welcome you in our settlement.',
 			type: 'natives',
+			image: settlement.tribe.image,
 			options: [{
 				default: true,
 				action: () => {
@@ -174,7 +178,8 @@ const dialog = (settlement, unit, answer) => {
 	if (answer === 'tribute') {
 		return {
 			text: 'We will not pay you tribute!',
-			type: 'natives'
+			type: 'natives',
+			image: settlement.tribe.image,
 		}
 	}
 	if (answer === 'enter') {	
@@ -198,6 +203,7 @@ const dialog = (settlement, unit, answer) => {
 					return {
 						text: 'We have already shared our knowledge with you. Now go your way and spread it amongst your people.',
 						type: 'natives',
+						image: settlement.tribe.image,
 						options: [{
 							text: 'Leave'
 						}]
@@ -207,6 +213,7 @@ const dialog = (settlement, unit, answer) => {
 				return {
 					text: `You seem unskilled and do not understand the way of the nature around you. We invite you to live among us and we will teach you to be a ${expert}.`,
 					type: 'natives',
+					image: settlement.tribe.image,
 					options: [{
 						text: 'Live among the natives',
 						answer: 'live'
@@ -219,6 +226,7 @@ const dialog = (settlement, unit, answer) => {
 				return {			
 					text: 'You are unskilled and your manners insult our patience. We do not believe we can teach you anything.',
 					type: 'natives',
+					image: settlement.tribe.image,
 					options: [{
 						text: 'Leave'
 					}]
@@ -228,6 +236,7 @@ const dialog = (settlement, unit, answer) => {
 				return {
 					text: `Fare well fellow ${experts[settlement.expert]}.`,
 					type: 'natives',
+					image: settlement.tribe.image,
 					options: [{
 						text: 'Leave'
 					}]
@@ -236,6 +245,7 @@ const dialog = (settlement, unit, answer) => {
 			return {
 				text: 'You are skilled and already know your way. We cannot teach you anything.',
 				type: 'natives',
+				image: settlement.tribe.image,
 				options: [{
 					text: 'Leave'
 				}]
@@ -274,6 +284,7 @@ const dialog = (settlement, unit, answer) => {
 		return {
 			text: 'The natives greet you.',
 			type: 'natives',
+			image: settlement.tribe.image,
 			options: [{
 				text: 'Leave'
 			}]

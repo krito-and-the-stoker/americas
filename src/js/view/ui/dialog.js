@@ -62,7 +62,6 @@ const types = {
 	},
 	natives: {
 		...broadLeft,
-		image: 'native',
 	},
 	religion: {
 		...left,
@@ -129,7 +128,7 @@ const align = {
 
 
 
-const create = ({ type, text, options, coords, pause, closeScreen, centerMap }) => {
+const create = ({ type, text, options, coords, pause, closeScreen, centerMap, image }) => {
 	let clickAllowed = false
 	setTimeout(() => { clickAllowed = true }, clickBlockTime)
 
@@ -145,6 +144,9 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap }) 
 	if (typeof centerMap !== 'undefined') {
 		config.centerMap = centerMap
 	}
+	if (typeof image !== 'undefined') {
+		config.image = image
+	}
 
 	if (config.closeScreen) {
 		Foreground.closeScreen()
@@ -154,7 +156,7 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap }) 
 	textView.y = padding
 	plane9.addChild(textView)
 
-	const image = config.image ? Resources.sprite(config.image) : null
+	const imageView = config.image ? Resources.sprite(config.image) : null
 
 	const optionViews = options.filter(option => option.text).map(option => ({
 		...option,
@@ -211,16 +213,16 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap }) 
 
 		plane9.width = config.width * dimensions.x + 2*padding
 		plane9.height = currentHeight + padding
-		align[config.align](plane9, image, dimensions)
+		align[config.align](plane9, imageView, dimensions)
 	})
 
 	Foreground.add.dialog(closePlane)
-	if (image && config.imageBehindText) {
-		Foreground.add.dialog(image)
+	if (imageView && config.imageBehindText) {
+		Foreground.add.dialog(imageView)
 	}
 	Foreground.add.dialog(plane9)
-	if (image && !config.imageBehindText) {
-		Foreground.add.dialog(image)
+	if (imageView && !config.imageBehindText) {
+		Foreground.add.dialog(imageView)
 	}
 
 	if (pause) {
@@ -231,8 +233,8 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap }) 
 		unsubscribeDimensions()
 		Foreground.remove.dialog(closePlane)
 		Foreground.remove.dialog(plane9)
-		if (image) {	
-			Foreground.remove.dialog(image)
+		if (imageView) {	
+			Foreground.remove.dialog(imageView)
 		}
 		if (pause) {
 			Time.resume()

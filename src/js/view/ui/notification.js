@@ -37,10 +37,6 @@ import Icon from 'view/ui/icon'
 
 
 
-const originalDimensions = {
-	x: 1920,
-	y: 1080
-}
 let notificationsContainer = null
 let notifications = []
 
