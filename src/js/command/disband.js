@@ -1,5 +1,7 @@
-import Unit from 'entity/unit'
 import Record from 'util/record'
+
+import Unit from 'entity/unit'
+
 
 const create = unit => {
 	const init = () => {

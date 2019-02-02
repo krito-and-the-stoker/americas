@@ -1,9 +1,9 @@
-import Tile from './tile.js'
 import Record from 'util/record'
 import Util from 'util/util'
-import Message from 'view/ui/message'
+import Message from 'util/message'
+
+import Tile from 'entity/tile.js'
 import Owner from 'entity/owner'
-import Background from 'render/background'
 
 
 let numTiles = null

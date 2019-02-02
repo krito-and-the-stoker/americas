@@ -6,8 +6,7 @@ import Unit from 'entity/unit'
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
 
-import Notification from 'view/ui/notification'
-
+// import Notification from 'view/ui/notification'
 
 
 const TEACH_BASE_FACTOR = 1.0 / Time.TEACH_BASE_TIME

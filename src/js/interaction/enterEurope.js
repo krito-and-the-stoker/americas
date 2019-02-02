@@ -1,7 +1,7 @@
 import Treasure from 'entity/treasure'
 import Unit from 'entity/unit'
 import Europe from 'entity/europe'
-import Message from 'view/ui/message'
+import Message from 'util/message'
 
 export default unit => {
 	Europe.add.unit(unit)

@@ -1,10 +1,10 @@
 import Util from 'util/util'
 import Record from 'util/record'
 
-import Dialog from 'view/ui/dialog'
-
 import Storage from 'entity/storage'
 import Settlement from 'entity/settlement'
+
+// import Dialog from 'view/ui/dialog'
 
 
 const create = (colony, settlement, unit) => {

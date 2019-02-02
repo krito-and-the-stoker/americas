@@ -1,10 +1,5 @@
-import * as PIXI from 'pixi.js'
-
-
 const inBattleDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
-
-const mergeFunctions = funcArray => funcArray.filter(fn => fn).reduce((all, fn) => () => { all(); fn() }, () => {})
-
+const mergeFunctions = funcArray => funcArray.filter(fn => typeof fn === 'function').reduce((all, fn) => () => { all(); fn() }, () => {})
 const makeObject = arr => arr.reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
 
 const globalScale = sprite => {
@@ -38,15 +33,6 @@ const quantizedRadius = (coords, radius) => range(2 * radius)
 	.filter(({ x, y }) => (x - coords.x) * (x - coords.x) + (y - coords.y) * (y - coords.y) <= radius*radius)
 
 
-const rectangle = (index) => {
-	const width = 64
-	const height = 64
-	const tilesPerRow = Math.floor(1024 / width)
-	const row = Math.floor(index / tilesPerRow)
-	const col = index % tilesPerRow
-	return new PIXI.Rectangle(width * col, height * row, width, height)
-}
-
 const choose = array => array[Math.floor(Math.random() * array.length)]
 const unique = (value, index, self) => self.indexOf(value) === index
 
@@ -64,7 +50,6 @@ export default {
 	globalScale,
 	range,
 	choose,
-	rectangle,
 	getUid,
 	mergeFunctions,
 	removeDuplicates,

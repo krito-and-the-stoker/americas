@@ -16,7 +16,7 @@ import Owner from 'entity/owner'
 import Tile from 'entity/tile'
 
 import ColonyView from 'view/colony'
-import Events from 'view/ui/events'
+import Events from 'util/events'
 
 import Util from 'util/util'
 import Record from 'util/record'
@@ -167,16 +167,19 @@ const visibleOnMap = view => (view === state.selectedView || !view.unit.colony) 
 	(view.unit.owner.visible || view.unit.tile.discovered()) &&
 	!view.destroyed
 
-const save = () => Record.reference(selectedUnit())
-const load = data => {
-	const unit = Record.dereference(data)
-	if (unit) {
-		select(unit)
-	}
-}
-
 let views = []
 const initialize = () => {
+	Events.listen('save', () => {
+		Record.setGlobal('selectedUnit', Record.reference(selectedUnit()))
+	})
+
+	Events.listen('restart', () => {
+		const unit = Record.dereference(Record.getGlobal('selectedUnit'))
+		if (unit) {
+			select(unit)
+		}
+	})
+
 	Record.listen('unit', unit => {
 		const view = create(unit)
 		const updateBoundVisibility = () => { updateVisibility(view) }

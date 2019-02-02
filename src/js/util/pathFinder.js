@@ -1,11 +1,14 @@
+import { FibonacciHeap } from '@tyriar/fibonacci-heap'
+
 import Graph from 'util/graph'
 import Util from 'util/util'
-import { FibonacciHeap } from '@tyriar/fibonacci-heap'
+import Message from 'util/message'
+
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
-import Message from 'view/ui/message'
 import Colony from 'entity/colony'
 import Unit from 'entity/unit'
+
 
 const CANNOT_MOVE_COST = 500
 const MIN_TERRAIN_COST = 0.33

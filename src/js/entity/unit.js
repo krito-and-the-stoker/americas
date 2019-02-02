@@ -1,19 +1,25 @@
 import Units from 'data/units.json'
+
+import Util from 'util/util'
+import Record from 'util/record'
+import Binding from 'util/binding'
+import Member from 'util/member'
+
+import Time from 'timeline/time'
+
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
-import Record from 'util/record'
-import Commander from 'command/commander'
-import Time from 'timeline/time'
 import Storage from 'entity/storage'
-import Util from 'util/util'
-import Binding from 'util/binding'
-import EnterColony from 'interaction/enterColony'
-import LeaveColony from 'interaction/leaveColony'
-import EnterEurope from 'interaction/enterEurope'
 import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
-import Member from 'util/member'
-import Battle from 'interaction/battle'
+
+import Commander from 'command/commander'
+
+// import EnterColony from 'interaction/enterColony'
+// import LeaveColony from 'interaction/leaveColony'
+// import EnterEurope from 'interaction/enterEurope'
+// import Battle from 'interaction/battle'
+
 
 const RADIUS_GROWTH = 1.0 / 2500
 const create = (name, coords, owner) => {

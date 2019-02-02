@@ -1,9 +1,14 @@
-import Dialog from 'view/ui/dialog'
-import Time from 'timeline/time'
-import Move from './move'
-import Commander from './commander'
 import Record from 'util/record'
+
+import Time from 'timeline/time'
+
 import Unit from 'entity/unit'
+
+import Move from 'command/move'
+import Commander from 'command/commander'
+
+// import Dialog from 'view/ui/dialog'
+
 
 const createUnloadingOnly = unloadingStartedAt => {
 	const update = currentTime => {

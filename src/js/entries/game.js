@@ -33,7 +33,7 @@ import MapView from 'view/map'
 import AutosaveView from 'view/autosave'
 
 import Dialog from 'view/ui/dialog'
-import Message from 'view/ui/message'
+import Message from 'util/message'
 
 import GlobalPanel from 'view/panel/global'
 

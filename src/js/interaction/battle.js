@@ -7,9 +7,9 @@ import Unit from 'entity/unit'
 
 import UnitView from 'view/unit'
 
-import Message from 'view/ui/message'
+import Message from 'util/message'
 import Notification from 'view/ui/notification'
-import Events from 'view/ui/events'
+import Events from 'util/events'
 
 export default (attacker, other) => {
 	Time.schedule({ priority: true, init: () => { 

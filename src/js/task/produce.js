@@ -1,6 +1,7 @@
+import Time from 'timeline/time'
+
 import Production from 'entity/production'
 import Storage from 'entity/storage'
-import Time from 'timeline/time'
 import Colony from 'entity/colony'
 import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'

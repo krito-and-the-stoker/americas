@@ -6,7 +6,7 @@ import Layer from 'render/layer'
 import Background from 'render/background'
 
 import Context from 'view/ui/context'
-import Events from 'view/ui/events'
+import Events from 'util/events'
 
 let container = null
 let context = null
@@ -133,6 +133,10 @@ const initialize = () => {
 	layer.app.stage.addChild(dialog)
 	layer.app.stage.addChild(notifications)
 	layer.app.stop()
+
+	Events.listen('shutdown', () => {
+		shutdown()		
+	})
 }
 
 const shutdown = () => {
@@ -151,7 +155,6 @@ export default {
 	listen,
 	update,
 	hitTest,
-	shutdown,
 	updateCoords,
 	updateScale,
 	doRenderWork,

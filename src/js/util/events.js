@@ -1,5 +1,3 @@
-
-
 let listeners = {}
 
 const init = name => {

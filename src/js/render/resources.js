@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js'
-import Message from 'view/ui/message'
-import Util from 'util/util'
+import Message from 'util/message'
 
 
 let counter = 2
@@ -58,13 +57,21 @@ const paths = {
 
 const textures = {}
 
+const rectangle = (index) => {
+	const width = 64
+	const height = 64
+	const tilesPerRow = Math.floor(1024 / width)
+	const row = Math.floor(index / tilesPerRow)
+	const col = index % tilesPerRow
+	return new PIXI.Rectangle(width * col, height * row, width, height)
+}
 
 const texture = (name, options = {}) => {
 	if (!textures[name]) {
 		console.warn('Texture not found in textures:', name, textures)
 	}
 	if (options.frame || options.frame === 0) {
-		return new PIXI.Texture(textures[name], Util.rectangle(options.frame))
+		return new PIXI.Texture(textures[name], rectangle(options.frame))
 	}
 	if (options.rectangle) {
 		return new PIXI.Texture(textures[name], options.rectangle)

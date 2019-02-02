@@ -22,7 +22,7 @@ import ColonyView from 'view/map/colony'
 import SettlementView from 'view/map/settlement'
 
 import Icon from 'view/ui/icon'
-import Events from 'view/ui/events'
+import Events from 'util/events'
 import Notification from 'view/ui/notification'
 import Dialog from 'view/ui/dialog'
 

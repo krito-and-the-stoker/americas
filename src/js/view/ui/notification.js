@@ -32,7 +32,7 @@ import UnitMapView from 'view/map/unit'
 import ColonyMapView from 'view/map/colony'
 
 import Dialog from 'view/ui/dialog'
-import Events from 'view/ui/events'
+import Events from 'util/events'
 import Icon from 'view/ui/icon'
 
 
@@ -100,13 +100,27 @@ const colonyIcon = colony => {
 	return [...tileSprites, colonySprite, text, mask]
 }
 
+const frame = (colony, building) => Buildings[building.name].frame[colony.buildings[building.name].level] ? Buildings[building.name].frame[colony.buildings[building.name].level] - 1 : null
+const buildingRectangle = (colony, building) => {
+	if (frame(colony, building) === null) {
+		return null
+	}
+
+	const fr = frame(colony, building)
+	const cols = 13
+	const x = 128 * (fr % cols)
+	const y = 128 * Math.floor(fr / cols)
+	const width = Buildings[building.name].width * 128
+	const height = 128
+	return new PIXI.Rectangle(x, y, width, height)	
+}
 const buildingIcon = (colony, building) => {
 	if (building.name === 'fortifications') {
 		return new PIXI.Container()
 	}
 
 	// TODO: fixme, this is unacceptable
-	const rectangle = Building.rectangle(colony, building)
+	const rectangle = buildingRectangle(colony, building)
 	if (!rectangle) {
 		return new PIXI.Container()
 	}

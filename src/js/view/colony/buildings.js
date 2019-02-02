@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import Building from 'entity/building'
+import Buildings from 'data/buildings.json'
 import Production from 'entity/production'
 import Resources from 'render/resources'
 import Util from 'util/util'
@@ -15,6 +15,22 @@ import BecomeColonist from 'interaction/becomeColonist'
 
 const TILE_SIZE = 64
 
+const frame = (colony, building) => Buildings[building.name].frame[colony.buildings[building.name].level] ? Buildings[building.name].frame[colony.buildings[building.name].level] - 1 : null
+const buildingRectangle = (colony, building) => {
+	if (frame(colony, building) === null) {
+		return null
+	}
+
+	const fr = frame(colony, building)
+	const cols = 13
+	const x = 128 * (fr % cols)
+	const y = 128 * Math.floor(fr / cols)
+	const width = Buildings[building.name].width * 128
+	const height = 128
+	return new PIXI.Rectangle(x, y, width, height)	
+}
+
+
 const createBuilding = (colony, building) => {
 	const container = {
 		building: new PIXI.Container(),
@@ -22,7 +38,7 @@ const createBuilding = (colony, building) => {
 	}
 
 	const name = building.name
-	const rectangle = Building.rectangle(colony, building)
+	const rectangle = buildingRectangle(colony, building)
 	if (!rectangle || !building.position) {		
 		return null
 	}

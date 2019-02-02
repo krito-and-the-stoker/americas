@@ -10,7 +10,7 @@ import Binding from 'util/binding'
 import Owner from 'entity/owner'
 import MapEntity from 'entity/map'
 
-import Background from 'render/background'
+// import Background from 'render/background'
 
 
 const create = ({ id, layers, index }) => {

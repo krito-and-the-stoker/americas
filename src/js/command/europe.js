@@ -1,10 +1,14 @@
-import MapEntity from 'entity/map'
-import Time from 'timeline/time'
 import Record from 'util/record'
+import Message from 'util/message'
+
+import Time from 'timeline/time'
+
+import MapEntity from 'entity/map'
 import Unit from 'entity/unit'
-import Message from 'view/ui/message'
-import EnterEurope from 'interaction/enterEurope'
-import Notification from 'view/ui/notification'
+
+// import EnterEurope from 'interaction/enterEurope'
+
+// import Notification from 'view/ui/notification'
 
 
 const create = (unit, eta = null) => {

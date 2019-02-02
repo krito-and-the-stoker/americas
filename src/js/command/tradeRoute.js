@@ -1,13 +1,16 @@
-import Commander from './commander'
-import MapEntity from 'entity/map'
-import Storage from 'entity/storage'
+import Message from 'util/message'
 import Record from 'util/record'
 import PathFinder from 'util/pathFinder'
-import LoadCargo from 'command/loadCargo'
-import MoveTo from 'command/moveTo'
-import Message from 'view/ui/message'
+
+import MapEntity from 'entity/map'
+import Storage from 'entity/storage'
 import Colony from 'entity/colony'
 import Unit from 'entity/unit'
+
+import Commander from 'command/commander'
+import LoadCargo from 'command/loadCargo'
+import MoveTo from 'command/moveTo'
+
 
 const TRADE_ROUTE_DISTANCE_CAP = 15
 

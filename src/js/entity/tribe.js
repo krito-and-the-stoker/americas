@@ -1,8 +1,9 @@
 import Util from 'util/util'
 import Record from 'util/record'
+import Message from 'util/message'
+
 import MapEntity from 'entity/map'
 import Settlement from 'entity/settlement'
-import Message from 'view/ui/message'
 import Owner from 'entity/owner'
 
 

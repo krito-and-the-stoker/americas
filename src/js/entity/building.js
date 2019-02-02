@@ -1,27 +1,13 @@
-import * as PIXI from 'pixi.js'
-
 import Buildings from 'data/buildings.json'
+
 import Util from 'util/util'
+import Message from 'util/message'
+
 import Colony from 'entity/colony'
 import Unit from 'entity/unit'
 import Storage from 'entity/storage'
-import Message from 'view/ui/message'
-import Notification from 'view/ui/notification'
 
-const frame = (colony, building) => Buildings[building.name].frame[colony.buildings[building.name].level] ? Buildings[building.name].frame[colony.buildings[building.name].level] - 1 : null
-const rectangle = (colony, building) => {
-	if (frame(colony, building) === null) {
-		return null
-	}
-
-	const fr = frame(colony, building)
-	const cols = 13
-	const x = 128 * (fr % cols)
-	const y = 128 * Math.floor(fr / cols)
-	const width = Buildings[building.name].width * 128
-	const height = 128
-	return new PIXI.Rectangle(x, y, width, height)	
-}
+// import Notification from 'view/ui/notification'
 
 const create = () => {
 	const positions = Util.range(11).map(x =>
@@ -239,7 +225,6 @@ const construct = (colony, construction) => {
 
 
 export default {
-	rectangle,
 	getName,
 	create,
 	constructionOptions,

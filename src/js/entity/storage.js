@@ -1,4 +1,5 @@
 import Goods from 'data/goods'
+
 import Binding from 'util/binding'
 import Util from 'util/util'
 

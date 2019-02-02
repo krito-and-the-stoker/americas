@@ -1,13 +1,15 @@
 import PathFinder from 'util/pathFinder'
-import MapEntity from 'entity/map'
-import Move from './move'
-import Commander from './commander'
 import Record from 'util/record'
-import Unit from 'entity/unit'
-import Load from 'command/load'
-import Unload from './unload'
-import Tile from 'entity/tile'
 import Util from 'util/util'
+
+import MapEntity from 'entity/map'
+import Unit from 'entity/unit'
+import Tile from 'entity/tile'
+
+import Move from 'command/move'
+import Commander from 'command/commander'
+import Load from 'command/load'
+import Unload from 'command/unload'
 
 
 const canLoad = ship => (Commander.isIdle(ship.commander) ||

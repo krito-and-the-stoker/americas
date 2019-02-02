@@ -1,8 +1,14 @@
 import LZString from 'lz-string'
 import FileSaver from 'file-saver'
 
-import Util from 'util/util'
 import Version from 'version/version.json'
+
+import Util from 'util/util'
+import PathFinder from 'util/pathFinder'
+import Message from 'util/message'
+import Events from 'util/events'
+
+import Time from 'timeline/time'
 
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
@@ -16,14 +22,6 @@ import Tribe from 'entity/tribe'
 import Settlement from 'entity/settlement'
 import Owner from 'entity/owner'
 
-import MapView from 'render/map'
-import Foreground from 'render/foreground'
-import RenderView from 'render/view'
-import UnitView from 'view/map/unit'
-import Time from 'timeline/time'
-import PathFinder from 'util/pathFinder'
-import Message from 'view/ui/message'
-import Events from 'view/ui/events'
 
 const REFERENCE_KEY = 'referenceId'
 
@@ -69,6 +67,15 @@ const listen = (type, fn) => {
 	if (!listeners[type]) {
 		initListeners(type)
 	}
+	records
+		.filter(record => record.type === type)
+		.forEach(record => {
+			record.destroy = Util.mergeFunctions([
+				record.destroy,
+				fn(record.entity)
+			])
+		})
+
 	listeners[type].push(fn)
 }
 
@@ -76,7 +83,7 @@ const update = (type, entity) => {
 	if (!listeners[type]) {
 		initListeners(type)
 	}
-	return Util.mergeFunctions(listeners[type].map(fn => fn(entity)).filter(fn => typeof fn === 'function'))
+	return Util.mergeFunctions(listeners[type].map(fn => fn(entity)))
 }
 
 
@@ -295,7 +302,7 @@ const beforeEntitiesLoaded = fn => beforeLoadedListeners.push(fn)
 
 const load = (src = null) => {
 	Message.log('Loading...')
-	Foreground.shutdown()
+	Events.trigger('shotdown')
 
 	records.forEach(record => record.destroy())
 	
@@ -326,7 +333,6 @@ const load = (src = null) => {
 	MapEntity.prepare()
 	snapshot.tiles.map(resolveLookup).forEach(reviveTile)
 	MapEntity.load()
-	new MapView()
 	snapshot.entities.forEach(revive)
 	Time.load(snapshot.time)
 	Treasure.load(snapshot.treasure)
@@ -336,9 +342,8 @@ const load = (src = null) => {
 	loadedListeners.forEach(fn => fn())
 
 	PathFinder.initialize()
-	UnitView.load(snapshot.unitView)
 
-	RenderView.restart()
+	Events.trigger('restart')
 	Message.log('Game loaded')
 }
 

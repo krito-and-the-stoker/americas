@@ -1,7 +1,11 @@
-import Background from './background.js'
-import Foreground from './foreground.js'
 import Record from 'util/record'
 import Binding from 'util/binding'
+import Events from 'util/events'
+
+import Background from 'render/background.js'
+import Foreground from 'render/foreground.js'
+import RenderMap from 'render/map'
+
 
 const get = () => ({
 	scale: Record.getGlobal('scale'),
@@ -11,6 +15,7 @@ const get = () => ({
 let resizeFunctions = []
 
 const restart = () => {
+	new RenderMap()
 	const { scale, coords } = get()
 	updateScale(scale)
 	updateMapCoords(coords)
@@ -57,6 +62,10 @@ const initialize = () => {
 			scale: Record.getGlobal('scale'),
 			coords: Record.getGlobal('coords')
 		})))
+
+	Events.listen('restart', () => {
+		restart()
+	})
 }
 
 const onDraw = () => {

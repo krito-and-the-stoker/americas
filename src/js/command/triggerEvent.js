@@ -1,5 +1,6 @@
-import Events from 'view/ui/events'
+import Events from 'util/events'
 import Record from 'util/record'
+
 
 const create = (name, params) => {
 	const init = () => {

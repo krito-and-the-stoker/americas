@@ -4,7 +4,7 @@ import Foreground from 'render/foreground'
 import RenderView from 'render/view'
 import Text from 'render/text'
 
-import Events from 'view/ui/events'
+import Events from 'util/events'
 
 
 const create = () => {

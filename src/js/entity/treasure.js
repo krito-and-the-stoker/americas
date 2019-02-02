@@ -1,4 +1,3 @@
-
 let treasureListeners = []
 let treasure = 100
 const spend = amount => {

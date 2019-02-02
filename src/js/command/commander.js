@@ -1,3 +1,7 @@
+import Time from 'timeline/time'
+
+import Record from 'util/record'
+
 import Found from 'command/found'
 import Move from 'command/move'
 import MoveTo from 'command/moveTo'
@@ -15,12 +19,8 @@ import Road from 'command/road'
 import LearnFromNatives from 'command/learnFromNatives'
 import CommunicateTension from 'command/communicateTension'
 
-import InvestigateRumors from 'interaction/investigateRumors'
-import EnterSettlement from 'interaction/enterSettlement'
-
-import Time from 'timeline/time'
-
-import Record from 'util/record'
+// import InvestigateRumors from 'interaction/investigateRumors'
+// import EnterSettlement from 'interaction/enterSettlement'
 
 
 const cancel = () => ({

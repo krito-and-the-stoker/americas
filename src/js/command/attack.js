@@ -1,7 +1,8 @@
-import MoveTo from 'command/moveTo'
-
 import Unit from 'entity/unit'
 import Colony from 'entity/colony'
+
+import MoveTo from 'command/moveTo'
+
 
 const predictCoordinates = unit => {
 	const from = unit.tile.mapCoordinates

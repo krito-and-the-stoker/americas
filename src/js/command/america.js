@@ -1,8 +1,10 @@
-import Time from 'timeline/time'
-import Europe from 'entity/europe'
 import Record from 'util/record'
+import Message from 'util/message'
+
+import Time from 'timeline/time'
+
+import Europe from 'entity/europe'
 import Unit from 'entity/unit'
-import Message from 'view/ui/message'
 
 
 const create = (unit, eta = null) => {

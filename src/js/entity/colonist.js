@@ -1,13 +1,17 @@
-import Building from 'entity/building'
-import Harvest from 'task/harvest'
-import Produce from 'task/produce'
-import Teach from 'task/teach'
-import Time from 'timeline/time'
 import Record from 'util/record'
 import Binding from 'util/binding'
 import Util from 'util/util'
 import Unit from 'entity/unit'
-import UnjoinColony from 'interaction/unjoinColony'
+
+import Building from 'entity/building'
+
+import Time from 'timeline/time'
+
+import Harvest from 'task/harvest'
+import Produce from 'task/produce'
+import Teach from 'task/teach'
+
+// import UnjoinColony from 'interaction/unjoinColony'
 
 
 const beginFieldWork = (colonist, tile, good) => {
