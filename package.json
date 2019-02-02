@@ -6,7 +6,8 @@
   "scripts": {
     "build": "gulp build --production",
     "dev": "gulp",
-    "test": "jest --verbose"
+    "test": "jest --watch",
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
