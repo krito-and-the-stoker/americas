@@ -1,4 +1,3 @@
-import MainLoop from 'mainloop.js'
 import * as Sentry from '@sentry/browser'
 
 import Version from 'version/version.json'
