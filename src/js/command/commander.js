@@ -45,10 +45,10 @@ const clearSchedule = commander => {
 }
 
 const commandsScheduled = command => {
-		const current = command.currentCommand ? commandsScheduled(command.currentCommand) : 1
-		const other = command.commands ? command.commands.map(commandsScheduled).reduce((sum, count) => sum + count, 0) : 0
+	const current = command.currentCommand ? commandsScheduled(command.currentCommand) : 1
+	const other = command.commands ? command.commands.map(commandsScheduled).reduce((sum, count) => sum + count, 0) : 0
 
-		return current + other
+	return current + other
 }
 
 const create = (args = {}) => {

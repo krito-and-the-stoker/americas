@@ -108,8 +108,8 @@ const constructionOptions = colony => {
 	}
 
 	const wagontrain = [{
-		target: "wagontrain",
-		name: "Wagon Train",
+		target: 'wagontrain',
+		name: 'Wagon Train',
 		cost: { construction: 40 },
 		action: () => {
 			const unit = Unit.create('wagontrain', colony.mapCoordinates, colony.owner)
@@ -118,8 +118,8 @@ const constructionOptions = colony => {
 	}]
 
 	const artillery = [{
-		target: "artillery",
-		name: "Artillery",
+		target: 'artillery',
+		name: 'Artillery',
 		cost: {
 			construction: 400,
 			tools: 80
@@ -131,8 +131,8 @@ const constructionOptions = colony => {
 	}]
 
 	const ships = [{
-		target: "caravel",
-		name: "Caravel",
+		target: 'caravel',
+		name: 'Caravel',
 		cost: {
 			construction: 250,
 			tools: 80
@@ -142,8 +142,8 @@ const constructionOptions = colony => {
 			Notification.create({ type: 'construction', colony, unit })
 		}
 	}, {
-		target: "merchantman",
-		name: "Merchantman",
+		target: 'merchantman',
+		name: 'Merchantman',
 		cost: {
 			construction: 400,
 			tools: 160
@@ -153,8 +153,8 @@ const constructionOptions = colony => {
 			Notification.create({ type: 'construction', colony, unit })
 		}
 	}, {
-		target: "galleon",
-		name: "Galleon",
+		target: 'galleon',
+		name: 'Galleon',
 		cost: {
 			construction: 640,
 			tools: 200
@@ -164,8 +164,8 @@ const constructionOptions = colony => {
 			Notification.create({ type: 'construction', colony, unit })
 		}
 	}, {
-		target: "privateer",
-		name: "Privateer",
+		target: 'privateer',
+		name: 'Privateer',
 		cost: {
 			construction: 500,
 			tools: 240
@@ -175,8 +175,8 @@ const constructionOptions = colony => {
 			Notification.create({ type: 'construction', colony, unit })
 		}
 	}, {
-		target: "frigate",
-		name: "Frigate",
+		target: 'frigate',
+		name: 'Frigate',
 		cost: {
 			construction: 1000,
 			tools: 400
