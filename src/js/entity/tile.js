@@ -190,7 +190,7 @@ const discover = (tile, owner) => {
 	// if (tile.domain === 'land' && !Record.getGlobal('hasDiscoveredLand')) {
 	// 	Record.setGlobal('hasDiscoveredLand', true)
 	// }
-	if (!tile.discoveredBy.includes(owner)) {	
+	if (!tile.discoveredBy.includes(owner)) {
 		tile.discoveredBy.push(owner)
 		Owner.listen.visible(owner, () => {		
 			if (tile.currentlyDiscovered !== discovered(tile)) {

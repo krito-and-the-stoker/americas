@@ -76,7 +76,7 @@ const create = (name, coords, owner) => {
 }
 
 const initialize = unit => {
-	if (unit.tile) {	
+	if (unit.tile) {
 		Tile.discover(unit.tile, unit.owner)
 		Tile.diagonalNeighbors(unit.tile).forEach(other => Tile.discover(other, unit.owner))
 	}

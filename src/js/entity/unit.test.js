@@ -9,6 +9,7 @@ import MapEntity from 'entity/map'
 
 beforeAll(() => {
 	MapEntity.create({ data: americaLargeMap })
+	Owner.initialize()
 })
 
 
