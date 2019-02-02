@@ -1,5 +1,5 @@
 import Binding from 'util/binding'
-import MainLoop from 'mainloop.js'
+
 
 const MOVE_BASE_TIME = 8000
 const UNLOAD_TIME = 3000
