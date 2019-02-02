@@ -404,7 +404,6 @@ const updateTile = center => {
 	radius(center).forEach(tile => {
 		update.tile(tile)
 	})
-	Background.render()
 }
 
 const listen = {

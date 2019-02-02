@@ -1,5 +1,7 @@
 import americaLargeMap from 'data/america-large'
 
+import polyfills from 'util/polyfills'
+
 import Unit from 'entity/unit'
 import Owner from 'entity/owner'
 import MapEntity from 'entity/map'

@@ -9,11 +9,13 @@
     "test": "jest --verbose"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.2.5",
     "@babel/preset-env": "^7.3.1",
     "@sentry/browser": "^4.5.3",
     "@sentry/webpack-plugin": "^1.6.2",
     "@tweenjs/tween.js": "^17.2.0",
     "@tyriar/fibonacci-heap": "^2.0.9",
+    "array.prototype.flat": "^1.2.1",
     "babel-core": "^6.26.0",
     "browser-sync": "^2.26.3",
     "file-saver": "^2.0.0",

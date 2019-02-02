@@ -142,7 +142,10 @@ const restart = () => {
 
 	unsubscribeTiles()
 	unsubscribeTiles = Util.mergeFunctions(tiles.map((tile, index) => 
-		Tile.listen.tile(MapEntity.get().tiles[index], () => { tile.dirty = true })))
+		Tile.listen.tile(MapEntity.get().tiles[index], () => {
+			tile.dirty = true
+			render()
+		})))
 
 	render()
 }
@@ -168,7 +171,10 @@ const initialize = () => {
 
 		unsubscribeTiles()
 		unsubscribeTiles = Util.mergeFunctions(tiles.map((tile, index) => 
-			Tile.listen.tile(MapEntity.get().tiles[index], () => { tile.dirty = true })))
+			Tile.listen.tile(MapEntity.get().tiles[index], () => {
+				tile.dirty = true
+				render()
+			})))
 
 		render()
 	}
