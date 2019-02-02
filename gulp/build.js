@@ -6,10 +6,9 @@ const md = require('markdown-it')({ html: true })
 const mila = require('markdown-it-link-attributes')
 const webpack = require('webpack')
 const path = require('path')
-const yargs = require('yargs')
 const jimp = require('jimp')
 const fs = require('fs')
-// const SentryCliPlugin = require('@sentry/webpack-plugin')
+const config = require('./webpack.config.js')
 
 
 md.use(mila, {
@@ -19,47 +18,6 @@ md.use(mila, {
 	}
 })
 
-
-const config = () => {
-	const plugins = []
-	if (yargs.argv.production) {
-		plugins.push(new webpack.EnvironmentPlugin(['KEEN_SECRET', 'ENABLE_TRACKING', 'SENTRY_DSN']))
-	}
-	//   plugins.push(new SentryCliPlugin({
-	//     dryRun: false,
-	//     release: require(path.resolve(__dirname, '../src/version/version.json')).revision,
-	//     include: path.resolve(__dirname, '../src/js'),
-	//     configFile: path.resolve(__dirname, './sentry.properties'),
-	//     ignore: ['node_modules', 'webpack.config.js', 'sentry.properties'],
-	//   }))
-	// }
-
-	const directories = ['ai', 'command', 'data', 'entity', 'input', 'interaction', 'render', 'task', 'timeline', 'util', 'view']
-	const aliases = directories.map(dir => ({
-		[dir]: path.resolve(__dirname, `../src/js/${dir}`)
-	})).reduce((all, one) => ({ ...all, ...one }), {})
-
-	return {
-		mode: (yargs.argv.production || yargs.argv.staging) ? 'production' : 'development',
-		entry: {
-			index: './entries/index.js',
-			worker: './entries/worker.js'
-		},
-		output: {
-			filename: './[name].entry.js',
-			path: path.resolve(__dirname, '../dist')
-		},
-		resolve: {
-			alias: {
-				version: path.resolve(__dirname, '../src/version'),
-				...aliases
-			}
-		},
-		devtool: (yargs.argv.production || yargs.argv.staging) ? 'eval' : 'source-map',
-		context: path.resolve(__dirname, '../src/js/'),
-		plugins: plugins
-	}
-}
 
 gulp.task('version', done => {
 	const revision = require('child_process')
@@ -73,7 +31,7 @@ gulp.task('version', done => {
 })
 
 gulp.task('compile', () => {
-	return new Promise(resolve => webpack(config(), (err, stats) => {
+	return new Promise(resolve => webpack(config, (err, stats) => {
 		if (err) {
 			console.log('Webpack', err)     
 		}
