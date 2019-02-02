@@ -125,7 +125,8 @@ const create = () => {
 		if (unit.domain === 'land') {
 			const position = landPositions.find(pos => !pos.taken)
 			if (position) {
-				const sprite = UnitView.create(unit)
+				const view = UnitView.create(unit)
+				const sprite = view.sprite
 
 				position.taken = unit
 
@@ -139,6 +140,7 @@ const create = () => {
 
 				return () => {
 					position.taken = false
+					view.unsubscribe()
 					container.units.removeChild(sprite)
 				}
 			}

@@ -211,15 +211,6 @@ const start = async () => {
 		}, 3500)
 
 		await nextFrame()
-		document.addEventListener('visibilitychange', () => {
-			if (document.hidden) {
-				MainLoop.stop()
-			} else {
-				MainLoop.start()
-			}
-		})
-
-		await nextFrame()
 		initialize()
 	} catch (err) {
 		captureException(err)

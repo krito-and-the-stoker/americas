@@ -15,7 +15,8 @@ import LoadUnitToShip from 'interaction/loadUnitToShip'
 
 const create = unit => {
 	const container = new PIXI.Container()
-	const sprite = UnitView.create(unit)
+	const view = UnitView.create(unit)
+	const sprite = view.sprite
 	sprite.scale.set(2)
 	container.addChild(sprite)
 
@@ -59,7 +60,8 @@ const create = unit => {
 		}
 
 		const unsubscribePassengers = Util.mergeFunctions(passengers.map(passenger => {
-			const sprite = UnitView.create(passenger)
+			const view = UnitView.create(passenger)
+			const sprite = view.sprite
 			sprite.x = index.x * 1.4 * 32 - 8
 			sprite.y = index.y * 1.2 * 32 + 80
 			sprite.scale.set(1.4)
@@ -73,6 +75,7 @@ const create = unit => {
 			}
 
 			return () => {
+				view.unsubscribe()
 				container.removeChild(sprite)
 			}
 		}))
@@ -114,6 +117,7 @@ const create = unit => {
 
 
 	const unsubscribe = () => {
+		view.unsubscribe()
 		unsubscribeDrag()
 		unsubscribePassengersAndStorage()
 	}

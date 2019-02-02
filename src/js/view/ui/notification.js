@@ -165,7 +165,7 @@ const combine = (slot1, slot2, slot3) => {
 
 const createEurope = unit => {
 	const icon = Icon.create('europe')
-	const unitView = UnitView.create(unit)
+	const unitView = Resources.sprite('map', { frame: UnitView.getFrame(unit) })
 	const arrow = Icon.create('right')
 	const container = combine(icon, unitView, arrow)
 
@@ -192,7 +192,7 @@ const createEurope = unit => {
 
 const createImmigration = unit => {
 	const icon = Icon.create('europe')
-	const unitView = UnitView.create(unit)
+	const unitView = Resources.sprite('map', { frame: UnitView.getFrame(unit) })
 	const arrow = Icon.create('plus')
 	const container = combine(icon, unitView, arrow)
 
@@ -219,7 +219,7 @@ const createImmigration = unit => {
 
 const createAmerica = unit => {
 	const icon = Icon.create('america')
-	const unitView = UnitView.create(unit)
+	const unitView = Resources.sprite('map', { frame: UnitView.getFrame(unit) })
 	const arrow = Icon.create('left')
 	const container = combine(icon, unitView, arrow)
 
@@ -249,7 +249,7 @@ const createAmerica = unit => {
 
 const createConstruction = (colony, { building, unit }) => {
 	const colonyView = colonyIcon(colony)
-	const targetView = building ? buildingIcon(colony, building) : UnitView.create(unit)
+	const targetView = building ? buildingIcon(colony, building) : Resources.sprite('map', { frame: UnitView.getFrame(unit) })
 	const icon = Icon.create('plus')
 	const container = combine(colonyView, targetView, icon)
 
@@ -285,7 +285,7 @@ const createTerraforming = unit => {
 
 	const tileSprites = Background.createSpritesFromTile(tile)
 	tileSprites.forEach(s => s.mask = circle)
-	const unitSprite = UnitView.create(unit)
+	const unitSprite = Resources.sprite('map', { frame: UnitView.getFrame(unit) })
 
 	const container = combine(tileSprites.concat(circle), unitSprite)
 
@@ -408,7 +408,7 @@ const createSettlement = (settlement, unit) => {
 
 const createSettlerBorn = (colony, unit) => {
 	const colonyView = colonyIcon(colony)
-	const unitView = UnitView.create(unit)
+	const unitView = Resources.sprite('map', { frame: UnitView.getFrame(unit) })
 	const plus = Icon.create('plus')
 	const container = combine(colonyView, unitView, plus)
 
@@ -461,7 +461,7 @@ const createStarving = colony => {
 
 const createDied = (colony, unit) => {
 	const colonyView = colonyIcon(colony)
-	const unitView = UnitView.create(unit)
+	const unitView = Resources.sprite('map', { frame: UnitView.getFrame(unit) })
 	const minus = Icon.create('minus')
 	const container = combine(colonyView, unitView, minus)
 
@@ -541,7 +541,7 @@ const createStorageFull = (colony, good) => {
 
 const createArrive = (colony, unit) => {
 	const colonySprite = colonyIcon(colony)
-	const unitView = UnitView.create(unit)
+	const unitView = Resources.sprite('map', { frame: UnitView.getFrame(unit) })
 	const icon = Icon.create('left')
 	const container = combine(colonySprite, unitView, icon)
 
@@ -568,7 +568,7 @@ const createArrive = (colony, unit) => {
 const createLearned = ({ colony, colonist, unit }) => {
 	const colonySprite = colony ? colonyIcon(colony) : null
 	unit = unit || colonist.unit
-	const unitView = UnitView.create(unit)
+	const unitView = Resources.sprite('map', { frame: UnitView.getFrame(unit) })
 	const book = Resources.sprite('map', { frame: Goods.books.id })
 
 	const container = colony ? combine(colonySprite, unitView, book) : combine(unitView, book)
@@ -603,7 +603,7 @@ const createLearned = ({ colony, colonist, unit }) => {
 }
 
 const createTreasure = (colony, unit) => {
-	const treasureView = UnitView.create(unit)
+	const treasureView = Resources.sprite('map', { frame: UnitView.getFrame(unit) })
 	const galleonView = Resources.sprite('map', { frame: Units.galleon.frame.default })
 	const icon = Icon.create('right')
 	const container = combine(treasureView, galleonView, icon)
@@ -662,20 +662,22 @@ const createCombat = (attacker, defender, loser) => {
 	const defenderView = UnitView.create(defender)
 	const combatIcon = Icon.create('combat')
 	const xIcon = Icon.create('cancel')
+	attackerView.unsubscribe()
+	defenderView.unsubscribe()
 
 	const container = new PIXI.Container()
 
 	tileView.forEach(tile => container.addChild(tile))
 	
-	attackerView.scale.set(0.5)
-	attackerView.x = 0
-	attackerView.y = 32
-	container.addChild(attackerView)
+	attackerView.sprite.scale.set(0.5)
+	attackerView.sprite.x = 0
+	attackerView.sprite.y = 32
+	container.addChild(attackerView.sprite)
 	
-	defenderView.scale.set(0.5)
-	defenderView.x = 32
-	defenderView.y = 32
-	container.addChild(defenderView)
+	defenderView.sprite.scale.set(0.5)
+	defenderView.sprite.x = 32
+	defenderView.sprite.y = 32
+	container.addChild(defenderView.sprite)
 
 	combatIcon.scale.set(0.25)
 	combatIcon.x = 24
@@ -683,7 +685,7 @@ const createCombat = (attacker, defender, loser) => {
 	container.addChild(combatIcon)
 
 	xIcon.scale.set(0.5)
-	xIcon.x = loser === attacker ? attackerView.x : defenderView.x
+	xIcon.x = loser === attacker ? attackerView.sprite.x : defenderView.sprite.x
 	xIcon.y = 32
 	container.addChild(xIcon)
 

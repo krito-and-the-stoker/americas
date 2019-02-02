@@ -1,12 +1,13 @@
 import * as PIXI from 'pixi.js'
 
+import Unit from 'entity/unit'
+
 import Resources from 'render/resources'
 
+
 const getName = unit => unit.expert ? unit.properties.name[unit.expert] || unit.properties.name.default : unit.properties.name.default
-const createTexture = unit => {
-	const frame = unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
-	return Resources.texture('map', { frame })
-}
+const createTexture = unit => Resources.texture('map', { frame: getFrame(unit) })
+const getFrame = unit => unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
 
 const create = unit => {
 	const sprite = new PIXI.Sprite(createTexture(unit))
@@ -15,12 +16,19 @@ const create = unit => {
 		sprite.hitArea = new PIXI.Rectangle(16, 0, 32, 64)
 	}
 
-	return sprite
+	const unsubscribe = Unit.listen.properties(unit, () => {
+		sprite.texture = createTexture(unit)
+	})
+
+	return {
+		sprite,
+		unsubscribe
+	}
 }
 
 
 export default {
-	createTexture,
+	getFrame,
 	create,
 	getName
 }

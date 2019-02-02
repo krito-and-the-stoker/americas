@@ -82,7 +82,6 @@ const advance = deltaTime => {
 		scheduled = scheduled.filter(e => !e.cleanup)
 		prioritized = prioritized.filter(e => !e.cleanup)
 	}	catch(error) {
-		MainLoop.stop()
 		throw error
 	}
 

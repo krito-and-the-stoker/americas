@@ -90,7 +90,8 @@ const create = (colony, closeScreen, originalDimensions) => {
 		}
 		position.taken = true
 
-		const sprite = UnitView.create(unit)
+		const view = UnitView.create(unit)
+		const sprite = view.sprite
 		sprite.x = position.x
 		sprite.y = position.y
 		sprite.scale.set(2)
@@ -117,11 +118,9 @@ const create = (colony, closeScreen, originalDimensions) => {
 			const fromUnit = args.unit
 			if (fromUnit) {
 				EquipUnitFromShip(fromUnit, unit, { good, amount })
-				sprite.texture = UnitView.createTexture(unit)
 			}
 			if (colony) {
 				EquipUnitFromColony(colony, unit, { good, amount })
-				sprite.texture = UnitView.createTexture(unit)
 			}
 
 			return false
@@ -132,6 +131,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 			unsubscribePioneering()
 			unsubscribeDrag()				
 			container.removeChild(sprite)
+			view.unsubscribe()
 		}
 	}
 

@@ -157,7 +157,8 @@ const initialize = () => {
 			const unsubscribePassengersAndStorage = Unit.listen.passengers(unit, passengers => {
 				let index = 0
 				const unsubscribePassengers = Util.mergeFunctions(passengers.map(passenger => {
-					const sprite = UnitView.create(passenger)
+					const view = UnitView.create(passenger)
+					const sprite = view.sprite
 					sprite.x = index * cargoScale * 32 - 8
 					sprite.y = 0
 					sprite.scale.set(cargoScale)
@@ -166,6 +167,7 @@ const initialize = () => {
 					index += 1
 	
 					return () => {
+						view.unsubscribe()
 						container.removeChild(sprite)
 					}
 				}))
