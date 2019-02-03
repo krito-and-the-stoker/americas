@@ -90,7 +90,7 @@ const create = (transport, tradeCommanderParam = null, initialized = false, wait
 		// try unloading all passengers
 		if (transport.passengers.length > 0) {
 			if (MapEntity.tile(transport.mapCoordinates).domain === 'land') {
-				Unit.unloadAll(transport)
+				Unit.unloadAllUnits(transport)
 				return true
 			}
 			return false
