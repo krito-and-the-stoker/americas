@@ -1,8 +1,8 @@
 {
-  "name": "pixijs",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "americas",
+  "version": "0.1.0",
   "license": "MIT",
+  "repository": "git@github.com:krito-and-the-stoker/americas.git",
   "scripts": {
     "build": "gulp build --production",
     "dev": "gulp",
