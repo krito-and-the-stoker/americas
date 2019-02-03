@@ -26,27 +26,27 @@ import ProductionSummary from 'task/productionSummary'
 // import Notification from 'view/ui/notification'
 
 
-// for unknown reasons we need to wait bit until we can set the global here :/
-setTimeout(() => Record.setGlobal('colonyNames',
-	['Jamestown',
-		'Roanoke',
-		'Virginia',
-		"Cuper's Cove",
-		"St. John's",
-		'Henricus',
-		'Delaware',
-		'Pennsylvania',
-		'Massachusetts Bay Colony',
-		'Maine',
-		'New Jersey',
-		'Connecticut',
-		'Maryland',
-		'South Carolina',
-		'New Hampshire',
-		'North Carolina',
-		'Rhode Island']), 0)
-
 const getColonyName = () => {
+	if (!Record.getGlobal('colonyNames')) {
+		Record.setGlobal('colonyNames',
+			['Jamestown',
+				'Roanoke',
+				'Virginia',
+				"Cuper's Cove",
+				"St. John's",
+				'Henricus',
+				'Delaware',
+				'Pennsylvania',
+				'Massachusetts Bay Colony',
+				'Maine',
+				'New Jersey',
+				'Connecticut',
+				'Maryland',
+				'South Carolina',
+				'New Hampshire',
+				'North Carolina',
+				'Rhode Island'])		
+	}
 	let colonyNames = Record.getGlobal('colonyNames')
 	const name = colonyNames.shift()
 	Record.setGlobal('colonyNames', colonyNames)

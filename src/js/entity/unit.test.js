@@ -1,17 +1,9 @@
-import americaSmallMap from 'data/america-small'
-
-import polyfills from 'util/polyfills'
+import 'test/setup'
 import Record from 'util/record'
 
 import Unit from 'entity/unit'
 import Owner from 'entity/owner'
-import MapEntity from 'entity/map'
 
-
-beforeAll(() => {
-	MapEntity.create({ data: americaSmallMap })
-	Owner.initialize()
-})
 
 
 test('create/disband', () => {
@@ -28,9 +20,14 @@ test('strength', () => {
 
 test('load/unload', () => {
 	const transport = Unit.create('caravel', { x: 0, y: 0 }, Owner.player())
-	const passenger = Unit.create('settler', { x: 0, y: 0 }, Owner.player())
-	Unit.loadUnit(transport, passenger)
-	expect(transport.passengers[0]).toBe(passenger)
-	Unit.unloadUnit(transport, passenger)
+	const passenger1 = Unit.create('settler', { x: 0, y: 0 }, Owner.player())
+	const passenger2 = Unit.create('pioneer', { x: 0, y: 0 }, Owner.player())
+	Unit.loadUnit(transport, passenger1)
+	Unit.loadUnit(transport, passenger2)
+	expect(transport.passengers[0]).toBe(passenger1)
+	expect(transport.passengers[1]).toBe(passenger2)
+	Unit.unloadUnit(transport, passenger1)
+	expect(transport.passengers[0]).toBe(passenger2)
+	Unit.unloadUnit(transport)
 	expect(transport.passengers.length).toBe(0)
 })

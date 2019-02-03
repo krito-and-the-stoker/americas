@@ -27,7 +27,8 @@ const config = () => {
 		resolve: {
 			alias: {
 				version: path.resolve(__dirname, '../src/version'),
-				...aliases
+				...aliases,
+				test: path.resolve(__dirname, '../test')
 			}
 		},
 		devtool: (yargs.argv.production || yargs.argv.staging) ? 'eval' : 'source-map',
