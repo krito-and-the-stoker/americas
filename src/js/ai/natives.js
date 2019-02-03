@@ -1,3 +1,5 @@
+import 'util/polyfills'
+
 import Util from 'util/util'
 import Binding from 'util/binding'
 import Member from 'util/member'

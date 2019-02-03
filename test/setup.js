@@ -1,4 +1,3 @@
-import 'util/polyfills'
 import americaSmallMap from 'data/america-small'
 
 import Owner from 'entity/owner'
