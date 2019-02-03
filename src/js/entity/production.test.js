@@ -15,3 +15,8 @@ test('production', () => {
 	expect(production.amount).toBe(3)
 	expect(production.good).toBe('tools')
 })
+
+test('consumption', () => {
+	const consumption = Production.consumption('blacksmiths')
+	expect(consumption.good).toBe('ore')
+})
