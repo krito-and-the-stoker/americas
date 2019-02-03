@@ -2,12 +2,12 @@ import Buildings from 'data/buildings.json'
 
 import Util from 'util/util'
 import Message from 'util/message'
+import Events from 'util/events'
 
 import Colony from 'entity/colony'
 import Unit from 'entity/unit'
 import Storage from 'entity/storage'
 
-// import Notification from 'view/ui/notification'
 
 const create = () => {
 	const positions = Util.range(11).map(x =>
@@ -76,7 +76,7 @@ const constructionOptions = colony => {
 				const buildings = colony.buildings
 				buildings[name].level += 1
 				Colony.update.buildings(colony)
-				Notification.create({ type: 'construction', colony, building: colony.buildings[name] })
+				Events.trigger('notification', { type: 'construction', colony, building: colony.buildings[name] })
 			}
 		}))
 
@@ -89,7 +89,7 @@ const constructionOptions = colony => {
 			}
 			buildings.warehouse.level += 1
 			Colony.update.buildings(colony)
-			Notification.create({ type: 'construction', colony, building: colony.buildings['warehouse'] })
+			Events.trigger('notification', { type: 'construction', colony, building: colony.buildings['warehouse'] })
 		}
 	}
 
@@ -99,7 +99,7 @@ const constructionOptions = colony => {
 		cost: { construction: 40 },
 		action: () => {
 			const unit = Unit.create('wagontrain', colony.mapCoordinates, colony.owner)
-			Notification.create({ type: 'construction', colony, unit })
+			Events.trigger('notification', { type: 'construction', colony, unit })
 		}
 	}]
 
@@ -112,7 +112,7 @@ const constructionOptions = colony => {
 		},
 		action: () => {
 			const unit = Unit.create('artillery', colony.mapCoordinates, colony.owner)
-			Notification.create({ type: 'construction', colony, unit })
+			Events.trigger('notification', { type: 'construction', colony, unit })
 		}
 	}]
 
@@ -125,7 +125,7 @@ const constructionOptions = colony => {
 		},
 		action: () => {
 			const unit = Unit.create('caravel', colony.mapCoordinates, colony.owner)
-			Notification.create({ type: 'construction', colony, unit })
+			Events.trigger('notification', { type: 'construction', colony, unit })
 		}
 	}, {
 		target: 'merchantman',
@@ -136,7 +136,7 @@ const constructionOptions = colony => {
 		},
 		action: () => {
 			const unit = Unit.create('merchantman', colony.mapCoordinates, colony.owner)
-			Notification.create({ type: 'construction', colony, unit })
+			Events.trigger('notification', { type: 'construction', colony, unit })
 		}
 	}, {
 		target: 'galleon',
@@ -147,7 +147,7 @@ const constructionOptions = colony => {
 		},
 		action: () => {
 			const unit = Unit.create('galleon', colony.mapCoordinates, colony.owner)
-			Notification.create({ type: 'construction', colony, unit })
+			Events.trigger('notification', { type: 'construction', colony, unit })
 		}
 	}, {
 		target: 'privateer',
@@ -158,7 +158,7 @@ const constructionOptions = colony => {
 		},
 		action: () => {
 			const unit = Unit.create('privateer', colony.mapCoordinates, colony.owner)
-			Notification.create({ type: 'construction', colony, unit })
+			Events.trigger('notification', { type: 'construction', colony, unit })
 		}
 	}, {
 		target: 'frigate',
@@ -169,7 +169,7 @@ const constructionOptions = colony => {
 		},
 		action: () => {
 			const unit = Unit.create('frigate', colony.mapCoordinates, colony.owner)
-			Notification.create({ type: 'construction', colony, unit })
+			Events.trigger('notification', { type: 'construction', colony, unit })
 		}
 	}]
 

@@ -3,6 +3,7 @@ import Record from 'util/record'
 import Binding from 'util/binding'
 import Member from 'util/member'
 import Message from 'util/message'
+import Events from 'util/events'
 
 import Time from 'timeline/time'
 
@@ -22,8 +23,6 @@ import ProductionSummary from 'task/productionSummary'
 import ShrinkFromStarvation from 'interaction/shrinkFromStarvation'
 import UnjoinColony from 'interaction/unjoinColony'
 import LeaveColony from 'interaction/leaveColony'
-
-// import Notification from 'view/ui/notification'
 
 
 const getColonyName = () => {
@@ -151,7 +150,7 @@ const initialize = colony => {
 	destroy.push(listen.colonists(colony, colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length))))
 	destroy.push(listenEach.units(colony, (unit, added) => {
 		if (added && unit.treasure) {
-			Notification.create({ type: 'treasure', colony, unit })
+			Events.trigger('notificaiton', { type: 'treasure', colony, unit })
 		}
 	}))
 
@@ -163,11 +162,11 @@ const initialize = colony => {
 		if (storage.food >= 200 + keepFood) {
 			const unit = Unit.create('settler', colony.mapCoordinates, colony.owner)
 			Storage.update(colony.storage, { good: 'food', amount: -200 })
-			Notification.create({ type: 'born', colony, unit })
+			Events.trigger('notificaiton', { type: 'born', colony, unit })
 		}
 		if (storage.food < -1 && !starvationMessageSent) {
 			Message.send(`The food storage of ${colony.name} is empty. We need to get food quickly to prevent losses amongst the colonists`)
-			Notification.create({ type: 'starving', colony })
+			Events.trigger('notificaiton', { type: 'starving', colony })
 			starvationMessageSent = true
 		}
 		if (storage.food < -5) {
@@ -188,7 +187,7 @@ const initialize = colony => {
 		// 	.filter(good => good !== 'food')
 		// 	.filter(good => needsToSendEmptyWarning[good])
 		// 	.forEach(good => {
-		// 		Notification.create({ type: 'storageEmpty', colony, good})
+		// 		Events.trigger('notificaiton', { type: 'storageEmpty', colony, good})
 		// 		needsToSendEmptyWarning[good] = false
 		// 	})
 		// Goods.types
@@ -202,7 +201,7 @@ const initialize = colony => {
 		// 	.filter(good => good !== 'food')
 		// 	.filter(good => needsToSendFullWarning[good])
 		// 	.forEach(good => {
-		// 		Notification.create({ type: 'storageFull', colony, good })
+		// 		Events.trigger('notificaiton', { type: 'storageFull', colony, good })
 		// 		needsToSendFullWarning[good] = false
 		// 	})
 	}))

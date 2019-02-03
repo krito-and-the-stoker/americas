@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js'
 import Terrain from 'data/terrain'
 import Goods from 'data/goods'
 import Units from 'data/units'
+import Buildings from 'data/buildings'
 
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'

@@ -3,12 +3,11 @@ import Member from 'util/member'
 import Binding from 'util/binding'
 import Util from 'util/util'
 import Message from 'util/message'
+import Events from 'util/events'
 
 import Unit from 'entity/unit'
 import Treasure from 'entity/treasure'
 import Owner from 'entity/owner'
-
-// import Notification from 'view/ui/notification'
 
 
 const possibleColonists = [
@@ -230,7 +229,7 @@ const initialize = () => {
 			add.unit(unit)
 			update.crosses(-europe.crossesNeeded)
 			europe.crossesNeeded += 2
-			Notification.create({ type: 'immigration', unit })
+			Events.trigger('notification', { type: 'immigration', unit })
 			Message.send(`Religious unrest in Europe has caused a ${chosen.name} to line up for migration to the new world.`)
 		}
 	})
