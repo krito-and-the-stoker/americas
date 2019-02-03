@@ -157,8 +157,8 @@ const initialize = () => {
 			const unsubscribePassengersAndStorage = Unit.listen.passengers(unit, passengers => {
 				let index = 0
 				const unsubscribePassengers = Util.mergeFunctions(passengers.map(passenger => {
-					const view = UnitView.create(passenger)
-					const sprite = view.sprite
+					const passengerView = UnitView.create(passenger)
+					const sprite = passengerView.sprite
 					sprite.x = index * cargoScale * 32 - 8
 					sprite.y = 0
 					sprite.scale.set(cargoScale)
@@ -167,7 +167,7 @@ const initialize = () => {
 					index += 1
 	
 					return () => {
-						view.unsubscribe()
+						passengerView.unsubscribe()
 						container.removeChild(sprite)
 					}
 				}))
@@ -186,28 +186,28 @@ const initialize = () => {
 				}
 
 				const storage = unit.properties.cargo > 0 ? unit.storage : unit.equipment
-				const unsubscribeStorage = Storage.listen(storage, storage => {
+				const unsubscribeStorage = Storage.listen(storage, () => {
 					const goods = Storage.goods(storage).filter(pack => pack.amount > 0)
 					let storageIndex = 0
 
 					return Util.mergeFunctions(goods.map(pack => {
-						const view = GoodsView.create(pack)
+						const goodsView = GoodsView.create(pack)
 						const offset = index * cargoScale * 32 + (index > 0 ? 20 : 0)
-						view.sprite.x = offset + storageIndex * cargoScale * 95 + 5 + 0.25 * view.number.width
-						view.sprite.y = 0
-						view.sprite.scale.set(cargoScale)
-						view.number.x = offset + storageIndex * cargoScale * 95
-						view.number.y = 10
-						view.number.scale.set(cargoScale)
+						goodsView.sprite.x = offset + storageIndex * cargoScale * 95 + 5 + 0.25 * goodsView.number.width
+						goodsView.sprite.y = 0
+						goodsView.sprite.scale.set(cargoScale)
+						goodsView.number.x = offset + storageIndex * cargoScale * 95
+						goodsView.number.y = 10
+						goodsView.number.scale.set(cargoScale)
 
 						storageIndex += 1
 
-						container.addChild(view.number)
-						container.addChild(view.sprite)
+						container.addChild(goodsView.number)
+						container.addChild(goodsView.sprite)
 
 						return () => {
-							container.removeChild(view.number)
-							container.removeChild(view.sprite)
+							container.removeChild(goodsView.number)
+							container.removeChild(goodsView.sprite)
 						}
 					}))
 				})
@@ -218,7 +218,6 @@ const initialize = () => {
 					unsubscribeStorage()
 					unsubscribeCoords()
 					unsubscribeTile()
-					unsubscribeClick()
 				}
 			})
 
@@ -232,21 +231,22 @@ const initialize = () => {
 				Foreground.get().notifications.removeChild(trade)
 				Foreground.get().notifications.removeChild(container)
 				unsubscribePassengersAndStorage()
+				unsubscribeClick()
 			}
 		}
 	})
 
-	const offset = 60
+	const lineOffset = 60
 	const lineHeight = 36
 	RenderView.updateWhenResized(({ dimensions }) => {
-		container.y = dimensions.y - offset
-		unitName.y = dimensions.y - offset - 1 * lineHeight
-		gotoText.y = dimensions.y - offset - 2 * lineHeight - 20
-		trade.y = dimensions.y - offset - 3 * lineHeight - 20
-		foundColony.y = dimensions.y - offset - 3 * lineHeight - 20
-		buildRoadText.y = dimensions.y - offset - 4 * lineHeight - 20
-		plowText.y = dimensions.y - offset - 5 * lineHeight - 20
-		cutForestText.y = dimensions.y - offset - 5 * lineHeight - 20
+		container.y = dimensions.y - lineOffset
+		unitName.y = dimensions.y - lineOffset - 1 * lineHeight
+		gotoText.y = dimensions.y - lineOffset - 2 * lineHeight - 20
+		trade.y = dimensions.y - lineOffset - 3 * lineHeight - 20
+		foundColony.y = dimensions.y - lineOffset - 3 * lineHeight - 20
+		buildRoadText.y = dimensions.y - lineOffset - 4 * lineHeight - 20
+		plowText.y = dimensions.y - lineOffset - 5 * lineHeight - 20
+		cutForestText.y = dimensions.y - lineOffset - 5 * lineHeight - 20
 	})
 }
 
