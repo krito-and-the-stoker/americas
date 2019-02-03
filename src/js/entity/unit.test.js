@@ -26,11 +26,11 @@ test('strength', () => {
 	expect(Unit.strength(unit)).toBe(3)
 })
 
-// test('load/unload', () => {
-// 	const vehicle = Unit.create('caravel', { x: 0, y: 0 }, Owner.player())
-// 	const passenger = Unit.create('settler', { x: 0, y: 0 }, Owner.player())
-// 	Unit.load(vehicle, passenger)
-// 	expect(unit.passengers[0]).toBe(passenger)
-// 	Unit.unload(vehicle, passenger)
-// 	expect(unit.passengeres.length).toBe(0)
-// })
+test('load/unload', () => {
+	const transport = Unit.create('caravel', { x: 0, y: 0 }, Owner.player())
+	const passenger = Unit.create('settler', { x: 0, y: 0 }, Owner.player())
+	Unit.loadUnit(transport, passenger)
+	expect(transport.passengers[0]).toBe(passenger)
+	Unit.unloadUnit(transport, passenger)
+	expect(transport.passengers.length).toBe(0)
+})
