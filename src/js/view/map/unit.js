@@ -256,8 +256,6 @@ export default {
 	selectedUnit,
 	select,
 	unselect,
-	load,
-	save,
 	listen,
 	update
 }

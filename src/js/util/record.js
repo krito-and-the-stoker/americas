@@ -227,7 +227,6 @@ const save = () => {
 		tileLookup,
 		tiles: tileIndices,
 		time: Time.save(),
-		unitView: UnitView.save(),
 		europe: Europe.save(),
 		treasure: Treasure.save(),
 		market: Market.save(),
