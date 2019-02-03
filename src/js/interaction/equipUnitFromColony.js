@@ -1,4 +1,6 @@
 import Storage from 'entity/storage'
+
+
 export default (colony, unit, pack) => {
 	const { good, amount } = pack
 	if (unit.name === 'settler') {

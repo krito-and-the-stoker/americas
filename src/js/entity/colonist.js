@@ -11,7 +11,7 @@ import Harvest from 'task/harvest'
 import Produce from 'task/produce'
 import Teach from 'task/teach'
 
-// import UnjoinColony from 'interaction/unjoinColony'
+import UnjoinColony from 'interaction/unjoinColony'
 
 
 const beginFieldWork = (colonist, tile, good) => {

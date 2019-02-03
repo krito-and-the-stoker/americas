@@ -1,6 +1,7 @@
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
 
+
 export default colonist => {
 	const colony = colonist.colony
 	Colonist.stopWorking(colonist)

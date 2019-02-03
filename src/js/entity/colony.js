@@ -19,9 +19,9 @@ import GrowHorses from 'task/growHorses'
 import ColonyProduction from 'task/colonyProduction'
 import ProductionSummary from 'task/productionSummary'
 
-// import ShrinkFromStarvation from 'interaction/shrinkFromStarvation'
-// import UnjoinColony from 'interaction/unjoinColony'
-// import LeaveColony from 'interaction/leaveColony'
+import ShrinkFromStarvation from 'interaction/shrinkFromStarvation'
+import UnjoinColony from 'interaction/unjoinColony'
+import LeaveColony from 'interaction/leaveColony'
 
 // import Notification from 'view/ui/notification'
 

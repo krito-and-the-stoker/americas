@@ -1,7 +1,8 @@
 import Util from 'util/util'
 import Unit from 'entity/unit'
 import Colonist from 'entity/colonist'
-import Notification from 'view/ui/notification'
+// import Notification from 'view/ui/notification'
+
 
 export default colony => {
 	const colonist = Util.choose(colony.colonists)

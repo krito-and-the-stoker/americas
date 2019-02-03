@@ -10,8 +10,6 @@ import Binding from 'util/binding'
 import Owner from 'entity/owner'
 import MapEntity from 'entity/map'
 
-// import Background from 'render/background'
-
 
 const create = ({ id, layers, index }) => {
 	const [name, terrain] = Object.entries(Terrain).find(([, terrain]) => terrain.id === id)

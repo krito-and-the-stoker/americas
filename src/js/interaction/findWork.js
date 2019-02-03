@@ -2,6 +2,7 @@ import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Colonist from 'entity/colonist'
 
+
 export default colonist => {
 	const colony = colonist.colony
 	const tile = MapEntity.tile(colony.mapCoordinates)

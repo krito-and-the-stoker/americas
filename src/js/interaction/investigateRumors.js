@@ -2,7 +2,8 @@ import MapEntity from 'entity/map'
 import Unit from 'entity/unit'
 import Treasure from 'entity/treasure'
 import Europe from 'entity/europe'
-import Notification from 'view/ui/notification'
+
+// import Notification from 'view/ui/notification'
 
 // TODO: implement these
 // After choice

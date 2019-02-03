@@ -1,15 +1,14 @@
 import Record from 'util/record'
 import Util from 'util/util'
+import Message from 'util/message'
+import Events from 'util/events'
 
 import Time from 'timeline/time'
 
 import Unit from 'entity/unit'
 
-import UnitView from 'view/unit'
-
-import Message from 'util/message'
-import Notification from 'view/ui/notification'
-import Events from 'util/events'
+// import UnitView from 'view/unit'
+// import Notification from 'view/ui/notification'
 
 export default (attacker, other) => {
 	Time.schedule({ priority: true, init: () => { 

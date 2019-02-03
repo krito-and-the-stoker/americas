@@ -15,10 +15,10 @@ import Colonist from 'entity/colonist'
 
 import Commander from 'command/commander'
 
-// import EnterColony from 'interaction/enterColony'
-// import LeaveColony from 'interaction/leaveColony'
-// import EnterEurope from 'interaction/enterEurope'
-// import Battle from 'interaction/battle'
+import EnterColony from 'interaction/enterColony'
+import LeaveColony from 'interaction/leaveColony'
+import EnterEurope from 'interaction/enterEurope'
+import Battle from 'interaction/battle'
 
 
 const RADIUS_GROWTH = 1.0 / 2500

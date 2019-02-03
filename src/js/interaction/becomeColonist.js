@@ -1,6 +1,8 @@
 import Colonist from 'entity/colonist'
-import JoinColony from './joinColony'
 import Unit from 'entity/unit'
+
+import JoinColony from 'interaction/joinColony'
+
 
 export default (colony, unit) => {
 	const colonist = Colonist.create(unit)

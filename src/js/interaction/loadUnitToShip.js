@@ -1,7 +1,10 @@
 import Unit from 'entity/unit'
 import Europe from 'entity/europe'
-import LeaveColony from './leaveColony'
+
 import Commander from 'command/commander'
+
+import LeaveColony from 'interaction/leaveColony'
+
 
 export default (ship, unit) => {	
 	if (!unit.treasure || ship.properties.canTransportTreasure && Commander.isIdle(ship.commander)) {	
