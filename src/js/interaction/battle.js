@@ -7,9 +7,6 @@ import Time from 'timeline/time'
 
 import Unit from 'entity/unit'
 
-// import UnitView from 'view/unit'
-// import Notification from 'view/ui/notification'
-
 export default (attacker, other) => {
 	Time.schedule({ priority: true, init: () => { 
 		if (!Util.inBattleDistance(attacker, other)) {
@@ -31,15 +28,15 @@ export default (attacker, other) => {
 		const chance = Math.random() * (probability.attacker + probability.defender)
 		Unit.remove.hostile(attacker, defender)
 
-		const attackerName = UnitView.getName(attacker)
-		const defenderName = UnitView.getName(defender)
+		const attackerName = Unit.name(attacker)
+		const defenderName = Unit.name(defender)
 		if (chance < probability.attacker) {
 			Message.send(`A ${attackerName} defeated a ${defenderName} on the battle field`)
-			Notification.create({ type: 'combat', attacker, defender, loser: defender })
+			Events.trigger('notification', { type: 'combat', attacker, defender, loser: defender })
 			Unit.disband(defender)
 		} else {
 			Message.send(`A ${defenderName} defeated a ${attackerName} on the battle field`)
-			Notification.create({ type: 'combat', attacker, defender, loser: attacker })
+			Events.trigger('notification', { type: 'combat', attacker, defender, loser: attacker })
 			Unit.disband(attacker)
 		}
 		const coords = {

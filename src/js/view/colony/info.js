@@ -1,7 +1,9 @@
 import * as PIXI from 'pixi.js'
 
 import Drag from 'input/drag'
-import UnitView from 'view/unit'
+
+import Unit from 'entity/unit'
+
 import Text from 'render/text'
 
 
@@ -14,10 +16,10 @@ const create = originalDimensions => {
 	const unsubscribeDrag = Drag.listen(params => {
 		if (params) {
 			if (params.unit) {
-				text.text = UnitView.getName(params.unit)
+				text.text = Unit.name(params.unit)
 			}
 			if (params.colonist) {
-				text.text = UnitView.getName(params.colonist.unit)
+				text.text = Unit.name(params.colonist.unit)
 			}
 			if (params.good) {
 				text.text = `${params.amount} ${params.good}`

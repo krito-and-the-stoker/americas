@@ -165,6 +165,8 @@ const initialize = unit => {
 	])
 }
 
+const name = unit => unit.expert ? unit.properties.name[unit.expert] || unit.properties.name.default : unit.properties.name.default
+
 const add = {
 	passenger: (unit, passenger) => Member.add(unit, 'passengers', passenger),
 	hostile: (unit, hostile) => Member.add(unit, 'hostiles', hostile),
@@ -365,5 +367,6 @@ export default {
 	load,
 	at,
 	area,
-	strength
+	strength,
+	name
 }

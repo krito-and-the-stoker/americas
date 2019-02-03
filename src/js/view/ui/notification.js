@@ -192,7 +192,7 @@ const createEurope = unit => {
 	}
 
 	const dialog = {
-		text: `A ${UnitView.getName(unit)} has arrived in Europe.`,
+		text: `A ${Unit.name(unit)} has arrived in Europe.`,
 		type: 'naval'
 	}
 
@@ -219,7 +219,7 @@ const createImmigration = unit => {
 	}
 
 	const dialog = {
-		text: `Religous unrest has caused immigration from Europe. A new ${UnitView.getName(unit)} is waiting to be picked up in London.`,
+		text: `Religous unrest has caused immigration from Europe. A new ${Unit.name(unit)} is waiting to be picked up in London.`,
 		type: 'religion'
 	}
 
@@ -248,7 +248,7 @@ const createAmerica = unit => {
 	}
 
 	const dialog = {
-		text: `A ${UnitView.getName(unit)} has arrived in the new world.`,
+		text: `A ${Unit.name(unit)} has arrived in the new world.`,
 		coords: unit.mapCoordinates,
 		type: 'naval'
 	}
@@ -274,7 +274,7 @@ const createConstruction = (colony, { building, unit }) => {
 		colonyScreen: c => c === colony
 	}
 
-	const constructionName = building ? Building.getName(colony, building) : UnitView.getName(unit)
+	const constructionName = building ? Building.getName(colony, building) : Unit.name(unit)
 	const dialog = {
 		text: `${colony.name} has finished the construction of a ${constructionName}.`,
 		coords: colony.mapCoordinates,
@@ -314,7 +314,7 @@ const createTerraforming = unit => {
 	}
 
 	const dialog = {
-		text: `A ${UnitView.getName(unit)} has finished working on a tile`,
+		text: `A ${Unit.name(unit)} has finished working on a tile`,
 		coords: unit.mapCoordinates,
 		type: 'scout'	
 	}
@@ -356,7 +356,7 @@ const createRumor = (option, tile, unit) => {
 	}
 
 	const dialog = {
-		text: `A ${UnitView.getName(unit)} has found a rumor.`,
+		text: `A ${Unit.name(unit)} has found a rumor.`,
 		coord: unit.mapCoordinates,
 		type: 'scout'
 	}
@@ -407,7 +407,7 @@ const createSettlement = (settlement, unit) => {
 	}
 
 	const dialog = {
-		text: `A ${UnitView.getName(unit)} has entered a native village`,
+		text: `A ${Unit.name(unit)} has entered a native village`,
 		coords: settlement.mapCoordinates,
 		type: 'scout'
 	}
@@ -486,7 +486,7 @@ const createDied = (colony, unit) => {
 	}
 
 	const dialog = {
-		text: `A ${UnitView.getName(unit)} has died of starvation in ${colony.name}`,
+		text: `A ${Unit.name(unit)} has died of starvation in ${colony.name}`,
 		coords: colony.mapCoordinates,
 		type: 'govenor'
 	}
@@ -566,7 +566,7 @@ const createArrive = (colony, unit) => {
 	}
 
 	const dialog = {
-		text: `A ${UnitView.getName(unit)} has arrived in ${colony.name}`,
+		text: `A ${Unit.name(unit)} has arrived in ${colony.name}`,
 		coords: colony.mapCoordinates,
 		type: 'naval'
 	}
@@ -603,7 +603,7 @@ const createLearned = ({ colony, colonist, unit }) => {
 	}
 
 	const dialog = {
-		text: `A colonist has learned a new profession and is now considered a ${UnitView.getName(unit)}.`,
+		text: `A colonist has learned a new profession and is now considered a ${Unit.name(unit)}.`,
 		coords: unit.mapCoordinates,
 		type: 'govenor'
 	}

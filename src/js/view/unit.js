@@ -5,7 +5,6 @@ import Unit from 'entity/unit'
 import Resources from 'render/resources'
 
 
-const getName = unit => unit.expert ? unit.properties.name[unit.expert] || unit.properties.name.default : unit.properties.name.default
 const createTexture = unit => Resources.texture('map', { frame: getFrame(unit) })
 const getFrame = unit => unit.expert ? unit.properties.frame[unit.expert] || unit.properties.frame.default : unit.properties.frame.default
 
@@ -29,6 +28,5 @@ const create = unit => {
 
 export default {
 	getFrame,
-	create,
-	getName
+	create
 }

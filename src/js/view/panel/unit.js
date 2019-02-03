@@ -71,7 +71,7 @@ const initialize = () => {
 	UnitMapView.listen.selectedView(view => {
 		if (view) {
 			const unit = view.unit
-			unitName.text = `${UnitView.getName(unit)}`
+			unitName.text = `${Unit.name(unit)}`
 			unitName.buttonMode = true
 			const unsubscribeClick = Util.mergeFunctions([
 				Click.on(unitName, () => {

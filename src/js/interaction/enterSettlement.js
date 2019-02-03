@@ -1,5 +1,6 @@
-// import Notification from 'view/ui/notification'
+import Events from 'util/events'
+
 
 export default (settlement, unit) => {
-	Notification.create({ type: 'settlement', settlement, unit })
+	Events.trigger('notification', { type: 'settlement', settlement, unit })
 }

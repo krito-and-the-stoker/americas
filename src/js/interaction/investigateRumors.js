@@ -1,9 +1,10 @@
+import Events from 'util/events'
+
 import MapEntity from 'entity/map'
 import Unit from 'entity/unit'
 import Treasure from 'entity/treasure'
 import Europe from 'entity/europe'
 
-// import Notification from 'view/ui/notification'
 
 // TODO: implement these
 // After choice
@@ -62,5 +63,5 @@ export default unit => {
 		text: option.text({ unit, random }),
 		action: () => option.action({ unit, random })
 	}
-	Notification.create({ type: 'rumor', option: evaluatedOption, tile, unit })
+	Events.trigger('notification', { type: 'rumor', option: evaluatedOption, tile, unit })
 }
