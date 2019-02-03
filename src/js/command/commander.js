@@ -19,8 +19,8 @@ import Road from 'command/road'
 import LearnFromNatives from 'command/learnFromNatives'
 import CommunicateTension from 'command/communicateTension'
 
-// import InvestigateRumors from 'interaction/investigateRumors'
-// import EnterSettlement from 'interaction/enterSettlement'
+import InvestigateRumors from 'interaction/investigateRumors'
+import EnterSettlement from 'interaction/enterSettlement'
 
 
 const cancel = () => ({

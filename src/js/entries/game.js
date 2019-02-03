@@ -178,6 +178,7 @@ const start = async () => {
 
 		AutosaveView.initialize()
 		GlobalPanel.initialize(Foreground.get().permanent)
+		Dialog.initialize()
 
 		// start game!
 		// const caravel = americaSmall()
@@ -241,6 +242,7 @@ const load = async () => {
 		Record.load()
 		await nextFrame()
 		AutosaveView.initialize()
+		Dialog.initialize()
 
 		MapView.zoomBy(1/0.35, null, 0)
 		setTimeout(() => {

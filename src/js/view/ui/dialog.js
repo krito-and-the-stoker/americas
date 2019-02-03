@@ -7,6 +7,8 @@ import Resources from 'render/resources'
 import Time from 'timeline/time'
 import Click from 'input/click'
 import MapView from 'view/map'
+import Events from 'util/events'
+
 
 const padding = 40
 const emptyLine = 26
@@ -254,4 +256,11 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap, im
 	return close
 }
 
-export default { create }
+const initialize = () => {
+	Events.listen('dialog', params => create(params))
+}
+
+export default {
+	initialize,
+	create
+}

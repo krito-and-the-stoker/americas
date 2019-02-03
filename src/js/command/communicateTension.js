@@ -1,10 +1,9 @@
 import Util from 'util/util'
 import Record from 'util/record'
+import Events from 'util/events'
 
 import Storage from 'entity/storage'
 import Settlement from 'entity/settlement'
-
-// import Dialog from 'view/ui/dialog'
 
 
 const create = (colony, settlement, unit) => {
@@ -15,7 +14,7 @@ const create = (colony, settlement, unit) => {
 			const good = Util.choose(goods)
 			const amount = 2 + Math.round(Math.random() * 15)
 
-			Dialog.create({
+			Events.trigger('dialog', {
 				text: `As a sign of our friendship and peace take these ${amount} ${good} as a gift.`,
 				type: 'natives',
 				image: settlement.tribe.image,
@@ -33,7 +32,7 @@ const create = (colony, settlement, unit) => {
 		}
 
 		if (settlement.tension < 20) {
-			Dialog.create({
+			Events.trigger('dialog', {
 				text: 'Although we are glad to see your colonies prosper, we are concerned with your overuse of land.',
 				type: 'natives',
 				image: settlement.tribe.image,
@@ -48,7 +47,7 @@ const create = (colony, settlement, unit) => {
 			return false
 		}
 
-		Dialog.create({
+		Events.trigger('dialog', {
 			text: 'We cannot tolerate your careless exploitation of our ancestors land any longer.',
 			type: 'natives',
 			image: settlement.tribe.image,

@@ -1,4 +1,5 @@
 import Record from 'util/record'
+import Events from 'util/events'
 
 import Time from 'timeline/time'
 
@@ -6,8 +7,6 @@ import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Unit from 'entity/unit'
 import Storage from 'entity/storage'
-
-// import Notification from 'view/ui/notification'
 
 
 const create = (unit, eta) => {
@@ -33,7 +32,7 @@ const create = (unit, eta) => {
 			Storage.update(unit.equipment, { good: 'tools', amount: -20 })	
 			Tile.constructRoad(MapEntity.tile(unit.mapCoordinates))
 			Unit.update.pioneering(unit, false)
-			Notification.create({ type: 'terraforming', unit })
+			Events.trigger('notification', { type: 'terraforming', unit })
 		}
 	}
 

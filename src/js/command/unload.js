@@ -1,4 +1,5 @@
 import Record from 'util/record'
+import Events from 'util/events'
 
 import Time from 'timeline/time'
 
@@ -6,8 +7,6 @@ import Unit from 'entity/unit'
 
 import Move from 'command/move'
 import Commander from 'command/commander'
-
-// import Dialog from 'view/ui/dialog'
 
 
 const createUnloadingOnly = unloadingStartedAt => {
@@ -32,7 +31,7 @@ const create = (unit, coords) => {
 	let landingUnit = null
 
 	const init = () => {	
-		Dialog.create({
+		Events.trigger('dialog', {
 			type: 'naval',
 			text: 'Would you like to disembark here?',
 			coords: unit.mapCoordinates,

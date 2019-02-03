@@ -1,14 +1,13 @@
 import Record from 'util/record'
 import Message from 'util/message'
+import Events from 'util/events'
 
 import Time from 'timeline/time'
 
 import MapEntity from 'entity/map'
 import Unit from 'entity/unit'
 
-// import EnterEurope from 'interaction/enterEurope'
-
-// import Notification from 'view/ui/notification'
+import EnterEurope from 'interaction/enterEurope'
 
 
 const create = (unit, eta = null) => {
@@ -33,7 +32,7 @@ const create = (unit, eta = null) => {
 	const finished = () => {
 		if (eta) {
 			Message.send(`A ${unit.name} arrived in Europe.`)
-			Notification.create({ type: 'europe', unit })
+			Events.trigger('notification', { type: 'europe', unit })
 			EnterEurope(unit)
 		}
 	}

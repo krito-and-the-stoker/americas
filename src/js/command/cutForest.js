@@ -1,5 +1,6 @@
 import Util from 'util/util'
 import Record from 'util/record'
+import Events from 'util/events'
 
 import Time from 'timeline/time'
 
@@ -7,8 +8,6 @@ import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Storage from 'entity/storage'
 import Unit from 'entity/unit'
-
-// import Notification from 'view/ui/notification'
 
 
 const create = (unit, eta) => {
@@ -40,7 +39,7 @@ const create = (unit, eta) => {
 				Storage.update(colony.storage, { good: 'wood', amount })
 			}
 			Unit.update.pioneering(unit, false)
-			Notification.create({ type: 'terraforming', unit })
+			Events.trigger('notification', { type: 'terraforming', unit })
 		}
 	}
 

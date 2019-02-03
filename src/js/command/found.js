@@ -5,9 +5,9 @@ import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Unit from 'entity/unit'
 
-// import BecomeColonist from 'interaction/becomeColonist'
-// import FindWork from 'interaction/findWork'
-// import EnterColony from 'interaction/enterColony'
+import BecomeColonist from 'interaction/becomeColonist'
+import FindWork from 'interaction/findWork'
+import EnterColony from 'interaction/enterColony'
 
 
 const create = unit => {

@@ -6,8 +6,8 @@ import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Unit from 'entity/unit'
 
-// import EnterColony from 'interaction/enterColony'
-// import LeaveColony from 'interaction/leaveColony'
+import EnterColony from 'interaction/enterColony'
+import LeaveColony from 'interaction/leaveColony'
 
 
 const inMoveDistance = (coords1, coords2) => Math.abs(coords1.x - coords2.x) <= 1 && Math.abs(coords1.y - coords2.y) <= 1
