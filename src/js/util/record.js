@@ -227,6 +227,7 @@ const getTileLookup = tile => {
 const resolveLookup = index => tileLookup ? tileLookup[index] : index
 
 const serialize = () => {
+	setGlobal('revision', Version.revision)
 	tileDictionary = {}
 	tileLookup = []
 	const tileIndices = tiles.map(saveSingleTile).map(getTileLookup)
@@ -328,6 +329,7 @@ const unserialize = content => {
 	if (snapshot.revision !== Version.revision) {
 		console.warn('The save games version does not match the version of the game. If you see no errors you can ignore this warning.')
 	}
+	globals.revision = snapshot.revision
 	globals = snapshot.globals
 	tileLookup = snapshot.tileLookup
 	snapshot.entities.forEach(record => record.listeners = [])

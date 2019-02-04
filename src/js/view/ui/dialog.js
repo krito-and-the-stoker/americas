@@ -160,7 +160,7 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap, im
 
 	const imageView = config.image ? Resources.sprite(config.image) : null
 
-	const optionViews = options.filter(option => option.text).map(option => ({
+	const optionViews = (options ? options.filter(option => option.text) : []).map(option => ({
 		...option,
 		text: Text.create(option.text)
 	}))
@@ -245,7 +245,7 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap, im
 
 	Click.on(closePlane, () => {
 		if (clickAllowed) {
-			const defaultOption = options.find(option => option.default)
+			const defaultOption = options ? options.find(option => option.default) : null
 			if (defaultOption && defaultOption.action) {
 				defaultOption.action()
 			}

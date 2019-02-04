@@ -52,33 +52,19 @@ if (process.env.SENTRY_DSN) {
 	})
 }
 
-const update = deltaTime => {
-	try {
-		Time.advance(deltaTime)
-	} catch (err) {
-		captureException(err)
-		throw err
-	}
-}
-
-const draw = () => {
-	try {
-		RenderView.onDraw()
-	} catch (err) {
-		captureException(err)
-		throw err
-	}
-}
-
 const initialize = () => {
 	let timeStamp = 0
 
 	const loop = t => {
 		const deltaTime = Math.min(t - timeStamp, 150)
 		timeStamp = t
-		update(deltaTime)
-		Binding.applyUpdate()
-		draw()
+		try {		
+			Time.advance(deltaTime)
+			Binding.applyUpdate()
+			RenderView.onDraw()
+		} catch (err) {
+			captureException(err)
+		}
 		requestAnimationFrame(loop)
 	}
 
@@ -209,10 +195,15 @@ const start = async () => {
 			})
 		}, 3500)
 
+
 		await nextFrame()
 		initialize()
 	} catch (err) {
 		captureException(err)
+		Dialog.create({
+			type: 'menu',
+			text: 'There has been an error initializing the game. A report has been sent and we will investigate and fix it shortly.'
+		})
 	}
 }
 
@@ -257,17 +248,20 @@ const load = async () => {
 			Keyboard.initialize()
 		}, 3000)
 
-		// document.addEventListener('visibilitychange', () => {
-		// 	if (document.hidden) {
-		// 		MainLoop.stop()
-		// 	} else {
-		// 		MainLoop.start()
-		// 	}
-		// })
-
 		initialize()
 	} catch (err) {
 		captureException(err)
+		if (Record.getGlobal('revision') !== Version.revision) {		
+			Dialog.create({
+				type: 'menu',
+				text: 'There has been an error loading the save game. The save game is from an earlier release and this is most likely the reason.'
+			})
+		} else {
+			Dialog.create({
+				type: 'menu',
+				text: 'There has been an error initializing the game. A report has been sent and we will investigate and fix it shortly.'
+			})
+		}
 	}
 }
 

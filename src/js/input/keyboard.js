@@ -17,26 +17,31 @@ import Help from 'view/help'
 import Owner from 'entity/owner'
 
 let controlAllPlayers = false
-const handleKeydown = (e) => {
+const handleKeydown = e => {
 	if (e.ctrlKey) {	
 		if (e.key === 'o') {
 			Record.dump()
+			e.preventDefault()
 		}
 
 		if (e.key === 'g') {
 			Treasure.gain(100)
+			e.preventDefault()
 		}
 
 		if (e.key === 's') {
 			Record.download()
+			e.preventDefault()
 		}
 
 		if (e.key === 'l') {
 			Record.upload()
+			e.preventDefault()
 		}
 
 		if (e.key === 'd') {
 			MapEntity.discoverAll()
+			e.preventDefault()
 		}
 
 		if (e.key === 'a') {
@@ -55,6 +60,7 @@ const handleKeydown = (e) => {
 				})
 			}
 			controlAllPlayers = !controlAllPlayers
+			e.preventDefault()
 		}
 	}
 
@@ -66,7 +72,7 @@ const handleKeydown = (e) => {
 		Europe.open()
 	}
 
-	if (e.key === 'm' || e.key === 'a' || e.key === 'Escape') {
+	if (e.key === 'a' || e.key === 'Escape') {
 		Foreground.closeScreen()
 	}
 

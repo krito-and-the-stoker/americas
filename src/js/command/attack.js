@@ -17,7 +17,6 @@ const create = (attacker, { colony, unit }) => {
 	const	defender = colony ? Colony.defender(colony) : unit
 	Unit.add.hostile(attacker, defender)
 
-
 	return MoveTo.create(attacker, predictCoordinates(defender))
 }
 
