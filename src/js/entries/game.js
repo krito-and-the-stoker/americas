@@ -60,7 +60,7 @@ const initialize = () => {
 		timeStamp = t
 		try {		
 			Time.advance(deltaTime)
-			Binding.applyUpdate()
+			Binding.applyAllUpdates()
 			RenderView.onDraw()
 		} catch (err) {
 			captureException(err)
