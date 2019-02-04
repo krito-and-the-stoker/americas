@@ -1,4 +1,4 @@
-import americaSmallMap from 'data/america-small'
+import americaSmallMap from 'data/america-small-incompatible'
 
 import PathFinder from 'util/pathFinder'
 import Owner from 'entity/owner'

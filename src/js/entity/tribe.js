@@ -1,3 +1,5 @@
+import Terrain from 'data/terrain'
+
 import Util from 'util/util'
 import Member from 'util/member'
 import Binding from 'util/binding'
@@ -17,7 +19,7 @@ const SPEED = 3
 const createFromMap = ({ tiles }) => {
 	const tribes = []
 	tiles.forEach(tile => {
-		if (tile.zone) {
+		if (tile.zone && tile.zone !== Terrain.start.id) {
 			if (!tribes.map(tribe => tribe.id).includes(tile.zone)) {
 				tribes.push(create(tile.zone, Owner.create('natives')))
 			}

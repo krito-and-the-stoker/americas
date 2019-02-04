@@ -6,6 +6,6 @@ import Owner from 'entity/owner'
 
 
 test('create', () => {
-	const settler = Unit.create('settler', { x: 74, y: 36 }, Owner.player())
+	const settler = Unit.create('settler', { x: 1, y: 1 }, Owner.player())
 	Colonist.create(settler)
 })

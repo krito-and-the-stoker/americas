@@ -75,6 +75,7 @@ const initialize = settlement => {
 				update.interest(settlement, interest - INTEREST_THRESHOLD)
 				const colony = Util.choose(Util.quantizedRadius(settlement.mapCoordinates, 5)
 					.map(coords => MapEntity.tile(coords))
+					.filter(tile => !!tile)
 					.filter(tile => tile.colony)
 					.map(tile => tile.colony))
 				if (!colony) {
@@ -97,14 +98,17 @@ const initialize = settlement => {
 		}),
 
 		listen.mission(settlement, mission =>
-			Util.quantizedRadius(settlement.mapCoordinates, 5).map(coords =>
-				Tile.listen.tile(MapEntity.tile(coords), tile => {
-					const tension = (tile.road ? 1 : 0) + (tile.plowed ? 1 : 0)
-					return [
-						tension ? Time.schedule(GrowTension.create(settlement, (mission ?0.5:1) * tension / Util.distance(settlement.mapCoordinates, coords))) : null,
-						tile.colony ? Time.schedule(GrowInterest.create(settlement, 1.0 / Util.distance(settlement.mapCoordinates, coords))) : null
-					]
-				})))
+			Util.quantizedRadius(settlement.mapCoordinates, 5)
+				.map(MapEntity.tile)
+				.filter(tile => !!tile)
+				.map(tile =>
+					Tile.listen.tile(tile, tile => {
+						const tension = (tile.road ? 1 : 0) + (tile.plowed ? 1 : 0)
+						return [
+							tension ? Time.schedule(GrowTension.create(settlement, (mission ?0.5:1) * tension / Util.distance(settlement.mapCoordinates, tile.mapCoordinates))) : null,
+							tile.colony ? Time.schedule(GrowInterest.create(settlement, 1.0 / Util.distance(settlement.mapCoordinates, tile.mapCoordinates))) : null
+						]
+					})))
 	]
 }
 

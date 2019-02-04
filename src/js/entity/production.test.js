@@ -8,8 +8,8 @@ import Owner from 'entity/owner'
 
 
 test('production', () => {
-	const colony = Colony.create({ x: 74, y: 36 }, Owner.player())
-	const unit = Unit.create('settler', { x: 74, y: 36 }, Owner.player())
+	const colony = Colony.create({ x: 1, y: 1 }, Owner.player())
+	const unit = Unit.create('settler', { x: 1, y: 1 }, Owner.player())
 	const colonist = Colonist.create(unit)
 	const production = Production.production(colony, 'blacksmiths', colonist)
 	expect(production.amount).toBe(3)

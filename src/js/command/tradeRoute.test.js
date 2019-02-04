@@ -10,8 +10,8 @@ import Commander from 'command/commander'
 
 
 test('unload passengers', () => {
-	const vessel = Unit.create('caravel', { x: 74, y: 36 }, Owner.player())
-	const passenger = Unit.create('settler', { x: 74, y: 36 }, Owner.player())
+	const vessel = Unit.create('caravel', { x: 1, y: 1 }, Owner.player())
+	const passenger = Unit.create('settler', { x: 1, y: 1 }, Owner.player())
 	Unit.loadUnit(vessel, passenger)
 	expect(vessel.passengers.length).toBe(1)
 	Commander.scheduleInstead(vessel.commander, TradeRoute.create(vessel))

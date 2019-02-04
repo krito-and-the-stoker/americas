@@ -1,9 +1,9 @@
 import * as Sentry from '@sentry/browser'
 
-import Version from 'version/version.json'
+import Version from 'version/version'
 
-// import americaSmallMap from 'data/america-small.json'
-import americaLargeMap from 'data/america-large.json'
+import americaLargeMap from 'data/america-large'
+import Terrain from 'data/terrain'
 
 import Tween from 'util/tween.js'
 import PathFinder from 'util/pathFinder'
@@ -111,12 +111,10 @@ const initialize = () => {
 // }
 
 const americaLarge = () => {
-	const startCoordinates = Util.choose([
-		{ x: 151, y: 125 },
-		{ x: 142, y: 144 },
-		{ x: 176, y: 170 },
-		{ x: 209, y: 186 },
-	])
+	const startCoordinates = Util.choose(
+		MapEntity.get().tiles.filter(tile =>
+			tile.zone === Terrain.start.id)).mapCoordinates
+
 	const pioneer = Unit.create('pioneer', startCoordinates, Owner.player())
 	const soldier = Unit.create('soldier', startCoordinates, Owner.player())
 	const caravel = Unit.create('caravel', startCoordinates, Owner.player())
