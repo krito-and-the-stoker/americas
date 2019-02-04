@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 
+import Util from 'util/util'
 import Binding from 'util/binding'
 
 import Layer from 'render/layer'
@@ -62,7 +63,7 @@ const openScreen = (view, params) => {
 const closeScreen = () => {
 	if (state.screen) {
 		if (state.screen.unsubscribe) {
-			state.screen.unsubscribe()
+			Util.execute(state.screen.unsubscribe)
 		}
 		Events.trigger('closeScreen', state.screen.params)
 		Context.cancelAll()

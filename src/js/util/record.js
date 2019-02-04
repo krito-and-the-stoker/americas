@@ -53,7 +53,7 @@ const remove = entity => {
 	if (!record) {
 		console.warn('cannot remove, entity not found. Possible duplicate removal', entity)
 	} else {
-		record.destroy()
+		Util.execute(record.destroy)
 	}
 	records = records.filter(record => record.entity !== entity)
 }
@@ -70,10 +70,10 @@ const listen = (type, fn) => {
 	records
 		.filter(record => record.type === type)
 		.forEach(record => {
-			record.destroy = Util.mergeFunctions([
+			record.destroy = [
 				record.destroy,
 				fn(record.entity)
-			])
+			]
 		})
 
 	listeners[type].push(fn)
@@ -83,7 +83,7 @@ const update = (type, entity) => {
 	if (!listeners[type]) {
 		initListeners(type)
 	}
-	return Util.mergeFunctions(listeners[type].map(fn => fn(entity)))
+	return listeners[type].map(fn => fn(entity))
 }
 
 
@@ -303,7 +303,7 @@ const load = (src = null) => {
 	Message.log('Loading...')
 	Events.trigger('shotdown')
 
-	records.forEach(record => record.destroy())
+	records.forEach(record => Util.execute(record.destroy))
 	
 	loadedListeners = []
 	records = []

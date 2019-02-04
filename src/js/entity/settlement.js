@@ -59,12 +59,13 @@ const create = (tribe, coords, owner) => {
 
 
 const initialize = settlement => {
-	if (settlement.destroy) {
-		settlement.destroy()
-	}
-	Natives.add.settlement(settlement.owner.ai, settlement)
+	Util.execute(settlement.destroy)
 
-	settlement.destroy = Util.mergeFunctions([
+	// Tile.radius(MapEntity.tile())
+
+	settlement.destroy = [
+		Natives.add.settlement(settlement.owner.ai, settlement),
+
 		listen.interest(settlement, interest => {
 			if (interest > INTEREST_THRESHOLD) {
 				update.interest(settlement, interest - INTEREST_THRESHOLD)
@@ -92,15 +93,15 @@ const initialize = settlement => {
 		}),
 
 		listen.mission(settlement, mission =>
-			Util.mergeFunctions(Util.quantizedRadius(settlement.mapCoordinates, 5).map(coords =>
+			Util.quantizedRadius(settlement.mapCoordinates, 5).map(coords =>
 				Tile.listen.tile(MapEntity.tile(coords), tile => {
 					const tension = (tile.road ? 1 : 0) + (tile.plowed ? 1 : 0)
-					return Util.mergeFunctions([
+					return [
 						tension ? Time.schedule(GrowTension.create(settlement, (mission ?0.5:1) * tension / Util.distance(settlement.mapCoordinates, coords))) : null,
 						tile.colony ? Time.schedule(GrowInterest.create(settlement, 1.0 / Util.distance(settlement.mapCoordinates, coords))) : null
-					].filter(fn => fn))
-				}))))
-	].flat())
+					]
+				})))
+	]
 }
 
 const dialog = (settlement, unit, answer) => {

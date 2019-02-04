@@ -1,20 +1,23 @@
 import * as PIXI from 'pixi.js'
 
+import Util from 'util/util'
+
+import Click from 'input/click'
+
 import Foreground from 'render/foreground'
 import Resources from 'render/resources'
 import RenderView from 'render/view'
-import Click from 'input/click'
 
-import ColonyBackground from './background'
-import ColonyTiles from './tiles'
-import ColonyHeadline from './headline'
-import ColonyStorage from './storage'
-import ColonyUnits from './units'
-import ColonyBuildings from './buildings'
-import ColonyProduction from './production'
-import ColonyConstruction from './construction'
-import ColonyLiberty from './liberty'
-import ColonyInfo from './info'
+import ColonyBackground from 'view/colony/background'
+import ColonyTiles from 'view/colony/tiles'
+import ColonyHeadline from 'view/colony/headline'
+import ColonyStorage from 'view/colony/storage'
+import ColonyUnits from 'view/colony/units'
+import ColonyBuildings from 'view/colony/buildings'
+import ColonyProduction from 'view/colony/production'
+import ColonyConstruction from 'view/colony/construction'
+import ColonyLiberty from 'view/colony/liberty'
+import ColonyInfo from 'view/colony/info'
 
 
 const close = () => {
@@ -76,18 +79,18 @@ const create = colony => {
 	})
 
 	colonyWoodBackground.interactive = true
-	const unsubscribe = () => {
-		tiles.unsubscribe()
-		storage.unsubscribe()
-		units.unsubscribe()
-		buildings.unsubscribe()
-		production.unsubscribe()
-		liberty.unsubscribe()
-		construction.unsubscribe()
-		info.unsubscribe()
-		unsubscribeResize()
-	}
-	Click.on(colonyWoodBackground, close)
+	const unsubscribe = [
+		tiles.unsubscribe,
+		storage.unsubscribe,
+		units.unsubscribe,
+		buildings.unsubscribe,
+		production.unsubscribe,
+		liberty.unsubscribe,
+		construction.unsubscribe,
+		info.unsubscribe,
+		unsubscribeResize,
+		Click.on(colonyWoodBackground, close)
+	]
 	
 	return {
 		container,

@@ -145,8 +145,8 @@ const initialize = colony => {
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	const destroy = []
 	destroy.push(Tile.listen.tile(tile, () =>
-		Util.mergeFunctions(Tile.colonyProductionGoods(tile).map(good =>
-			Time.schedule(Harvest.create(colony, tile, good))))))
+		Tile.colonyProductionGoods(tile).map(good =>
+			Time.schedule(Harvest.create(colony, tile, good)))))
 	destroy.push(listen.colonists(colony, colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length))))
 	destroy.push(listenEach.units(colony, (unit, added) => {
 		if (added && unit.treasure) {
@@ -243,7 +243,7 @@ const initialize = colony => {
 		}
 	})))
 
-	colony.destroy = Util.mergeFunctions(destroy)
+	colony.destroy = destroy
 }
 
 const create = (coords, owner) => {
@@ -280,7 +280,7 @@ const disband = colony => {
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	Tile.update.colony(tile, null)
 	Tile.removeRoad(tile)
-	colony.destroy()
+	Util.execute(colony.destroy)
 	tile.harvestedBy = null
 
 	Record.remove(colony)

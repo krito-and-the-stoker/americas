@@ -1,3 +1,4 @@
+import Util from 'util/util'
 
 const doNothing = () => {}
 
@@ -9,7 +10,7 @@ const create = (instance, key) => {
 const remove = (instance, key, listener) => {	
 	const listeners = listenerKey(key)
 	if (listener.cleanup) {
-		listener.cleanup(true)
+		Util.execute(listener.cleanup, true)
 	}
 	instance[listeners] = instance[listeners].filter(l => l !== listener)
 }
@@ -64,8 +65,7 @@ const update = (instance, key, value) => {
 	}
 	if (instance[listeners]) {	
 		instance[listeners]
-			.filter(listener => listener.cleanup)
-			.forEach(listener => listener.cleanup(false))
+			.forEach(listener => Util.execute(listener.cleanup, false))
 		instance[listeners].forEach(listener => {
 			// const value = key ? instance[key] : instance
 			// listener.cleanup = listener.fn(value)

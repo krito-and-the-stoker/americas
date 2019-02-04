@@ -1,17 +1,26 @@
 import * as PIXI from 'pixi.js'
+
 import Buildings from 'data/buildings.json'
-import Production from 'entity/production'
-import Resources from 'render/resources'
+
 import Util from 'util/util'
+
 import Drag from 'input/drag'
+
+import Production from 'entity/production'
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
-import ProductionView from 'view/production'
-import Commander from 'command/commander'
-import ColonistView from 'view/colony/colonist'
 
 import JoinColony from 'interaction/joinColony'
 import BecomeColonist from 'interaction/becomeColonist'
+
+import Commander from 'command/commander'
+
+import Resources from 'render/resources'
+
+import ProductionView from 'view/production'
+
+import ColonistView from 'view/colony/colonist'
+
 
 const TILE_SIZE = 64
 
@@ -108,9 +117,10 @@ const createBuilding = (colony, building) => {
 	}
 
 	const unsubscribeColonists = Colony.listen.productionBonus(colony, productionBonus => 
-		Colony.listen.colonists(colony, colonists => Util.mergeFunctions(colonists.map(colonist =>
-			Colonist.listen.work(colonist, work =>
-				Colonist.listen.expert(colonist, () => createColonistView(productionBonus, colonist, work)))))))
+		Colony.listen.colonists(colony, colonists =>
+			colonists.map(colonist =>
+				Colonist.listen.work(colonist, work =>
+					Colonist.listen.expert(colonist, () => createColonistView(productionBonus, colonist, work))))))
 
 
 	const unsubscribe = () => {
@@ -131,7 +141,7 @@ const create = colony => {
 	}
 
 	const unsubscribe = Colony.listen.buildings(colony, buildings =>
-		Util.mergeFunctions(Object.values(buildings).map(building => {
+		Object.values(buildings).map(building => {
 			const buildingView = createBuilding(colony, building)
 			if (buildingView) {			
 				buildingView.container.building.x = building.position.x * 128
@@ -142,7 +152,7 @@ const create = colony => {
 				container.colonists.addChild(buildingView.container.colonists)
 
 				return () => {
-					buildingView.unsubscribe()
+					Util.execute(buildingView.unsubscribe)
 					container.buildings.removeChild(buildingView.container.building)
 					container.colonists.removeChild(buildingView.container.colonists)
 				}
@@ -154,7 +164,7 @@ const create = colony => {
 					container.buildings.removeChild(sprite)
 				}
 			}
-		})))
+		}))
 
 	return {
 		container,

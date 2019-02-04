@@ -73,7 +73,7 @@ const initialize = () => {
 			const unit = view.unit
 			unitName.text = `${Unit.name(unit)}`
 			unitName.buttonMode = true
-			const unsubscribeClick = Util.mergeFunctions([
+			const unsubscribeClick = [
 				Click.on(unitName, () => {
 					MapView.centerAt(unit.mapCoordinates, 350)
 				}),
@@ -129,7 +129,7 @@ const initialize = () => {
 						})
 					}
 				})
-			])
+			]
 
 
 			const updateCommands = () => {
@@ -156,7 +156,7 @@ const initialize = () => {
 			Foreground.get().notifications.addChild(container)
 			const unsubscribePassengersAndStorage = Unit.listen.passengers(unit, passengers => {
 				let index = 0
-				const unsubscribePassengers = Util.mergeFunctions(passengers.map(passenger => {
+				const unsubscribePassengers = passengers.map(passenger => {
 					const passengerView = UnitView.create(passenger)
 					const sprite = passengerView.sprite
 					sprite.x = index * cargoScale * 32 - 8
@@ -167,22 +167,22 @@ const initialize = () => {
 					index += 1
 	
 					return () => {
-						passengerView.unsubscribe()
+						Util.execute(passengerView.unsubscribe)
 						container.removeChild(sprite)
 					}
-				}))
+				})
 
 				let unsubscribeTreasure = () => {}
 				if (unit.treasure) {
 					const treasureText = Text.create(unit.treasure)
 					treasureText.x = 10
 					Foreground.get().notifications.addChild(treasureText)
-					unsubscribeTreasure = Util.mergeFunctions([
+					unsubscribeTreasure = [
 						RenderView.listen.dimensions(dimensions => {
 							treasureText.y = dimensions.y - 60
 						}),
 						() =>	Foreground.get().notifications.removeChild(treasureText)
-					])
+					]
 				}
 
 				const storage = unit.properties.cargo > 0 ? unit.storage : unit.equipment
@@ -190,7 +190,7 @@ const initialize = () => {
 					const goods = Storage.goods(storage).filter(pack => pack.amount > 0)
 					let storageIndex = 0
 
-					return Util.mergeFunctions(goods.map(pack => {
+					return goods.map(pack => {
 						const goodsView = GoodsView.create(pack)
 						const offset = index * cargoScale * 32 + (index > 0 ? 20 : 0)
 						goodsView.sprite.x = offset + storageIndex * cargoScale * 95 + 5 + 0.25 * goodsView.number.width
@@ -209,15 +209,17 @@ const initialize = () => {
 							container.removeChild(goodsView.number)
 							container.removeChild(goodsView.sprite)
 						}
-					}))
+					})
 				})
 
 				return () => {
-					unsubscribeTreasure()
-					unsubscribePassengers()
-					unsubscribeStorage()
-					unsubscribeCoords()
-					unsubscribeTile()
+					Util.execute([
+						unsubscribeTreasure,
+						unsubscribePassengers,
+						unsubscribeStorage,
+						unsubscribeCoords,
+						unsubscribeTile,
+					])
 				}
 			})
 
@@ -231,7 +233,7 @@ const initialize = () => {
 				Foreground.get().notifications.removeChild(trade)
 				Foreground.get().notifications.removeChild(container)
 				unsubscribePassengersAndStorage()
-				unsubscribeClick()
+				Util.execute(unsubscribeClick)
 			}
 		}
 	})

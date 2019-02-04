@@ -1,5 +1,33 @@
+import 'util/polyfills'
+
 const inBattleDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
-const mergeFunctions = funcArray => funcArray.filter(fn => typeof fn === 'function').reduce((all, fn) => () => { all(); fn() }, () => {})
+
+const isArray = something => something && something.constructor === Array
+const flatten = array => {
+	const result = array.flat()
+	return result.some(value => isArray(value)) ? flatten(result) : result
+}
+
+const isFunction = something => typeof something === 'function'
+
+const mergeFunctions = funcArray => funcArray.filter(fn => isFunction(fn)).reduce((all, fn) => arg => { all(arg); fn(arg) }, () => {})
+const mergeFunctionsFlat = funcArray => mergeFunctions(flatten(funcArray))
+const execute = (something, arg) => {
+	if (!something) {
+		return null
+	}
+
+	if (isFunction(something)) {
+		return something(arg)
+	}
+
+	if (isArray(something)) {
+		return mergeFunctionsFlat(something)(arg)
+	}
+
+	throw new Error('unable to execute', something)
+}
+
 const makeObject = arr => arr.reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
 
 const globalScale = sprite => {
@@ -51,7 +79,9 @@ export default {
 	range,
 	choose,
 	getUid,
-	mergeFunctions,
+	execute,
+	isArray,
+	flatten,
 	removeDuplicates,
 	unique,
 	distance,

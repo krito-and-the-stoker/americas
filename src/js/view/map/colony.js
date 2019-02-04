@@ -90,15 +90,14 @@ const initialize = () => {
 	Record.listen('colony', colony => {
 		const view = create(colony)
 
-		const destroy = () => view.unsubscribe()
-		return Util.mergeFunctions([
-			destroy,
+		return [
+			view.unsubscribe,
 			Colony.listen.colonists(colony, () => {
 				if (view.sprite) {
 					view.sprite.texture = Resources.texture('map', { frame: frame(colony) })
 				}
 			})
-		])
+		]
 	})
 }
 

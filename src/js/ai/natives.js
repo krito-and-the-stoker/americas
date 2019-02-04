@@ -10,21 +10,26 @@ import MapEntity from 'entity/map'
 
 
 const initialize = ai => {
-	listen.settlements(ai, settlements => {
-		const tiles = settlements
-			.map(settlement => Util.quantizedRadius(settlement.mapCoordinates, 5))
-			.flat()
-			.map(coords => MapEntity.tile(coords))
-			.filter(Util.unique)
-		tiles.map(tile =>
-			Tile.listen.units(tile, units => {
-				units
-					.filter(unit => unit.owner.type === 'player')
-					.filter(unit => unit.domain !== 'sea')
-					.forEach(unit =>
-						console.log('unit in range', unit))
-			}))
-	})
+	if (ai.destroy) {
+		ai.destroy()
+	}
+
+	return [
+		listen.settlements(ai, settlements => {
+			const tiles = settlements
+				.map(settlement => Util.quantizedRadius(settlement.mapCoordinates, 5))
+				.flat()
+				.map(coords => MapEntity.tile(coords))
+				.filter(Util.unique)
+			return tiles.map(tile =>
+				Tile.listen.units(tile, units => {
+					units
+						.filter(unit => unit.domain !== 'sea')
+						.forEach(unit =>
+							console.log('unit in range', unit))
+				}))
+		})
+	]
 }
 
 const create = owner => {
@@ -34,7 +39,7 @@ const create = owner => {
 		hasMetPlayer: false
 	}
 
-	initialize(ai)
+	ai.destroy = initialize(ai)
 
 	return ai
 }

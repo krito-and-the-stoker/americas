@@ -4,7 +4,6 @@ import UnitView from 'view/unit'
 import Unit from 'entity/unit'
 import Drag from 'input/drag'
 import GoodsView from 'view/goods'
-import Util from 'util/util'
 import Storage from 'entity/storage'
 
 import BuyFromEurope from 'interaction/buyFromEurope'
@@ -59,7 +58,7 @@ const create = unit => {
 			y: 0
 		}
 
-		const unsubscribePassengers = Util.mergeFunctions(passengers.map(passenger => {
+		const unsubscribePassengers = passengers.map(passenger => {
 			const view = UnitView.create(passenger)
 			const sprite = view.sprite
 			sprite.x = index.x * 1.4 * 32 - 8
@@ -74,11 +73,11 @@ const create = unit => {
 				index.y += 1
 			}
 
-			return () => {
-				view.unsubscribe()
-				container.removeChild(sprite)
-			}
-		}))
+			return [
+				view.unsubscribe,
+				() => container.removeChild(sprite),
+			]
+		})
 
 		const unsubscribeStorage = Storage.listen(unit.storage, storage => {
 			const goods = Storage.split(storage)
@@ -86,7 +85,7 @@ const create = unit => {
 				x: index.x,
 				y: index.y
 			}
-			return Util.mergeFunctions(goods.map(pack => {
+			return goods.map(pack => {
 				const view = GoodsView.create(pack)
 				view.sprite.x = storageIndex.x * 1.4 * 32 - 8
 				view.sprite.y = storageIndex.y * 1.2 * 32 + 80
@@ -105,22 +104,22 @@ const create = unit => {
 				return () => {
 					container.removeChild(view.sprite)
 				}
-			}))
+			})
 		})
 
-		return () => {
-			unsubscribePassengers()
-			unsubscribeStorage()
-		}
+		return [
+			unsubscribePassengers,
+			unsubscribeStorage,
+		]
 	})
 
 
 
-	const unsubscribe = () => {
-		view.unsubscribe()
-		unsubscribeDrag()
-		unsubscribePassengersAndStorage()
-	}
+	const unsubscribe = [
+		view.unsubscribe,
+		unsubscribeDrag,
+		unsubscribePassengersAndStorage,
+	]
 
 	return {
 		container,

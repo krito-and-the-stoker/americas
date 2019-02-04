@@ -1,7 +1,5 @@
 import Time from 'timeline/time'
 
-import Util from 'util/util'
-
 import Treasure from 'entity/treasure'
 
 import Click from 'input/click'
@@ -61,7 +59,7 @@ const createEurope = () => {
 	container.buttonMode = true
 
 	let currentDimensions = null
-	const unsubscribe = Util.mergeFunctions([
+	const unsubscribe = [
 		RenderView.listen.dimensions(dimensions => {
 			container.x = dimensions.x - (container.width + 10)
 			currentDimensions = dimensions
@@ -82,7 +80,7 @@ const createEurope = () => {
 				})
 			}
 		})
-	])
+	]
 
 	return {
 		unsubscribe,
@@ -98,7 +96,7 @@ const createScale = () => {
 	})
 
 	let currentDimensions = null
-	const unsubscribe = Util.mergeFunctions([
+	const unsubscribe = [
 		RenderView.listen.dimensions(dimensions => {
 			container.x = dimensions.x - (container.width + 10)
 			currentDimensions = dimensions
@@ -115,7 +113,7 @@ const createScale = () => {
 				container.x = currentDimensions.x - (container.width + 10)
 			}
 		})
-	])
+	]
 
 
 	return {

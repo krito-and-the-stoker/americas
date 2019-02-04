@@ -52,7 +52,7 @@ const create = settlement => {
 }
 
 const destroy = view => {
-	view.unsubscribe()
+	Util.execcute(view.unsubscribe)
 }
 
 const initialize = () => {

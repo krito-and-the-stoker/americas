@@ -114,7 +114,7 @@ const create = () => {
 
 				return () => {
 					position.taken = false
-					view.unsubscribe()
+					Util.execute(view.unsubscribe)
 					Tween.moveTo(view.container, { x: - 1000, y: -300 }, 5000).then(() => {
 						container.ships.removeChild(view.container)
 					})
@@ -140,7 +140,7 @@ const create = () => {
 
 				return () => {
 					position.taken = false
-					view.unsubscribe()
+					Util.execute(view.unsubscribe)
 					container.units.removeChild(sprite)
 				}
 			}
@@ -162,10 +162,10 @@ const create = () => {
 		}
 	})
 
-	const unsubscribe = () => {
-		unsubscribeDrag()
-		unsubscribeUnits()
-	}
+	const unsubscribe = [
+		unsubscribeDrag,
+		unsubscribeUnits,
+	]
 
 	return {
 		container,

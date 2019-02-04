@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js'
 
 import Goods from 'data/goods'
-import Util from 'util/util'
 import Drag from 'input/drag'
 import Icon from 'view/ui/icon'
 import GoodsView from 'view/goods'
@@ -44,7 +43,7 @@ const create = (colony, originalDimensions) => {
 	})
 
 	const unsubscribeTrade = Storage.listen(colony.trade, () => 
-		Util.mergeFunctions(Storage.goods(colony.trade).map(({ amount }, index) => {
+		Storage.goods(colony.trade).map(({ amount }, index) => {
 			if (amount > 0) {
 				const sprite = Icon.create('plus')
 				sprite.x = Math.round(index * (originalDimensions.x + 11) / numberOfGoods) + 55
@@ -68,7 +67,7 @@ const create = (colony, originalDimensions) => {
 				}
 			}
 			return () => {}
-		})))
+		}))
 
 	const unsubscribeStorage = Storage.listen(colony.storage, storage => {
 		Storage.goods(storage).forEach(({ amount }, i) => {

@@ -1,20 +1,26 @@
 import * as PIXI from 'pixi.js'
 
-import Background from 'render/background'
-import Colonist from 'entity/colonist'
-import Resources from 'render/resources'
-import MapEntity from 'entity/map'
-import Util from 'util/util'
-import Tile from 'entity/tile'
-import ProductionView from 'view/production'
 import Drag from 'input/drag'
-import Context from 'view/ui/context'
+
+import Colonist from 'entity/colonist'
+import MapEntity from 'entity/map'
+import Tile from 'entity/tile'
 import Colony from 'entity/colony'
-import Commander from 'command/commander'
-import ColonistView from './colonist'
+
 import BecomeColonist from 'interaction/becomeColonist'
 import JoinColony from 'interaction/joinColony'
 import UnjoinColony from 'interaction/unjoinColony'
+
+import Commander from 'command/commander'
+
+import Background from 'render/background'
+import Resources from 'render/resources'
+
+import ProductionView from 'view/production'
+
+import ColonistView from 'view/colony/colonist'
+
+import Context from 'view/ui/context'
 
 
 const TILE_SIZE = 64
@@ -36,7 +42,7 @@ const create = (colony, originalDimensions) => {
 			position
 		}
 	})
-	const unsubscribeTiles = Util.mergeFunctions(tiles.map(tile => {
+	const unsubscribeTiles = tiles.map(tile => {
 		return Tile.listen.tile(tile, tile => {
 			const sprites = Background.createSpritesFromTile(tile)
 			const { position } = tilesAndPositions.find(tp => tp.tile === tile)
@@ -98,7 +104,7 @@ const create = (colony, originalDimensions) => {
 				sprites.forEach(s => container.removeChild(s))
 			}
 		})
-	}))
+	})
 
 	const createColonistView = (productionBonus, colonist, work) => {
 		const { tile, position } = tilesAndPositions.find(({ tile }) => work && work.tile === tile) || {}
@@ -130,9 +136,9 @@ const create = (colony, originalDimensions) => {
 
 	const unsubscribeColonists = Colony.listen.productionBonus(colony, productionBonus => 
 		Colony.listen.colonists(colony, colonists => 
-			Util.mergeFunctions(colonists.map(colonist => 
+			colonists.map(colonist => 
 				Colonist.listen.work(colonist, work =>
-					Colonist.listen.expert(colonist, () => createColonistView(productionBonus, colonist, work)))))))
+					Colonist.listen.expert(colonist, () => createColonistView(productionBonus, colonist, work))))))
 
 	
 	const unsubscribeCenter = Tile.listen.tile(center, center => {	
@@ -163,11 +169,11 @@ const create = (colony, originalDimensions) => {
 	})
 
 
-	const unsubscribe = () => {
-		unsubscribeTiles()
-		unsubscribeColonists()
-		unsubscribeCenter()
-	}
+	const unsubscribe = [
+		unsubscribeTiles,
+		unsubscribeColonists,
+		unsubscribeCenter,
+	]
 
 	return {
 		unsubscribe,

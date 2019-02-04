@@ -140,12 +140,12 @@ const restart = () => {
 	tiles = createTiles(MapView.instance.tileStacks)
 	numTiles = MapView.instance.numTiles
 
-	unsubscribeTiles()
-	unsubscribeTiles = Util.mergeFunctions(tiles.map((tile, index) => 
+	Util.execute(unsubscribeTiles)
+	unsubscribeTiles = tiles.map((tile, index) => 
 		Tile.listen.tile(MapEntity.get().tiles[index], () => {
 			tile.dirty = true
 			render()
-		})))
+		}))
 
 	render()
 }
@@ -169,12 +169,12 @@ const initialize = () => {
 		tiles = createTiles(mapView.tileStacks)
 		numTiles = mapView.numTiles
 
-		unsubscribeTiles()
-		unsubscribeTiles = Util.mergeFunctions(tiles.map((tile, index) => 
+		Util.execute(unsubscribeTiles)
+		unsubscribeTiles = tiles.map((tile, index) => 
 			Tile.listen.tile(MapEntity.get().tiles[index], () => {
 				tile.dirty = true
 				render()
-			})))
+			}))
 
 		render()
 	}

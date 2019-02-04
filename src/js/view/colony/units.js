@@ -64,8 +64,8 @@ const create = (colony, closeScreen, originalDimensions) => {
 			}
 
 			return () => {
+				Util.execute(view.unsubscribe)
 				position.taken = false
-				view.unsubscribe()
 				Tween.moveTo(view.container, { x: - 120, y: 500 }, 1500).then(() => {
 					container.removeChild(view.container)
 				})
@@ -98,7 +98,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 		container.addChild(sprite)
 
 		if (added) {
-			Tween.fadeIn(sprite, 1000)
+			Tween.fadeIn(sprite, 350)
 		}
 
 		Drag.makeDraggable(sprite, { unit })
@@ -128,10 +128,12 @@ const create = (colony, closeScreen, originalDimensions) => {
 
 		return () => {
 			position.taken = false
-			unsubscribePioneering()
-			unsubscribeDrag()				
 			container.removeChild(sprite)
-			view.unsubscribe()
+			Util.execute([
+				unsubscribePioneering,
+				unsubscribeDrag,
+				view.unsubscribe,
+			])
 		}
 	}
 
@@ -143,10 +145,10 @@ const create = (colony, closeScreen, originalDimensions) => {
 		}
 	})
 
-	const unsubscribe = () => {
-		unsubscribeLandUnits()
-		unsubscribeShips()
-	}
+	const unsubscribe = [
+		unsubscribeLandUnits,
+		unsubscribeShips,
+	]
 
 	return {
 		container,

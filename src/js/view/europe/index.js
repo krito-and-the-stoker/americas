@@ -110,11 +110,11 @@ const create = () => {
 		trainButton.x = dimensions.x / coverScale - trainButton.width - 20
 	})
 
-	const unsubscribe = () => {
-		units.unsubscribe()
-		market.unsubscribe()
-		info.unsubscribe()
-	}
+	const unsubscribe = [
+		units.unsubscribe,
+		market.unsubscribe,
+		info.unsubscribe,
+	]
 
 	return {
 		container,

@@ -5,6 +5,8 @@ import Goods from 'data/goods'
 import Units from 'data/units'
 import Buildings from 'data/buildings'
 
+import Util from 'util/util'
+
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Building from 'entity/building'
@@ -677,8 +679,10 @@ const createCombat = (attacker, defender, loser) => {
 	const defenderView = UnitView.create(defender)
 	const combatIcon = Icon.create('combat')
 	const xIcon = Icon.create('cancel')
-	attackerView.unsubscribe()
-	defenderView.unsubscribe()
+	Util.execute([
+		attackerView.unsubscribe,
+		defenderView.unsubscribe,
+	])
 
 	const container = new PIXI.Container()
 

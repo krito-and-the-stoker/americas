@@ -6,7 +6,6 @@ import Drag from 'input/drag'
 import Resources from 'render/resources'
 import Market from 'entity/market'
 import SellInEurope from 'interaction/sellInEurope'
-import Util from 'util/util'
 import Binding from 'util/binding'
 import Text from 'render/text'
 
@@ -57,13 +56,13 @@ const create = (originalDimensions) => {
 		}
 	})
 
-	const unsubscribePriceViews = Util.mergeFunctions(priceViews.map(view => view.unsubscribe))
+	const unsubscribePriceViews = priceViews.map(view => view.unsubscribe)
 	const perGoodMapping = Object.values(Goods.types).map(good => [good, () => Market.bid(good)])
-	const unsubscribeMarket = Util.mergeFunctions(perGoodMapping.map(([good, mapping]) => 
+	const unsubscribeMarket = perGoodMapping.map(([good, mapping]) => 
 		Market.listen.europe(Binding.map(bid => {
 			const ask = Market.ask(good)
 			priceViews.find(view => view.good === good).price.text = `${bid}/${ask}`
-		}, mapping))))
+		}, mapping)))
 
 	const text = Text.create('', {
 		fontSize: 36
@@ -87,11 +86,11 @@ const create = (originalDimensions) => {
 		return false
 	})
 
-	const unsubscribe = () => {
-		unsubscribeMarket()
-		unsubscribeDragTarget()
-		unsubscribePriceViews()
-	}
+	const unsubscribe = [
+		unsubscribeMarket,
+		unsubscribeDragTarget,
+		unsubscribePriceViews,
+	]
 
 	return {
 		container,

@@ -123,7 +123,7 @@ const selectedUnit = () => state.selectedView ? state.selectedView.unit : null
 const destroy = view => {
 	unselect(view.unit)
 	view.destroyed = true
-	view.unsubscribe()
+	Util.execute(view.unsubscribe)
 	Tween.fadeOut(view.sprite, 1000)
 	Tween.fadeOut(view.circle, 1000).then(() => {
 		hide(view)	
@@ -184,7 +184,7 @@ const initialize = () => {
 		const view = create(unit)
 		const updateBoundVisibility = () => { updateVisibility(view) }
 
-		view.unsubscribe = Util.mergeFunctions([
+		view.unsubscribe = [
 			Unit.listen.vehicle(unit, updateBoundVisibility),
 			Unit.listen.offTheMap(unit, updateBoundVisibility),
 			Unit.listen.colony(unit, updateBoundVisibility),
@@ -238,7 +238,7 @@ const initialize = () => {
 						})
 					}
 				}) : null)
-		])
+		]
 
 		views.push(view)
 

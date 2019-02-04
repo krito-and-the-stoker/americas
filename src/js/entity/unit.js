@@ -87,7 +87,7 @@ const initialize = unit => {
 		}		
 	}
 
-	return Util.mergeFunctions([
+	[
 		Time.schedule(unit.commander),
 		Time.schedule({ update: (currentTime, deltaTime) => {
 			if (unit.vehicle) {
@@ -111,10 +111,10 @@ const initialize = unit => {
 			Tile.add.unit(tile, unit)),
 
 		listen.hostiles(unit, hostiles =>
-			Util.mergeFunctions(hostiles.map(hostile => [
+			hostiles.map(hostile => [
 				listen.mapCoordinates(unit, () => decideBattle(unit, hostile)),
 				listen.mapCoordinates(hostile, () => decideBattle(unit, hostile))
-			]).flat())),
+			])),
 
 		Storage.listen(unit.equipment, equipment => {
 			// lose status
@@ -162,7 +162,7 @@ const initialize = unit => {
 		}),
 
 		listen.colonist(unit, colonist => colonist ? Colonist.listen.expert(colonist, expert => update.expert(unit, expert)) : null)
-	])
+	]
 }
 
 const name = unit => unit.expert ? unit.properties.name[unit.expert] || unit.properties.name.default : unit.properties.name.default
