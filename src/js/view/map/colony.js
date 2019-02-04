@@ -1,7 +1,7 @@
 import ColonyFrames from 'data/colony'
 
-import Util from 'util/util'
 import Record from 'util/record'
+import Events from 'util/events'
 
 import Colony from 'entity/colony'
 import Tile from 'entity/tile'
@@ -87,6 +87,10 @@ const create = colony => {
 }
 
 const initialize = () => {
+	Events.listen('found', ({ colony }) => {
+		ColonyView.open(colony)
+	})
+
 	Record.listen('colony', colony => {
 		const view = create(colony)
 

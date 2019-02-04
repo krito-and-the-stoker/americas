@@ -1,4 +1,5 @@
 import Record from 'util/record'
+import Events from 'util/events'
 
 import Colony from 'entity/colony'
 import MapEntity from 'entity/map'
@@ -31,6 +32,8 @@ const create = unit => {
 		})
 		BecomeColonist(colony, unit)
 		FindWork(unit.colonist)
+
+		Events.trigger('found', { colony })
 
 		return false
 	}
