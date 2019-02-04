@@ -1,4 +1,4 @@
-import 'test/setup'
+import 'test/min-setup'
 
 import Colony from 'entity/colony'
 import Unit from 'entity/unit'

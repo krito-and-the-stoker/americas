@@ -215,12 +215,11 @@ const getTileLookup = tile => {
 // defaults to identity when no lookup table found
 const resolveLookup = index => tileLookup ? tileLookup[index] : index
 
-const save = () => {
-	Message.log('Saving...')
+const serialize = () => {
 	tileDictionary = {}
 	tileLookup = []
 	const tileIndices = Object.values(tiles).map(saveSingleTile).map(getTileLookup)
-	lastSave = JSON.stringify({
+	const content = JSON.stringify({
 		game: 'americas',
 		revision: Version.revision,
 		entities: records.map(saveSingleRecord),
@@ -232,6 +231,12 @@ const save = () => {
 		market: Market.save(),
 		globals
 	})
+	return content
+}
+
+const save = () => {
+	Message.log('Saving...')
+	lastSave = serialize()
 	if (SAVE_TO_LOCAL_STORAGE) {
 		if (USE_COMPRESSION) {		
 			if (window.Worker) {
@@ -299,27 +304,13 @@ let loadedListeners = []
 const entitiesLoaded = fn => loadedListeners.push(fn)
 const beforeEntitiesLoaded = fn => beforeLoadedListeners.push(fn)
 
-const load = (src = null) => {
-	Message.log('Loading...')
-	Events.trigger('shotdown')
-
+const unserialize = content => {
 	records.forEach(record => Util.execute(record.destroy))
-	
 	loadedListeners = []
 	records = []
 	tiles = []
-	if (src) {
-		lastSave = src
-	} else {	
-		if (SAVE_TO_LOCAL_STORAGE) {
-			if (USE_COMPRESSION) {
-				lastSave = LZString.decompress(window.localStorage.getItem('lastSaveCompressed'))
-			} else {
-				lastSave = window.localStorage.getItem('lastSave')
-			}
-		}
-	}
-	snapshot = JSON.parse(lastSave)
+
+	snapshot = JSON.parse(content)
 	if (snapshot.game !== 'americas') {
 		console.warn('The save game does not appear to be a valid americas save game.')
 	}
@@ -339,7 +330,25 @@ const load = (src = null) => {
 	Europe.load(snapshot.europe)
 	beforeLoadedListeners.forEach(fn => fn())
 	loadedListeners.forEach(fn => fn())
+}
 
+const load = (src = null) => {
+	Message.log('Loading...')
+	// Events.trigger('shutdown')
+
+	if (src) {
+		lastSave = src
+	} else {	
+		if (SAVE_TO_LOCAL_STORAGE) {
+			if (USE_COMPRESSION) {
+				lastSave = LZString.decompress(window.localStorage.getItem('lastSaveCompressed'))
+			} else {
+				lastSave = window.localStorage.getItem('lastSave')
+			}
+		}
+	}
+
+	unserialize(lastSave)
 	PathFinder.initialize()
 
 	Events.trigger('restart')
@@ -395,6 +404,8 @@ export default {
 	getGlobal,
 	save,
 	load,
+	serialize,
+	unserialize,
 	dump,
 	getAll,
 	download,

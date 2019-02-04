@@ -1,4 +1,4 @@
-import 'test/setup'
+import 'test/min-setup'
 
 import Time from 'timeline/time'
 

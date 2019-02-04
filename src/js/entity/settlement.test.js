@@ -1,4 +1,4 @@
-import 'test/setup'
+import 'test/min-setup'
 
 import Settlement from 'entity/settlement'
 import Owner from 'entity/owner'

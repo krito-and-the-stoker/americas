@@ -163,7 +163,7 @@ const load = (data, index) => {
 
 	tile.units = []
 
-	Record.dereferenceLazy(tile.harvestedyBy, entity => tile.harvestedBy = entity)
+	Record.dereferenceLazy(tile.harvestedBy, entity => update.harvestedBy(tile, entity))
 	
 	Record.entitiesLoaded(() => {
 		tile.discoveredBy = tile.discoveredBy.map(Record.dereference)

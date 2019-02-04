@@ -8,6 +8,7 @@ import Click from 'input/click'
 import Colonist from 'entity/colonist'
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
+import Treasure from 'entity/treasure'
 
 import BecomeColonist from 'interaction/becomeColonist'
 import JoinColony from 'interaction/joinColony'
@@ -24,6 +25,7 @@ import ColonistView from 'view/colony/colonist'
 
 import Icon from 'view/ui/icon'
 import Context from 'view/ui/context'
+import Dialog from 'view/ui/dialog'
 
 
 const TILE_SIZE = 64
@@ -81,7 +83,7 @@ const create = (colony, originalDimensions) => {
 								container.colonists.addChild(s)
 							})
 
-							const destroyProductionSprites = () => {
+							const removeProductionSprites = () => {
 								productionSprites.forEach(s => {
 									container.colonists.removeChild(s)
 								})
@@ -99,8 +101,10 @@ const create = (colony, originalDimensions) => {
 
 											const optionsView = options.map(Context.productionOption)
 											sprite.visible = false
+											productionSprites.forEach(s => { s.visible = false })
 											const decision = await Context.create(optionsView, coords, 64, 0.5 * scale)
 											sprite.visible = true
+											productionSprites.forEach(s => { s.visible = true })
 											Colonist.beginFieldWork(colonist, tile, decision.good)
 										}
 									}
@@ -108,7 +112,7 @@ const create = (colony, originalDimensions) => {
 
 								Drag.makeDraggable(sprite, { colonist }),
 								destroySprite,
-								destroyProductionSprites
+								removeProductionSprites
 							]
 						} else {
 							const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
@@ -174,6 +178,33 @@ const create = (colony, originalDimensions) => {
 						return true
 					}
 				}
+
+				if (tile.harvestedBy && tile.harvestedBy.type === 'settlement') {
+					const settlement = tile.harvestedBy
+					await Dialog.create({
+						text: 'We already use this land and will appreciate if you stay clear of it.',
+						type: 'natives',
+						image: settlement.tribe.image,
+						options: [{
+							text: 'We will conform to your wishes',
+						}, {
+							text: 'We offer you 500 for this piece of land',
+							action: () => {
+								Treasure.spend(500)
+								Tile.update.harvestedBy(tile, null)
+							},
+							disabled: Treasure.amount() < 500
+						}, {
+							text: 'You are mistaken. This is our land now.',
+							action: () => {
+								// TODO: provoke response from the natives
+								Tile.update.harvestedBy(tile, null)
+							}
+						}]
+					})
+					return false
+				}
+
 				return false
 			})
 
@@ -185,7 +216,7 @@ const create = (colony, originalDimensions) => {
 		})
 	})
 
-	
+
 	const unsubscribeCenter = Tile.listen.tile(center, center => {	
 		const colonySprite = Resources.sprite('map', { frame: MAP_COLONY_FRAME_ID })
 		colonySprite.position.x = TILE_SIZE

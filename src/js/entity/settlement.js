@@ -49,7 +49,13 @@ const create = (tribe, coords, owner) => {
 	}
 
 	Tile.update.settlement(MapEntity.tile(coords), settlement)
-	Tile.radius(MapEntity.tile(coords)).forEach(tile => Tile.discover(tile, owner))
+	Tile.radius(MapEntity.tile(coords))
+		.forEach(tile => Tile.discover(tile, owner))
+
+	Tile.radius(MapEntity.tile(coords))
+		.filter(tile => tile.domain === 'land')
+		.forEach(tile => Tile.update.harvestedBy(tile, settlement))
+
 
 	initialize(settlement)
 
@@ -60,12 +66,7 @@ const create = (tribe, coords, owner) => {
 
 const initialize = settlement => {
 	Util.execute(settlement.destroy)
-
 	settlement.type = 'settlement'
-
-	Tile.radius(MapEntity.tile(settlement.mapCoordinates))
-		.filter(tile => tile.domain === 'land')
-		.forEach(tile => Tile.update.harvestedBy(tile, settlement))
 
 	settlement.destroy = [
 		Natives.add.settlement(settlement.owner.ai, settlement),

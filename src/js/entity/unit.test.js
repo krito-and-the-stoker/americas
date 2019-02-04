@@ -1,4 +1,4 @@
-import 'test/setup'
+import 'test/min-setup'
 import Record from 'util/record'
 
 import Unit from 'entity/unit'
