@@ -301,11 +301,7 @@ const disband = unit => {
 		.filter(other => other.hostiles.includes(unit))
 		.forEach(other => remove.hostile(other, unit))
 
-	if (unit.destroy) {
-		unit.destroy()
-	} else {
-		console.warn('destroy failed on', unit)
-	}
+	Util.execute(unit.destroy)
 	Record.remove(unit)
 }
 
