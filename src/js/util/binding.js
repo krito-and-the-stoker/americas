@@ -103,14 +103,14 @@ const shared = fn => {
 	let destroy = null
 	return arg => {
 		if (destroy) {
-			destroy()
+			Util.execute(destroy)
 			destroyExecuted += 1
 		}
 		destroy = fn(arg) || doNothing
 		return () => {
 			destroyScheduled += 1
 			if (destroyScheduled > destroyExecuted) {
-				destroy()
+				Util.execute(destroy)
 				destroyExecuted += 1
 			}
 		}

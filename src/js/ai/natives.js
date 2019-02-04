@@ -10,9 +10,7 @@ import MapEntity from 'entity/map'
 
 
 const initialize = ai => {
-	if (ai.destroy) {
-		ai.destroy()
-	}
+	Util.execute(ai.destroy)
 
 	return [
 		listen.settlements(ai, settlements => {

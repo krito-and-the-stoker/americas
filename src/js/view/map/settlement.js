@@ -1,5 +1,6 @@
 import Goods from 'data/goods'
 
+import Util from 'util/util'
 import Record from 'util/record'
 
 import Click from 'input/click'
@@ -52,7 +53,7 @@ const create = settlement => {
 }
 
 const destroy = view => {
-	Util.execcute(view.unsubscribe)
+	Util.execute(view.unsubscribe)
 }
 
 const initialize = () => {
