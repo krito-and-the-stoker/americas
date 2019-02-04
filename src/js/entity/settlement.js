@@ -8,6 +8,7 @@ import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Unit from 'entity/unit'
 import Treasure from 'entity/treasure'
+import Tribe from 'entity/tribe'
 
 import Commander from 'command/commander'
 import MoveTo from 'command/moveTo'
@@ -18,8 +19,6 @@ import Attack from 'command/attack'
 
 import GrowTension from 'task/growTension'
 import GrowInterest from 'task/growInterest'
-
-import Natives from 'ai/natives'
 
 
 const experts = {
@@ -69,7 +68,7 @@ const initialize = settlement => {
 	settlement.type = 'settlement'
 
 	settlement.destroy = [
-		Natives.add.settlement(settlement.owner.ai, settlement),
+		Tribe.add.settlement(settlement.tribe, settlement),
 
 		listen.interest(settlement, interest => {
 			if (interest > INTEREST_THRESHOLD) {

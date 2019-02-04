@@ -1,4 +1,6 @@
 import Util from 'util/util'
+import Member from 'util/member'
+import Binding from 'util/binding'
 import Record from 'util/record'
 import Message from 'util/message'
 
@@ -62,6 +64,7 @@ const create = (id, owner) => {
 	const tribe = {
 		id,
 		owner,
+		settlements: []
 	}
 
 	tribe.name = Util.choose(tribeNames)
@@ -73,21 +76,37 @@ const create = (id, owner) => {
 	return tribe
 }
 
+const add = {
+	settlement: (tribe, settlement) => Member.add(tribe, 'settlements', settlement)
+}
+
+const listen = {
+	settlements: (tribe, fn) => Binding.listen(tribe, 'settlements', fn)
+}
+
+
 const save = tribe => ({
 	id: tribe.id,
 	name: tribe.name,
 	image: tribe.image,
+	settlements: tribe.settlements.map(Record.reference),
 	owner: Record.reference(tribe.owner)
 })
 
 const load = tribe => {
 	tribe.owner = Record.dereference(tribe.owner)
+	Record.entitiesLoaded(() => {
+		tribe.settlements = tribe.settlements.map(Record.dereference)
+	})
+
 	return tribe
 }
 
 export default {
 	create,
 	createFromMap,
+	add,
+	listen,
 	load,
 	save
 }

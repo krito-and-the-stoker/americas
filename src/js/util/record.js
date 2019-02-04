@@ -37,7 +37,7 @@ const makeId = () => idCounter += 1
 let	records = []
 let snapshot = []
 let globals = {}
-let tiles = {}
+let tiles = []
 let listeners = {}
 const add = (type, entity) => {
 	records.push({
@@ -123,6 +123,7 @@ const revive = (record) => {
 const dump = () => {
 	console.log(records)
 	console.log(globals)
+
 	window.Record = {
 		add,
 		remove,
@@ -157,6 +158,16 @@ const dump = () => {
 	window.Settlement = Settlement
 	window.Owner = Owner
 }
+
+const state = () => ({
+	records: records.map(saveSingleRecord).data,
+	tiles: tiles.map(saveSingleTile),
+	time: Time.save(),
+	europe: Europe.save(),
+	treasure: Treasure.save(),
+	market: Market.save(),
+	globals
+})
 
 const reviveTile = (data, index) => {
 	const tile = Tile.load(data, index)
@@ -218,7 +229,7 @@ const resolveLookup = index => tileLookup ? tileLookup[index] : index
 const serialize = () => {
 	tileDictionary = {}
 	tileLookup = []
-	const tileIndices = Object.values(tiles).map(saveSingleTile).map(getTileLookup)
+	const tileIndices = tiles.map(saveSingleTile).map(getTileLookup)
 	const content = JSON.stringify({
 		game: 'americas',
 		revision: Version.revision,
@@ -410,5 +421,6 @@ export default {
 	getAll,
 	download,
 	upload,
+	state,
 	REFERENCE_KEY
 }

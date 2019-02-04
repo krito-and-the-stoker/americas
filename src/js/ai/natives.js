@@ -7,13 +7,15 @@ import Record from 'util/record'
 
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
+import Tribe from 'entity/tribe'
 
 
 const initialize = ai => {
 	Util.execute(ai.destroy)
+	return
 
 	return [
-		listen.settlements(ai, settlements => {
+		Tribe.listen.settlements(ai.tribe, settlements => {
 			const tiles = settlements
 				.map(settlement => Util.quantizedRadius(settlement.mapCoordinates, 5))
 				.flat()
@@ -32,9 +34,7 @@ const initialize = ai => {
 
 const create = owner => {
 	const ai = {
-		settlements: [],
 		owner,
-		hasMetPlayer: false
 	}
 
 	ai.destroy = initialize(ai)
@@ -53,7 +53,6 @@ const load = ai => {
 }
 
 const save = ai => ({
-	hasMetPlayer: ai.hasMetPlayer,
 	owner: Record.reference(ai.owner)
 })
 

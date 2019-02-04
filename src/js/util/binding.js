@@ -90,6 +90,17 @@ const applyUpdate = () => {
 	promise = new Promise(res => { resolve = res })
 }
 
+const applyAllUpdates = () => {
+	let guard = 0
+	while(scheduled.size > 0 && guard < 100) {
+		applyUpdate()
+		guard += 1
+	}
+	if (guard === 100) {
+		throw new Error('apply updates has reached maximum iterations.')
+	}
+}
+
 const hasListener = (instance, key) => {
 	const listeners = listenerKey(key)
 	return (instance[listeners] && instance[listeners].length > 0)	
@@ -149,5 +160,6 @@ export default {
 	listenerKey,
 	shared,
 	map,
-	applyUpdate
+	applyUpdate,
+	applyAllUpdates,
 }

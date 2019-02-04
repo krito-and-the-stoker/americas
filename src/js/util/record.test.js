@@ -1,19 +1,21 @@
-import 'test/min-setup'
+import 'test/normal-setup'
 
 import Record from 'util/record'
-import Owner from 'entity/owner'
+import Binding from 'util/binding'
 import Unit from 'entity/unit'
+import Owner from 'entity/owner'
 
 test('serialize', () => {
 	Record.serialize()
 })
 
 test('serialize/unserialize', () => {
-	const save1 = Record.serialize()
-	Unit.create('caravel', {x: 0, y: 0 }, Owner.player())
-	const save2 = Record.serialize()
-	Record.unserialize(save1)
-	const save3 = Record.serialize()
-	expect(save1).not.toEqual(save2)
-	expect(save1).toEqual(save3)
+	const save = Record.serialize()
+	Binding.applyAllUpdates()
+	const state1 = Record.state()
+	Unit.create('caravel', { x: 0, y: 0 }, Owner.player())
+	Record.unserialize(save)
+	Binding.applyAllUpdates()
+	const state2 = Record.state()
+	expect(state1).toEqual(state2)
 })

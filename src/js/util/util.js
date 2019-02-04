@@ -1,4 +1,5 @@
 import 'util/polyfills'
+// import Clone from 'clone'
 
 const inBattleDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
 
@@ -29,6 +30,7 @@ const execute = (something, arg) => {
 }
 
 const makeObject = arr => arr.reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
+// const clone = something => Clone(something)
 
 const globalScale = sprite => {
 	let s = sprite
@@ -78,6 +80,7 @@ export default {
 	globalScale,
 	range,
 	choose,
+	// clone,
 	getUid,
 	execute,
 	isArray,
