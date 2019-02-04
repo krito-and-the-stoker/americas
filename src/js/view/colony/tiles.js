@@ -1,11 +1,13 @@
 import * as PIXI from 'pixi.js'
 
+import Util from 'util/util'
+
 import Drag from 'input/drag'
+import Click from 'input/click'
 
 import Colonist from 'entity/colonist'
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
-import Colony from 'entity/colony'
 
 import BecomeColonist from 'interaction/becomeColonist'
 import JoinColony from 'interaction/joinColony'
@@ -20,6 +22,7 @@ import ProductionView from 'view/production'
 
 import ColonistView from 'view/colony/colonist'
 
+import Icon from 'view/ui/icon'
 import Context from 'view/ui/context'
 
 
@@ -28,31 +31,105 @@ const MAP_COLONY_FRAME_ID = 53
 
 
 const create = (colony, originalDimensions) => {
-	const container = new PIXI.Container()
+	const container = {
+		tiles: new PIXI.Container(),
+		colonists: new PIXI.Container()
+	}
 	const center = MapEntity.tile(colony.mapCoordinates)
-	const tiles = [center].concat(Tile.diagonalNeighbors(center))
-	const tilesAndPositions = tiles.map(tile => {
-		const position = {
-			x: TILE_SIZE * (1 + tile.mapCoordinates.x - center.mapCoordinates.x),
-			y: TILE_SIZE * (1 + tile.mapCoordinates.y - center.mapCoordinates.y)
-		}
-
-		return {
-			tile,
-			position
-		}
+	const tiles = Tile.radius(center)
+	const relativePosition = tile => ({
+		x: TILE_SIZE * (1 + tile.mapCoordinates.x - center.mapCoordinates.x),
+		y: TILE_SIZE * (1 + tile.mapCoordinates.y - center.mapCoordinates.y)
 	})
+
 	const unsubscribeTiles = tiles.map(tile => {
 		return Tile.listen.tile(tile, tile => {
 			const sprites = Background.createSpritesFromTile(tile)
-			const { position } = tilesAndPositions.find(tp => tp.tile === tile)
+			const position = relativePosition(tile)
 			sprites.forEach(sprite => {
 				sprite.position.x = position.x
 				sprite.position.y = position.y
-				container.addChild(sprite)
+				container.tiles.addChild(sprite)
 			})
-			
-			const unsubscribeDragTarget = Drag.makeDragTarget(sprites[sprites.length - 1], async (args, coords) => {
+
+			const destroySprites = () => {
+				sprites.forEach(s => container.tiles.removeChild(s))
+			}
+
+			const destroyHarvester = Tile.listen.harvestedBy(tile, harvester => {
+				if (harvester) {
+					if (harvester.type === 'colonist') {
+						const colonist = harvester
+
+						const sprite = ColonistView.create(colonist)
+						sprite.x = position.x
+						sprite.y = position.y
+						sprite.scale.set(0.75)
+						container.colonists.addChild(sprite)
+
+						const destroySprite = () => {
+							container.colonists.removeChild(sprite)
+						}
+
+						if (colonist.colony === colony) {
+							const good = colonist.work.good
+							const productionSprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
+							productionSprites.forEach(s => {
+								s.position.x += position.x
+								s.position.y += position.y + 0.5 * TILE_SIZE
+								s.scale.set(0.5)
+								container.colonists.addChild(s)
+							})
+
+							const destroyProductionSprites = () => {
+								productionSprites.forEach(s => {
+									container.colonists.removeChild(s)
+								})
+							}
+
+							return [
+								Click.on(sprite, async () => {
+									if (colonist.work && colonist.work.type === 'Field') {
+										const tile = colonist.work.tile
+										const options = Tile.fieldProductionOptions(tile, colonist)
+										if (options.length > 1) {			
+											const coords = sprite.getGlobalPosition()
+											const scale = Util.globalScale(sprite)
+											coords.y += 0.5 * sprite.height / 2 - 7
+
+											const optionsView = options.map(Context.productionOption)
+											sprite.visible = false
+											const decision = await Context.create(optionsView, coords, 64, 0.5 * scale)
+											sprite.visible = true
+											Colonist.beginFieldWork(colonist, tile, decision.good)
+										}
+									}
+								}),
+
+								Drag.makeDraggable(sprite, { colonist }),
+								destroySprite,
+								destroyProductionSprites
+							]
+						} else {
+							const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
+							greyScaleFilter.blackAndWhite()
+							sprite.filters = [greyScaleFilter]
+							return destroySprite
+						}
+					}
+
+					if (harvester.type === 'settlement') {
+						const icon = Icon.create('natives')
+						icon.x = position.x + 16
+						icon.y = position.y + 16
+						icon.scale.set(0.5)
+						container.colonists.addChild(icon)
+						return () => { container.colonists.removeChild(icon) }
+					}
+				}
+			})			
+
+			const destroyDrag = Drag.makeDragTarget(sprites[sprites.length - 1], async (args, coords) => {
 				const { unit } = args
 				if (unit && !Commander.isIdle(unit.commander)) {
 					return false
@@ -99,55 +176,21 @@ const create = (colony, originalDimensions) => {
 				}
 				return false
 			})
-			return () => {
-				unsubscribeDragTarget()
-				sprites.forEach(s => container.removeChild(s))
-			}
+
+			return [
+				destroySprites,
+				destroyDrag,
+				destroyHarvester
+			]
 		})
 	})
-
-	const createColonistView = (productionBonus, colonist, work) => {
-		const { tile, position } = tilesAndPositions.find(({ tile }) => work && work.tile === tile) || {}
-		
-		if (position) {
-			return Tile.listen.tile(tile, tile => {
-				const colonistSprite = ColonistView.create(colonist)
-				colonistSprite.x = position.x
-				colonistSprite.y = position.y
-				colonistSprite.scale.set(0.75)
-				container.addChild(colonistSprite)
-
-				const good = work.good
-				const productionSprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
-				productionSprites.forEach(s => {
-					s.position.x += position.x
-					s.position.y += position.y + 0.5 * TILE_SIZE
-					s.scale.set(0.5)
-					container.addChild(s)
-				})
-
-				return () => {
-					container.removeChild(colonistSprite)
-					productionSprites.forEach(s => container.removeChild(s))
-				}
-			})
-		}		
-	}
-
-	const unsubscribeColonists = Colony.listen.productionBonus(colony, productionBonus => 
-		Colony.listen.colonists(colony, colonists => 
-			colonists.map(colonist => 
-				Colonist.listen.work(colonist, work =>
-					Colonist.listen.expert(colonist, () => createColonistView(productionBonus, colonist, work))))))
 
 	
 	const unsubscribeCenter = Tile.listen.tile(center, center => {	
 		const colonySprite = Resources.sprite('map', { frame: MAP_COLONY_FRAME_ID })
 		colonySprite.position.x = TILE_SIZE
 		colonySprite.position.y = TILE_SIZE
-		container.position.x = (originalDimensions.x - 450)
-		container.scale.set(450 / (3 * TILE_SIZE))
-		container.addChild(colonySprite)
+		container.tiles.addChild(colonySprite)
 
 		// production sprites for center
 		const productionGoods = Tile.colonyProductionGoods(center)
@@ -157,21 +200,25 @@ const create = (colony, originalDimensions) => {
 				s.scale.set(1.0 / productionGoods.length)
 				s.position.x += TILE_SIZE
 				s.position.y += TILE_SIZE + i * TILE_SIZE / productionGoods.length
-				container.addChild(s)
+				container.tiles.addChild(s)
 			})
 			return sprites
 		}).flat()
 
 		return () => {
-			container.removeChild(colonySprite)
-			container.removeChild(productionSprites)
+			container.tiles.removeChild(colonySprite)
+			container.tiles.removeChild(productionSprites)
 		}
 	})
+
+	container.tiles.position.x = (originalDimensions.x - 450)
+	container.tiles.scale.set(450 / (3 * TILE_SIZE))
+	container.colonists.position.x = (originalDimensions.x - 450)
+	container.colonists.scale.set(450 / (3 * TILE_SIZE))
 
 
 	const unsubscribe = [
 		unsubscribeTiles,
-		unsubscribeColonists,
 		unsubscribeCenter,
 	]
 

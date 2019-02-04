@@ -249,6 +249,7 @@ const initialize = colony => {
 const create = (coords, owner) => {
 	const colony = {
 		name: getColonyName(),
+		type: 'colony',
 		owner,
 		units: [],
 		colonists: [],
@@ -281,7 +282,7 @@ const disband = colony => {
 	Tile.update.colony(tile, null)
 	Tile.removeRoad(tile)
 	Util.execute(colony.destroy)
-	tile.harvestedBy = null
+	Tile.update.harvestedBy(tile, null)
 
 	Record.remove(colony)
 }
@@ -301,6 +302,8 @@ const save = colony => ({
 })
 
 const load = colony => {
+	colony.type = 'colony'
+
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	tile.colony = colony
 	colony.storage = Storage.load(colony.storage)

@@ -23,7 +23,7 @@ const create = (colony, tile, good, colonist = null) => {
 
 	const unsubscribe = colonist ? Colonist.listen.expert(colonist, calculate) : calculate()
 
-	tile.harvestedBy = colonist || colony
+	Tile.update.harvestedBy(tile, colonist || colony)
 	const update = (currentTime, deltaTime) => {
 		const amount = deltaTime * production
 		Storage.update(colony.storage, { good, amount })

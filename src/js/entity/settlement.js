@@ -61,7 +61,11 @@ const create = (tribe, coords, owner) => {
 const initialize = settlement => {
 	Util.execute(settlement.destroy)
 
-	// Tile.radius(MapEntity.tile())
+	settlement.type = 'settlement'
+
+	Tile.radius(MapEntity.tile(settlement.mapCoordinates))
+		.filter(tile => tile.domain === 'land')
+		.forEach(tile => Tile.update.harvestedBy(tile, settlement))
 
 	settlement.destroy = [
 		Natives.add.settlement(settlement.owner.ai, settlement),

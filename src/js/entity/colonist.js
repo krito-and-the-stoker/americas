@@ -1,8 +1,9 @@
 import Record from 'util/record'
 import Binding from 'util/binding'
 import Util from 'util/util'
-import Unit from 'entity/unit'
 
+import Tile from 'entity/tile'
+import Unit from 'entity/unit'
 import Building from 'entity/building'
 
 import Time from 'timeline/time'
@@ -52,7 +53,7 @@ const stopWorking = colonist => {
 	if (colonist.work) {
 		colonist.work.stop()
 		if (colonist.work.tile) {
-			colonist.work.tile.harvestedBy = null
+			Tile.update.harvestedBy(colonist.work.tile, null)
 		}
 	}
 	update.work(colonist, null)
@@ -133,7 +134,7 @@ const load = colonist => {
 		if (colonist.work) {
 			if (colonist.work.type === 'Field') {			
 				colonist.work.tile = Record.dereferenceTile(colonist.work.tile)
-				colonist.work.tile.harvestedBy = null
+				Tile.update.harvestedBy(colonist.work.tile, null)
 				colonist.work.stop = Time.schedule(Harvest.create(colonist.colony, colonist.work.tile, colonist.work.good, colonist))
 			} 
 			if (colonist.work.type === 'Building') {

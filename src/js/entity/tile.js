@@ -360,11 +360,22 @@ const add = {
 
 const update = {
 	colony: (tile, colony) => Binding.update(tile, 'colony', colony),
+	harvestedBy: (tile, harvestedBy) => Binding.update(tile, 'harvestedBy', harvestedBy),
 	settlement: (tile, settlement) => Binding.update(tile, 'settlement', settlement),
 	tile: tile => Binding.update(tile),
 	currentlyDiscovered: (tile, value) => Binding.update(tile, 'currentlyDiscovered', value)
 	// rumors: (tile, value) => Binding.update(tile, 'rumors', value)
 }
+
+const listen = {
+	tile: (tile, fn) => Binding.listen(tile, null, fn),
+	settlement: (tile, fn) => Binding.listen(tile, 'settlement', fn),
+	colony: (tile, fn) => Binding.listen(tile, 'colony', fn),
+	harvestedBy: (tile, fn) => Binding.listen(tile, 'harvestedBy', fn),
+	units: (tile, fn) => Binding.listen(tile, 'units', fn),
+	discovered: (tile, fn) => Binding.listen(tile, 'currentlyDiscovered', fn)
+}
+
 
 const clearForest = tile => {
 	tile.forest = false
@@ -402,14 +413,6 @@ const updateTile = center => {
 	radius(center).forEach(tile => {
 		update.tile(tile)
 	})
-}
-
-const listen = {
-	tile: (tile, fn) => Binding.listen(tile, null, fn),
-	settlement: (tile, fn) => Binding.listen(tile, 'settlement', fn),
-	colony: (tile, fn) => Binding.listen(tile, 'colony', fn),
-	units: (tile, fn) => Binding.listen(tile, 'units', fn),
-	discovered: (tile, fn) => Binding.listen(tile, 'currentlyDiscovered', fn)
 }
 
 
