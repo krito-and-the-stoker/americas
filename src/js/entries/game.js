@@ -112,7 +112,7 @@ const initialize = () => {
 
 const americaLarge = () => {
 	const startCoordinates = Util.choose([
-		{ x: 151, y: 152 },
+		{ x: 151, y: 125 },
 		{ x: 142, y: 144 },
 		{ x: 176, y: 170 },
 		{ x: 209, y: 186 },
