@@ -145,7 +145,12 @@ const getModule = type => ( type ? ({
 	learnFromNatives: LearnFromNatives,
 	communicateTension: CommunicateTension,
 	commander: { load }
-})[type] : { load: data => console.warn('cannot load command, missing type', data) }) 
+})[type] : {
+	load: data => {
+		console.warn('cannot load command, missing type', data)
+		return {}
+	}
+})
 
 
 const load = data => {
