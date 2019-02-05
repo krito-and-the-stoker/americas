@@ -53,9 +53,12 @@ const paths = {
 	native7: 'images/characters-head/native7.png',
 	native8: 'images/characters-head/native8.png',
 	native9: 'images/characters-head/native9.png',
+	discovery: 'images/fullscreen-events/discovery.jpg'
 }
 
-const textures = {}
+const textures = {
+	white: PIXI.Texture.WHITE
+}
 
 const rectangle = (index) => {
 	const width = 64
