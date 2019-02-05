@@ -7,7 +7,7 @@ const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const MIN_PRICE = 1
 const MAX_PRICE = 24
 
-const consumptionFactor = () => 1.25 + 0.25*Math.random()
+const consumptionFactor = () => 1.5 + 0.25*Math.random()
 const log2 = Math.log(2)
 const consumption = (base, year) => base * Math.exp(log2 * (year - 1492) / 50)
 
