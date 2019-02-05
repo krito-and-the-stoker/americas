@@ -133,7 +133,7 @@ const create = (colony, originalDimensions) => {
 				}
 			})			
 
-			const destroyDrag = Drag.makeDragTarget(sprites[sprites.length - 1], async (args, coords) => {
+			const destroyDrag = Drag.makeDragTarget(sprites[sprites.length - 1], async args => {
 				const { unit } = args
 				if (unit && !Commander.isIdle(unit.commander)) {
 					return false
@@ -169,10 +169,7 @@ const create = (colony, originalDimensions) => {
 						if (options.length === 1 || unit) {
 							Colonist.beginFieldWork(colonist, tile, options[0].good)
 						} else {
-							coords.y += 0.5 * TILE_SIZE / 2 - 7
-
-							const optionsView = options.map(Context.productionOption)
-							const decision = await Context.create(optionsView, coords, 64, 0.5)
+							const decision = options.reduce((best, pack) => pack.amount > best.amount ? pack : best, options[0])
 							Colonist.beginFieldWork(colonist, tile, decision.good)
 						}
 						return true
