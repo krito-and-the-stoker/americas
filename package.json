@@ -6,7 +6,7 @@
   "scripts": {
     "build": "gulp build --production",
     "dev": "gulp",
-    "test": "jest --watch --silent",
+    "test": "jest --watch",
     "coverage": "jest --coverage"
   },
   "dependencies": {
