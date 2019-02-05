@@ -2,12 +2,13 @@ import 'util/polyfills'
 
 import Util from 'util/util'
 import Binding from 'util/binding'
-// import Member from 'util/member'
 import Record from 'util/record'
 
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Tribe from 'entity/tribe'
+
+import Plan from 'ai/plan'
 
 
 const initialize = ai => {
@@ -31,6 +32,7 @@ const initialize = ai => {
 									ai.state.relations[contact.referenceId] = {
 										established: false
 									}
+									update.state(ai)
 								}
 							})
 					}))
@@ -52,7 +54,9 @@ const initialize = ai => {
 
 		listen.goals(ai, goals => {
 			goals.forEach(goal => {
-				console.log('trying to fullfill', goal, 'dont know how yet :/')
+				const plan = Plan.create(ai.state, goal)
+				console.log('plan', plan)
+				console.log('goal', goal)
 			})
 		})
 	]
@@ -64,7 +68,9 @@ const create = owner => {
 		tribe: null,
 		contacts: [],
 		state: {
-			relations: {}
+			relations: {},
+			units: {},
+			settlements: {}
 		},
 		goals: []
 	}

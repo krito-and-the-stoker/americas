@@ -67,6 +67,7 @@ const quantizedRadius = (coords, radius) => range(2 * radius)
 const choose = array => array[Math.floor(Math.random() * array.length)]
 const unique = (value, index, self) => self.indexOf(value) === index
 
+const minDistance = (many, one) => many.reduce((min, test) => Math.min(min, distance(test, one)), 1e10)
 const distance = (first, second) => Math.sqrt((first.x - second.x) * (first.x - second.x) + (first.y - second.y) * (first.y - second.y))
 
 let currentId = 0
@@ -89,6 +90,7 @@ export default {
 	removeDuplicates,
 	unique,
 	distance,
+	minDistance,
 	quantizedRadius,
-	inBattleDistance
+	inBattleDistance,
 }
