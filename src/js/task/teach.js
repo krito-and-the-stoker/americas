@@ -1,14 +1,14 @@
 import Time from 'timeline/time'
 
+import Events from 'util/events'
+
 import Storage from 'entity/storage'
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
-
-// import Notification from 'view/ui/notification'
+import Unit from 'entity/unit'
 
 
 const TEACH_BASE_FACTOR = 1.0 / Time.TEACH_BASE_TIME
-const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
 const testFieldWork = (student, good) => student.work && student.work.type === 'Field' && student.work.good === good
 const testBuildingWork = (student, building) => student.work && student.work.type === 'Building' && student.work.building === building
@@ -56,7 +56,8 @@ const create = teacher => {
 				student.education.progress += scale
 				if (student.education.progress >= Colony.expertLevel[profession]) {
 					Colonist.update.expert(student, student.education.profession)
-					Notification.create({ type: 'learned', colonist: student, colony: teacher.colony })
+					Unit.update.expert(student.unit, student.education.profession)
+					Events.trigger('notification', { type: 'learned', colonist: student, colony: teacher.colony })
 				}
 				Storage.update(teacher.colony.productionRecord, { good: 'books', amount: 1 })
 			})
@@ -68,7 +69,8 @@ const create = teacher => {
 				student.education.progress += scale
 				if (student.education.progress >= 1) {
 					Colonist.update.expert(student, student.expert === 'criminal' ? 'servant' : null)
-					Notification.create({ type: 'learned', colonist: student, colony: teacher.colony })
+					Unit.update.expert(student.unit, student.expert === 'criminal' ? 'servant' : null)
+					Events.trigger('notification', { type: 'learned', colonist: student, colony: teacher.colony })
 				}
 				Storage.update(teacher.colony.productionRecord, { good: 'books', amount: 1 })
 			})

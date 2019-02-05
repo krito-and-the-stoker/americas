@@ -26,7 +26,8 @@ const execute = (something, arg) => {
 		return flatten(something).filter(isFunction).map(fn => fn(arg))
 	}
 
-	throw new Error('unable to execute', something)
+	console.log('unable to execute', something)
+	throw new Error('unable to execute')
 }
 
 const makeObject = arr => arr.reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
