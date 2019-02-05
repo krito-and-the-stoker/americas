@@ -57,7 +57,6 @@ const openScreen = (view, params) => {
 	layer.app.stage.addChild(context)
 	layer.app.stage.addChild(dialog)
 	layer.app.stage.removeChild(notifications)
-	layer.app.stage.removeChild(container)
 	if (view.removePermanent) {
 		layer.app.stage.removeChild(permanent)
 	}

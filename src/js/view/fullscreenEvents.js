@@ -14,9 +14,10 @@ import Click from 'input/click'
 import Resources from 'render/resources'
 import RenderView from 'render/view'
 import Foreground from 'render/foreground'
+import Text from 'render/text'
 
 
-const create = name => {
+const create = (name, text) => {
 	markHappend(name)
 
 	const container = new PIXI.Container()
@@ -30,6 +31,14 @@ const create = name => {
 		y: image.height
 	}
 
+	const padding = 30
+	const relativeWidth = 0.35
+	const plane9 = new PIXI.mesh.NineSlicePlane(Resources.texture('status'), 100, 100, 100, 100)
+	const textView = Text.create(text)
+	textView.y = padding
+	plane9.addChild(textView)
+
+
 	const unsubscribeDimensions = RenderView.listen.dimensions(dimensions => {
 		background.width = dimensions.x
 		background.height = dimensions.y
@@ -38,10 +47,24 @@ const create = name => {
 		image.scale.set(0.9 * scale)
 		image.x = (dimensions.x - image.width) / 2
 		image.y = (dimensions.y - image.height) / 2
+
+		textView.style = {
+			...textView.style,
+			wordWrap: true,
+			wordWrapWidth: relativeWidth * dimensions.x
+		}
+		textView.x = padding + (relativeWidth * dimensions.x - textView.width) / 2
+
+		plane9.width = relativeWidth * dimensions.x + 2 * padding
+		plane9.height = textView.y + textView.height + padding
+		plane9.x = dimensions.x / 2 - plane9.width / 2
+		plane9.y = 0.925 * dimensions.y - plane9.height
 	})
+
 
 	container.addChild(background)
 	container.addChild(image)
+	container.addChild(plane9)
 	Time.pause()
 
 	let clickEnabled = false
@@ -54,11 +77,13 @@ const create = name => {
 		() => {
 			container.removeChild(background)
 			container.removeChild(image)
+			container.removeChild(plane9)
 			Time.resume()
 		},
 		Click.on(background, () => {
 			if (clickEnabled) {
 				Tween.fadeOut(image, 500)
+				Tween.fadeOut(plane9, 500)
 				setTimeout(Foreground.closeScreen, 500)
 			}
 		})
@@ -66,6 +91,7 @@ const create = name => {
 
 	Tween.fadeIn(background, 2000)
 	Tween.fadeIn(image, 2000)
+	Tween.fadeIn(plane9, 2000)
 
 	Foreground.openScreen({
 		container,
@@ -94,7 +120,7 @@ const initialize = () => {
 				Tile.listen.discovered(tile, discovered => {
 					if (discovered && !Record.getGlobal('fullscreen-events').discovery) {
 						Record.getGlobal('fullscreen-events').discovery = true
-						create('discovery')
+						create('discovery', 'You have discovered a new continent!')
 						Util.execute(unsubscribeTiles)
 					}
 				})
