@@ -1,5 +1,3 @@
-import Time from 'timeline/time'
-
 import Record from 'util/record'
 import Util from 'util/util'
 import Binding from 'util/binding'
@@ -11,14 +9,7 @@ import Treasure from 'entity/treasure'
 import Tribe from 'entity/tribe'
 
 import Commander from 'command/commander'
-import MoveTo from 'command/moveTo'
-import Disband from 'command/disband'
 import LearnFromNatives from 'command/learnFromNatives'
-import CommunicateTension from 'command/communicateTension'
-import Attack from 'command/attack'
-
-import GrowTension from 'task/growTension'
-import GrowInterest from 'task/growInterest'
 
 
 const experts = {
@@ -33,7 +24,6 @@ const experts = {
 	fisher: 'Expert Fisher',
 }
 
-const INTEREST_THRESHOLD = 20
 const create = (tribe, coords, owner) => {
 	const settlement = {
 		mapCoordinates: coords,
@@ -42,8 +32,6 @@ const create = (tribe, coords, owner) => {
 		presentGiven: false,
 		hasLearned: false,
 		expert: Util.choose(Object.keys(experts)),
-		interest: 0.5 * INTEREST_THRESHOLD * Math.random(),
-		tension: 0,
 		mission: false,
 	}
 
@@ -69,46 +57,6 @@ const initialize = settlement => {
 
 	settlement.destroy = [
 		Tribe.add.settlement(settlement.tribe, settlement),
-
-		listen.interest(settlement, interest => {
-			if (interest > INTEREST_THRESHOLD) {
-				update.interest(settlement, interest - INTEREST_THRESHOLD)
-				const colony = Util.choose(Util.quantizedRadius(settlement.mapCoordinates, 5)
-					.map(coords => MapEntity.tile(coords))
-					.filter(tile => !!tile)
-					.filter(tile => tile.colony)
-					.map(tile => tile.colony))
-				if (!colony) {
-					console.warn('no colony in range of settlement', settlement)
-					return
-				}
-				const unit = Unit.create('native', settlement.mapCoordinates, settlement.owner)
-				if (settlement.tension < 25) {				
-					Commander.scheduleInstead(unit.commander, MoveTo.create(unit, colony.mapCoordinates))
-					Commander.scheduleBehind(unit.commander, CommunicateTension.create(colony, settlement, unit))
-					Commander.scheduleBehind(unit.commander, MoveTo.create(unit, settlement.mapCoordinates))
-					Commander.scheduleBehind(unit.commander, Disband.create(unit))
-				} else {
-					Commander.scheduleInstead(unit.commander, Attack.create(unit, { colony }))
-					Commander.scheduleBehind(unit.commander, MoveTo.create(unit, settlement.mapCoordinates))
-					Commander.scheduleBehind(unit.commander, Disband.create(unit))
-				}
-				update.tension(settlement, 0.5*settlement.tension)
-			}
-		}),
-
-		listen.mission(settlement, mission =>
-			Util.quantizedRadius(settlement.mapCoordinates, 5)
-				.map(MapEntity.tile)
-				.filter(tile => !!tile)
-				.map(tile =>
-					Tile.listen.tile(tile, tile => {
-						const tension = (tile.road ? 1 : 0) + (tile.plowed ? 1 : 0)
-						return [
-							tension ? Time.schedule(GrowTension.create(settlement, (mission ?0.5:1) * tension / Util.distance(settlement.mapCoordinates, tile.mapCoordinates))) : null,
-							tile.colony ? Time.schedule(GrowInterest.create(settlement, 1.0 / Util.distance(settlement.mapCoordinates, tile.mapCoordinates))) : null
-						]
-					})))
 	]
 }
 
@@ -303,14 +251,10 @@ const dialog = (settlement, unit, answer) => {
 
 
 const listen = {
-	interest: (settlement, fn) => Binding.listen(settlement, 'interest', fn),
-	tension: (settlement, fn) => Binding.listen(settlement, 'tension', fn),
 	mission: (settlement, fn) => Binding.listen(settlement, 'mission', fn),
 }
 
 const update = {
-	interest: (settlement, value) => Binding.update(settlement, 'interest', value),
-	tension: (settlement, value) => Binding.update(settlement, 'tension', value),
 	mission: (settlement, value) => Binding.update(settlement, 'mission', value),
 }
 
@@ -321,8 +265,6 @@ const save = settlement => ({
 	expert: settlement.expert,
 	presentGiven: settlement.presentGiven,
 	hasLearned: settlement.hasLearned,
-	interest: settlement.interest,
-	tension: settlement.tension,
 	mission: settlement.mission,
 })
 

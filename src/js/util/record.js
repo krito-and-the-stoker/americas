@@ -40,8 +40,9 @@ let globals = {}
 let tiles = []
 let listeners = {}
 const add = (type, entity) => {
+	entity.referenceId = makeId()
 	records.push({
-		id: makeId(),
+		id: entity.referenceId,
 		entity,
 		type,
 		destroy: update(type, entity)
@@ -112,6 +113,7 @@ const revive = (record) => {
 	}
 
 	record.entity = getModule(record.type).load(record.data)
+	record.entity.referenceId = record.id
 	record.listeners.forEach(fn => fn(record.entity))	
 	records.push(record)
 
@@ -180,13 +182,13 @@ const reference = entity => {
 	if (!entity) {
 		return null
 	}
-	const record = records.find(record => record.entity === entity)
-	if (!record) {
-		console.warn('could not create reference, entity not found', entity)
-		return null
-	}
+	// const record = records.find(record => record.entity === entity)
+	// if (!record) {
+	// 	console.warn('could not create reference, entity not found', entity)
+	// 	return null
+	// }
 	return {
-		[REFERENCE_KEY]: record.id
+		[REFERENCE_KEY]: entity.referenceId
 	}
 }
 
