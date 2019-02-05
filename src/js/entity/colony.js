@@ -258,7 +258,7 @@ const create = (coords, owner) => {
 		mapCoordinates: { ...coords },
 		construction: {
 			amount: 0,
-			target: 'wagontrain',
+			target: 'harbour',
 		},
 		bells: 0
 	}
@@ -296,7 +296,10 @@ const save = colony => ({
 	storage: Storage.save(colony.storage),
 	trade: Storage.save(colony.trade),
 	buildings: colony.buildings,
-	construction: colony.construction,
+	construction: {
+		amount: colony.construction.amount,
+		target: colony.construction.target
+	},
 	bells: colony.bells,
 	owner: Record.reference(colony.owner)
 })

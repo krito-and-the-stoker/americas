@@ -10,6 +10,8 @@ import MapEntity from 'entity/map'
 import Settlement from 'entity/settlement'
 import Owner from 'entity/owner'
 
+import Natives from 'ai/natives'
+
 
 const settlementDensity = 0.06
 let tribeNames = ['Sioux', 'Apache', 'Cherokee', 'Inca', 'Aztec', 'Navajo', 'Cheyenne', 'Ponca', 'Iroquis', 'Delaware', 'Comanche']
@@ -73,6 +75,8 @@ const create = (id, owner) => {
 	tribeNames = tribeNames.filter(name => name !== tribe.name)
 	tribe.image = Util.choose(images)
 	images = images.filter(name => name !== tribe.image)
+
+	Natives.update.tribe(owner.ai, tribe)
 
 	Record.add('tribe', tribe)
 	return tribe
