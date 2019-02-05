@@ -183,7 +183,7 @@ const create = (colony, originalDimensions) => {
 						type: 'natives',
 						image: settlement.tribe.image,
 						options: [{
-							text: 'We will conform to your wishes',
+							text: 'We will respect your wishes',
 						}, {
 							text: 'We offer you 500 for this piece of land',
 							action: () => {
