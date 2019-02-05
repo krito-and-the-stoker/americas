@@ -77,6 +77,8 @@ const listen = (type, fn) => {
 		})
 
 	listeners[type].push(fn)
+
+	return () => listeners[type] = listeners[type].filter(f => f !== fn)
 }
 
 const update = (type, entity) => {

@@ -123,10 +123,13 @@ const initialize = () => {
 	if (!hasHappend('discovery')) {	
 		const unsubscribe = MapEntity.get().tiles
 			.filter(tile => tile.domain === 'land')
+			.filter(tile =>
+				Tile.diagonalNeighbors(tile).some(n => n.domain === 'sea'))
 			.map(tile => 
 				Tile.listen.discovered(tile, discovered => {
 					if (discovered && !hasHappend('discovery')) {
 						create('discovery', 'You have discovered a new continent!')
+						Events.trigger('discovery')
 						Util.execute(unsubscribe)
 					}
 				})

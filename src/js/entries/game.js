@@ -10,6 +10,7 @@ import PathFinder from 'util/pathFinder'
 import Record from 'util/record'
 import Util from 'util/util'
 import Binding from 'util/binding'
+import Message from 'util/message'
 
 import Time from 'timeline/time'
 
@@ -32,9 +33,9 @@ import UnitMapView from 'view/map/unit'
 import MapView from 'view/map'
 import AutosaveView from 'view/autosave'
 import FullscreenEvents from 'view/fullscreenEvents'
+import Tutorial from 'view/tutorial'
 
 import Dialog from 'view/ui/dialog'
-import Message from 'util/message'
 
 import GlobalPanel from 'view/panel/global'
 
@@ -186,17 +187,18 @@ const start = async () => {
 			Keyboard.initialize()
 			Dialog.create({
 				type: 'king',
-				text: 'Welcome to Americas!\n\nYou made it here to find a new world in the west\n\npress "h" for any help',
-				options: [{
-					default: true,
-					action: () => UnitMapView.select(caravel)
-				}],
+				text: 'Welcome to Americas!\n\nYou made it here to find a new world in the west.',
+				// options: [{
+				// 	default: true,
+				// 	action: () => UnitMapView.select(caravel)
+				// }],
 				coords: caravel.mapCoordinates,
 				pause: true
 			})
 		}, 3500)
 
 		FullscreenEvents.initialize()
+		Tutorial.initialize()
 
 		await nextFrame()
 		initialize()
@@ -251,6 +253,7 @@ const load = async () => {
 		}, 3000)
 
 		FullscreenEvents.initialize()
+		Tutorial.initialize()
 
 		initialize()
 	} catch (err) {
