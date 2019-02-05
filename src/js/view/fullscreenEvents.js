@@ -3,11 +3,15 @@ import * as PIXI from 'pixi.js'
 import Util from 'util/util'
 import Record from 'util/record'
 import Tween from 'util/tween'
+import Events from 'util/events'
 
 import Time from 'timeline/time'
 
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
+import Owner from 'entity/owner'
+import Europe from 'entity/europe'
+import Storage from 'entity/storage'
 
 import Click from 'input/click'
 
@@ -15,6 +19,8 @@ import Resources from 'render/resources'
 import RenderView from 'render/view'
 import Foreground from 'render/foreground'
 import Text from 'render/text'
+
+import EuropeView from 'view/europe'
 
 
 const create = (name, text) => {
@@ -96,7 +102,7 @@ const create = (name, text) => {
 	Foreground.openScreen({
 		container,
 		unsubscribe,
-		removePermanent: true,
+		priority: true,
 	}, {
 		name: 'fullscreen-event',
 		type: name
@@ -113,18 +119,46 @@ const initGlobals = () => {
 
 const initialize = () => {
 	initGlobals()
+
 	if (!hasHappend('discovery')) {	
-		const unsubscribeTiles = MapEntity.get().tiles
+		const unsubscribe = MapEntity.get().tiles
 			.filter(tile => tile.domain === 'land')
 			.map(tile => 
 				Tile.listen.discovered(tile, discovered => {
-					if (discovered && !Record.getGlobal('fullscreen-events').discovery) {
-						Record.getGlobal('fullscreen-events').discovery = true
+					if (discovered && !hasHappend('discovery')) {
 						create('discovery', 'You have discovered a new continent!')
-						Util.execute(unsubscribeTiles)
+						Util.execute(unsubscribe)
 					}
 				})
 			)
+	}
+
+	if (!hasHappend('firstColony')) {
+		const unsubscribe = Record.listen('colony', colony => {
+			if (colony.owner === Owner.player() && !hasHappend('first-colony')) {
+				create('firstColony', 'Building a colony')
+				Util.execute(unsubscribe)
+			}
+		})
+	}
+
+	if (!hasHappend('enteringVillage')) {
+		const unsubscribe = Events.listen('notification', ({ type }) => {
+			if (type === 'settlement' && !hasHappend('enteringVillage')) {
+				create('enteringVillage', 'Entering a native village')
+				Util.execute(unsubscribe)
+			}
+		})
+	}
+
+	if (!hasHappend('firstFreight')) {
+		const unsubscribe = Europe.listen.units(units => {
+			if (units.some(unit => unit.domain === 'sea' && Storage.split(unit.storage).length > 0)) {
+				create('firstFreight', 'Cargo from the new world')
+				EuropeView.open()
+				unsubscribe()
+			}
+		})
 	}
 }
 

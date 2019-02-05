@@ -53,7 +53,10 @@ const paths = {
 	native7: 'images/characters-head/native7.png',
 	native8: 'images/characters-head/native8.png',
 	native9: 'images/characters-head/native9.png',
-	discovery: 'images/fullscreen-events/discovery.jpg'
+	discovery: 'images/fullscreen-events/discovery.jpg',
+	firstColony: 'images/fullscreen-events/first-colony.jpg',
+	enteringVillage: 'images/fullscreen-events/entering-village.jpg',
+	firstFreight: 'images/fullscreen-events/first-freight.jpg'
 }
 
 const textures = {

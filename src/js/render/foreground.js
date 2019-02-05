@@ -39,26 +39,35 @@ const listen = {
 
 const hitTest = coords => layer.app.renderer.plugins.interaction.hitTest(new PIXI.Point(coords.x, coords.y), layer.app.stage)
 const state = {
-	screen: null
+	screen: null,
+	queue: []
 }
 
 const openScreen = (view, params) => {
 	if (state.screen) {
-		closeScreen()
+		if (state.screen.priority) {
+			state.queue.push({
+				view,
+				params
+			})
+			return
+		} else {
+			closeScreen()
+		}
 	}
 	update.screen({
 		...view,
 		params
 	})
-	layer.app.stage.addChild(view.container)
-	if (!view.removePermanent) {
-		layer.app.stage.addChild(permanent)
+	if (!view.priority) {
+		layer.app.stage.addChild(view.container)
 	}
+	layer.app.stage.addChild(permanent)
 	layer.app.stage.addChild(context)
 	layer.app.stage.addChild(dialog)
 	layer.app.stage.removeChild(notifications)
-	if (view.removePermanent) {
-		layer.app.stage.removeChild(permanent)
+	if (view.priority) {
+		layer.app.stage.addChild(view.container)
 	}
 	Background.hide()
 	Events.trigger('openScreen', params)
@@ -80,6 +89,10 @@ const closeScreen = () => {
 		Background.show()
 	}
 	update.screen(null)
+	if (state.queue.length > 0) {
+		const next = state.queue.shift()
+		openScreen(next.view, next.params)
+	}
 }
 
 const hasOpenScreen = () => state.screen ? true : false
