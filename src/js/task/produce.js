@@ -27,9 +27,11 @@ const create = (colony, building, colonist) => {
 			productionAmount = Math.min(colony.storage[consumption.good], productionAmount)
 		}
 		let consumptionAmount = productionAmount
+		const unscaledProductionAmount = productionAmount / scale
+		const unscaledConsumptionAmount = consumptionAmount / scale
 		if (consumption.good) {
 			Storage.update(colony.storage, { good: consumption.good, amount: -consumptionAmount })
-			Storage.update(colony.productionRecord, { good: consumption.good, amount: -consumptionAmount })
+			Storage.update(colony.productionRecord, { good: consumption.good, amount: -unscaledConsumptionAmount })
 		}
 		if (production.type === 'good') {
 			Storage.update(colony.storage, { good: production.good, amount: productionAmount })
@@ -44,7 +46,7 @@ const create = (colony, building, colonist) => {
 		if (production.type === 'crosses') {
 			Europe.update.crosses(productionAmount)
 		}
-		Storage.update(colony.productionRecord, { good: production.good, amount: productionAmount })
+		Storage.update(colony.productionRecord, { good: production.good, amount: unscaledProductionAmount })
 
 		return true
 	}

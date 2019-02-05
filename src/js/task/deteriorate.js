@@ -13,18 +13,20 @@ const create = colony => {
 			.filter(([good]) => good !== 'food')
 			.filter(([, amount]) => amount > colony.capacity)
 			.forEach(([good, amount]) => {
-				const loss = deltaTime * PRODUCTION_BASE_FACTOR * LOSS_FACTOR * (amount - colony.capacity)
+				const unscaledLoss = LOSS_FACTOR * (amount - colony.capacity)
+				const loss = deltaTime * PRODUCTION_BASE_FACTOR * unscaledLoss
 				Storage.update(colony.storage, { good, amount: -loss })
-				Storage.update(colony.productionRecord, { good, amount: -loss })
+				Storage.update(colony.productionRecord, { good, amount: -unscaledLoss })
 			})
 
 		if (colony.construction.amount > colony.construction.cost.construction) {
 			const amount = colony.construction.amount
 			const capacity = colony.construction.cost.construction
-			const loss = deltaTime * PRODUCTION_BASE_FACTOR * LOSS_FACTOR * (amount - capacity)
+			const unscaledLoss = LOSS_FACTOR * (amount - capacity)
+			const loss = deltaTime * PRODUCTION_BASE_FACTOR * unscaledLoss
 			colony.construction.amount -= loss
 			Colony.update.construction(colony)
-			Storage.update(colony.productionRecord, { good: 'construction', amount: -loss })
+			Storage.update(colony.productionRecord, { good: 'construction', amount: -unscaledLoss })
 		}
 
 		return true

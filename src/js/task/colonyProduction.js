@@ -13,9 +13,9 @@ const create = colony => {
 		const scale = deltaTime * PRODUCTION_BASE_FACTOR
 
 		Europe.update.crosses(scale)
-		Storage.update(colony.productionRecord, { good: 'crosses', amount: scale })
+		Storage.update(colony.productionRecord, { good: 'crosses', amount: 1 })
 		Colony.update.bells(colony, scale)
-		Storage.update(colony.productionRecord, { good: 'bells', amount: scale })
+		Storage.update(colony.productionRecord, { good: 'bells', amount: 1 })
 
 		return true
 	}

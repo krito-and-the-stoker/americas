@@ -58,7 +58,7 @@ const create = teacher => {
 					Colonist.update.expert(student, student.education.profession)
 					Notification.create({ type: 'learned', colonist: student, colony: teacher.colony })
 				}
-				Storage.update(teacher.colony.productionRecord, { good: 'books', amount: 1 * deltaTime * PRODUCTION_BASE_FACTOR })
+				Storage.update(teacher.colony.productionRecord, { good: 'books', amount: 1 })
 			})
 
 		teacher.colony.colonists
@@ -70,7 +70,7 @@ const create = teacher => {
 					Colonist.update.expert(student, student.expert === 'criminal' ? 'servant' : null)
 					Notification.create({ type: 'learned', colonist: student, colony: teacher.colony })
 				}
-				Storage.update(teacher.colony.productionRecord, { good: 'books', amount: 1 * deltaTime * PRODUCTION_BASE_FACTOR })
+				Storage.update(teacher.colony.productionRecord, { good: 'books', amount: 1 })
 			})
 
 		return true
