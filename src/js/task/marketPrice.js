@@ -18,13 +18,17 @@ const create = market => {
 		if (scale > 0) {
 			Object.keys(market).forEach(good => {
 				market[good].storage -= scale * consumption(market[good].consumption, Time.get().year)
-				if (market[good].storage < 0 && market[good].price < MAX_PRICE) {
-					market[good].price += 1
+				if (market[good].storage < 0) {
+					if (market[good].price < MAX_PRICE) {
+						market[good].price += 1
+					}
 					market[good].storage += market[good].capacity
 					market[good].consumption /= consumptionFactor()
 				}
-				if (market[good].storage > market[good].capacity && market[good].price > MIN_PRICE) {
-					market[good].price -= 1
+				if (market[good].storage > market[good].capacity) {
+					if (market[good].price > MIN_PRICE) {
+						market[good].price -= 1
+					}
 					market[good].storage -= market[good].capacity
 					market[good].consumption *= consumptionFactor()
 				}
