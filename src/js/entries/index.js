@@ -20,7 +20,6 @@ window.addEventListener('load', async () => {
 				await loadingGameCode.then(() => {
 					return game.start()
 				}).then(() => {
-					setInterval(game.save, 60000)
 					window.addEventListener('beforeunload', game.save)
 					setTimeout(() => {
 						document.querySelector('.loading').classList.add('hidden')
@@ -39,7 +38,6 @@ window.addEventListener('load', async () => {
 				await loadingGameCode.then(() => {
 					return game.load()
 				}).then(() => {
-					setInterval(game.save, 60000)
 					window.addEventListener('beforeunload', game.save)
 					setTimeout(() => {
 						document.querySelector('.loading').classList.add('hidden')

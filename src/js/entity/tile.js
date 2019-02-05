@@ -92,7 +92,7 @@ const terrainName = tile =>
 
 const keys = ['id', 'forest', 'treeVariation', 'hills', 'hillVariation', 'mountains', 'mountainVariation', 'riverSmall', 'riverLarge', 'bonus', 'plowed', 'road', 'coast', 'discoveredBy', 'rumors', 'harvestedBy', 'currentlyVisible']
 const type = ['int','bool',   'int',           'bool',  'bool',          'bool',      'bool',              'bool',       'bool',       'bool',  'bool',   'bool', 'bool',  'references',   'bool',   'reference',   'bool']
-const save = tile => ([
+const save = tile => compress([
 	tile.id,
 	tile.forest,
 	tile.treeVariation,
@@ -109,7 +109,9 @@ const save = tile => ([
 	tile.discoveredBy.map(Record.reference),
 	tile.rumors,
 	Record.reference(tile.harvestedBy)
-].map((value, index) => {
+])
+
+const compress = values => values.map((value, index) => {
 	if (type[index] === 'bool') {
 		return value ? 1 : 0
 	}
@@ -120,7 +122,45 @@ const save = tile => ([
 		return value.map(one => one ? one[Record.REFERENCE_KEY] : 0).join('-')
 	}
 	return value
-}))
+})
+
+export const saveSerializedCopy = tile => compress([
+	tile.id,
+	tile.forest,
+	tile.treeVariation,
+	tile.hills,
+	tile.hillVariation,
+	tile.mountains,
+	tile.mountainVariation,
+	tile.riverSmall,
+	tile.riverLarge,
+	tile.bonus,
+	tile.plowed,
+	tile.road,
+	tile.coast,
+	tile.discoveredBy,
+	tile.rumors,
+	tile.harvestedBy
+])
+
+const serializableCopy = tile => ({
+	id: tile.id,
+	forest: tile.forest,
+	treeVariation: tile.treeVariation,
+	hills: tile.hills,
+	hillVariation: tile.hillVariation,
+	mountains: tile.mountains,
+	mountainVariation: tile.mountainVariation,
+	riverSmall: tile.riverSmall,
+	riverLarge: tile.riverLarge,
+	bonus: tile.bonus,
+	plowed: tile.plowed,
+	road: tile.road,
+	coast: tile.coast,
+	discoveredBy: tile.discoveredBy.map(Record.reference),
+	rumors: tile.rumors,
+	harvestedBy: Record.reference(tile.harvestedBy)
+})
 
 const load = (data, index) => {
 	const tile = data
@@ -441,5 +481,6 @@ export default {
 	right,
 	up,
 	down,
-	add
+	add,
+	serializableCopy,
 }

@@ -29,7 +29,6 @@ import RenderView from 'render/view.js'
 import Foreground from 'render/foreground'
 import Background from 'render/background'
 
-import UnitMapView from 'view/map/unit'
 import MapView from 'view/map'
 import AutosaveView from 'view/autosave'
 import FullscreenEvents from 'view/fullscreenEvents'
@@ -54,8 +53,10 @@ if (process.env.SENTRY_DSN) {
 	})
 }
 
+const AUTOSAVE_INTERVAL = 60000
 const initialize = () => {
 	let timeStamp = 0
+	setInterval(Record.autosave, AUTOSAVE_INTERVAL)
 
 	const loop = t => {
 		const deltaTime = Math.min(t - timeStamp, 150)
@@ -188,10 +189,6 @@ const start = async () => {
 			Dialog.create({
 				type: 'king',
 				text: 'Welcome to Americas!\n\nYou made it here to find a new world in the west.',
-				// options: [{
-				// 	default: true,
-				// 	action: () => UnitMapView.select(caravel)
-				// }],
 				coords: caravel.mapCoordinates,
 				pause: true
 			})
