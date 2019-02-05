@@ -11,8 +11,8 @@ const flatten = array => {
 
 const isFunction = something => typeof something === 'function'
 
-const mergeFunctions = funcArray => funcArray.filter(fn => isFunction(fn)).reduce((all, fn) => arg => { all(arg); fn(arg) }, () => {})
-const mergeFunctionsFlat = funcArray => mergeFunctions(flatten(funcArray))
+// const mergeFunctions = funcArray => funcArray.filter(fn => isFunction(fn)).reduce((all, fn) => arg => { all(arg); fn(arg) }, () => {})
+// const mergeFunctionsFlat = funcArray => mergeFunctions(flatten(funcArray))
 const execute = (something, arg) => {
 	if (!something) {
 		return null
@@ -23,7 +23,7 @@ const execute = (something, arg) => {
 	}
 
 	if (isArray(something)) {
-		return mergeFunctionsFlat(something)(arg)
+		return flatten(something).filter(isFunction).map(fn => fn(arg))
 	}
 
 	throw new Error('unable to execute', something)

@@ -55,6 +55,8 @@ const listen = (instance, key, fn) => {
 let resolve = null
 let promise = new Promise(res => { resolve = res })
 let scheduled = new Set()
+const add = scheduled.add.bind(scheduled)
+
 const update = (instance, key, value) => {
 	const listeners = listenerKey(key)
 	if (value !== undefined) {
@@ -66,11 +68,7 @@ const update = (instance, key, value) => {
 	if (instance[listeners]) {	
 		instance[listeners]
 			.forEach(listener => Util.execute(listener.cleanup, false))
-		instance[listeners].forEach(listener => {
-			// const value = key ? instance[key] : instance
-			// listener.cleanup = listener.fn(value)
-			scheduled.add(listener)
-		})
+		instance[listeners].forEach(add)
 		instance[listeners]
 			.filter(listener => !listener.keep)
 			.forEach(listener => remove(listener))

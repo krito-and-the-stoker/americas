@@ -31,6 +31,7 @@ import Background from 'render/background'
 import UnitMapView from 'view/map/unit'
 import MapView from 'view/map'
 import AutosaveView from 'view/autosave'
+import FullscreenEvents from 'view/fullscreenEvents'
 
 import Dialog from 'view/ui/dialog'
 import Message from 'util/message'
@@ -195,6 +196,7 @@ const start = async () => {
 			})
 		}, 3500)
 
+		FullscreenEvents.initialize()
 
 		await nextFrame()
 		initialize()
@@ -247,6 +249,8 @@ const load = async () => {
 		setTimeout(() => {
 			Keyboard.initialize()
 		}, 3000)
+
+		FullscreenEvents.initialize()
 
 		initialize()
 	} catch (err) {
