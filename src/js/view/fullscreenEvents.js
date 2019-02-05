@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 
 import Util from 'util/util'
 import Record from 'util/record'
+import Tween from 'util/tween'
 
 import Time from 'timeline/time'
 
@@ -23,7 +24,7 @@ const create = name => {
 	const background = Resources.sprite('white')
 	background.tint = 0x000000
 
-	const image = Resources.sprite('discovery')
+	const image = Resources.sprite(name)
 	const originalDimensions = {
 		x: image.width,
 		y: image.height
@@ -43,6 +44,11 @@ const create = name => {
 	container.addChild(image)
 	Time.pause()
 
+	let clickEnabled = false
+	setTimeout(() => {
+		clickEnabled = true
+	}, 2000)
+
 	const unsubscribe = [
 		unsubscribeDimensions,
 		() => {
@@ -50,8 +56,16 @@ const create = name => {
 			container.removeChild(image)
 			Time.resume()
 		},
-		Click.on(background, Foreground.closeScreen)
+		Click.on(background, () => {
+			if (clickEnabled) {
+				Tween.fadeOut(image, 500)
+				setTimeout(Foreground.closeScreen, 500)
+			}
+		})
 	]
+
+	Tween.fadeIn(background, 2000)
+	Tween.fadeIn(image, 2000)
 
 	Foreground.openScreen({
 		container,
@@ -59,7 +73,7 @@ const create = name => {
 		removePermanent: true,
 	}, {
 		name: 'fullscreen-event',
-		type: 'discovery'
+		type: name
 	})
 }
 

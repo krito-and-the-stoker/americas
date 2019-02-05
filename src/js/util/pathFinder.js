@@ -16,6 +16,8 @@ const graph = Graph.create()
 
 
 const initialize = () => {
+	Message.log('Initializing pathfinder')
+
 	const tiles = MapEntity.get().tiles
 	Util.range(MapEntity.get().numTiles.total).forEach(index => {
 		const center = tiles[index]
@@ -23,13 +25,13 @@ const initialize = () => {
 			index: tile.index,
 			area: tile.area,
 			cost: () => Tile.movementCost(center, tile),
-			tile: () => MapEntity.tileFromIndex(tile.index),
+			tile
 		}))
 
 		graph.addNode({
 			index: center.index,
 			area: center.area,
-			tile: () => MapEntity.tileFromIndex(center.index)
+			tile: center
 		}, neighbors)
 	})
 
@@ -43,7 +45,7 @@ const findNextToArea = (from, area) => {
 }
 
 const findHighSeas = from => {
-	const target = node => node.tile().terrainName === 'sea lane' && node.tile().discovered()
+	const target = node => node.tile.terrainName === 'sea lane' && node.tile.discovered()
 	return find(from, target, null, from.colony ? Colony.area(from.colony, 'sea') : null)
 }
 const findPathXY = (from, to, unit) => findPath(MapEntity.tile(from), MapEntity.tile(to), unit)
@@ -103,10 +105,10 @@ const find = (from, isTarget, target, area = null) => {
 			return a.value.cost - b.value.cost
 
 		//prefer horizontal or vertical movement to diagonals
-		if(Tile.isNextTo(a.value.prev.value.tile(), a.value.tile()))
+		if(Tile.isNextTo(a.value.prev.value.tile, a.value.tile))
 			return -1
 
-		if(Tile.isNextTo(b.value.prev.value.tile(), b.value.tile()))
+		if(Tile.isNextTo(b.value.prev.value.tile, b.value.tile))
 			return 1
 
 		return 0
@@ -126,10 +128,10 @@ const find = (from, isTarget, target, area = null) => {
 		node = frontier.extractMinimum()
 		inFrontier[node.value.index] = false
 		if (isTarget(node.value)) {
-			const path = [node.value.tile()]
+			const path = [node.value.tile]
 			while (node.value.prev !== node){
 				node = node.value.prev
-				path.push(node.value.tile())
+				path.push(node.value.tile)
 			}
 
 			return path.reverse()
@@ -137,14 +139,14 @@ const find = (from, isTarget, target, area = null) => {
 
 		explored[node.value.index] = true
 		node.value.neighbors.forEach(neighbor => {
-			if (!explored[neighbor.index] && (!area || neighbor.area === area || neighbor.tile().colony)) {
+			if (!explored[neighbor.index] && (!area || neighbor.area === area || neighbor.tile.colony)) {
 				const neighborNode = graph.node(neighbor.index)
 				const newCost = node.value.cost + neighbor.cost()
 
 				if (!inFrontier[neighbor.index]) {
 					neighborNode.prev = node
 					neighborNode.cost = newCost
-					neighborNode.priority =  newCost + relativeEstimate(neighborNode.tile())
+					neighborNode.priority =  newCost + relativeEstimate(neighborNode.tile)
 
 					inFrontier[neighbor.index] = frontier.insert(neighborNode.priority, neighborNode)
 				}
@@ -152,7 +154,7 @@ const find = (from, isTarget, target, area = null) => {
 					if (newCost < neighborNode.cost) {
 						neighborNode.prev = node
 						neighborNode.cost = newCost
-						neighborNode.priority = newCost + relativeEstimate(neighborNode.tile())
+						neighborNode.priority = newCost + relativeEstimate(neighborNode.tile)
 
 						frontier.decreaseKey(inFrontier[neighbor.index], neighborNode.priority)
 					}
