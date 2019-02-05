@@ -61,15 +61,16 @@ const openScreen = (view, params) => {
 	})
 	if (!view.priority) {
 		layer.app.stage.addChild(view.container)
+		layer.app.stage.removeChild(notifications)
 	}
 	layer.app.stage.addChild(permanent)
 	layer.app.stage.addChild(context)
 	layer.app.stage.addChild(dialog)
-	layer.app.stage.removeChild(notifications)
 	if (view.priority) {
 		layer.app.stage.addChild(view.container)
+	} else {
+		Background.hide()
 	}
-	Background.hide()
 	Events.trigger('openScreen', params)
 }
 
