@@ -410,9 +410,7 @@ const updateRumors = (tile, value) => {
 }
 
 const updateTile = center => {
-	radius(center).forEach(tile => {
-		update.tile(tile)
-	})
+	radius(center).forEach(update.tile)
 }
 
 
