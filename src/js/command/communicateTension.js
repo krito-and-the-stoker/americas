@@ -15,7 +15,7 @@ const create = (colony, settlement, unit) => {
 			const amount = 2 + Math.round(Math.random() * 15)
 
 			Events.trigger('dialog', {
-				text: `As a sign of our friendship and peace take these ${amount} ${good} as a gift.`,
+				text: `As a sign of our friendship between the ${settlement.tribe.name} and the citizen of {${colony.name} take these ${amount} ${good} as a gift.`,
 				type: 'natives',
 				image: settlement.tribe.image,
 				options: [{

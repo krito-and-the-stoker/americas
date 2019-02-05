@@ -29,7 +29,7 @@ import Dialog from 'view/ui/dialog'
 import UnitPanel from 'view/panel/unit'
 
 // min scale means how far can you zoom out
-const MIN_SCALE = 0.2
+const MIN_SCALE = 0.3
 const MAX_SCALE = 4
 const TILE_SIZE = 64
 
