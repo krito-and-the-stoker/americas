@@ -105,14 +105,20 @@ const createBuilding = (colony, building) => {
 					s.position.y += 20 + TILE_SIZE
 					container.colonists.addChild(s)
 				})
-				return () => {
-					productionSprites.forEach(s => container.colonists.removeChild(s))
+				return [
+					() => {
+						productionSprites.forEach(s => container.colonists.removeChild(s))
+						container.colonists.removeChild(colonistSprite)
+					},
+					Drag.makeDraggable(colonistSprite, { colonist })
+				]
+			}
+			return [
+				() => {
 					container.colonists.removeChild(colonistSprite)
-				}
-			}
-			return () => {
-				container.colonists.removeChild(colonistSprite)
-			}
+				},
+				Drag.makeDraggable(colonistSprite, { colonist })
+			]
 		}
 	}
 
