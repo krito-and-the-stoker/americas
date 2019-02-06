@@ -139,7 +139,7 @@
 				"expert": "*2"
 			},
 			"wood":{
-				"base": 6,
+				"base": 4,
 				"road": "+2",
 				"river": "+2",
 				"resource": "+4",
@@ -241,7 +241,7 @@
 				"expert": "*2"
 			},
 			"wood":{
-				"base": 3,
+				"base": 2,
 				"road": "+2",
 				"river": "+2",			
 				"expert": "*2"
@@ -365,7 +365,7 @@
 				"expert": "*2"
 			},
 			"wood":{
-				"base": 6,
+				"base": 4,
 				"road": "+2",
 				"river": "+2",	
 				"expert": "*2"
@@ -432,7 +432,7 @@
 				"expert": "*2"
 			},
 			"wood":{
-				"base": 3,
+				"base": 2,
 				"road": "+2",
 				"river": "+2",	
 				"expert": "*2"
@@ -497,7 +497,7 @@
 				"expert": "*2"
 			},
 			"wood":{
-				"base": 3,
+				"base": 2,
 				"road": "+2",
 				"river": "+2",
 				"resource": "+4",			
@@ -567,7 +567,7 @@
 				"expert": "*2"
 			},
 			"wood":{
-				"base": 3,
+				"base": 2,
 				"road": "+2",
 				"river": "+2",	
 				"expert": "*2"
@@ -635,7 +635,7 @@
 				"expert": "*2"
 			},
 			"wood":{
-				"base": 3,
+				"base": 2,
 				"road": "+2",
 				"river": "+2",	
 				"expert": "*2"
