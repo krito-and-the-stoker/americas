@@ -18,12 +18,12 @@ const needs = () => ({
 })
 	
 
-const cost = (state, goal) =>
-	Object.values(state.settlements)
-		.filter(settlement => settlement.canCreateUnit)
-		.map(settlement => settlement.mapCoordinates)
-		.map(coords => Util.minDistance(goal.value, coords))
-		.reduce((min, test) => Math.min(min, test), 1e10)
+const cost = (state, goal) => 0
+	// Object.values(state.settlements)
+	// 	.filter(settlement => settlement.canCreateUnit)
+	// 	.map(settlement => settlement.mapCoordinates)
+	// 	.map(coords => Util.minDistance(goal.where, coords))
+	// 	.reduce((min, test) => Math.min(min, test), 1e10)
 
 
 export default {

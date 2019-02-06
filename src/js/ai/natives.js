@@ -7,6 +7,7 @@ import Record from 'util/record'
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Tribe from 'entity/tribe'
+import Unit from 'entity/unit'
 
 import Plan from 'ai/plan'
 
@@ -15,6 +16,33 @@ const initialize = ai => {
 	Util.execute(ai.destroy)
 
 	return [
+		Record.listen('unit', unit => {
+			if (unit.owner === ai.owner) {
+				ai.state.units[unit.referenceId] = {
+					command: 'idle'
+				}
+				return [
+					Unit.listen.mapCoordinates(unit, coords => {
+						ai.state.units[unit.referenceId].mapCoordinates = coords
+					}),
+					() => {
+						delete ai.state.units[unit.referenceId]
+					}
+				]
+			}
+		}),
+
+		Record.listen('settlement', settlement => {
+			if (settlement.owner === ai.owner) {
+				ai.state.settlements[settlement.referenceId] = {
+					canCreateUnit: true
+				}
+				return () => {
+					delete ai.state.settlements[settlement.referenceId]
+				}
+			}
+		}),
+
 		listen.tribe(ai, tribe =>
 			tribe ? Tribe.listen.settlements(tribe, settlements => {
 				const tiles = settlements

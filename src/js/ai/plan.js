@@ -33,10 +33,11 @@ const create = (state, goal) => {
 	let currentSteps = search(plan)
 	let i = 0
 	while(currentSteps.length > 0 && i < 10) {
-		console.log(currentSteps)
 		currentSteps = currentSteps.map(step => search(step)).flat()
 		i += 1
 	}
+
+	console.log(plan)
 }
 
 export default {
