@@ -12,8 +12,8 @@ const produces = goal =>
 	goal.key.length === 3 &&
 	goal.key[0] === 'units' &&
 	!goal.key[1] &&
-	goal.key[2] === 'command' &&
-	goal.value === 'idle'
+	goal.key[2] === 'plan' &&
+	goal.value === 'none'
 
 
 const needs = () => ({
@@ -23,22 +23,22 @@ const needs = () => ({
 	
 
 const cost = (state, goal) =>
-	Object.values(state.settlements)
+	Util.minPairValue(Object.values(state.settlements)
 		.filter(settlement => settlement.canCreateUnit)
-		.map(settlement => settlement.mapCoordinates)
-		.map(coords => Util.minDistance(goal.where, coords))
-		.reduce((min, test) => Math.min(min, test), 1e10)
+		.map(settlement => settlement.mapCoordinates), goal.where, Util.distance)
 
 
 const commit = (state, goal, next) => {
-	const coords = 	Object.values(state.settlements)
+	const coords = 	Util.minPair(Object.values(state.settlements)
 		.filter(settlement => settlement.canCreateUnit)
-		.map(settlement => settlement.mapCoordinates)
-		.reduce((best, settlement) =>
-			Util.minDistance(goal.where, best) < Util.minDistance(goal.where, settlement) ? best : settlement,
-		{ x: 1e10, y: 1e10 })
-	Unit.create('native', coords, State.dereference(state.owner))
-	next()
+		.map(settlement => settlement.mapCoordinates), goal.where, Util.distance).one
+
+	const unit = Unit.create('native', coords, State.dereference(state.owner))
+	state.units[unit.referenceId] = {
+		plan: 'none'
+	}
+
+	return next()
 }
 
 export default {

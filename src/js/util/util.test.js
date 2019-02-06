@@ -28,3 +28,26 @@ test('execute', () => {
 	Util.execute([f1, f2, f3])
 	expect(counter).toBe(4)
 })
+
+test('min', () => {
+	expect(Util.min([1, 2, 3, 4, 5], x => x)).toBe(1)
+	expect(Util.min([1, 2, 3, 4, 5], x => -x)).toBe(5)
+})
+
+test('minPair', () => {
+	expect(Util.minPair([1, 2, 3, 4, 5], [1, 2, 3, 4, 5], (x, y) => x + y)).toEqual({ one: 1, other: 1 })
+	expect(Util.minPair([-1, -2, -3, -4, -5], [1, 2, 3, 4, 5], (x, y) => x - y)).toEqual({ one: -5, other: 5 })
+})
+
+test('distance', () => {
+	expect(Util.distance({ x: 0, y: 0}, { x: 3, y: 4 })).toBe(5)
+	expect(Util.distance({ x: -3, y: 0}, { x: 0, y: 4 })).toBe(5)
+})
+
+test('uid', () => {
+	expect(Util.uid()).not.toBe(Util.uid())
+	expect(Util.uid()).not.toBe(Util.uid())
+	expect(Util.uid()).not.toBe(Util.uid())
+	expect(Util.uid()).not.toBe(Util.uid())
+	expect(Util.uid()).not.toBe(Util.uid())
+})

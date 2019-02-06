@@ -19,8 +19,8 @@ const produces = goal =>
 
 
 const needs = goal => ({
-	key: ['units', goal.key[1], 'command'],
-	value: 'idle',
+	key: ['units', goal.key[1], 'plan'],
+	value: 'none',
 	where: goal.value
 })
 
@@ -29,20 +29,35 @@ const cost = () => 0
 
 
 const commit = (state, goal, next) => {
-	const unit = State.dereference(Object.entries(state.units)
-		.filter(([, unit]) => unit.command === 'idle')
-		.reduce(([bestId, bestUnit], [testId, testUnit]) =>
-			Util.minDistance(goal.value, bestUnit.mapCoordinates) < Util.minDistance(goal.value, testUnit.mapCoordinates) ? [bestId, bestUnit] : [testId, testUnit],
-		[-1, { mapCoordinates: { x: 1e10, y: 1e10 } }])[0])
+	const units = State.free(state, 'units')
 
-	const target = goal.value.reduce((best, test) => Util.distance(unit.mapCoordinates, best) < Util.distance(unit.mapCoordinates, test) ? best : test, goal.value[0])
+	const pair = Util.minPair(units,
+		goal.value,
+		(one, other) => Util.distance(one.mapCoordinates, other))
+	const unit = pair.one
+	const target = pair.other
+
+	console.log('unit', unit)
+	console.log('target', target)
+
+	const free = State.allocate(state, 'units', unit.referenceId)
+
 	Commander.scheduleInstead(unit.commander, MoveTo.create(unit, target))
-	Commander.scheduleBehind(unit.commander, TriggerEvent.create('ai-move-complete', { unit }))
-	Events.listen('ai-move-complete', params => {
+	Commander.scheduleBehind(unit.commander, TriggerEvent.create('ai-move-unit-complete', { unit }))
+
+	let cancel = () => {
+		free()
+		Commander.clearSchedule(unit.commander)		
+	}
+
+	Events.listen('ai-move-unit-complete', params => {
 		if (params.unit === unit) {
-			next()
+			cancel = next()
 		}
 	})
+
+	// bind cancel to current scope so we can update it when the move is complete
+	return () => cancel()
 }
 
 

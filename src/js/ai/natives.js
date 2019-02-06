@@ -18,9 +18,12 @@ const initialize = ai => {
 	return [
 		Record.listen('unit', unit => {
 			if (unit.owner === ai.owner) {
-				ai.state.units[unit.referenceId] = {
-					command: 'idle'
+				if (!ai.state.units[unit.referenceId]) {					
+					ai.state.units[unit.referenceId] = {
+						plan: 'none'
+					}
 				}
+
 				return [
 					Unit.listen.mapCoordinates(unit, coords => {
 						ai.state.units[unit.referenceId].mapCoordinates = coords
@@ -84,9 +87,11 @@ const initialize = ai => {
 		listen.goals(ai, goals => {
 			goals.forEach(goal => {
 				const plan = Plan.create(ai.state, goal)
-				plan()
-				// console.log('plan', plan)
-				// console.log('goal', goal)
+				if (plan) {
+					plan()
+				} else {
+					console.log('no plan could be formed')
+				}
 			})
 		})
 	]

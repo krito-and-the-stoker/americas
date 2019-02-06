@@ -67,11 +67,24 @@ const quantizedRadius = (coords, radius) => range(2 * radius)
 const choose = array => array[Math.floor(Math.random() * array.length)]
 const unique = (value, index, self) => self.indexOf(value) === index
 
-const minDistance = (many, one) => many.reduce((min, test) => Math.min(min, distance(test, one)), 1e10)
+// const minDistance = (many, one) => many.reduce((min, test) => Math.min(min, distance(test, one)), 1e10)
+const minDistance = (many, one) => distance(min(many, other => distance(one, other)))
 const distance = (first, second) => Math.sqrt((first.x - second.x) * (first.x - second.x) + (first.y - second.y) * (first.y - second.y))
 
+const min = (many, fn) => many.reduce((best, test) => (best && fn(best) < fn(test)) ? best : test, null)
+const minPair = (many, some, fn) => min(many.map(one => ({
+	one,
+	other: min(some, other => fn(one, other))
+})), ({ one, other }) => fn(one, other))
+const minPairValue = (many, some, fn) => {
+	const pair = minPair(many, some, fn)
+	return fn(pair.one, pair.other)
+}
+
+
+
 let currentId = 0
-const getUid = () => {
+const uid = () => {
 	currentId += 1
 	return currentId
 }
@@ -83,7 +96,7 @@ export default {
 	range,
 	choose,
 	// clone,
-	getUid,
+	uid,
 	execute,
 	isArray,
 	flatten,
@@ -93,4 +106,7 @@ export default {
 	minDistance,
 	quantizedRadius,
 	inBattleDistance,
+	min,
+	minPair,
+	minPairValue
 }

@@ -1,3 +1,4 @@
+import Util from 'util/util'
 import Record from 'util/record'
 
 
@@ -12,8 +13,22 @@ const satisfies = (state, goal) => goal.key
 
 const dereference = referenceId => Record.dereference({ referenceId: Number(referenceId) })
 
+const free = (state, key) => Object.entries(state[key])
+	.filter(([, entity]) => entity.plan === 'none')
+	.map(([referenceId]) => dereference(referenceId))
+
+const allocate = (state, key, id) => {
+	state[key][id].plan = `in-use-${Util.uid()}`
+
+	return () => {
+		state[key][id].plan = 'none'
+	}
+}
+
 
 export default {
 	satisfies,
-	dereference
+	dereference,
+	free,
+	allocate
 }

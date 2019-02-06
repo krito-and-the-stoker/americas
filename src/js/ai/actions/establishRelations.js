@@ -16,7 +16,7 @@ const needs = goal => ({
 	key: ['units', null, 'mapCoordinates'],
 	value: Record.getAll('unit')
 		.filter(unit => unit.owner.referenceId === Number(goal.key[1]) && unit.tile.domain === 'land')
-		.map(unit => unit.mapCoordinates)
+		.map(unit => unit.tile.mapCoordinates)
 })
 
 
@@ -25,7 +25,7 @@ const cost = () => 0
 
 const commit = (state, goal, next) => {
 	console.log('relationships established!')
-	next()
+	return next()
 }
 
 

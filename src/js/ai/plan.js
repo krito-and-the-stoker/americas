@@ -1,3 +1,5 @@
+import Util from 'util/util'
+
 import Actions from 'ai/actions'
 import State from 'ai/state'
 
@@ -30,18 +32,23 @@ const create = (state, goal) => {
 
 	// build complete tree
 	let infinityGuard = 0
-	let currentSteps = search({
+	const initial = {
 		goal,
 		cost: 0,
 		action: () => console.log('plan fulfilled')
-	})
+	}
+	let currentSteps = search(initial)
 	while(currentSteps.length > 0 && infinityGuard < 10) {
 		currentSteps = currentSteps.map(step => search(step)).flat()
 		infinityGuard += 1
 	}
 
+	console.log(initial)
+	console.log(leafs)
+
 	if (leafs.length > 0) {
-		const start = leafs.reduce((best, step) => best.cost < step.cost ? best : step, leafs[0])
+		// const start = leafs.reduce((best, step) => best.cost < step.cost ? best : step, leafs[0])
+		const start = Util.min(leafs, step => step.cost)
 		return start.action
 		// const plan = []
 		// let step = start
