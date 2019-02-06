@@ -1,4 +1,3 @@
-import Util from 'util/util'
 import Record from 'util/record'
 
 
@@ -16,15 +15,17 @@ const dereference = referenceId => Record.dereference({ referenceId: Number(refe
 const all = (state, key) => Object.entries(state[key])
 	.map(([referenceId]) => dereference(referenceId))
 const free = (state, key) => Object.entries(state[key])
-	.filter(([, entity]) => entity.plan === 'none')
+	.filter(([, entity]) => entity.goal === 'none')
 	.map(([referenceId]) => dereference(referenceId))
 
-const allocate = (state, key, id) => {
-	state[key][id].plan = `in-use-${Util.uid()}`
+const allocated = (state, key, goal) => goal ? Object.entries(state[key])
+	.filter(([, entity]) => entity.goal === goal.name)
+	.map(([referenceId]) => dereference(referenceId)) : free(state, key)
 
-	return () => {
-		state[key][id].plan = 'none'
-	}
+const cleanup = (state, goals) => {
+	Object.values(state.units)
+		.filter(unit => !goals.map(goal => goal.name).includes(unit.goal))
+		.forEach(unit => unit.goal = 'none')
 }
 
 
@@ -32,7 +33,8 @@ const allocate = (state, key, id) => {
 export default {
 	satisfies,
 	dereference,
-	allocate,
+	allocated,
+	cleanup,
 	free,
 	all,
 }

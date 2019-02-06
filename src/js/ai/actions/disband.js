@@ -5,7 +5,7 @@ import State from 'ai/state'
 
 const name = () => 'disband'
 
-const produces = goal =>
+const produces = (state, goal) =>
 	goal.key.length === 3 &&
 	goal.key[0] === 'units' &&
 	goal.key[1] &&
@@ -14,7 +14,8 @@ const produces = goal =>
 
 const needs = (state, goal) => ({
 	key: ['units', goal.key[1], 'mapCoordinates'],
-	value: State.all(state, 'settlements').map(settlement => settlement.mapCoordinates)
+	value: State.all(state, 'settlements').map(settlement => settlement.mapCoordinates),
+	name: goal.name
 })
 
 const cost = () => 0

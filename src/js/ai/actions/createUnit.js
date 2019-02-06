@@ -8,24 +8,25 @@ import State from 'ai/state'
 const name = () => 'create unit'
 
 
-const produces = goal =>
+const produces = (state, goal) =>
 	goal.key.length === 3 &&
 	goal.key[0] === 'units' &&
 	!goal.key[1] &&
-	goal.key[2] === 'plan' &&
-	goal.value === 'none'
+	goal.key[2] === 'goal' &&
+	goal.value === goal.name &&
+	goal.where
 
 
-const needs = () => ({
+const needs = (state, goal) => ({
 	key: ['settlements', null, 'canCreateUnit'],
 	value: true,
+	name: goal.name
 })
-	
 
-const cost = (state, goal) =>
-	Util.minPairValue(Object.values(state.settlements)
-		.filter(settlement => settlement.canCreateUnit)
-		.map(settlement => settlement.mapCoordinates), goal.where, Util.distance)
+
+const cost = (state, goal) => 1 + Util.minPairValue(Object.values(state.settlements)
+	.filter(settlement => settlement.canCreateUnit)
+	.map(settlement => settlement.mapCoordinates), goal.where, Util.distance)
 
 
 const commit = (state, goal, next) => {
@@ -35,7 +36,7 @@ const commit = (state, goal, next) => {
 
 	const unit = Unit.create('native', coords, State.dereference(state.owner))
 	state.units[unit.referenceId] = {
-		plan: 'none'
+		goal: goal.name
 	}
 
 	return next()

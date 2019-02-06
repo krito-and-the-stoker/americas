@@ -70,6 +70,7 @@ const unique = (value, index, self) => self.indexOf(value) === index
 // const minDistance = (many, one) => many.reduce((min, test) => Math.min(min, distance(test, one)), 1e10)
 const minDistance = (many, one) => distance(min(many, other => distance(one, other)))
 const distance = (first, second) => Math.sqrt((first.x - second.x) * (first.x - second.x) + (first.y - second.y) * (first.y - second.y))
+const entityDistance = (one, other) => distance(one.mapCoordinates, other.mapCoordinates)
 
 const min = (many, fn) => many.reduce((best, test) => (best && fn(best) < fn(test)) ? best : test, null)
 const minPair = (many, some, fn) => min(many.map(one => ({
@@ -104,6 +105,7 @@ export default {
 	unique,
 	distance,
 	minDistance,
+	entityDistance,
 	quantizedRadius,
 	inBattleDistance,
 	min,

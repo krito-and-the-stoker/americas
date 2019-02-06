@@ -11,17 +11,18 @@ import State from 'ai/state'
 const name = () => 'move unit'
 
 
-const produces = goal =>
+const produces = (state, goal) =>
 	goal.key.length === 3 &&
 	goal.key[0] === 'units' &&
 	goal.key[2] === 'mapCoordinates' &&
 	goal.value.length > 0
 
 
-const needs = goal => ({
-	key: ['units', goal.key[1], 'plan'],
-	value: 'none',
-	where: goal.value
+const needs = (state, goal) => ({
+	key: ['units', goal.key[1], 'goal'],
+	value: goal.name,
+	where: goal.value,
+	name: goal.name
 })
 
 
@@ -29,7 +30,7 @@ const cost = () => 0
 
 
 const commit = (state, goal, next) => {
-	const units = State.free(state, 'units')
+	const units = State.allocated(state, 'units', goal)
 
 	const pair = Util.minPair(units,
 		goal.value,
@@ -40,14 +41,11 @@ const commit = (state, goal, next) => {
 	console.log('unit', unit)
 	console.log('target', target)
 
-	const free = State.allocate(state, 'units', unit.referenceId)
-
 	Commander.scheduleInstead(unit.commander, MoveTo.create(unit, target))
 	Commander.scheduleBehind(unit.commander, TriggerEvent.create('ai-move-unit-complete', { unit }))
 
 	let cancel = () => {
-		free()
-		Commander.clearSchedule(unit.commander)		
+		Commander.clearSchedule(unit.commander)
 	}
 
 	Events.listen('ai-move-unit-complete', params => {

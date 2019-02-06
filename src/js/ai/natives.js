@@ -72,47 +72,50 @@ const initialize = ai => {
 			}) : null),
 
 		listen.state(ai, () => {
-			findNewGoals(ai)
+			makePlansAndRunThem(ai)
 		}),
-
-		listen.goals(ai, goals => {
-			goals.forEach(goal => {
-				const plan = Plan.create(ai.state, goal, () => {
-					findNewGoals(ai)
-				})
-
-				if (plan) {
-					plan()
-				} else {
-					console.log('no plan could be formed to reach', goal)
-				}
-			})
-		})
 	]
 }
 
-const findNewGoals = ai => {
-	const goals = []
+const makePlansAndRunThem = ai => {
+	Util.execute(ai.stopAllPlans)
+	State.cleanup(ai.state, [])
 
-	// establish contact with all strangers
-	State.all(ai.state, 'relations')
-		.map(contact => ({
-			key: ['relations', contact.referenceId, 'established'],
-			value: true
-		}))
-		.filter(goal => !State.satisfies(ai.state, goal))
-		.forEach(goal => goals.push(goal))
+	ai.stop = [
+		// establish contact with all strangers
+		State.all(ai.state, 'relations')
+			.map(contact => ({
+				key: ['relations', contact.referenceId, 'established'],
+				value: true,
+				name: `contact-${contact.referenceId}`
+			}))
+			.filter(goal => !State.satisfies(ai.state, goal))
+			.map(goal => {
+				const plan = Plan.create(ai.state, goal, () => update.state(ai))
+				if (plan) {
+					return plan()
+				} else {
+					console.log('no plan could be formed to reach', goal)
+				}
+			}),
 
-	//disband all idle units
-	State.free(ai.state, 'units')
-		.map(unit => ({
-			key: ['units', unit.referenceId, 'scheduled'],
-			value: 'disband'
-		}))
-		.filter(goal => !State.satisfies(ai.state, goal))
-		.forEach(goal => goals.push(goal))
-
-	update.goals(ai, goals)
+		//disband all idle units
+		State.free(ai.state, 'units')
+			.map(unit => ({
+				key: ['units', unit.referenceId, 'scheduled'],
+				value: 'disband',
+				name: `disband-${unit.referenceId}`
+			}))
+			.filter(goal => !State.satisfies(ai.state, goal))
+			.map(goal => {
+				const plan = Plan.create(ai.state, goal, () => update.state(ai))
+				if (plan) {
+					return plan()
+				} else {
+					console.log('no plan could be formed to reach', goal)
+				}
+			}),
+	]
 }
 
 const create = owner => {
@@ -126,7 +129,6 @@ const create = owner => {
 			units: {},
 			settlements: {}
 		},
-		goals: []
 	}
 
 	ai.destroy = initialize(ai)
@@ -153,18 +155,12 @@ const save = ai => ({
 const listen = {
 	state: (ai, fn)=> Binding.listen(ai, 'state', fn),
 	tribe: (ai, fn) => Binding.listen(ai, 'tribe', fn),
-	goals: (ai, fn)=> Binding.listen(ai, 'goals', fn)
 }
 
 const update = {
 	state: ai => Binding.update(ai, 'state'),
 	tribe: (ai, value) => Binding.update(ai, 'tribe', value),
-	goals: (ai, goals) => Binding.update(ai, 'goals', goals)
 }
-
-// const add = {
-// 	contact: (ai, member) => Member.add(ai, 'contacts', member)
-// }
 
 export default {
 	create,
