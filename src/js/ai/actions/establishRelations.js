@@ -25,7 +25,7 @@ const cost = () => 0
 
 const commit = (state, goal, next) => {
 	console.log('relationships established!')
-	next
+	next()
 }
 
 
