@@ -35,7 +35,8 @@ const initialize = ai => {
 		Record.listen('settlement', settlement => {
 			if (settlement.owner === ai.owner) {
 				ai.state.settlements[settlement.referenceId] = {
-					canCreateUnit: true
+					canCreateUnit: true,
+					mapCoordinates: settlement.mapCoordinates
 				}
 				return () => {
 					delete ai.state.settlements[settlement.referenceId]
@@ -83,8 +84,9 @@ const initialize = ai => {
 		listen.goals(ai, goals => {
 			goals.forEach(goal => {
 				const plan = Plan.create(ai.state, goal)
-				console.log('plan', plan)
-				console.log('goal', goal)
+				plan()
+				// console.log('plan', plan)
+				// console.log('goal', goal)
 			})
 		})
 	]
@@ -96,6 +98,7 @@ const create = owner => {
 		tribe: null,
 		contacts: [],
 		state: {
+			owner: owner.referenceId,
 			relations: {},
 			units: {},
 			settlements: {}

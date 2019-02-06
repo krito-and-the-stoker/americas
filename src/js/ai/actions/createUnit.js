@@ -1,5 +1,9 @@
 import Util from 'util/util'
 
+import Unit from 'entity/unit'
+
+import State from 'ai/state'
+
 
 const name = () => 'create unit'
 
@@ -18,17 +22,29 @@ const needs = () => ({
 })
 	
 
-const cost = (state, goal) => 0
-	// Object.values(state.settlements)
-	// 	.filter(settlement => settlement.canCreateUnit)
-	// 	.map(settlement => settlement.mapCoordinates)
-	// 	.map(coords => Util.minDistance(goal.where, coords))
-	// 	.reduce((min, test) => Math.min(min, test), 1e10)
+const cost = (state, goal) =>
+	Object.values(state.settlements)
+		.filter(settlement => settlement.canCreateUnit)
+		.map(settlement => settlement.mapCoordinates)
+		.map(coords => Util.minDistance(goal.where, coords))
+		.reduce((min, test) => Math.min(min, test), 1e10)
 
+
+const commit = (state, goal, next) => {
+	const coords = 	Object.values(state.settlements)
+		.filter(settlement => settlement.canCreateUnit)
+		.map(settlement => settlement.mapCoordinates)
+		.reduce((best, settlement) =>
+			Util.minDistance(goal.where, best) < Util.minDistance(goal.where, settlement) ? best : settlement,
+		{ x: 1e10, y: 1e10 })
+	Unit.create('native', coords, State.dereference(state.owner))
+	next()
+}
 
 export default {
 	produces,
 	needs,
 	cost,
+	commit,
 	name
 }

@@ -15,9 +15,9 @@ const create = (state, goal) => {
 				.map(action => ({
 					next: step,
 					goal: action.needs(step.goal),
-					cost: step.cost + action.cost(state, goal),
+					cost: step.cost + action.cost(state, step.goal),
 					name: action.name(),
-					action
+					action: () => action.commit(state, step.goal, step.action)
 				}))
 		} else {
 			leafs.push(step)
@@ -33,6 +33,7 @@ const create = (state, goal) => {
 	let currentSteps = search({
 		goal,
 		cost: 0,
+		action: () => console.log('plan fulfilled')
 	})
 	while(currentSteps.length > 0 && infinityGuard < 10) {
 		currentSteps = currentSteps.map(step => search(step)).flat()
@@ -41,16 +42,17 @@ const create = (state, goal) => {
 
 	if (leafs.length > 0) {
 		const start = leafs.reduce((best, step) => best.cost < step.cost ? best : step, leafs[0])
-		const plan = []
-		let step = start
-		infinityGuard = 0
-		while(step.goal !== goal && infinityGuard < 10) {
-			plan.push(step)
-			step = step.next
-			infinityGuard += 1
-		}
+		return start.action
+		// const plan = []
+		// let step = start
+		// infinityGuard = 0
+		// while(step.goal !== goal && infinityGuard < 10) {
+		// 	plan.push(step)
+		// 	step = step.next
+		// 	infinityGuard += 1
+		// }
 
-		return plan
+		// return plan
 	}
 
 	return null

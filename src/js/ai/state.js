@@ -1,3 +1,4 @@
+import Record from 'util/record'
 
 
 const satisfies = (state, goal) => goal.key
@@ -8,6 +9,11 @@ const satisfies = (state, goal) => goal.key
 	[state])
 	.some(value => [goal.value].flat().includes(value))
 
+
+const dereference = referenceId => Record.dereference({ referenceId: Number(referenceId) })
+
+
 export default {
-	satisfies
+	satisfies,
+	dereference
 }

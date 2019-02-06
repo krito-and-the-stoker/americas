@@ -24,10 +24,11 @@ const create = type => {
 		currentPlayer = owner
 	}
 
+	Record.add('owner', owner)
+
 	if (owner.type === 'natives') {
 		owner.ai = Natives.create(owner)
 	}
-	Record.add('owner', owner)
 
 	return owner
 }

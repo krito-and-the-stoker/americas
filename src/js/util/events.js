@@ -26,6 +26,7 @@ const listen = (name, fn) => {
 	return () => remove(name, fn)
 }
 
+
 export default {
 	trigger,
 	remove,
