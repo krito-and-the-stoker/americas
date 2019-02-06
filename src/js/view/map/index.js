@@ -36,6 +36,9 @@ const TILE_SIZE = 64
 let stopRollingOut = () => {}
 let moveTween = null
 const moveMap = (newCoords, moveTime = 0) => {
+	if (zoomTween) {
+		return
+	}
 	if (moveTween) {
 		moveTween.stop()
 	}
@@ -51,6 +54,11 @@ const moveMap = (newCoords, moveTime = 0) => {
 }
 
 const centerAt = ({ x, y }, moveTime, screen = { x: 0.5, y: 0.5 }) => {
+	if (zoomTween) {
+		zoomTween.onComplete(() => centerAt({ x, y }, moveTime, screen))
+		return
+	}
+
 	const scale = RenderView.get().scale
 	const target = {
 		x: -scale*TILE_SIZE*x + screen.x * RenderView.getDimensions().x,
@@ -92,6 +100,7 @@ let zoomTween = null
 const zoom = (targetScale, center = null, scaleTime = 0) => {
 	if (zoomTween) {
 		zoomTween.stop()
+		zoomTween = null
 	}
 	const relativeZoomCenter = center ? {
 		x: center.x / RenderView.getDimensions().x,
@@ -112,6 +121,7 @@ const zoom = (targetScale, center = null, scaleTime = 0) => {
 			.onUpdate(({ scale }) => {
 				RenderView.updateScale(scale)
 			})
+			.onComplete(() => { zoomTween = null })
 			.start()
 	} else {
 		RenderView.updateScale(target.scale)
