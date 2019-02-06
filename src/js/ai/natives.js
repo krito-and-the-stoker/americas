@@ -57,7 +57,7 @@ const initialize = ai => {
 				return tiles.map(tile =>
 					Tile.listen.units(tile, units => {
 						units
-							.filter(unit => unit.domain !== 'sea')
+							.filter(unit => unit.tile.domain !== 'sea')
 							.map(unit => unit.owner)
 							.forEach(contact => {
 								if (!ai.state.relations[contact.referenceId]) {
