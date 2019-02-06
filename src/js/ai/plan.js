@@ -4,7 +4,7 @@ import Actions from 'ai/actions'
 import State from 'ai/state'
 
 
-const create = (state, goal) => {
+const create = (state, goal, fn) => {
 
 
 	// create neighbours and find leafs
@@ -35,7 +35,7 @@ const create = (state, goal) => {
 	const initial = {
 		goal,
 		cost: 0,
-		action: () => console.log('plan fulfilled')
+		action: fn
 	}
 	let currentSteps = search(initial)
 	while(currentSteps.length > 0 && infinityGuard < 10) {

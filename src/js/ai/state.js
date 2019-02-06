@@ -13,6 +13,8 @@ const satisfies = (state, goal) => goal.key
 
 const dereference = referenceId => Record.dereference({ referenceId: Number(referenceId) })
 
+const all = (state, key) => Object.entries(state[key])
+	.map(([referenceId]) => dereference(referenceId))
 const free = (state, key) => Object.entries(state[key])
 	.filter(([, entity]) => entity.plan === 'none')
 	.map(([referenceId]) => dereference(referenceId))
@@ -26,9 +28,11 @@ const allocate = (state, key, id) => {
 }
 
 
+
 export default {
 	satisfies,
 	dereference,
+	allocate,
 	free,
-	allocate
+	all,
 }

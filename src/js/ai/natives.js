@@ -10,6 +10,7 @@ import Tribe from 'entity/tribe'
 import Unit from 'entity/unit'
 
 import Plan from 'ai/plan'
+import State from 'ai/state'
 
 
 const initialize = ai => {
@@ -50,7 +51,7 @@ const initialize = ai => {
 		listen.tribe(ai, tribe =>
 			tribe ? Tribe.listen.settlements(tribe, settlements => {
 				const tiles = settlements
-					.map(settlement => Util.quantizedRadius(settlement.mapCoordinates, 3))
+					.map(settlement => Util.quantizedRadius(settlement.mapCoordinates, 6))
 					.flat()
 					.map(coords => MapEntity.tile(coords))
 					.filter(Util.unique)
@@ -70,31 +71,48 @@ const initialize = ai => {
 					}))
 			}) : null),
 
-		listen.state(ai, state => {
-			const goals = []
-			Object.entries(state.relations)
-				.filter(([,relation]) => !relation.established)
-				.forEach(([contact]) => {
-					const goal = {
-						key: ['relations', contact, 'established'],
-						value: true
-					}
-					goals.push(goal)
-				})
-			update.goals(ai, goals)
+		listen.state(ai, () => {
+			findNewGoals(ai)
 		}),
 
 		listen.goals(ai, goals => {
 			goals.forEach(goal => {
-				const plan = Plan.create(ai.state, goal)
+				const plan = Plan.create(ai.state, goal, () => {
+					findNewGoals(ai)
+				})
+
 				if (plan) {
 					plan()
 				} else {
-					console.log('no plan could be formed')
+					console.log('no plan could be formed to reach', goal)
 				}
 			})
 		})
 	]
+}
+
+const findNewGoals = ai => {
+	const goals = []
+
+	// establish contact with all strangers
+	State.all(ai.state, 'relations')
+		.map(contact => ({
+			key: ['relations', contact.referenceId, 'established'],
+			value: true
+		}))
+		.filter(goal => !State.satisfies(ai.state, goal))
+		.forEach(goal => goals.push(goal))
+
+	//disband all idle units
+	State.free(ai.state, 'units')
+		.map(unit => ({
+			key: ['units', unit.referenceId, 'scheduled'],
+			value: 'disband'
+		}))
+		.filter(goal => !State.satisfies(ai.state, goal))
+		.forEach(goal => goals.push(goal))
+
+	update.goals(ai, goals)
 }
 
 const create = owner => {
