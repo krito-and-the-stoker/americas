@@ -2,6 +2,7 @@ import 'util/polyfills'
 // import Clone from 'clone'
 
 const inBattleDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
+const inDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
 
 const isArray = something => something && something.constructor === Array
 const flatten = array => {
@@ -68,7 +69,7 @@ const choose = array => array[Math.floor(Math.random() * array.length)]
 const unique = (value, index, self) => self.indexOf(value) === index
 
 // const minDistance = (many, one) => many.reduce((min, test) => Math.min(min, distance(test, one)), 1e10)
-const minDistance = (many, one) => distance(min(many, other => distance(one, other)))
+const minDistance = (many, one) => distance(min(many, other => distance(one, other)), one)
 const distance = (first, second) => Math.sqrt((first.x - second.x) * (first.x - second.x) + (first.y - second.y) * (first.y - second.y))
 const entityDistance = (one, other) => distance(one.mapCoordinates, other.mapCoordinates)
 
@@ -108,6 +109,7 @@ export default {
 	entityDistance,
 	quantizedRadius,
 	inBattleDistance,
+	inDistance,
 	min,
 	minPair,
 	minPairValue

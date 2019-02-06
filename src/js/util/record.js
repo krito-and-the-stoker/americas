@@ -35,7 +35,7 @@ let idCounter = 0
 const makeId = () => idCounter += 1
 
 let	records = []
-let snapshot = []
+let snapshot = { entities: [] }
 let globals = {}
 let tiles = []
 let listeners = {}
@@ -182,11 +182,7 @@ const reference = entity => {
 	if (!entity) {
 		return null
 	}
-	// const record = records.find(record => record.entity === entity)
-	// if (!record) {
-	// 	console.warn('could not create reference, entity not found', entity)
-	// 	return null
-	// }
+
 	return {
 		[REFERENCE_KEY]: entity.referenceId
 	}

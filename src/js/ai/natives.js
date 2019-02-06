@@ -3,6 +3,7 @@ import 'util/polyfills'
 import Util from 'util/util'
 import Binding from 'util/binding'
 import Record from 'util/record'
+import Events from 'util/events'
 
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
@@ -55,16 +56,25 @@ const initialize = ai => {
 					.flat()
 					.map(coords => MapEntity.tile(coords))
 					.filter(Util.unique)
+					.filter(tile => tile.domain === 'land')
+					.filter(tile => settlements.map(settlement => MapEntity.tile(settlement.mapCoordinates).area).includes(tile.area))
 				return tiles.map(tile =>
 					Tile.listen.units(tile, units => {
 						units
 							.filter(unit => unit.tile.domain !== 'sea')
 							.map(unit => unit.owner)
-							.forEach(contact => {
-								if (!ai.state.relations[contact.referenceId]) {
-									ai.state.relations[contact.referenceId] = {
+							.filter(owner => owner !== ai.owner)
+							.forEach(owner => {
+								if (!ai.state.relations[owner.referenceId]) {
+									ai.state.relations[owner.referenceId] = {
 										established: false
 									}
+									const unsubscribe = Events.listen('meet', ({ unit, other }) => {
+										if (unit.owner === ai.owner && other.owner === owner) {
+											establishRelations(ai, owner)
+											unsubscribe()
+										}
+									})
 									update.state(ai)
 								}
 							})
@@ -75,6 +85,22 @@ const initialize = ai => {
 			makePlansAndRunThem(ai)
 		}),
 	]
+}
+
+const establishRelations = (ai, owner) => {
+	ai.state.relations[owner.referenceId].established = true
+	if (owner.type === 'player') {
+		const numSettlements = Record.getAll('settlement').filter(settlement => settlement.tribe === ai.tribe).length
+		Events.trigger('dialog', {
+			type: 'natives',
+			image: ai.tribe.image,
+			text: `Hello strange men from the sea. We are the ${ai.tribe.name} and live here in ${numSettlements} settlements. We welcome you in peace.`,
+			pause: true,
+			options: [{
+				text: 'Let there be peace.',
+			}]
+		})
+	}
 }
 
 const makePlansAndRunThem = ai => {

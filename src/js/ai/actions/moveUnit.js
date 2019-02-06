@@ -38,9 +38,6 @@ const commit = (state, goal, next) => {
 	const unit = pair.one
 	const target = pair.other
 
-	console.log('unit', unit)
-	console.log('target', target)
-
 	Commander.scheduleInstead(unit.commander, MoveTo.create(unit, target))
 	Commander.scheduleBehind(unit.commander, TriggerEvent.create('ai-move-unit-complete', { unit }))
 

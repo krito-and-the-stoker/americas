@@ -1,4 +1,3 @@
-import Unit from 'entity/unit'
 import Colony from 'entity/colony'
 
 import MoveTo from 'command/moveTo'
@@ -15,7 +14,8 @@ const predictCoordinates = unit => {
 
 const create = (attacker, { colony, unit }) => {
 	const	defender = colony ? Colony.defender(colony) : unit
-	Unit.add.hostile(attacker, defender)
+	// TODO: Make battles happen again
+	// Unit.add.hostile(attacker, defender)
 
 	return MoveTo.create(attacker, predictCoordinates(defender))
 }

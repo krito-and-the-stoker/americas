@@ -21,6 +21,8 @@ import Market from 'entity/market'
 import Tribe from 'entity/tribe'
 import Owner from 'entity/owner'
 
+import Meet from 'task/meet'
+
 import Keyboard from 'input/keyboard.js'
 
 import Resources from 'render/resources'
@@ -57,6 +59,8 @@ const AUTOSAVE_INTERVAL = 60000
 const initialize = () => {
 	let timeStamp = 0
 	setInterval(Record.autosave, AUTOSAVE_INTERVAL)
+
+	Time.schedule(Meet.create())
 
 	const loop = t => {
 		const deltaTime = Math.min(t - timeStamp, 150)

@@ -24,9 +24,10 @@ const needs = (state, goal) => ({
 })
 
 
-const cost = (state, goal) => 1 + Util.minPairValue(Object.values(state.settlements)
-	.filter(settlement => settlement.canCreateUnit)
-	.map(settlement => settlement.mapCoordinates), goal.where, Util.distance)
+const cost = (state, goal) => Object.values(state.settlements).length > 0 ?
+	1 + Util.minPairValue(Object.values(state.settlements)
+		.filter(settlement => settlement.canCreateUnit)
+		.map(settlement => settlement.mapCoordinates), goal.where, Util.distance) : 0
 
 
 const commit = (state, goal, next) => {

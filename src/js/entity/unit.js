@@ -40,7 +40,6 @@ const create = (name, coords, owner) => {
 			colonist: null,
 			pioneering: false,
 			radius: 0,
-			hostiles: []
 		}
 		unit.storage = Storage.create()
 		unit.equipment = Storage.create()
@@ -81,12 +80,6 @@ const initialize = unit => {
 		Tile.diagonalNeighbors(unit.tile).forEach(other => Tile.discover(other, unit.owner))
 	}
 
-	const decideBattle = (unit, hostile) => {
-		if (Util.inBattleDistance(unit, hostile)) {
-			Battle(unit, hostile)
-		}		
-	}
-
 	[
 		Time.schedule(unit.commander),
 		Time.schedule({ update: (currentTime, deltaTime) => {
@@ -109,12 +102,6 @@ const initialize = unit => {
 
 		listen.tile(unit, tile =>
 			Tile.add.unit(tile, unit)),
-
-		listen.hostiles(unit, hostiles =>
-			hostiles.map(hostile => [
-				listen.mapCoordinates(unit, () => decideBattle(unit, hostile)),
-				listen.mapCoordinates(hostile, () => decideBattle(unit, hostile))
-			])),
 
 		Storage.listen(unit.equipment, equipment => {
 			// lose status
@@ -169,16 +156,10 @@ const name = unit => unit.expert ? unit.properties.name[unit.expert] || unit.pro
 
 const add = {
 	passenger: (unit, passenger) => Member.add(unit, 'passengers', passenger),
-	hostile: (unit, hostile) => Member.add(unit, 'hostiles', hostile),
 }
 
 const remove = {
 	passenger: passenger => Member.remove(passenger.vehicle, 'passengers', passenger),
-	hostile: (unit, hostile) => Member.remove(unit, 'hostiles', hostile),
-}
-
-const listenEach = {
-	hostiles: (unit, fn) => Member.listenEach(unit, 'hostiles', fn),
 }
 
 const listen = {
@@ -194,7 +175,6 @@ const listen = {
 	pioneering: (unit, fn) => Binding.listen(unit, 'pioneering', fn),
 	tile: (unit, fn) => Binding.listen(unit, 'tile', fn),
 	radius: (unit, fn) => Binding.listen(unit, 'radius', fn),
-	hostiles: (unit, fn) => Binding.listen(unit, 'hostiles', fn),
 }
 
 const update = {
@@ -297,10 +277,6 @@ const disband = unit => {
 		Colonist.update.unit(unit.colonist, null)
 	}
 
-	Record.getAll('unit')
-		.filter(other => other.hostiles.includes(unit))
-		.forEach(other => remove.hostile(other, unit))
-
 	Util.execute(unit.destroy)
 	Record.remove(unit)
 }
@@ -325,7 +301,6 @@ const save = unit => ({
 	tile: Record.referenceTile(unit.tile),
 	owner: Record.reference(unit.owner),
 	radius: unit.radius,
-	hostiles: unit.hostiles.map(Record.reference)
 })
 
 const load = unit => {
@@ -338,7 +313,6 @@ const load = unit => {
 	Record.dereferenceLazy(unit.colonist, colonist => unit.colonist = colonist)
 	Record.dereferenceLazy(unit.vehicle, vehicle => unit.vehicle = vehicle)
 	Record.entitiesLoaded(() => {
-		unit.hostiles = unit.hostiles.map(Record.dereference)
 		unit.commander = Commander.load(unit.commander)
 		unit.destroy = initialize(unit)
 	})
@@ -350,7 +324,6 @@ export default {
 	create,
 	disband,
 	listen,
-	listenEach,
 	add,
 	remove,
 	update,

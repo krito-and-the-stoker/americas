@@ -26,7 +26,6 @@ export default (attacker, other) => {
 		}
 
 		const chance = Math.random() * (probability.attacker + probability.defender)
-		Unit.remove.hostile(attacker, defender)
 
 		const attackerName = Unit.name(attacker)
 		const defenderName = Unit.name(defender)

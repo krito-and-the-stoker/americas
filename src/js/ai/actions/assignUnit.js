@@ -3,7 +3,7 @@ import Util from 'util/util'
 import State from 'ai/state'
 
 
-const name = () => 'create unit'
+const name = () => 'assign unit'
 
 
 const produces = (state, goal) =>
@@ -23,7 +23,11 @@ const needs = (state, goal) => ({
 
 const cost = (state, goal) => {
 	if (goal.key[1]) {
-		return Util.distance(state.units[goal.key[1]], goal.where)
+		if (goal.where) {
+			return Util.minDistance(goal.where, State.dereference(goal.key[1]).mapCoordinates)
+		} else {
+			return 0
+		}
 	} else {
 		const units = State.free(state, 'units')
 		if (units.length > 0) {
@@ -41,7 +45,7 @@ const commit = (state, goal, next) => {
 		return next()
 	}
 
-	const unit = 	Util.minPair(State.free(state, 'units'), goal.where, Util.entityDistance).one
+	const unit = Util.minPair(State.free(state, 'units'), goal.where.map(coords => ({ mapCoordinates: coords })), Util.entityDistance).one
 	state.units[unit.referenceId] = {
 		goal: goal.name
 	}
