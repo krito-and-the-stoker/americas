@@ -1,6 +1,9 @@
 import Record from 'util/record'
 
 
+const name = () => 'establish relations'
+
+
 const produces = goal =>
 	goal.key.length === 3 &&
 	goal.key[0] === 'relations' &&
@@ -12,16 +15,17 @@ const produces = goal =>
 const needs = goal => ({
 	key: ['units', null, 'mapCoordinates'],
 	value: Record.getAll('unit')
-		.filter(unit => unit.owner.referenceId === goal.key[1] && unit.domain === 'land')
+		.filter(unit => unit.owner.referenceId === Number(goal.key[1]) && unit.domain === 'land')
 		.map(unit => unit.mapCoordinates)
 })
 	
 
-const costs = () => 0
+const cost = () => 0
 
 
 export default {
 	produces,
 	needs,
-	costs
+	cost,
+	name
 }

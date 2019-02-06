@@ -1,6 +1,9 @@
 import Util from 'util/util'
 
 
+const name = () => 'create unit'
+
+
 const produces = goal =>
 	goal.key.length === 3 &&
 	goal.key[0] === 'units' &&
@@ -15,7 +18,7 @@ const needs = () => ({
 })
 	
 
-const costs = (state, goal) =>
+const cost = (state, goal) =>
 	Object.values(state.settlements)
 		.filter(settlement => settlement.canCreateUnit)
 		.map(settlement => settlement.mapCoordinates)
@@ -26,5 +29,6 @@ const costs = (state, goal) =>
 export default {
 	produces,
 	needs,
-	costs
+	cost,
+	name
 }

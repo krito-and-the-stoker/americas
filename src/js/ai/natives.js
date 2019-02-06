@@ -55,8 +55,8 @@ const initialize = ai => {
 		listen.goals(ai, goals => {
 			goals.forEach(goal => {
 				const plan = Plan.create(ai.state, goal)
-				console.log('plan', plan)
-				console.log('goal', goal)
+				// console.log('plan', plan)
+				// console.log('goal', goal)
 			})
 		})
 	]

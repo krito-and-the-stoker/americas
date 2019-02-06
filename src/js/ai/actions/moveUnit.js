@@ -1,3 +1,6 @@
+const name = () => 'move unit'
+
+
 const produces = goal =>
 	goal.key.length === 3 &&
 	goal.key[0] === 'units' &&
@@ -12,11 +15,12 @@ const needs = goal => ({
 })
 
 
-const costs = () => 0
+const cost = () => 0
 
 
 export default {
 	produces,
 	needs,
-	costs
+	cost,
+	name
 }
