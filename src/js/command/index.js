@@ -1,3 +1,4 @@
+import Commander from 'command/commander'
 import Found from 'command/found'
 import Move from 'command/move'
 import MoveTo from 'command/moveTo'
@@ -15,8 +16,6 @@ import Disband from 'command/disband'
 import Plow from 'command/plow'
 import Road from 'command/road'
 import LearnFromNatives from 'command/learnFromNatives'
-import CommunicateTension from 'command/communicateTension'
-import Commander from 'command/commander'
 
 export default {
 	Found,
@@ -36,6 +35,5 @@ export default {
 	Plow,
 	Road,
 	LearnFromNatives,
-	CommunicateTension,
 	Commander
 }

@@ -13,6 +13,7 @@ import Tile from 'entity/tile'
 import Storage from 'entity/storage'
 import Building from 'entity/building'
 import Trade from 'entity/trade'
+import Owner from 'entity/owner'
 
 import Harvest from 'task/harvest'
 import Consume from 'task/consume'
@@ -223,7 +224,7 @@ const create = (coords, owner) => {
 	const colony = {
 		name: getColonyName(),
 		type: 'colony',
-		owner,
+		owner: owner || Owner.player(),
 		units: [],
 		colonists: [],
 		buildings: Building.create(),

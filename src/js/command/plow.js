@@ -37,7 +37,7 @@ const create = (unit, eta) => {
 	}
 
 	const save = () => ({
-		type: 'plow',
+		module: 'Plow',
 		unit: Record.reference(unit),
 		eta
 	})

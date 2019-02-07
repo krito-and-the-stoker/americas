@@ -9,7 +9,7 @@ const create = unit => {
 	}
 
 	const save = () => ({
-		type: 'disband',
+		module: 'Disband',
 		unit: Record.reference(unit)
 	})
 

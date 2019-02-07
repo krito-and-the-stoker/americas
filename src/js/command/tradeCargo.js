@@ -53,7 +53,7 @@ const create = (unit, pack, eta = null) => {
 
 
 	const save = () => ({
-		type: 'tradeCargo',
+		module: 'TradeCargo',
 		unit: Record.reference(unit),
 		eta,
 		pack

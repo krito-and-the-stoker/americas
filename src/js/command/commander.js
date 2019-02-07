@@ -2,7 +2,7 @@ import Time from 'timeline/time'
 
 import Record from 'util/record'
 
-import Commands from 'command/index'
+import Command from 'command/index'
 
 import InvestigateRumors from 'interaction/investigateRumors'
 import EnterSettlement from 'interaction/enterSettlement'
@@ -113,36 +113,9 @@ const create = (args = {}) => {
 	return commander
 }
 
-const getModule = type => ( type ? ({
-	found: Commands.Found,
-	move: Commands.Move,
-	moveTo: Commands.MoveTo,
-	goTo: Commands.GoTo,
-	unload: Commands.Unload,
-	load: Commands.Load,
-	europe: Commands.Europe,
-	cutForest: Commands.CutForest,
-	plow: Commands.Plow,
-	road: Commands.Road,
-	america: Commands.America,
-	tradeRoute: Commands.TradeRoute,
-	loadCargo: Commands.LoadCargo,
-	tradeCargo: Commands.TradeCargo,
-	triggerEvent: Commands.TriggerEvent,
-	disband: Commands.Disband,
-	learnFromNatives: Commands.LearnFromNatives,
-	communicateTension: Commands.CommunicateTension,
-	commander: Commands.commander
-})[type] : {
-	load: data => {
-		console.warn('cannot load command, missing type', data)
-		return {}
-	}
-})
-
 
 const load = data => {
-	const commands = (data.currentCommand ? [data.currentCommand, ...data.commands] : data.commands).map(cmd => getModule(cmd.type).load(cmd))
+	const commands = (data.currentCommand ? [data.currentCommand, ...data.commands] : data.commands).map(cmd => Command[cmd.module].load(cmd))
 	const unit = Record.dereference(data.unit)
 	return create({ keep: data.keep, commands, unit })
 }
@@ -150,7 +123,6 @@ const load = data => {
 export default {
 	create,
 	load,
-	getModule,
 	cancel,
 	scheduleInstead,
 	scheduleBehind,

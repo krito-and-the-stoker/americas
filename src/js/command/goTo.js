@@ -52,7 +52,7 @@ const create = (unit, destination, commander = null) => {
 		gotoCommander: gotoCommander.save(),
 		unit: Record.reference(unit),
 		destination: destination.type === 'colony' ? Record.reference(destination) : destination,
-		type: 'goTo'
+		module: 'GoTo'
 	})
 
 	return {

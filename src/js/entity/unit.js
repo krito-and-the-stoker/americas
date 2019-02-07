@@ -12,13 +12,13 @@ import Tile from 'entity/tile'
 import Storage from 'entity/storage'
 import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
+import Owner from 'entity/owner'
 
 import Commander from 'command/commander'
 
 import EnterColony from 'interaction/enterColony'
 import LeaveColony from 'interaction/leaveColony'
 import EnterEurope from 'interaction/enterEurope'
-import Battle from 'interaction/battle'
 
 
 const RADIUS_GROWTH = 1.0 / 2500
@@ -26,7 +26,7 @@ const create = (name, coords, owner) => {
 	if (Units[name]) {
 		const unit = {
 			name,
-			owner,
+			owner: owner || Owner.player(),
 			tile: MapEntity.tile(coords),
 			properties: Units[name],
 			domain: Units[name].domain,

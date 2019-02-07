@@ -71,7 +71,7 @@ const create = (unit, coords) => {
 	}
 
 	const save = () => ({
-		type: 'unload',
+		module: 'Unload',
 		decision,
 		unloadingStartedAt,
 		coords,

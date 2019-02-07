@@ -44,7 +44,7 @@ const create = (unit, profession) => {
 	}
 
 	const save = () => ({
-		type: 'learnFromNatives',
+		module: 'LearnFromNatives',
 		unit: Record.reference(unit),
 		profession
 	})

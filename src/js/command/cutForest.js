@@ -44,7 +44,7 @@ const create = (unit, eta) => {
 	}
 
 	const save = () => ({
-		type: 'cutForest',
+		module: 'CutForest',
 		unit: Record.reference(unit),
 		eta
 	})

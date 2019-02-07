@@ -73,7 +73,7 @@ const create = (colony, unit, pack, eta = null) => {
 	}
 
 	const save = () => ({
-		type: 'loadCargo',
+		module: 'LoadCargo',
 		unit: Record.reference(unit),
 		colony: Record.reference(colony),
 		eta,

@@ -99,14 +99,14 @@ const createFromData = data => {
 	}
 
 	const save = () => ({
-		type: 'move',
+		module: 'Move',
 		unit: Record.reference(unit),
 		coords,
 		startTime,
 		startCoords,
 		duration,
 		aborted,
-		enteringShip
+		enteringShip,
 	})
 
 	return {
@@ -122,8 +122,12 @@ const createFromData = data => {
 const create = (unit, coords, finishedFn) => createFromData({ unit, coords, finishedFn })
 
 const load = data => {
-	data.unit = Record.dereference(data.unit)
-	return createFromData(data)
+	const unit = Record.dereference(data.unit)
+
+	return createFromData({
+		...data,
+		unit
+	})
 }
 
 export default {

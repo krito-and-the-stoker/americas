@@ -37,7 +37,7 @@ const create = (unit, eta) => {
 	}
 
 	const save = () => ({
-		type: 'road',
+		module: 'Road',
 		unit: Record.reference(unit),
 		eta
 	})

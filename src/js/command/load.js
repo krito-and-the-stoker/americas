@@ -23,14 +23,13 @@ const create = (transport, passenger, loadingStartedAt = null) => {
 	}
 
 	const save = () => ({
-		type: 'load',
+		module: 'Load',
 		loadingStartedAt,
 		transport: Record.reference(transport),
 		passenger: Record.reference(passenger)
 	})
 
 	return {
-		type: 'load',
 		init,
 		update,
 		finished,

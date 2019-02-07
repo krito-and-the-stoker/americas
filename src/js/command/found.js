@@ -39,11 +39,11 @@ const create = unit => {
 	}
 
 	const save = () => ({
+		module: 'Found',
 		unit: Record.reference(unit)
 	})
 
 	return {
-		type: 'found',
 		init,
 		save
 	}

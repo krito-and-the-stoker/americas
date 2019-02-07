@@ -23,7 +23,6 @@ import Record from 'util/record'
 import Binding from 'util/binding'
 
 import Commander from 'command/commander'
-import Attack from 'command/attack'
 
 import Dialog from 'view/ui/dialog'
 
@@ -230,7 +229,8 @@ const initialize = () => {
 							options: [{
 								text: 'Attack!',
 								action: () => {
-									Commander.scheduleInstead(selectedUnit().commander, Attack.create(selectedUnit(), { unit }))
+									console.warn('Feature has been revoked for now')
+									// Commander.scheduleInstead(selectedUnit().commander, Attack.create(selectedUnit(), { unit }))
 								}
 							}, {
 								text: 'No'

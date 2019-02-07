@@ -104,7 +104,7 @@ const create = (unit, coords, moveToCommander = null, hasPath = false, lastPoint
 	}
 
 	const save = () => ({
-		type: 'moveTo',
+		module: 'MoveTo',
 		coords,
 		hasPath,
 		moveToCommander: moveToCommander.save(),

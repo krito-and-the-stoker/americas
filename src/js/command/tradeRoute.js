@@ -103,7 +103,7 @@ const create = (transport, tradeCommanderParam = null, initialized = false, wait
 	}
 
 	const save = () => ({
-		type: 'tradeRoute',
+		module: 'TradeRoute',
 		waitingForRoute,
 		initialized,
 		tradeCommander: tradeCommander.save(),

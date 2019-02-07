@@ -1,3 +1,4 @@
+import seed from 'seed-random'
 import americaSmallMap from 'data/america-small-incompatible'
 
 import PathFinder from 'util/pathFinder'
@@ -9,6 +10,8 @@ import Tribe from 'entity/tribe'
 
 
 beforeAll(() => {
+	seed('1234', { global: true })
+
 	MapEntity.create({ data: americaSmallMap })
 	Owner.initialize()
 	PathFinder.initialize()	

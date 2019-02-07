@@ -31,7 +31,7 @@ const create = (unit, eta = null) => {
 	}
 
 	const save = () => ({
-		type: 'america',
+		module: 'America',
 		eta,
 		unit: Record.reference(unit)
 	})

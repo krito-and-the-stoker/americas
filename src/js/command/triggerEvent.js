@@ -9,7 +9,7 @@ const create = (name, params) => {
 	}
 
 	const save = () => ({
-		type: 'triggerEvent',
+		module: 'TriggerEvent',
 		name,
 		params: {
 			type: params.type,
@@ -25,9 +25,14 @@ const create = (name, params) => {
 }
 
 const load = data => {
-	data.params.unit = Record.dereference(data.params.unit)
-	data.params.colony = Record.dereference(data.params.colony)
-	return create(data.name, data.params)
+	const unit = Record.dereference(data.params.unit)
+	const colony = Record.dereference(data.params.colony)
+
+	return create(data.name, {
+		type: data.params.type,
+		unit,
+		colony
+	})
 }
 
 export default {
