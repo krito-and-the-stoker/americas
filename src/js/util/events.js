@@ -1,3 +1,5 @@
+// import Message from 'util/message'
+
 let listeners = {}
 
 const init = name => {
@@ -5,6 +7,7 @@ const init = name => {
 }
 
 const trigger = (name, arg) => {
+	// console.log(`Event: ${name}`, arg)
 	if (listeners[name]) {
 		listeners[name].forEach(fn => fn(arg))
 	}

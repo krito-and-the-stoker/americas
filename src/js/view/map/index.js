@@ -8,6 +8,7 @@ import Tile from 'entity/tile'
 import MoveTo from 'command/moveTo'
 import Commander from 'command/commander'
 import Europe from 'command/europe'
+import TriggerEvent from 'command/triggerEvent'
 
 import Drag from 'input/drag'
 import Wheel from 'input/wheel'
@@ -203,7 +204,10 @@ const initialize = () => {
 						text: 'Would you like to set sail for Europe?',
 						options: [{
 							text: 'Yes, steady as she goes!',
-							action: () => Commander.scheduleBehind(selectedUnit.commander, Europe.create(selectedUnit))
+							action: () => {
+								Commander.scheduleBehind(selectedUnit.commander, Europe.create(selectedUnit))
+								Commander.scheduleBehind(selectedUnit.commander, TriggerEvent.create('notification', { type: 'europe', unit: selectedUnit }))
+							}								
 						}, {
 							text: 'No let as remain here',
 							action: () => {},

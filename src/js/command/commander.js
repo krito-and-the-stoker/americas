@@ -2,23 +2,7 @@ import Time from 'timeline/time'
 
 import Record from 'util/record'
 
-import Found from 'command/found'
-import Move from 'command/move'
-import MoveTo from 'command/moveTo'
-import Unload from 'command/unload'
-import Load from 'command/load'
-import Europe from 'command/europe'
-import America from 'command/america'
-import CutForest from 'command/cutForest'
-import LoadCargo from 'command/loadCargo'
-import TradeCargo from 'command/tradeCargo'
-import TradeRoute from 'command/tradeRoute'
-import TriggerEvent from 'command/triggerEvent'
-import Disband from 'command/disband'
-import Plow from 'command/plow'
-import Road from 'command/road'
-import LearnFromNatives from 'command/learnFromNatives'
-import CommunicateTension from 'command/communicateTension'
+import Commands from 'command/index'
 
 import InvestigateRumors from 'interaction/investigateRumors'
 import EnterSettlement from 'interaction/enterSettlement'
@@ -130,24 +114,25 @@ const create = (args = {}) => {
 }
 
 const getModule = type => ( type ? ({
-	found: Found,
-	move: Move,
-	moveTo: MoveTo,
-	unload: Unload,
-	load: Load,
-	europe: Europe,
-	cutForest: CutForest,
-	plow: Plow,
-	road: Road,
-	america: America,
-	tradeRoute: TradeRoute,
-	loadCargo: LoadCargo,
-	tradeCargo: TradeCargo,
-	triggerEvent: TriggerEvent,
-	disband: Disband,
-	learnFromNatives: LearnFromNatives,
-	communicateTension: CommunicateTension,
-	commander: { load }
+	found: Commands.Found,
+	move: Commands.Move,
+	moveTo: Commands.MoveTo,
+	goTo: Commands.GoTo,
+	unload: Commands.Unload,
+	load: Commands.Load,
+	europe: Commands.Europe,
+	cutForest: Commands.CutForest,
+	plow: Commands.Plow,
+	road: Commands.Road,
+	america: Commands.America,
+	tradeRoute: Commands.TradeRoute,
+	loadCargo: Commands.LoadCargo,
+	tradeCargo: Commands.TradeCargo,
+	triggerEvent: Commands.TriggerEvent,
+	disband: Commands.Disband,
+	learnFromNatives: Commands.LearnFromNatives,
+	communicateTension: Commands.CommunicateTension,
+	commander: Commands.commander
 })[type] : {
 	load: data => {
 		console.warn('cannot load command, missing type', data)

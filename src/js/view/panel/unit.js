@@ -17,6 +17,7 @@ import CutForest from 'command/cutForest'
 import TradeRoute from 'command/tradeRoute'
 import MoveTo from 'command/moveTo'
 import Europe from 'command/europe'
+import TriggerEvent from 'command/triggerEvent'
 
 import Click from 'input/click'
 
@@ -111,6 +112,7 @@ const initialize = () => {
 									const target = pathToHighSeas[pathToHighSeas.length - 1]
 									Commander.scheduleInstead(unit.commander, MoveTo.create(unit, target.mapCoordinates))
 									Commander.scheduleBehind(unit.commander, Europe.create(unit))
+									Commander.scheduleBehind(unit.commander, TriggerEvent.create('notification', { type: 'europe', unit }))
 								}
 							}])
 						})

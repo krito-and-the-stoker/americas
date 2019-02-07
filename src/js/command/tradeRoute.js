@@ -1,5 +1,6 @@
 import Message from 'util/message'
 import Record from 'util/record'
+import Events from 'util/events'
 
 import MapEntity from 'entity/map'
 import Storage from 'entity/storage'
@@ -10,10 +11,20 @@ import Commander from 'command/commander'
 import GoTo from 'command/goTo'
 import LoadCargo from 'command/loadCargo'
 import TradeCargo from 'command/tradeCargo'
+import TriggerEvent from 'command/triggerEvent'
 
 
-const create = (transport, tradeCommanderParam = null, initialized = false, waitingForRoute = 0) => {
+const create = (transport, tradeCommanderParam = null, initialized = false, waitingForRoute = 0, needsOrders = true) => {
 	const tradeCommander = tradeCommanderParam || Commander.create({ keep: true })
+
+	if (!needsOrders) {
+		const unsubscribeListener = Events.listen('trade-route-complete', ({ unit }) => {
+			if (unit === transport) {
+				needsOrders = true
+				unsubscribeListener()
+			}
+		})		
+	}
 
 	const init = () => {
 		if (initialized) {
@@ -43,13 +54,13 @@ const create = (transport, tradeCommanderParam = null, initialized = false, wait
 	}
 
 	const update = currentTime => {
-		if (Commander.isIdle(tradeCommander) && !tradeRoute.pleaseStop && currentTime > waitingForRoute) {
+		if (needsOrders && !tradeRoute.pleaseStop && currentTime > waitingForRoute) {
 			const route = Trade.match(transport)
 			if (route) {
 				const goods = route.orders.reduce((s, order) => s ? `${s}, ${order.amount} ${order.good}` : `${order.amount} ${order.good}`, null)
 				Message.send(`A ${transport.name} will transport ${goods} from ${route.src.name} to ${route.dest.name}`)
 
-				Commander.scheduleBehind(tradeCommander, GoTo.create(transport, route.src))
+				Commander.scheduleInstead(tradeCommander, GoTo.create(transport, route.src))
 				route.orders.forEach(order => {
 					if (route.src.isEurope) {
 						Commander.scheduleBehind(tradeCommander, TradeCargo.create(transport, { good: order.good, amount: order.amount }))
@@ -66,11 +77,22 @@ const create = (transport, tradeCommanderParam = null, initialized = false, wait
 						Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.dest, transport, { good: order.good, amount: -order.amount }))
 					}
 				})
+
+				// make sure we generate new orders eventually
+				needsOrders = false
+				Commander.scheduleBehind(tradeCommander, TriggerEvent.create('trade-route-complete', { unit: transport }))
+				const unsubscribeListener = Events.listen('trade-route-complete', ({ unit }) => {
+					if (unit === transport) {
+						needsOrders = true
+						unsubscribeListener()
+					}
+				})
 			} else {
 				Message.send(`A ${transport.name} has not found any routes and will look again shortly`)
 				waitingForRoute = currentTime + 2500
 			}
 		}
+
 		if (tradeRoute.pleaseStop) {
 			Commander.clearSchedule(tradeCommander)
 			tradeCommander.update()
@@ -85,7 +107,8 @@ const create = (transport, tradeCommanderParam = null, initialized = false, wait
 		waitingForRoute,
 		initialized,
 		tradeCommander: tradeCommander.save(),
-		transport: Record.reference(transport)
+		transport: Record.reference(transport),
+		needsOrders
 	})
 
 	const tradeRoute = {
@@ -100,7 +123,7 @@ const create = (transport, tradeCommanderParam = null, initialized = false, wait
 
 const load = data => {
 	const transport = Record.dereference(data.transport)
-	const tradeRoute = create(transport, Commander.load(data.tradeCommander), data.initialized, data.waitingForRoute)
+	const tradeRoute = create(transport, Commander.load(data.tradeCommander), data.initialized, data.waitingForRoute, data.needsOrders)
 
 	return tradeRoute
 }

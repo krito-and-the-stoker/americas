@@ -1,6 +1,5 @@
 import Record from 'util/record'
 import Message from 'util/message'
-import Events from 'util/events'
 
 import Time from 'timeline/time'
 
@@ -32,7 +31,6 @@ const create = (unit, eta = null) => {
 	const finished = () => {
 		if (eta) {
 			Message.send(`A ${unit.name} arrived in Europe.`)
-			Events.trigger('notification', { type: 'europe', unit })
 			EnterEurope(unit)
 		}
 	}

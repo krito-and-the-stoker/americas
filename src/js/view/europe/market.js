@@ -52,10 +52,10 @@ const create = (originalDimensions) => {
 			amount: 100,
 			buyFromEurope: true
 		}
-		
+
 		Drag.makeDraggable(sprite, args)
 		Click.on(sprite, () => {
-			const options = [Trade.NOTHING, Trade.SELL, Trade.BUY]
+			const options = [Trade.NOTHING, Trade.SELL]
 			const trade = Europe.trade()
 			trade[good] = options[(options.indexOf(trade[good]) + 1) % options.length]
 			Europe.update.trade()

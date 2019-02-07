@@ -39,7 +39,7 @@ const selectTarget = unit => {
 	const options = [{
 		text: 'Where you came from',
 		action: () => {
-			Commander.scheduleBehind(unit.commander, America.create(unit))
+			Commander.scheduleInstead(unit.commander, America.create(unit))
 			Commander.scheduleBehind(unit.commander, TriggerEvent.create('notification', { type: 'america', unit: unit }))
 			closeIfNoShips()
 		}
@@ -50,7 +50,7 @@ const selectTarget = unit => {
 			const tile = MapEntity.tile(colony.mapCoordinates)
 			const path = PathFinder.findHighSeas(tile)
 			Unit.update.mapCoordinates(unit, path[path.length - 1].mapCoordinates)
-			Commander.scheduleBehind(unit.commander, America.create(unit))
+			Commander.scheduleInstead(unit.commander, America.create(unit))
 			Commander.scheduleBehind(unit.commander, MoveTo.create(unit, colony.mapCoordinates))
 			Commander.scheduleBehind(unit.commander, TriggerEvent.create('notification', { type: 'arrive', unit: unit, colony }))
 			closeIfNoShips()
