@@ -65,7 +65,7 @@ const update = (instance, key, value) => {
 		}
 		instance[key] = value
 	}
-	if (instance[listeners]) {	
+	if (instance[listeners]) {
 		instance[listeners]
 			.forEach(listener => Util.execute(listener.cleanup, false))
 		instance[listeners].forEach(add)

@@ -1,13 +1,23 @@
 import * as PIXI from 'pixi.js'
 
 import Goods from 'data/goods'
-import GoodsView from 'view/goods'
-import Drag from 'input/drag'
-import Resources from 'render/resources'
-import Market from 'entity/market'
-import SellInEurope from 'interaction/sellInEurope'
+
 import Binding from 'util/binding'
+
+import Market from 'entity/market'
+import Trade from 'entity/trade'
+import Europe from 'entity/europe'
+
+import SellInEurope from 'interaction/sellInEurope'
+
+import Drag from 'input/drag'
+import Click from 'input/click'
+
 import Text from 'render/text'
+import Resources from 'render/resources'
+
+import GoodsView from 'view/goods'
+import Icon from 'view/ui/icon'
 
 
 const create = (originalDimensions) => {
@@ -42,7 +52,15 @@ const create = (originalDimensions) => {
 			amount: 100,
 			buyFromEurope: true
 		}
-		Drag.makeDraggable(sprite, args)	
+		
+		Drag.makeDraggable(sprite, args)
+		Click.on(sprite, () => {
+			const options = [Trade.NOTHING, Trade.BUY, Trade.SELL]
+			const trade = Europe.trade()
+			trade[good] = options[(options.indexOf(trade[good]) + 1) % options.length]
+			Europe.update.trade()
+		})
+
 
 		const unsubscribe = () => {
 			container.goods.removeChild(sprite)
@@ -69,6 +87,25 @@ const create = (originalDimensions) => {
 	})
 	container.pricing.addChild(text)
 
+	const unsubscribeTrade = Europe.listen.trade(trade => 
+		Trade.goods(trade).map(({ amount }, index) => {
+			if (amount !== Trade.NOTHING) {				
+				const icon = {
+					[Trade.BUY]: 'buy',
+					[Trade.SELL]: 'import',
+				}
+				const sprite = Icon.create(icon[amount])
+				sprite.x = Math.round(index * (originalDimensions.x + 11) / Object.values(Goods.types).length) + 55
+				sprite.y = -119
+				sprite.scale.set(0.7)
+				container.goods.addChild(sprite)
+
+				return () => {
+					container.goods.removeChild(sprite)
+				}
+			}
+		}))
+
 	const dragTarget = new PIXI.Container()
 	container.goods.addChild(dragTarget)
 	dragTarget.hitArea = new PIXI.Rectangle(0, -119, originalDimensions.x, 119)
@@ -86,10 +123,12 @@ const create = (originalDimensions) => {
 		return false
 	})
 
+
 	const unsubscribe = [
 		unsubscribeMarket,
 		unsubscribeDragTarget,
 		unsubscribePriceViews,
+		unsubscribeTrade
 	]
 
 	return {

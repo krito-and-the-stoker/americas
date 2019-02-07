@@ -15,6 +15,8 @@ const NOTHING = 0
 const IMPORT = 1
 const EXPORT = 2
 const HUB = 3
+const BUY = 4
+const SELL = 5
 
 const create = () => Storage.create()
 const save = trade => Storage.save(trade)
@@ -156,5 +158,7 @@ export default {
 	NOTHING,
 	IMPORT,
 	EXPORT,
-	HUB
+	HUB,
+	BUY,
+	SELL
 }

@@ -8,6 +8,7 @@ import Events from 'util/events'
 import Unit from 'entity/unit'
 import Treasure from 'entity/treasure'
 import Owner from 'entity/owner'
+import Trade from 'entity/trade'
 
 
 const possibleColonists = [
@@ -105,7 +106,8 @@ const europe = {
 	units: [],
 	crosses: 0,
 	crossesNeeded: 2,
-	pool: [Util.choose(possibleColonists), Util.choose(possibleColonists), Util.choose(possibleColonists)]
+	pool: [Util.choose(possibleColonists), Util.choose(possibleColonists), Util.choose(possibleColonists)],
+	trade: Trade.create()
 }
 
 const add = {
@@ -127,12 +129,12 @@ const has = {
 const listen = {
 	units: fn => Binding.listen(europe, 'units', fn),
 	crosses: fn => Binding.listen(europe, 'crosses', fn),
+	trade: fn => Binding.listen(europe, 'trade', fn),
 }
 
 const update = {
-	crosses: value => {
-		return Binding.update(europe, 'crosses', europe.crosses + value)
-	}
+	crosses: value => Binding.update(europe, 'crosses', europe.crosses + value),
+	trade: () => Binding.update(europe, 'trade')
 }
 
 
@@ -141,7 +143,8 @@ const save = () => ({
 	units: europe.units.map(Record.reference),
 	crosses: europe.crosses,
 	crossesNeeded: europe.crossesNeeded,
-	pool: europe.pool
+	pool: europe.pool,
+	trade: Trade.save(europe.trade)
 })
 
 const load = data => {
@@ -149,7 +152,10 @@ const load = data => {
 	europe.crosses = data.crosses
 	europe.crossesNeeded = data.crossesNeeded
 	europe.pool = data.pool
+	europe.trade = Trade.load(data.trade)
 }
+
+const trade = () => europe.trade
 
 const recruitmentCost = () => Math.round(100 + 500 * Math.max(1 - Math.floor(europe.crosses) / europe.crossesNeeded, 0))
 
@@ -246,6 +252,7 @@ export default {
 	update,
 	save,
 	load,
+	trade,
 	recruitmentOptions,
 	recruit,
 	purchaseOptions,
