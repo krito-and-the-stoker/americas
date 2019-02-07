@@ -12,6 +12,7 @@ import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Storage from 'entity/storage'
 import Building from 'entity/building'
+import Trade from 'entity/trade'
 
 import Harvest from 'task/harvest'
 import Consume from 'task/consume'
@@ -175,35 +176,6 @@ const initialize = colony => {
 			storage.food = 0
 			starvationMessageSent = false
 		}
-		// Goods.types
-		// 	.filter(good => storage[good] >= 1)
-		// 	.filter(good => good !== 'food')
-		// 	.forEach(good => {
-		// 		needsToSendEmptyWarning[good] = true
-		// 	})
-		// Goods.types
-		// 	.filter(good => storage[good] <= 0)
-		// 	.filter(good => colony.trade[good] >= 0)
-		// 	.filter(good => good !== 'food')
-		// 	.filter(good => needsToSendEmptyWarning[good])
-		// 	.forEach(good => {
-		// 		Events.trigger('notificaiton', { type: 'storageEmpty', colony, good})
-		// 		needsToSendEmptyWarning[good] = false
-		// 	})
-		// Goods.types
-		// 	.filter(good => storage[good] < colony.capacity)
-		// 	.filter(good => good !== 'food')
-		// 	.forEach(good => {
-		// 		needsToSendFullWarning[good] = true
-		// 	})
-		// Goods.types
-		// 	.filter(good => storage[good] > colony.capacity)
-		// 	.filter(good => good !== 'food')
-		// 	.filter(good => needsToSendFullWarning[good])
-		// 	.forEach(good => {
-		// 		Events.trigger('notificaiton', { type: 'storageFull', colony, good })
-		// 		needsToSendFullWarning[good] = false
-		// 	})
 	}))
 	colony.construction = {
 		amount: colony.construction.amount,
@@ -294,7 +266,7 @@ const save = colony => ({
 	capacity: colony.capacity,
 	mapCoordinates: colony.mapCoordinates,
 	storage: Storage.save(colony.storage),
-	trade: Storage.save(colony.trade),
+	trade: Trade.save(colony.trade),
 	buildings: colony.buildings,
 	construction: {
 		amount: colony.construction.amount,
@@ -310,7 +282,7 @@ const load = colony => {
 	const tile = MapEntity.tile(colony.mapCoordinates)
 	tile.colony = colony
 	colony.storage = Storage.load(colony.storage)
-	colony.trade = colony.trade ? Storage.load(colony.trade) : Storage.create()
+	colony.trade = Trade.load(colony.trade)
 	colony.owner = Record.dereference(colony.owner)
 
 	colony.colonists.forEach((colonist, index) => Record.dereferenceLazy(colonist, entity => colony.colonists[index] = entity))

@@ -9,5 +9,9 @@
 	"question": 709,
 	"cancel": 710,
 	"combat": 720,
-	"natives": 118
+	"natives": 118,
+	"import": 736,
+	"export": 737,
+	"fromEurope": 738,
+	"tradeHub": 739
 }

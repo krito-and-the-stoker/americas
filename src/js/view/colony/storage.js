@@ -1,13 +1,19 @@
 import * as PIXI from 'pixi.js'
 
 import Goods from 'data/goods'
-import Drag from 'input/drag'
-import Icon from 'view/ui/icon'
-import GoodsView from 'view/goods'
+
 import Storage from 'entity/storage'
+import Trade from 'entity/trade'
+import Colony from 'entity/colony'
+
 import Click from 'input/click'
+import Drag from 'input/drag'
+
+import GoodsView from 'view/goods'
+import Icon from 'view/ui/icon'
 
 import LoadFromShipToColony from 'interaction/loadFromShipToColony'
+
 
 const create = (colony, originalDimensions) => {
 	const container = new PIXI.Container()
@@ -32,8 +38,12 @@ const create = (colony, originalDimensions) => {
 		}
 		Drag.makeDraggable(sprite, args)
 		Click.on(sprite, () => {
-			colony.trade[good] = colony.trade[good] > 0 ? -1 : colony.trade[good] < 0 ? 0 : 1
-			Storage.update(colony.trade)
+			const options = [Trade.NOTHING, Trade.IMPORT, Trade.EXPORT]
+			if (Colony.isCoastal(colony)) {
+				options.push(Trade.HUB)
+			}
+			colony.trade[good] = options[(colony.trade[good] + 1) % options.length]
+			Trade.update(colony.trade)
 		})
 
 		return {
@@ -42,10 +52,15 @@ const create = (colony, originalDimensions) => {
 		}
 	})
 
-	const unsubscribeTrade = Storage.listen(colony.trade, () => 
-		Storage.goods(colony.trade).map(({ amount }, index) => {
-			if (amount > 0) {
-				const sprite = Icon.create('plus')
+	const unsubscribeTrade = Trade.listen(colony.trade, () => 
+		Trade.goods(colony.trade).map(({ amount }, index) => {
+			if (amount !== Trade.NOTHING) {				
+				const icon = {
+					[Trade.IMPORT]: 'import',
+					[Trade.EXPORT]: 'export',
+					[Trade.HUB]: 'tradeHub',
+				}
+				const sprite = Icon.create(icon[amount])
 				sprite.x = Math.round(index * (originalDimensions.x + 11) / numberOfGoods) + 55
 				sprite.y = originalDimensions.y - 121
 				sprite.scale.set(0.7)
@@ -55,18 +70,6 @@ const create = (colony, originalDimensions) => {
 					container.removeChild(sprite)
 				}
 			}
-			if (amount < 0) {
-				const sprite = Icon.create('minus')
-				sprite.x = Math.round(index * (originalDimensions.x + 11) / numberOfGoods) + 55
-				sprite.y = originalDimensions.y - 121
-				sprite.scale.set(0.7)
-				container.addChild(sprite)
-
-				return () => {
-					container.removeChild(sprite)
-				}
-			}
-			return () => {}
 		}))
 
 	const unsubscribeStorage = Storage.listen(colony.storage, storage => {
