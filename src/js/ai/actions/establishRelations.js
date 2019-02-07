@@ -25,8 +25,6 @@ const cost = () => 0
 
 
 const commit = (state, goal, next) => {
-	// console.log('relationships established!')
-	// state.relations[goal.key[1]].established = true
 	return next()
 }
 

@@ -40,7 +40,6 @@ const initialize = () => {
 
 const findNextToArea = (from, area) => {
 	const path = find(from, node => node.area === area, null, null)
-	// console.log(path)
 	return path.length > 1 ? path[path.length - 2] : from
 }
 
@@ -74,6 +73,10 @@ const	tileDistance = (from, to) => {
 
 
 const find = (from, isTarget, target, area = null) => {
+	if (isTarget && area) {
+		console.warn('The case of having a special is target function and an area can lead to unexpected results.')
+	}
+
 	if (!isTarget) {
 		isTarget = node => node.index === target.index
 	}
@@ -81,11 +84,6 @@ const find = (from, isTarget, target, area = null) => {
 	if (target && area && target.area !== area && !target.colony) {
 		const newTarget = findNextToArea(target, area)
 		const newIsTarget = node => node.neighbors.some(n => n.index === newTarget.index)
-		// console.log(newTarget)
-		// console.log(Tile.radius(newTarget).map(tile => tile.area))
-		// console.log(Tile.radius(newTarget)
-		// 	.filter(tile => tile.area === area)
-		// 	.some(tile => newIsTarget(graph.node(tile.index))))
 
 		return find(from, newIsTarget, { ...newTarget, area }, area)
 	}

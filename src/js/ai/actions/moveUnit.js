@@ -43,16 +43,18 @@ const commit = (state, goal, next) => {
 
 	let cancel = () => {
 		Commander.clearSchedule(unit.commander)
+		Util.execute(unsubscribe)
 	}
 
-	Events.listen('ai-move-unit-complete', params => {
+	const unsubscribe = Events.listen('ai-move-unit-complete', params => {
 		if (params.unit === unit) {
+			Util.execute(unsubscribe)
 			cancel = next()
 		}
 	})
 
 	// bind cancel to current scope so we can update it when the move is complete
-	return () => cancel()
+	return () => Util.execute(cancel)
 }
 
 

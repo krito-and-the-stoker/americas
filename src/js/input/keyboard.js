@@ -1,20 +1,28 @@
-import Foreground from 'render/foreground'
-import MapView from 'view/map'
-import UnitView from 'view/map/unit'
-import Time from 'timeline/time'
-import Found from 'command/found'
-import Europe from 'view/europe'
 import Record from 'util/record'
+import Message from 'util/message'
+
+import Time from 'timeline/time'
+
+import MapEntity from 'entity/map'
+import Treasure from 'entity/treasure'
+import Unit from 'entity/unit'
+import Owner from 'entity/owner'
+
 import Commander from 'command/commander'
+import Found from 'command/found'
 import TradeRoute from 'command/tradeRoute'
 import CutForest from 'command/cutForest'
 import Plow from 'command/plow'
 import Road from 'command/road'
-import MapEntity from 'entity/map'
-import Treasure from 'entity/treasure'
-import Unit from 'entity/unit'
+
+import Foreground from 'render/foreground'
+
+import MapView from 'view/map'
+import UnitView from 'view/map/unit'
+
+import Europe from 'view/europe'
 import Help from 'view/help'
-import Owner from 'entity/owner'
+
 
 let controlAllPlayers = false
 const handleKeydown = e => {
@@ -46,14 +54,14 @@ const handleKeydown = e => {
 
 		if (e.key === 'a') {
 			if (!controlAllPlayers) {
-				console.log('now controlling everyone')
+				Message.log('now controlling everyone')
 				Record.getAll('owner').forEach(owner => {
 					Owner.update.visible(owner, true)
 					Owner.update.input(owner, true)
 				})
 			}
 			if (controlAllPlayers) {
-				console.log('now controlling only player')
+				Message.log('now controlling only player')
 				Record.getAll('owner').forEach(owner => {
 					Owner.update.visible(owner, owner === Owner.player())
 					Owner.update.input(owner, owner === Owner.player())

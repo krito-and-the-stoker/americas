@@ -454,7 +454,7 @@ const upload = () => {
 				document.body.removeChild(input)
 			}
 			reader.onerror = function (evt) {
-				console.log('oh no, something went wrong :/', evt)
+				Message.log('oh no, something went wrong :/', evt)
 				document.body.removeChild(input)
 			}
 		}	

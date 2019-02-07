@@ -29,6 +29,7 @@ const cancel = () => ({
 
 const scheduleInstead = (commander, command) => {
 	commander.commands = [command]
+	commander.pleaseStop = false
 	if (commander.currentCommand) {
 		clearSchedule(commander.currentCommand)
 	}

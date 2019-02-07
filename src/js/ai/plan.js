@@ -1,12 +1,11 @@
 import Util from 'util/util'
+import Message from 'util/message'
 
 import Actions from 'ai/actions'
 import State from 'ai/state'
 
 
 const create = (state, goal, fn) => {
-
-
 	// create neighbours and find leafs
 	const leafs = []
 	const search = step => {
@@ -47,7 +46,7 @@ const create = (state, goal, fn) => {
 		const best = Util.min(leafs, step => step.cost)
 		const planDescription = best => best.next.name ? `${best.name}, ${planDescription(best.next)}` : best.name
 
-		console.log(planDescription(best))
+		Message.log(`${best.goal.name}: ${planDescription(best)}`)
 
 		return best.action
 	}
@@ -56,5 +55,5 @@ const create = (state, goal, fn) => {
 }
 
 export default {
-	create
+	create,
 }

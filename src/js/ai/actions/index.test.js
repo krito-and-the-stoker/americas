@@ -3,10 +3,11 @@ import Actions from 'ai/actions'
 
 Object.values(Actions).forEach(Module => {
 	const owner = Owner.create('player')
+
 	const state = {
 		relations: {
 			[owner.referenceId]: {
-				established: true
+				established: true,
 			}
 		},
 		units: {},
@@ -24,13 +25,5 @@ Object.values(Actions).forEach(Module => {
 
 	test('produces', () => {
 		Module.produces(state, goal)
-	})
-
-	test('needs', () => {
-		Module.needs(state, goal)
-	})
-
-	test('cost', () => {
-		Module.cost(state, goal)
 	})
 })

@@ -129,7 +129,7 @@ const create = (unit, coords, moveToCommander = null, hasPath = false, lastPoint
 const load = data => {
 	const unit = Record.dereference(data.unit)
 	const commander = Commander.load(data.moveToCommander)
-	const coords = data.coords
+
 	return create(unit, data.coords, commander, data.hasPath, data.lastPoint)
 }
 

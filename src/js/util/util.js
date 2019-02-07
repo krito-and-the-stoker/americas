@@ -27,7 +27,7 @@ const execute = (something, arg) => {
 		return flatten(something).filter(isFunction).map(fn => fn(arg))
 	}
 
-	console.log('unable to execute', something)
+	console.warn('unable to execute', something)
 	throw new Error('unable to execute')
 }
 

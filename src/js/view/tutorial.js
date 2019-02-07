@@ -83,12 +83,11 @@ const init = () => {
 }
 const markDone = name => {
 	Record.getGlobal('tutorial')[name] = true
-	// console.log(name, messages.find(msg => msg.name === name))
 	Util.execute(messages.find(msg => msg.name === name).unsubscribe)
 }
 const isDone = name => Record.getGlobal('tutorial')[name]
 const message = () => messages.filter(msg => !isDone(msg.name)).find(msg => msg.preconditions.every(pre => isDone(pre)))
-const stop = () => messages.map(msg => msg.name).forEach(markDone)
+const stop = () => messages.map(msg => msg.name).forEach(markDone) // stops the tutorial, will probably be used at some point
 
 const initialize = () => {
 	init()

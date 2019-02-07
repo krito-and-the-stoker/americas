@@ -49,7 +49,13 @@ const initialize = ai => {
 			}
 		}),
 
-		listen.tribe(ai, tribe =>
+		listen.tribe(ai, tribe => {
+			if (tribe) {
+				ai.state.tribe = tribe.referenceId
+			}
+		}),
+
+		listen.tribe(ai, tribe => 
 			tribe ? Tribe.listen.settlements(tribe, settlements => {
 				const tiles = settlements
 					.map(settlement => Util.quantizedRadius(settlement.mapCoordinates, 6))
@@ -58,7 +64,7 @@ const initialize = ai => {
 					.filter(Util.unique)
 					.filter(tile => tile.domain === 'land')
 					.filter(tile => settlements.map(settlement => MapEntity.tile(settlement.mapCoordinates).area).includes(tile.area))
-				return tiles.map(tile =>
+				return tiles.map(tile => [
 					Tile.listen.units(tile, units => {
 						units
 							.filter(unit => unit.tile.domain !== 'sea')
@@ -67,7 +73,8 @@ const initialize = ai => {
 							.forEach(owner => {
 								if (!ai.state.relations[owner.referenceId]) {
 									ai.state.relations[owner.referenceId] = {
-										established: false
+										established: false,
+										colonies: {}
 									}
 									const unsubscribe = Events.listen('meet', ({ unit, other }) => {
 										if (unit.owner === ai.owner && other.owner === owner) {
@@ -78,7 +85,17 @@ const initialize = ai => {
 									update.state(ai)
 								}
 							})
-					}))
+					}),
+
+					Tile.listen.colony(tile, colony => {
+						if (colony) {
+							ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId] = {
+								visited: false
+							}
+							update.state(ai)
+						}
+					})
+				])
 			}) : null),
 
 		listen.state(ai, () => {
@@ -103,11 +120,22 @@ const establishRelations = (ai, owner) => {
 	}
 }
 
+
+
 const makePlansAndRunThem = ai => {
 	Util.execute(ai.stopAllPlans)
 	State.cleanup(ai.state, [])
 
-	ai.stop = [
+	const executePlan = goal => {
+		const plan = Plan.create(ai.state, goal, () => { update.state(ai) })
+		if (plan) {
+			return plan()
+		} else {
+			console.warn('no plan could be formed to reach', goal)
+		}
+	}
+
+	ai.stopAllPlans = [
 		// establish contact with all strangers
 		State.all(ai.state, 'relations')
 			.map(contact => ({
@@ -116,16 +144,20 @@ const makePlansAndRunThem = ai => {
 				name: `contact-${contact.referenceId}`
 			}))
 			.filter(goal => !State.satisfies(ai.state, goal))
-			.map(goal => {
-				const plan = Plan.create(ai.state, goal, () => update.state(ai))
-				if (plan) {
-					return plan()
-				} else {
-					console.log('no plan could be formed to reach', goal)
-				}
-			}),
+			.map(executePlan),
 
-		//disband all idle units
+		// visit new colonies
+		Object.entries(ai.state.relations)
+			.map(([referenceId, relation]) => State.all(relation, 'colonies')
+				.map(colony => ({
+					key: ['relations', referenceId, 'colonies', colony.referenceId, 'visited'],
+					value: true,
+					name: `visit-${colony.referenceId}`
+				}))).flat()
+			.filter(goal => !State.satisfies(ai.state, goal))
+			.map(executePlan),
+
+		// disband all idle units
 		State.free(ai.state, 'units')
 			.map(unit => ({
 				key: ['units', unit.referenceId, 'scheduled'],
@@ -133,14 +165,7 @@ const makePlansAndRunThem = ai => {
 				name: `disband-${unit.referenceId}`
 			}))
 			.filter(goal => !State.satisfies(ai.state, goal))
-			.map(goal => {
-				const plan = Plan.create(ai.state, goal, () => update.state(ai))
-				if (plan) {
-					return plan()
-				} else {
-					console.log('no plan could be formed to reach', goal)
-				}
-			}),
+			.map(executePlan),
 	]
 }
 
