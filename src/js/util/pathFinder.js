@@ -74,9 +74,9 @@ const	tileDistance = (from, to) => {
 
 const find = (from, isTarget, target, area = null) => {
 	// TODO: Do something about this message, it is very annoying and needs to go away quickly
-	// if (isTarget && area && target && target.area !== area) {
-	// 	console.warn('The case of having a special is target function and an area will probably lead to unexpected results.')
-	// }
+	if (isTarget && target && area && target.area !== area && !target.colony) {
+		console.warn('The case of having a special is target function and an area will probably lead to unexpected results.')
+	}
 
 	if (!isTarget) {
 		isTarget = node => node.index === target.index

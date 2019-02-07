@@ -57,7 +57,8 @@ const create = (colony, building, colonist) => {
 
 	return {
 		update,
-		finished
+		finished,
+		sort: 4
 	}
 }
 

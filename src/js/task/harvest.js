@@ -36,7 +36,8 @@ const create = (colony, tile, good, colonist = null) => {
 
 	return {
 		update,
-		finished
+		finished,
+		sort: 1
 	}
 }
 

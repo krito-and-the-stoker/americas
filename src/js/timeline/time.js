@@ -109,12 +109,16 @@ const schedule = e => {
 		started: false,
 		cleanup: false,
 		willStop: false,
+		sort: e.sort || 10
 	}
 
 	scheduled.push(task)
 	if (task.priority) {
 		prioritized.push(task)
 	}
+
+	scheduled = scheduled.sort((a, b) => a.sort - b.sort)
+	prioritized = prioritized.sort((a, b) => a.sort - b.sort)
 
 	const stop = () => {
 		task.willStop = true

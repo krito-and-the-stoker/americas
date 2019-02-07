@@ -22,7 +22,8 @@ const create = colony => {
 
 
 	return {
-		update
+		update,
+		sort: 1,
 	}	
 }
 

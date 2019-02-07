@@ -16,7 +16,8 @@ const create = (colony, good, amount) => {
 	}
 
 	return {
-		update
+		update,
+		sort: 2
 	}	
 }
 
