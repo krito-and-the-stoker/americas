@@ -144,3 +144,8 @@ test('uid', () => {
 	expect(Util.uid()).not.toBe(Util.uid())
 	expect(Util.uid()).not.toBe(Util.uid())
 })
+
+test('sum', () => {
+	expect(Util.sum([1, 2, 3, 4])).toBe(10)
+	expect(Util.sum([2, 4, 6, 8].reverse())).toBe(20)
+})

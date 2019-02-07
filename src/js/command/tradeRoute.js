@@ -46,10 +46,14 @@ const create = (transport, tradeCommanderParam = null, initialized = false, wait
 		if (Commander.isIdle(tradeCommander) && !tradeRoute.pleaseStop && currentTime > waitingForRoute) {
 			const route = Trade.match(transport)
 			if (route) {
-				Commander.scheduleBehind(tradeCommander, MoveTo.create(transport, route.from.mapCoordinates))
-				Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.from, transport, { good: route.good, amount: route.amount }))
-				Commander.scheduleBehind(tradeCommander, MoveTo.create(transport, route.to.mapCoordinates))
-				Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.to, transport, { good: route.good, amount: -route.amount }))
+				Commander.scheduleBehind(tradeCommander, MoveTo.create(transport, route.src.mapCoordinates))
+				route.orders.forEach(order => {
+					Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.src, transport, { good: order.good, amount: order.amount }))
+				})
+				Commander.scheduleBehind(tradeCommander, MoveTo.create(transport, route.dest.mapCoordinates))
+				route.orders.forEach(order => {
+					Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.dest, transport, { good: order.good, amount: -order.amount }))
+				})
 			} else {
 				Message.send(`A ${transport.name} has not found any routes and will look again shortly`)
 				waitingForRoute = currentTime + 2500

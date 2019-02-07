@@ -67,6 +67,7 @@ const quantizedRadius = (coords, radius) => range(2 * radius)
 
 const choose = array => array[Math.floor(Math.random() * array.length)]
 const unique = (value, index, self) => self.indexOf(value) === index
+const sum = array => array.reduce((all, single) => all + single, 0)
 
 // const minDistance = (many, one) => many.reduce((min, test) => Math.min(min, distance(test, one)), 1e10)
 const minDistance = (many, one) => distance(min(many, other => distance(one, other)), one)
@@ -83,6 +84,11 @@ const minPairValue = (many, some, fn) => {
 	return fn(pair.one, pair.other)
 }
 
+
+const pairs = (many, some) => many.map(one => some.map(other => ({
+	one,
+	other
+}))).flat()
 
 
 let currentId = 0
@@ -112,5 +118,7 @@ export default {
 	inDistance,
 	min,
 	minPair,
-	minPairValue
+	minPairValue,
+	pairs,
+	sum
 }
