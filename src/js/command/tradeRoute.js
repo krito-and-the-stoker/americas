@@ -46,6 +46,8 @@ const create = (transport, tradeCommanderParam = null, initialized = false, wait
 		if (Commander.isIdle(tradeCommander) && !tradeRoute.pleaseStop && currentTime > waitingForRoute) {
 			const route = Trade.match(transport)
 			if (route) {
+				const goods = route.orders.reduce((s, order) => s ? `${s}, ${order.amount} ${order.good}` : `${order.amount} ${order.good}`, null)
+				Message.send(`A ${transport.name} will transport ${goods} from ${route.src.name} to ${route.dest.name}`)
 				Commander.scheduleBehind(tradeCommander, MoveTo.create(transport, route.src.mapCoordinates))
 				route.orders.forEach(order => {
 					Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.src, transport, { good: order.good, amount: order.amount }))

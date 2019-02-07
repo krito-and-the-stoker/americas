@@ -93,7 +93,8 @@ const update = {
 const area = (colony, domain) =>
 	Tile.radius(MapEntity.tile(colony.mapCoordinates))
 		.filter(tile => tile.domain === domain)
-		.map(tile => tile.area)[0]
+		.map(tile => tile.area)
+		.find(() => true)
 
 const tories = colony => {
 	const colonists = colony.colonists.length

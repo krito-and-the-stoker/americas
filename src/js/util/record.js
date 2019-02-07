@@ -370,7 +370,7 @@ const dereferenceLazy = (ref, fn) => {
 		} else {
 			const dead = snapshot.entities.find(record => record.id === referenceId)
 			if (!dead) {
-				console.warn('Could ot find reference for', ref)
+				console.warn('Could not find reference for', ref)
 			}
 			dead.listeners.push(fn)
 		}
