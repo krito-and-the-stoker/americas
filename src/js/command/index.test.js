@@ -38,6 +38,13 @@ const commandTest = (name, create) => {
 
 		expect(laterSave1).toEqual(laterSave2)
 	})
+
+	test(`${name}: advance`, () => {
+		create()
+		create()
+
+		advance(200)
+	})
 }
 
 const ship = () => Unit.create('caravel', {x: 0, y: 5})
