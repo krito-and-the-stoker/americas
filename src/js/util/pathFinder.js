@@ -12,6 +12,7 @@ import Unit from 'entity/unit'
 
 const CANNOT_MOVE_COST = 500
 const MIN_TERRAIN_COST = 0.33
+const EUROPE_TRAVEL_COST = 50
 const graph = Graph.create()
 
 
@@ -63,6 +64,11 @@ const distance = (fromCoords, toCoords, unit, max = CANNOT_MOVE_COST) => {
 			distance: distance + Tile.movementCost(from, to) + ((from.domain === to.domain || from.colony || to.colony) ? 0 : CANNOT_MOVE_COST),
 			from: to
 		}), { distance: 0, from: path[0] }).distance
+}
+
+const distanceToEurope = coords => {
+	// TODO: Calculate this properly with find high seas
+	return EUROPE_TRAVEL_COST
 }
 
 const	tileDistance = (from, to) => {
@@ -181,5 +187,6 @@ export default {
 	findPath,
 	findPathXY,
 	findHighSeas,
-	distance
+	distance,
+	distanceToEurope
 }

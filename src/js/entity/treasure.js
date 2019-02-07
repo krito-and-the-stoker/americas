@@ -27,7 +27,6 @@ const amount = () => treasure
 
 const save = () => treasure
 const load = data => {
-	// treasureListeners = []
 	treasure = data
 	treasureListeners.forEach(fn => fn(treasure))
 }

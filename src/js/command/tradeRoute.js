@@ -7,9 +7,9 @@ import Unit from 'entity/unit'
 import Trade from 'entity/trade'
 
 import Commander from 'command/commander'
+import GoTo from 'command/goTo'
 import LoadCargo from 'command/loadCargo'
-import MoveTo from 'command/moveTo'
-
+import TradeCargo from 'command/tradeCargo'
 
 
 const create = (transport, tradeCommanderParam = null, initialized = false, waitingForRoute = 0) => {
@@ -48,13 +48,23 @@ const create = (transport, tradeCommanderParam = null, initialized = false, wait
 			if (route) {
 				const goods = route.orders.reduce((s, order) => s ? `${s}, ${order.amount} ${order.good}` : `${order.amount} ${order.good}`, null)
 				Message.send(`A ${transport.name} will transport ${goods} from ${route.src.name} to ${route.dest.name}`)
-				Commander.scheduleBehind(tradeCommander, MoveTo.create(transport, route.src.mapCoordinates))
+
+				Commander.scheduleBehind(tradeCommander, GoTo.create(transport, route.src))
 				route.orders.forEach(order => {
-					Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.src, transport, { good: order.good, amount: order.amount }))
+					if (route.src.isEurope) {
+						Commander.scheduleBehind(tradeCommander, TradeCargo.create(transport, { good: order.good, amount: order.amount }))
+					} else {
+						Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.src, transport, { good: order.good, amount: order.amount }))
+					}
 				})
-				Commander.scheduleBehind(tradeCommander, MoveTo.create(transport, route.dest.mapCoordinates))
+
+				Commander.scheduleBehind(tradeCommander, GoTo.create(transport, route.dest))
 				route.orders.forEach(order => {
-					Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.dest, transport, { good: order.good, amount: -order.amount }))
+					if (route.dest.isEurope) {
+						Commander.scheduleBehind(tradeCommander, TradeCargo.create(transport, { good: order.good, amount: -order.amount }))
+					} else {
+						Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.dest, transport, { good: order.good, amount: -order.amount }))
+					}
 				})
 			} else {
 				Message.send(`A ${transport.name} has not found any routes and will look again shortly`)
@@ -66,6 +76,7 @@ const create = (transport, tradeCommanderParam = null, initialized = false, wait
 			tradeCommander.update()
 			return !Commander.isIdle(tradeCommander)
 		}
+
 		return tradeCommander.update()
 	}
 
