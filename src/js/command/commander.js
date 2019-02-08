@@ -105,7 +105,7 @@ const create = (args = {}) => {
 	commander.save = () => ({
 		commands: commander.commands.map(command => command.save()),
 		currentCommand: commander.currentCommand ? commander.currentCommand.save() : null,
-		type: 'commander',
+		module: 'Commander',
 		keep,
 		unit: Record.reference(unit),
 	})

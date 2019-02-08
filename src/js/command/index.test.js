@@ -63,7 +63,7 @@ const commands = {
 		return Command.America.create(unit)
 	},
 	// commander: () => {
-	// 	return Command.Commander.create()
+	// 	return Commander.create()
 	// },
 	cutForest: () => {
 		const unit = pioneer()
