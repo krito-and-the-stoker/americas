@@ -95,7 +95,9 @@ const initialize = () => {
 				}),
 				Click.on(gotoText, () => {
 					if (unit.domain === 'sea') {
-						const colonies = Record.getAll('colony').filter(Colony.isCoastal)
+						const colonies = Record.getAll('colony')
+							.filter(Colony.isCoastal)
+							.sort((a, b) => b.colonists.length - a.colonists.length)
 						Dialog.create({
 							type: 'naval',
 							text: 'Where shall we go?',
