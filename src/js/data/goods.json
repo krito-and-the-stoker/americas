@@ -21,7 +21,8 @@
 		"construction",
 		"bells",
 		"crosses",
-		"books"
+		"books",
+		"gold"
 	],
 	"food":{
 		"id": 64,
@@ -99,5 +100,8 @@
 	},
 	"books":{
 		"id": 134
+	},
+	"gold":{
+		"id": 116
 	}
 }

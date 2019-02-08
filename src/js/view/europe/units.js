@@ -35,7 +35,8 @@ const selectTarget = unit => {
 	const colonies = Record.getAll('colony').filter(colony => {
 		const tile = MapEntity.tile(colony.mapCoordinates)
 		return Tile.diagonalNeighbors(tile).some(tile => tile.domain === 'sea')
-	})
+	}).sort((a, b) => b.colonists.length - a.colonists.length)
+
 	const options = [{
 		text: 'Where you came from',
 		action: () => {

@@ -76,6 +76,7 @@ const listen = {
 	colonists: (colony, fn) => Binding.listen(colony, 'colonists', fn),
 	construction: (colony, fn) => Binding.listen(colony, 'construction', fn),
 	bells: (colony, fn) => Binding.listen(colony, 'bells', fn),
+	growth: (colony, fn) => Binding.listen(colony, 'growth', fn),
 	buildings: (colony, fn) => Binding.listen(colony, 'buildings', fn),
 	productionBonus: (colony, fn) => Binding.listen(colony, 'productionBonus', fn),
 }
@@ -88,6 +89,7 @@ const update = {
 	construction: (colony, value) => Binding.update(colony, 'construction', value),
 	buildings: (colony, value) => Binding.update(colony, 'buildings', value),
 	bells: (colony, value) => Binding.update(colony, 'bells', colony.bells + value),
+	growth: (colony, value) => Binding.update(colony, 'growth', colony.growth + value),
 	productionBonus: (colony, value) => Binding.update(colony, 'productionBonus', value),
 }
 
@@ -150,7 +152,10 @@ const initialize = colony => {
 	destroy.push(Tile.listen.tile(tile, () =>
 		Tile.colonyProductionGoods(tile).map(good =>
 			Time.schedule(Harvest.create(colony, tile, good)))))
-	destroy.push(listen.colonists(colony, colonists => Time.schedule(Consume.create(colony, 'food', 2 * colonists.length))))
+	destroy.push(listen.colonists(colony, colonists => [
+		Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)),
+		Time.schedule(Consume.create(colony, 'bells', 1 * colonists.length))
+	]))
 	destroy.push(listenEach.units(colony, (unit, added) => {
 		if (added && unit.treasure) {
 			Events.trigger('notificaiton', { type: 'treasure', colony, unit })
@@ -160,19 +165,23 @@ const initialize = colony => {
 	let starvationMessageSent = false
 	// const needsToSendEmptyWarning = Util.makeObject(Goods.types.map(good => [good, false]))
 	// const needsToSendFullWarning = Util.makeObject(Goods.types.map(good => [good, false]))
-	destroy.push(Storage.listen(colony.storage, storage => {
-		const keepFood = 20
-		if (storage.food >= 200 + keepFood) {
+	destroy.push(listen.growth(colony, growth => {
+		if (growth > 200) {
 			const unit = Unit.create('settler', colony.mapCoordinates, colony.owner)
-			Storage.update(colony.storage, { good: 'food', amount: -200 })
 			Events.trigger('notificaiton', { type: 'born', colony, unit })
+			colony.growth = 0
 		}
+	}))
+	destroy.push(Storage.listen(colony.storage, storage => {
 		if (storage.food < -1 && !starvationMessageSent) {
 			Message.send(`The food storage of ${colony.name} is empty. We need to get food quickly to prevent losses amongst the colonists`)
 			Events.trigger('notificaiton', { type: 'starving', colony })
 			starvationMessageSent = true
 		}
 		if (storage.food < -5) {
+			starvationMessageSent = false
+		}
+		if (storage.food < -10) {
 			Message.send(`A colonist in ${colony.name} died due to inadequate food supplies`)
 			ShrinkFromStarvation(colony)
 			storage.food = 0
@@ -234,7 +243,8 @@ const create = (coords, owner) => {
 			amount: 0,
 			target: 'harbour',
 		},
-		bells: 0
+		bells: 0,
+		growth: 0
 	}
 	colony.storage = Storage.create()
 	colony.trade = Storage.create()
@@ -275,6 +285,7 @@ const save = colony => ({
 		target: colony.construction.target
 	},
 	bells: colony.bells,
+	growth: colony.growth,
 	owner: Record.reference(colony.owner)
 })
 
@@ -286,6 +297,11 @@ const load = colony => {
 	colony.storage = Storage.load(colony.storage)
 	colony.trade = Trade.load(colony.trade)
 	colony.owner = Record.dereference(colony.owner)
+
+	// legacy games load
+	if (!colony.growth) {
+		colony.growth = 0
+	}
 
 	colony.colonists.forEach((colonist, index) => Record.dereferenceLazy(colonist, entity => colony.colonists[index] = entity))
 	colony.units.forEach((unit, index) => Record.dereferenceLazy(unit, entity => colony.units[index] = entity))

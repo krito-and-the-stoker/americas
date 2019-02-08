@@ -10,7 +10,6 @@ const LOSS_FACTOR = 0.25
 const create = colony => {
 	const update = (currentTime, deltaTime) => {
 		Object.entries(colony.storage)
-			.filter(([good]) => good !== 'food')
 			.filter(([, amount]) => amount > colony.capacity)
 			.forEach(([good, amount]) => {
 				const unscaledLoss = LOSS_FACTOR * (amount - colony.capacity)

@@ -5,8 +5,9 @@ import Storage from 'entity/storage'
 import Colony from 'entity/colony'
 import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
+import Treasure from 'entity/treasure'
 
-
+const BELLS_TO_GOLD_FACTOR = 2
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
 const create = (colony, building, colonist) => {
@@ -26,6 +27,9 @@ const create = (colony, building, colonist) => {
 		if (consumption.good) {
 			productionAmount = Math.min(colony.storage[consumption.good], productionAmount)
 		}
+		if (production.good === 'bells') {
+			productionAmount = Math.min(Treasure.amount() / BELLS_TO_GOLD_FACTOR, productionAmount)	
+		}
 		let consumptionAmount = productionAmount
 		const unscaledProductionAmount = productionAmount / scale
 		const unscaledConsumptionAmount = consumptionAmount / scale
@@ -41,6 +45,8 @@ const create = (colony, building, colonist) => {
 			Colony.update.construction(colony)
 		}
 		if (production.type === 'bells') {
+			Treasure.spend(productionAmount * BELLS_TO_GOLD_FACTOR)
+			Storage.update(colony.productionRecord, { good: 'gold', amount: -unscaledProductionAmount })
 			Colony.update.bells(colony, productionAmount)
 		}
 		if (production.type === 'crosses') {

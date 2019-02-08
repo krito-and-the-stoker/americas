@@ -9,8 +9,11 @@ const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const create = (colony, good, amount) => {
 	const update = (currentTime, deltaTime) => {
 		const finalAmount = -deltaTime * amount * PRODUCTION_BASE_FACTOR
-		Storage.update(colony.storage, { good, amount: finalAmount })
-		Storage.update(colony.productionRecord, { good, amount: -amount })
+
+		if (good !== 'bells' || colony.bells >= finalAmount) {		
+			Storage.update(colony.storage, { good, amount: finalAmount })
+			Storage.update(colony.productionRecord, { good, amount: -amount })
+		}
 		// console.log('consume', { good, amount: -amount })
 
 		return true
