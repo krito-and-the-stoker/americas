@@ -34,6 +34,7 @@ let lastSave = null
 let idCounter = 0
 const makeId = () => idCounter += 1
 
+let worker = null
 let	records = []
 let snapshot = { entities: [] }
 let globals = {}
@@ -264,7 +265,10 @@ const serializeAsync = () => new Promise(async resolve => {
 	await nextFrame()
 
 	if (window.Worker) {
-		const worker = new Worker('/worker.entry.js')
+		if (!worker) {
+			worker = new Worker('/worker.entry.js')
+		}
+
 		worker.onmessage = e => {
 			resolve(e.data)
 		}

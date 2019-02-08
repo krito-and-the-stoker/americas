@@ -55,4 +55,8 @@ const save = () => {
 	const content = JSON.stringify(data)
 
 	postMessage(content)
+
+	data = {
+		tiles: []
+	}
 }
