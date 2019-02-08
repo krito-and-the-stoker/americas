@@ -43,6 +43,7 @@ const togglePause = () => update.paused(time.paused ? 0 : 1)
 let lowPrioDeltaTime = 0
 const advance = deltaTime => {
 	if (time.paused) {
+		Binding.applyAllUpdates()
 		return
 	}
 	currentTime += deltaTime * time.scale
@@ -81,13 +82,15 @@ const advance = deltaTime => {
 
 		scheduled = scheduled.filter(e => !e.cleanup)
 		prioritized = prioritized.filter(e => !e.cleanup)
+
+		if (lowPrioDeltaTime >= LOW_PRIORITY_DELTA_TIME) {
+			lowPrioDeltaTime = 0
+			update.year(Math.round(startYear + currentTime / YEAR))
+		}
+
+		Binding.applyAllUpdates()
 	}	catch(error) {
 		throw error
-	}
-
-	if (lowPrioDeltaTime >= LOW_PRIORITY_DELTA_TIME) {
-		lowPrioDeltaTime = 0
-		update.year(Math.round(startYear + currentTime / YEAR))
 	}
 }
 

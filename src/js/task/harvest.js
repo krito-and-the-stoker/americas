@@ -28,6 +28,7 @@ const create = (colony, tile, good, colonist = null) => {
 		const amount = deltaTime * production
 		Storage.update(colony.storage, { good, amount })
 		Storage.update(colony.productionRecord, { good, amount: unscaledProduction })
+		// console.log('harvest', { good, amount: unscaledProduction })
 
 		return true
 	}

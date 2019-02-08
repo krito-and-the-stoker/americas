@@ -24,9 +24,7 @@ const jamestown = () => {
 	return colony
 }
 const tools = () => ({ good: 'tools', amount: 79 })
-// const closePlace = () => ({ x: 2, y: 2 })
-// const place = () => ({ x: 3, y: 4 })
-// const immigration = () => ({ unit: settler() })
+
 
 test('battle', () => {
 	Interaction.Battle(soldier, settler)

@@ -11,6 +11,7 @@ const create = (colony, good, amount) => {
 		const finalAmount = -deltaTime * amount * PRODUCTION_BASE_FACTOR
 		Storage.update(colony.storage, { good, amount: finalAmount })
 		Storage.update(colony.productionRecord, { good, amount: -amount })
+		// console.log('consume', { good, amount: -amount })
 
 		return true
 	}
