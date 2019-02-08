@@ -73,8 +73,6 @@ const update = (instance, key, value) => {
 			.filter(listener => !listener.keep)
 			.forEach(listener => remove(listener))
 	}
-
-	return promise
 }
 
 const applyUpdate = () => {
