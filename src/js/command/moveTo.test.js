@@ -16,6 +16,8 @@ const advance = (n = 1) => Util.range(n).forEach(() => Time.advance(500))
 
 const soldier = () => Unit.create('soldier', { x: 1, y: 2 })
 const place = () => ({ x: 2, y: 4 })
+const farPlace = () => ({ x: 6, y: 8 })
+const firstPlace = () => ({ x: 1, y: 2 })
 
 test('create & schedule', () => {
 	const unit = soldier()
@@ -50,4 +52,43 @@ test('save & restore', () => {
 
 	advance(100)
 	expect(loadedUnit.mapCoordinates).toEqual(place())
+})
+
+test('schedule instead & schedule behind', () => {
+	const joe = soldier()
+	const jack = soldier()
+	const john = soldier()
+
+	// start walking
+	Commander.scheduleInstead(joe.commander, MoveTo.create(joe, farPlace()))
+	Commander.scheduleInstead(jack.commander, MoveTo.create(jack, farPlace()))
+	Commander.scheduleInstead(john.commander, MoveTo.create(john, farPlace()))
+
+	advance(25)
+
+	// send joe back
+	Commander.scheduleInstead(joe.commander, MoveTo.create(joe, firstPlace()))
+
+	// schedule jack back
+	Commander.scheduleBehind(jack.commander, MoveTo.create(jack, firstPlace()))
+
+	advance(125)
+
+	// joe should have made it back by now
+	expect(joe.mapCoordinates).toEqual(firstPlace())
+
+	// the others should still be walking
+	expect(jack.mapCoordinates).not.toEqual(farPlace())
+	expect(john.mapCoordinates).not.toEqual(farPlace())
+
+	advance(125)
+	// jack should be there now
+	expect(john.mapCoordinates).toEqual(farPlace())
+	// jack should be still on his way
+	expect(jack.mapCoordinates).not.toEqual(farPlace())
+	expect(jack.mapCoordinates).not.toEqual(firstPlace())
+
+	advance(250)
+	// jack should have made it eventually
+	expect(jack.mapCoordinates).toEqual(firstPlace())
 })
