@@ -148,7 +148,7 @@ const match = transport => {
 					const importAmount = route.dest.isEurope ? exportAmount : canImportAmount(route.dest, good)
 					const amount = Math.floor(Math.min(exportAmount, importAmount, capacity))
 					const exPrio = route.src.isEurope ? buyPriority() : exportPriority(route.src, exportAmount)
-					const imPrio = route.dest.isEurope ? sellPriority() : importPriority(route.dest, importAmount)
+					const imPrio = (good === 'food' ? 2 : 1) * (route.dest.isEurope ? sellPriority() : importPriority(route.dest, importAmount))
 					const importance = amount * (1 + exPrio) * (0.5 + imPrio)
 
 					return {
