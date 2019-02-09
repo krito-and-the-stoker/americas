@@ -9,6 +9,7 @@ import Events from 'util/events'
 import Time from 'timeline/time'
 
 import Unit from 'entity/unit'
+import Europe from 'entity/europe'
 
 import Click from 'input/click'
 
@@ -18,6 +19,7 @@ import RenderView from 'render/view'
 import Text from 'render/text'
 
 import Dialog from 'view/ui/dialog'
+import Icon from 'view/ui/icon'
 
 
 const messageFunctions = {
@@ -34,24 +36,67 @@ const messageFunctions = {
 				}
 			}))
 	},
-	landfall: {
+	drag: {
+		subscribe: () => Events.listen('drag', () => {
+			markDone('drag')
+		})
+	},
+	zoom: {
+		subscribe: () => Events.listen('zoom', () => {
+			markDone('zoom')
+		})
+	},
+	discovery: {
 		subscribe: () => Events.listen('discovery', () => {
+			markDone('discovery')
+		})		
+	},
+	landfall: {
+		subscribe: () => Events.listen('disembark', () => {
 			markDone('landfall')
 		})		
 	},
-	disembark: {
-		subscribe: () => Events.listen('disembark', () => {
-			markDone('disembark')
+	foundColony: {
+		subscribe: () => Events.listen('found', () => {
+			markDone('foundColony')
 		})		
+	},
+	goEurope: {
+		extraCondition: () => {
+			let result = false
+			const unsubscribe = Europe.listen.units(units => {
+				result = units.some(unit => unit.domain === 'land')
+			})
+			unsubscribe()
+			return result
+		},
+		subscribe: () => Europe.listen.units(units => {
+			if (units.some(unit => unit.domain === 'sea')) {
+				markDone('goEurope')
+			}
+		})
+	},
+	inEurope: {
+		subscribe: () => Europe.listen.units(units => {
+			if (isDone('goEurope') && !units.some(unit => unit.domain === 'sea')) {
+				markDone('inEurope')
+			}
+		})
 	},
 	colony: {
-		subscribe: () => Events.listen('found', () => {
+		open: () => {
 			markDone('colony')
-		})		
+		}
 	},
-	immigration: {
-		subscribe: () => Events.listen('immigration', () => {
-			markDone('immigration')
+	equip: {
+		open: () => {
+			markDone('equip')
+		}
+	},
+	pioneer: {
+		extraCondition: () => Record.getAll('unit').some(unit => unit.properties.canTerraform),
+		subscribe: () => Events.listen('terraform', () => {
+			markDone('pioneer')
 		})
 	}
 }
@@ -59,16 +104,18 @@ const messageFunctions = {
 const prepareMessage = message => {
 	message.valid = true
 	message.shown = false
+	message.doNotShowAgain = false
 	const funcs = messageFunctions[message.name]
 	if (funcs) {
 		Object.keys(funcs).forEach(key => {
 			message[key] = funcs[key]
 		})
+	} else {
+		console.warn('no listeners attached to tutorial message', message.name, message)
 	}
 
 	return message
 }
-const messages = Messages.map(prepareMessage)
 
 const originalDimensions = sprite => ({
 	x: sprite.texture.baseTexture.realWidth,
@@ -76,7 +123,10 @@ const originalDimensions = sprite => ({
 })
 const height = (sprite) => sprite.width * originalDimensions(sprite).y / originalDimensions(sprite).x
 
-const videoDialog = ({ text, video }) => {
+const videoDialog = message => {
+	const video = message.video
+	const text = message.text
+
 	const closePlane = new PIXI.Container()
 	const frameView = Resources.sprite('tutorialFrame')
 
@@ -85,7 +135,13 @@ const videoDialog = ({ text, video }) => {
 	videoControls.currentTime = 0
 	videoControls.play()
 
-	const textView = Text.create(text)
+	const textView = Text.create(text, {
+		align: 'left',
+		fontSize: 20
+	})
+
+	const checkMark = Icon.create('check')
+	checkMark.buttonMode = true
 
 	const unsubscribeDimensions = RenderView.listen.dimensions(dimensions => {
 		closePlane.hitArea = new PIXI.Rectangle(0, 0, dimensions.x, dimensions.y)
@@ -107,16 +163,20 @@ const videoDialog = ({ text, video }) => {
 		}
 		textView.x = (dimensions.x - textView.width) / 2
 		textView.y = video.y + video.height + 0.03 * dimensions.y
+
+		checkMark.x = frameView.x + frameView.width - 0.03 * dimensions.x - checkMark.width
+		checkMark.y = frameView.y + frameView.height - 0.03 * dimensions.y - checkMark.height
 	})
 
 	Foreground.add.dialog(closePlane)
 	Foreground.add.dialog(video)
 	Foreground.add.dialog(frameView)
 	Foreground.add.dialog(textView)
+	Foreground.add.dialog(checkMark)
 
 	Time.pause()
 
-	Click.on(closePlane, () => {
+	const close = () => {
 		unsubscribeDimensions()
 		videoControls.pause()
 
@@ -124,19 +184,27 @@ const videoDialog = ({ text, video }) => {
 		Foreground.remove.dialog(video)
 		Foreground.remove.dialog(frameView)
 		Foreground.remove.dialog(textView)
+		Foreground.remove.dialog(checkMark)
 
 		Time.resume()
+	}
+
+	Click.on(closePlane, close)
+	Click.on(checkMark, () => {
+		message.doNotShowAgain = true
+		message.valid = false
+		close()
 	})
 }
 
 const show = message => {
 	message.shown = true
+	if (message.open) {
+		message.open()
+	}
 
 	if (message.type === 'video') {	
-		videoDialog({
-			text: message.text,
-			video: message.video,
-		})
+		videoDialog(message)
 	} else {	
 		Dialog.create({
 			text: message.text,
@@ -146,55 +214,70 @@ const show = message => {
 	}
 }
 
-const prepare = message => {
+const prepareVideo = message => {
 	if (message.type === 'video') {
 		message.video = Resources.video(message.name)
 	}
 }
 
-const init = () => {
-	if (!Record.getGlobal('tutorial')) {
-		Record.setGlobal('tutorial', {})
-	}
-
-	messages
-		.filter(msg => msg.subscribe)
-		.forEach(msg => {
-			msg.unsubscribe = msg.subscribe()
-		})
-}
+const isDone = name => Record.getGlobal('tutorial')[name]
 const markDone = name => {
 	Record.getGlobal('tutorial')[name] = true
 	const message = messages.find(msg => msg.name === name)
 	Util.execute(message.unsubscribe)
 	message.valid = false
 }
-const isDone = name => Record.getGlobal('tutorial')[name]
+
+const nextMessageTime = (currentTime, msg) => currentTime + 1000 * (msg.wait ? (msg.shown ? msg.wait.repeat : msg.wait.initial) : 0)
 const nextMessage = () => {
-	const message = messages.filter(msg => !isDone(msg.name)).find(msg => msg.preconditions.every(pre => isDone(pre)))
-	prepare(message)
+	const message = messages
+		.filter(msg => !isDone(msg.name))
+		.filter(msg => !msg.doNotShowAgain)
+		.filter(msg => !msg.extraCondition || msg.extraCondition(msg))
+		.find(msg => msg.preconditions.every(pre => isDone(pre)))
+
+	if (message) {
+		message.valid = true
+		prepareVideo(message)
+	}
+
 	return message
 }
-// const stop = () => messages.map(msg => msg.name).forEach(markDone)
-const nextMessageTime = (currentTime, msg) => currentTime + 1000 * (msg.wait ? (msg.shown ? msg.wait.repeat : msg.wait.initial) : 0)
-const initialize = () => {
-	init()
 
-	let msg = nextMessage()
+let messages = []
+const initialize = () => {
+	if (!Record.getGlobal('tutorial')) {
+		Record.setGlobal('tutorial', {})
+	}
+
+	messages = Messages.map(prepareMessage)
+	messages
+		.filter(msg => msg.subscribe)
+		.forEach(msg => {
+			msg.unsubscribe = msg.subscribe()
+		})
+
+
+	let message = nextMessage()
 	let eta = 0
 	Time.schedule({ update: currentTime => {
-		if (!msg.valid) {
-			msg = nextMessage()
-			eta = nextMessageTime(currentTime, msg)
+		if (!message) {
+			message = nextMessage()
+			eta = 0
 		}
 
-		if (!eta) {
-			eta = nextMessageTime(currentTime, msg)
+		if (message && !message.valid) {		
+			message = nextMessage()
+			eta = 0
 		}
 
-		if (currentTime >= eta) {
-			show(msg)
-			eta = nextMessageTime(currentTime, msg)
+		if (message && !eta) {
+			eta = nextMessageTime(currentTime, message)
+		}
+
+		if (message && currentTime >= eta) {
+			show(message)
+			eta = nextMessageTime(currentTime, message)
 		}
 
 		return true

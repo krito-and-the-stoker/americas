@@ -156,6 +156,7 @@ const initialize = () => {
 
 	let initialCoords = null
 	const start = coords => {
+		Events.trigger('drag')
 		stopRollingOut = () => { initialCoords = null }
 		if (!Foreground.hasOpenScreen()) {		
 			initialCoords = {
@@ -224,6 +225,7 @@ const initialize = () => {
 	const ZOOM_FACTOR = 0.001
 	const handleWheel = (e) => {
 		if (!Foreground.hasOpenScreen()) {		
+			Events.trigger('zoom')
 			stopRollingOut()
 			zoomBy(Math.exp(-ZOOM_FACTOR * e.deltaY), { x: Math.round(e.clientX), y: Math.round(e.clientY) })
 		}

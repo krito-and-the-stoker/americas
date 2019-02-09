@@ -33,6 +33,7 @@ const create = (unit, eta) => {
 			Tile.constructRoad(MapEntity.tile(unit.mapCoordinates))
 			Unit.update.pioneering(unit, false)
 			Events.trigger('notification', { type: 'terraforming', unit })
+			Events.trigger('terraform')
 		}
 	}
 

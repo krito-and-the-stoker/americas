@@ -66,8 +66,10 @@ const textures = {
 
 const videos = {
 	colony: 'videos/tutorial/colony.mp4',
+	equip: 'videos/tutorial/equip.mp4',
 	foundColony: 'videos/tutorial/found-colony.mp4',
 	goEurope: 'videos/tutorial/go-europe.mp4',
+	inEurope: 'videos/tutorial/in-europe.mp4',
 	landfall: 'videos/tutorial/landfall.mp4',
 	move: 'videos/tutorial/move.mp4',
 	pioneer: 'videos/tutorial/pioneer.mp4',
