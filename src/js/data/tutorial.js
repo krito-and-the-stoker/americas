@@ -65,7 +65,7 @@ export default [
 	}, {
 		name: 'goEurope',
 		preconditions: [],
-		text: 'You should return to Europe to bring a settler to the new world and maybe buy needed goods',
+		text: 'You should return to Europe to bring settlers to the new world. Send your ship to the darker water areas to send them across the atlantic. You might also use the go-to command',
 		wait: {
 			initial: 10,
 			repeat: 15
