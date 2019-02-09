@@ -57,6 +57,7 @@ const paths = {
 	firstColony: 'images/fullscreen-events/first-colony.jpg',
 	enteringVillage: 'images/fullscreen-events/entering-village.jpg',
 	firstFreight: 'images/fullscreen-events/first-freight.jpg',
+	tutorialFrame: 'images/tutorial-frame.png'
 }
 
 const textures = {
@@ -70,7 +71,7 @@ const videos = {
 	landfall: 'videos/tutorial/landfall.mp4',
 	move: 'videos/tutorial/move.mp4',
 	pioneer: 'videos/tutorial/pioneer.mp4',
-	scroll: 'videos/tutorial/scroll.mp4',
+	drag: 'videos/tutorial/drag.mp4',
 	select: 'videos/tutorial/select.mp4',
 	zoom: 'videos/tutorial/zoom.mp4',
 }
@@ -87,6 +88,7 @@ const rectangle = (index) => {
 const texture = (name, options = {}) => {
 	if (!textures[name]) {
 		console.warn('Texture not found in textures:', name, textures)
+		return textures.white
 	}
 	if (options.frame || options.frame === 0) {
 		return new PIXI.Texture(textures[name], rectangle(options.frame))
@@ -98,7 +100,10 @@ const texture = (name, options = {}) => {
 }
 
 const video = name => {
-	textures.name = PIXI.Texture.fromVideo(videos[name])
+	if (!textures[name]) {
+		textures[name] = PIXI.Texture.fromVideo(videos[name])
+	}
+
 	return sprite(name)
 }
 
