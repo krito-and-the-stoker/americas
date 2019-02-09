@@ -50,8 +50,8 @@
 	},
 	"silver": {
 		"difference": 1,
-		"low": 24,
-		"high": 24,
+		"low": 29,
+		"high": 29,
 		"consumption": 0,
 		"capacity": 200
 	},
@@ -64,29 +64,29 @@
 	},
 	"rum": {
 		"difference": 1,
-		"low": 7,
-		"high": 13,
+		"low": 12,
+		"high": 17,
 		"consumption": 3,
 		"capacity": 200
 	},
 	"cigars": {
 		"difference": 1,
-		"low": 7,
-		"high": 13,
+		"low": 12,
+		"high": 17,
 		"consumption": 3,
 		"capacity": 200
 	},
 	"cloth": {
 		"difference": 1,
-		"low": 7,
-		"high": 13,
+		"low": 12,
+		"high": 17,
 		"consumption": 3,
 		"capacity": 200
 	},
 	"coats": {
 		"difference": 1,
-		"low": 7,
-		"high": 13,
+		"low": 12,
+		"high": 17,
 		"consumption": 3,
 		"capacity": 200
 	},
