@@ -178,6 +178,7 @@ const recruit = (option, index) => {
 		europe.crosses = 0
 		update.crosses(0)
 		europe.pool[index] = Util.choose(possibleColonists)
+		Events.trigger('immigration')
 	}
 }
 
@@ -236,6 +237,7 @@ const initialize = () => {
 			update.crosses(-europe.crossesNeeded)
 			europe.crossesNeeded += 2
 			Events.trigger('notification', { type: 'immigration', unit })
+			Events.trigger('immigration')
 			Message.send(`Religious unrest in Europe has caused a ${chosen.name} to line up for migration to the new world.`)
 		}
 	})

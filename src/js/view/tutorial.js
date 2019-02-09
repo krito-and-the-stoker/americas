@@ -1,3 +1,5 @@
+import Messages from 'data/tutorial'
+
 import Util from 'util/util'
 import Record from 'util/record'
 import Events from 'util/events'
@@ -9,66 +11,63 @@ import Unit from 'entity/unit'
 import Dialog from 'view/ui/dialog'
 
 
-const interval = 15000
-const messages = [
-	{
-		name: 'select',
-		preconditions: [],
-		text: 'Click on your caravel to select it',
-		type: 'naval',
+const messageFunctions = {
+	select: {
 		subscribe: () => Events.listen('select', () => {
 			markDone('select')
 		})
-	}, {
-		name: 'go',
-		preconditions: ['select'],
-		text: 'Right-click somewhere on the map to the west to go there',
-		type: 'naval',
+	},
+	move: {
 		subscribe: () => Record.getAll('unit').map(unit =>
 			Unit.listen.mapCoordinates(unit, coords => {
 				if (coords.x < unit.tile.mapCoordinates.x) {
-					markDone('go')
+					markDone('move')
 				}
 			}))
-	}, {
-		name: 'land',
-		preconditions: ['go'],
-		text: 'Sail to the west, there will be land',
-		type: 'naval',
+	},
+	landfall: {
 		subscribe: () => Events.listen('discovery', () => {
-			markDone('land')
-		})
-	}, {
-		name: 'disembark',
-		preconditions: ['land'],
-		text: 'Disembark a passanger by targeting land with your ship',
-		type: 'naval',
+			markDone('landfall')
+		})		
+	},
+	disembark: {
 		subscribe: () => Events.listen('disembark', () => {
 			markDone('disembark')
-		})
-	}, {
-		name: 'colony',
-		preconditions: ['disembark'],
-		text: 'Found a colony',
-		type: 'scout',
+		})		
+	},
+	colony: {
 		subscribe: () => Events.listen('found', () => {
 			markDone('colony')
+		})		
+	},
+	immigration: {
+		subscribe: () => Events.listen('immigration', () => {
+			markDone('immigration')
 		})
 	}
-]
+}
+
+const prepareMessage = message => {
+	message.valid = true
+	message.shown = false
+	const funcs = messageFunctions[message.name]
+	if (funcs) {
+		Object.keys(funcs).forEach(key => {
+			message[key] = funcs[key]
+		})
+	}
+
+	return message
+}
+const messages = Messages.map(prepareMessage)
 
 
-const create = message => {
+const show = message => {
+	message.shown = true
 	Dialog.create({
-		type: message.type,
 		text: message.text,
+		type: 'menu',
 		pause: true
-		// options: [{
-		// 	text: 'Ok, thank you.'
-		// }, {
-		// 	text: 'I know what I am doing (skip tutorial)',
-		// 	action: () => stop()
-		// }]
 	})
 }
 
@@ -77,37 +76,44 @@ const init = () => {
 		Record.setGlobal('tutorial', {})
 	}
 
-	messages.forEach(msg => {
-		msg.unsubscribe = msg.subscribe()
-	})
+	messages
+		.filter(msg => msg.subscribe)
+		.forEach(msg => {
+			msg.unsubscribe = msg.subscribe()
+		})
 }
 const markDone = name => {
 	Record.getGlobal('tutorial')[name] = true
-	Util.execute(messages.find(msg => msg.name === name).unsubscribe)
+	const message = messages.find(msg => msg.name === name)
+	Util.execute(message.unsubscribe)
+	message.valid = false
 }
 const isDone = name => Record.getGlobal('tutorial')[name]
-const message = () => messages.filter(msg => !isDone(msg.name)).find(msg => msg.preconditions.every(pre => isDone(pre)))
-const stop = () => messages.map(msg => msg.name).forEach(markDone) // stops the tutorial, will probably be used at some point
-
+const nextMessage = () => messages.filter(msg => !isDone(msg.name)).find(msg => msg.preconditions.every(pre => isDone(pre)))
+// const stop = () => messages.map(msg => msg.name).forEach(markDone)
+const nextMessageTime = (currentTime, msg) => currentTime + 1000 * (msg.wait ? (msg.shown ? msg.wait.initial : msg.wait.repeat) : 0)
 const initialize = () => {
 	init()
 
+	let msg = nextMessage()
 	let eta = 0
 	Time.schedule({ update: currentTime => {
+		if (!msg.valid) {
+			msg = nextMessage()
+			eta = nextMessageTime(currentTime, msg)
+		}
+
 		if (!eta) {
-			eta = currentTime + interval
+			eta = nextMessageTime(currentTime, msg)
 		}
 
 		if (currentTime >= eta) {
-			const msg = message()
-			if (msg) {
-				create(msg)
-				eta = currentTime + interval
-			}
+			show(msg)
+			eta = nextMessageTime(currentTime, msg)
 		}
 
 		return true
-	}})
+	} })
 }
 
 export default { initialize }

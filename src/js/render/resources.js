@@ -56,11 +56,23 @@ const paths = {
 	discovery: 'images/fullscreen-events/discovery.jpg',
 	firstColony: 'images/fullscreen-events/first-colony.jpg',
 	enteringVillage: 'images/fullscreen-events/entering-village.jpg',
-	firstFreight: 'images/fullscreen-events/first-freight.jpg'
+	firstFreight: 'images/fullscreen-events/first-freight.jpg',
 }
 
 const textures = {
 	white: PIXI.Texture.WHITE
+}
+
+const videos = {
+	colony: 'videos/tutorial/colony.mp4',
+	foundColony: 'videos/tutorial/found-colony.mp4',
+	goEurope: 'videos/tutorial/go-europe.mp4',
+	landfall: 'videos/tutorial/landfall.mp4',
+	move: 'videos/tutorial/move.mp4',
+	pioneer: 'videos/tutorial/pioneer.mp4',
+	scroll: 'videos/tutorial/scroll.mp4',
+	select: 'videos/tutorial/select.mp4',
+	zoom: 'videos/tutorial/zoom.mp4',
 }
 
 const rectangle = (index) => {
@@ -83,6 +95,11 @@ const texture = (name, options = {}) => {
 		return new PIXI.Texture(textures[name], options.rectangle)
 	}
 	return new PIXI.Texture(textures[name])
+}
+
+const video = name => {
+	textures.name = PIXI.Texture.fromVideo(videos[name])
+	return sprite(name)
 }
 
 const sprite = (name, options) => new PIXI.Sprite(texture(name, options))
@@ -110,50 +127,12 @@ const loadAll = () => {
 
 const initialize = () => {
 	return loadAll()
-	// return Util.loadTextureVerbose('images/colony-screen/coast-up.png',
-	// 	'images/colony-screen/coast-rightup.png',
-	// 	'images/colony-screen/coast-right.png',
-	// 	'images/colony-screen/coast-rightdown.png',
-	// 	'images/colony-screen/coast-down.png',
-	// 	'images/colony-screen/coast-leftdown.png',
-	// 	'images/colony-screen/coast-left.png',
-	// 	'images/colony-screen/coast-leftup.png'
-	// ).then(([up, rightup, right, rightdown, down, leftdown, left, leftup]) => {
-	// 	colonyScreenCoast.up = up
-	// 	colonyScreenCoast.rightup = rightup
-	// 	colonyScreenCoast.right = right
-	// 	colonyScreenCoast.rightdown = rightdown
-	// 	colonyScreenCoast.down = down
-	// 	colonyScreenCoast.leftdown = leftdown
-	// 	colonyScreenCoast.left = left
-	// 	colonyScreenCoast.leftup = leftup
-	// }).then(() => Util.loadTextureVerbose('images/map.png',
-	// 	'images/colony-screen/background.jpg',
-	// 	'images/europe.jpg',
-	// 	'images/undiscovered.jpg',
-	// 	'images/colony-screen/wood-background.jpg',
-	// 	'images/goods-background.jpg',
-	// 	'images/colony-screen/buildings.png',
-	// 	'images/help.jpg',
-	// 	'images/welcome.png',
-	// 	'images/ring.png'
-	// )).then(result => {
-	// 	mapTiles = result[0]
-	// 	colonyBackground = result[1]
-	// 	europeBackground = result[2]
-	// 	undiscovered = result[3]
-	// 	colonyWoodBackground = result[4]
-	// 	goodsBackground = result[5]
-	// 	buildings = result[6]
-	// 	help = result[7]
-	// 	welcome = result[8]
-	// 	ring = result[9]
-	// })
 }
 
 
 export default {
 	initialize,
+	video,
 	sprite,
 	texture,
 	numberOfAssets
