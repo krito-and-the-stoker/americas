@@ -56,7 +56,7 @@ export default [
 	}, {
 		name: 'foundColony',
 		preconditions: ['disembark'],
-		text: 'You should found a colony by left-clicking on the command or pressing -b-',
+		text: 'You should tell your land-unit to found a colony by left-clicking on the command or pressing -b-'. Almost all land-units can found colonies, soldiers, too!,
 		wait: {
 			initial: 10,
 			repeat: 15
@@ -68,7 +68,7 @@ export default [
 	}, {
 		name: 'goEurope',
 		preconditions: ['immigration'],
-		text: 'You should return to Europe to bring a settler to the wen world and maybe buy needed goods',
+		text: 'You should return to Europe to bring settlers to the new world. Send your ship to the darker water areas to send them across the atlantic. You might also use the go-to command',
 		wait: {
 			initial: 10,
 			repeat: 15
