@@ -2,7 +2,7 @@ export default [
 	{
 		name: 'select', // do not change the name, has to match video source in resources module
 		preconditions: [], // when can this event occur
-		text: 'Click on your caravel to select it',
+		text: 'Click on your ship to select it',
 		wait: {
 			initial: 5, // how many seconds we will wait initially
 			repeat: 10 // how many seconds we will wait until showing the same message again
@@ -11,7 +11,7 @@ export default [
 	}, {
 		name: 'move',
 		preconditions: ['select'],
-		text: 'Right-click somewhere on the map to the west to go there',
+		text: 'Right-click somewhere on the map to your left to send your ship there',
 		wait: {
 			initial: 10,
 			repeat: 15
@@ -20,7 +20,7 @@ export default [
 	}, {
 		name: 'drag',
 		preconditions: ['move'],
-		text: 'You can drag wow!',
+		text: 'You can drag the view by holding and dragging your left mouse button',
 		wait: {
 			initial: 10,
 			repeat: 15
@@ -29,7 +29,7 @@ export default [
 	}, {
 		name: 'zoom',
 		preconditions: ['drag'],
-		text: 'You can zoom also!',
+		text: 'You can use your mouse wheel to zoom in and out',
 		wait: {
 			initial: 10,
 			repeat: 15
@@ -38,7 +38,7 @@ export default [
 	}, {
 		name: 'discovery',
 		preconditions: ['zoom'],
-		text: 'Sail to the west, there will be land',
+		text: 'There are signs of land ahead. Keep sailing to the west to find new shores!',
 		wait: {
 			initial: 10,
 			repeat: 15
@@ -56,7 +56,7 @@ export default [
 	}, {
 		name: 'foundColony',
 		preconditions: ['disembark'],
-		text: 'Found a colony',
+		text: 'You should found a colony by left-clicking on the command or pressing -b-',
 		wait: {
 			initial: 10,
 			repeat: 15
@@ -68,7 +68,7 @@ export default [
 	}, {
 		name: 'goEurope',
 		preconditions: ['immigration'],
-		text: 'Go to Europe and get your settler',
+		text: 'You should return to Europe to bring a settler to the wen world and maybe buy needed goods',
 		wait: {
 			initial: 10,
 			repeat: 15
