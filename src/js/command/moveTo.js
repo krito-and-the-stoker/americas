@@ -25,12 +25,8 @@ const inMoveDistance = (coords1, coords2) => Math.abs(coords1.x - coords2.x) <= 
 
 
 const create = Decorators.ensureArguments(2, (unit, coords, moveToCommander = null, hasPath = false, lastPoint = null) => {
-	if (unit.unloadingInProgress ||
-		coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y) {
-
-		return {
-			update: () => false
-		}
+	if (coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y) {
+		console.warn('invalid coords', unit.name, coords)
 	}
 
 	if (!moveToCommander) {

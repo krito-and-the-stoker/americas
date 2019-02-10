@@ -12,10 +12,14 @@ import America from 'command/america'
 import EuropeCommand from 'command/europe'
 
 
-const create = Decorators.ensureArguments(2, (unit, destination, commander = null) => {
+const create = Decorators.ensureArguments(2, (unit, destination, commander = null, isInitialized = false) => {
 	const gotoCommander = commander ? commander : Commander.create()
 
 	const init = () => {
+		if (isInitialized) {
+			return true
+		}
+
 		if (destination.type === 'colony') {
 			const colony = destination
 
@@ -66,6 +70,7 @@ const create = Decorators.ensureArguments(2, (unit, destination, commander = nul
 		update,
 		save,
 		stopped,
+		isInitialized,
 		priority: true
 	}
 
@@ -76,8 +81,12 @@ const load = data => {
 	const commander = Commander.load(data.gotoCommander)
 	const unit = Record.dereference(data.unit)
 	const destination = data.destination.type === 'colony' ? Record.dereference(data.destination) : data.destination
+	if (!Commander.isIdle(commander)) {
+		data.isInitialized = true
+	}
+	const isInitialized = data.isInitialized
 
-	return create(unit, destination, commander)
+	return create(unit, destination, commander, isInitialized)
 }
 
 export default {
