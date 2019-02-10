@@ -57,7 +57,7 @@ const create = Decorators.ensureArguments(2, (unit, coords, moveToCommander = nu
 			}
 
 			if (!MapEntity.tile(unit.mapCoordinates)) {
-				console.warn('unit is adrift. This is definitely an error. Trying to fix...', unit.mapCoordinates, unit.referenceId)
+				console.warn('unit is adrift. This is definitely an error. Trying to fix...', unit.mapCoordinates, unit.name, unit.referenceId)
 				unit.mapCoordinates = {
 					x: Math.round(unit.mapCoordinates.x),
 					y: Math.round(unit.mapCoordinates.y),

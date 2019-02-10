@@ -46,7 +46,12 @@ const create = Decorators.ensureArguments(2, (unit, destination, commander = nul
 		return gotoCommander.init()
 	}
 
-	const update = () => gotoCommander.update()
+	const update = () => {
+		if (command.pleaseStop) {
+			gotoCommander.pleaseStop = true
+		}
+		return gotoCommander.update()
+	}
 	const stopped = () => gotoCommander.stopped()
 
 	const save = () => ({
@@ -56,13 +61,15 @@ const create = Decorators.ensureArguments(2, (unit, destination, commander = nul
 		module: 'GoTo'
 	})
 
-	return {
+	const command = {
 		init,
 		update,
 		save,
 		stopped,
 		priority: true
 	}
+
+	return command
 })
 
 const load = data => {

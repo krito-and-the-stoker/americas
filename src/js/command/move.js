@@ -17,12 +17,9 @@ const unloading = (unit, fromTile, toTile) => unit.domain === 'land' && fromTile
 const createFromData = data => {
 	const coords = data.coords
 	const unit = data.unit
-	const finishedFn = data.finishedFn
 
 	if (coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y) {
-		return {
-			update: () => false
-		}
+		console.warn('coords out of range', coords)
 	}
 
 	let startTime = data.startTime
@@ -31,23 +28,21 @@ const createFromData = data => {
 	let aborted = data.aborted
 	const targetTile = MapEntity.tile(coords)
 	let fromTile = null
-	let enteringShip = data.enteringShip
 
 	const init = currentTime => {
 		startTime = currentTime
 		startCoords = startCoords || unit.mapCoordinates
 
 		if(unit.offTheMap) {
-			aborted = true
-			return false
+			console.warn('unit is off the map. cannot move')
 		}
 
 		if (!inMoveDistance(startCoords, coords)) {
-			aborted = true
-			return false
+			console.warn('unit cannot move to non-adjacent tiles')
 		}
 
 		if (startCoords.x === coords.x && startCoords.y === coords.y) {
+			console.warn('unit is at target coordinates already')
 			aborted = true
 			return false
 		}
@@ -62,9 +57,6 @@ const createFromData = data => {
 		duration = Tile.movementCost(fromTile, targetTile) * Time.MOVE_BASE_TIME / speed
 		if (unloading(unit, fromTile, targetTile)) {
 			duration = Time.UNLOAD_TIME
-		}
-		if (enteringShip) {
-			duration = Time.LOAD_TIME
 		}
 
 		return true
@@ -94,9 +86,6 @@ const createFromData = data => {
 			Tile.discover(targetTile, unit.owner)
 			Tile.diagonalNeighbors(targetTile).forEach(other => Tile.discover(other, unit.owner))
 		}
-		if (finishedFn) {
-			finishedFn()
-		}
 	}
 
 	const save = () => ({
@@ -107,7 +96,6 @@ const createFromData = data => {
 		startCoords,
 		duration,
 		aborted,
-		enteringShip,
 	})
 
 	return {
@@ -120,7 +108,7 @@ const createFromData = data => {
 	
 }
 
-const create = (unit, coords, finishedFn) => createFromData({ unit, coords, finishedFn })
+const create = (unit, coords) => createFromData({ unit, coords })
 
 const load = data => {
 	const unit = Record.dereference(data.unit)
