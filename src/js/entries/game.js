@@ -190,7 +190,7 @@ const start = async () => {
 			Keyboard.initialize()
 			Dialog.create({
 				type: 'king',
-				text: 'Welcome to Americas!\n\nYou made it here to find a new world in the west.',
+				text: 'You have been send by our king to the other side of the ocean. Look for new land and riches to serve the glory of our country!',
 				coords: caravel.mapCoordinates,
 				pause: true
 			})
