@@ -137,7 +137,7 @@ const videoDialog = message => {
 
 	const textView = Text.create(text, {
 		align: 'left',
-		fontSize: 20
+		fontSize: 24
 	})
 
 	const checkMark = Icon.create('check')
