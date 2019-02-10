@@ -9,7 +9,6 @@ import Tween from 'util/tween.js'
 import PathFinder from 'util/pathFinder'
 import Record from 'util/record'
 import Util from 'util/util'
-import Binding from 'util/binding'
 import Message from 'util/message'
 
 import Time from 'timeline/time'
