@@ -1,5 +1,6 @@
 import Record from 'util/record'
 import Message from 'util/message'
+import Decorators from 'util/decorators'
 
 import Time from 'timeline/time'
 
@@ -9,7 +10,7 @@ import Unit from 'entity/unit'
 import EnterEurope from 'interaction/enterEurope'
 
 
-const create = (unit, eta = null) => {
+const create = Decorators.ensureArguments(1, (unit, eta = null) => {
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)
 		if (tile.name !== 'sea lane') {
@@ -47,7 +48,7 @@ const create = (unit, eta = null) => {
 		finished,
 		save
 	}
-}
+})
 
 const load = data => {
 	const unit = Record.dereference(data.unit)

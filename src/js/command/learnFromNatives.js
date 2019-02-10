@@ -2,6 +2,7 @@ import Time from 'timeline/time'
 
 import Record from 'util/record'
 import Events from 'util/events'
+import Decorators from 'util/decorators'
 
 import Unit from 'entity/unit'
 import Colonist from 'entity/colonist'
@@ -11,7 +12,7 @@ import Colony from 'entity/colony'
 const TEACH_BASE_FACTOR = 1.0 / Time.TEACH_BASE_TIME
 
 
-const create = (unit, profession) => {
+const create = Decorators.ensureArguments(2, (unit, profession) => {
 	if (!unit.colonist) {
 		Unit.update.colonist(unit, Colonist.create(unit))
 	}
@@ -57,7 +58,7 @@ const create = (unit, profession) => {
 	}
 
 	return learnFromNatives
-}
+})
 
 const load = data => {
 	const unit = Record.dereference(data.unit)

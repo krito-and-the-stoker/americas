@@ -1,3 +1,4 @@
+import Decorators from 'util/decorators'
 import Record from 'util/record'
 import Events from 'util/events'
 
@@ -41,16 +42,12 @@ const loadCargo = (colony, unit, pack) => {
 }
 
 
-const create = (colony, unit, pack, eta = null) => {
+const create = Decorators.ensureArguments(3, (colony, unit, pack, eta = null) => {
 	addForecast(colony, pack)
 
 	const init = currentTime => {
-		if (!colony || unit.colony !== colony) {
-			return false
-		}
-
-		if (!pack) {
-			return false
+		if (unit.colony !== colony) {
+			console.warn('unit loads cargo but is not inside colony', colony.name, unit.name, pack)
 		}
 
 		if (!eta) {
@@ -87,7 +84,7 @@ const create = (colony, unit, pack, eta = null) => {
 		save,
 		canceled
 	}
-}
+})
 
 const load = data => {
 	const unit = Record.dereference(data.unit)

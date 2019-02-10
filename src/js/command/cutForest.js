@@ -1,6 +1,7 @@
 import Util from 'util/util'
 import Record from 'util/record'
 import Events from 'util/events'
+import Decorators from 'util/decorators'
 
 import Time from 'timeline/time'
 
@@ -10,7 +11,7 @@ import Storage from 'entity/storage'
 import Unit from 'entity/unit'
 
 
-const create = (unit, eta) => {
+const create = Decorators.ensureArguments(1, (unit, eta) => {
 	let aborted = false
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)
@@ -56,7 +57,7 @@ const create = (unit, eta) => {
 		finished,
 		save
 	}
-}
+})
 
 const load = data => {
 	const unit = Record.dereference(data.unit)

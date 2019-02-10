@@ -1,4 +1,5 @@
 import Record from 'util/record'
+import Decorators from 'util/decorators'
 
 import Time from 'timeline/time'
 

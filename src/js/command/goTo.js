@@ -1,5 +1,6 @@
 import PathFinder from 'util/pathFinder'
 import Record from 'util/record'
+import Decorators from 'util/decorators'
 
 import MapEntity from 'entity/map'
 import Europe from 'entity/europe'
@@ -11,7 +12,7 @@ import America from 'command/america'
 import EuropeCommand from 'command/europe'
 
 
-const create = (unit, destination, commander = null) => {
+const create = Decorators.ensureArguments(2, (unit, destination, commander = null) => {
 	const gotoCommander = commander ? commander : Commander.create()
 
 	const init = () => {
@@ -62,7 +63,7 @@ const create = (unit, destination, commander = null) => {
 		stopped,
 		priority: true
 	}
-}
+})
 
 const load = data => {
 	const commander = Commander.load(data.gotoCommander)

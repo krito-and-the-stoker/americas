@@ -1,5 +1,6 @@
 import Record from 'util/record'
 import Events from 'util/events'
+import Decorators from 'util/decorators'
 
 import Colony from 'entity/colony'
 import MapEntity from 'entity/map'
@@ -11,7 +12,7 @@ import FindWork from 'interaction/findWork'
 import EnterColony from 'interaction/enterColony'
 
 
-const create = unit => {
+const create = Decorators.ensureArguments(1, unit => {
 	const init = () => {
 		if (!unit.properties.canFound) {
 			return false
@@ -47,7 +48,7 @@ const create = unit => {
 		init,
 		save
 	}
-}
+})
 
 const load = data => create(Record.dereference(data.unit))
 

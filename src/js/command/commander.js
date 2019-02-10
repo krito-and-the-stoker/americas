@@ -113,9 +113,19 @@ const create = (args = {}) => {
 	return commander
 }
 
+const loadCommand = command => {
+	const module = Command[command.module]
+	if (!module || !module.load) {
+		console.warn('no module found', command.module, module, command)
+		return command
+	}
+
+	return module.load(command)
+}
+
 
 const load = data => {
-	const commands = (data.currentCommand ? [data.currentCommand, ...data.commands] : data.commands).map(cmd => Command[cmd.module].load(cmd))
+	const commands = (data.currentCommand ? [data.currentCommand, ...data.commands] : data.commands).map(loadCommand)
 	const unit = Record.dereference(data.unit)
 	return create({ keep: data.keep, commands, unit })
 }

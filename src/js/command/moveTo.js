@@ -1,6 +1,7 @@
+import Util from 'util/util'
 import PathFinder from 'util/pathFinder'
 import Record from 'util/record'
-import Util from 'util/util'
+import Decorators from 'util/decorators'
 
 import MapEntity from 'entity/map'
 import Unit from 'entity/unit'
@@ -23,7 +24,7 @@ const canLoadTreasure = ship => (Commander.isIdle(ship.commander) ||
 const inMoveDistance = (coords1, coords2) => Math.abs(coords1.x - coords2.x) <= 1 && Math.abs(coords1.y - coords2.y) <= 1
 
 
-const create = (unit, coords, moveToCommander = null, hasPath = false, lastPoint = null) => {
+const create = Decorators.ensureArguments(2, (unit, coords, moveToCommander = null, hasPath = false, lastPoint = null) => {
 	if (unit.unloadingInProgress ||
 		coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y) {
 
@@ -127,7 +128,7 @@ const create = (unit, coords, moveToCommander = null, hasPath = false, lastPoint
 	}
 
 	return moveTo
-}
+})
 
 const load = data => {
 	const unit = Record.dereference(data.unit)

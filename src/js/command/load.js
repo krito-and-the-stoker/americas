@@ -1,3 +1,4 @@
+import Decorators from 'util/decorators'
 import Record from 'util/record'
 
 import Time from 'timeline/time'
@@ -5,7 +6,7 @@ import Time from 'timeline/time'
 import Unit from 'entity/unit'
 
 
-const create = (transport, passenger, loadingStartedAt = null) => {
+const create = Decorators.ensureArguments(2, (transport, passenger, loadingStartedAt = null) => {
 	const init = currentTime => {
 		if (!loadingStartedAt) {
 			loadingStartedAt = currentTime
@@ -35,7 +36,7 @@ const create = (transport, passenger, loadingStartedAt = null) => {
 		finished,
 		save
 	}
-}
+})
 
 const load = data => {
 	const transport = Record.dereference(data.transport)

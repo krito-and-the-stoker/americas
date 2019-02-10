@@ -1,5 +1,6 @@
 import Record from 'util/record'
 import Events from 'util/events'
+import Decorators from 'util/decorators'
 
 import Time from 'timeline/time'
 
@@ -27,14 +28,11 @@ const tradeCargo = (unit, pack) => {
 }
 
 
-const create = (unit, pack, eta = null) => {
+const create = Decorators.ensureArguments(2, (unit, pack, eta = null) => {
+
 	const init = currentTime => {
 		if (!Europe.has.unit(unit)) {
-			return false
-		}
-
-		if (!pack) {
-			return false
+			console.warn('unit wants to trade without being in europe', unit.name, pack)
 		}
 
 		if (!eta) {
@@ -65,7 +63,7 @@ const create = (unit, pack, eta = null) => {
 		finished,
 		save,
 	}
-}
+})
 
 const load = data => {
 	const unit = Record.dereference(data.unit)

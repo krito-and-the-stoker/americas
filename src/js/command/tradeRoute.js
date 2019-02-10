@@ -1,6 +1,7 @@
 import Message from 'util/message'
 import Record from 'util/record'
 import Events from 'util/events'
+import Decorators from 'util/decorators'
 
 import MapEntity from 'entity/map'
 import Storage from 'entity/storage'
@@ -14,7 +15,7 @@ import TradeCargo from 'command/tradeCargo'
 import TriggerEvent from 'command/triggerEvent'
 
 
-const create = (transport, tradeCommanderParam = null, initialized = false, waitingForRoute = 0, needsOrders = true) => {
+const create = Decorators.ensureArguments(1, (transport, tradeCommanderParam = null, initialized = false, waitingForRoute = 0, needsOrders = true) => {
 	const tradeCommander = tradeCommanderParam || Commander.create({ keep: true })
 
 	if (!needsOrders) {
@@ -119,7 +120,7 @@ const create = (transport, tradeCommanderParam = null, initialized = false, wait
 	}
 
 	return tradeRoute
-}
+})
 
 const load = data => {
 	const transport = Record.dereference(data.transport)

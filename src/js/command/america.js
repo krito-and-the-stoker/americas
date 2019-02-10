@@ -1,5 +1,6 @@
 import Record from 'util/record'
 import Message from 'util/message'
+import Decorators from 'util/decorators'
 
 import Time from 'timeline/time'
 
@@ -7,9 +8,10 @@ import Europe from 'entity/europe'
 import Unit from 'entity/unit'
 
 
-const create = (unit, eta = null) => {
+const create = Decorators.ensureArguments(1, (unit, eta = null) => {
 	const init = currentTime => {
 		if (!Europe.has.unit(unit)) {
+			console.warn('unit is not in europe', unit.name)
 			return false
 		}
 
@@ -42,7 +44,7 @@ const create = (unit, eta = null) => {
 		finished,
 		save
 	}
-}
+})
 
 const load = data => {
 	const unit = Record.dereference(data.unit)

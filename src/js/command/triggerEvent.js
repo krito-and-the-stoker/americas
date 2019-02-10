@@ -1,8 +1,9 @@
+import Decorators from 'util/decorators'
 import Events from 'util/events'
 import Record from 'util/record'
 
 
-const create = (name, params) => {
+const create = Decorators.ensureArguments(1, (name, params) => {
 	const init = () => {
 		Events.trigger(name, params)
 		return false
@@ -22,7 +23,7 @@ const create = (name, params) => {
 		init,
 		save
 	}
-}
+})
 
 const load = data => {
 	const unit = Record.dereference(data.params.unit)
