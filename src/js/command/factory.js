@@ -34,13 +34,23 @@ const create = (name, params, functionFactory) => {
 
 		Object.entries(params)
 			.filter(([, description]) => typeof description.default !== 'undefined')
+			.filter(([key]) => typeof args[key] === 'undefined')
 			.forEach(([key, description]) => {
-				args[key] = description.default
+				args[key] = Util.clone(description.default)
+			})
+
+		Object.entries(params)
+			.filter(([, description]) => typeof description.initialized !== 'undefined')
+			.forEach(([key, description]) => {
+				args[key] = description.initialized
 			})
 
 		const save = () => {
 			return Util.makeObject(Object.entries(params).concat([['module', { type: 'name' }]]).map(([key, description]) => [key, types.save[description.type](args[key])]))
 		}
+
+		let tag = `${name} - ${Util.tag()}`
+		args.tag = tag
 
 		const functions = functionFactory(args)
 		if (args.initHasBeenCalled) {
@@ -62,8 +72,6 @@ const create = (name, params, functionFactory) => {
 			}
 		}
 
-		let tag = Math.random()
-
 		return {
 			...functions,
 			save,
@@ -79,12 +87,28 @@ const create = (name, params, functionFactory) => {
 	}
 }
 
-const combineOne = (one, other) => (Util.isFunction(one) || Util.isFunction(other)) ? () => Util.execute([one, other]) : (one || other)
-const combine = (one, other) => Util.makeObject(
-	Object.keys(one)
-		.concat(Object.keys(other))
-		.filter(Util.unique)
-		.map(key => [key, combineOne(one[key], other[key])]))
+const wrap = (commander, command) => ({
+	...command,
+	update: (...x) => {
+		if (command.update) {
+			if (!command.update(...x)) {
+				// console.log('should stop commander here')
+				// commander.schedule.stop()
+			}
+		}
+
+		return commander.update(...x)
+	},
+	stopped: (...x) => {
+		if (command.stopped) {
+			command.stopped(...x)
+		}
+		commander.stopped(...x)
+	},
+	priority: true,
+	state: commander.state,
+	tag: `Wrapped ${command.tag}`
+})
 
 const commander = (name, params, functionFactory) => {
 	params.commander = {
@@ -93,9 +117,13 @@ const commander = (name, params, functionFactory) => {
 
 	return {
 		create: (...args) => {
-			params.commander.default = Commander.create()
-			const command = create(name, params, functionFactory)
-			return combine(params.commander.default, command.create(...args))
+			const commander = Commander.create()
+			// console.log('creating auxiliary commander', commander.tag)
+			params.commander.initialized = commander
+			const factory = create(name, params, functionFactory)
+			const command = factory.create(...args)
+
+			return wrap(commander, command)
 		},
 		load: create(name, params, functionFactory).load
 	}

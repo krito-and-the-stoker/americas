@@ -194,9 +194,9 @@ const initialize = () => {
 				}
 
 				if (shiftKey) {
-					Commander.scheduleBehind(selectedUnit.commander, MoveTo.create(selectedUnit, target))
+					Commander.scheduleBehind(selectedUnit.commander, MoveTo.create({ unit: selectedUnit, coords: target }))
 				} else {
-					Commander.scheduleInstead(selectedUnit.commander, MoveTo.create(selectedUnit, target))
+					Commander.scheduleInstead(selectedUnit.commander, MoveTo.create({ unit: selectedUnit, coords: target }))
 				}
 				const targetTile = MapEntity.tile(target)
 				if (targetTile.name === 'sea lane') {	

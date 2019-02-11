@@ -1,5 +1,6 @@
 import 'util/polyfills'
-// import Clone from 'clone'
+import Names from 'data/names'
+import Clone from 'clone'
 
 const inBattleDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
 const inDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
@@ -8,6 +9,14 @@ const isArray = something => something && something.constructor === Array
 const flatten = array => {
 	const result = array.flat()
 	return result.some(value => isArray(value)) ? flatten(result) : result
+}
+
+let names = Names
+const tag = () => {
+	const name = choose(names)
+	names = names.filter(n => n !== name)
+
+	return name
 }
 
 const isFunction = something => typeof something === 'function'
@@ -32,7 +41,7 @@ const execute = (something, arg) => {
 }
 
 const makeObject = arr => arr.reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
-// const clone = something => Clone(something)
+const clone = something => Clone(something)
 
 const globalScale = sprite => {
 	let s = sprite
@@ -99,8 +108,9 @@ const uid = () => {
 
 
 export default {
-	// clone,
+	clone,
 	makeObject,
+	tag,
 	globalScale,
 	range,
 	choose,

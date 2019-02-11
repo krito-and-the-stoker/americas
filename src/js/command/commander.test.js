@@ -43,11 +43,12 @@ test('scheduleInstead', () => {
 	expect(unit.mapCoordinates).toEqual(otherPlace())
 })
 
-test.only('clearSchedule', () => {
+test('clearSchedule and reschedule', () => {
 	const target = { x: 5, y: 1 }
 	const otherTarget = { x: 1, y: 4}
 	const unit = Unit.create('settler', { x: 1, y: 1 })
 	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: target }))
+
 	Time.advance(1000)
 	Time.advance(1000)
 	Time.advance(1000)

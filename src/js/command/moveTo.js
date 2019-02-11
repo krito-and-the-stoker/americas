@@ -64,7 +64,6 @@ export default Factory.commander('MoveTo', {
 	}
 
 	const finished = () => {
-		console.log('finished', commander)
 		const target = MapEntity.tile(coords)
 
 		const shipsAtTarget = Unit.at(coords).filter(unit => unit.domain === 'sea')

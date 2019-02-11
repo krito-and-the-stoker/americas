@@ -11,17 +11,58 @@ const cancel = () => ({
 })
 
 const scheduleInstead = (commander, command) => {
-	commander.schedule.instead(command)
+	schedule.instead(commander, command)
 }
 
-const isIdle = commander => !commander.currentCommand && commander.commands.length === 0
+const isIdle = commander => false //!commander.currentCommand && commander.commands.length === 0
 
 const scheduleBehind = (commander, command) => {
-	commander.schedule.behind(command)
+	schedule.behind(commander, command)
 }
 
 const clearSchedule = commander => {
-	commander.schedule.stop()
+	schedule.clear(commander)
+}
+
+const schedule = {
+	instead: (parent, child) => {
+		// console.log(`scheduling ${child.tag} into ${parent.tag}`)
+		schedule.clear(parent)
+		schedule.behind(parent, child)
+		// console.log(parent.tag, 'commands', parent.state.commands)
+	},
+	behind: (parent, child) => {
+		parent.state.commands.push(child)
+	},
+	clear: (parent) => {
+		// console.log('clearing', parent.tag)
+		parent.state.commands.forEach(cmd => cmd.canceled ? cmd.canceled() : null)
+		parent.state.commands.length = 0
+		if (parent.state.currentCommand && parent.state.currentCommand.state) {
+			schedule.clear(parent.state.currentCommand)
+		}
+	},
+	// printTree: (indentation = 0) => {
+	// 	const spaces = Util.range(indentation + 2).map(() => '.').join('')
+	// 	if (!indentation) {
+	// 		console.log('tree of', tag)
+	// 	}
+
+	// 	const all = [schedule.currentCommand].concat(schedule.commands)
+	// 	all.filter(cmd => !!cmd).forEach(cmd => {
+	// 		if (cmd.schedule) {
+	// 			console.log(spaces, cmd.tag)
+	// 			if (cmd.schedule !== schedule) {
+	// 				cmd.schedule.printTree(indentation + 2)
+	// 			} else {
+	// 				console.log(schedule.currentCommand)
+	// 				console.log(schedule.commands)
+	// 			}
+	// 		} else {
+	// 			console.log(spaces, cmd.tag)
+	// 		}
+	// 	})
+	// },
 }
 
 const commandsScheduled = command => {
@@ -40,10 +81,6 @@ const { create, load } = Factory.create('Commander', {
 	unit: {
 		type: 'entity',
 	},
-	pleaseStop: {
-		type: 'raw',
-		default: false
-	},
 	commands: {
 		type: 'commands',
 		default: []
@@ -51,7 +88,7 @@ const { create, load } = Factory.create('Commander', {
 	currentCommand: {
 		type: 'command',
 	}
-}, ({ keep, unit, commands, currentCommand }) => {
+}, ({ keep, unit, commands, currentCommand, tag }) => {
 	let unschedule = null
 	// TODO: this does not belong here!
 	let done = {
@@ -59,66 +96,30 @@ const { create, load } = Factory.create('Commander', {
 		enterSettlement: false
 	}
 
-	const schedule = {
-		instead: command => {
-			console.log('new schedule', schedule.tag, unit && unit.referenceId)
-			commands.length = 0
-			commands.push(command)
-			if (schedule.currentCommand && schedule.currentCommand.schedule) {
-				schedule.currentCommand.schedule.stop()
-			}
-		},
-		behind: command => {
-			commands.push(command)
-		},
-		clear: () => {
-			console.log('clear schedule', schedule.tag)
-			if (schedule.currentCommand && schedule.currentCommand.schedule ) {
-				schedule.currentCommand.schedule.stop()
-			}
-		},
-		stop: () => {
-			pleaseStop = true
-		},
+	const state = {
 		currentCommand,
-		tag: Math.random()
+		commands,
 	}
 
-	const init = () => ({
-		keep,
-		unit,
-		commands,
-		currentCommand
-	})
-
-	let pleaseStop = false
 
 	const update = () => {
-		console.log(schedule.tag, commands.length)
-		if (pleaseStop) {
-			commands.forEach(command => command.canceled ? command.canceled() : null)
-			commands.length = 0
-			if (schedule.currentCommand && schedule.currentCommand.schedule) {
-				schedule.currentCommand.schedule.stop()
-			}
-			pleaseStop = false
-		}
-		if (!schedule.currentCommand && commands.length > 0) {
-			schedule.currentCommand = commands.shift()
-			const originalFinished = schedule.currentCommand.finished
-			schedule.currentCommand.finished = () => {
+		if (!state.currentCommand && state.commands.length > 0) {
+			state.currentCommand = state.commands.shift()
+			
+			const originalFinished = state.currentCommand.finished
+			state.currentCommand.finished = () => {
 				if (originalFinished) {
 					originalFinished()
 				}
-				schedule.currentCommand = null
+				state.currentCommand = null
 			}
-			unschedule = Time.schedule(schedule.currentCommand)
+			unschedule = Time.schedule(state.currentCommand)
 
 			done.investigateRumors = false
 			done.enterSettlement = false
 		}
 
-		if (unit && !schedule.currentCommand && commands.length === 0) {
+		if (unit && !state.currentCommand && state.commands.length === 0) {
 			if (unit.owner.input && unit.tile.rumors && !done.investigateRumors) {
 				done.investigateRumors = true
 				InvestigateRumors(unit)
@@ -130,11 +131,11 @@ const { create, load } = Factory.create('Commander', {
 			}			
 		}
 
-		return keep || schedule.currentCommand || commands.length > 0
+		return keep || state.currentCommand || state.commands.length > 0
 	}
 
 	const stopped = () => {
-		if (schedule.currentCommand) {
+		if (state.currentCommand) {
 			if (unschedule) {
 				unschedule()
 			}
@@ -143,10 +144,9 @@ const { create, load } = Factory.create('Commander', {
 
 	return {
 		priority: true,
-		init,
 		update,
 		stopped,
-		schedule
+		state
 	}
 })
 
