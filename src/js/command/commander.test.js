@@ -23,48 +23,58 @@ test('moveTo', () => {
 	expect(unit.mapCoordinates).toEqual(farPlace())
 })
 
+test('moveTo again', () => {
+	const unit = Unit.create('settler', place())
+	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: farPlace() }))
+
+	Util.range(100).forEach(() => Time.advance(1000))
+	expect(unit.mapCoordinates).toEqual(farPlace())
+})
+
 test('scheduleInstead', () => {
 	const unit = Unit.create('settler', place())
+	console.log('schedule')
 	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: farPlace() }))
 	Time.advance(1000)
 	Time.advance(1000)
 	Time.advance(1000)
+	console.log('schedule again')
 	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: otherPlace() }))
 
 	Util.range(100).forEach(() => Time.advance(1000))
 	expect(unit.mapCoordinates).toEqual(otherPlace())
 })
 
-// test('clearSchedule', () => {
-// 	const target = { x: 5, y: 1 }
-// 	const otherTarget = { x: 1, y: 4}
-// 	const unit = Unit.create('settler', { x: 1, y: 1 })
-// 	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: target }))
-// 	Time.advance(1000)
-// 	Time.advance(1000)
-// 	Time.advance(1000)
-// 	Commander.clearSchedule(unit.commander)
+test('clearSchedule', () => {
+	const target = { x: 5, y: 1 }
+	const otherTarget = { x: 1, y: 4}
+	const unit = Unit.create('settler', { x: 1, y: 1 })
+	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: target }))
+	Time.advance(1000)
+	Time.advance(1000)
+	Time.advance(1000)
+	Commander.clearSchedule(unit.commander)
 
-// 	Util.range(20).forEach(() => Time.advance(1000))
-// 	expect(unit.mapCoordinates).toEqual({ x: 2, y: 1})
+	Util.range(20).forEach(() => Time.advance(1000))
+	expect(unit.mapCoordinates).toEqual({ x: 2, y: 1})
 
-// 	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: otherTarget }))
+	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: otherTarget }))
 
-// 	Util.range(100).forEach(() => Time.advance(1000))
-// 	expect(unit.mapCoordinates).toEqual(otherTarget)
-// })
+	Util.range(100).forEach(() => Time.advance(1000))
+	expect(unit.mapCoordinates).toEqual(otherTarget)
+})
 
-// test('clearSchedule followed by scheduleInstead', () => {
-// 	const target = { x: 5, y: 1 }
-// 	const otherTarget = { x: 1, y: 4}
-// 	const unit = Unit.create('settler', { x: 1, y: 1 })
-// 	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: target }))
-// 	Time.advance(1000)
-// 	Time.advance(1000)
-// 	Time.advance(1000)
-// 	Commander.clearSchedule(unit.commander)
-// 	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: otherTarget }))
+test('clearSchedule followed by scheduleInstead', () => {
+	const target = { x: 5, y: 1 }
+	const otherTarget = { x: 1, y: 4}
+	const unit = Unit.create('settler', { x: 1, y: 1 })
+	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: target }))
+	Time.advance(1000)
+	Time.advance(1000)
+	Time.advance(1000)
+	Commander.clearSchedule(unit.commander)
+	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: otherTarget }))
 
-// 	Util.range(100).forEach(() => Time.advance(1000))
-// 	expect(unit.mapCoordinates).toEqual(otherTarget)	
-// })
+	Util.range(100).forEach(() => Time.advance(1000))
+	expect(unit.mapCoordinates).toEqual(otherTarget)	
+})

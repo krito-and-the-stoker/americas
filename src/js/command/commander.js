@@ -14,6 +14,7 @@ const scheduleInstead = (commander, command) => {
 	commander.commands.length = 0
 	commander.commands.push(command)
 	commander.pleaseStop = false
+	console.log('scheduling onto commander', commander.tag)
 	if (commander.currentCommand) {
 		clearSchedule(commander.currentCommand)
 	}
@@ -26,7 +27,7 @@ const scheduleBehind = (commander, command) => {
 }
 
 const clearSchedule = commander => {
-	commander.pleaseStop = true
+	commander.stop()
 }
 
 const commandsScheduled = command => {
@@ -75,6 +76,11 @@ const { create, load } = Factory.create('Commander', {
 		commands,
 		currentCommand
 	})
+
+	commander.stop = () => {
+		console.log('stopping', commander)
+		commander.pleaseStop = true
+	}
 
 	commander.update = () => {
 		if (commander.pleaseStop) {

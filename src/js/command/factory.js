@@ -64,6 +64,7 @@ const create = (name, params, functionFactory) => {
 		return {
 			...functions,
 			save,
+			tag: Math.random()
 		}
 	}
 
@@ -78,23 +79,22 @@ const create = (name, params, functionFactory) => {
 const combineOne = (one, other) => (Util.isFunction(one) || Util.isFunction(other)) ? () => Util.execute([one, other]) : (one || other)
 const combine = (one, other) => Util.makeObject(
 	Object.keys(one)
-		.concat(other)
+		.concat(Object.keys(other))
 		.filter(Util.unique)
 		.map(key => [key, combineOne(one[key], other[key])]))
 
 const commander = (name, params, functionFactory) => {
-	const injectedCommander = Commander.create()
-
 	params.commander = {
-		type: 'command',
-		default: injectedCommander
+		type: 'command'
 	}
 
-	const result = create(name, params, functionFactory)
-
 	return {
-		create: (...args) => combine(injectedCommander, result.create(...args)),
-		load: result.load
+		create: (...args) => {
+			params.commander.default = Commander.create()
+			const command = create(name, params, functionFactory)
+			return combine(params.commander.default, command.create(...args))
+		},
+		load: create(name, params, functionFactory).load
 	}
 }
 
