@@ -35,7 +35,7 @@ test('moving', () => {
 	expect(unit.mapCoordinates).toEqual(place())
 })
 
-test.only('save & restore', () => {
+test('save & restore', () => {
 	const unit = soldier()
 	Commander.scheduleBehind(unit.commander, MoveTo.create({ unit: unit, coords: place() }))
 

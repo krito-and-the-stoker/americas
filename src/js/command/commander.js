@@ -65,6 +65,20 @@ const schedule = {
 	// },
 }
 
+const start = (state, command) => {
+	// console.log('starting', command.tag)
+	const originalFinished = state.currentCommand.finished
+	state.currentCommand.finished = () => {
+		if (originalFinished) {
+			originalFinished()
+		}
+		state.currentCommand = null
+		// console.log('finished', command.tag)
+	}
+
+	return Time.schedule(command)	
+}
+
 const commandsScheduled = command => {
 	console.warn('probably not working')
 	const current = command.currentCommand ? commandsScheduled(command.currentCommand) : 1
@@ -88,8 +102,8 @@ const { create, load } = Factory.create('Commander', {
 	currentCommand: {
 		type: 'command',
 	}
-}, (state) => {
-	const { keep, unit, tag } = state
+}, state => {
+	const { keep, unit } = state
 	let unschedule = null
 	// TODO: this does not belong here!
 	let done = {
@@ -101,15 +115,7 @@ const { create, load } = Factory.create('Commander', {
 		// console.log(tag, state.currentCommand && state.currentCommand.tag, state.commands.map(cmd => cmd.tag))
 		if (!state.currentCommand && state.commands.length > 0) {
 			state.currentCommand = state.commands.shift()
-			
-			const originalFinished = state.currentCommand.finished
-			state.currentCommand.finished = () => {
-				if (originalFinished) {
-					originalFinished()
-				}
-				state.currentCommand = null
-			}
-			unschedule = Time.schedule(state.currentCommand)
+			unschedule = start(state, state.currentCommand)
 
 			done.investigateRumors = false
 			done.enterSettlement = false
@@ -131,10 +137,14 @@ const { create, load } = Factory.create('Commander', {
 	}
 
 	const stopped = () => {
+		if (unschedule) {
+			unschedule()
+		}
+	}
+
+	const loaded = () => {
 		if (state.currentCommand) {
-			if (unschedule) {
-				unschedule()
-			}
+			unschedule = start(state, state.currentCommand)
 		}
 	}
 
@@ -142,6 +152,7 @@ const { create, load } = Factory.create('Commander', {
 		priority: true,
 		update,
 		stopped,
+		loaded,
 		state
 	}
 })

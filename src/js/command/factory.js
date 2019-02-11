@@ -98,10 +98,15 @@ const create = (name, params, functionFactory) => {
 	}
 
 	const load = data => {
-		console.log('loading', data.tag, params, data)
+		// console.log('loading', data.tag, params, data)
 		const args = Util.makeObject(Object.entries(params).map(([key, description]) => [key, types.load[description.type](data[key])]))
-		console.log(args)
-		return create(args)
+		// console.log(args)
+		const result = create(args)
+		if (result.loaded) {
+			result.loaded()
+		}
+
+		return result
 	}
 
 	return {
@@ -148,7 +153,11 @@ const commander = (name, params, functionFactory) => {
 
 			return wrap(commander, inner)
 		},
-		load: create(name, params, functionFactory).load
+		load: data => {
+			const inner = create(name, params, functionFactory).load(data)
+			const commander = Commander.load(data.commander)
+			return wrap(commander, inner)
+		}
 	}
 }
 
