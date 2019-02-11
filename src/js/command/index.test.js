@@ -59,15 +59,15 @@ const immigration = () => ({ unit: settler() })
 
 const commands = {
 	america: () => {
-		const unit = Unit.create('caravel', {x: 0, y: 5})
-		return Command.America.create(unit)
+		const unit = ship()
+		return Command.America.create({ unit })
 	},
 	// commander: () => {
 	// 	return Commander.create()
 	// },
 	cutForest: () => {
 		const unit = pioneer()
-		return Command.CutForest.create(unit)
+		return Command.CutForest.create({ unit })
 	},
 	disband: () => {
 		const unit = pioneer()
@@ -110,7 +110,7 @@ const commands = {
 	moveTo: () => {
 		const unit = pioneer()
 		const coords = place()
-		return Command.MoveTo.create(unit, coords)
+		return Command.MoveTo.create({ unit, coords })
 	},
 	plow: () => {
 		const unit = pioneer()

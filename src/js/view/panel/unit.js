@@ -88,7 +88,7 @@ const initialize = () => {
 					Commander.scheduleInstead(unit.commander, Plow.create(unit))
 				}),
 				Click.on(cutForestText, () => {
-					Commander.scheduleInstead(unit.commander, CutForest.create(unit))
+					Commander.scheduleInstead(unit.commander, CutForest.create({ unit }))
 				}),
 				Click.on(trade, () => {
 					Commander.scheduleInstead(unit.commander, TradeRoute.create(unit))

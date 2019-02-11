@@ -21,14 +21,14 @@ const firstPlace = () => ({ x: 1, y: 2 })
 
 test('create & schedule', () => {
 	const unit = soldier()
-	Commander.scheduleBehind(unit.commander, MoveTo.create(unit, place()))
+	Commander.scheduleBehind(unit.commander, MoveTo.create({ unit: unit, coords: place() }))
 
 	expect(Commander.isIdle(unit.commander)).toBe(false)
 })
 
 test('moving', () => {
 	const unit = soldier()
-	Commander.scheduleBehind(unit.commander, MoveTo.create(unit, place()))
+	Commander.scheduleBehind(unit.commander, MoveTo.create({ unit: unit, coords: place() }))
 
 	advance(150)
 
@@ -37,7 +37,7 @@ test('moving', () => {
 
 test('save & restore', () => {
 	const unit = soldier()
-	Commander.scheduleBehind(unit.commander, MoveTo.create(unit, place()))
+	Commander.scheduleBehind(unit.commander, MoveTo.create({ unit: unit, coords: place() }))
 
 	advance(50)
 
@@ -60,17 +60,17 @@ test('schedule instead & schedule behind', () => {
 	const john = soldier()
 
 	// start walking
-	Commander.scheduleInstead(joe.commander, MoveTo.create(joe, farPlace()))
-	Commander.scheduleInstead(jack.commander, MoveTo.create(jack, farPlace()))
-	Commander.scheduleInstead(john.commander, MoveTo.create(john, farPlace()))
+	Commander.scheduleInstead(joe.commander, MoveTo.create({ unit: joe, coords: farPlace() }))
+	Commander.scheduleInstead(jack.commander, MoveTo.create({ unit: jack, coords: farPlace() }))
+	Commander.scheduleInstead(john.commander, MoveTo.create({ unit: john, coords: farPlace() }))
 
 	advance(25)
 
 	// send joe back
-	Commander.scheduleInstead(joe.commander, MoveTo.create(joe, firstPlace()))
+	Commander.scheduleInstead(joe.commander, MoveTo.create({ unit: joe, coords: firstPlace() }))
 
 	// schedule jack back
-	Commander.scheduleBehind(jack.commander, MoveTo.create(jack, firstPlace()))
+	Commander.scheduleBehind(jack.commander, MoveTo.create({ unit: jack, coords: firstPlace() }))
 
 	advance(125)
 

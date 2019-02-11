@@ -28,6 +28,7 @@ const create = Decorators.ensureArguments(1, (transport, tradeCommanderParam = n
 	}
 
 	const init = () => {
+		console.log('trade route initialized')
 		if (initialized) {
 			return true
 		}

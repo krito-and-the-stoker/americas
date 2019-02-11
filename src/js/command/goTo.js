@@ -28,11 +28,11 @@ const create = Decorators.ensureArguments(2, (unit, destination, commander = nul
 				const tile = MapEntity.tile(colony.mapCoordinates)
 				const path = PathFinder.findHighSeas(tile)
 				Unit.update.mapCoordinates(unit, path[path.length - 1].mapCoordinates)
-				Commander.scheduleBehind(gotoCommander, America.create(unit))
-				Commander.scheduleBehind(gotoCommander, MoveTo.create(unit, colony.mapCoordinates))
+				Commander.scheduleBehind(gotoCommander, America.create({ unit }))
+				Commander.scheduleBehind(gotoCommander, MoveTo.create({ unit, coords: colony.mapCoordinates }))
 			} else {
 				// from somewhere to colony
-				Commander.scheduleBehind(gotoCommander, MoveTo.create(unit, colony.mapCoordinates))
+				Commander.scheduleBehind(gotoCommander, MoveTo.create({ unit, coords: colony.mapCoordinates }))
 			}
 		}
 
@@ -41,13 +41,13 @@ const create = Decorators.ensureArguments(2, (unit, destination, commander = nul
 				// from somehwere to europe
 				const pathToHighSeas = PathFinder.findHighSeas(unit.tile)
 				const target = pathToHighSeas[pathToHighSeas.length - 1]
-				Commander.scheduleInstead(gotoCommander, MoveTo.create(unit, target.mapCoordinates))
+				Commander.scheduleInstead(gotoCommander, MoveTo.create({ unit, coords: target.mapCoordinates }))
 				Commander.scheduleBehind(gotoCommander, EuropeCommand.create(unit))
 			}
 			// from europe to europe -> nothing to do
 		}
 
-		return gotoCommander.init()
+		return true
 	}
 
 	const update = () => {

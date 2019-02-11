@@ -99,11 +99,12 @@ const uid = () => {
 
 
 export default {
+	// clone,
 	makeObject,
 	globalScale,
 	range,
 	choose,
-	// clone,
+	isFunction,
 	uid,
 	execute,
 	isArray,

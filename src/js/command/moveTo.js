@@ -1,12 +1,11 @@
 import Util from 'util/util'
 import PathFinder from 'util/pathFinder'
-import Record from 'util/record'
-import Decorators from 'util/decorators'
 
 import MapEntity from 'entity/map'
 import Unit from 'entity/unit'
 import Tile from 'entity/tile'
 
+import Factory from 'command/factory'
 import Move from 'command/move'
 import Commander from 'command/commander'
 import Load from 'command/load'
@@ -23,62 +22,50 @@ const canLoadTreasure = ship => (Commander.isIdle(ship.commander) ||
 
 const inMoveDistance = (coords1, coords2) => Math.abs(coords1.x - coords2.x) <= 1 && Math.abs(coords1.y - coords2.y) <= 1
 
-
-const create = Decorators.ensureArguments(2, (unit, coords, moveToCommander = null, hasPath = false, lastPoint = null) => {
+export default Factory.commander('MoveTo', {
+	unit: {
+		type: 'entity',
+		required: true
+	},
+	coords: {
+		type: 'raw',
+		required: true
+	},
+	lastPoint: {
+		type: 'raw'
+	}
+}, ({ unit, coords, commander, lastPoint }) => {
 	if (coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y) {
 		console.warn('invalid coords', unit.name, coords)
 	}
 
-	if (!moveToCommander) {
-		moveToCommander = Commander.create()
-	}
-
-	const target = MapEntity.tile(coords)
-	const update = () => {
-		if (moveTo.pleaseStop) {
-			moveToCommander.pleaseStop = true
-		}
-
-		return moveToCommander.update()
-	}
-
 	const init = () => {
-		if (moveToCommander.init) {
-			moveToCommander.init()
-		}
-
-		if (!hasPath) {
-			if (unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y) {
-				return false
-			}
-
-			if (!MapEntity.tile(unit.mapCoordinates)) {
-				console.warn('unit is adrift. This is definitely an error. Trying to fix...', unit.mapCoordinates, unit.name, unit.referenceId)
-				unit.mapCoordinates = {
-					x: Math.round(unit.mapCoordinates.x),
-					y: Math.round(unit.mapCoordinates.y),
-				}
-			}
-
-			if (!hasPath) {
-				const path = PathFinder.findPathXY(unit.mapCoordinates, coords, unit).filter((waypoint, index) => index > 0)
-				moveToCommander.commands = path.map(waypoint => Move.create(unit, waypoint.mapCoordinates))
-				lastPoint = path.length > 0 ? path[path.length - 1].mapCoordinates : unit.mapCoordinates
-				hasPath = true
+		if (!MapEntity.tile(unit.mapCoordinates)) {
+			console.warn('unit is adrift. This is definitely an error. Trying to fix...', unit.mapCoordinates, unit.name, unit.referenceId)
+			unit.mapCoordinates = {
+				x: Math.round(unit.mapCoordinates.x),
+				y: Math.round(unit.mapCoordinates.y),
 			}
 		}
 
-		return true
-	}
+		const path = PathFinder.findPathXY(unit.mapCoordinates, coords, unit).filter((waypoint, index) => index > 0)
+		const schedule = command => Commander.scheduleBehind(commander, command)
+		const commands = (unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y) ?
+			[] : path.map(waypoint => Move.create(unit, waypoint.mapCoordinates))
+		commands.forEach(schedule)
+		lastPoint = path.length > 0 ? path[path.length - 1].mapCoordinates : unit.mapCoordinates
 
-	const stopped = () => {
-		moveToCommander.stopped()
+		return {
+			unit,
+			commander,
+			coords,
+			lastPoint
+		}
 	}
 
 	const finished = () => {
-		if (moveToCommander.finished) {
-			moveToCommander.finished()
-		}
+		console.log('finished', commander)
+		const target = MapEntity.tile(coords)
 
 		const shipsAtTarget = Unit.at(coords).filter(unit => unit.domain === 'sea')
 		if (unit.domain === 'land' &&
@@ -103,38 +90,8 @@ const create = Decorators.ensureArguments(2, (unit, coords, moveToCommander = nu
 		}
 	}
 
-	const save = () => ({
-		module: 'MoveTo',
-		coords,
-		hasPath,
-		moveToCommander: moveToCommander.save(),
-		unit: Record.reference(unit),
-		lastPoint
-	})
-
-	const moveTo = {
+	return {
 		init,
-		update,
-		finished,
-		priority: true,
-		currentCommand: moveToCommander.currentCommand,
-		commands: moveToCommander.commands,
-		save,
-		stopped
-	}
-
-	return moveTo
+		finished
+	}	
 })
-
-const load = data => {
-	const unit = Record.dereference(data.unit)
-	const commander = Commander.load(data.moveToCommander)
-
-	return create(unit, data.coords, commander, data.hasPath, data.lastPoint)
-}
-
-
-export default {
-	create,
-	load
-}

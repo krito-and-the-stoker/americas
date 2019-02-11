@@ -38,7 +38,7 @@ const commit = (state, goal, next) => {
 	const unit = pair.one
 	const target = pair.other
 
-	Commander.scheduleInstead(unit.commander, MoveTo.create(unit, target))
+	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: target }))
 	Commander.scheduleBehind(unit.commander, TriggerEvent.create('ai-move-unit-complete', { unit }))
 
 	let cancel = () => {

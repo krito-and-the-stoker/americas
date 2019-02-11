@@ -1,26 +1,35 @@
-import Record from 'util/record'
 import Message from 'util/message'
-import Decorators from 'util/decorators'
 
 import Time from 'timeline/time'
 
 import Europe from 'entity/europe'
 import Unit from 'entity/unit'
 
+import Factory from 'command/factory'
 
-const create = Decorators.ensureArguments(1, (unit, eta = null) => {
+
+export default Factory.create('America', {
+	unit: {
+		type: 'entity',
+		required: true,
+	},
+	eta: {
+		type: 'raw',
+	}
+}, ({ unit, eta }) => {
 	const init = currentTime => {
 		if (!Europe.has.unit(unit)) {
 			console.warn('unit is not in europe', unit.name)
 			return false
 		}
 
-		if (!eta) {
-			eta = currentTime + Time.EUROPE_SAIL_TIME
-			Europe.remove.unit(unit)
-		}
+		eta = currentTime + Time.EUROPE_SAIL_TIME
+		Europe.remove.unit(unit)
 
-		return true
+		return {
+			unit,
+			eta
+		}
 	}
 
 	const update = currentTime => eta > currentTime
@@ -32,26 +41,9 @@ const create = Decorators.ensureArguments(1, (unit, eta = null) => {
 		}
 	}
 
-	const save = () => ({
-		module: 'America',
-		eta,
-		unit: Record.reference(unit)
-	})
-
 	return {
 		init,
 		update,
 		finished,
-		save
-	}
+	}		
 })
-
-const load = data => {
-	const unit = Record.dereference(data.unit)
-	return create(unit, data.eta)
-}
-
-export default {
-	create,
-	load
-}

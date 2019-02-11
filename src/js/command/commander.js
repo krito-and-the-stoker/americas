@@ -1,8 +1,6 @@
 import Time from 'timeline/time'
 
-import Record from 'util/record'
-
-import Command from 'command/index'
+import Factory from 'command/factory'
 
 import InvestigateRumors from 'interaction/investigateRumors'
 import EnterSettlement from 'interaction/enterSettlement'
@@ -13,7 +11,8 @@ const cancel = () => ({
 })
 
 const scheduleInstead = (commander, command) => {
-	commander.commands = [command]
+	commander.commands.length = 0
+	commander.commands.push(command)
 	commander.pleaseStop = false
 	if (commander.currentCommand) {
 		clearSchedule(commander.currentCommand)
@@ -37,23 +36,45 @@ const commandsScheduled = command => {
 	return current + other
 }
 
-const create = (args = {}) => {
-	const keep = args.keep || false
-	const unit = args.unit || null
-	const commands = args.commands || []
+const { create, load } = Factory.create('Commander', {
+	keep: {
+		type: 'raw',
+		default: false
+	},
+	unit: {
+		type: 'entity',
+	},
+	pleaseStop: {
+		type: 'raw',
+		default: false
+	},
+	commands: {
+		type: 'commands',
+		default: []
+	},
+	currentCommand: {
+		type: 'command',
+	}
+}, ({ keep, unit, commands, currentCommand }) => {
 	let unschedule = null
 	const commander = {
 		commands,
 		priority: true,
-		currentCommand: null
+		currentCommand
 	}
 
+	// TODO: this does not belong here!
 	let done = {
 		investigateRumors: false,
 		enterSettlement: false
 	}
 
-	commander.init = () => !commander.pleaseStop
+	commander.init = () => ({
+		keep,
+		unit,
+		commands,
+		currentCommand
+	})
 
 	commander.update = () => {
 		if (commander.pleaseStop) {
@@ -102,33 +123,9 @@ const create = (args = {}) => {
 		}
 	}
 
-	commander.save = () => ({
-		commands: commander.commands.map(command => command.save()),
-		currentCommand: commander.currentCommand ? commander.currentCommand.save() : null,
-		module: 'Commander',
-		keep,
-		unit: Record.reference(unit),
-	})
-
 	return commander
-}
+})
 
-const loadCommand = command => {
-	const module = Command[command.module]
-	if (!module || !module.load) {
-		console.warn('no module found', command.module, module, command)
-		return command
-	}
-
-	return module.load(command)
-}
-
-
-const load = data => {
-	const commands = (data.currentCommand ? [data.currentCommand, ...data.commands] : data.commands).map(loadCommand)
-	const unit = Record.dereference(data.unit)
-	return create({ keep: data.keep, commands, unit })
-}
 
 export default {
 	create,
