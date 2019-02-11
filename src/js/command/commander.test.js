@@ -33,19 +33,17 @@ test('moveTo again', () => {
 
 test('scheduleInstead', () => {
 	const unit = Unit.create('settler', place())
-	console.log('schedule')
 	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: farPlace() }))
 	Time.advance(1000)
 	Time.advance(1000)
 	Time.advance(1000)
-	console.log('schedule again')
 	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: otherPlace() }))
 
 	Util.range(100).forEach(() => Time.advance(1000))
 	expect(unit.mapCoordinates).toEqual(otherPlace())
 })
 
-test('clearSchedule', () => {
+test.only('clearSchedule', () => {
 	const target = { x: 5, y: 1 }
 	const otherTarget = { x: 1, y: 4}
 	const unit = Unit.create('settler', { x: 1, y: 1 })

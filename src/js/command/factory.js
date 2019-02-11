@@ -56,15 +56,18 @@ const create = (name, params, functionFactory) => {
 			functions.init = (...initArgs) => {
 				args = originalInit(...initArgs)
 				args.initHasBeenCalled = true
+				args.tag = tag
 
 				return true
 			}
 		}
 
+		let tag = Math.random()
+
 		return {
 			...functions,
 			save,
-			tag: Math.random()
+			tag
 		}
 	}
 

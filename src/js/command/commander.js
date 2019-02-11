@@ -11,26 +11,21 @@ const cancel = () => ({
 })
 
 const scheduleInstead = (commander, command) => {
-	commander.commands.length = 0
-	commander.commands.push(command)
-	commander.pleaseStop = false
-	console.log('scheduling onto commander', commander.tag)
-	if (commander.currentCommand) {
-		clearSchedule(commander.currentCommand)
-	}
+	commander.schedule.instead(command)
 }
 
 const isIdle = commander => !commander.currentCommand && commander.commands.length === 0
 
 const scheduleBehind = (commander, command) => {
-	commander.commands.push(command)
+	commander.schedule.behind(command)
 }
 
 const clearSchedule = commander => {
-	commander.stop()
+	commander.schedule.stop()
 }
 
 const commandsScheduled = command => {
+	console.warn('probably not working')
 	const current = command.currentCommand ? commandsScheduled(command.currentCommand) : 1
 	const other = command.commands ? command.commands.map(commandsScheduled).reduce((sum, count) => sum + count, 0) : 0
 
@@ -58,55 +53,72 @@ const { create, load } = Factory.create('Commander', {
 	}
 }, ({ keep, unit, commands, currentCommand }) => {
 	let unschedule = null
-	const commander = {
-		commands,
-		priority: true,
-		currentCommand
-	}
-
 	// TODO: this does not belong here!
 	let done = {
 		investigateRumors: false,
 		enterSettlement: false
 	}
 
-	commander.init = () => ({
+	const schedule = {
+		instead: command => {
+			console.log('new schedule', schedule.tag, unit && unit.referenceId)
+			commands.length = 0
+			commands.push(command)
+			if (schedule.currentCommand && schedule.currentCommand.schedule) {
+				schedule.currentCommand.schedule.stop()
+			}
+		},
+		behind: command => {
+			commands.push(command)
+		},
+		clear: () => {
+			console.log('clear schedule', schedule.tag)
+			if (schedule.currentCommand && schedule.currentCommand.schedule ) {
+				schedule.currentCommand.schedule.stop()
+			}
+		},
+		stop: () => {
+			pleaseStop = true
+		},
+		currentCommand,
+		tag: Math.random()
+	}
+
+	const init = () => ({
 		keep,
 		unit,
 		commands,
 		currentCommand
 	})
 
-	commander.stop = () => {
-		console.log('stopping', commander)
-		commander.pleaseStop = true
-	}
+	let pleaseStop = false
 
-	commander.update = () => {
-		if (commander.pleaseStop) {
-			commander.commands.forEach(command => command.canceled ? command.canceled() : null)
-			commander.commands = []
-			if (commander.currentCommand) {
-				commander.currentCommand.pleaseStop = true
+	const update = () => {
+		console.log(schedule.tag, commands.length)
+		if (pleaseStop) {
+			commands.forEach(command => command.canceled ? command.canceled() : null)
+			commands.length = 0
+			if (schedule.currentCommand && schedule.currentCommand.schedule) {
+				schedule.currentCommand.schedule.stop()
 			}
-			commander.pleaseStop = false
+			pleaseStop = false
 		}
-		if (!commander.currentCommand && commander.commands.length > 0) {
-			commander.currentCommand = commander.commands.shift()
-			const originalFinished = commander.currentCommand.finished
-			commander.currentCommand.finished = () => {
+		if (!schedule.currentCommand && commands.length > 0) {
+			schedule.currentCommand = commands.shift()
+			const originalFinished = schedule.currentCommand.finished
+			schedule.currentCommand.finished = () => {
 				if (originalFinished) {
 					originalFinished()
 				}
-				commander.currentCommand = null
+				schedule.currentCommand = null
 			}
-			unschedule = Time.schedule(commander.currentCommand)
+			unschedule = Time.schedule(schedule.currentCommand)
 
 			done.investigateRumors = false
 			done.enterSettlement = false
 		}
 
-		if (unit && !commander.currentCommand && commander.commands.length === 0) {
+		if (unit && !schedule.currentCommand && commands.length === 0) {
 			if (unit.owner.input && unit.tile.rumors && !done.investigateRumors) {
 				done.investigateRumors = true
 				InvestigateRumors(unit)
@@ -118,18 +130,24 @@ const { create, load } = Factory.create('Commander', {
 			}			
 		}
 
-		return keep || commander.currentCommand || commander.commands.length > 0
+		return keep || schedule.currentCommand || commands.length > 0
 	}
 
-	commander.stopped = () => {
-		if (commander.currentCommand) {
+	const stopped = () => {
+		if (schedule.currentCommand) {
 			if (unschedule) {
 				unschedule()
 			}
 		}
 	}
 
-	return commander
+	return {
+		priority: true,
+		init,
+		update,
+		stopped,
+		schedule
+	}
 })
 
 
