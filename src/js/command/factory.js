@@ -16,14 +16,31 @@ const create = (name, params, functionFactory) => {
 		load: {
 			raw: x => x,
 			entity: x => Record.dereference(x),
-			command: x => x ? Commander.load(x) : null,
-			commands: x => x.filter(y => !!y).map(y => Commander.load(y)),
+			command: x => {
+				if (x) {
+					if (x.module === 'Commander') {
+						return Commander.load(x)
+					}
+					const Commands = require('command')
+					const module = Commands.default[x.module]
+
+					return module.load(x)
+				}
+				return null
+			},
+			commands: x => x.filter(y => !!y).map(y => types.load.command(y)),
 			name: () => name
 		}
 	}
 
+	params.tag = {
+		type: 'raw'
+	}
+
 
 	const create = (args = {}) => {
+		args.tag = args.tag || `${name} - ${Util.tag()}`
+
 		Object.entries(params)
 			.filter(([, description]) => description.required)
 			.forEach(([key, description]) => {
@@ -46,11 +63,10 @@ const create = (name, params, functionFactory) => {
 			})
 
 		const save = () => {
-			return Util.makeObject(Object.entries(params).concat([['module', { type: 'name' }]]).map(([key, description]) => [key, types.save[description.type](args[key])]))
+			const result = Util.makeObject(Object.entries(params).concat([['module', { type: 'name' }]]).map(([key, description]) => [key, types.save[description.type](args[key])]))
+			// console.log(tag, result)
+			return result
 		}
-
-		let tag = `${name} - ${Util.tag()}`
-		args.tag = tag
 
 		const functions = functionFactory(args)
 		if (args.initHasBeenCalled) {
@@ -64,9 +80,11 @@ const create = (name, params, functionFactory) => {
 			const originalInit = functions.init
 
 			functions.init = (...initArgs) => {
-				args = originalInit(...initArgs)
-				args.initHasBeenCalled = true
-				args.tag = tag
+				args = {
+					...originalInit(...initArgs),
+					tag: args.tag,
+					initHasBeenCalled: true
+				}
 
 				return true
 			}
@@ -75,11 +93,16 @@ const create = (name, params, functionFactory) => {
 		return {
 			...functions,
 			save,
-			tag
+			tag: args.tag
 		}
 	}
 
-	const load = data => create(Util.makeObject(Object.entries(params).map(([key, description]) => [key, types.load[description.type](data[key])])))
+	const load = data => {
+		console.log('loading', data.tag, params, data)
+		const args = Util.makeObject(Object.entries(params).map(([key, description]) => [key, types.load[description.type](data[key])]))
+		console.log(args)
+		return create(args)
+	}
 
 	return {
 		create,
@@ -121,9 +144,9 @@ const commander = (name, params, functionFactory) => {
 			// console.log('creating auxiliary commander', commander.tag)
 			params.commander.initialized = commander
 			const factory = create(name, params, functionFactory)
-			const command = factory.create(...args)
+			const inner = factory.create(...args)
 
-			return wrap(commander, command)
+			return wrap(commander, inner)
 		},
 		load: create(name, params, functionFactory).load
 	}

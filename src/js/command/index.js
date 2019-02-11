@@ -1,4 +1,3 @@
-import Commander from 'command/commander'
 import Found from 'command/found'
 import Move from 'command/move'
 import MoveTo from 'command/moveTo'
@@ -34,6 +33,5 @@ export default {
 	Disband,
 	Plow,
 	Road,
-	LearnFromNatives,
-	Commander
+	LearnFromNatives
 }

@@ -88,7 +88,8 @@ const { create, load } = Factory.create('Commander', {
 	currentCommand: {
 		type: 'command',
 	}
-}, ({ keep, unit, commands, currentCommand, tag }) => {
+}, (state) => {
+	const { keep, unit, tag } = state
 	let unschedule = null
 	// TODO: this does not belong here!
 	let done = {
@@ -96,13 +97,8 @@ const { create, load } = Factory.create('Commander', {
 		enterSettlement: false
 	}
 
-	const state = {
-		currentCommand,
-		commands,
-	}
-
-
 	const update = () => {
+		// console.log(tag, state.currentCommand && state.currentCommand.tag, state.commands.map(cmd => cmd.tag))
 		if (!state.currentCommand && state.commands.length > 0) {
 			state.currentCommand = state.commands.shift()
 			

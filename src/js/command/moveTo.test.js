@@ -35,17 +35,19 @@ test('moving', () => {
 	expect(unit.mapCoordinates).toEqual(place())
 })
 
-test('save & restore', () => {
+test.only('save & restore', () => {
 	const unit = soldier()
 	Commander.scheduleBehind(unit.commander, MoveTo.create({ unit: unit, coords: place() }))
 
 	advance(50)
 
+	console.log('serialize')
 	const save = Record.serialize()
 
 	advance(100)
 	expect(unit.mapCoordinates).toEqual(place())
 
+	console.log('unserialize')
 	Record.unserialize(save)
 	const loadedUnit = Record.dereference(Record.reference(unit))
 	expect(loadedUnit.mapCoordinates).not.toEqual(place())
