@@ -93,6 +93,10 @@ const initialize = ai => {
 								visited: false
 							}
 							update.state(ai)
+
+							return () => {
+								delete ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId]
+							} 
 						}
 					})
 				])
@@ -193,7 +197,7 @@ const load = ai => {
 
 	Record.entitiesLoaded(() => {
 		initialize(ai)
-	})
+	}, 100)
 
 	return ai
 }
