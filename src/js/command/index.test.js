@@ -80,7 +80,7 @@ const commands = {
 	},
 	found: () => {
 		const unit = pioneer()
-		return Command.Found.create(unit)
+		return Command.Found.create({ unit })
 	},
 	goTo: () => {
 		const unit = ship()
@@ -89,12 +89,12 @@ const commands = {
 	},
 	learnFromNatives: () => {
 		const unit = settler()
-		return Command.LearnFromNatives.create(unit, 'farmer')
+		return Command.LearnFromNatives.create({ unit, profession: 'farmer' })
 	},
 	load: () => {
 		const transport = ship()
 		const passenger = pioneer()
-		return Command.Load.create(transport, passenger)
+		return Command.LoadUnit.create({ transport, passenger })
 	},
 	loadCargo: () => {
 		const colony = jamestown()

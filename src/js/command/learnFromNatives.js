@@ -1,18 +1,26 @@
 import Time from 'timeline/time'
 
-import Record from 'util/record'
 import Events from 'util/events'
-import Decorators from 'util/decorators'
 
 import Unit from 'entity/unit'
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
 
+import Factory from 'command/factory'
+
 
 const TEACH_BASE_FACTOR = 1.0 / Time.TEACH_BASE_TIME
 
-
-const create = Decorators.ensureArguments(2, (unit, profession) => {
+export default Factory.create('LearnFromNatives', {
+	unit: {
+		type: 'entity',
+		required: true
+	},
+	profession: {
+		type: 'raw',
+		required: true
+	}
+}, ({ unit, profession }) => {
 	if (!unit.colonist) {
 		Unit.update.colonist(unit, Colonist.create(unit))
 	}
@@ -20,7 +28,6 @@ const create = Decorators.ensureArguments(2, (unit, profession) => {
 
 	const init = () => {
 		Unit.update.offTheMap(unit, true)
-		return true
 	}
 	
 	const update = (currentTime, deltaTime) => {
@@ -44,25 +51,9 @@ const create = Decorators.ensureArguments(2, (unit, profession) => {
 		Unit.update.offTheMap(unit, false)
 	}
 
-	const save = () => ({
-		module: 'LearnFromNatives',
-		unit: Record.reference(unit),
-		profession
-	})
-
-	const learnFromNatives = {
+	return {
 		init,
 		update,
 		finished,
-		save
 	}
-
-	return learnFromNatives
 })
-
-const load = data => {
-	const unit = Record.dereference(data.unit)
-	return create(unit, data.profession)
-}
-
-export default { create, load }

@@ -1,6 +1,4 @@
-import Record from 'util/record'
 import Message from 'util/message'
-import Decorators from 'util/decorators'
 
 import Time from 'timeline/time'
 
@@ -15,8 +13,11 @@ export default Factory.create('Europe', {
 	unit: {
 		type: 'entity',
 		required: true
+	},
+	eta: {
+		type: 'raw'
 	}
-}, ({ unit }) => {
+}, ({ unit, eta }) => {
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)
 		if (tile.name !== 'sea lane') {

@@ -8,7 +8,7 @@ import Tile from 'entity/tile'
 import Factory from 'command/factory'
 import Move from 'command/move'
 import Commander from 'command/commander'
-import Load from 'command/load'
+import LoadUnit from 'command/loadUnit'
 import Unload from 'command/unload'
 
 
@@ -72,7 +72,7 @@ export default Factory.commander('MoveTo', {
 				shipsAtTarget.some(unit.treasure ? canLoadTreasure : canLoad) &&
 				inMoveDistance(unit.tile.mapCoordinates, coords)) {
 			const ship = shipsAtTarget.find(unit.treasure ? canLoadTreasure : canLoad)
-			Commander.scheduleBehind(ship.commander, Load.create(ship, unit))
+			Commander.scheduleBehind(ship.commander, LoadUnit.create({ transport: ship, passenger: unit }))
 			Commander.scheduleInstead(unit.commander, Move.create(unit, coords))
 		}
 

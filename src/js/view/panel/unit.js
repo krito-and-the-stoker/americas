@@ -79,7 +79,7 @@ const initialize = () => {
 					MapView.centerAt(unit.mapCoordinates, 350)
 				}),
 				Click.on(foundColony, () => {
-					Commander.scheduleInstead(unit.commander, Found.create(unit))
+					Commander.scheduleInstead(unit.commander, Found.create({ unit }))
 				}),
 				Click.on(buildRoadText, () => {
 					Commander.scheduleInstead(unit.commander, Road.create(unit))

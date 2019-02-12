@@ -3,7 +3,7 @@ import Move from 'command/move'
 import MoveTo from 'command/moveTo'
 import GoTo from 'command/goTo'
 import Unload from 'command/unload'
-import Load from 'command/load'
+import LoadUnit from 'command/loadUnit'
 import Europe from 'command/europe'
 import America from 'command/america'
 import CutForest from 'command/cutForest'
@@ -22,7 +22,7 @@ export default {
 	MoveTo,
 	GoTo,
 	Unload,
-	Load,
+	LoadUnit,
 	Europe,
 	America,
 	CutForest,

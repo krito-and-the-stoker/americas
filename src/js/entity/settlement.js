@@ -127,7 +127,7 @@ const dialog = (settlement, unit, answer) => {
 				default: true,
 				action: () => {
 					settlement.hasLearned = true
-					Commander.scheduleInstead(unit.commander, LearnFromNatives.create(unit, settlement.expert))
+					Commander.scheduleInstead(unit.commander, LearnFromNatives.create({ unit, profession: settlement.expert }))
 				}
 			}]
 		}

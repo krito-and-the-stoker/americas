@@ -107,7 +107,7 @@ const handleKeydown = e => {
 	const unit = UnitView.selectedUnit()
 	if (unit && !e.ctrlKey && !e.metaKey) {
 		if (e.key === 'b') {
-			Commander.scheduleInstead(unit.commander, Found.create(unit))
+			Commander.scheduleInstead(unit.commander, Found.create({ unit }))
 		}
 		if (e.key === 'p') {
 			Commander.scheduleInstead(unit.commander, Plow.create(unit))
@@ -131,7 +131,7 @@ const handleKeydown = e => {
 		}
 
 		if (e.key === 'B') {
-			Commander.scheduleBehind(unit.commander, Found.create(unit))
+			Commander.scheduleBehind(unit.commander, Found.create({ unit }))
 		}
 		if (e.key === 'P') {
 			Commander.scheduleBehind(unit.commander, Plow.create(unit))
