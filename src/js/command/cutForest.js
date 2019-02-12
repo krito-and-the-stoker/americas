@@ -29,7 +29,6 @@ export default Factory.create('CutForest', {
 		Unit.update.pioneering(unit, true)
 
 		return {
-			unit,
 			eta,
 		}
 	}

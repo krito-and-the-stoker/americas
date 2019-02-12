@@ -7,10 +7,16 @@ import Time from 'timeline/time'
 import MapEntity from 'entity/map'
 import Unit from 'entity/unit'
 
+import Factory from 'command/factory'
+
 import EnterEurope from 'interaction/enterEurope'
 
-
-const create = Decorators.ensureArguments(1, (unit, eta = null) => {
+export default Factory.create('Europe', {
+	unit: {
+		type: 'entity',
+		required: true
+	}
+}, ({ unit }) => {
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)
 		if (tile.name !== 'sea lane') {
@@ -18,13 +24,12 @@ const create = Decorators.ensureArguments(1, (unit, eta = null) => {
 			return false
 		}
 
-		if (!eta) {
-			eta = currentTime + Time.EUROPE_SAIL_TIME
-		}
-
+		eta = currentTime + Time.EUROPE_SAIL_TIME
 		Unit.update.offTheMap(unit, true)
 
-		return true
+		return {
+			eta
+		}
 	}
 
 	const update = currentTime => eta > currentTime
@@ -36,26 +41,9 @@ const create = Decorators.ensureArguments(1, (unit, eta = null) => {
 		}
 	}
 
-	const save = () => ({
-		module: 'Europe',
-		eta,
-		unit: Record.reference(unit)
-	})
-
 	return {
 		init,
 		update,
-		finished,
-		save
+		finished
 	}
 })
-
-const load = data => {
-	const unit = Record.dereference(data.unit)
-	return create(unit, data.eta)
-}
-
-export default {
-	create,
-	load
-}

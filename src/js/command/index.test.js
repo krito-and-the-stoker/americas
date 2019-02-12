@@ -71,12 +71,12 @@ const commands = {
 	},
 	disband: () => {
 		const unit = pioneer()
-		return Command.Disband.create(unit)
+		return Command.Disband.create({ unit })
 	},
 	europe: () => {
 		const unit = ship()
 		Unit.update.offTheMap(true)
-		return Command.Europe.create(unit)
+		return Command.Europe.create({ unit })
 	},
 	found: () => {
 		const unit = pioneer()

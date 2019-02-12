@@ -206,7 +206,7 @@ const initialize = () => {
 						options: [{
 							text: 'Yes, steady as she goes!',
 							action: () => {
-								Commander.scheduleBehind(selectedUnit.commander, Europe.create(selectedUnit))
+								Commander.scheduleBehind(selectedUnit.commander, Europe.create({ unit: selectedUnit }))
 								Commander.scheduleBehind(selectedUnit.commander, TriggerEvent.create('notification', { type: 'europe', unit: selectedUnit }))
 							}								
 						}, {

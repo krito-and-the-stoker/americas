@@ -1,27 +1,19 @@
-import Record from 'util/record'
-import Decorators from 'util/decorators'
-
 import Unit from 'entity/unit'
 
+import Factory from 'command/factory'
 
-const create = Decorators.ensureArguments(1, unit => {
+
+export default Factory.create('Disband', {
+	unit: {
+		type: 'entity',
+		required: true
+	}
+}, ({ unit }) => {
 	const init = () => {
 		Unit.disband(unit)
 	}
 
-	const save = () => ({
-		module: 'Disband',
-		unit: Record.reference(unit)
-	})
-
 	return {
-		init,
-		save
+		init
 	}
 })
-
-const load = data => {
-	return create(Record.dereference(data.unit))
-}
-
-export default { create, load }
