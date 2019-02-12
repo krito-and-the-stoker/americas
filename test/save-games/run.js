@@ -8,7 +8,7 @@ import Europe from 'entity/europe'
 import Meet from 'task/meet'
 
 
-export default game => {
+export default (game, steps = 750) => {
 	test('load save game', () => {
 		Europe.initialize()
 
@@ -17,6 +17,6 @@ export default game => {
 		Record.load(JSON.stringify(game))
 
 		Time.schedule(Meet.create())
-		Util.range(750).forEach(() => Time.advance(16 + 16*Math.random()))
+		Util.range(steps).forEach(() => Time.advance(16 + 16*Math.random()))
 	})
 }

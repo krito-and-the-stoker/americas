@@ -3,7 +3,7 @@ import Commander from 'command/commander'
 import Util from 'util/util'
 import Record from 'util/record'
 
-const create = (name, params, functionFactory) => {
+const createTypes = name => {
 	const types = {
 		save: {
 			raw: x => x,
@@ -32,6 +32,22 @@ const create = (name, params, functionFactory) => {
 			name: () => name
 		}
 	}
+
+	return types
+}
+
+
+const revive = command => {
+	if (command.loaded) {
+		command.loaded()
+	}
+
+	return command
+}
+
+
+const create = (name, params, functionFactory) => {
+	const types = createTypes(name)
 
 	params.tag = {
 		type: 'raw'
@@ -105,12 +121,7 @@ const create = (name, params, functionFactory) => {
 		// console.log('loading', data.tag, params, data)
 		const args = Util.makeObject(Object.entries(params).map(([key, description]) => [key, types.load[description.type](data[key])]))
 		// console.log(args)
-		const result = create(args)
-		if (result.loaded) {
-			result.loaded()
-		}
-
-		return result
+		return revive(create(args))
 	}
 
 	return {
@@ -158,8 +169,15 @@ const commander = (name, params, functionFactory) => {
 			return wrap(commander, inner)
 		},
 		load: data => {
+			// const args = Util.makeObject(Object.entries(params).filter(([key]) => key !== 'commander').map(([key, description]) => [key, types.load[description.type](data[key])]))
+			// args.commander = Commander.load(data.commander)
+			// const inner = revive(create(name, params, functionFactory).create(args))
+
+			// return wrap(args.commander, inner)
+
 			const inner = create(name, params, functionFactory).load(data)
 			const commander = Commander.load(data.commander)
+			console.log(inner.commander.tag, commander.tag, inner.commander === commander)
 			return wrap(commander, inner)
 		}
 	}
