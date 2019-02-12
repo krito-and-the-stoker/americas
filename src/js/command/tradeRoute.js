@@ -89,7 +89,7 @@ export default Factory.commander('TradeRoute', {
 				Commander.scheduleBehind(commander, TriggerEvent.create({ name: 'trade-route-complete', id: commander.tag }))
 			} else {
 				Message.send(`A ${unit.name} has not found any routes and will look again shortly`)
-				Commander.scheduleBehind(commander, TriggerEvent.create({ name: 'trade-route-complete', commander, wait: 2500 }))
+				Commander.scheduleBehind(commander, TriggerEvent.create({ name: 'trade-route-complete', id: commander.tag, wait: 2500 }))
 			}
 		}
 

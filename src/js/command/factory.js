@@ -59,7 +59,14 @@ const create = (name, params, functionFactory) => {
 
 
 	const create = (args = {}) => {
+		Object.keys(args).forEach(key => {
+			if (!params[key]) {
+				console.warn('unspecified command creation argument', key, args, params)
+			}
+		})
+
 		args.tag = args.tag || `${name} - ${Util.tag()}`
+
 
 		Object.entries(params)
 			.filter(([, description]) => description.required)
