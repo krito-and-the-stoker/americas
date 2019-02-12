@@ -110,12 +110,12 @@ const handleKeydown = e => {
 			Commander.scheduleInstead(unit.commander, Found.create({ unit }))
 		}
 		if (e.key === 'p') {
-			Commander.scheduleInstead(unit.commander, Plow.create(unit))
+			Commander.scheduleInstead(unit.commander, Plow.create({ unit }))
 			Commander.scheduleBehind(unit.commander, CutForest.create({ unit }))
 		}
 
 		if (e.key === 'r') {
-			Commander.scheduleInstead(unit.commander, Road.create(unit))
+			Commander.scheduleInstead(unit.commander, Road.create({ unit }))
 		}
 
 		if (e.key === 't') {
@@ -134,12 +134,12 @@ const handleKeydown = e => {
 			Commander.scheduleBehind(unit.commander, Found.create({ unit }))
 		}
 		if (e.key === 'P') {
-			Commander.scheduleBehind(unit.commander, Plow.create(unit))
+			Commander.scheduleBehind(unit.commander, Plow.create({ unit }))
 			Commander.scheduleBehind(unit.commander, CutForest.create({ unit }))
 		}
 
 		if (e.key === 'R') {
-			Commander.scheduleBehind(unit.commander, Road.create(unit))
+			Commander.scheduleBehind(unit.commander, Road.create({ unit }))
 		}
 	}
 }

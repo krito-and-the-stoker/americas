@@ -114,11 +114,11 @@ const commands = {
 	},
 	plow: () => {
 		const unit = pioneer()
-		return Command.Plow.create(unit)
+		return Command.Plow.create({ unit })
 	},
 	road: () => {
 		const unit = pioneer()
-		return Command.Road.create(unit)
+		return Command.Road.create({ unit })
 	},
 	tradeCargo: () => {
 		const colony = jamestown()

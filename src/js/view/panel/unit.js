@@ -82,10 +82,10 @@ const initialize = () => {
 					Commander.scheduleInstead(unit.commander, Found.create({ unit }))
 				}),
 				Click.on(buildRoadText, () => {
-					Commander.scheduleInstead(unit.commander, Road.create(unit))
+					Commander.scheduleInstead(unit.commander, Road.create({ unit }))
 				}),
 				Click.on(plowText, () => {
-					Commander.scheduleInstead(unit.commander, Plow.create(unit))
+					Commander.scheduleInstead(unit.commander, Plow.create({ unit }))
 				}),
 				Click.on(cutForestText, () => {
 					Commander.scheduleInstead(unit.commander, CutForest.create({ unit }))

@@ -24,9 +24,8 @@ export default Factory.create('CutForest', {
 		const tile = MapEntity.tile(unit.mapCoordinates)
 		if (unit.properties.canTerraform && tile.forest && !tile.settlement) {
 			eta = currentTime + Time.CUT_FOREST * (unit.expert === 'pioneer' ? 0.6 : 1)
+			Unit.update.pioneering(unit, true)
 		}
-
-		Unit.update.pioneering(unit, true)
 
 		return {
 			eta,
@@ -35,17 +34,19 @@ export default Factory.create('CutForest', {
 
 	const update = currentTime => currentTime < eta
 	const finished = () => {
-		Storage.update(unit.equipment, { good: 'tools', amount: -20 })	
-		const tile = MapEntity.tile(unit.mapCoordinates)
-		Tile.clearForest(tile)
-		const colony = Util.choose(Tile.radius(tile).filter(tile => tile.colony).map(tile => tile.colony))
-		if (colony) {
-			const amount = 10 + Math.random() * (unit.expert === 'pioneer' ? 90 : 50)
-			Storage.update(colony.storage, { good: 'wood', amount })
+		if (eta) {		
+			Storage.update(unit.equipment, { good: 'tools', amount: -20 })	
+			const tile = MapEntity.tile(unit.mapCoordinates)
+			Tile.clearForest(tile)
+			const colony = Util.choose(Tile.radius(tile).filter(tile => tile.colony).map(tile => tile.colony))
+			if (colony) {
+				const amount = 10 + Math.random() * (unit.expert === 'pioneer' ? 90 : 50)
+				Storage.update(colony.storage, { good: 'wood', amount })
+			}
+			Unit.update.pioneering(unit, false)
+			Events.trigger('notification', { type: 'terraforming', unit })
+			Events.trigger('terraform')
 		}
-		Unit.update.pioneering(unit, false)
-		Events.trigger('notification', { type: 'terraforming', unit })
-		Events.trigger('terraform')
 	}
 
 	return {
