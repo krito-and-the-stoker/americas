@@ -123,6 +123,8 @@ const establishRelations = (ai, owner) => {
 
 
 const makePlansAndRunThem = ai => {
+	return 
+
 	Util.execute(ai.stopAllPlans)
 	State.cleanup(ai.state, [])
 
