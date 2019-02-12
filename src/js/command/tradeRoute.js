@@ -1,7 +1,5 @@
 import Message from 'util/message'
-import Record from 'util/record'
 import Events from 'util/events'
-import Decorators from 'util/decorators'
 
 import MapEntity from 'entity/map'
 import Storage from 'entity/storage'
@@ -16,7 +14,6 @@ import TradeCargo from 'command/tradeCargo'
 import TriggerEvent from 'command/triggerEvent'
 
 
-
 export default Factory.commander('TradeRoute', {
 	unit: {
 		type: 'entity',
@@ -26,11 +23,17 @@ export default Factory.commander('TradeRoute', {
 		type: 'raw',
 		default: true
 	}
-}, ({ unit, needsOrders, commander }) => {
-	let waitingForRoute = 0
+}, state => {
+	const { unit, commander } = state
+	const unsubscribe = Events.listen('trade-route-complete', params => {
+		if (params.id === commander.tag) {
+			state.needsOrders = true
+		}
+	})
 
-	const update = currentTime => {
-		if (needsOrders && currentTime > waitingForRoute) {
+	const update = () => {
+		if (state.needsOrders) {
+			state.needsOrders = false
 			if (Storage.split(unit.storage).length > 0) {
 				return false
 			}
@@ -51,50 +54,42 @@ export default Factory.commander('TradeRoute', {
 			const route = Trade.match(unit)
 			if (route) {
 				const goods = route.orders.reduce((s, order) => s ? `${s}, ${order.amount} ${order.good}` : `${order.amount} ${order.good}`, null)
-				Message.send(`A ${unit.name} will unit ${goods} from ${route.src.name} to ${route.dest.name}`)
+				Message.send(`A ${unit.name} will bring ${goods} from ${route.src.name} to ${route.dest.name}`)
 
 				Commander.scheduleInstead(commander, GoTo.create({
 					unit,
-					colony: route.src.type === 'colony' && route.src,
+					colony: route.src.type === 'colony' ? route.src : null,
 					europe: route.src.type === 'europe'
 				}))
 
 				route.orders.forEach(order => {
+					const pack = { good: order.good, amount: order.amount }
 					if (route.src.isEurope) {
-						const pack = { good: order.good, amount: order.amount }
 						Commander.scheduleBehind(commander, TradeCargo.create({ unit, pack }))
 					} else {
-						Commander.scheduleBehind(commander, LoadCargo.create(route.src, unit, { good: order.good, amount: order.amount }))
+						Commander.scheduleBehind(commander, LoadCargo.create({ colony: route.src, unit, pack }))
 					}
 				})
 
-				Commander.scheduleInstead(commander, GoTo.create({
+				Commander.scheduleBehind(commander, GoTo.create({
 					unit,
-					colony: route.dest.type === 'colony' && route.dest,
+					colony: route.dest.type === 'colony' ? route.dest : null,
 					europe: route.dest.type === 'europe'
 				}))
 
 				route.orders.forEach(order => {
+					const pack = { good: order.good, amount: -order.amount }
 					if (route.dest.isEurope) {
-						const pack = { good: order.good, amount: -order.amount }
 						Commander.scheduleBehind(commander, TradeCargo.create({ unit, pack }))
 					} else {
-						Commander.scheduleBehind(commander, LoadCargo.create(route.dest, unit, { good: order.good, amount: -order.amount }))
+						Commander.scheduleBehind(commander, LoadCargo.create({ colony: route.dest, unit, pack }))
 					}
 				})
 
-				// make sure we generate new orders eventually
-				needsOrders = false
-				Commander.scheduleBehind(commander, TriggerEvent.create({ name: 'trade-route-complete', unit }))
-				const unsubscribeListener = Events.listen('trade-route-complete', ({ unit }) => {
-					if (unit === unit) {
-						needsOrders = true
-						unsubscribeListener()
-					}
-				})
+				Commander.scheduleBehind(commander, TriggerEvent.create({ name: 'trade-route-complete', id: commander.tag }))
 			} else {
 				Message.send(`A ${unit.name} has not found any routes and will look again shortly`)
-				waitingForRoute = currentTime + 2500
+				Commander.scheduleBehind(commander, TriggerEvent.create({ name: 'trade-route-complete', commander, wait: 2500 }))
 			}
 		}
 
@@ -102,6 +97,8 @@ export default Factory.commander('TradeRoute', {
 	}
 
 	return {
-		update
+		update,
+		finished: unsubscribe,
+		canceled: unsubscribe
 	}
 })

@@ -10,8 +10,7 @@ import MapEntity from 'entity/map'
 import Europe from 'entity/europe'
 import Treasure from 'entity/treasure'
 import Market from 'entity/market'
-
-import LoadCargo from 'command/loadCargo'
+import Forecast from 'entity/forecast'
 
 
 const NOTHING = 0
@@ -41,8 +40,8 @@ const canBuy = (europe, good) => europe.trade[good] === BUY
 const canSell = (europe, good) => europe.trade[good] === SELL
 const isHub = (colony, good) => colony.trade[good] === HUB
 
-const canExportAmount = (colony, good) => Math.max(colony.storage[good] + LoadCargo.forecast(colony, good), 0)
-const canImportAmount = (colony, good) => Math.max(colony.capacity - colony.storage[good] + LoadCargo.forecast(colony, good), 0)
+const canExportAmount = (colony, good) => Math.max(colony.storage[good] + Forecast.get(colony, good), 0)
+const canImportAmount = (colony, good) => Math.max(colony.capacity - colony.storage[good] + Forecast.get(colony, good), 0)
 
 // how much can we buy depends on treasure
 const canBuyAmount = (europe, good) => Math.floor((Treasure.amount() - TREASURE_MIN) / Market.ask(good))

@@ -16,13 +16,33 @@ export default Factory.create('TriggerEvent', {
 	},
 	colony: {
 		type: 'entity'
+	},
+	id: {
+		type: 'raw'
+	},
+	wait: {
+		type: 'raw',
+		default: 0
+	},
+	eta: {
+		type: 'raw'
 	}
-}, ({ name, type, unit, colony}) => {
-	const init = () => {
-		Events.trigger(name, { type, unit, colony })
+}, ({ name, type, unit, colony, id, wait, eta }) => {
+	const init = currentTime => {
+		eta = currentTime + wait
+		return {
+			eta
+		}
+	}
+
+	const update = currentTime => eta && currentTime < eta 
+	const finished = () => {
+		Events.trigger(name, { type, unit, colony, id })
 	}
 
 	return {
-		init
+		init,
+		update,
+		finished
 	}
 })

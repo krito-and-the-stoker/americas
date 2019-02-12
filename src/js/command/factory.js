@@ -83,6 +83,7 @@ const create = (name, params, functionFactory) => {
 			})
 
 		const save = () => {
+			// console.log('saving', params, args)
 			const result = Util.makeObject(Object.entries(params).concat([['module', { type: 'name' }]]).map(([key, description]) => [key, types.save[description.type](args[key])]))
 			// console.log(tag, result)
 			return result
@@ -165,7 +166,6 @@ const commander = (name, params, functionFactory) => {
 	return {
 		create: (...args) => {
 			const commander = Commander.create()
-			// console.log('creating auxiliary commander', commander.tag)
 			params.commander.initialized = commander
 			const factory = create(name, params, functionFactory)
 			const inner = factory.create(...args)

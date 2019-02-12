@@ -16,8 +16,7 @@ export default Factory.create('America', {
 	eta: {
 		type: 'raw',
 	}
-}, ({ unit, eta, tag }) => {
-	console.log(tag, unit.name, eta)
+}, ({ unit, eta }) => {
 	const init = currentTime => {
 		if (!Europe.has.unit(unit)) {
 			console.warn('unit is not in europe', unit.name)

@@ -1,32 +1,12 @@
-import Decorators from 'util/decorators'
-import Record from 'util/record'
 import Events from 'util/events'
 
 import Time from 'timeline/time'
 
 import Storage from 'entity/storage'
+import Forecast from 'entity/forecast'
 
+import Factory from 'command/factory'
 
-const scheduledCargoLoads = {}
-const scheduled = () => scheduledCargoLoads
-
-const init = name => {
-	scheduled()[name] = Storage.create()
-}
-
-const addForecast = (colony, pack) => {
-	if (!scheduled()[colony.name]) {
-		init(colony.name)
-	}
-	scheduled()[colony.name][pack.good] -= pack.amount
-}
-const removeForecast = (colony, pack) => {
-	if (!scheduled()[colony.name]) {
-		init(colony.name)
-	}
-	scheduled()[colony.name][pack.good] += pack.amount
-}
-const forecast = (colony, good) => scheduled()[colony.name] ? scheduled()[colony.name][good] : 0
 
 const loadCargo = (colony, unit, pack) => {
 	if (pack.amount > 0) {
@@ -42,58 +22,52 @@ const loadCargo = (colony, unit, pack) => {
 }
 
 
-const create = Decorators.ensureArguments(3, (colony, unit, pack, eta = null) => {
-	addForecast(colony, pack)
+export default Factory.create('LoadCargo', {
+	colony: {
+		type: 'entity',
+		required: true
+	},
+	unit: {
+		type: 'entity',
+		required: true
+	},
+	pack: {
+		type: 'raw',
+		required: true
+	},
+	eta: {
+		type: 'raw'
+	}
+}, ({ colony, unit, pack, eta }) => {
+	Forecast.add(colony, pack)
 
 	const init = currentTime => {
 		if (unit.colony !== colony) {
 			console.warn('unit loads cargo but is not inside colony', colony.name, unit.name, pack)
 		}
 
-		if (!eta) {
-			eta = currentTime + Time.CARGO_LOAD_TIME
+		eta = currentTime + Time.CARGO_LOAD_TIME
+		return {
+			eta
 		}
-
-		return true
 	}
 
-	const update = currentTime => currentTime < eta
+	const update = currentTime => eta && currentTime < eta
 	const finished = () => {
-		removeForecast(colony, pack)
+		Forecast.remove(colony, pack)
 		if (eta) {
 			loadCargo(colony, unit, pack)
 		}
 	}
 
 	const canceled = () => {
-		removeForecast(colony, pack)
+		Forecast.remove(colony, pack)
 	}
-
-	const save = () => ({
-		module: 'LoadCargo',
-		unit: Record.reference(unit),
-		colony: Record.reference(colony),
-		eta,
-		pack
-	})
 
 	return {
 		init,
 		update,
 		finished,
-		save,
 		canceled
 	}
 })
-
-const load = data => {
-	const unit = Record.dereference(data.unit)
-	const colony = Record.dereference(data.colony)
-	return create(colony, unit, data.pack, data.eta)
-}
-
-export default {
-	create,
-	load,
-	forecast
-}

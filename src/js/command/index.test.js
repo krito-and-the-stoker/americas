@@ -62,9 +62,6 @@ const commands = {
 		const unit = ship()
 		return Command.America.create({ unit })
 	},
-	// commander: () => {
-	// 	return Commander.create()
-	// },
 	cutForest: () => {
 		const unit = pioneer()
 		return Command.CutForest.create({ unit })
@@ -99,8 +96,8 @@ const commands = {
 	loadCargo: () => {
 		const colony = jamestown()
 		const unit = pioneer()
-		const good = tools()
-		return Command.LoadCargo.create(colony, unit, good)
+		const pack = tools()
+		return Command.LoadCargo.create({ colony, unit, pack })
 	},
 	move: () => {
 		const unit = pioneer()
