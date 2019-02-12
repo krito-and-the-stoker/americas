@@ -43,13 +43,13 @@ export default Factory.create('Move', {
 	let aborted = false
 
 	const init = currentTime => {
-		startCoords = unit.tile.mapCoordinates
+		startCoords = unit.mapCoordinates
 		if(unit.offTheMap) {
 			console.warn('unit is off the map. cannot move')
 		}
 
 		if (!inMoveDistance(startCoords, coords)) {
-			console.warn('unit cannot move to non-adjacent tiles')
+			console.warn('unit cannot move to non-adjacent tiles', startCoords, coords)
 		}
 
 		if (startCoords.x === coords.x && startCoords.y === coords.y) {

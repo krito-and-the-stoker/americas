@@ -31,7 +31,7 @@ export default Factory.create('Road', {
 		}
 	}
 
-	const update = currentTime => currentTime < eta
+	const update = currentTime => eta && currentTime < eta
 	const finished = () => {
 		if (eta) {
 			Storage.update(unit.equipment, { good: 'tools', amount: -20 })	

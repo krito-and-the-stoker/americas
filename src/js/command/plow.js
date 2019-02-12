@@ -29,7 +29,7 @@ export default Factory.create('Plow', {
 		return false
 	}
 
-	const update = currentTime => currentTime < eta
+	const update = currentTime => eta && currentTime < eta
 	const finished = () => {
 		if (eta) {
 			Storage.update(unit.equipment, { good: 'tools', amount: -20 })	
