@@ -1,6 +1,4 @@
-import Record from 'util/record'
 import Events from 'util/events'
-import Decorators from 'util/decorators'
 
 import Time from 'timeline/time'
 
@@ -9,6 +7,8 @@ import Europe from 'entity/europe'
 import Market from 'entity/market'
 import Trade from 'entity/trade'
 import Treasure from 'entity/treasure'
+
+import Factory from 'command/factory'
 
 
 const tradeCargo = (unit, pack) => {
@@ -28,18 +28,28 @@ const tradeCargo = (unit, pack) => {
 }
 
 
-const create = Decorators.ensureArguments(2, (unit, pack, eta = null) => {
-
+export default Factory.create('TradeCargo', {
+	unit: {
+		type: 'entity',
+		required: true
+	},
+	pack: {
+		type: 'raw',
+		required: true
+	},
+	eta: {
+		type: 'raw'
+	}
+}, ({ unit, pack, eta }) => {
 	const init = currentTime => {
 		if (!Europe.has.unit(unit)) {
 			console.warn('unit wants to trade without being in europe', unit.name, pack)
 		}
 
-		if (!eta) {
-			eta = currentTime + Time.CARGO_LOAD_TIME
+		eta = currentTime + Time.CARGO_LOAD_TIME
+		return {
+			eta
 		}
-
-		return true
 	}
 
 	const update = currentTime => currentTime < eta
@@ -49,29 +59,9 @@ const create = Decorators.ensureArguments(2, (unit, pack, eta = null) => {
 		}
 	}
 
-
-	const save = () => ({
-		module: 'TradeCargo',
-		unit: Record.reference(unit),
-		eta,
-		pack
-	})
-
 	return {
 		init,
 		update,
-		finished,
-		save,
-	}
+		finished
+	}	
 })
-
-const load = data => {
-	const unit = Record.dereference(data.unit)
-
-	return create(unit, data.pack, data.eta)
-}
-
-export default {
-	create,
-	load,
-}

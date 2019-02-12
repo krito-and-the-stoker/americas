@@ -124,7 +124,7 @@ const commands = {
 		const colony = jamestown()
 		const unit = Unit.create('caravel', colony.mapCoordinates)
 		const pack = tools()
-		return Command.TradeCargo.create(colony, unit, pack)
+		return Command.TradeCargo.create({ unit, pack })
 	},
 	tradeRoute: () => {
 		const unit = ship()

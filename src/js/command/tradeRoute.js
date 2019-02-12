@@ -70,7 +70,8 @@ const create = Decorators.ensureArguments(1, (transport, tradeCommanderParam = n
 
 				route.orders.forEach(order => {
 					if (route.src.isEurope) {
-						Commander.scheduleBehind(tradeCommander, TradeCargo.create(transport, { good: order.good, amount: order.amount }))
+						const pack = { good: order.good, amount: order.amount }
+						Commander.scheduleBehind(tradeCommander, TradeCargo.create({ unit: transport, pack }))
 					} else {
 						Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.src, transport, { good: order.good, amount: order.amount }))
 					}
@@ -84,7 +85,8 @@ const create = Decorators.ensureArguments(1, (transport, tradeCommanderParam = n
 
 				route.orders.forEach(order => {
 					if (route.dest.isEurope) {
-						Commander.scheduleBehind(tradeCommander, TradeCargo.create(transport, { good: order.good, amount: -order.amount }))
+						const pack = { good: order.good, amount: -order.amount }
+						Commander.scheduleBehind(tradeCommander, TradeCargo.create({ unit: transport, pack }))
 					} else {
 						Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.dest, transport, { good: order.good, amount: -order.amount }))
 					}
