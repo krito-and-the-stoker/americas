@@ -14,8 +14,6 @@ const scheduleInstead = (commander, command) => {
 	schedule.instead(commander, command)
 }
 
-const isIdle = commander => false //!commander.currentCommand && commander.commands.length === 0
-
 const scheduleBehind = (commander, command) => {
 	schedule.behind(commander, command)
 }
@@ -79,13 +77,13 @@ const start = (state, command) => {
 	return Time.schedule(command)	
 }
 
-const commandsScheduled = command => {
-	console.warn('probably not working')
-	const current = command.currentCommand ? commandsScheduled(command.currentCommand) : 1
-	const other = command.commands ? command.commands.map(commandsScheduled).reduce((sum, count) => sum + count, 0) : 0
+// const commandsScheduled = command => {
+// 	console.warn('probably not working')
+// 	const current = command.currentCommand ? commandsScheduled(command.currentCommand) : 1
+// 	const other = command.commands ? command.commands.map(commandsScheduled).reduce((sum, count) => sum + count, 0) : 0
 
-	return current + other
-}
+// 	return current + other
+// }
 
 const { create, load } = Factory.create('Commander', {
 	keep: {
@@ -164,7 +162,5 @@ export default {
 	cancel,
 	scheduleInstead,
 	scheduleBehind,
-	isIdle,
-	commandsScheduled,
 	clearSchedule
 }

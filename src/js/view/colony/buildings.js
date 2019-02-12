@@ -13,8 +13,6 @@ import Colony from 'entity/colony'
 import JoinColony from 'interaction/joinColony'
 import BecomeColonist from 'interaction/becomeColonist'
 
-import Commander from 'command/commander'
-
 import Resources from 'render/resources'
 
 import ProductionView from 'view/production'
@@ -61,10 +59,6 @@ const createBuilding = (colony, building) => {
 		}
 
 		if (colony.disbanded) {
-			return false
-		}
-
-		if (unit && !Commander.isIdle(unit.commander)) {
 			return false
 		}
 

@@ -22,8 +22,6 @@ const firstPlace = () => ({ x: 1, y: 2 })
 test('create & schedule', () => {
 	const unit = soldier()
 	Commander.scheduleBehind(unit.commander, MoveTo.create({ unit: unit, coords: place() }))
-
-	expect(Commander.isIdle(unit.commander)).toBe(false)
 })
 
 test('moving', () => {

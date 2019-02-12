@@ -12,13 +12,13 @@ import LoadUnit from 'command/loadUnit'
 import Unload from 'command/unload'
 
 
-const canLoad = ship => (Commander.isIdle(ship.commander) ||
-	ship.commander.currentCommand.type === 'load' ||
-	ship.commander.currentCommand.type === 'unload')
+const canLoad = ship => (!ship.commander.state.currentCommand ||
+	ship.commander.state.currentCommand.type === 'load' ||
+	ship.commander.state.currentCommand.type === 'unload')
 
-const canLoadTreasure = ship => (Commander.isIdle(ship.commander) ||
-	ship.commander.currentCommand.type === 'load' ||
-	ship.commander.currentCommand.type === 'unload') && ship.properties.canTransportTreasure
+const canLoadTreasure = ship => (!ship.commander.state.currentCommand ||
+	ship.commander.state.currentCommand.type === 'load' ||
+	ship.commander.state.currentCommand.type === 'unload') && ship.properties.canTransportTreasure
 
 const inMoveDistance = (coords1, coords2) => Math.abs(coords1.x - coords2.x) <= 1 && Math.abs(coords1.y - coords2.y) <= 1
 
