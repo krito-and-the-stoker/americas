@@ -37,6 +37,10 @@ const create = (name, params, functionFactory) => {
 		type: 'raw'
 	}
 
+	params.initHasBeenCalled = {
+		type: 'raw',
+	}
+
 
 	const create = (args = {}) => {
 		args.tag = args.tag || `${name} - ${Util.tag()}`
@@ -68,15 +72,14 @@ const create = (name, params, functionFactory) => {
 			return result
 		}
 
+
 		const functions = functionFactory(args)
 		if (args.initHasBeenCalled) {
+			args.initHasBeenCalled = true
 			delete functions.init
 		}
 
 		if (functions.init) {
-			params.initHasBeenCalled = {
-				type: 'raw',
-			}
 			const originalInit = functions.init
 
 			functions.init = (...initArgs) => {

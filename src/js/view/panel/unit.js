@@ -104,7 +104,7 @@ const initialize = () => {
 							options: colonies.map(colony => ({
 								text: `${colony.name} (${colony.colonists.length})`,
 								action: () => {
-									Commander.scheduleInstead(unit.commander, MoveTo.create(unit, colony.mapCoordinates))
+									Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: colony.mapCoordinates }))
 								}
 							})).concat([{
 								text: 'London',
@@ -112,7 +112,7 @@ const initialize = () => {
 								action: () => {
 									const pathToHighSeas = PathFinder.findHighSeas(unit.tile)
 									const target = pathToHighSeas[pathToHighSeas.length - 1]
-									Commander.scheduleInstead(unit.commander, MoveTo.create(unit, target.mapCoordinates))
+									Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: target.mapCoordinates }))
 									Commander.scheduleBehind(unit.commander, Europe.create({ unit }))
 									Commander.scheduleBehind(unit.commander, TriggerEvent.create({ name: 'notification', type: 'europe', unit }))
 								}
@@ -127,7 +127,7 @@ const initialize = () => {
 							options: colonies.map(colony => ({
 								text: `${colony.name} (${colony.colonists.length})`,
 								action: () => {
-									Commander.scheduleInstead(unit.commander, MoveTo.create(unit, colony.mapCoordinates))
+									Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: colony.mapCoordinates }))
 								}
 							}))
 						})

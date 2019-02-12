@@ -56,9 +56,6 @@ export default Factory.commander('MoveTo', {
 		lastPoint = path.length > 0 ? path[path.length - 1].mapCoordinates : unit.mapCoordinates
 
 		return {
-			unit,
-			commander,
-			coords,
 			lastPoint
 		}
 	}

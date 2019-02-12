@@ -15,6 +15,10 @@ let names = Names
 const tag = () => {
 	const name = choose(names)
 	names = names.filter(n => n !== name)
+	if (names.length === 0) {
+		console.warn('Resetting names. Consider using more in future.')
+		names = Names
+	}
 
 	return name
 }
