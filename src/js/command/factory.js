@@ -91,7 +91,6 @@ const create = (name, params, functionFactory) => {
 
 		const functions = functionFactory(args)
 		if (args.initHasBeenCalled) {
-			args.initHasBeenCalled = true
 			delete functions.init
 		}
 
@@ -154,8 +153,13 @@ const wrap = (commander, command) => ({
 })
 
 const commander = (name, params, functionFactory) => {
+	const types = createTypes(name)
 	params.commander = {
 		type: 'command'
+	}
+
+	params.initHasBeenCalled = {
+		type: 'raw'
 	}
 
 	return {
@@ -169,15 +173,12 @@ const commander = (name, params, functionFactory) => {
 			return wrap(commander, inner)
 		},
 		load: data => {
-			// const args = Util.makeObject(Object.entries(params).filter(([key]) => key !== 'commander').map(([key, description]) => [key, types.load[description.type](data[key])]))
-			// args.commander = Commander.load(data.commander)
-			// const inner = revive(create(name, params, functionFactory).create(args))
-
-			// return wrap(args.commander, inner)
-
-			const inner = create(name, params, functionFactory).load(data)
 			const commander = Commander.load(data.commander)
-			console.log(inner.commander.tag, commander.tag, inner.commander === commander)
+
+			const args = Util.makeObject(Object.entries(params).filter(([key]) => key !== 'commander').map(([key, description]) => [key, types.load[description.type](data[key])]))
+			args.commander = commander
+			const inner = revive(create(name, params, functionFactory).create(args))
+
 			return wrap(commander, inner)
 		}
 	}
