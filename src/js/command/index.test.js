@@ -128,11 +128,11 @@ const commands = {
 	},
 	tradeRoute: () => {
 		const unit = ship()
-		return Command.TradeRoute.create(unit)
+		return Command.TradeRoute.create({ unit })
 	},
 	triggerEvent: () => {
 		const notification = immigration()
-		return Command.TriggerEvent.create('notification', notification)
+		return Command.TriggerEvent.create({ name: 'notification', ...notification })
 	}
 }
 

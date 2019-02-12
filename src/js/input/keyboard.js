@@ -119,7 +119,7 @@ const handleKeydown = e => {
 		}
 
 		if (e.key === 't') {
-			Commander.scheduleInstead(unit.commander, TradeRoute.create(unit))
+			Commander.scheduleInstead(unit.commander, TradeRoute.create({ unit }))
 		}
 
 		if (e.key === 'c') {

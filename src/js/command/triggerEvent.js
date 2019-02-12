@@ -1,42 +1,28 @@
-import Decorators from 'util/decorators'
 import Events from 'util/events'
-import Record from 'util/record'
+
+import Factory from 'command/factory'
 
 
-const create = Decorators.ensureArguments(1, (name, params) => {
-	const init = () => {
-		Events.trigger(name, params)
-		return false
+export default Factory.create('TriggerEvent', {
+	name: {
+		type: 'raw',
+		required: true
+	},
+	type: {
+		type: 'raw'
+	},
+	unit: {
+		type: 'entity',
+	},
+	colony: {
+		type: 'entity'
 	}
-
-	const save = () => ({
-		module: 'TriggerEvent',
-		name,
-		params: {
-			type: params.type,
-			unit: Record.reference(params.unit),
-			colony: Record.reference(params.colony),
-		}
-	})
+}, ({ name, type, unit, colony}) => {
+	const init = () => {
+		Events.trigger(name, { type, unit, colony })
+	}
 
 	return {
-		init,
-		save
+		init
 	}
 })
-
-const load = data => {
-	const unit = Record.dereference(data.params.unit)
-	const colony = Record.dereference(data.params.colony)
-
-	return create(data.name, {
-		type: data.params.type,
-		unit,
-		colony
-	})
-}
-
-export default {
-	create,
-	load
-}

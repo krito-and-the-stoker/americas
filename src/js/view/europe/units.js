@@ -13,7 +13,6 @@ import Util from 'util/util'
 import LoadUnitFromShipToEurope from 'interaction/loadUnitFromShipToEurope'
 import Dialog from 'view/ui/dialog'
 import Record from 'util/record'
-import PathFinder from 'util/pathFinder'
 import MapEntity from 'entity/map'
 import GoTo from 'command/goTo'
 import TriggerEvent from 'command/triggerEvent'
@@ -41,7 +40,7 @@ const selectTarget = unit => {
 		text: 'Where you came from',
 		action: () => {
 			Commander.scheduleInstead(unit.commander, America.create({ unit }))
-			Commander.scheduleBehind(unit.commander, TriggerEvent.create('notification', { type: 'america', unit: unit }))
+			Commander.scheduleBehind(unit.commander, TriggerEvent.create({ name: 'notification', type: 'america', unit }))
 			closeIfNoShips()
 		}
 	}].concat(colonies.map((colony, index) => ({
@@ -49,7 +48,7 @@ const selectTarget = unit => {
 		text: `${colony.name} (${colony.colonists.length})`,
 		action: () => {
 			Commander.scheduleBehind(unit.commander, GoTo.create({ unit, colony }))
-			Commander.scheduleBehind(unit.commander, TriggerEvent.create('notification', { type: 'arrive', unit: unit, colony }))
+			Commander.scheduleBehind(unit.commander, TriggerEvent.create({ name: 'notification', type: 'arrive', unit, colony }))
 			closeIfNoShips()
 		}
 	}))).concat([{

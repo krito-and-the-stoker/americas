@@ -8,6 +8,7 @@ import Storage from 'entity/storage'
 import Unit from 'entity/unit'
 import Trade from 'entity/trade'
 
+import Factory from 'command/factory'
 import Commander from 'command/commander'
 import GoTo from 'command/goTo'
 import LoadCargo from 'command/loadCargo'
@@ -15,55 +16,45 @@ import TradeCargo from 'command/tradeCargo'
 import TriggerEvent from 'command/triggerEvent'
 
 
-const create = Decorators.ensureArguments(1, (transport, tradeCommanderParam = null, initialized = false, waitingForRoute = 0, needsOrders = true) => {
-	const tradeCommander = tradeCommanderParam || Commander.create({ keep: true })
 
-	if (!needsOrders) {
-		const unsubscribeListener = Events.listen('trade-route-complete', ({ unit }) => {
-			if (unit === transport) {
-				needsOrders = true
-				unsubscribeListener()
-			}
-		})		
+export default Factory.commander('TradeRoute', {
+	unit: {
+		type: 'entity',
+		required: true
+	},
+	needsOrders: {
+		type: 'raw',
+		default: true
 	}
-
-	const init = () => {
-		console.log('trade route initialized')
-		if (initialized) {
-			return true
-		}
-		initialized = true
-
-		// cannot start trade route when loaded
-		if (Storage.split(transport.storage).length > 0) {
-			return false
-		}
-
-		if (!transport.properties.cargo) {
-			return false
-		}
-
-		// try unloading all passengers
-		if (transport.passengers.length > 0) {
-			if (MapEntity.tile(transport.mapCoordinates).domain === 'land') {
-				Unit.unloadAllUnits(transport)
-				return true
-			}
-			return false
-		}
-
-		return true
-	}
+}, ({ unit, needsOrders, commander }) => {
+	let waitingForRoute = 0
 
 	const update = currentTime => {
-		if (needsOrders && !tradeRoute.pleaseStop && currentTime > waitingForRoute) {
-			const route = Trade.match(transport)
+		if (needsOrders && currentTime > waitingForRoute) {
+			if (Storage.split(unit.storage).length > 0) {
+				return false
+			}
+
+			if (!unit.properties.cargo) {
+				return false
+			}
+
+			// try unloading all passengers
+			if (unit.passengers.length > 0) {
+				if (MapEntity.tile(unit.mapCoordinates).domain === 'land') {
+					Unit.unloadAllUnits(unit)
+				} else {
+					return false
+				}
+			}
+
+			const route = Trade.match(unit)
 			if (route) {
 				const goods = route.orders.reduce((s, order) => s ? `${s}, ${order.amount} ${order.good}` : `${order.amount} ${order.good}`, null)
-				Message.send(`A ${transport.name} will transport ${goods} from ${route.src.name} to ${route.dest.name}`)
+				Message.send(`A ${unit.name} will unit ${goods} from ${route.src.name} to ${route.dest.name}`)
 
-				Commander.scheduleInstead(tradeCommander, GoTo.create({
-					unit: transport,
+				Commander.scheduleInstead(commander, GoTo.create({
+					unit,
 					colony: route.src.type === 'colony' && route.src,
 					europe: route.src.type === 'europe'
 				}))
@@ -71,14 +62,14 @@ const create = Decorators.ensureArguments(1, (transport, tradeCommanderParam = n
 				route.orders.forEach(order => {
 					if (route.src.isEurope) {
 						const pack = { good: order.good, amount: order.amount }
-						Commander.scheduleBehind(tradeCommander, TradeCargo.create({ unit: transport, pack }))
+						Commander.scheduleBehind(commander, TradeCargo.create({ unit, pack }))
 					} else {
-						Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.src, transport, { good: order.good, amount: order.amount }))
+						Commander.scheduleBehind(commander, LoadCargo.create(route.src, unit, { good: order.good, amount: order.amount }))
 					}
 				})
 
-				Commander.scheduleInstead(tradeCommander, GoTo.create({
-					unit: transport,
+				Commander.scheduleInstead(commander, GoTo.create({
+					unit,
 					colony: route.dest.type === 'colony' && route.dest,
 					europe: route.dest.type === 'europe'
 				}))
@@ -86,60 +77,31 @@ const create = Decorators.ensureArguments(1, (transport, tradeCommanderParam = n
 				route.orders.forEach(order => {
 					if (route.dest.isEurope) {
 						const pack = { good: order.good, amount: -order.amount }
-						Commander.scheduleBehind(tradeCommander, TradeCargo.create({ unit: transport, pack }))
+						Commander.scheduleBehind(commander, TradeCargo.create({ unit, pack }))
 					} else {
-						Commander.scheduleBehind(tradeCommander, LoadCargo.create(route.dest, transport, { good: order.good, amount: -order.amount }))
+						Commander.scheduleBehind(commander, LoadCargo.create(route.dest, unit, { good: order.good, amount: -order.amount }))
 					}
 				})
 
 				// make sure we generate new orders eventually
 				needsOrders = false
-				Commander.scheduleBehind(tradeCommander, TriggerEvent.create('trade-route-complete', { unit: transport }))
+				Commander.scheduleBehind(commander, TriggerEvent.create({ name: 'trade-route-complete', unit }))
 				const unsubscribeListener = Events.listen('trade-route-complete', ({ unit }) => {
-					if (unit === transport) {
+					if (unit === unit) {
 						needsOrders = true
 						unsubscribeListener()
 					}
 				})
 			} else {
-				Message.send(`A ${transport.name} has not found any routes and will look again shortly`)
+				Message.send(`A ${unit.name} has not found any routes and will look again shortly`)
 				waitingForRoute = currentTime + 2500
 			}
 		}
 
-		if (tradeRoute.pleaseStop) {
-			Commander.clearSchedule(tradeCommander)
-			tradeCommander.update()
-			return !Commander.isIdle(tradeCommander)
-		}
-
-		return tradeCommander.update()
+		return true
 	}
 
-	const save = () => ({
-		module: 'TradeRoute',
-		waitingForRoute,
-		initialized,
-		tradeCommander: tradeCommander.save(),
-		transport: Record.reference(transport),
-		needsOrders
-	})
-
-	const tradeRoute = {
-		commands: tradeCommander.commands,
-		init,
-		update,
-		save
+	return {
+		update
 	}
-
-	return tradeRoute
 })
-
-const load = data => {
-	const transport = Record.dereference(data.transport)
-	const tradeRoute = create(transport, Commander.load(data.tradeCommander), data.initialized, data.waitingForRoute, data.needsOrders)
-
-	return tradeRoute
-}
-
-export default { create, load }

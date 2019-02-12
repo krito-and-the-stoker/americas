@@ -91,7 +91,7 @@ const initialize = () => {
 					Commander.scheduleInstead(unit.commander, CutForest.create({ unit }))
 				}),
 				Click.on(trade, () => {
-					Commander.scheduleInstead(unit.commander, TradeRoute.create(unit))
+					Commander.scheduleInstead(unit.commander, TradeRoute.create({ unit }))
 				}),
 				Click.on(gotoText, () => {
 					if (unit.domain === 'sea') {
@@ -114,7 +114,7 @@ const initialize = () => {
 									const target = pathToHighSeas[pathToHighSeas.length - 1]
 									Commander.scheduleInstead(unit.commander, MoveTo.create(unit, target.mapCoordinates))
 									Commander.scheduleBehind(unit.commander, Europe.create({ unit }))
-									Commander.scheduleBehind(unit.commander, TriggerEvent.create('notification', { type: 'europe', unit }))
+									Commander.scheduleBehind(unit.commander, TriggerEvent.create({ name: 'notification', type: 'europe', unit }))
 								}
 							}])
 						})
