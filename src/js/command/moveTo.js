@@ -51,7 +51,7 @@ export default Factory.commander('MoveTo', {
 		const path = PathFinder.findPathXY(unit.mapCoordinates, coords, unit).filter((waypoint, index) => index > 0)
 		const schedule = command => Commander.scheduleBehind(commander, command)
 		const commands = (unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y) ?
-			[] : path.map(waypoint => Move.create(unit, waypoint.mapCoordinates))
+			[] : path.map(waypoint => Move.create({ unit, coords: waypoint.mapCoordinates }))
 		commands.forEach(schedule)
 		lastPoint = path.length > 0 ? path[path.length - 1].mapCoordinates : unit.mapCoordinates
 
@@ -73,7 +73,7 @@ export default Factory.commander('MoveTo', {
 				inMoveDistance(unit.tile.mapCoordinates, coords)) {
 			const ship = shipsAtTarget.find(unit.treasure ? canLoadTreasure : canLoad)
 			Commander.scheduleBehind(ship.commander, LoadUnit.create({ transport: ship, passenger: unit }))
-			Commander.scheduleInstead(unit.commander, Move.create(unit, coords))
+			Commander.scheduleInstead(unit.commander, Move.create({ unit, coords }))
 		}
 
 		if (unit.domain === 'sea' &&

@@ -64,7 +64,7 @@ const create = (unit, coords) => {
 		if (decision === 0) {
 			Events.trigger('disembark')
 			landingUnit = Unit.unloadUnit(unit)
-			Commander.scheduleInstead(landingUnit.commander, Move.create(landingUnit, coords))
+			Commander.scheduleInstead(landingUnit.commander, Move.create({ unit: landingUnit, coords }))
 			unloadingStartedAt = currentTime
 			return true
 		}

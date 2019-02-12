@@ -105,7 +105,7 @@ const commands = {
 	move: () => {
 		const unit = pioneer()
 		const coords = closePlace()
-		return Command.Move.create(unit, coords)
+		return Command.Move.create({ unit, coords })
 	},
 	moveTo: () => {
 		const unit = pioneer()
