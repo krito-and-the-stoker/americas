@@ -382,15 +382,19 @@ const dereferenceLazy = (ref, fn) => {
 			const dead = snapshot.entities.find(record => record.id === referenceId)
 			if (!dead) {
 				console.warn('Could not find reference for', ref)
+			} else {
+				dead.listeners.push(fn)
 			}
-			dead.listeners.push(fn)
 		}
 	}
 }
 
 let beforeLoadedListeners = []
 let loadedListeners = []
-const entitiesLoaded = fn => loadedListeners.push(fn)
+const entitiesLoaded = (fn, priority = 10) => loadedListeners.push({
+	fn,
+	priority
+})
 const beforeEntitiesLoaded = fn => beforeLoadedListeners.push(fn)
 
 const unserialize = content => {
@@ -419,12 +423,11 @@ const unserialize = content => {
 	Market.load(snapshot.market)
 	Europe.load(snapshot.europe)
 	beforeLoadedListeners.forEach(fn => fn())
-	loadedListeners.forEach(fn => fn())
+	loadedListeners.sort((a, b) => a.priority - b.priority).forEach(({ fn }) => fn())
 }
 
 const load = (src = null) => {
 	Message.log('Loading...')
-	// Events.trigger('shutdown')
 
 	if (src) {
 		lastSave = src
