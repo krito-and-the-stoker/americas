@@ -137,7 +137,6 @@ const videoDialog = message => {
 
 	const textView = Text.create(text, {
 		align: 'left',
-		fontSize: 24
 	})
 
 	const checkMark = Icon.create('check')
@@ -159,11 +158,13 @@ const videoDialog = message => {
 		textView.style = {
 			...textView.style,
 			wordWrap: true,
+			fontSize: Math.round(0.0175 * dimensions.x),
 			wordWrapWidth: 0.48 * dimensions.x
 		}
 		textView.x = (dimensions.x - textView.width) / 2
 		textView.y = video.y + video.height + 0.03 * dimensions.y
 
+		checkMark.scale.set(1.5*Math.round(0.0175 * dimensions.x) / 64)
 		checkMark.x = frameView.x + frameView.width - 0.03 * dimensions.x - checkMark.width
 		checkMark.y = frameView.y + frameView.height - 0.03 * dimensions.y - checkMark.height
 	})
