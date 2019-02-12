@@ -85,7 +85,7 @@ const commands = {
 	goTo: () => {
 		const unit = ship()
 		const colony = jamestown()
-		return Command.GoTo.create(unit, colony)
+		return Command.GoTo.create({ unit, colony })
 	},
 	learnFromNatives: () => {
 		const unit = settler()

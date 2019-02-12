@@ -62,7 +62,12 @@ const create = Decorators.ensureArguments(1, (transport, tradeCommanderParam = n
 				const goods = route.orders.reduce((s, order) => s ? `${s}, ${order.amount} ${order.good}` : `${order.amount} ${order.good}`, null)
 				Message.send(`A ${transport.name} will transport ${goods} from ${route.src.name} to ${route.dest.name}`)
 
-				Commander.scheduleInstead(tradeCommander, GoTo.create(transport, route.src))
+				Commander.scheduleInstead(tradeCommander, GoTo.create({
+					unit: transport,
+					colony: route.src.type === 'colony' && route.src,
+					europe: route.src.type === 'europe'
+				}))
+
 				route.orders.forEach(order => {
 					if (route.src.isEurope) {
 						Commander.scheduleBehind(tradeCommander, TradeCargo.create(transport, { good: order.good, amount: order.amount }))
@@ -71,7 +76,12 @@ const create = Decorators.ensureArguments(1, (transport, tradeCommanderParam = n
 					}
 				})
 
-				Commander.scheduleBehind(tradeCommander, GoTo.create(transport, route.dest))
+				Commander.scheduleInstead(tradeCommander, GoTo.create({
+					unit: transport,
+					colony: route.dest.type === 'colony' && route.dest,
+					europe: route.dest.type === 'europe'
+				}))
+
 				route.orders.forEach(order => {
 					if (route.dest.isEurope) {
 						Commander.scheduleBehind(tradeCommander, TradeCargo.create(transport, { good: order.good, amount: -order.amount }))

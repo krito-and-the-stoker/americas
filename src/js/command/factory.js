@@ -81,6 +81,7 @@ const create = (name, params, functionFactory) => {
 
 			functions.init = (...initArgs) => {
 				args = {
+					...args,
 					...originalInit(...initArgs),
 					tag: args.tag,
 					initHasBeenCalled: true

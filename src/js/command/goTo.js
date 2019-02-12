@@ -1,95 +1,59 @@
 import PathFinder from 'util/pathFinder'
 import Record from 'util/record'
-import Decorators from 'util/decorators'
 
 import MapEntity from 'entity/map'
 import Europe from 'entity/europe'
 import Unit from 'entity/unit'
 
 import Commander from 'command/commander'
+import Factory from 'command/factory'
 import MoveTo from 'command/moveTo'
 import America from 'command/america'
 import EuropeCommand from 'command/europe'
 
 
-const create = Decorators.ensureArguments(2, (unit, destination, commander = null, isInitialized = false) => {
-	const gotoCommander = commander ? commander : Commander.create()
-
+export default Factory.commander('GoTo', {
+	unit: {
+		type: 'entity',
+		required: true
+	},
+	colony: {
+		type: 'entity',
+		default: null
+	},
+	europe: {
+		type: 'raw',
+		default: false
+	}
+}, ({ unit, colony, europe, commander }) => {
 	const init = () => {
-		if (isInitialized) {
-			return true
-		}
-
-		if (destination.type === 'colony') {
-			const colony = destination
-
+		if (colony) {
 			// from europe to colony
 			if (Europe.has.unit(unit)) {
 				const tile = MapEntity.tile(colony.mapCoordinates)
 				const path = PathFinder.findHighSeas(tile)
 				Unit.update.mapCoordinates(unit, path[path.length - 1].mapCoordinates)
-				Commander.scheduleBehind(gotoCommander, America.create({ unit }))
-				Commander.scheduleBehind(gotoCommander, MoveTo.create({ unit, coords: colony.mapCoordinates }))
+				Commander.scheduleBehind(commander, America.create({ unit }))
+				Commander.scheduleBehind(commander, MoveTo.create({ unit, coords: colony.mapCoordinates }))
 			} else {
 				// from somewhere to colony
-				Commander.scheduleBehind(gotoCommander, MoveTo.create({ unit, coords: colony.mapCoordinates }))
+				Commander.scheduleBehind(commander, MoveTo.create({ unit, coords: colony.mapCoordinates }))
 			}
 		}
 
-		if (destination.type === 'europe') {
+		if (europe) {
 			if (!Europe.has.unit(unit)) {
 				// from somehwere to europe
 				const pathToHighSeas = PathFinder.findHighSeas(unit.tile)
 				const target = pathToHighSeas[pathToHighSeas.length - 1]
-				Commander.scheduleInstead(gotoCommander, MoveTo.create({ unit, coords: target.mapCoordinates }))
-				Commander.scheduleBehind(gotoCommander, EuropeCommand.create(unit))
+				Commander.scheduleInstead(commander, MoveTo.create({ unit, coords: target.mapCoordinates }))
+				Commander.scheduleBehind(commander, EuropeCommand.create(unit))
 			}
 			// from europe to europe -> nothing to do
 		}
+	}	
 
-		return true
+	return {
+		init
 	}
-
-	const update = () => {
-		if (command.pleaseStop) {
-			gotoCommander.pleaseStop = true
-		}
-		return gotoCommander.update()
-	}
-	const stopped = () => gotoCommander.stopped()
-
-	const save = () => ({
-		gotoCommander: gotoCommander.save(),
-		unit: Record.reference(unit),
-		destination: destination.type === 'colony' ? Record.reference(destination) : destination,
-		module: 'GoTo'
-	})
-
-	const command = {
-		init,
-		update,
-		save,
-		stopped,
-		isInitialized,
-		priority: true
-	}
-
-	return command
 })
-
-const load = data => {
-	const commander = Commander.load(data.gotoCommander)
-	const unit = Record.dereference(data.unit)
-	const destination = data.destination.type === 'colony' ? Record.dereference(data.destination) : data.destination
-	if (!Commander.isIdle(commander)) {
-		data.isInitialized = true
-	}
-	const isInitialized = data.isInitialized
-
-	return create(unit, destination, commander, isInitialized)
-}
-
-export default {
-	create,
-	load
-}

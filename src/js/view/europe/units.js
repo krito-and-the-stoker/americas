@@ -48,11 +48,7 @@ const selectTarget = unit => {
 		margin: !index && colonies.length > 1,
 		text: `${colony.name} (${colony.colonists.length})`,
 		action: () => {
-			const tile = MapEntity.tile(colony.mapCoordinates)
-			const path = PathFinder.findHighSeas(tile)
-			Unit.update.mapCoordinates(unit, path[path.length - 1].mapCoordinates)
-			Commander.scheduleInstead(unit.commander, America.create({ unit }))
-			Commander.scheduleBehind(unit.commander, GoTo.create(unit, colony))
+			Commander.scheduleBehind(unit.commander, GoTo.create({ unit, colony }))
 			Commander.scheduleBehind(unit.commander, TriggerEvent.create('notification', { type: 'arrive', unit: unit, colony }))
 			closeIfNoShips()
 		}
