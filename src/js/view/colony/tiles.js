@@ -135,9 +135,6 @@ const create = (colony, originalDimensions) => {
 
 			const destroyDrag = Drag.makeDragTarget(sprites[sprites.length - 1], async args => {
 				const { unit } = args
-				if (unit && !Commander.isIdle(unit.commander)) {
-					return false
-				}
 				if (!colony.buildings.harbour.level && tile.domain === 'sea') {
 					return false
 				}
@@ -166,12 +163,9 @@ const create = (colony, originalDimensions) => {
 							}
 							return false
 						}
-						if (options.length === 1 || unit) {
-							Colonist.beginFieldWork(colonist, tile, options[0].good)
-						} else {
-							const decision = options.reduce((best, pack) => pack.amount > best.amount ? pack : best, options[0])
-							Colonist.beginFieldWork(colonist, tile, decision.good)
-						}
+						const decision = options.reduce((best, pack) => pack.amount >= best.amount ? pack : best, options[0])
+						Colonist.beginFieldWork(colonist, tile, decision.good)
+
 						return true
 					}
 				}
