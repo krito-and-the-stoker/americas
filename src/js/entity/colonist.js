@@ -64,12 +64,14 @@ const listen = {
 	colony: (colonist, fn) => Binding.listen(colonist, 'colony', fn),
 	expert: (colonist, fn) => Binding.listen(colonist, 'expert', fn),
 	unit: (colonist, fn) => Binding.listen(colonist, 'unit', fn),
+	beingEducated: (colonist, fn) => Binding.listen(colonist, 'beingEducated', fn),
 }
 const update = {
 	work: (colonist, value) => Binding.update(colonist, 'work', value),
 	colony: (colonist, value) => Binding.update(colonist, 'colony', value),
 	expert: (colonist, value) => Binding.update(colonist, 'expert', value),
 	unit: (colonist, value) => Binding.update(colonist, 'unit', value),
+	beingEducated: (colonist, value) => Binding.update(colonist, 'beingEducated', value),
 }
 
 const initialize = colonist => {
@@ -89,7 +91,8 @@ const create = unit => {
 			profession: null,
 			progress: 0
 		},
-		work: null
+		work: null,
+		beingEducated: false
 	}
 
 	initialize(colonist)

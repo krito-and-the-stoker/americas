@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 
-import Buildings from 'data/buildings.json'
+import Buildings from 'data/buildings'
+import Goods from 'data/goods'
 
 import Util from 'util/util'
 
@@ -9,6 +10,7 @@ import Drag from 'input/drag'
 import Production from 'entity/production'
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
+import Building from 'entity/building'
 
 import JoinColony from 'interaction/joinColony'
 import BecomeColonist from 'interaction/becomeColonist'
@@ -85,18 +87,35 @@ const createBuilding = (colony, building) => {
 
 	const createColonistView = (productionBonus, colonist, work) => {
 		if (work && work.building === name) {
+			const position = {
+				x: work.position * 128 * Buildings[work.building].width / (Building.workspace(colony, work.building) || 1),
+				y: 20
+			}
 			const colonistSprite = ColonistView.create(colonist)
-			colonistSprite.x = work.position * 128 / 3
-			colonistSprite.y = 20
+			colonistSprite.x = position.x
+			colonistSprite.y = position.y
 			colonistSprite.scale.set(1.5)
 			container.colonists.addChild(colonistSprite)
+
+			const unsubscribeEducation = Colonist.listen.beingEducated(colonist, beingEducated => {
+				if (beingEducated) {
+					const bookSprite = Resources.sprite('map', { frame: Goods.books.id })
+					bookSprite.scale.set(0.5)
+					bookSprite.x = 0.5 * TILE_SIZE
+					bookSprite.y = 0
+					colonistSprite.addChild(bookSprite)
+					return () => {
+						colonistSprite.removeChild(bookSprite)
+					}
+				}
+			})
 
 			const production = Production.production(colony, name, colonist)
 			if (production) {
 				const productionSprites = ProductionView.create(production.good, Math.round(production.amount), TILE_SIZE / 2)
 				productionSprites.forEach(s => {
-					s.position.x += work.position * 128 / 3
-					s.position.y += 20 + TILE_SIZE
+					s.position.x += position.x
+					s.position.y += position.y + TILE_SIZE
 					container.colonists.addChild(s)
 				})
 				return [
@@ -107,11 +126,13 @@ const createBuilding = (colony, building) => {
 					Drag.makeDraggable(colonistSprite, { colonist })
 				]
 			}
+			
 			return [
 				() => {
 					container.colonists.removeChild(colonistSprite)
 				},
-				Drag.makeDraggable(colonistSprite, { colonist })
+				Drag.makeDraggable(colonistSprite, { colonist }),
+				unsubscribeEducation
 			]
 		}
 	}

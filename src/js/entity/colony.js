@@ -21,6 +21,7 @@ import Deteriorate from 'task/deteriorate'
 import GrowHorses from 'task/growHorses'
 import ColonyProduction from 'task/colonyProduction'
 import ProductionSummary from 'task/productionSummary'
+import TeachingSummary from 'task/teachingSummary'
 
 import ShrinkFromStarvation from 'interaction/shrinkFromStarvation'
 import UnjoinColony from 'interaction/unjoinColony'
@@ -161,6 +162,7 @@ const initialize = colony => {
 			Events.trigger('notificaiton', { type: 'treasure', colony, unit })
 		}
 	}))
+	destroy.push(Time.schedule(TeachingSummary.create(colony)))
 
 	let starvationMessageSent = false
 	// const needsToSendEmptyWarning = Util.makeObject(Goods.types.map(good => [good, false]))

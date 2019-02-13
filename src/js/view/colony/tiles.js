@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js'
 
+import Goods from 'data/goods'
+
 import Util from 'util/util'
 
 import Drag from 'input/drag'
@@ -13,8 +15,6 @@ import Treasure from 'entity/treasure'
 import BecomeColonist from 'interaction/becomeColonist'
 import JoinColony from 'interaction/joinColony'
 import UnjoinColony from 'interaction/unjoinColony'
-
-import Commander from 'command/commander'
 
 import Background from 'render/background'
 import Resources from 'render/resources'
@@ -89,6 +89,19 @@ const create = (colony, originalDimensions) => {
 								})
 							}
 
+							const unsubscribeEducation = Colonist.listen.beingEducated(colonist, beingEducated => {
+								if (beingEducated) {
+									const bookSprite = Resources.sprite('map', { frame: Goods.books.id })
+									bookSprite.scale.set(0.5)
+									bookSprite.x = position.x + 0.25 * TILE_SIZE
+									bookSprite.y = position.y
+									container.colonists.addChild(bookSprite)
+									return () => {
+										container.colonists.removeChild(bookSprite)
+									}
+								}
+							})
+
 							return [
 								Click.on(sprite, async () => {
 									if (colonist.work && colonist.work.type === 'Field') {
@@ -112,7 +125,8 @@ const create = (colony, originalDimensions) => {
 
 								Drag.makeDraggable(sprite, { colonist }),
 								destroySprite,
-								removeProductionSprites
+								removeProductionSprites,
+								unsubscribeEducation
 							]
 						} else {
 							const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
