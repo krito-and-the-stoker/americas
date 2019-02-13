@@ -68,12 +68,14 @@ const create = (colony, originalDimensions) => {
 	const unsubscribeAmount = Colony.listen.construction(colony, Binding.map(updateConstructionPanel, getAmount))
 	const unsubscribeTarget = Colony.listen.construction(colony, Binding.map(updateConstructionPanel, getTarget))
 
-	const getTools = storage => Math.floor(storage.tools)
+	const getTools = construction => Math.floor(construction.tools)
 	const getToolsNeeded = construction => construction.cost.tools
 	const updateToolsPanel = (have, needed) => {
 		if (!needed) {
 			return
 		}
+
+		console.log(have, needed)
 
 		const fraction = Math.min(have / needed, 1)
 		const haveView = ProductionView.create('tools', Math.min(have, needed), fraction * 260)
@@ -95,9 +97,13 @@ const create = (colony, originalDimensions) => {
 		}
 	}
 
-	const unsubscribeTools = Colony.listen.construction(colony, Binding.map(needed => 
-		Storage.listen(colony.storage, Binding.map(have =>
+	const unsubscribeTools = Colony.listen.construction(colony, Binding.map(needed =>
+		Colony.listen.construction(colony, Binding.map(have =>
 			updateToolsPanel(have, needed), getTools)), getToolsNeeded))
+
+	// const unsubscribeTools = Colony.listen.construction(colony, Binding.map(needed => 
+	// 	Storage.listen(colony.storage, Binding.map(have =>
+	// 		updateToolsPanel(have, needed), getTools)), getToolsNeeded))
 
 	const unsubscribe = () => {
 		unsubscribeAmount()

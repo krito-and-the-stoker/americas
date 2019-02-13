@@ -1,3 +1,5 @@
+import Util from 'util/util'
+
 import Time from 'timeline/time'
 
 import Production from 'entity/production'
@@ -30,18 +32,35 @@ const create = (colony, building, colonist) => {
 		if (production.good === 'bells') {
 			productionAmount = Math.min(Treasure.amount() / BELLS_TO_GOLD_FACTOR, productionAmount)	
 		}
-		let consumptionAmount = productionAmount
+		const consumptionAmount = productionAmount
 		const unscaledProductionAmount = productionAmount / scale
 		const unscaledConsumptionAmount = consumptionAmount / scale
-		if (consumption.good) {
+		if (consumption.good && production.type !== 'construction') {
 			Storage.update(colony.storage, { good: consumption.good, amount: -consumptionAmount })
 			Storage.update(colony.productionRecord, { good: consumption.good, amount: -unscaledConsumptionAmount })
+			Storage.update(colony.productionRecord, { good: production.good, amount: unscaledProductionAmount })
 		}
+
 		if (production.type === 'good') {
 			Storage.update(colony.storage, { good: production.good, amount: productionAmount })
 		}
 		if (production.type === 'construction') {
-			colony.construction.amount += productionAmount
+			const toolProduction = productionAmount *
+				(colony.construction.cost ? colony.construction.cost.tools || 0 : 0) / colony.construction.cost.construction
+			const toolsEfficiency = toolProduction > 0 ? Util.clamp(colony.storage.tools / toolProduction) : 1
+			colony.construction.amount += toolsEfficiency * productionAmount
+			colony.construction.tools += toolsEfficiency * toolProduction
+
+			// use wood
+			Storage.update(colony.storage, { good: consumption.good, amount: -toolsEfficiency * consumptionAmount })
+			Storage.update(colony.productionRecord, { good: consumption.good, amount: -toolsEfficiency * unscaledConsumptionAmount })
+
+			// use tools
+			Storage.update(colony.storage, { good: 'tools', amount: -toolsEfficiency * toolProduction })
+			Storage.update(colony.productionRecord, { good: 'tools', amount: -toolsEfficiency * toolProduction / scale })
+
+			// construct
+			Storage.update(colony.productionRecord, { good: production.good, amount: toolsEfficiency * unscaledProductionAmount })
 			Colony.update.construction(colony)
 		}
 		if (production.type === 'bells') {
@@ -52,7 +71,6 @@ const create = (colony, building, colonist) => {
 		if (production.type === 'crosses') {
 			Europe.update.crosses(productionAmount)
 		}
-		Storage.update(colony.productionRecord, { good: production.good, amount: unscaledProductionAmount })
 
 		return true
 	}

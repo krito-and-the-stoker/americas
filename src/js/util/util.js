@@ -110,6 +110,7 @@ const uid = () => {
 	return currentId
 }
 
+const clamp = (value, lower = 0, upper = 1) => Math.min(Math.max(value, lower), upper)
 
 export default {
 	clone,
@@ -123,6 +124,7 @@ export default {
 	execute,
 	isArray,
 	flatten,
+	clamp,
 	removeDuplicates,
 	unique,
 	distance,

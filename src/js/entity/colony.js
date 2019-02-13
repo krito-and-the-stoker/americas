@@ -192,17 +192,12 @@ const initialize = colony => {
 	}))
 	colony.construction = {
 		amount: colony.construction.amount,
+		tools: colony.construction.tools,
 		...Building.constructionOptions(colony).find(option => option.target === colony.construction.target) || Building.noProductionOption()
 	}
 	destroy.push(listen.construction(colony, construction => {
-		if (construction.amount >= construction.cost.construction) {
-			if (construction.cost.tools) {
-				if (colony.storage.tools >= construction.cost.tools) {
-					Building.construct(colony, construction)
-				}
-			} else {
-				Building.construct(colony, construction)
-			}
+		if (construction.amount >= construction.cost.construction && construction.tools >= construction.cost.tools) {
+			Building.construct(colony, construction)
 		}
 	}))
 	destroy.push(Time.schedule(ColonyProduction.create(colony)))
@@ -243,6 +238,7 @@ const create = (coords, owner) => {
 		mapCoordinates: { ...coords },
 		construction: {
 			amount: 0,
+			tools: 0,
 			target: 'harbour',
 		},
 		bells: 0,
@@ -284,6 +280,7 @@ const save = colony => ({
 	buildings: colony.buildings,
 	construction: {
 		amount: colony.construction.amount,
+		tools: colony.construction.tools,
 		target: colony.construction.target
 	},
 	bells: colony.bells,
