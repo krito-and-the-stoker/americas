@@ -37,7 +37,7 @@
     "pixi.js": "^4.8.5",
     "seed-random": "^2.2.0",
     "uuid": "^3.3.2",
-    "webpack": "^4.29.3",
+    "webpack": "4.28.4",
     "webpack-dev-middleware": "^3.5.2",
     "webpack-hot-middleware": "^2.24.3",
     "yargs": "^11.1.0"
