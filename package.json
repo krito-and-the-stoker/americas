@@ -34,6 +34,7 @@
     "lz-string": "^1.4.4",
     "markdown-it-link-attributes": "^2.1.0",
     "mz": "^2.7.0",
+    "normalize-wheel": "^1.0.1",
     "pixi.js": "^4.8.5",
     "seed-random": "^2.2.0",
     "uuid": "^3.3.2",

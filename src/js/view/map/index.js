@@ -223,11 +223,11 @@ const initialize = () => {
 	})
 
 	const ZOOM_FACTOR = 0.001
-	const handleWheel = (e) => {
+	const handleWheel = ({ delta, position }) => {
 		if (!Foreground.hasOpenScreen()) {		
 			Events.trigger('zoom')
 			stopRollingOut()
-			zoomBy(Math.exp(-ZOOM_FACTOR * e.deltaY), { x: Math.round(e.clientX), y: Math.round(e.clientY) })
+			zoomBy(Math.exp(-ZOOM_FACTOR * delta.y), { x: Math.round(position.x), y: Math.round(position.y) })
 		}
 	}
 	Wheel.on(handleWheel)

@@ -120,8 +120,8 @@ const create = () => {
 		helpTextView.y = 100 - position
 	})
 
-	Wheel.on(e => {
-		update.position(help.position + e.deltaY)
+	Wheel.on(({ delta }) => {
+		update.position(help.position + delta.y)
 	})
 
 	Click.on(background, close)
