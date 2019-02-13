@@ -47,7 +47,7 @@ export default Factory.commander('GoTo', {
 				const pathToHighSeas = PathFinder.findHighSeas(unit.tile)
 				const target = pathToHighSeas[pathToHighSeas.length - 1]
 				Commander.scheduleInstead(commander, MoveTo.create({ unit, coords: target.mapCoordinates }))
-				Commander.scheduleBehind(commander, EuropeCommand.create(unit))
+				Commander.scheduleBehind(commander, EuropeCommand.create({ unit }))
 			}
 			// from europe to europe -> nothing to do
 		}
