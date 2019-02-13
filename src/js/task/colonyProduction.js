@@ -14,7 +14,7 @@ const create = colony => {
 
 		Europe.update.crosses(scale)
 		Storage.update(colony.productionRecord, { good: 'crosses', amount: 1 })
-		Colony.update.bells(colony, scale)
+		Colony.update.bells(colony, 2*scale)
 		Storage.update(colony.productionRecord, { good: 'bells', amount: 2 })
 		if (colony.storage.food > 0) {
 			Colony.update.growth(colony, colony.colonists.length * scale)

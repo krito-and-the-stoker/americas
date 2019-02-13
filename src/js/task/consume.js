@@ -12,11 +12,11 @@ const create = (colony, good, amount) => {
 		const scaledAmount = deltaTime * amount * PRODUCTION_BASE_FACTOR
 
 		// bells must not become negative
-		if (good === 'bells' && colony.bells < colony.scaledAmount && colony.scaledAmount > 0) {
-			const efficiency = colony.bells / colony.scaledAmount
+		if (good === 'bells' && colony.bells <= scaledAmount && scaledAmount > 0) {
+			const efficiency = colony.bells / scaledAmount
 
 			Colony.update.bells(colony, -efficiency * scaledAmount)
-			Storage.update(colony.productionRecord, { good, amount: -Math.round(efficiency * amount) })
+			Storage.update(colony.productionRecord, { good, amount: -efficiency * amount })
 		} else {		
 			if (good === 'bells') {
 				Colony.update.bells(colony, -scaledAmount)
