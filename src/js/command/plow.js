@@ -26,7 +26,9 @@ export default Factory.create('Plow', {
 			Unit.update.pioneering(unit, true)
 		}
 
-		return false
+		return {
+			eta
+		}
 	}
 
 	const update = currentTime => eta && currentTime < eta
