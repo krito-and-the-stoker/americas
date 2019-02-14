@@ -1,6 +1,7 @@
 dist/
 node_modules/
 coverage/
+stuff/
 
 yarn-error.log
 *.sublime-*

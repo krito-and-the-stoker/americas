@@ -1,3 +1,5 @@
+import Colony from 'data/colony'
+
 import Util from 'util/util'
 import Record from 'util/record'
 import Binding from 'util/binding'
@@ -30,25 +32,9 @@ import LeaveColony from 'interaction/leaveColony'
 
 const getColonyName = () => {
 	if (!Record.getGlobal('colonyNames')) {
-		Record.setGlobal('colonyNames',
-			['Jamestown',
-				'Roanoke',
-				'Virginia',
-				"Cuper's Cove",
-				"St. John's",
-				'Henricus',
-				'Delaware',
-				'Pennsylvania',
-				'Massachusetts Bay Colony',
-				'Maine',
-				'New Jersey',
-				'Connecticut',
-				'Maryland',
-				'South Carolina',
-				'New Hampshire',
-				'North Carolina',
-				'Rhode Island'])		
+		Record.setGlobal('colonyNames', Colony.names)		
 	}
+
 	let colonyNames = Record.getGlobal('colonyNames')
 	const name = colonyNames.shift()
 	Record.setGlobal('colonyNames', colonyNames)

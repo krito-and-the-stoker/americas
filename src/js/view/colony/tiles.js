@@ -155,7 +155,7 @@ const create = (colony, originalDimensions) => {
 				if (colony.disbanded) {
 					return false
 				}
-				if (!unit.properties.canFound) {
+				if (unit && !unit.properties.canFound) {
 					return false
 				}
 				if (!tile.harvestedBy) {

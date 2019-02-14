@@ -64,7 +64,7 @@ const createBuilding = (colony, building) => {
 			return false
 		}
 
-		if (!unit.properties.canFound) {
+		if (unit && !unit.properties.canFound) {
 			return false
 		}
 
