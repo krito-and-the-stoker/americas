@@ -8,7 +8,6 @@ import MapView from 'render/map'
 import MapEntity from 'entity/map'
 import Message from 'util/message'
 import Tile from 'entity/tile'
-import Time from 'timeline/time'
 
 
 const MAX_TILES = 30000
@@ -83,34 +82,40 @@ const show = () => {
 	}
 }
 
-const createSpriteFromFrames = frames => frames.map(frame => {
-	const sprite = Resources.sprite('map', { frame: Math.abs(frame) - 1 })
+const createSpriteFromFrames = (resource, frames) => frames.map(frame => {
+	const sprite = Resources.sprite(resource, { frame: Math.abs(frame) - 1 })
 	sprite.blendMode = frame > 0 ? PIXI.BLEND_MODES.NORMAL : PIXI.BLEND_MODES.OVERLAY
 	return sprite
 })
 
-const createSpritesFromTile = tile => createSpriteFromFrames(MapView.instance.assembleTile(tile))
+const createSummerSprite = frames => createSpriteFromFrames('map', frames)
+const createWinterSprite = frames => createSpriteFromFrames('mapWinter', frames)
+const createSprite = frames => frames[frames.length - 1] ? createSummerSprite(frames.slice(0, -1)) : createWinterSprite(frames.slice(0, -1))
+const createSpritesFromTile = tile => createSpriteFromFrames('map', MapView.instance.assembleTile(tile))
 
-const createTiles = tileStacks => tileStacks.map(stack => ({
+const createTiles = tileStacks => tileStacks.map((stack, index) => ({
+	index,
 	spites: null,
 	stack,
 	container: null,
 	initialized: false,
-	createSprites: () => stack.frames.map(frame => {
-		const sprite = Resources.sprite('map', { frame: Math.abs(frame) - 1 })
-		sprite.x = stack.position.x
-		sprite.y = stack.position.y
-		sprite.blendMode = frame > 0 ? PIXI.BLEND_MODES.NORMAL : PIXI.BLEND_MODES.OVERLAY
-		return sprite
-	}),
+	// createSprites: () => stack.frames.map(frame => {
+	// 	const sprite = Resources.sprite('map', { frame: Math.abs(frame) - 1 })
+	// 	sprite.x = stack.position.x
+	// 	sprite.y = stack.position.y
+	// 	sprite.blendMode = frame > 0 ? PIXI.BLEND_MODES.NORMAL : PIXI.BLEND_MODES.OVERLAY
+	// 	return sprite
+	// }),
 	createCachedSprites: () => {
-		const sprite = TileCache.createCachedSprite(createSpriteFromFrames, stack.frames)
-		if (sprite) {			
+		const winterSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 0])
+		const summerSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 1])
+		const result = [winterSprite, summerSprite].filter(x => !!x)
+		result.forEach(sprite => {			
 			sprite.position.x = stack.position.x
 			sprite.position.y = stack.position.y
-			return [sprite]
-		}
-		return []
+		})
+
+		return result
 	},
 	update: (tile, coords) => {
 		if (tile.initialized) {
@@ -130,8 +135,8 @@ const createTiles = tileStacks => tileStacks.map(stack => ({
 	},
 	initialize: tile => {
 		tile.sprites = tile.createCachedSprites()
-		const index = TileCache.getTextureIndex(tile.stack.frames)
-		tile.container = getContainer(index)
+		const indices = [TileCache.getTextureIndex([...tile.stack.frames, 0]), TileCache.getTextureIndex([...tile.stack.frames, 1])]
+		tile.containers = indices.map(getContainer)
 		tile.initialized = true
 		tile.dirty = false
 	}
@@ -193,11 +198,14 @@ const resize = () => {
 }
 
 const updateOpacity = () => {
-	// console.log(Time.get().timeOfYear, 0.5 + 0.5 * Math.sin(2*Math.PI * Time.get().timeOfYear))
 	visibleTiles.forEach(tile => {
-		tile.alpha = 0.5 + 0.5 * Math.sin(2*Math.PI * Time.get().timeOfYear)
-		tile.sprites.forEach(sprite => {
-			sprite.alpha = tile.alpha
+		tile.sprites.forEach((sprite, i) => {
+			if (i === 1) {
+				const summerness = Tile.summerness(MapEntity.get().tiles[tile.index])
+				// console.log(0xFFFFFF * summerness + (1 - summerness) * 0x0000FF)
+				// sprite.tint = 0xFFFFFF * summerness + (1 - summerness) * 0x0000FF
+				sprite.alpha = summerness
+			}
 		})
 	})
 }
@@ -240,8 +248,8 @@ const doRenderWork = () => {
 				if (!tiles[index].initialized) {
 					tiles[index].initialize(tiles[index])
 				}
-				tiles[index].sprites.forEach(sprite => {
-					tiles[index].container.addChild(sprite)
+				tiles[index].sprites.forEach((sprite, i) => {
+					tiles[index].containers[i].addChild(sprite)
 				})
 			})
 		})

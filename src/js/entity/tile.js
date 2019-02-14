@@ -7,6 +7,8 @@ import Member from 'util/member'
 import Record from 'util/record'
 import Binding from 'util/binding'
 
+import Time from 'timeline/time'
+
 import Owner from 'entity/owner'
 import MapEntity from 'entity/map'
 
@@ -221,6 +223,11 @@ const load = (data, index) => {
 	})
 
 	return tile	
+}
+
+const summerness = tile => {
+	const season = 0.5 - 0.5 * Math.sin(2*Math.PI * Time.get().timeOfYear)
+	return Math.min(tile.mapCoordinates.y / 200, 1) + (200 - tile.mapCoordinates.y) * season / 200
 }
 
 
@@ -483,4 +490,5 @@ export default {
 	down,
 	add,
 	serializableCopy,
+	summerness
 }

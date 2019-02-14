@@ -17,6 +17,7 @@ const numberOfAssets = () => 2 + Object.entries(paths).length
 
 const paths = {
 	map: 'images/map.png',
+	mapWinter: 'images/map-winter.png',
 	colonyBackground: 'images/colony-screen/background.jpg',
 	europeBackground: 'images/europe.jpg',
 	undiscovered: 'images/undiscovered.jpg',
