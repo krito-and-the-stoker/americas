@@ -88,9 +88,11 @@ const createSpriteFromFrames = (resource, frames) => frames.map(frame => {
 	return sprite
 })
 
-const createSummerSprite = frames => createSpriteFromFrames('map', frames)
-const createWinterSprite = frames => createSpriteFromFrames('mapWinter', frames)
-const createSprite = frames => frames[frames.length - 1] ? createSummerSprite(frames.slice(0, -1)) : createWinterSprite(frames.slice(0, -1))
+const mapNames = ['map', 'mapWinter', 'mapSummer']
+const createSprite = frames => {
+	const mapName = mapNames[frames[frames.length - 1]]
+	return createSpriteFromFrames(mapName, frames.slice(0, -1))
+}
 const createSpritesFromTile = tile => createSpriteFromFrames('map', MapView.instance.assembleTile(tile))
 
 const createTiles = tileStacks => tileStacks.map((stack, index) => ({
@@ -107,9 +109,10 @@ const createTiles = tileStacks => tileStacks.map((stack, index) => ({
 	// 	return sprite
 	// }),
 	createCachedSprites: () => {
-		const winterSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 0])
-		const summerSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 1])
-		const result = [winterSprite, summerSprite].filter(x => !!x)
+		const baseSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 0])
+		const winterSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 1])
+		const summerSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 2])
+		const result = [baseSprite, winterSprite, summerSprite].filter(x => !!x)
 		result.forEach(sprite => {			
 			sprite.position.x = stack.position.x
 			sprite.position.y = stack.position.y
@@ -135,7 +138,7 @@ const createTiles = tileStacks => tileStacks.map((stack, index) => ({
 	},
 	initialize: tile => {
 		tile.sprites = tile.createCachedSprites()
-		const indices = [TileCache.getTextureIndex([...tile.stack.frames, 0]), TileCache.getTextureIndex([...tile.stack.frames, 1])]
+		const indices = Util.range(tile.sprites.length).map(i => TileCache.getTextureIndex([...tile.stack.frames, i]))
 		tile.containers = indices.map(getContainer)
 		tile.initialized = true
 		tile.dirty = false
@@ -197,14 +200,20 @@ const resize = () => {
 	render()
 }
 
+const temperatureToAlpha = temperature => [
+	Util.clamp(-(temperature - 5) / 10), // winter
+	// Util.clamp(((temperature + 5) - (temperature - 5)) / 10) +
+	// 	Util.clamp(((temperature - 15) - (temperature - 25)) / 10),
+	Util.clamp((temperature - 15) / 10) // summer
+]
+
 const updateOpacity = () => {
 	visibleTiles.forEach(tile => {
+		const temperature = Tile.temperature(MapEntity.get().tiles[tile.index])
+		const alphas = temperatureToAlpha(temperature)
 		tile.sprites.forEach((sprite, i) => {
-			if (i === 1) {
-				const summerness = Tile.summerness(MapEntity.get().tiles[tile.index])
-				// console.log(0xFFFFFF * summerness + (1 - summerness) * 0x0000FF)
-				// sprite.tint = 0xFFFFFF * summerness + (1 - summerness) * 0x0000FF
-				sprite.alpha = summerness
+			if (i > 0) {
+				sprite.alpha = alphas[i-1]
 			}
 		})
 	})
