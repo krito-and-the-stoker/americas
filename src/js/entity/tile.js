@@ -229,7 +229,8 @@ const temperature = tile => {
 	// 1 is summer, -1 is winter
 	const season = -Math.sin(2*Math.PI * (Time.get().timeOfYear + 0.25))
 	const relativeHeight = (200 - tile.mapCoordinates.y) / 200
-	return 25 * (1 - Math.abs(relativeHeight)) + season * relativeHeight * 25
+	const base = 20 - 80 * Math.abs(relativeHeight) * Math.abs(relativeHeight)
+	return base + season * relativeHeight * 35
 	// const season = 0.5 - 0.5 * Math.sin(2*Math.PI * Time.get().timeOfYear)
 	// return Math.min(tile.mapCoordinates.y / 200, 1) + (200 - tile.mapCoordinates.y) * season / 200
 }
