@@ -155,6 +155,9 @@ const create = (colony, originalDimensions) => {
 				if (colony.disbanded) {
 					return false
 				}
+				if (!unit.properties.canFound) {
+					return false
+				}
 				if (!tile.harvestedBy) {
 					if (!unit && !args.colonist) {
 						return false

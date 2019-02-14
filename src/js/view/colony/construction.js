@@ -7,7 +7,6 @@ import Button from 'view/ui/button'
 import Util from 'util/util'
 import ProductionView from 'view/production'
 import Binding from 'util/binding'
-import Storage from 'entity/storage'
 import Text from 'render/text'
 
 
@@ -17,15 +16,26 @@ const create = (colony, originalDimensions) => {
 		menu: new PIXI.Container()
 	}
 
+	const optionDescription = option => {
+		const cost = option.cost.tools ? `${option.cost.construction} / ${option.cost.tools}` : `${option.cost.construction}`
+		return `${option.name} (${cost})`
+	}
+
 	const constructionButton = Button.create('change', () => {
 		const options = Building.constructionOptions(colony)
 		const choices = options.map(option => ({
-			text: `${option.name} (${option.cost.construction})`,
-			action: () => Colony.update.construction(colony, {
-				amount: colony.construction.amount / 2 + Math.min(colony.construction.amount / 2, 12),
-				...option
-			})
+			text: optionDescription(option),
+			action: () => {
+				if (option.target !== colony.construction.target) {				
+					Colony.update.construction(colony, {
+						amount: colony.construction.amount / 2 + Math.min(colony.construction.amount / 2, 12),
+						tools: colony.construction.tools / 2,
+						...option
+					})
+				}
+			}
 		}))
+
 		return Dialog.create({
 			type: 'menu',
 			text: 'What would you like to construct?',
@@ -75,8 +85,6 @@ const create = (colony, originalDimensions) => {
 			return
 		}
 
-		console.log(have, needed)
-
 		const fraction = Math.min(have / needed, 1)
 		const haveView = ProductionView.create('tools', Math.min(have, needed), fraction * 260)
 		haveView.forEach(s => {
@@ -101,9 +109,6 @@ const create = (colony, originalDimensions) => {
 		Colony.listen.construction(colony, Binding.map(have =>
 			updateToolsPanel(have, needed), getTools)), getToolsNeeded))
 
-	// const unsubscribeTools = Colony.listen.construction(colony, Binding.map(needed => 
-	// 	Storage.listen(colony.storage, Binding.map(have =>
-	// 		updateToolsPanel(have, needed), getTools)), getToolsNeeded))
 
 	const unsubscribe = () => {
 		unsubscribeAmount()

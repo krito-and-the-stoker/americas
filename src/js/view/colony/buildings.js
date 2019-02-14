@@ -64,6 +64,10 @@ const createBuilding = (colony, building) => {
 			return false
 		}
 
+		if (!unit.properties.canFound) {
+			return false
+		}
+
 
 		let colonist = args.colonist
 		if (!Colony.canEmploy(colony, name, unit ? unit.expert : colonist.expert)) {

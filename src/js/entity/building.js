@@ -205,7 +205,7 @@ const construct = (colony, construction) => {
 
 	construction.amount -= construction.cost.construction
 	if (construction.cost.tools) {
-		Storage.update(colony.storage, { good: 'tools', amount: -construction.cost.tools })
+		construction.tools -= construction.cost.tools
 	}
 
 	const newConstruction = {
@@ -216,6 +216,7 @@ const construct = (colony, construction) => {
 			construction: 50,
 			tools: 0
 		},
+		tools: construction.tools,
 		amount: construction.amount
 	}
 
