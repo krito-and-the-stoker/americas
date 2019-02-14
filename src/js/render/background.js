@@ -93,7 +93,7 @@ const createSprite = frames => {
 	const mapName = mapNames[frames[frames.length - 1]]
 	return createSpriteFromFrames(mapName, frames.slice(0, -1))
 }
-const createSpritesFromTile = tile => createSpriteFromFrames('map', MapView.instance.assembleTile(tile))
+const createSpritesFromTile = tile => createSpriteFromFrames('mapSummer', MapView.instance.assembleTile(tile))
 
 const createTiles = tileStacks => tileStacks.map((stack, index) => ({
 	index,
