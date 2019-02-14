@@ -8,6 +8,7 @@ import MapView from 'render/map'
 import MapEntity from 'entity/map'
 import Message from 'util/message'
 import Tile from 'entity/tile'
+import Time from 'timeline/time'
 
 
 const MAX_TILES = 30000
@@ -208,8 +209,9 @@ const temperatureToAlpha = temperature => [
 ]
 
 const updateOpacity = () => {
+	const season = -Math.sin(2*Math.PI * (Time.get().timeOfYear + 0.25))
 	visibleTiles.forEach(tile => {
-		const temperature = Tile.temperature(MapEntity.get().tiles[tile.index])
+		const temperature = Tile.temperature(MapEntity.get().tiles[tile.index], season)
 		const alphas = temperatureToAlpha(temperature)
 		tile.sprites.forEach((sprite, i) => {
 			if (i > 0) {

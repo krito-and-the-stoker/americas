@@ -80,13 +80,6 @@ const initialize = tile => {
 	listen.settlement(tile, updateTreeVariation)
 	listen.colony(tile, updateTreeVariation)
 	listen.discovered(tile, discovered => discovered ? computeSurroundingAreaInfluence(tile) : null)
-	
-	// listen.colony(tile, () => {
-	// 	Tile.update.tile(tile)
-	// })
-	// listen.settlement(tile, () => {
-	// 	Tile.update.tile(tile)
-	// })
 }
 
 const terrainName = tile =>
@@ -227,31 +220,23 @@ const load = (data, index) => {
 	return tile	
 }
 
-const temperature = tile => {
-	const seaWeight = 10
-	const riverLargeWeight = 7
-	const riverSmallWeight = 3
-	const mountainWeight = -3
-	const hillWeight = -3
+const seaWeight = 10
+const riverLargeWeight = 7
+const riverSmallWeight = 3
+const mountainWeight = -3
+const hillWeight = -3
+const temperature = (tile, season) => {
 	// 1 is summer, -1 is winter
-	const season = -Math.sin(2*Math.PI * (Time.get().timeOfYear + 0.25))
-	const relativeHeight = (200 - tile.mapCoordinates.y) / 200
-	const base = 20 - 80 * Math.abs(relativeHeight) * Math.abs(relativeHeight)
-	return base + season * relativeHeight * 35
+	return tile.baseTemperature + season * tile.relativeHeight * 35
 		+ seaWeight * (tile.influenceOfTheSea || 0)
 		+ riverLargeWeight * (tile.influenceOfRiverLarge || 0)
 		+ riverSmallWeight * (tile.influenceOfRiverSmall || 0)
 		+ mountainWeight * (tile.influenceOfTheMountains || 0)
 		+ hillWeight * (tile.influenceOfTheHills || 0)
-	// const season = 0.5 - 0.5 * Math.sin(2*Math.PI * Time.get().timeOfYear)
-	// return Math.min(tile.mapCoordinates.y / 200, 1) + (200 - tile.mapCoordinates.y) * season / 200
 }
 
 
 const discover = (tile, owner) => {
-	// if (tile.domain === 'land' && !Record.getGlobal('hasDiscoveredLand')) {
-	// 	Record.setGlobal('hasDiscoveredLand', true)
-	// }
 	if (!tile.discoveredBy.includes(owner)) {
 		tile.discoveredBy.push(owner)
 		Owner.listen.visible(owner, () => {		
@@ -347,6 +332,8 @@ const computeSurroundingAreaInfluence = tile => {
 	if (typeof tile.influenceOfTheSea !== 'undefined') {
 		return
 	}
+	tile.relativeHeight = ((MapEntity.get().numTiles.y / 2) - tile.mapCoordinates.y) / (MapEntity.get().numTiles.y / 2)
+	tile.baseTemperature = 20 - 80 * Math.abs(tile.relativeHeight) * Math.abs(tile.relativeHeight)
 
 	const radius = 20
 	tile.influenceOfTheSea = 0
