@@ -333,7 +333,7 @@ const computeSurroundingAreaInfluence = tile => {
 		return
 	}
 	tile.relativeHeight = ((MapEntity.get().numTiles.y / 2) - tile.mapCoordinates.y) / (MapEntity.get().numTiles.y / 2)
-	tile.baseTemperature = 20 - 80 * Math.abs(tile.relativeHeight) * Math.abs(tile.relativeHeight)
+	tile.baseTemperature = 30 - 80 * Math.abs(tile.relativeHeight) * Math.abs(tile.relativeHeight)
 
 	const radius = 20
 	tile.influenceOfTheSea = 0
