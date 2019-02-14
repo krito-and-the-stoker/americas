@@ -8,6 +8,8 @@ import MapView from 'render/map'
 import MapEntity from 'entity/map'
 import Message from 'util/message'
 import Tile from 'entity/tile'
+import Time from 'timeline/time'
+
 
 const MAX_TILES = 30000
 
@@ -19,6 +21,7 @@ let tiles = null
 let scale = 1
 let renderRequested = false
 let visible = true
+let visibleTiles = []
 
 const get = () => ({
 	numTiles,
@@ -50,7 +53,7 @@ const updateScale = newScale => {
 
 const getContainer = index => {
 	while (containers.length <= index) {
-		const container = new PIXI.particles.ParticleContainer(MAX_TILES)
+		const container = new PIXI.particles.ParticleContainer(MAX_TILES, { tint: true })
 		if (containers.length > 0) {		
 			container.x = containers[containers.length - 1].x
 			container.y = containers[containers.length - 1].y
@@ -189,17 +192,31 @@ const resize = () => {
 	render()
 }
 
+const updateOpacity = () => {
+	// console.log(Time.get().timeOfYear, 0.5 + 0.5 * Math.sin(2*Math.PI * Time.get().timeOfYear))
+	visibleTiles.forEach(tile => {
+		tile.alpha = 0.5 + 0.5 * Math.sin(2*Math.PI * Time.get().timeOfYear)
+		tile.sprites.forEach(sprite => {
+			sprite.alpha = tile.alpha
+		})
+	})
+}
+
 const render = () => {
 	renderRequested = true
 }
 
 const doRenderWork = () => {
-	if (!renderRequested) {
+	if (!renderRequested && visible) {
+		updateOpacity()
+		layer.app.render()
 		return
 	}
+
 	containers.forEach(container => {
 		container.removeChildren()
 	})
+	visibleTiles = []
 
 	if (visible) {
 		const numTilesX = Math.ceil(layer.width / 64 / scale) + 1
@@ -217,6 +234,8 @@ const doRenderWork = () => {
 		xIndices.forEach(x => {
 			yIndices.forEach(y => {
 				const index = y * numTiles.x + x
+
+				visibleTiles.push(tiles[index])
 				tiles[index].update(tiles[index], { x, y })
 				if (!tiles[index].initialized) {
 					tiles[index].initialize(tiles[index])
@@ -226,6 +245,7 @@ const doRenderWork = () => {
 				})
 			})
 		})
+		updateOpacity()
 		layer.app.render()
 		renderRequested = false
 	}
