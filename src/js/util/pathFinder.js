@@ -12,7 +12,7 @@ import Unit from 'entity/unit'
 
 const CANNOT_MOVE_COST = 500
 const MIN_TERRAIN_COST = 0.33
-const EUROPE_TRAVEL_COST = 150
+const EUROPE_TRAVEL_COST = 111
 const graph = Graph.create()
 
 
