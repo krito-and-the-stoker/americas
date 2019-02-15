@@ -208,10 +208,12 @@ const resize = () => {
 	render()
 }
 
-const temperatureToAlpha = temperature => [
-	Util.clamp(-(temperature - 5) / 15), // winter
-	Util.clamp((temperature - 10) / 10) // summer
-]
+// const temperatureToAlpha = temperature => [
+// 	Util.clamp(-(temperature - 5) / 15), // winter
+// 	Util.clamp((temperature - 10) / 10) // summer
+// ]
+
+const alphaFrom = (temperature, i) => i ? Util.clamp((temperature - 10) / 10) : Util.clamp(-(temperature - 5) / 15)
 
 
 // const interpolateColor = (rgb1, rgb2, amount) => {
@@ -244,10 +246,9 @@ const updateOpacity = () => {
 	const season = Time.season()
 	visibleTiles.forEach(tile => {
 		const temperature = Tile.temperature(MapEntity.get().tiles[tile.index], season)
-		const alphas = temperatureToAlpha(temperature)
 		tile.sprites.forEach((sprite, i) => {
 			if (i > 0) {
-				sprite.alpha = alphas[i-1]
+				sprite.alpha = alphaFrom(temperature, i-1)
 			}
 		})
 	})
