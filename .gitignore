@@ -3,5 +3,7 @@ node_modules/
 coverage/
 stuff/
 
+src/js/maps/*.temperature.json
+
 yarn-error.log
 *.sublime-*

@@ -9,7 +9,7 @@ const config = () => {
 		plugins.push(new webpack.EnvironmentPlugin(['KEEN_SECRET', 'ENABLE_TRACKING', 'SENTRY_DSN']))
 	}
 
-	const directories = ['ai', 'command', 'data', 'entity', 'input', 'interaction', 'render', 'task', 'timeline', 'util', 'view']
+	const directories = ['ai', 'command', 'data', 'entity', 'input', 'interaction', 'maps', 'render', 'task', 'timeline', 'util', 'view']
 	const aliases = directories.map(dir => ({
 		[dir]: path.resolve(__dirname, `../src/js/${dir}`)
 	})).reduce((all, one) => ({ ...all, ...one }), {})

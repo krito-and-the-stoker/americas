@@ -1,3 +1,4 @@
+import Temperature from 'maps/america-large.temperature.json'
 import Terrain from 'data/terrain.json'
 import MovementCosts from 'data/movementCosts'
 import Yield from 'data/yield'
@@ -7,8 +8,6 @@ import Util from 'util/util'
 import Member from 'util/member'
 import Record from 'util/record'
 import Binding from 'util/binding'
-
-import Time from 'timeline/time'
 
 import Owner from 'entity/owner'
 import MapEntity from 'entity/map'
@@ -68,6 +67,12 @@ const create = ({ id, layers, index }) => {
 }
 
 const initialize = tile => {
+	const equator = MapEntity.get().numTiles.y / 2
+	const equatorDirection = Math.sign(equator - tile.mapCoordinates.y)
+	const poleFraction = (equator - tile.mapCoordinates.y) / equator
+	tile.seasonStrength = equatorDirection * 25 * Util.clamp((poleFraction + 0.15) * (poleFraction + 0.15))
+	tile.temperature = Temperature[tile.index]
+
 	const updateTreeVariation = colonyOrSettlement => {
 		if (colonyOrSettlement) {
 			if (tile.forest) {
@@ -79,7 +84,6 @@ const initialize = tile => {
 
 	listen.settlement(tile, updateTreeVariation)
 	listen.colony(tile, updateTreeVariation)
-	listen.discovered(tile, discovered => discovered ? computeSurroundingAreaInfluence(tile) : null)
 }
 
 const terrainName = tile =>
@@ -105,7 +109,8 @@ const save = tile => compress([
 	tile.coast,
 	tile.discoveredBy.map(Record.reference),
 	tile.rumors,
-	Record.reference(tile.harvestedBy)
+	Record.reference(tile.harvestedBy),
+	tile.currentlyVisible,
 ])
 
 const compress = values => values.map((value, index) => {
@@ -137,7 +142,8 @@ export const saveSerializedCopy = tile => compress([
 	tile.coast,
 	tile.discoveredBy,
 	tile.rumors,
-	tile.harvestedBy
+	tile.harvestedBy,
+	tile.currentlyVisible,
 ])
 
 const serializableCopy = tile => ({
@@ -156,7 +162,8 @@ const serializableCopy = tile => ({
 	coast: tile.coast,
 	discoveredBy: tile.discoveredBy.map(Record.reference),
 	rumors: tile.rumors,
-	harvestedBy: Record.reference(tile.harvestedBy)
+	harvestedBy: Record.reference(tile.harvestedBy),
+	currentlyVisible: tile.currentlyVisible,
 })
 
 const load = (data, index) => {
@@ -220,19 +227,9 @@ const load = (data, index) => {
 	return tile	
 }
 
-const seaWeight = 10
-const riverLargeWeight = 7
-const riverSmallWeight = 3
-const mountainWeight = -3
-const hillWeight = -3
 const temperature = (tile, season) => {
 	// 1 is summer, -1 is winter
-	return tile.baseTemperature + season * tile.relativeHeight * 35
-		+ seaWeight * (tile.influenceOfTheSea || 0)
-		+ riverLargeWeight * (tile.influenceOfRiverLarge || 0)
-		+ riverSmallWeight * (tile.influenceOfRiverSmall || 0)
-		+ mountainWeight * (tile.influenceOfTheMountains || 0)
-		+ hillWeight * (tile.influenceOfTheHills || 0)
+	return tile.temperature + season * tile.seasonStrength
 }
 
 
@@ -326,48 +323,6 @@ const decideCoastTerrain = tile => {
 
 const decideCoastalSea = tile => {
 	tile.isCoastalSea = tile.terrain && tile.domain === 'sea' && !tile.coast && diagonalNeighbors(tile).some(other => other.coast)
-}
-
-const computeSurroundingAreaInfluence = tile => {
-	if (typeof tile.influenceOfTheSea !== 'undefined') {
-		return
-	}
-	tile.relativeHeight = ((MapEntity.get().numTiles.y / 2) - tile.mapCoordinates.y) / (MapEntity.get().numTiles.y / 2)
-	tile.baseTemperature = 30 - 80 * Math.abs(tile.relativeHeight) * Math.abs(tile.relativeHeight)
-
-	const radius = 20
-	tile.influenceOfTheSea = 0
-	tile.influenceOfRiverLarge = 0
-	tile.influenceOfRiverSmall = 0
-	tile.influenceOfTheMountains = 0
-	tile.influenceOfTheHills = 0
-	if (tile.domain === 'land' || tile.coast) {
-		Util.quantizedRadius(tile.mapCoordinates, radius)
-			.filter(coords => MapEntity.tile(coords))
-			.map(coords => {
-				const other = MapEntity.tile(coords)
-				if (other.domain === 'sea' && tile.influenceOfTheSea < 1 - Util.distance(coords, tile.mapCoordinates) / radius) {
-					tile.influenceOfTheSea = 1 - Util.distance(coords, tile.mapCoordinates) / radius
-				}
-				if (other.riverLarge && tile.influenceOfRiverLarge < 1 - Util.distance(coords, tile.mapCoordinates) / radius) {
-					tile.influenceOfRiverLarge = 1 - Util.distance(coords, tile.mapCoordinates) / radius
-				}
-				if (other.riverSmall && tile.influenceOfRiverSmall < 1 - Util.distance(coords, tile.mapCoordinates) / radius) {
-					tile.influenceOfRiverSmall = 1 - Util.distance(coords, tile.mapCoordinates) / radius
-				}
-				if (other.mountains && tile.influenceOfTheMountains < 1 - Util.distance(coords, tile.mapCoordinates) / radius) {
-					tile.influenceOfTheMountains = 1 - Util.distance(coords, tile.mapCoordinates) / radius
-				}
-				if (other.hills && tile.influenceOfTheHills < 1 - Util.distance(coords, tile.mapCoordinates) / radius) {
-					tile.influenceOfTheHills = 1 - Util.distance(coords, tile.mapCoordinates) / radius
-				}
-			})
-	}
-	tile.influenceOfTheSea *= tile.influenceOfTheSea
-	tile.influenceOfRiverLarge *= tile.influenceOfRiverLarge
-	tile.influenceOfRiverSmall *= tile.influenceOfRiverSmall
-	tile.influenceOfTheMountains *= tile.influenceOfTheMountains
-	tile.influenceOfTheHills *= tile.influenceOfTheHills
 }
 
 const	applyModifier = (tile, base, name, resource, where) => {

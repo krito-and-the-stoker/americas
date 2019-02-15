@@ -8,7 +8,8 @@
     "dev": "gulp",
     "test": "jest",
     "coverage": "jest --coverage",
-    "watch": "jest --watch --verbose"
+    "watch": "jest --watch --verbose",
+    "climate": "gulp climate"
   },
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
