@@ -132,7 +132,7 @@ const smooth = tiles => {
 				tile.newTemperature += neighbor.temperature
 				tile.newSeasonStrength += neighbor.seasonStrength
 			})
-		const strength = 10*Climate.weight[tile.terrainName]
+		const strength = 50*Climate.weight[tile.terrainName]
 		tile.newTemperature = (tile.newTemperature + strength * tile.temperature) / (strength + weightSum)
 		tile.newSeasonStrength = (tile.newSeasonStrength + strength * tile.seasonStrength) / (strength + weightSum)
 	})
@@ -162,7 +162,7 @@ const analyseMap = data => {
 				(tile.riverLarge ? Climate.modifier.riverLarge : 0)
 		}
 	})
-	range(25).forEach(() => smooth(tiles))
+	range(100).forEach(() => smooth(tiles))
 
 	return tiles.map(tile => ({
 		temperature: tile.temperature,
