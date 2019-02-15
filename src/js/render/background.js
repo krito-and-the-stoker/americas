@@ -20,6 +20,7 @@ let undiscovered = null
 let tiles = null
 let scale = 1
 let renderRequested = false
+let opacityRequested = false
 let visible = true
 let visibleTiles = []
 
@@ -240,6 +241,13 @@ const alphaFrom = (temperature, i) => i ? Util.clamp((temperature - 10) / 10) : 
 // 		})
 // 	})
 // }
+const opacityTask = () => ({
+	update: () => {
+		opacityRequested = true
+
+		return true
+	}
+})
 
 
 const updateOpacity = () => {
@@ -260,9 +268,13 @@ const render = () => {
 }
 
 const doRenderWork = () => {
-	if (!renderRequested && visible) {
+	if (opacityRequested && visible) {
+		opacityRequested = false
 		updateOpacity()
 		layer.app.render()
+	}
+
+	if (!renderRequested || !visible) {
 		return
 	}
 
@@ -315,5 +327,6 @@ export default {
 	updateCoords,
 	updateScale,
 	createSpritesFromTile,
+	opacityTask,
 	get
 }
