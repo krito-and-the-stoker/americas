@@ -50,7 +50,7 @@ const get = () => ({
 })
 
 
-const create = ({ data, temperature }) => {
+const create = ({ data }) => {
 	Message.log('Creating map')
 
 	const baseLayer = layer(data, 'terrain base')
@@ -63,7 +63,6 @@ const create = ({ data, temperature }) => {
 	Message.log('Creating tiles')
 	tiles = layer(data, 'terrain base').data.map((id, index) => Tile.create({
 		id,
-		temperature: temperature[index],
 		index,
 		layers: {
 			top: layer(data, 'terrain top').data[index],

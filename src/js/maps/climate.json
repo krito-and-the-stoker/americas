@@ -1,5 +1,5 @@
 {
-	"field": {
+	"temperature": {
 		"arctic": -25,
 		"arcticWithForest": -25,
 		"desert": 25,
@@ -22,13 +22,37 @@
 		"oceanPole": -10,
 		"oceanEquator": 25
 	},
+	"season": {
+		"arctic": 0,
+		"arcticWithForest": 0,
+		"desert": 0,
+		"desertWithForest": 0,
+		"grassland": 1,
+		"grasslandWithForest": 1,
+		"marsh": 1,
+		"marshWithForest": 1,
+		"plains": 1,
+		"plainsWithForest": 1,
+		"prairie": 1,
+		"prairieWithForest": 1,
+		"savannah": 1,
+		"savannahWithForest": 1,
+		"sea lane": 0,
+		"swamp": 1,
+		"swampWithForest": 1,
+		"tundra": 1,
+		"tundraWithForest": 1,
+		"ocean": 0.5,
+		"hills": 1,
+		"mountains": 0.5
+	},
 	"modifier": {
 		"riverSmall": 2,
 		"riverLarge": 3,
 		"hills": -3,
 		"mountains": -5,
 		"equator": 10,
-		"pole": -30
+		"pole": -40
 	},
 	"weight": {
 		"arctic": 1,
@@ -51,7 +75,7 @@
 		"tundra": 1,
 		"tundraWithForest": 1.5,
 		"ocean": 20,
-		"hills": 5,
+		"hills": 10,
 		"mountains": 50
 	}
 }

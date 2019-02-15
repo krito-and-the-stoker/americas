@@ -1,6 +1,6 @@
 const AmericaLarge = require('./america-large.json')
 const Terrain = require('../data/terrain.json')
-const Temperature = require('./temperature.json')
+const Climate = require('./climate.json')
 
 
 const range = n => [...Array(n).keys()]
@@ -125,37 +125,49 @@ const smooth = tiles => {
 	tiles.forEach(tile => {
 		let weightSum = 0
 		tile.newTemperature = 0
+		tile.newSeasonStrength = 0
 		diagonalNeighbors(tile)
 			.forEach(neighbor => {
 				weightSum += 1
-				tile.newTemperature += 1 * neighbor.temperature
+				tile.newTemperature += neighbor.temperature
+				tile.newSeasonStrength += neighbor.seasonStrength
 			})
-		tile.newTemperature = (tile.newTemperature + Temperature.weight[tile.terrainName] * tile.temperature) / (Temperature.weight[tile.terrainName] + weightSum)
+		const strength = 5*Climate.weight[tile.terrainName]
+		tile.newTemperature = (tile.newTemperature + strength * tile.temperature) / (strength + weightSum)
+		tile.newSeasonStrength = (tile.newSeasonStrength + strength * tile.seasonStrength) / (strength + weightSum)
 	})
 	tiles.forEach(tile => {
 		tile.temperature = tile.newTemperature
+		tile.seasonStrength = tile.newSeasonStrength
 	})
 }
 
 const analyseMap = data => {
 	tiles = createTiles(data)
+
 	tiles.forEach(tile => {
 		const pole = poleFraction(tile.mapCoordinates.y) * poleFraction(tile.mapCoordinates.y)
+		tile.sunIndicator = 40 * Math.sign(pole) * (pole + 0.2) * (pole + 0.2)
+		tile.seasonStrength = Climate.season[tile.terrainName]
+
 		if (tile.domain === 'sea') {
-			tile.temperature = pole * Temperature.field.oceanPole + (1 - pole) * Temperature.field.oceanEquator
+			tile.temperature = pole * Climate.temperature.oceanPole + (1 - pole) * Climate.temperature.oceanEquator
 		} else {
-			const baseTemperature = Temperature.field[tile.baseName]
+			const baseTemperature = Climate.temperature[tile.baseName]
 			tile.temperature = baseTemperature +
-				pole * Temperature.modifier.pole + (1 - pole) * Temperature.modifier.equator +
-				(tile.mountains ? Temperature.modifier.mountains : 0) +
-				(tile.hills ? Temperature.modifier.hills : 0) +
-				(tile.riverSmall ? Temperature.modifier.riverSmall : 0) +
-				(tile.riverLarge ? Temperature.modifier.riverLarge : 0)
+				pole * Climate.modifier.pole + (1 - pole) * Climate.modifier.equator +
+				(tile.mountains ? Climate.modifier.mountains : 0) +
+				(tile.hills ? Climate.modifier.hills : 0) +
+				(tile.riverSmall ? Climate.modifier.riverSmall : 0) +
+				(tile.riverLarge ? Climate.modifier.riverLarge : 0)
 		}
 	})
-	range(50).forEach(() => smooth(tiles))
+	range(250).forEach(() => smooth(tiles))
 
-	return tiles.map(tile => tile.temperature)
+	return tiles.map(tile => ({
+		temperature: tile.temperature,
+		seasonStrength: tile.sunIndicator * tile.seasonStrength
+	}))
 }
 
 const analyse = () => {

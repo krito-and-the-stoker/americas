@@ -202,10 +202,8 @@ const resize = () => {
 }
 
 const temperatureToAlpha = temperature => [
-	Util.clamp(-(temperature - 5) / 10), // winter
-	// Util.clamp(((temperature + 5) - (temperature - 5)) / 10) +
-	// 	Util.clamp(((temperature - 15) - (temperature - 25)) / 10),
-	Util.clamp((temperature - 15) / 10) // summer
+	Util.clamp(-(temperature - 5) / 15), // winter
+	Util.clamp((temperature - 10) / 10) // summer
 ]
 
 const updateOpacity = () => {

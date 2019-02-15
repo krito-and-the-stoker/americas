@@ -1,10 +1,9 @@
-import Temperature from 'maps/america-large.temperature.json'
+import Climate from 'maps/america-large.climate.json'
 import Terrain from 'data/terrain.json'
 import MovementCosts from 'data/movementCosts'
 import Yield from 'data/yield'
 import Goods from 'data/goods'
 
-import Util from 'util/util'
 import Member from 'util/member'
 import Record from 'util/record'
 import Binding from 'util/binding'
@@ -67,11 +66,8 @@ const create = ({ id, layers, index }) => {
 }
 
 const initialize = tile => {
-	const equator = MapEntity.get().numTiles.y / 2
-	const equatorDirection = Math.sign(equator - tile.mapCoordinates.y)
-	const poleFraction = Math.abs(equator - tile.mapCoordinates.y) / equator
-	tile.seasonStrength = equatorDirection * 25 * Util.clamp((poleFraction + 0.2) * (poleFraction + 0.2))
-	tile.temperature = Temperature[tile.index]
+	tile.seasonStrength = Climate[tile.index].seasonStrength
+	tile.temperature = Climate[tile.index].temperature
 
 	const updateTreeVariation = colonyOrSettlement => {
 		if (colonyOrSettlement) {

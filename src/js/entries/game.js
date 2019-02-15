@@ -3,7 +3,6 @@ import * as Sentry from '@sentry/browser'
 import Version from 'version/version'
 
 import americaLargeMap from 'maps/america-large'
-import americaLargeTemperature from 'maps/america-large.temperature'
 import Terrain from 'data/terrain'
 
 import Tween from 'util/tween.js'
@@ -142,7 +141,7 @@ const start = async () => {
 		Owner.initialize()
 
 		// MapEntity.create({ data: americaSmallMap })
-		MapEntity.create({ data: americaLargeMap, temperature: americaLargeTemperature })
+		MapEntity.create({ data: americaLargeMap })
 
 		await nextFrame()
 

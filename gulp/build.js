@@ -20,7 +20,7 @@ md.use(mila, {
 
 gulp.task('climate', done => {
 	const analized = climate.analyse()
-	fs.writeFileSync(path.resolve(__dirname, '../src/js/maps/america-large.temperature.json'), JSON.stringify(analized.americaLarge))
+	fs.writeFileSync(path.resolve(__dirname, '../src/js/maps/america-large.climate.json'), JSON.stringify(analized.americaLarge))
 	done()
 })
 
