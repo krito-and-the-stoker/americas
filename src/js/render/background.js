@@ -202,17 +202,14 @@ const resize = () => {
 }
 
 const temperatureToAlpha = temperature => [
-	Util.clamp(-(temperature - 2) / 6), // winter
+	Util.clamp(-(temperature - 0) / 6), // winter
 	// Util.clamp(((temperature + 5) - (temperature - 5)) / 10) +
 	// 	Util.clamp(((temperature - 15) - (temperature - 25)) / 10),
-	Util.clamp((temperature - 12) / 12) // summer
+	Util.clamp((temperature - 10) / 10) // summer
 ]
 
 const updateOpacity = () => {
-	const phase = Time.get().timeOfYear
-		+ 0.25 // start sine curve at winter
-		- 0.08333 // make a 1 month offset t compensate
-	const season = -Math.sin(2*Math.PI * phase)
+	const season = Time.season()
 	visibleTiles.forEach(tile => {
 		const temperature = Tile.temperature(MapEntity.get().tiles[tile.index], season)
 		const alphas = temperatureToAlpha(temperature)

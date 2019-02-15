@@ -98,6 +98,14 @@ const advance = deltaTime => {
 	}
 }
 
+const season = () => {
+	const phase = time.timeOfYear
+		+ 0.25 // start sine curve at winter
+		- 0.08333 // make a 1 month offset t compensate
+	
+	return -Math.sin(2*Math.PI * phase)
+}
+
 const listen = {
 	year: fn => Binding.listen(time, 'year', fn),
 	timeOfYear: fn => Binding.listen(time, 'timeOfYear', fn),
@@ -153,6 +161,7 @@ const load = data => {
 
 export default {
 	advance,
+	season,
 	listen,
 	schedule,
 	togglePause,

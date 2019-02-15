@@ -1,7 +1,5 @@
 import * as PIXI from 'pixi.js'
 
-import Util from 'util/util'
-
 import Click from 'input/click'
 
 import Foreground from 'render/foreground'
@@ -90,6 +88,7 @@ const create = colony => {
 		liberty.unsubscribe,
 		construction.unsubscribe,
 		info.unsubscribe,
+		headline.unsubscribe,
 		unsubscribeResize,
 		Click.on(colonyWoodBackground, close)
 	]
