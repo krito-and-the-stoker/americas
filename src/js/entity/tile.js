@@ -69,8 +69,8 @@ const create = ({ id, layers, index }) => {
 const initialize = tile => {
 	const equator = MapEntity.get().numTiles.y / 2
 	const equatorDirection = Math.sign(equator - tile.mapCoordinates.y)
-	const poleFraction = (equator - tile.mapCoordinates.y) / equator
-	tile.seasonStrength = equatorDirection * 25 * Util.clamp((poleFraction + 0.15) * (poleFraction + 0.15))
+	const poleFraction = Math.abs(equator - tile.mapCoordinates.y) / equator
+	tile.seasonStrength = equatorDirection * 25 * Util.clamp((poleFraction + 0.2) * (poleFraction + 0.2))
 	tile.temperature = Temperature[tile.index]
 
 	const updateTreeVariation = colonyOrSettlement => {

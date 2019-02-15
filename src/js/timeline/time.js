@@ -110,8 +110,12 @@ const season = () => {
 	const phase = time.timeOfYear
 		+ 0.25 // start sine curve at winter
 		- 0.08333 // make a 1 month offset t compensate
+
+	const curve = Math.sin(2*Math.PI * phase)
+	const sign = Math.sign(curve)
+	const strength = Math.abs(curve)
 	
-	return -Math.sin(2*Math.PI * phase)
+	return -sign * strength * strength
 }
 
 
