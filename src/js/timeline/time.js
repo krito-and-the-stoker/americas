@@ -106,6 +106,8 @@ const advance = deltaTime => {
 	}
 }
 
+let lastCurve = 0
+let currentStrength = 0.5 + 1.5*Math.random()
 const season = () => {
 	const phase = time.timeOfYear
 		+ 0.25 // start sine curve at winter
@@ -114,8 +116,13 @@ const season = () => {
 	const curve = Math.sin(2*Math.PI * phase)
 	const sign = Math.sign(curve)
 	const strength = Math.abs(curve)
+
+	if ((lastCurve < 0 && curve > 0) || (lastCurve > 0 && curve < 0)) {
+		currentStrength = 0.5 + 1.5*Math.random()
+	}
+	lastCurve = curve
 	
-	return -sign * strength * strength
+	return -sign * currentStrength * strength * strength
 }
 
 
