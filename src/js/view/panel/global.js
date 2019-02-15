@@ -42,10 +42,11 @@ const createYear = () => {
 		currentDimensions = dimensions
 	})
 
-	const unsubscribe = Time.listen.year(year => {
-		container.text = `${year} A.D.`
-		container.x = currentDimensions.x - (container.width + 10)
-	})
+	const unsubscribe = Time.listen.year(year =>
+		Time.listen.month(month => {		
+			container.text = `${month} ${year} A.D.`
+			container.x = currentDimensions.x - (container.width + 10)
+		}))
 
 
 	return {

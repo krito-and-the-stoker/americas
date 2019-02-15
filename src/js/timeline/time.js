@@ -18,12 +18,16 @@ let currentTime = 0
 let scheduled = []
 let prioritized = []
 
+const months = ['January', 'February', 'March', 'April', 'Mai', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
 const startYear = 1492
 const time = {
 	scale: 1,
 	year: startYear,
 	timeOfYear: 0,
-	paused: 0
+	paused: 0,
+	monthNumber: 0,
+	month: months[0]
 }
 
 const get = () => ({
@@ -91,6 +95,10 @@ const advance = deltaTime => {
 
 		update.timeOfYear((currentTime % YEAR) / YEAR)
 		update.year(Math.floor(startYear + currentTime / YEAR))
+		if (Math.floor(12 * time.timeOfYear) !== time.monthNumber) {
+			time.monthNumber = Math.floor(12 * time.timeOfYear)
+			update.month(months[time.monthNumber])
+		}
 
 		Binding.applyAllUpdates()
 	}	catch(error) {
@@ -106,11 +114,13 @@ const season = () => {
 	return -Math.sin(2*Math.PI * phase)
 }
 
+
 const listen = {
 	year: fn => Binding.listen(time, 'year', fn),
 	timeOfYear: fn => Binding.listen(time, 'timeOfYear', fn),
 	scale: fn => Binding.listen(time, 'scale', fn),
 	paused: fn => Binding.listen(time, 'paused', fn),
+	month: fn => Binding.listen(time, 'month', fn),
 }
 
 const update = {
@@ -118,6 +128,7 @@ const update = {
 	timeOfYear: value => Binding.update(time, 'timeOfYear', value),
 	scale: value => Binding.update(time, 'scale', value),
 	paused: value => Binding.update(time, 'paused', value),
+	month: value => Binding.update(time, 'month', value),
 }
 
 const schedule = e => {
