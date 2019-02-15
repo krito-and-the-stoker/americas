@@ -69,6 +69,8 @@ const centerAt = ({ x, y }, moveTime, screen = { x: 0.5, y: 0.5 }) => {
 }
 
 
+
+
 let forestVisibility = true
 const hideForest = () => {
 	forestVisibility = false
@@ -156,6 +158,14 @@ const initialize = () => {
 
 	let initialCoords = null
 	const start = coords => {
+		const scale = RenderView.get().scale
+		const tileCoords = {
+			x: Math.floor(- (RenderView.get().coords.x - coords.x) / (TILE_SIZE * scale)),
+			y: Math.floor(- (RenderView.get().coords.y - coords.y) / (TILE_SIZE * scale)),
+		}
+		console.log(MapEntity.tile(tileCoords).temperature)
+		console.log(MapEntity.tile(tileCoords).seasonStrength)
+		
 		Events.trigger('drag')
 		stopRollingOut = () => { initialCoords = null }
 		if (!Foreground.hasOpenScreen()) {		

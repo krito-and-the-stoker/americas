@@ -110,10 +110,17 @@ const createTiles = tileStacks => tileStacks.map((stack, index) => ({
 	// 	return sprite
 	// }),
 	createCachedSprites: () => {
-		const baseSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 0])
-		const winterSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 1])
-		const summerSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 2])
-		const result = [baseSprite, winterSprite, summerSprite].filter(x => !!x)
+		let result = []
+		if (MapEntity.get().tiles[index].domain === 'land' || MapEntity.get().tiles[index].coast) {
+			const baseSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 0])
+			const winterSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 1])
+			const summerSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 2])
+			result = [baseSprite, winterSprite, summerSprite].filter(x => !!x)
+		} else {
+			const baseSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 0])
+			result = [baseSprite].filter(x => !!x)
+		}
+
 		result.forEach(sprite => {			
 			sprite.position.x = stack.position.x
 			sprite.position.y = stack.position.y
@@ -206,6 +213,33 @@ const temperatureToAlpha = temperature => [
 	Util.clamp((temperature - 10) / 10) // summer
 ]
 
+
+// const interpolateColor = (rgb1, rgb2, amount) => {
+// 	amount = Math.max(Math.min(amount, 1), 0)
+// 	const color = []
+
+// 	Util.range(3).forEach(i => {
+// 		const color1 = rgb1[i] * rgb1[i]
+// 		const color2 = rgb2[i] * rgb2[i]
+// 		color[i] = (Math.sqrt(amount * (color2 - color1) + color1)) >> 0
+// 	})
+
+// 	return color
+// }
+
+// const showHeatmap = false
+// const colorToNumber = rgb => rgb[2] + 256*rgb[1] + 256*256*rgb[0]
+
+// const heatmap = () => {
+// 	visibleTiles.forEach(tile => {
+// 		const temperature = Tile.temperature(MapEntity.get().tiles[tile.index], 0)
+// 		tile.sprites.forEach(sprite => {
+// 			sprite.tint = colorToNumber(interpolateColor([0, 0, 0], [256, 256, 256], (temperature + 30) / 70))
+// 		})
+// 	})
+// }
+
+
 const updateOpacity = () => {
 	const season = Time.season()
 	visibleTiles.forEach(tile => {
@@ -218,6 +252,7 @@ const updateOpacity = () => {
 		})
 	})
 }
+
 
 const render = () => {
 	renderRequested = true

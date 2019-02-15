@@ -119,8 +119,8 @@ const createTiles = data => {
 	}))
 }
 
-
-const poleFraction = y => (numTiles.y / 2 - y) / (numTiles.y / 2)
+const poleLocation = () => (numTiles.y / 2 - 20)
+const poleFraction = y => (poleLocation() - y) / (numTiles.y / 2)
 const smooth = tiles => {
 	tiles.forEach(tile => {
 		let weightSum = 0
@@ -132,7 +132,7 @@ const smooth = tiles => {
 				tile.newTemperature += neighbor.temperature
 				tile.newSeasonStrength += neighbor.seasonStrength
 			})
-		const strength = 5*Climate.weight[tile.terrainName]
+		const strength = 10*Climate.weight[tile.terrainName]
 		tile.newTemperature = (tile.newTemperature + strength * tile.temperature) / (strength + weightSum)
 		tile.newSeasonStrength = (tile.newSeasonStrength + strength * tile.seasonStrength) / (strength + weightSum)
 	})
@@ -146,12 +146,12 @@ const analyseMap = data => {
 	tiles = createTiles(data)
 
 	tiles.forEach(tile => {
-		const pole = poleFraction(tile.mapCoordinates.y) * poleFraction(tile.mapCoordinates.y)
-		tile.sunIndicator = 40 * Math.sign(pole) * (pole + 0.2) * (pole + 0.2)
+		const pole = poleFraction(tile.mapCoordinates.y)
+		tile.sunIndicator = 25 * Math.sign(pole) * (Math.abs(pole) + 0.2) * (Math.abs(pole) + 0.2) * (Math.abs(pole) + 0.2)
 		tile.seasonStrength = Climate.season[tile.terrainName]
 
 		if (tile.domain === 'sea') {
-			tile.temperature = pole * Climate.temperature.oceanPole + (1 - pole) * Climate.temperature.oceanEquator
+			tile.temperature = (Math.abs(pole) + 0.2) * (Math.abs(pole) + 0.2) * Climate.temperature.oceanPole + (1 - (Math.abs(pole) + 0.2) * (Math.abs(pole) + 0.2)) * Climate.temperature.oceanEquator
 		} else {
 			const baseTemperature = Climate.temperature[tile.baseName]
 			tile.temperature = baseTemperature +
@@ -162,7 +162,7 @@ const analyseMap = data => {
 				(tile.riverLarge ? Climate.modifier.riverLarge : 0)
 		}
 	})
-	range(250).forEach(() => smooth(tiles))
+	range(25).forEach(() => smooth(tiles))
 
 	return tiles.map(tile => ({
 		temperature: tile.temperature,

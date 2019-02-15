@@ -118,7 +118,7 @@ const season = () => {
 	const strength = Math.abs(curve)
 
 	if ((lastCurve < 0 && curve > 0) || (lastCurve > 0 && curve < 0)) {
-		currentStrength = 0.5 + 1.5*Math.random()
+		currentStrength = window.season || 0.5 + 1.5*Math.random()
 	}
 	lastCurve = curve
 	

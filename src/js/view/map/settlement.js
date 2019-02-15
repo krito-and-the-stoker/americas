@@ -23,7 +23,7 @@ const create = settlement => {
 			sprite.x = TILE_SIZE * settlement.mapCoordinates.x
 			sprite.y = TILE_SIZE * settlement.mapCoordinates.y
 
-			Click.on(sprite, () => console.log(settlement.owner.ai.state))
+			// Click.on(sprite, () => console.log(settlement.owner.ai.state))
 			Foreground.addTerrain(sprite)
 
 			const unsubscribeMission = Settlement.listen.mission(settlement, mission => {
