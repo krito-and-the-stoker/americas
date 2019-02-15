@@ -145,7 +145,7 @@ const initialize = colony => {
 	]))
 	destroy.push(listenEach.units(colony, (unit, added) => {
 		if (added && unit.treasure) {
-			Events.trigger('notificaiton', { type: 'treasure', colony, unit })
+			Events.trigger('notification', { type: 'treasure', colony, unit })
 		}
 	}))
 	destroy.push(Time.schedule(TeachingSummary.create(colony)))
@@ -156,14 +156,14 @@ const initialize = colony => {
 	destroy.push(listen.growth(colony, growth => {
 		if (growth > 200) {
 			const unit = Unit.create('settler', colony.mapCoordinates, colony.owner)
-			Events.trigger('notificaiton', { type: 'born', colony, unit })
+			Events.trigger('notification', { type: 'born', colony, unit })
 			colony.growth = 0
 		}
 	}))
 	destroy.push(Storage.listen(colony.storage, storage => {
 		if (storage.food < -1 && !starvationMessageSent) {
 			Message.send(`The food storage of ${colony.name} is empty. We need to get food quickly to prevent losses amongst the colonists`)
-			Events.trigger('notificaiton', { type: 'starving', colony })
+			Events.trigger('notification', { type: 'starving', colony })
 			starvationMessageSent = true
 		}
 		if (storage.food < -5) {
