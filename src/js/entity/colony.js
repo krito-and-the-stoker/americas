@@ -182,7 +182,7 @@ const initialize = colony => {
 		...Building.constructionOptions(colony).find(option => option.target === colony.construction.target) || Building.noProductionOption()
 	}
 	destroy.push(listen.construction(colony, construction => {
-		if (construction.amount >= construction.cost.construction && construction.tools >= construction.cost.tools) {
+		if (construction.amount >= construction.cost.construction && (!construction.cost.tools || construction.tools >= construction.cost.tools)) {
 			Building.construct(colony, construction)
 		}
 	}))
