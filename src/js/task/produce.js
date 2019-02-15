@@ -65,11 +65,13 @@ const create = (colony, building, colonist) => {
 		}
 		if (production.type === 'bells') {
 			Treasure.spend(productionAmount * BELLS_TO_GOLD_FACTOR)
-			Storage.update(colony.productionRecord, { good: 'gold', amount: -unscaledProductionAmount })
 			Colony.update.bells(colony, productionAmount)
+			Storage.update(colony.productionRecord, { good: 'gold', amount: -unscaledProductionAmount })
+			Storage.update(colony.productionRecord, { good: production.good, amount: productionAmount / scale })
 		}
 		if (production.type === 'crosses') {
 			Europe.update.crosses(productionAmount)
+			Storage.update(colony.productionRecord, { good: production.good, amount: productionAmount / scale })
 		}
 
 		return true
