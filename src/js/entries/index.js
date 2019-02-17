@@ -25,6 +25,7 @@ const clickStart = async () => {
 			// return game.start()
 		}).then(async () => {
 			await introPromise
+			document.querySelector('#log').innerHTML = `Initializing game...`
 			document.querySelector('.loading').classList.remove('hidden')	
 			await nextFrame()
 			await game.start()
