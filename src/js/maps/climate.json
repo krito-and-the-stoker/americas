@@ -52,7 +52,8 @@
 		"hills": -3,
 		"mountains": -5,
 		"equator": 0,
-		"pole": 0
+		"pole": 0,
+		"equatorOffset": -20
 	},
 	"weight": {
 		"arctic": 1,
