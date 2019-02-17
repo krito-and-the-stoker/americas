@@ -9,7 +9,7 @@ const config = () => {
 		plugins.push(new webpack.EnvironmentPlugin(['KEEN_SECRET', 'ENABLE_TRACKING', 'SENTRY_DSN']))
 	}
 
-	const directories = ['ai', 'command', 'data', 'entity', 'input', 'interaction', 'maps', 'render', 'task', 'timeline', 'util', 'view']
+	const directories = ['ai', 'command', 'data', 'entity', 'input', 'interaction', 'intro', 'maps', 'render', 'task', 'timeline', 'util', 'view']
 	const aliases = directories.map(dir => ({
 		[dir]: path.resolve(__dirname, `../src/js/${dir}`)
 	})).reduce((all, one) => ({ ...all, ...one }), {})
@@ -27,13 +27,18 @@ const config = () => {
 		resolve: {
 			alias: {
 				version: path.resolve(__dirname, '../src/version'),
+				src: path.resolve(__dirname, '../src'),
 				...aliases,
 				test: path.resolve(__dirname, '../test')
 			}
 		},
 		devtool: (yargs.argv.production || yargs.argv.staging) ? 'eval' : 'source-map',
 		context: path.resolve(__dirname, '../src/js/'),
-		plugins: plugins
+		plugins: plugins,
+		// rules: [{
+		// 	test: /\.pug$/,
+		// 	use: 'pug-loader'
+		// }]
 	}
 }
 

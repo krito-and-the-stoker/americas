@@ -1,0 +1,20 @@
+.journey {
+	.image {	
+		position: relative;
+		@include background-contain('/images/intro-ship.jpg');
+
+		width: 100vw;
+		height: 56.25vw;
+	}
+
+	.text {
+		color: black;
+		position: absolute;
+		z-index: 4;
+		top: 47%;
+		left: 3%;
+		width: 33%;
+		font-size: 2.3vw;
+		text-align: center;
+	}
+}

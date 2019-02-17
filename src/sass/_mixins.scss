@@ -1,0 +1,27 @@
+@mixin no-select {
+	pointer-events: none;
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;	
+}
+
+@mixin background-contain($src) {
+	overflow: hidden;
+	background: url(#{$src}) no-repeat center center fixed;
+  -webkit-background-size: contain;
+  -moz-background-size: contain;
+  -o-background-size: contain;
+	background-size: contain;	
+}
+
+@mixin background-cover($src) {
+	overflow: hidden;
+	background: url(#{$src}) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+	background-size: cover;	
+}

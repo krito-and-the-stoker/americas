@@ -1,0 +1,27 @@
+.cinematic-background {	
+	background-color: black;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 2;
+	transition: opacity 2s;
+	opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+	.visible & {
+		opacity: 1;
+	}
+}
+
+#intro.opaque {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1;
+	background-color: black;
+}

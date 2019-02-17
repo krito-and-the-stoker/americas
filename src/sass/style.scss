@@ -1,11 +1,15 @@
+@import 'mixins';
+
+@import 'intro';
+@import 'journey';
+@import 'audience';
+
+
 html {
-	overflow: hidden;
-	background: url(/images/title.jpg) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-	background-size: cover;
+	@include background-cover('/images/title.jpg');
+
 	height: 100%;
+	font-family: "Times New Roman";
 }
 
 body {
@@ -20,14 +24,8 @@ body {
 	top: 10px;
 	left: 10px;
 	color: white;
-	pointer-events: none;
 	display: inline;
-  -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none;
+	@include no-select;
 }
 
 .imprint {
@@ -48,7 +46,6 @@ body {
 .title {
 	transition: opacity 1s;
 	opacity: 1;
-	font-family: "Times New Roman";
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -187,6 +184,8 @@ a {
 	display: block;
 	text-align: center;
 	transition: opacity 1s;
+	z-index: 5;
+	color: white;
 }
 
 .disabled {
