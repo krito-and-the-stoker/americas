@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 import Util from 'util/util'
+import Climate from 'data/climate'
 import Layer from './layer'
 import RenderView from './view'
 import TileCache from './tileCache'
@@ -214,7 +215,12 @@ const resize = () => {
 // 	Util.clamp((temperature - 10) / 10) // summer
 // ]
 
-const alphaFrom = (temperature, i) => i ? Util.clamp((temperature - 10) / 10) : Util.clamp(-(temperature - 5) / 15)
+const winterFrom = Climate.winter.from
+const winterRange = Climate.winter.to - Climate.winter.from
+const summerFrom = Climate.summer.from
+const summerRange = Climate.summer.to - Climate.summer.from
+const alphaFrom = (temperature, i) => i ? Util.clamp((temperature - summerFrom) / summerRange) : Util.clamp((temperature - winterFrom) / winterRange)
+// const alphaFrom = (temperature, i) => i ? Util.clamp((temperature - 10) / 10) : Util.clamp(-(temperature - 5) / 15)
 
 
 // const interpolateColor = (rgb1, rgb2, amount) => {
