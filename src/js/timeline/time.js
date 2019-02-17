@@ -20,7 +20,7 @@ let prioritized = []
 
 const months = ['January', 'February', 'March', 'April', 'Mai', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
-const startYear = 1492
+const startYear = 1607
 const time = {
 	scale: 1,
 	year: startYear,

@@ -190,8 +190,8 @@ const start = async () => {
 		setTimeout(() => {
 			Keyboard.initialize()
 			Dialog.create({
-				type: 'king',
-				text: 'You have been send by our king to the other side of the ocean. Look for new land and riches to serve the glory of our country!',
+				type: 'naval',
+				text: 'Sir,\nWe crossed the atlantic ocean. The new world called America lies ahead. Let us sail west and claim Englands fair share of this land!',
 				coords: caravel.mapCoordinates,
 				pause: true
 			})

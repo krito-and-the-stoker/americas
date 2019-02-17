@@ -5,7 +5,7 @@ const preload = () => {
 	img.src = '/images/intro-ship.jpg'
 }
 
-const text = 'So you set sail.<br>On board some hundred men and women. Armed with guns and equipt with needed tools. Bound to never see their homeland again.'
+const text = 'So you set sail.<br>On board some hundred men and women, armed with guns and equipped with needed tools, bound to never see their homeland again.'
 
 const create = () => new Promise(resolve => {
 	const container = document.querySelector('#intro .journey')
