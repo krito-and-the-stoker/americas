@@ -20,17 +20,13 @@ const clickStart = async () => {
 	disableButtons()
 
 	requestAnimationFrame(async () => {	
-		const introPromise = intro()
-		await loadingGameCode.then(() => {
-			// return game.start()
-		}).then(async () => {
-			await introPromise
-			document.querySelector('#log').innerHTML = `Initializing game...`
-			document.querySelector('.loading').classList.remove('hidden')	
-			await nextFrame()
-			await game.start()
-			prepareGame()
-		})
+		await intro()
+		document.querySelector('#log').innerHTML = `Initializing game...`
+		document.querySelector('.loading').classList.remove('hidden')	
+		await loadingGameCode
+		await nextFrame()
+		await game.start()
+		prepareGame()
 	})
 }
 
@@ -72,9 +68,9 @@ window.addEventListener('load', async () => {
 		document.querySelector('.start').addEventListener('click', clickStart)
 		document.querySelector('.start').classList.remove('disabled')	
 
+		Audience.preload()
+		Journey.preload()
 		loadingGameCode = import(/* webpackChunkName: "game" */ './game.js').then(module => {
-			Audience.preload()
-
 			game = module.default
 			return module.default.preload()
 		})
