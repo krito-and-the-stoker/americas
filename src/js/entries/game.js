@@ -113,7 +113,7 @@ const americaLarge = () => {
 	Unit.loadUnit(caravel, pioneer)
 	Unit.loadUnit(caravel, soldier)
 	MapView.centerAt(startCoordinates, 0, {
-		x: 0.3,
+		x: 0.5,
 		y: 0.5
 	})
 	MapView.zoomBy(1/0.35, null, 0)
