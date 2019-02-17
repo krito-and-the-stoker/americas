@@ -119,7 +119,7 @@ const createTiles = data => {
 	}))
 }
 
-const poleLocation = () => (numTiles.y / 2 - 20)
+const poleLocation = () => (numTiles.y / 2 + Climate.modifier.equatorOffset)
 const poleFraction = y => (poleLocation() - y) / (numTiles.y / 2)
 const smooth = tiles => {
 	tiles.forEach(tile => {
