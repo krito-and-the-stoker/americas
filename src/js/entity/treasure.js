@@ -1,5 +1,5 @@
 let treasureListeners = []
-let treasure = 100
+let treasure = 1000
 const spend = amount => {
 	if (treasure >= amount) {
 		treasure -= amount
