@@ -34,16 +34,14 @@ const create = settlement => {
 					missionSymbol.scale.set(0.5)
 					Foreground.addTerrain(missionSymbol)
 
-					return () => {
-						Foreground.removeTerrain(missionSymbol)
-					}
+					return () => Foreground.removeTerrain(missionSymbol)
 				}
 			})
 
-			return () => {
-				Foreground.removeTerrain(sprite)
-				unsubscribeMission()
-			}
+			return [
+				() => Foreground.removeTerrain(sprite),
+				unsubscribeMission
+			]
 		}
 	})
 
