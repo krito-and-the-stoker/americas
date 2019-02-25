@@ -1,14 +1,10 @@
-import Drag from './drag'
-
 const on = (target, fn) => {
 	const handler = async e => {
 		e.stopPropagation()
 		const handleClick = async () => {	
-			if (!Drag.isDragTarget(target)) {
-				target.interactive = false
-				await fn({ coords: e.data.global, shiftKey: e.data.originalEvent.shiftKey })
-				target.interactive = true
-			}
+			target.interactive = false
+			await fn({ coords: e.data.global, shiftKey: e.data.originalEvent.shiftKey })
+			target.interactive = true
 		}
 
 		await handleClick()

@@ -34,7 +34,6 @@ const MIN_SCALE = 0.3
 const MAX_SCALE = 4
 const TILE_SIZE = 64
 
-let stopRollingOut = () => {}
 let moveTween = null
 const moveMap = (newCoords, moveTime = 0) => {
 	if (zoomTween) {
@@ -42,12 +41,14 @@ const moveMap = (newCoords, moveTime = 0) => {
 	}
 	if (moveTween) {
 		moveTween.stop()
+		moveTween = null
 	}
 	if (moveTime > 0) {	
 		moveTween = new TWEEN.Tween(RenderView.get().coords)
 			.to(newCoords, moveTime)
 			.easing(TWEEN.Easing.Quadratic.Out)
 			.onUpdate(RenderView.updateMapCoords)
+			.onComplete(() => { moveTween = null })
 			.start()
 	} else {
 		RenderView.updateMapCoords(newCoords)
@@ -68,7 +69,16 @@ const centerAt = ({ x, y }, moveTime, screen = { x: 0.5, y: 0.5 }) => {
 	moveMap(target, moveTime)
 }
 
-
+// not used currently, but probably useful in the future
+const tileAt = ({ x, y }) => {
+	const scale = RenderView.get().scale
+	const tileCoords = {
+		x: Math.floor(- (RenderView.get().coords.x - x) / (TILE_SIZE * scale)),
+		y: Math.floor(- (RenderView.get().coords.y - y) / (TILE_SIZE * scale)),
+	}
+	
+	return MapEntity.tile(tileCoords)	
+}
 
 
 let forestVisibility = true
@@ -158,16 +168,7 @@ const initialize = () => {
 
 	let initialCoords = null
 	const start = coords => {
-		// const scale = RenderView.get().scale
-		// const tileCoords = {
-		// 	x: Math.floor(- (RenderView.get().coords.x - coords.x) / (TILE_SIZE * scale)),
-		// 	y: Math.floor(- (RenderView.get().coords.y - coords.y) / (TILE_SIZE * scale)),
-		// }
-		// console.log(MapEntity.tile(tileCoords).temperature)
-		// console.log(MapEntity.tile(tileCoords).seasonStrength)
-		
 		Events.trigger('drag')
-		stopRollingOut = () => { initialCoords = null }
 		if (!Foreground.hasOpenScreen()) {		
 			initialCoords = {
 				x: RenderView.get().coords.x - coords.x,
@@ -181,19 +182,18 @@ const initialize = () => {
 				x: initialCoords.x + coords.x,
 				y: initialCoords.y + coords.y
 			}
-			if (moveTween !== null) {
-				moveMap(target, 0)
+			if (!moveTween) {
+				moveMap(target)
 			} else {
 				initialCoords = null
 			}
 		}
 	}
 	const end = () => {
-		stopRollingOut = () => {}
 		initialCoords = null
 	}
 
-	Drag.on(stage, start, move, end, true)
+	Drag.on(stage, start, move, end)
 	Secondary.on(stage, ({ coords, shiftKey }) => {
 		if (!Foreground.hasOpenScreen()) {
 			const selectedUnit = UnitView.selectedUnit()
@@ -236,7 +236,6 @@ const initialize = () => {
 	const handleWheel = ({ delta, position }) => {
 		if (!Foreground.hasOpenScreen()) {		
 			Events.trigger('zoom')
-			stopRollingOut()
 			zoomBy(Math.exp(-ZOOM_FACTOR * delta.y), { x: Math.round(position.x), y: Math.round(position.y) })
 		}
 	}
