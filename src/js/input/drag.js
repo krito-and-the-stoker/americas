@@ -88,6 +88,19 @@ const drags = {
 const listen = fn => Binding.listen(drags, 'current', fn)
 const update = value => Binding.update(drags, 'current', value)
 
+const waitForDrag = () => new Promise(resolve => {
+	if (!drags.current) {
+		resolve()
+	} else {	
+		const unsubscribe = listen(currentDrag => {
+			if (!currentDrag) {
+				Util.execute(unsubscribe)
+				resolve()
+			}
+		})
+	}
+})
+
 let dragTargets = []
 const makeDraggable = (sprite, entity) => {
 	let initialCoords = null
@@ -170,6 +183,7 @@ const makeDragTarget = (sprite, fn) => {
 
 export default {
 	on,
+	waitForDrag,
 	makeDraggable,
 	makeDragTarget,
 	listen

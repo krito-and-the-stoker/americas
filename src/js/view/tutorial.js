@@ -12,6 +12,7 @@ import Unit from 'entity/unit'
 import Europe from 'entity/europe'
 
 import Click from 'input/click'
+import Drag from 'input/drag'
 
 import Foreground from 'render/foreground'
 import Resources from 'render/resources'
@@ -169,13 +170,15 @@ const videoDialog = message => {
 		checkMark.y = frameView.y + frameView.height - 0.03 * dimensions.y - checkMark.height
 	})
 
-	Foreground.add.dialog(closePlane)
-	Foreground.add.dialog(video)
-	Foreground.add.dialog(frameView)
-	Foreground.add.dialog(textView)
-	Foreground.add.dialog(checkMark)
+	Drag.waitForDrag().then(() => {	
+		Foreground.add.dialog(closePlane)
+		Foreground.add.dialog(video)
+		Foreground.add.dialog(frameView)
+		Foreground.add.dialog(textView)
+		Foreground.add.dialog(checkMark)
 
-	Time.pause()
+		Time.pause()
+	})
 
 	const close = () => {
 		unsubscribeDimensions()

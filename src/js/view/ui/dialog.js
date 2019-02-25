@@ -1,13 +1,18 @@
 import * as PIXI from 'pixi.js'
 
+import Events from 'util/events'
+
+import Time from 'timeline/time'
+
+import Click from 'input/click'
+import Drag from 'input/drag'
+
 import Foreground from 'render/foreground'
 import RenderView from 'render/view'
 import Text from 'render/text'
 import Resources from 'render/resources'
-import Time from 'timeline/time'
-import Click from 'input/click'
+
 import MapView from 'view/map'
-import Events from 'util/events'
 
 
 const padding = 40
@@ -150,10 +155,6 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap, im
 		config.image = image
 	}
 
-	if (config.closeScreen) {
-		Foreground.closeScreen()
-	}
-
 	const textView = Text.create(text)
 	textView.y = padding
 	plane9.addChild(textView)
@@ -218,21 +219,28 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap, im
 		align[config.align](plane9, imageView, dimensions)
 	})
 
-	Foreground.add.dialog(closePlane)
-	if (imageView && config.imageBehindText) {
-		Foreground.add.dialog(imageView)
-	}
-	Foreground.add.dialog(plane9)
-	if (imageView && !config.imageBehindText) {
-		Foreground.add.dialog(imageView)
-	}
+	Drag.waitForDrag().then(() => {
+		if (config.closeScreen) {
+			Foreground.closeScreen()
+		}
 
-	if (pause) {
-		Time.pause()
-	}
+		Foreground.add.dialog(closePlane)
+		if (imageView && config.imageBehindText) {
+			Foreground.add.dialog(imageView)
+		}
+		Foreground.add.dialog(plane9)
+		if (imageView && !config.imageBehindText) {
+			Foreground.add.dialog(imageView)
+		}
+
+		if (pause) {
+			Time.pause()
+		}
+	})
 
 	const close = () => {
 		unsubscribeDimensions()
+		unsubscribeClick()
 		Foreground.remove.dialog(closePlane)
 		Foreground.remove.dialog(plane9)
 		if (imageView) {	
@@ -243,7 +251,7 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap, im
 		}
 	}
 
-	Click.on(closePlane, () => {
+	const unsubscribeClick = Click.on(closePlane, () => {
 		if (clickAllowed) {
 			const defaultOption = options ? options.find(option => option.default) : null
 			if (defaultOption && defaultOption.action) {
