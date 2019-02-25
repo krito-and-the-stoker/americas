@@ -41,13 +41,13 @@ const canSell = (europe, good) => europe.trade[good] === SELL
 const isHub = (colony, good) => colony.trade[good] === HUB
 
 const canExportAmount = (colony, good) => Math.max(colony.storage[good] + Forecast.get(colony, good), 0)
-const canImportAmount = (colony, good) => Math.max(colony.capacity - colony.storage[good] + Forecast.get(colony, good), 0)
+const canImportAmount = (colony, good) => Math.max(colony.capacity - (colony.storage[good] + Forecast.get(colony, good)), 0)
 
 // how much can we buy depends on treasure
 const canBuyAmount = (europe, good) => Math.floor((Treasure.amount() - TREASURE_MIN) / Market.ask(good))
 
-const exportPriority = (colony, amount) => Math.max(amount / colony.capacity, 0)
-const importPriority = (colony, amount) => Math.max(1 - (amount / colony.capacity), 0)
+const exportPriority = (colony, good) => Math.max(colony.storage[good] / colony.capacity, 0)
+const importPriority = (colony, good) => Math.max(1 - (colony.storage[good] / colony.capacity), 0)
 
 // higher priority when have lots of money
 const buyPriority = () => Math.max(Treasure.amount() / TREASURE_TARGET, 0)
@@ -60,8 +60,8 @@ const areaPriority = (hub, area, good) => Record.getAll('colony')
 	.filter(colony => canExport(colony, good) || canImport(colony, good))
 	.filter(colony => !isHub(colony, good))
 	.map(colony => ({
-		export: canExport(colony, good) ? exportPriority(colony, canExportAmount(colony, good)) : 0,
-		import: canImport(colony, good) ? importPriority(colony, canImportAmount(colony, good)) : 0,
+		export: canExport(colony, good) ? exportPriority(colony, good) : 0,
+		import: canImport(colony, good) ? importPriority(colony, good) : 0,
 	}))
 	.reduce((sum, item) => ({
 		export: sum.export + item.export,
@@ -146,8 +146,8 @@ const match = transport => {
 					const exportAmount = route.src.isEurope ? canBuyAmount(route.src, good) : canExportAmount(route.src, good)
 					const importAmount = route.dest.isEurope ? exportAmount : canImportAmount(route.dest, good)
 					const amount = Math.floor(Math.min(exportAmount, importAmount, capacity))
-					const exPrio = route.src.isEurope ? buyPriority() : exportPriority(route.src, exportAmount)
-					const imPrio = (good === 'food' ? 2 : 1) * (route.dest.isEurope ? sellPriority() : importPriority(route.dest, importAmount))
+					const exPrio = route.src.isEurope ? buyPriority() : exportPriority(route.src, good)
+					const imPrio = (good === 'food' ? 2 : 1) * (route.dest.isEurope ? sellPriority() : importPriority(route.dest, good))
 					const importance = amount * (1 + exPrio) * (0.5 + imPrio)
 
 					return {
