@@ -37,6 +37,14 @@ const handleKeydown = e => {
 			e.preventDefault()
 		}
 
+		if (e.key === 'w') {
+			const unit = UnitView.selectedUnit()
+			if (unit) {
+				const treasure = Unit.create('treasure', unit.tile.mapCoordinates)
+				treasure.treasure = Math.round(250 * Math.random())
+			}
+		}
+
 		if (e.key === 's') {
 			Record.download()
 			e.preventDefault()
