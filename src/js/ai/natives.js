@@ -127,8 +127,6 @@ const establishRelations = (ai, owner) => {
 
 
 const makePlansAndRunThem = ai => {
-	return 
-
 	Util.execute(ai.stopAllPlans)
 	State.cleanup(ai.state, [])
 
@@ -198,6 +196,7 @@ const load = ai => {
 	ai.goals = []
 
 	Record.entitiesLoaded(() => {
+		ai.tribe = Record.dereference(ai.tribe)
 		initialize(ai)
 	}, 100)
 
@@ -206,7 +205,8 @@ const load = ai => {
 
 const save = ai => ({
 	owner: Record.reference(ai.owner),
-	state: ai.state
+	tribe: Record.reference(ai.tribe),
+	state: ai.state,
 })
 
 const listen = {
