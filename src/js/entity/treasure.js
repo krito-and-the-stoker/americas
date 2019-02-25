@@ -23,6 +23,8 @@ const bind = fn => {
 	}
 }
 
+const set = amount => treasure = amount
+
 const amount = () => treasure
 
 const save = () => treasure
@@ -37,5 +39,6 @@ export default {
 	bind,
 	amount,
 	save,
-	load
+	load,
+	set
 }
