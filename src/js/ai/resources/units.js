@@ -19,6 +19,10 @@ const unassign = unit => {
 	created[owner.referenceId] = created[owner.referenceId].filter(u => u !== unit)
 }
 
+const unassignAll = owner => {
+	init(owner)
+}
+
 const free = owner => {
 	const all = Record.getAll('unit')
 		.filter(unit => unit.owner === owner)
@@ -39,5 +43,6 @@ export default {
 	create,
 	assign,
 	unassign,
+	unassignAll,
 	free
 }

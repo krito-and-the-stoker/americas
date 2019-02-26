@@ -12,6 +12,8 @@ import Unit from 'entity/unit'
 
 import EstablishRelations from 'ai/actions/establishRelations'
 import Disband from 'ai/actions/disband'
+import VisitColony from 'ai/actions/visitColony'
+
 import State from 'ai/state'
 import Units from 'ai/resources/units'
 
@@ -20,43 +22,6 @@ const initialize = ai => {
 	Util.execute(ai.destroy)
 
 	return [
-		Record.listen('unit', unit => {
-			if (unit.owner === ai.owner) {
-				if (!ai.state.units[unit.referenceId]) {					
-					ai.state.units[unit.referenceId] = {
-						plan: 'none'
-					}
-				}
-
-				return [
-					Unit.listen.mapCoordinates(unit, coords => {
-						ai.state.units[unit.referenceId].mapCoordinates = coords
-					}),
-					() => {
-						delete ai.state.units[unit.referenceId]
-					}
-				]
-			}
-		}),
-
-		Record.listen('settlement', settlement => {
-			if (settlement.owner === ai.owner) {
-				ai.state.settlements[settlement.referenceId] = {
-					canCreateUnit: true,
-					mapCoordinates: settlement.mapCoordinates
-				}
-				return () => {
-					delete ai.state.settlements[settlement.referenceId]
-				}
-			}
-		}),
-
-		listen.tribe(ai, tribe => {
-			if (tribe) {
-				ai.state.tribe = tribe.referenceId
-			}
-		}),
-
 		listen.tribe(ai, tribe => 
 			tribe ? Tribe.listen.settlements(tribe, settlements => {
 				const tiles = settlements
@@ -132,11 +97,11 @@ const establishRelations = (ai, owner) => {
 
 const makePlansAndRunThem = ai => {
 	Util.execute(ai.stopAllPlans)
-	State.cleanup(ai.state, [])
+	Units.unassignAll(ai.owner)
 
 	const executeAction = action => {
 		if (action) {
-			action.commit()
+			action.commit().then(() => makePlansAndRunThem(ai))
 			return action.cancel
 		}
 	}
@@ -148,20 +113,17 @@ const makePlansAndRunThem = ai => {
 			.map(contact => EstablishRelations.create({ owner: ai.owner, contact }))
 			.map(executeAction),
 
+		// visit new colonies
+		Object.entries(ai.state.relations)
+			.map(([referenceId, relation]) => State.all(relation, 'colonies')
+				.filter(colony => !ai.state.relations[referenceId].colonies[colony.referenceId].visited)
+				.map(colony => VisitColony.create({ tribe: ai.tribe, state: ai.state, colony }))
+				.map(executeAction)),
+
+		// collect free and unused units
 		Units.free(ai.owner)
 			.map(unit => Disband.create(unit))
-			.map(executeAction)
-
-		// visit new colonies
-		// Object.entries(ai.state.relations)
-		// 	.map(([referenceId, relation]) => State.all(relation, 'colonies')
-		// 		.map(colony => ({
-		// 			key: ['relations', referenceId, 'colonies', colony.referenceId, 'visited'],
-		// 			value: true,
-		// 			name: `visit-${colony.referenceId}`
-		// 		}))).flat()
-		// 	.filter(goal => !State.satisfies(ai.state, goal))
-		// 	.map(executePlan),
+			.map(executeAction),
 
 		// raid colonies
 		// Object.entries(ai.state.relations)

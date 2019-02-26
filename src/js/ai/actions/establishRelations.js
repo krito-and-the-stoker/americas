@@ -6,19 +6,15 @@ import Units from 'ai/resources/units'
 
 
 const create = ({ owner, contact }) => {
+	console.log('establishing', contact.referenceId)
 	const prev = Plan.cheapest(Record.getAll('unit')
 		.filter(unit => unit.owner.referenceId === contact.referenceId)
 		.filter(unit => unit.tile.domain === 'land')
-		.map(unit => MoveUnit.create(({ owner, coords: unit.mapCoordinates }))))
-
-	console.log(`establish-relations-${contact.referenceId}`)
+		.map(unit => MoveUnit.create(({ owner, coords: unit.tile.mapCoordinates }))))
 
 	return prev ? {
-		name: `establish-relations-${contact.referenceId}`,
 		cost: prev.cost,
-		commit: () => {
-			prev.commit().then(unit => Units.unassign(unit))
-		},
+		commit: () => prev.commit().then(unit => Units.unassign(unit)),
 		cancel: prev.cancel,
 	} : null
 }

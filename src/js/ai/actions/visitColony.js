@@ -3,39 +3,29 @@ import Events from 'util/events'
 
 import Storage from 'entity/storage'
 
-import State from 'ai/state'
+import MoveUnit from 'ai/actions/moveUnit'
+import Units from 'ai/resources/units'
+
+const create = ({ tribe, state, colony }) => {
+	console.log('visiting', colony.name)
+	const prev = MoveUnit.create({ owner: tribe.owner, coords: colony.mapCoordinates })
+
+	return prev ? {
+		cancel: prev.cancel,
+		commit: () => {
+			return prev.commit().then(unit => {
+				Units.unassign(unit)
+				commit(tribe, state, colony)
+			})
+		}
+	} : null
+}
 
 
-const name = () => 'visit colony'
-
-
-const produces = (state, goal) =>
-	goal.key.length === 5 &&
-	goal.key[0] === 'relations' &&
-	goal.key[1] &&
-	goal.key[2] === 'colonies' &&
-	goal.key[3] &&
-	goal.key[4] === 'visited' &&
-	goal.value
-
-
-const needs = (state, goal) => ({
-	key: ['units', null, 'mapCoordinates'],
-	value: [State.dereference(goal.key[3]).mapCoordinates],
-	amount: 2,
-	name: goal.name
-})
-
-
-const cost = () => 0
-
-
-const commit = (state, goal, next) => {
-	const tribe = State.dereference(state.tribe)
-	const colony = State.dereference(goal.key[3])
+const commit = (tribe, state, colony) => {
 	const good = Util.choose(['food', 'cotton', 'furs', 'tobacco', 'sugar', 'coats', 'cloth'])
 	const amount = Math.round(4 + 10 * Math.random())
-	state.relations[goal.key[1]].colonies[goal.key[3]].visited = true
+	state.relations[colony.owner.referenceId].colonies[colony.referenceId].visited = true
 	Events.trigger('dialog', {
 		type: 'natives',
 		image: tribe.image,
@@ -49,15 +39,9 @@ const commit = (state, goal, next) => {
 			}
 		}]
 	})
-
-	return next()
 }
 
 
 export default {
-	produces,
-	needs,
-	cost,
-	commit,
-	name
+	create
 }

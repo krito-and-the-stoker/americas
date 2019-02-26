@@ -11,21 +11,24 @@ import CreateUnit from 'ai/actions/createUnit'
 
 
 const create = ({ owner, unit, coords }) => {
-	if (owner) {	
+	if (owner) {
 		const prev = Plan.cheapest([
-			AssignUnit.create(owner, coords),
-			CreateUnit.create(owner, coords)
-		])
+			AssignUnit.create({ owner, coords }),
+			CreateUnit.create({ owner, coords })
+		].filter(a => !!a).map(action => {
+			action.cost += Util.distance(coords, action.coords)
+			return action
+		}))
 
 		let cancel = null
 
 		return prev ? {
-			cost: prev.cost + Util.distance(coords, prev.coords),
+			cost: prev.cost,
 			commit: () => new Promise(resolve => {
 				const unit = prev.commit()
-				cancel = commit(unit, coords, resolve)
-
-				return unit
+				if (Util.distance(unit.mapCoordinates, coords) > 0) {
+					cancel = commit(unit, coords, () => resolve(unit))
+				}
 			}),
 			cancel: () => Util.execute(cancel)
 		} : null

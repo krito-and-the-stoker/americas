@@ -8,6 +8,7 @@ import Units from 'ai/resources/units'
 
 
 const create = unit => {
+	console.log('disbanding', unit.referenceId)
 	const settlements = Record.getAll('settlement').filter(settlement => settlement.owner === unit.owner)
 	const closest = Util.min(settlements, settlement =>
 		Util.distance(settlement.mapCoordinates, unit.mapCoordinates))
@@ -16,7 +17,7 @@ const create = unit => {
 	return {
 		commit: () => {
 			Units.assign(unit)
-			prev.commit().then(() => {
+			return prev.commit().then(() => {
 				Units.unassign(unit)
 				Unit.disband(unit)
 			})

@@ -12,7 +12,7 @@ const reserve = settlement => {
 const unreserve = settlement => reservedPopulation[settlement.referenceId] = reserved(settlement) - 1
 
 
-const create = (owner, coords) => {
+const create = ({ owner, coords }) => {
 	const settlements = Record.getAll('settlement')
 		.filter(settlement => settlement.owner === owner)
 		.filter(settlement => settlement.population + reserved(settlement) > 1)
