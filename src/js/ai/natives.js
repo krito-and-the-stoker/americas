@@ -39,7 +39,7 @@ const colonyRaidProbability = (t, colony) => {
 
 	const time = 1000 * defense / (attraction - defense)
 
-	console.log(`${colony.name}: ${Math.round(attraction)} vs ${Math.round(defense)} (${Math.round(time)})`)
+	// console.log(`${colony.name}: ${Math.round(attraction)} vs ${Math.round(defense)} (${Math.round(time)})`)
 
 	return 1 / time
 }

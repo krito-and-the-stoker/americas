@@ -14,9 +14,11 @@ const create = ({ tribe, state, colony }) => {
 		.map(() => MoveUnit.create({ owner: tribe.owner, coords: colony.mapCoordinates })).filter(a => !!a)
 
 	if (moves.length > 0) {
+		let cancelDisband = []
 		return {
 			cancel: () => {
 				moves.forEach(move => move.cancel())
+				Util.execute(cancelDisband)
 			},
 			commit: () => Promise.all(moves.map(move => move.commit()
 				.then(unit => {
@@ -25,7 +27,8 @@ const create = ({ tribe, state, colony }) => {
 					}
 					Units.unassign(unit)
 					state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned -= 1
-					Disband.create(unit)
+					const disbandAction = Disband.create(unit)
+					cancelDisband.push(disbandAction.commit())
 				})))
 		}
 	}
