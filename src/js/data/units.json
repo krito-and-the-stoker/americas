@@ -8,7 +8,7 @@
 		},
 		"domain": "sea",
 		"canFound": false,
-		"speed": 8,
+		"speed": 12,
 		"cargo": 2,
 		"combat": 2,
 		"radius": 1
@@ -22,7 +22,7 @@
 		},
 		"domain": "sea",
 		"canFound": false,
-		"speed": 16,
+		"speed": 18,
 		"cargo": 2,
 		"combat": 8,
 		"radius": 2
@@ -36,7 +36,7 @@
 		},
 		"domain": "sea",
 		"canFound": false,
-		"speed": 12,
+		"speed": 15,
 		"cargo": 4,
 		"combat": 16,
 		"radius": 3
@@ -51,7 +51,7 @@
 		"domain": "sea",
 		"canFound": false,
 		"canTransportTreasure": true,
-		"speed": 12,
+		"speed": 14,
 		"cargo": 6,
 		"combat": 10,
 		"radius": 1
@@ -65,7 +65,7 @@
 		},
 		"domain": "sea",
 		"canFound": false,
-		"speed": 10,
+		"speed": 14,
 		"cargo": 4,
 		"combat": 6,
 		"radius": 1
