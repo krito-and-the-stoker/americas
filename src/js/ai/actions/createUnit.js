@@ -1,52 +1,40 @@
 import Util from 'util/util'
+import Record from 'util/record'
 
-import Unit from 'entity/unit'
+import Units from 'ai/resources/units'
 
-import State from 'ai/state'
-
-
-const name = () => 'create unit'
-
-
-const produces = (state, goal) =>
-	goal.key.length === 3 &&
-	goal.key[0] === 'units' &&
-	!goal.key[1] &&
-	goal.key[2] === 'goal' &&
-	goal.value === goal.name &&
-	goal.where
+let reservedPopulation = {}
+const reserved = settlement => reservedPopulation[settlement.referenceId] || 0
+const reserve = settlement => {
+	reservedPopulation[settlement.referenceId] = reserved(settlement) + 1
+	return 5
+}
+const unreserve = settlement => reservedPopulation[settlement.referenceId] = reserved(settlement) - 1
 
 
-const needs = (state, goal) => ({
-	key: ['settlements', null, 'canCreateUnit'],
-	value: true,
-	name: goal.name
-})
+const create = (owner, coords) => {
+	const settlements = Record.getAll('settlement')
+		.filter(settlement => settlement.owner === owner)
+		.filter(settlement => settlement.population + reserved(settlement) > 1)
+	const closest = Util.min(settlements, settlement =>
+		Util.distance(settlement.mapCoordinates, coords))
+	
 
-
-const cost = (state, goal) => Object.values(state.settlements).length > 0 ?
-	1 + Util.minPairValue(Object.values(state.settlements)
-		.filter(settlement => settlement.canCreateUnit)
-		.map(settlement => settlement.mapCoordinates), goal.where, Util.distance) : 0
-
-
-const commit = (state, goal, next) => {
-	const coords = 	Util.minPair(Object.values(state.settlements)
-		.filter(settlement => settlement.canCreateUnit)
-		.map(settlement => settlement.mapCoordinates), goal.where, Util.distance).one
-
-	const unit = Unit.create('native', coords, State.dereference(state.owner))
-	state.units[unit.referenceId] = {
-		goal: goal.name
+	return {
+		cost: reserve(closest),
+		coords: closest.mapCoordinates,
+		commit: () => commit(closest),
+		dismiss: () => unreserve(closest)
 	}
+}
 
-	return next()
+const commit = settlement => {
+	unreserve(settlement)
+	const unit = Units.create('native', settlement)
+
+	return unit
 }
 
 export default {
-	produces,
-	needs,
-	cost,
-	commit,
-	name
+	create,
 }

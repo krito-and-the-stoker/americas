@@ -5,41 +5,52 @@ import Commander from 'command/commander'
 import MoveTo from 'command/moveTo'
 import TriggerEvent from 'command/triggerEvent'
 
-import State from 'ai/state'
+import Plan from 'ai/plan'
+import AssignUnit from 'ai/actions/assignUnit'
+import CreateUnit from 'ai/actions/createUnit'
 
 
-const name = () => 'move unit'
+const create = ({ owner, unit, coords }) => {
+	if (owner) {	
+		const prev = Plan.cheapest([
+			AssignUnit.create(owner, coords),
+			CreateUnit.create(owner, coords)
+		])
+
+		let cancel = null
+
+		return prev ? {
+			cost: prev.cost + Util.distance(coords, prev.coords),
+			commit: () => new Promise(resolve => {
+				const unit = prev.commit()
+				cancel = commit(unit, coords, resolve)
+
+				return unit
+			}),
+			cancel: () => Util.execute(cancel)
+		} : null
+	}
+
+	if (unit) {
+		let cancel = null
+		return {
+			cost: Util.distance(coords, unit.mapCoordinates),
+			commit: () => new Promise(resolve => {
+				cancel = commit(unit, coords, resolve)
+
+				return unit
+			}),
+			cancel: () => Util.execute(cancel)
+		}
+	}
+
+	console.warn('moveUnit action needs either a unit or an owner.')
+}
 
 
-const produces = (state, goal) =>
-	goal.key.length === 3 &&
-	goal.key[0] === 'units' &&
-	goal.key[2] === 'mapCoordinates' &&
-	goal.value.length > 0
-
-
-const needs = (state, goal) => ({
-	key: ['units', goal.key[1], 'goal'],
-	value: goal.name,
-	where: goal.value,
-	name: goal.name
-})
-
-
-const cost = () => 0
-
-
-const commit = (state, goal, next) => {
-	const units = State.allocated(state, 'units', goal)
-
-	const pair = Util.minPair(units,
-		goal.value,
-		(one, other) => Util.distance(one.mapCoordinates, other))
-	const unit = pair.one
-	const target = pair.other
-
-	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: target }))
-	Commander.scheduleBehind(unit.commander, TriggerEvent.create({ name: 'ai-move-unit-complete', unit }))
+const commit = (unit, coords, resolve) => {
+	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords }))
+	Commander.scheduleBehind(unit.commander, TriggerEvent.create({ name: 'ai-move-unit-complete', id: unit.referenceId }))
 
 	let cancel = () => {
 		Commander.clearSchedule(unit.commander)
@@ -47,21 +58,17 @@ const commit = (state, goal, next) => {
 	}
 
 	const unsubscribe = Events.listen('ai-move-unit-complete', params => {
-		if (params.unit === unit) {
+		if (params.id === unit.referenceId) {
 			Util.execute(unsubscribe)
-			cancel = next()
+			Util.execute(resolve)
 		}
 	})
 
 	// bind cancel to current scope so we can update it when the move is complete
-	return () => Util.execute(cancel)
+	return cancel
 }
 
 
 export default {
-	produces,
-	needs,
-	cost,
-	commit,
-	name
+	create,
 }

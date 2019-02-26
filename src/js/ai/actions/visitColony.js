@@ -22,6 +22,7 @@ const produces = (state, goal) =>
 const needs = (state, goal) => ({
 	key: ['units', null, 'mapCoordinates'],
 	value: [State.dereference(goal.key[3]).mapCoordinates],
+	amount: 2,
 	name: goal.name
 })
 

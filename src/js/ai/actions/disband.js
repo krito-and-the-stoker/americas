@@ -1,36 +1,31 @@
+import Util from 'util/util'
+import Record from 'util/record'
+
 import Unit from 'entity/unit'
 
-import State from 'ai/state'
+import MoveUnit from 'ai/actions/moveUnit'
+import Units from 'ai/resources/units'
 
 
-const name = () => 'disband'
+const create = unit => {
+	const settlements = Record.getAll('settlement').filter(settlement => settlement.owner === unit.owner)
+	const closest = Util.min(settlements, settlement =>
+		Util.distance(settlement.mapCoordinates, unit.mapCoordinates))
+	const prev = MoveUnit.create({ unit, coords: closest.mapCoordinates })
 
-const produces = (state, goal) =>
-	goal.key.length === 3 &&
-	goal.key[0] === 'units' &&
-	goal.key[1] &&
-	goal.key[2] === 'scheduled' &&
-	goal.value === 'disband'
-
-const needs = (state, goal) => ({
-	key: ['units', goal.key[1], 'mapCoordinates'],
-	value: State.all(state, 'settlements').map(settlement => settlement.mapCoordinates),
-	name: goal.name
-})
-
-const cost = () => 0
-
-const commit = (state, goal, next) => {
-	const unit = State.dereference(goal.key[1])
-	Unit.disband(unit)
-	return next()
+	return {
+		commit: () => {
+			Units.assign(unit)
+			prev.commit().then(() => {
+				Units.unassign(unit)
+				Unit.disband(unit)
+			})
+		},
+		cancel: prev.cancel
+	}
 }
 
 
 export default {
-	name,
-	produces,
-	needs,
-	cost,
-	commit
+	create
 }

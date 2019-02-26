@@ -1,38 +1,29 @@
 import Record from 'util/record'
 
-
-const name = () => 'establish relations'
-
-
-const produces = (state, goal) =>
-	goal.key.length === 3 &&
-	goal.key[0] === 'relations' &&
-	goal.key[1] &&
-	goal.key[2] === 'established' &&
-	goal.value
+import Plan from 'ai/plan'
+import MoveUnit from 'ai/actions/moveUnit'
+import Units from 'ai/resources/units'
 
 
-const needs = (state, goal) => ({
-	key: ['units', null, 'mapCoordinates'],
-	value: Record.getAll('unit')
-		.filter(unit => unit.owner.referenceId === Number(goal.key[1]) && unit.tile.domain === 'land')
-		.map(unit => unit.tile.mapCoordinates),
-	name: goal.name
-})
+const create = ({ owner, contact }) => {
+	const prev = Plan.cheapest(Record.getAll('unit')
+		.filter(unit => unit.owner.referenceId === contact.referenceId)
+		.filter(unit => unit.tile.domain === 'land')
+		.map(unit => MoveUnit.create(({ owner, coords: unit.mapCoordinates }))))
 
+	console.log(`establish-relations-${contact.referenceId}`)
 
-const cost = () => 0
-
-
-const commit = (state, goal, next) => {
-	return next()
+	return prev ? {
+		name: `establish-relations-${contact.referenceId}`,
+		cost: prev.cost,
+		commit: () => {
+			prev.commit().then(unit => Units.unassign(unit))
+		},
+		cancel: prev.cancel,
+	} : null
 }
 
 
 export default {
-	produces,
-	needs,
-	cost,
-	commit,
-	name
+	create,
 }

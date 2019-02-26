@@ -33,6 +33,7 @@ const create = (tribe, coords, owner) => {
 		hasLearned: false,
 		expert: Util.choose(Object.keys(experts)),
 		mission: false,
+		population: Math.round(10*Math.random())
 	}
 
 	Tile.update.settlement(MapEntity.tile(coords), settlement)
@@ -266,6 +267,7 @@ const save = settlement => ({
 	presentGiven: settlement.presentGiven,
 	hasLearned: settlement.hasLearned,
 	mission: settlement.mission,
+	population: settlement.population
 })
 
 const load = settlement => {

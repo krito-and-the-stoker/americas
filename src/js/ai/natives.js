@@ -10,8 +10,10 @@ import MapEntity from 'entity/map'
 import Tribe from 'entity/tribe'
 import Unit from 'entity/unit'
 
-import Plan from 'ai/plan'
+import EstablishRelations from 'ai/actions/establishRelations'
+import Disband from 'ai/actions/disband'
 import State from 'ai/state'
+import Units from 'ai/resources/units'
 
 
 const initialize = ai => {
@@ -76,12 +78,7 @@ const initialize = ai => {
 										established: false,
 										colonies: {}
 									}
-									const unsubscribe = Events.listen('meet', ({ unit, other }) => {
-										if (unit.owner === ai.owner && other.owner === owner) {
-											establishRelations(ai, owner)
-											unsubscribe()
-										}
-									})
+
 									update.state(ai)
 								}
 							})
@@ -90,7 +87,8 @@ const initialize = ai => {
 					Tile.listen.colony(tile, colony => {
 						if (colony) {
 							ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId] = {
-								visited: false
+								visited: false,
+								raidPlanned: false
 							}
 							update.state(ai)
 
@@ -105,6 +103,12 @@ const initialize = ai => {
 		listen.state(ai, () => {
 			makePlansAndRunThem(ai)
 		}),
+
+		Events.listen('meet', ({ unit, other }) => {
+			if (unit.owner === ai.owner && !ai.state.relations[other.owner.referenceId].established) {
+				establishRelations(ai, other.owner)
+			}
+		})
 	]
 }
 
@@ -130,46 +134,55 @@ const makePlansAndRunThem = ai => {
 	Util.execute(ai.stopAllPlans)
 	State.cleanup(ai.state, [])
 
-	const executePlan = goal => {
-		const plan = Plan.create(ai.state, goal, () => { update.state(ai) })
-		if (plan) {
-			return plan()
-		} else {
-			console.warn('no plan could be formed to reach', goal)
+	const executeAction = action => {
+		if (action) {
+			action.commit()
+			return action.cancel
 		}
 	}
 
 	ai.stopAllPlans = [
 		// establish contact with all strangers
 		State.all(ai.state, 'relations')
-			.map(contact => ({
-				key: ['relations', contact.referenceId, 'established'],
-				value: true,
-				name: `contact-${contact.referenceId}`
-			}))
-			.filter(goal => !State.satisfies(ai.state, goal))
-			.map(executePlan),
+			.filter(contact => !ai.state.relations[contact.referenceId].established)
+			.map(contact => EstablishRelations.create({ owner: ai.owner, contact }))
+			.map(executeAction),
+
+		Units.free(ai.owner)
+			.map(unit => Disband.create(unit))
+			.map(executeAction)
 
 		// visit new colonies
-		Object.entries(ai.state.relations)
-			.map(([referenceId, relation]) => State.all(relation, 'colonies')
-				.map(colony => ({
-					key: ['relations', referenceId, 'colonies', colony.referenceId, 'visited'],
-					value: true,
-					name: `visit-${colony.referenceId}`
-				}))).flat()
-			.filter(goal => !State.satisfies(ai.state, goal))
-			.map(executePlan),
+		// Object.entries(ai.state.relations)
+		// 	.map(([referenceId, relation]) => State.all(relation, 'colonies')
+		// 		.map(colony => ({
+		// 			key: ['relations', referenceId, 'colonies', colony.referenceId, 'visited'],
+		// 			value: true,
+		// 			name: `visit-${colony.referenceId}`
+		// 		}))).flat()
+		// 	.filter(goal => !State.satisfies(ai.state, goal))
+		// 	.map(executePlan),
+
+		// raid colonies
+		// Object.entries(ai.state.relations)
+		// 	.map(([referenceId, relation]) => State.all(relation, 'colonies')
+		// 		.map(colony => ({
+		// 			key: ['relations', referenceId, 'colonies', colony.referenceId, 'raidPlanned'],
+		// 			value: true,
+		// 			name: `raid-${colony.referenceId}`
+		// 		}))).flat()
+		// 	.filter(goal => !State.satisfies(ai.state, goal))
+		// 	.map(executePlan),
 
 		// disband all idle units
-		State.free(ai.state, 'units')
-			.map(unit => ({
-				key: ['units', unit.referenceId, 'scheduled'],
-				value: 'disband',
-				name: `disband-${unit.referenceId}`
-			}))
-			.filter(goal => !State.satisfies(ai.state, goal))
-			.map(executePlan),
+		// State.free(ai.state, 'units')
+		// 	.map(unit => ({
+		// 		key: ['units', unit.referenceId, 'scheduled'],
+		// 		value: 'disband',
+		// 		name: `disband-${unit.referenceId}`
+		// 	}))
+		// 	.filter(goal => !State.satisfies(ai.state, goal))
+		// 	.map(executePlan),
 	]
 }
 
@@ -181,8 +194,6 @@ const create = owner => {
 		state: {
 			owner: owner.referenceId,
 			relations: {},
-			units: {},
-			settlements: {}
 		},
 	}
 
