@@ -158,6 +158,31 @@ const create = (colony, originalDimensions) => {
 				if (unit && !unit.properties.canFound) {
 					return false
 				}
+				if (tile.harvestedBy && tile.harvestedBy.type === 'settlement') {
+					const settlement = tile.harvestedBy
+					await Dialog.create({
+						text: 'We already use this land and will appreciate if you stay clear of it.',
+						type: 'natives',
+						image: settlement.tribe.image,
+						options: [{
+							text: 'We will respect your wishes',
+						}, {
+							text: 'Although we already own this land we offer you 500 gold as a compensation for.',
+							action: () => {
+								settlement.owner.ai.state.relations[colony.owner.referenceId].trust -= 0.025
+								Treasure.spend(500)
+								Tile.update.harvestedBy(tile, null)
+							},
+							disabled: Treasure.amount() < 500
+						}, {
+							text: 'We have rightfully claimed this land for the crown of England and will therefore use it.',
+							action: () => {
+								settlement.owner.ai.state.relations[colony.owner.referenceId].trust -= 0.1
+								Tile.update.harvestedBy(tile, null)
+							}
+						}]
+					})
+				}
 				if (!tile.harvestedBy) {
 					if (!unit && !args.colonist) {
 						return false
@@ -185,32 +210,6 @@ const create = (colony, originalDimensions) => {
 
 						return true
 					}
-				}
-
-				if (tile.harvestedBy && tile.harvestedBy.type === 'settlement') {
-					const settlement = tile.harvestedBy
-					await Dialog.create({
-						text: 'We already use this land and will appreciate if you stay clear of it.',
-						type: 'natives',
-						image: settlement.tribe.image,
-						options: [{
-							text: 'We will respect your wishes',
-						}, {
-							text: 'We offer you 500 for this piece of land',
-							action: () => {
-								Treasure.spend(500)
-								Tile.update.harvestedBy(tile, null)
-							},
-							disabled: Treasure.amount() < 500
-						}, {
-							text: 'You are mistaken. This is our land now.',
-							action: () => {
-								// TODO: provoke response from the natives
-								Tile.update.harvestedBy(tile, null)
-							}
-						}]
-					})
-					return false
 				}
 
 				return false

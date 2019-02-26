@@ -23,30 +23,32 @@ import State from 'ai/state'
 import Units from 'ai/resources/units'
 import Goods from 'ai/resources/goods'
 
-const colonyRaidProbability = (t, colony) => {
+
+const colonyRaidProbability = (t, colony, state) => {
 	const offset = 10
 	if (t < offset) {
 		return 0
 	}
 
-	const attraction = Goods.value(colony.storage)
+	const attraction = Util.clamp(1 - state.relations[colony.owner.referenceId].trust) * Goods.value(colony.storage)
 	const protection = Colony.protection(colony)
-	const defense = 100 * protection * protection
+	const defense = 100 * protection * protection / Util.clamp(1 + state.relations[colony.owner.referenceId].militancy, 0.1, 10)
 
 	if (defense > attraction) {
+		console.log(`${colony.name}: ${Math.round(attraction)} vs ${Math.round(defense)}`)
 		return 0
 	}
 
 	const time = 1000 * defense / (attraction - defense)
 
-	// console.log(`${colony.name}: ${Math.round(attraction)} vs ${Math.round(defense)} (${Math.round(time)})`)
+	console.log(`${colony.name}: ${Math.round(attraction)} vs ${Math.round(defense)} (${Math.round(time)})`)
 
 	return 1 / time
 }
 
 const watch = (ai, colony) => {
 	console.log('watching', colony.name)
-	return Time.schedule(ProbabilisticTrigger.create(t => colonyRaidProbability(t, colony), () => {
+	return Time.schedule(ProbabilisticTrigger.create(t => colonyRaidProbability(t, colony, ai.state), () => {
 		ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = Math.ceil(1.25*Colony.protection(colony))
 		update.state(ai)
 	}))
@@ -76,7 +78,9 @@ const initialize = ai => {
 								if (!ai.state.relations[owner.referenceId]) {
 									ai.state.relations[owner.referenceId] = {
 										established: false,
-										colonies: {}
+										colonies: {},
+										militancy: 0,
+										trust: 1,
 									}
 
 									update.state(ai)
@@ -90,6 +94,7 @@ const initialize = ai => {
 								visited: false,
 								raidPlanned: false
 							}
+							ai.state.relations[colony.owner.referenceId].trust -= 0.1
 							update.state(ai)
 
 							return () => {
@@ -101,8 +106,8 @@ const initialize = ai => {
 					Tile.listen.colony(tile, colony => {
 						if (colony) {
 							return watch(ai, colony)
-						}						
-					})
+						}
+					}),
 				])
 			}) : null),
 

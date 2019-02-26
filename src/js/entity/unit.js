@@ -277,6 +277,8 @@ const disband = unit => {
 		Colonist.update.unit(unit.colonist, null)
 	}
 
+	unit.disbanded = true
+
 	Util.execute(unit.destroy)
 	Record.remove(unit)
 }

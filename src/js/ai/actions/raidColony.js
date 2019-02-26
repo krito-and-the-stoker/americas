@@ -25,10 +25,15 @@ const create = ({ tribe, state, colony }) => {
 					if (Math.random() < 2 / Colony.protection(colony)) {
 						Raid(colony, unit)
 					}
-					Units.unassign(unit)
-					state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned -= 1
-					const disbandAction = Disband.create(unit)
-					cancelDisband.push(disbandAction.commit())
+					if (!unit.disbanded) {
+						state.relations[colony.owner.referenceId].militancy += 0.1
+						Units.unassign(unit)
+						state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned -= 1
+						const disbandAction = Disband.create(unit)
+						cancelDisband.push(disbandAction.commit())
+					} else {
+						state.relations[colony.owner.referenceId].militancy -= 0.025
+					}
 				})))
 		}
 	}
