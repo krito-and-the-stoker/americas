@@ -15,7 +15,7 @@ const create = (pdf, fn) => {
 		const probabilityIntegral = deltaTime * (currentProbability + lastProbability) / (2 * 1000)
 
 		// console.log('probability', currentProbability)
-		console.log('chance', probabilityIntegral / (1 - cumulatedProbability))
+		// console.log('chance', probabilityIntegral / (1 - cumulatedProbability))
 
 		if (cumulatedProbability >= 1 || Math.random() < probabilityIntegral / (1 - cumulatedProbability)) {
 			fn()
