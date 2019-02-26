@@ -1,43 +1,36 @@
 import Util from 'util/util'
-import Events from 'util/events'
 
-import Storage from 'entity/storage'
+import Colony from 'entity/colony'
 
 import MoveUnit from 'ai/actions/moveUnit'
+import Disband from 'ai/actions/disband'
+
+import Raid from 'interaction/raid'
 import Units from 'ai/resources/units'
 
 const create = ({ tribe, state, colony }) => {
-	console.log('start raid', colony.name)
-	const prev = MoveUnit.create({ owner: tribe.owner, coords: colony.mapCoordinates })
+	console.log('starting raid on', colony.name, state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned)
+	const moves = Util.range(state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned)
+		.map(() => MoveUnit.create({ owner: tribe.owner, coords: colony.mapCoordinates })).filter(a => !!a)
 
-	return prev ? {
-		cancel: prev.cancel,
-		commit: () => {
-			return prev.commit().then(unit => {
-				Units.unassign(unit)
-				commit(tribe, state, colony)
-			})
+	if (moves.length > 0) {
+		return {
+			cancel: () => {
+				moves.forEach(move => move.cancel())
+			},
+			commit: () => Promise.all(moves.map(move => move.commit()
+				.then(unit => {
+					if (Math.random() < 2 / Colony.protection(colony)) {
+						Raid(colony, unit)
+					}
+					Units.unassign(unit)
+					state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned -= 1
+					Disband.create(unit)
+				})))
 		}
-	} : null
-}
+	}
 
-
-const commit = (tribe, state, colony) => {
-	console.log('raided copmlete', colony.name)
-	state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = false
-	// Events.trigger('dialog', {
-	// 	type: 'natives',
-	// 	image: tribe.image,
-	// 	text: `You have made quite some progress with your village called ${colony.name}. The ${tribe.name} want to help you and gift you these ${amount} ${good}.`,
-	// 	pause: true,
-	// 	options: [{
-	// 		text: 'Thank you my friends.',
-	// 		default: true,
-	// 		action: () => {
-	// 			Storage.update(colony.storage, { good, amount })
-	// 		}
-	// 	}]
-	// })
+	return null
 }
 
 

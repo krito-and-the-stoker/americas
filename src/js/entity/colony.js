@@ -242,6 +242,11 @@ const create = (coords, owner) => {
 	return colony
 }
 
+const protection = colony => (Util.max(colony.units
+	.filter(unit => unit.domain === 'land')
+	.filter(unit => !unit.colonist || !unit.colonist.colony)
+	.map(unit => Unit.strength(unit) - 1)) + 1) * (colony.buildings.fortifications.level + 1)
+
 const disband = colony => {
 	colony.disbanded = true
 	colony.colonists.forEach(UnjoinColony)
@@ -310,6 +315,7 @@ const coastalDirection = colony => {
 
 export default {
 	create,
+	protection,
 	save,
 	load,
 	area,

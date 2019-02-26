@@ -87,7 +87,7 @@ const minDistance = (many, one) => distance(min(many, other => distance(one, oth
 const distance = (first, second) => Math.sqrt((first.x - second.x) * (first.x - second.x) + (first.y - second.y) * (first.y - second.y))
 const entityDistance = (one, other) => distance(one.mapCoordinates, other.mapCoordinates)
 
-const min = (many, fn) => many.reduce((best, test) => (best && fn(best) < fn(test)) ? best : test, null)
+const min = (many, fn = x=>x) => many.reduce((best, test) => (best && fn(best) < fn(test)) ? best : test, null)
 const minPair = (many, some, fn) => min(many.map(one => ({
 	one,
 	other: min(some, other => fn(one, other))
@@ -96,6 +96,8 @@ const minPairValue = (many, some, fn) => {
 	const pair = minPair(many, some, fn)
 	return fn(pair.one, pair.other)
 }
+
+const max = (many, fn = x=>x) => many.reduce((best, test) => (best && fn(best) > fn(test)) ? best : test, null)
 
 
 const pairs = (many, some) => many.map(one => some.map(other => ({
@@ -134,6 +136,7 @@ export default {
 	inBattleDistance,
 	inDistance,
 	min,
+	max,
 	minPair,
 	minPairValue,
 	pairs,

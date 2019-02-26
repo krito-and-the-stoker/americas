@@ -283,14 +283,14 @@
 	},
 	"fortifications": {
 		"frame": [null, null, null, null],
-		"population": [0, 3, 3, 8],
+		"population": [0, 1, 3, 8],
 		"width": 0,
 		"name": ["None", "Stockade", "Fort", "Fortress"],
 		"workspace": 0,
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 120
+			"construction": 60
 		}, {
 			"construction": 240,
 			"tools": 200

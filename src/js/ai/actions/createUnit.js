@@ -7,7 +7,7 @@ let reservedPopulation = {}
 const reserved = settlement => reservedPopulation[settlement.referenceId] || 0
 const reserve = settlement => {
 	reservedPopulation[settlement.referenceId] = reserved(settlement) + 1
-	return 5
+	return Math.max(15 - (settlement.population + reserved(settlement)), 1)
 }
 const unreserve = settlement => reservedPopulation[settlement.referenceId] = reserved(settlement) - 1
 

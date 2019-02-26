@@ -4,7 +4,6 @@ import Util from 'util/util'
 import Binding from 'util/binding'
 import Record from 'util/record'
 import Events from 'util/events'
-import PDF from 'util/pdf'
 
 import Time from 'timeline/time'
 
@@ -13,7 +12,7 @@ import ProbabilisticTrigger from 'task/probabilisticTrigger'
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Tribe from 'entity/tribe'
-import Unit from 'entity/unit'
+import Colony from 'entity/colony'
 
 import EstablishRelations from 'ai/actions/establishRelations'
 import Disband from 'ai/actions/disband'
@@ -22,36 +21,33 @@ import RaidColony from 'ai/actions/raidColony'
 
 import State from 'ai/state'
 import Units from 'ai/resources/units'
+import Goods from 'ai/resources/goods'
 
 const colonyRaidProbability = (t, colony) => {
-	if (t < 2) {
+	const offset = 10
+	if (t < offset) {
 		return 0
 	}
 
-	const attraction = colony.storage.tools + 2*colony.storage.guns + colony.storage.horses
-	const protection = 25 * (Util.sum(colony.units
-		.filter(unit => unit.domain === 'land')
-		.filter(unit => !unit.colonist || !unit.colonist.colony)
-		.map(unit => Unit.strength(unit))) + 1)
+	const attraction = Goods.value(colony.storage)
+	const protection = Colony.protection(colony)
+	const defense = 100 * protection * protection
 
-	if (protection > attraction) {
+	if (defense > attraction) {
 		return 0
 	}
 
-	const time = 150 * protection / (attraction - protection)
+	const time = 1000 * defense / (attraction - defense)
 
-	// console.log(colony.name)
-	// console.log(attraction)
-	// console.log(protection)
-	// console.log(time)
+	console.log(`${colony.name}: ${Math.round(attraction)} vs ${Math.round(defense)} (${Math.round(time)})`)
 
-	return PDF.ramp(time)(t)
+	return 1 / time
 }
 
 const watch = (ai, colony) => {
 	console.log('watching', colony.name)
 	return Time.schedule(ProbabilisticTrigger.create(t => colonyRaidProbability(t, colony), () => {
-		ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = true
+		ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = Math.ceil(1.25*Colony.protection(colony))
 		update.state(ai)
 	}))
 }
