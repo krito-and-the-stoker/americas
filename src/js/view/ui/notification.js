@@ -654,7 +654,7 @@ const createTreasure = (colony, unit) => {
 	const dismiss = {}
 
 	const dialog = {
-		text: 'We have secured the treasure in on of our colonies. However, we need a galleon to transport it to Europe.',
+		text: `We have secured the treasure in ${colony.name}. However, we need a galleon to transport it to Europe.`,
 		type: 'govenor',
 		coords: unit.mapCoordinates
 	}
@@ -665,6 +665,34 @@ const createTreasure = (colony, unit) => {
 		type: 'treasure',
 		dismiss,
 		dialog,
+	}
+}
+
+const createRaid = (colony, unit) => {
+	const colonyView = colonyIcon(colony)
+	const unitView = Resources.sprite('map', { frame: UnitView.getFrame(unit) })
+	const icon = Icon.create('minus')
+
+	const container = combine(colonyView, unitView, icon)
+
+	const action = () => {
+		MapView.centerAt(colony.mapCoordinates, 350)
+	}
+
+	const dismiss = {}
+
+	const dialog = {
+		text: `There has benn a raid in ${colony.name}. The storage has been plundered and lots of goods are missing. Try protect your cities with armed forces. Stockades and forts are greatly effective to prevent such events.`,
+		type: 'govenor',
+		coords: colony.mapCoordinates
+	}
+
+	return {
+		container,
+		action,
+		type: 'raid',
+		dismiss,
+		dialog
 	}
 }
 
@@ -755,7 +783,8 @@ const createType = {
 	settlement: params => createSettlement(params.settlement, params.unit),
 	learned: params => createLearned(params),
 	treasure: params => createTreasure(params.colony, params.unit),
-	combat: params => createCombat(params.attacker, params.defender, params.loser)
+	combat: params => createCombat(params.attacker, params.defender, params.loser),
+	raid: params => createRaid(params.colony, params.unit)
 }
 
 const iconSize = 1.5*64
