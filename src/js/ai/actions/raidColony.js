@@ -3,45 +3,44 @@ import Events from 'util/events'
 
 import Storage from 'entity/storage'
 
-import State from 'ai/state'
+import MoveUnit from 'ai/actions/moveUnit'
+import Units from 'ai/resources/units'
+
+const create = ({ tribe, state, colony }) => {
+	console.log('start raid', colony.name)
+	const prev = MoveUnit.create({ owner: tribe.owner, coords: colony.mapCoordinates })
+
+	return prev ? {
+		cancel: prev.cancel,
+		commit: () => {
+			return prev.commit().then(unit => {
+				Units.unassign(unit)
+				commit(tribe, state, colony)
+			})
+		}
+	} : null
+}
 
 
-const name = () => 'raid colony'
-
-
-const produces = (state, goal) =>
-	goal.key.length === 5 &&
-	goal.key[0] === 'relations' &&
-	goal.key[1] &&
-	goal.key[2] === 'colonies' &&
-	goal.key[3] &&
-	goal.key[4] === 'raidPlanned' &&
-	goal.value
-
-
-const needs = (state, goal) => ({
-	key: ['units', null, 'mapCoordinates'],
-	value: [State.dereference(goal.key[3]).mapCoordinates],
-	name: goal.name
-})
-
-
-const cost = () => 0
-
-
-const commit = (state, goal, next) => {
-	// const tribe = State.dereference(state.tribe)
-	// const colony = State.dereference(goal.key[3])
-	state.relations[goal.key[1]].colonies[goal.key[3]].raidPlanned = false
-
-	return next()
+const commit = (tribe, state, colony) => {
+	console.log('raided copmlete', colony.name)
+	state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = false
+	// Events.trigger('dialog', {
+	// 	type: 'natives',
+	// 	image: tribe.image,
+	// 	text: `You have made quite some progress with your village called ${colony.name}. The ${tribe.name} want to help you and gift you these ${amount} ${good}.`,
+	// 	pause: true,
+	// 	options: [{
+	// 		text: 'Thank you my friends.',
+	// 		default: true,
+	// 		action: () => {
+	// 			Storage.update(colony.storage, { good, amount })
+	// 		}
+	// 	}]
+	// })
 }
 
 
 export default {
-	produces,
-	needs,
-	cost,
-	commit,
-	name
+	create
 }

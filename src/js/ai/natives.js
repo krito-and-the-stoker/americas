@@ -4,17 +4,57 @@ import Util from 'util/util'
 import Binding from 'util/binding'
 import Record from 'util/record'
 import Events from 'util/events'
+import PDF from 'util/pdf'
+
+import Time from 'timeline/time'
+
+import ProbabilisticTrigger from 'task/probabilisticTrigger'
 
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Tribe from 'entity/tribe'
+import Unit from 'entity/unit'
 
 import EstablishRelations from 'ai/actions/establishRelations'
 import Disband from 'ai/actions/disband'
 import VisitColony from 'ai/actions/visitColony'
+import RaidColony from 'ai/actions/raidColony'
 
 import State from 'ai/state'
 import Units from 'ai/resources/units'
+
+const colonyRaidProbability = (t, colony) => {
+	if (t < 2) {
+		return 0
+	}
+
+	const attraction = colony.storage.tools + 2*colony.storage.guns + colony.storage.horses
+	const protection = 25 * (Util.sum(colony.units
+		.filter(unit => unit.domain === 'land')
+		.filter(unit => !unit.colonist || !unit.colonist.colony)
+		.map(unit => Unit.strength(unit))) + 1)
+
+	if (protection > attraction) {
+		return 0
+	}
+
+	const time = 150 * protection / (attraction - protection)
+
+	// console.log(colony.name)
+	// console.log(attraction)
+	// console.log(protection)
+	// console.log(time)
+
+	return PDF.ramp(time)(t)
+}
+
+const watch = (ai, colony) => {
+	console.log('watching', colony.name)
+	return Time.schedule(ProbabilisticTrigger.create(t => colonyRaidProbability(t, colony), () => {
+		ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = true
+		update.state(ai)
+	}))
+}
 
 
 const initialize = ai => {
@@ -60,6 +100,12 @@ const initialize = ai => {
 								delete ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId]
 							} 
 						}
+					}),
+
+					Tile.listen.colony(tile, colony => {
+						if (colony) {
+							return watch(ai, colony)
+						}						
 					})
 				])
 			}) : null),
@@ -119,21 +165,27 @@ const makePlansAndRunThem = ai => {
 				.map(colony => VisitColony.create({ tribe: ai.tribe, state: ai.state, colony }))
 				.map(executeAction)),
 
+		// raid colonies
+		Object.entries(ai.state.relations)
+			.map(([referenceId, relation]) => State.all(relation, 'colonies')
+				.filter(colony => ai.state.relations[referenceId].colonies[colony.referenceId].raidPlanned)
+				.map(colony => ({
+					action: RaidColony.create({ tribe: ai.tribe, state: ai.state, colony }),
+					colony
+				}))
+				.map(({ action, colony }) => {
+					if (action) {
+						action.commit()
+							.then(() => watch(ai, colony))
+							.then(() => makePlansAndRunThem(ai))
+						return action.cancel
+					}
+				})),
+
 		// collect free and unused units
 		Units.free(ai.owner)
 			.map(unit => Disband.create(unit))
 			.map(executeAction),
-
-		// raid colonies
-		// Object.entries(ai.state.relations)
-		// 	.map(([referenceId, relation]) => State.all(relation, 'colonies')
-		// 		.map(colony => ({
-		// 			key: ['relations', referenceId, 'colonies', colony.referenceId, 'raidPlanned'],
-		// 			value: true,
-		// 			name: `raid-${colony.referenceId}`
-		// 		}))).flat()
-		// 	.filter(goal => !State.satisfies(ai.state, goal))
-		// 	.map(executePlan),
 	]
 }
 
