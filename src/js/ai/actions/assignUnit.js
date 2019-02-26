@@ -7,7 +7,7 @@ const create = ({ owner, coords }) => {
 	const unit = Util.min(Units.free(owner), unit => Util.distance(unit.mapCoordinates, coords))
 
 	if (unit) {
-		Units.assign(unit)	
+		Units.assign(unit)
 
 		return {
 			commit: () => {

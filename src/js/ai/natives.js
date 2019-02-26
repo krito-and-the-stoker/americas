@@ -8,7 +8,6 @@ import Events from 'util/events'
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Tribe from 'entity/tribe'
-import Unit from 'entity/unit'
 
 import EstablishRelations from 'ai/actions/establishRelations'
 import Disband from 'ai/actions/disband'
@@ -50,7 +49,7 @@ const initialize = ai => {
 					}),
 
 					Tile.listen.colony(tile, colony => {
-						if (colony) {
+						if (colony && !ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId]) {
 							ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId] = {
 								visited: false,
 								raidPlanned: false
@@ -135,16 +134,6 @@ const makePlansAndRunThem = ai => {
 		// 		}))).flat()
 		// 	.filter(goal => !State.satisfies(ai.state, goal))
 		// 	.map(executePlan),
-
-		// disband all idle units
-		// State.free(ai.state, 'units')
-		// 	.map(unit => ({
-		// 		key: ['units', unit.referenceId, 'scheduled'],
-		// 		value: 'disband',
-		// 		name: `disband-${unit.referenceId}`
-		// 	}))
-		// 	.filter(goal => !State.satisfies(ai.state, goal))
-		// 	.map(executePlan),
 	]
 }
 
@@ -154,7 +143,6 @@ const create = owner => {
 		tribe: null,
 		contacts: [],
 		state: {
-			owner: owner.referenceId,
 			relations: {},
 		},
 	}
@@ -166,7 +154,6 @@ const create = owner => {
 
 const load = ai => {
 	Record.dereferenceLazy(ai.owner, owner => { ai.owner = owner })
-	ai.goals = []
 
 	Record.entitiesLoaded(() => {
 		ai.tribe = Record.dereference(ai.tribe)
