@@ -24,7 +24,7 @@ export default (colony, raider) => {
 	const defenderName = Unit.name(defender)
 
 	if (chance < probability.raider) {
-		const survivalChance = (1 - (0.5 / (colony.buildings.fortifications.level + 1))) * (1 - 1 / colony.colonist.length)
+		const survivalChance = (1 - (0.5 / (colony.buildings.fortifications.level + 1))) + (1 / colony.colonists.length)
 		if (Math.random() < survivalChance) {
 			Message.send(`A ${raiderName} overcame the defenders of ${colony.name}. The storage has been plundered. A ${defenderName} has barely survvived the attack. The colonists in fear.`)
 		} else {
