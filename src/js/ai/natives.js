@@ -119,11 +119,15 @@ const initialize = ai => {
 
 		Events.listen('meet', ({ unit, other }) => {
 			const relations = ai.state.relations[other.owner.referenceId]
-			if (unit.owner === ai.owner && !relations.established) {
-				establishRelations(ai, other.owner)
-			}
-			if (unit.owner === ai.owner && relations.trust < 0.5 && relations.militancy > 5) {
-				Battle(unit, other)
+			if (relations) {			
+				if (unit.owner === ai.owner && !relations.established) {
+					establishRelations(ai, other.owner)
+				}
+				if (unit.owner === ai.owner && relations.trust < 0.5 && relations.militancy > 1.5) {
+					if (unit.domain === other.domain) {
+						Battle(unit, other)
+					}
+				}
 			}
 		})
 	]

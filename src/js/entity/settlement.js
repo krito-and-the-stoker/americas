@@ -2,6 +2,8 @@ import Record from 'util/record'
 import Util from 'util/util'
 import Binding from 'util/binding'
 
+import Time from 'timeline/time'
+
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Unit from 'entity/unit'
@@ -34,6 +36,7 @@ const create = (tribe, coords, owner) => {
 		owner,
 		presentGiven: false,
 		hasLearned: false,
+		lastTaxation: 0,
 		expert: Util.choose(Object.keys(experts)),
 		mission: false,
 		population: Math.round(10*Math.random())
@@ -77,23 +80,50 @@ const initialize = settlement => {
 
 const dialog = (settlement, unit, answer) => {
 	if (answer === 'food') {
+		if (settlement.lastTaxation > Time.get().currentTime - Time.YEAR) {
+			return {
+				text: 'We have already given you all we have. We cannot give you anything more this year',
+				type: 'natives',
+				image: settlement.tribe.image,
+				options: [{
+					text: 'So this is how you help out...'
+				}]
+			}
+		}
+
 		settlement.owner.ai.state.relations[unit.owner.referenceId].trust -= .1
+		settlement.owner.ai.state.relations[unit.owner.referenceId].militancy += .2
+		settlement.lastTaxation = Time.get().currentTime
+		const amount = Math.round(10 + 20 * Math.random())
 		return {
-			text: 'Although we do not have a significant surplus, we will give you some of our food savings. May you use it wisely in these hard times.',
+			text: 'We do not really have a surplus, but take these ${amount} food if you must.',
 			type: 'natives',
 			image: settlement.tribe.image,
 			options: [{
 				default: true,
 				action: () => {
-					Storage.update(unit.equipment, { good: 'food', amount: Math.round(10 + 20 * Math.random()) })
+					Storage.update(unit.equipment, { good: 'food', amount })
 				}
 			}]
 		}
 	}
 	if (answer === 'taxes') {
+		if (settlement.lastTaxation > Time.get().currentTime - Time.YEAR) {
+			return {
+				text: 'We have already paid your "taxes" and cannot make any further concessions.',
+				type: 'natives',
+				image: settlement.tribe.image,
+				options: [{
+					text: 'Fine. But we will come back next year.'
+				}]
+			}
+		}
+
 		const good = Util.choose(['food', 'cotton', 'furs', 'tobacco', 'sugar', 'coats', 'cloth'])
 		const amount = Math.round(10 + 30 * Math.random())
-		settlement.owner.ai.state.relations[unit.owner.referenceId].trust -= .1
+		settlement.lastTaxation = Time.get().currentTime
+		settlement.owner.ai.state.relations[unit.owner.referenceId].trust -= .15
+		settlement.owner.ai.state.relations[unit.owner.referenceId].militancy += .1
 
 		return {
 			text: `So be it then, take these ${amount} ${good}.`,
@@ -284,7 +314,7 @@ const dialog = (settlement, unit, answer) => {
 					text: 'Demand food supplies',
 					answer: 'food'
 				}, {
-					text: 'Collect taxes',
+					text: 'Demand taxes',
 					answer: 'taxes'
 				}, {
 					text: 'Just passing by'
@@ -331,7 +361,8 @@ const save = settlement => ({
 	presentGiven: settlement.presentGiven,
 	hasLearned: settlement.hasLearned,
 	mission: settlement.mission,
-	population: settlement.population
+	population: settlement.population,
+	lastTaxation: settlement.lastTaxation
 })
 
 const load = settlement => {

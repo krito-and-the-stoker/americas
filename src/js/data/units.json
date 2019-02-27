@@ -10,7 +10,7 @@
 		"canFound": false,
 		"speed": 12,
 		"cargo": 2,
-		"combat": 2,
+		"combat": 1,
 		"radius": 1
 	},
 	"privateer": {
@@ -24,7 +24,8 @@
 		"canFound": false,
 		"speed": 18,
 		"cargo": 2,
-		"combat": 8,
+		"combat": 4,
+		"support": 0.5,
 		"radius": 2
 	},
 	"frigate": {
@@ -38,7 +39,8 @@
 		"canFound": false,
 		"speed": 15,
 		"cargo": 4,
-		"combat": 16,
+		"combat": 8,
+		"support": 1,
 		"radius": 3
 	},
 	"galleon": {
@@ -53,7 +55,8 @@
 		"canTransportTreasure": true,
 		"speed": 14,
 		"cargo": 6,
-		"combat": 10,
+		"combat": 5,
+		"support": 0.5,
 		"radius": 1
 	},
 	"merchantman": {
@@ -67,7 +70,7 @@
 		"canFound": false,
 		"speed": 14,
 		"cargo": 4,
-		"combat": 6,
+		"combat": 3,
 		"radius": 1
 	},
 	"wagontrain": {
@@ -198,6 +201,7 @@
 		},
 		"domain": "land",
 		"canFound": true,
+		"equipment": 50,
 		"speed": 1,
 		"combat": 2,
 		"radius": 1.25

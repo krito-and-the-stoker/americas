@@ -13,7 +13,7 @@ import GoodsView from 'view/goods'
 import Icon from 'view/ui/icon'
 
 import LoadFromShipToColony from 'interaction/loadFromShipToColony'
-
+import UnequipUnitInColony from 'interaction/unequipUnitInColony'
 
 const create = (colony, originalDimensions) => {
 	const container = new PIXI.Container()
@@ -86,6 +86,9 @@ const create = (colony, originalDimensions) => {
 		const { good, unit, amount } = args
 		if (good && unit) {
 			LoadFromShipToColony(colony, unit, { good, amount })
+		}
+		if (!good && unit && !unit.properties.cargo) {
+			UnequipUnitInColony(colony, unit)
 		}
 
 		return false

@@ -1,5 +1,3 @@
-import Record from 'util/record'
-
 import Time from 'timeline/time'
 
 import MapEntity from 'entity/map'
@@ -62,7 +60,7 @@ export default Factory.create('Move', {
 			LeaveColony(unit)
 		}
 
-		const speed = unit.properties.speed
+		const speed = unit.properties.speed / (1 + Unit.overWeight(unit))
 		const fromTile = MapEntity.tile(startCoords)
 
 		duration = Tile.movementCost(fromTile, targetTile) * Time.MOVE_BASE_TIME / speed
@@ -93,7 +91,7 @@ export default Factory.create('Move', {
 	}
 
 	const finished = () => {
-		if (!aborted) {		
+		if (!aborted && !unit.disbanded) {		
 			Unit.update.mapCoordinates(unit, { ...coords })
 			Unit.update.tile(unit, targetTile)
 			if (targetTile.colony) {

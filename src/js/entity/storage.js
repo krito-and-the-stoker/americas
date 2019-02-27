@@ -60,6 +60,8 @@ const transfer = (src, dest, pack = {}) => {
 	update(dest)
 }
 
+const total = storage => Util.sum(goods(storage).map(pack => pack.amount))
+
 const transferWithProduction = (src, dest) => {
 	const move = pack => {
 		dest[pack.good] += pack.amount
@@ -89,6 +91,7 @@ export default {
 	transferWithProduction,
 	load,
 	save,
+	total,
 	goods,
 	productions,
 	equals,

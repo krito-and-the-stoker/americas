@@ -23,7 +23,7 @@ export default (colony, raider) => {
 	const raiderName = Unit.name(raider)
 	const defenderName = Unit.name(defender)
 
-	// console.log('raid', probability)
+	console.log('raid', chance, probability)
 
 	if (chance < probability.raider) {
 		const survivalChance = (1 - (1 / (colony.buildings.fortifications.level + 1))) + (1 / colony.colonists.length)

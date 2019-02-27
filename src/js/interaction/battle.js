@@ -27,6 +27,8 @@ export default (attacker, other) => {
 
 		const chance = Math.random() * (probability.attacker + probability.defender)
 
+		console.log('battle', chance, probability)
+
 		const attackerName = Unit.name(attacker)
 		const defenderName = Unit.name(defender)
 		if (chance < probability.attacker) {

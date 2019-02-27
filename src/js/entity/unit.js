@@ -219,6 +219,16 @@ const area = unit => {
 		.find(neighbor => neighbor.domain === unit.domain).area
 }
 
+const additionalEquipment = unit => Storage.goods(unit.equipment)
+	.filter(pack => !((unit.name === 'soldier' || unit.name === 'dragoon') && pack.good === 'guns'))
+	.filter(pack => !((unit.name === 'scout' || unit.name === 'dragoon') && pack.good === 'horses'))
+	.filter(pack => !(unit.name === 'pioneer' && pack.good === 'tools'))
+
+const overWeight = unit => {
+	const equipmentCapacity = 50 + unit.equipment.horses
+	return Math.max((Storage.total(unit.equipment) - equipmentCapacity) / equipmentCapacity, 0)
+}
+
 const support = unit => Util.max(Record.getAll('unit')
 	.filter(support => support.properties.support)
 	.filter(support => support.owner === unit.owner)
@@ -239,6 +249,8 @@ const strength = unit => {
 			result += unit.properties.colonyDefense
 		}
 	}
+
+	result /= (1 + overWeight(unit))
 
 	return result
 }
@@ -348,6 +360,8 @@ const load = unit => {
 
 export default {
 	create,
+	overWeight,
+	additionalEquipment,
 	isIdle,
 	disband,
 	listen,
