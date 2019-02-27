@@ -9,6 +9,8 @@ import Time from 'timeline/time'
 
 import ProbabilisticTrigger from 'task/probabilisticTrigger'
 
+import Battle from 'interaction/battle'
+
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Tribe from 'entity/tribe'
@@ -116,8 +118,12 @@ const initialize = ai => {
 		}),
 
 		Events.listen('meet', ({ unit, other }) => {
-			if (unit.owner === ai.owner && !ai.state.relations[other.owner.referenceId].established) {
+			const relations = ai.state.relations[other.owner.referenceId]
+			if (unit.owner === ai.owner && !relations.established) {
 				establishRelations(ai, other.owner)
+			}
+			if (unit.owner === ai.owner && relations.trust < 0.5 && relations.militancy > 5) {
+				Battle(unit, other)
 			}
 		})
 	]

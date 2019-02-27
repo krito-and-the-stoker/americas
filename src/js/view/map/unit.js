@@ -65,6 +65,7 @@ const select = unit => {
 			.start()
 
 		Events.trigger('select', view.unit)
+		console.log('strength of', unit.name, Unit.strength(view.unit))
 	}
 }
 

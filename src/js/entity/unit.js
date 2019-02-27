@@ -219,7 +219,29 @@ const area = unit => {
 		.find(neighbor => neighbor.domain === unit.domain).area
 }
 
-const strength = unit => unit.properties.combat || 1
+const support = unit => Util.max(Record.getAll('unit')
+	.filter(support => support.properties.support)
+	.filter(support => support.owner === unit.owner)
+	.filter(support => support !== unit)
+	.filter(support => Util.inBattleDistance(unit, support)), support => support.properties.support)
+
+const strength = unit => {
+	let result = unit.properties.combat || 1
+
+	const supportUnit = support(unit)
+	if (supportUnit) {
+		result += supportUnit.properties.support
+	}
+
+	if (unit.colony) {
+		result += 0.5 * unit.colony.buildings.fortifications.level
+		if (unit.properties.colonyDefense) {
+			result += unit.properties.colonyDefense
+		}
+	}
+
+	return result
+}
 
 const loadGoods = (unit, pack) => {
 	if (!hasCapacity(unit, pack) && pack.amount > 0) {

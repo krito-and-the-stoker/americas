@@ -94,8 +94,9 @@
 		},
 		"domain": "land",
 		"canFound": false,
+		"support": 1,
 		"speed": 1,
-		"combat": 5,
+		"combat": 1,
 		"radius": 2
 	},
 	"pioneer": {
@@ -214,7 +215,8 @@
 		"canFound": true,
 		"speed": 4,
 		"combat": 3,
-		"radius": 2
+		"radius": 2,
+		"colonyDefense": -1
 	},
 	"treasure": {
 		"frame": {
