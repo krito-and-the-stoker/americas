@@ -6,12 +6,17 @@ import Unit from 'entity/unit'
 import Storage from 'entity/storage'
 
 export default (colony, raider) => {
+	if (!Util.inBattleDistance(raider, colony)) {
+		return false
+	}
+
 	const possibleDefenders = colony.units
 		.filter(unit => unit.owner === colony.owner)
 		.filter(unit => unit.domain === 'land')
 	const defender = Util.max(possibleDefenders, unit => Unit.strength(unit))
 
 	Unit.update.radius(raider, 0)
+	Unit.update.radius(defender, 0)
 
 	let probability = {
 		raider: Math.pow(Unit.strength(raider), 2),

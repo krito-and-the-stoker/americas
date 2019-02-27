@@ -12,14 +12,29 @@ const create = () => {
 		}
 	})
 
+	let colonies = []
+	Record.listen('colony', colony => {
+		colonies.push(colony)
+		return () => {
+			colonies = colonies.filter(c => c !== colony)
+		}
+	})
+
 	const update = () => {
-		units.forEach(unit => units
-			.filter(other => other.owner !== unit.owner)
-			.forEach(other => {
-				if (Util.inDistance(unit, other)) {
-					Events.trigger('meet', { unit, other })
-				}
-			}))
+		units.forEach(unit => 
+			units.filter(other => other.owner !== unit.owner)
+				.forEach(other => {
+					if (Util.inDistance(unit, other)) {
+						Events.trigger('meet', { unit, other })
+					}
+				}))
+		units.forEach(unit =>
+			colonies.filter(colony => unit.owner !== colony.owner)
+				.forEach(colony => {
+					if (Util.inDistance(unit, colony)) {
+						Events.trigger('meet', { unit, colony })
+					}
+				}))
 
 		return true
 	}

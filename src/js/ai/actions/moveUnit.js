@@ -22,22 +22,30 @@ const create = ({ owner, unit, coords }) => {
 
 		let cancel = null
 
-		return prev ? {
-			cost: prev.cost,
-			commit: () => new Promise(resolve => {
-				const unit = prev.commit()
-				if (Util.distance(unit.mapCoordinates, coords) > 0) {
-					cancel = commit(unit, coords, () => resolve(unit))
-				}
-			}),
-			cancel: () => Util.execute(cancel)
-		} : null
+		if (prev) {
+			const move = {
+				cost: prev.cost,
+				commit: () => new Promise(resolve => {
+					const unit = prev.commit()
+					move.unit = unit
+					if (Util.distance(unit.mapCoordinates, coords) > 0) {
+						cancel = commit(unit, coords, () => resolve(unit))
+					}
+				}),
+				cancel: () => Util.execute(cancel)
+			}
+
+			return move
+		}
+
+		return null
 	}
 
 	if (unit) {
 		let cancel = null
 		return {
 			cost: Util.distance(coords, unit.mapCoordinates),
+			unit,
 			commit: () => new Promise(resolve => {
 				cancel = commit(unit, coords, resolve)
 

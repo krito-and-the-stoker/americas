@@ -1,7 +1,8 @@
 import Util from 'util/util'
+import Events from 'util/events'
 
-import Colony from 'entity/colony'
-import Unit from 'entity/unit'
+// import Colony from 'entity/colony'
+// import Unit from 'entity/unit'
 
 import MoveUnit from 'ai/actions/moveUnit'
 import Disband from 'ai/actions/disband'
@@ -21,21 +22,47 @@ const create = ({ tribe, state, colony }) => {
 				moves.forEach(move => move.cancel())
 				Util.execute(cancelDisband)
 			},
-			commit: () => Promise.all(moves.map(move => move.commit()
-				.then(unit => {
-					if (Math.random() < 2 * Unit.strength(unit) / Colony.protection(colony)) {
-						Raid(colony, unit)
+			commit: () => {
+				return Promise.all(moves.map(move => new Promise(resolve => {
+					const unit = move.unit
+					let cleanup = () => {
+						// only do this once
+						cleanup = () => {}
+
+						Util.execute[unsubscribeBattle, unsubscribeRaid]
+						state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned -= 1
+
+						if (!unit.disbanded) {
+							// state.relations[colony.owner.referenceId].militancy += 0.1
+							Units.unassign(unit)
+	
+							const disbandAction = Disband.create(unit)
+							cancelDisband.push(disbandAction.commit())						
+						}
+						resolve()
 					}
-					state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned -= 1
-					if (!unit.disbanded) {
-						state.relations[colony.owner.referenceId].militancy += 0.1
-						Units.unassign(unit)
-						const disbandAction = Disband.create(unit)
-						cancelDisband.push(disbandAction.commit())
-					} else {
-						state.relations[colony.owner.referenceId].militancy -= 0.1
-					}
+
+					// raid when in range
+					const unsubscribeRaid = Events.listen('meet', params => {
+						if (params.colony === colony && params.unit === unit) {
+							console.log('raiding', params.unit, colony)
+							Raid(colony, params.unit)
+
+							cleanup()
+						}
+					})
+
+					// die trying..
+					const unsubscribeBattle = Events.listen('battle', params => {
+						if (params.loser === unit) {
+							cleanup()
+						}
+					})
+
+					// reach colony
+					move.commit().then(cleanup)
 				})))
+			}
 		}
 	}
 

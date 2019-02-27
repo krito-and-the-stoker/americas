@@ -140,29 +140,33 @@ const initialize = ai => {
 		}),
 
 		Events.listen('meet', ({ unit, other }) => {
-			const relations = ai.state.relations[other.owner.referenceId]
-			if (relations) {
-				if (unit.owner === ai.owner && other.domain === 'land' && !relations.established) {
-					establishRelations(ai, other.owner)
-				}
-				if (relations.trust < 0 && relations.militancy > 1.5) {
-					if (unit.domain === other.domain) {
-						if (unit.owner === ai.owner && !other.colony) {		
-							Battle(unit, other)
-							makePlansAndRunThem(ai)
+			if (unit && other) {			
+				const relations = ai.state.relations[other.owner.referenceId]
+				if (relations) {
+					if (unit.owner === ai.owner && other.domain === 'land' && !relations.established) {
+						establishRelations(ai, other.owner)
+					}
+					if (relations.trust < 0 && relations.militancy > 1.5) {
+						if (unit.domain === other.domain) {
+							if (unit.owner === ai.owner && !other.colony) {
+								console.log('attacking hostile', unit, other)
+								Battle(unit, other)
+								makePlansAndRunThem(ai)
+							}
 						}
 					}
 				}
-			}
 
-			// TODO: move this to a more appropriate place
-			// auto attack natives when in state of war
-			if (other.owner === ai.owner) {
-				const relations = ai.state.relations[unit.owner.referenceId]
-				if (relations.trust < 0 && relations.militancy > 1.5) {
-					if (unit.domain === other.domain && !unit.properties.support && Unit.strength(unit) > 2 && Unit.strength(unit) > 2 * Unit.strength(other)) {
-						Battle(unit, other)
-						makePlansAndRunThem(ai)
+				// TODO: move this to a more appropriate place
+				// auto attack natives when in state of war
+				if (other.owner === ai.owner) {
+					const relations = ai.state.relations[unit.owner.referenceId]
+					if (relations.trust < 0 && relations.militancy > 1.5) {
+						if (unit.domain === other.domain && !unit.properties.support && Unit.strength(unit) > 2 && Unit.strength(unit) > 2 * Unit.strength(other)) {
+							console.log('defending hostile', unit, other)
+							Battle(unit, other)
+							makePlansAndRunThem(ai)
+						}
 					}
 				}
 			}
@@ -216,7 +220,7 @@ const makePlansAndRunThem = ai => {
 		// raid colonies
 		Object.entries(ai.state.relations)
 			.map(([referenceId, relation]) => State.all(relation, 'colonies')
-				.filter(colony => ai.state.relations[referenceId].colonies[colony.referenceId].raidPlanned)
+				.filter(colony => ai.state.relations[referenceId].colonies[colony.referenceId].raidPlanned > 0)
 				.map(colony => ({
 					action: RaidColony.create({ tribe: ai.tribe, state: ai.state, colony }),
 					colony

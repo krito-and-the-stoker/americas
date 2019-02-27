@@ -241,7 +241,7 @@ const initialize = () => {
 	}
 	Wheel.on(handleWheel)
 
-	Events.listen('combat', coords => {
+	Events.listen('combat', ({ coords }) => {
 		const icon = Icon.create('combat')
 		icon.x = TILE_SIZE * (coords.x + 0.5)
 		icon.y = TILE_SIZE * (coords.y + 0.5)
