@@ -60,7 +60,7 @@ export default Factory.create('Move', {
 			LeaveColony(unit)
 		}
 
-		const speed = unit.properties.speed / (1 + Unit.overWeight(unit))
+		const speed = Unit.speed(unit)
 		const fromTile = MapEntity.tile(startCoords)
 
 		duration = Tile.movementCost(fromTile, targetTile) * Time.MOVE_BASE_TIME / speed

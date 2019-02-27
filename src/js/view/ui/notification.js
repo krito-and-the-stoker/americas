@@ -405,7 +405,8 @@ const createSettlement = (settlement, unit) => {
 	}
 
 	const dismiss = {
-		move: u => u === unit
+		move: u => u === unit,
+		select: u => u === unit
 	}
 
 	const dialog = {

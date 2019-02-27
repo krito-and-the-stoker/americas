@@ -29,6 +29,7 @@ import GoodsView from 'view/goods'
 import UnitView from 'view/unit'
 import MapView from 'view/map'
 import UnitMapView from 'view/map/unit'
+import Icon from 'view/ui/icon'
 
 import Dialog from 'view/ui/dialog'
 
@@ -66,12 +67,39 @@ const initialize = () => {
 	cutForestText.buttonMode = true
 	trade.buttonMode = true
 
+	const unitSpeed = Text.create('')
+	const unitStrength = Text.create('')
+	const speedIcon = Icon.create('go')
+	const strengthIcon = Icon.create('combat')
+	speedIcon.scale.set(0.5)
+	strengthIcon.scale.set(0.5)
+	speedIcon.x = 10
+	unitSpeed.x = 45
+	strengthIcon.x = 110
+	unitStrength.x = 145
+
 	const container = new PIXI.Container()
 	container.x = 10
 
 	UnitMapView.listen.selectedView(view => {
 		if (view) {
 			const unit = view.unit
+
+			let oldUnitStrength = null
+			const unsubscribeSpeedAndStorage = [
+				Storage.listen(unit.equipment, () => {			
+					unitSpeed.text = `${Math.round(10 * Unit.speed(unit)) / 10}`
+					unitStrength.text = `${Math.round(10 * Unit.strength(unit)) / 10}`
+				}),
+
+				Unit.listen.mapCoordinates(unit, () => {
+					const newStrength = Math.round(10 * Unit.strength(unit)) / 10
+					if (oldUnitStrength !== newStrength) {
+						unitStrength.text = `${newStrength}`
+					}
+				})
+			]
+
 			unitName.text = `${Unit.name(unit)}`
 			unitName.buttonMode = true
 			const unsubscribeClick = [
@@ -157,6 +185,11 @@ const initialize = () => {
 			Foreground.get().notifications.addChild(cutForestText)
 			Foreground.get().notifications.addChild(trade)
 
+			Foreground.get().notifications.addChild(unitSpeed)
+			Foreground.get().notifications.addChild(unitStrength)
+			Foreground.get().notifications.addChild(speedIcon)
+			Foreground.get().notifications.addChild(strengthIcon)
+
 			Foreground.get().notifications.addChild(container)
 			const unsubscribePassengersAndStorage = Unit.listen.passengers(unit, passengers => {
 				let index = 0
@@ -235,9 +268,16 @@ const initialize = () => {
 				Foreground.get().notifications.removeChild(plowText)
 				Foreground.get().notifications.removeChild(cutForestText)
 				Foreground.get().notifications.removeChild(trade)
+
+				Foreground.get().notifications.removeChild(unitSpeed)
+				Foreground.get().notifications.removeChild(unitStrength)
+				Foreground.get().notifications.removeChild(speedIcon)
+				Foreground.get().notifications.removeChild(strengthIcon)
+
 				Foreground.get().notifications.removeChild(container)
 				unsubscribePassengersAndStorage()
 				Util.execute(unsubscribeClick)
+				Util.execute(unsubscribeSpeedAndStorage)
 			}
 		}
 	})
@@ -246,13 +286,19 @@ const initialize = () => {
 	const lineHeight = 36
 	RenderView.updateWhenResized(({ dimensions }) => {
 		container.y = dimensions.y - lineOffset
+
+		unitSpeed.y = dimensions.y - lineOffset - 2 * lineHeight
+		unitStrength.y = dimensions.y - lineOffset - 2 * lineHeight
+		speedIcon.y = dimensions.y - lineOffset - 2 * lineHeight
+		strengthIcon.y = dimensions.y - lineOffset - 2 * lineHeight
+
 		unitName.y = dimensions.y - lineOffset - 1 * lineHeight
-		gotoText.y = dimensions.y - lineOffset - 2 * lineHeight - 20
-		trade.y = dimensions.y - lineOffset - 3 * lineHeight - 20
-		foundColony.y = dimensions.y - lineOffset - 3 * lineHeight - 20
-		buildRoadText.y = dimensions.y - lineOffset - 4 * lineHeight - 20
-		plowText.y = dimensions.y - lineOffset - 5 * lineHeight - 20
-		cutForestText.y = dimensions.y - lineOffset - 5 * lineHeight - 20
+		gotoText.y = dimensions.y - lineOffset - 3 * lineHeight - 20
+		trade.y = dimensions.y - lineOffset - 4 * lineHeight - 20
+		foundColony.y = dimensions.y - lineOffset - 4 * lineHeight - 20
+		buildRoadText.y = dimensions.y - lineOffset - 5 * lineHeight - 20
+		plowText.y = dimensions.y - lineOffset - 6 * lineHeight - 20
+		cutForestText.y = dimensions.y - lineOffset - 6 * lineHeight - 20
 	})
 }
 

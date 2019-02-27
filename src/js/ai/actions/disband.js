@@ -19,8 +19,10 @@ const create = unit => {
 			Units.assign(unit)
 			return prev.commit().then(() => {
 				Units.unassign(unit)
-				Unit.disband(unit)
-				closest.population += 1
+				if (!unit.disbanded) {				
+					Unit.disband(unit)
+					closest.population += 1
+				}
 			})
 		},
 		cancel: prev.cancel

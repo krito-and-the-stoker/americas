@@ -256,6 +256,8 @@ const strength = unit => {
 	return result
 }
 
+const speed = unit => unit.properties.speed / (1 + overWeight(unit))
+
 const loadGoods = (unit, pack) => {
 	if (!hasCapacity(unit, pack) && pack.amount > 0) {
 		return false
@@ -362,6 +364,7 @@ const load = unit => {
 export default {
 	create,
 	overWeight,
+	speed,
 	additionalEquipment,
 	isIdle,
 	disband,

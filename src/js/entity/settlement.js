@@ -122,7 +122,7 @@ const dialog = (settlement, unit, answer) => {
 		const good = Util.choose(['food', 'cotton', 'furs', 'tobacco', 'sugar', 'coats', 'cloth'])
 		const amount = Math.round(10 + 30 * Math.random())
 		settlement.lastTaxation = Time.get().currentTime
-		settlement.owner.ai.state.relations[unit.owner.referenceId].trust -= .15
+		settlement.owner.ai.state.relations[unit.owner.referenceId].trust -= .1
 		settlement.owner.ai.state.relations[unit.owner.referenceId].militancy += .1
 
 		return {
