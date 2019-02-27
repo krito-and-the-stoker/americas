@@ -22,8 +22,6 @@ import Util from 'util/util'
 import Record from 'util/record'
 import Binding from 'util/binding'
 
-import Commander from 'command/commander'
-
 import Dialog from 'view/ui/dialog'
 
 

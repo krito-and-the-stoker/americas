@@ -128,7 +128,7 @@ const { create, load } = Factory.create('Commander', {
 			if (unit.owner.input && unit.tile.settlement && !done.enterSettlement) {
 				done.enterSettlement = true
 				EnterSettlement(unit.tile.settlement, unit)
-			}			
+			}
 		}
 
 		return keep || state.currentCommand || state.commands.length > 0

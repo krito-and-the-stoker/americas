@@ -152,6 +152,8 @@ const initialize = unit => {
 	]
 }
 
+const isIdle = unit => !unit.commander.state.currentCommand && unit.commander.state.commands.length === 0
+
 const name = unit => unit.expert ? unit.properties.name[unit.expert] || unit.properties.name.default : unit.properties.name.default
 
 const add = {
@@ -324,6 +326,7 @@ const load = unit => {
 
 export default {
 	create,
+	isIdle,
 	disband,
 	listen,
 	add,

@@ -668,6 +668,64 @@ const createTreasure = (colony, unit) => {
 	}
 }
 
+const createDestroyed = (settlement, treasure) => {
+	const MAP_SETTLEMENT_FRAME_ID = 59
+	const settlementView = Resources.sprite('map', { frame: MAP_SETTLEMENT_FRAME_ID })
+	const icon = Icon.create('minus')
+	const container = combine(settlementView, icon)
+
+	const action = () => {
+		MapView.centerAt(settlement.mapCoordinates, 350)
+		UnitMapView.select(treasure)
+	}
+
+	const dismiss = {}
+
+	const tribeName = settlement.tribe.name
+	const dialog = {
+		text: `A settlement of the ${tribeName} has been destroyed. The ${tribeName} swear to take revenge. We have found ${treasure.treasure} gold in the ruins.`,
+		type: 'marshal',
+		coords: settlement.mapCoordinates
+	}
+
+	return {
+		container,
+		action,
+		type: 'destroyed',
+		dismiss,
+		dialog
+	}
+}
+
+const createDecimated = settlement => {
+	const MAP_SETTLEMENT_FRAME_ID = 59
+	const settlementView = Resources.sprite('map', { frame: MAP_SETTLEMENT_FRAME_ID })
+	const unitView = Resources.sprite('map', { frame: Units.native.frame.default })
+	const icon = Icon.create('minus')
+	const container = combine(settlementView, unitView, icon)
+
+	const action = () => {
+		MapView.centerAt(settlement.mapCoordinates, 350)
+	}
+
+	const dismiss = {}
+
+	const tribeName = settlement.tribe.name
+	const dialog = {
+		text: `A settlement of the ${tribeName} has been decimated tremendously.`,
+		type: 'marshal',
+		coords: settlement.mapCoordinates
+	}
+
+	return {
+		container,
+		action,
+		type: 'destroyed',
+		dismiss,
+		dialog
+	}
+}
+
 const createRaid = (colony, unit) => {
 	const colonyView = colonyIcon(colony)
 	const unitView = Resources.sprite('map', { frame: UnitView.getFrame(unit) })
@@ -784,7 +842,9 @@ const createType = {
 	learned: params => createLearned(params),
 	treasure: params => createTreasure(params.colony, params.unit),
 	combat: params => createCombat(params.attacker, params.defender, params.loser),
-	raid: params => createRaid(params.colony, params.unit)
+	raid: params => createRaid(params.colony, params.unit),
+	destroyed: params => createDestroyed(params.settlement, params.treasure),
+	decimated: params => createDecimated(params.settlement)
 }
 
 const iconSize = 1.5*64
@@ -911,6 +971,11 @@ const initialize = () => {
 	})
 	Events.listen('notification', params => {
 		create(params)
+	})
+	Events.listen('select', unit => {
+		if (Unit.isIdle(unit) && unit.tile.settlement) {
+			Events.trigger('notification', { type: 'settlement', settlement: unit.tile.settlement, unit })
+		}
 	})
 }
 

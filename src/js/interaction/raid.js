@@ -23,8 +23,10 @@ export default (colony, raider) => {
 	const raiderName = Unit.name(raider)
 	const defenderName = Unit.name(defender)
 
+	// console.log('raid', probability)
+
 	if (chance < probability.raider) {
-		const survivalChance = (1 - (0.5 / (colony.buildings.fortifications.level + 1))) + (1 / colony.colonists.length)
+		const survivalChance = (1 - (1 / (colony.buildings.fortifications.level + 1))) + (1 / colony.colonists.length)
 		if (Math.random() < survivalChance) {
 			Message.send(`A ${raiderName} overcame the defenders of ${colony.name}. The storage has been plundered. A ${defenderName} has barely survvived the attack. The colonists in fear.`)
 			Events.trigger('notification', { type: 'raid', colony, unit: raider })
@@ -52,13 +54,5 @@ export default (colony, raider) => {
 			Events.trigger('notification', { type: 'combat', attacker: raider, defender, loser: raider })
 			Unit.disband(raider)
 		}
-		// Message.send(`A ${defenderName} defeated a ${attackerName} on the battle field`)
-		// Events.trigger('notification', { type: 'combat', attacker, defender, loser: attacker })
 	}
-
-	// const coords = {
-	// 	x: (raider.mapCoordinates.x + defender.mapCoordinates.x) / 2,
-	// 	y: (raider.mapCoordinates.y + defender.mapCoordinates.y) / 2,
-	// }
-	// Events.trigger('raid', coords)
 }

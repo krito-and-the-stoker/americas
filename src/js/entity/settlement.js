@@ -7,9 +7,12 @@ import MapEntity from 'entity/map'
 import Unit from 'entity/unit'
 import Treasure from 'entity/treasure'
 import Tribe from 'entity/tribe'
+import Storage from 'entity/storage'
 
 import Commander from 'command/commander'
 import LearnFromNatives from 'command/learnFromNatives'
+
+import Bombard from 'interaction/bombard'
 
 
 const experts = {
@@ -36,7 +39,6 @@ const create = (tribe, coords, owner) => {
 		population: Math.round(10*Math.random())
 	}
 
-	Tile.update.settlement(MapEntity.tile(coords), settlement)
 	Tile.radius(MapEntity.tile(coords))
 		.forEach(tile => Tile.discover(tile, owner))
 
@@ -51,8 +53,20 @@ const create = (tribe, coords, owner) => {
 	return settlement
 }
 
+const disband = settlement => {
+	const center = MapEntity.tile(settlement.mapCoordinates)
+	Tile.update.settlement(center, null)
+	Tile.radius(center)
+		.filter(tile => tile.domain === 'land')
+		.filter(tile => tile.harvestedBy === settlement)
+		.forEach(tile => Tile.update.harvestedBy(tile, null))
+
+	Util.execute(settlement.destroy)
+	Record.remove(settlement)
+}
 
 const initialize = settlement => {
+	Tile.update.settlement(MapEntity.tile(settlement.mapCoordinates), settlement)
 	Util.execute(settlement.destroy)
 	settlement.type = 'settlement'
 
@@ -62,7 +76,37 @@ const initialize = settlement => {
 }
 
 const dialog = (settlement, unit, answer) => {
-	if (answer === 'mission') {
+	if (answer === 'food') {
+		settlement.owner.ai.state.relations[unit.owner.referenceId].trust -= .1
+		return {
+			text: 'Although we do not have a significant surplus, we will give you some of our food savings. May you use it wisely in these hard times.',
+			type: 'natives',
+			image: settlement.tribe.image,
+			options: [{
+				default: true,
+				action: () => {
+					Storage.update(unit.equipment, { good: 'food', amount: Math.round(10 + 20 * Math.random()) })
+				}
+			}]
+		}
+	}
+	if (answer === 'taxes') {
+		const good = Util.choose(['food', 'cotton', 'furs', 'tobacco', 'sugar', 'coats', 'cloth'])
+		const amount = Math.round(10 + 30 * Math.random())
+		settlement.owner.ai.state.relations[unit.owner.referenceId].trust -= .1
+
+		return {
+			text: `So be it then, take these ${amount} ${good}.`,
+			type: 'natives',
+			image: settlement.tribe.image,
+			options: [{
+				default: true,
+				action: () => {
+					Storage.update(unit.equipment, { good, amount })
+				}
+			}]
+		}
+	}	if (answer === 'mission') {
 		return {
 			text: 'The natives come to your mission with curiousity.',
 			type: 'religion',
@@ -218,12 +262,32 @@ const dialog = (settlement, unit, answer) => {
 				}]
 			}
 		}
-		if (unit.name === 'artillery' || unit.name === 'soldier' || unit.name === 'dragoon') {
+		if (unit.name === 'artillery') {
 			return {
-				text: 'We cannot attack the native settlements yet.',
+				text: 'Do you want to bombard the settlement?',
 				type: 'marshal',
 				options: [{
-					text: 'Leave'
+					text: 'Yes, make that village disappear!',
+					action: () => {
+						Bombard(settlement, unit)
+					}
+				}, {
+					text: 'No, spare these people.'
+				}]
+			}
+		}
+		if (unit.name === 'soldier' || unit.name === 'dragoon') {
+			return {
+				text: 'Our soldiers are ready for orders close to the native settlement.',
+				type: 'marshal',
+				options: [{
+					text: 'Demand food supplies',
+					answer: 'food'
+				}, {
+					text: 'Collect taxes',
+					answer: 'taxes'
+				}, {
+					text: 'Just passing by'
 				}]
 			}
 		}
@@ -273,7 +337,6 @@ const save = settlement => ({
 const load = settlement => {
 	settlement.tribe = Record.dereference(settlement.tribe)
 	settlement.owner = Record.dereference(settlement.owner)
-	Tile.update.settlement(MapEntity.tile(settlement.mapCoordinates), settlement)
 
 	Record.entitiesLoaded(() => initialize(settlement))
 	return settlement
@@ -281,6 +344,7 @@ const load = settlement => {
 
 export default {
 	create,
+	disband,
 	listen,
 	update,
 	load,
