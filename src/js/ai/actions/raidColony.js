@@ -33,7 +33,7 @@ const create = ({ tribe, state, colony }) => {
 						const disbandAction = Disband.create(unit)
 						cancelDisband.push(disbandAction.commit())
 					} else {
-						state.relations[colony.owner.referenceId].militancy -= 0.025
+						state.relations[colony.owner.referenceId].militancy -= 0.1
 					}
 				})))
 		}

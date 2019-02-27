@@ -213,7 +213,14 @@ const initialize = () => {
 						unit.colony.screen = ColonyView.open(unit.colony)
 					} else {
 						if (!unit.pioneering) {
-							select(unit)
+							if (unit === selectedUnit()) {
+								// cycle through units on tile
+								const others = Unit.at(unit.mapCoordinates)
+								const index = others.indexOf(unit) % others.length
+								select(others[index])
+							} else {
+								select(unit)
+							}
 						}
 					}
 				}) : null),

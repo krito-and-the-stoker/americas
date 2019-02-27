@@ -146,17 +146,23 @@ const initialize = ai => {
 					establishRelations(ai, other.owner)
 				}
 				if (relations.trust < 0 && relations.militancy > 1.5) {
-					if (unit.domain === other.domain && !other.colony) {
-						if (unit.owner === ai.owner) {						
+					if (unit.domain === other.domain) {
+						if (unit.owner === ai.owner && !other.colony) {		
 							Battle(unit, other)
 							makePlansAndRunThem(ai)
 						}
+					}
+				}
+			}
 
-						// let other player attack ai when ai is outright hostile
-						if (other.owner === ai.owner && Unit.strength(other) > 1.5 && Unit.strength(other) > Unit.strength(unit)) {
-							Battle(other, unit)
-							makePlansAndRunThem(ai)
-						}
+			// TODO: move this to a more appropriate place
+			// auto attack natives when in state of war
+			if (other.owner === ai.owner) {
+				const relations = ai.state.relations[unit.owner.referenceId]
+				if (relations.trust < 0 && relations.militancy > 1.5) {
+					if (unit.domain === other.domain && !unit.properties.support && Unit.strength(unit) > 2 && Unit.strength(unit) > 2 * Unit.strength(other)) {
+						Battle(unit, other)
+						makePlansAndRunThem(ai)
 					}
 				}
 			}

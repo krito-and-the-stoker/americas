@@ -2,8 +2,8 @@ import 'util/polyfills'
 import Names from 'data/names'
 import Clone from 'clone'
 
-const inBattleDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
-const inDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
+const inBattleDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) <= 0.5 * unit.radius
+const inDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) <= 0.5 * unit.radius
 
 const isArray = something => something && something.constructor === Array
 const flatten = array => {

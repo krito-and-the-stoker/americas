@@ -83,7 +83,7 @@ const initialize = unit => {
 	[
 		Time.schedule(unit.commander),
 		Time.schedule({ update: (currentTime, deltaTime) => {
-			if (unit.vehicle) {
+			if (unit.vehicle || (unit.colonist && unit.colonist.colony)) {
 				if (unit.radius > 0) {
 					update.radius(unit, 0)
 				}
@@ -256,7 +256,7 @@ const support = unit => Util.max(Record.getAll('unit')
 	.filter(support => support.properties.support)
 	.filter(support => support.owner === unit.owner)
 	.filter(support => support !== unit)
-	.filter(support => Util.inBattleDistance(unit, support)), support => support.properties.support)
+	.filter(support => Util.inBattleDistance(support, unit)), support => support.properties.support)
 
 const strength = unit => {
 	let result = unit.properties.combat || 1
@@ -266,8 +266,8 @@ const strength = unit => {
 		result += supportUnit.properties.support
 	}
 
-	if (unit.colony) {
-		result += 0.5 * unit.colony.buildings.fortifications.level
+	if (unit.colony && unit.owner === unit.colony.owner) {
+		result += unit.colony.buildings.fortifications.level
 		if (unit.properties.colonyDefense) {
 			result += unit.properties.colonyDefense
 		}
