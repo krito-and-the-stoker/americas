@@ -68,6 +68,7 @@ const create = (id, owner) => {
 	const tribe = {
 		id,
 		owner,
+		civilizationLevel: 1 + 9 * Math.random(),
 		settlements: []
 	}
 
@@ -95,6 +96,7 @@ const save = tribe => ({
 	id: tribe.id,
 	name: tribe.name,
 	image: tribe.image,
+	civilizationLevel: tribe.civilizationLevel,
 	settlements: tribe.settlements.map(Record.reference),
 	owner: Record.reference(tribe.owner)
 })

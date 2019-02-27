@@ -15,6 +15,7 @@ import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Tribe from 'entity/tribe'
 import Colony from 'entity/colony'
+import Unit from 'entity/unit'
 
 import EstablishRelations from 'ai/actions/establishRelations'
 import Disband from 'ai/actions/disband'
@@ -119,14 +120,22 @@ const initialize = ai => {
 
 		Events.listen('meet', ({ unit, other }) => {
 			const relations = ai.state.relations[other.owner.referenceId]
-			if (relations) {			
+			if (relations) {
 				if (unit.owner === ai.owner && other.domain === 'land' && !relations.established) {
 					establishRelations(ai, other.owner)
 				}
-				if (unit.owner === ai.owner && relations.trust < 0.5 && relations.militancy > 1.5) {
+				if (relations.trust < 0.5 && relations.militancy > 1.5) {
 					if (unit.domain === other.domain && !other.colony) {
-						Battle(unit, other)
-						makePlansAndRunThem(ai)
+						if (unit.owner === ai.owner) {						
+							Battle(unit, other)
+							makePlansAndRunThem(ai)
+						}
+
+						// let other player attack ai when ai is outright hostile
+						if (other.owner === ai.owner && Unit.strength(other) > 1.5 && Unit.strength(other) > Unit.strength(unit)) {
+							Battle(other, unit)
+							makePlansAndRunThem(ai)
+						}
 					}
 				}
 			}

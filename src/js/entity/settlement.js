@@ -39,7 +39,7 @@ const create = (tribe, coords, owner) => {
 		lastTaxation: 0,
 		expert: Util.choose(Object.keys(experts)),
 		mission: false,
-		population: Math.round(10*Math.random())
+		population: Math.ceil(tribe.civilizationLevel * (1 + 3*Math.random()))
 	}
 
 	Tile.radius(MapEntity.tile(coords))
@@ -94,7 +94,7 @@ const dialog = (settlement, unit, answer) => {
 		settlement.owner.ai.state.relations[unit.owner.referenceId].trust -= .1
 		settlement.owner.ai.state.relations[unit.owner.referenceId].militancy += .2
 		settlement.lastTaxation = Time.get().currentTime
-		const amount = Math.round(10 + 20 * Math.random())
+		const amount = Math.round(settlement.population * (1 + 2 * Math.random()))
 		return {
 			text: 'We do not really have a surplus, but take these ${amount} food if you must.',
 			type: 'natives',
@@ -119,8 +119,17 @@ const dialog = (settlement, unit, answer) => {
 			}
 		}
 
-		const good = Util.choose(['food', 'cotton', 'furs', 'tobacco', 'sugar', 'coats', 'cloth'])
-		const amount = Math.round(10 + 30 * Math.random())
+		let good = null
+		if (settlement.tribe.civilizationLevel < 3) {
+			good = Util.choose(['food', 'furs', 'tobacco', 'coats', 'cloth'])
+		}
+		if (!good && settlement.tribe.civilizationLevel < 6) {
+			good = Util.choose(['food', 'furs', 'tobacco', 'sugar', 'cotton', 'coats', 'cloth'])
+		}
+		if (!good) {
+			good = Util.choose(['food', 'tobacco', 'sugar', 'cotton', 'coats', 'cloth', 'silver'])
+		}
+		const amount = Math.round(settlement.population * (1 + 3 * Math.random()))
 		settlement.lastTaxation = Time.get().currentTime
 		settlement.owner.ai.state.relations[unit.owner.referenceId].trust -= .1
 		settlement.owner.ai.state.relations[unit.owner.referenceId].militancy += .1
@@ -168,7 +177,7 @@ const dialog = (settlement, unit, answer) => {
 					default: true,
 					action: () => {
 						settlement.presentGiven = true
-						const radius = Math.round(3 + 3 * Math.random())
+						const radius = Math.round(5 * (1 + Math.random()))
 						const tiles = Util.quantizedRadius(unit.mapCoordinates, radius).map(MapEntity.tile)
 						tiles.forEach(tile => {
 							if (Math.random() > 0.4) {
@@ -179,7 +188,7 @@ const dialog = (settlement, unit, answer) => {
 				}]
 			}
 		}
-		const worth = Math.round(50 + 200*Math.random())
+		const worth = Math.round(settlement.tribe.civilizationLevel * settlement.tribe.population * (1 + 3*Math.random()))
 		return {
 			text: `${welcomeText} Have these valuable beads (${worth}) as our gift.`,
 			type: 'natives',

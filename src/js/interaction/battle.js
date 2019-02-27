@@ -35,10 +35,26 @@ export default (attacker, other) => {
 			Message.send(`A ${attackerName} defeated a ${defenderName} on the battle field`)
 			Events.trigger('notification', { type: 'combat', attacker, defender, loser: defender })
 			Unit.disband(defender)
+			if (attacker.owner.type === 'natives') {
+				const relation = attacker.owner.ai.state.relations[defender.owner.referenceId]
+				relation.militancy += 0.1
+			}
+			if (defender.owner.type === 'natives') {
+				const relation = defender.owner.ai.state.relations[attacker.owner.referenceId]
+				relation.militancy -= 0.025
+			}
 		} else {
 			Message.send(`A ${defenderName} defeated a ${attackerName} on the battle field`)
 			Events.trigger('notification', { type: 'combat', attacker, defender, loser: attacker })
 			Unit.disband(attacker)
+			if (attacker.owner.type === 'natives') {
+				const relation = attacker.owner.ai.state.relations[defender.owner.referenceId]
+				relation.militancy -= 0.025
+			}
+			if (defender.owner.type === 'natives') {
+				const relation = defender.owner.ai.state.relations[attacker.owner.referenceId]
+				relation.militancy += 0.1
+			}
 		}
 		const coords = {
 			x: (attacker.mapCoordinates.x + defender.mapCoordinates.x) / 2,

@@ -65,7 +65,6 @@ const select = unit => {
 			.start()
 
 		Events.trigger('select', view.unit)
-		console.log('strength of', unit.name, Unit.strength(view.unit))
 	}
 }
 
@@ -219,24 +218,23 @@ const initialize = () => {
 					}
 				}) : null),
 
-			Owner.listen.input(unit.owner, input =>
-				!input ? Secondary.on(view.sprite, () => {
-					if (selectedUnit()) {
-						Dialog.create({
-							type: 'marshal',
-							text: 'Shall we attack?',
-							options: [{
-								text: 'Attack!',
-								action: () => {
-									console.warn('Feature has been revoked for now')
-									// Commander.scheduleInstead(selectedUnit().commander, Attack.create(selectedUnit(), { unit }))
-								}
-							}, {
-								text: 'No'
-							}]
-						})
-					}
-				}) : null)
+			// Owner.listen.input(unit.owner, input =>
+			// 	!input ? Secondary.on(view.sprite, () => {
+			// 		if (selectedUnit()) {
+			// 			Dialog.create({
+			// 				type: 'marshal',
+			// 				text: 'Shall we attack?',
+			// 				options: [{
+			// 					text: 'Attack!',
+			// 					action: () => {
+			// 						console.warn('Feature has been revoked for now')
+			// 					}
+			// 				}, {
+			// 					text: 'No'
+			// 				}]
+			// 			})
+			// 		}
+			// 	}) : null)
 		]
 
 		views.push(view)
