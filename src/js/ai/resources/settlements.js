@@ -3,6 +3,8 @@ import Record from 'util/record'
 
 import Time from 'timeline/time'
 
+import Storage from 'entity/storage'
+
 import Units from 'ai/resources/units'
 
 let reservedPopulation = {}
@@ -33,6 +35,12 @@ const cheapest = (owner, coords) => {
 
 const recruit = settlement => {
 	const unit = Units.create('native', settlement)
+	if (settlement.tribe.storage.guns >= 25) {
+		Storage.transfer(settlement.tribe.storage, unit.equipment, { good: 'guns', amount: 25 })
+	}
+	if (settlement.tribe.storage.horses >= 25) {
+		Storage.transfer(settlement.tribe.storage, unit.equipment, { good: 'horses', amount: 25 })
+	}
 
 	return unit	
 }

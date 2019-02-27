@@ -117,6 +117,18 @@ const initialize = unit => {
 			if (unit.name === 'soldier' && equipment.guns < 50) {
 				updateType(unit, 'settler')
 			}
+			if (unit.name === 'mountedarmednative' && equipment.guns < 25) {
+				updateType(unit, 'mountednative')
+			}
+			if (unit.name === 'mountedarmednative' && equipment.horses < 25) {
+				updateType(unit, 'armednative')
+			}
+			if (unit.name === 'armednative' && equipment.guns < 25) {
+				updateType(unit, 'native')
+			}
+			if (unit.name === 'mountednative' && equipment.horses < 25) {
+				updateType(unit, 'native')
+			}
 
 			// gain status
 			if (unit.name === 'settler') {
@@ -134,17 +146,28 @@ const initialize = unit => {
 					updateType(unit, 'scout')
 				}
 			}
-
 			if (unit.name === 'scout') {
 				if (equipment.guns >= 50) {
 					updateType(unit, 'dragoon')
 				}
 			}
-
 			if (unit.name === 'soldier') {
 				if (equipment.horses >= 50 && equipment.guns >= 50) {
 					updateType(unit, 'dragoon')
 				}
+			}
+
+			if (unit.name === 'native' && equipment.horses >= 25) {
+				updateType(unit, 'mountednative')
+			}
+			if (unit.name === 'native' && equipment.guns >= 25) {
+				updateType(unit, 'armednative')
+			}
+			if (unit.name === 'mountednative' && equipment.guns >= 25) {
+				updateType(unit, 'mountedarmednative')
+			}
+			if (unit.name === 'armednative' && equipment.horses >= 25) {
+				updateType(unit, 'mountedarmednative')
 			}
 		}),
 

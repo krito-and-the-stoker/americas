@@ -1,5 +1,7 @@
 import 'util/polyfills'
 
+import UnitProperties from 'data/units'
+
 import Util from 'util/util'
 import Binding from 'util/binding'
 import Record from 'util/record'
@@ -26,16 +28,35 @@ import State from 'ai/state'
 import Units from 'ai/resources/units'
 import Goods from 'ai/resources/goods'
 
+const offensiveCapability = ai => {
+	let offense = 1
+	if (ai.tribe.storage.guns >= 25 && ai.tribe.storage.horses >= 25) {
+		offense = UnitProperties.mountedarmednative.combat
+	}
+	if (ai.tribe.storage.guns >= 25 && ai.tribe.storage.horses < 25) {
+		offense = UnitProperties.armednative.combat
+	}
+	if (ai.tribe.storage.guns < 25 && ai.tribe.storage.horses >= 25) {
+		offense = UnitProperties.mountednative.combat
+	}
+	if (ai.tribe.storage.guns < 25 && ai.tribe.storage.horses < 25) {
+		offense = UnitProperties.native.combat
+	}
 
-const colonyRaidProbability = (t, colony, state) => {
+	return offense
+}
+
+const colonyRaidProbability = (t, colony, ai) => {
 	const offset = 10
 	if (t < offset) {
 		return 0
 	}
 
+	const state = ai.state
 	const attraction = Util.clamp(1 - state.relations[colony.owner.referenceId].trust) * Goods.value(colony.storage)
 	const protection = Colony.protection(colony)
-	const defense = 100 * protection * protection / Util.clamp(1 + state.relations[colony.owner.referenceId].militancy, 0.1, 10)
+	const offense = offensiveCapability(ai)
+	const defense = 100 * protection * protection / Util.clamp(offense*offense + state.relations[colony.owner.referenceId].militancy, 0.1, 100 * protection * protection)
 
 	if (defense > attraction) {
 		console.log(`${colony.name}: ${Math.round(attraction)} vs ${Math.round(defense)}`)
@@ -51,8 +72,8 @@ const colonyRaidProbability = (t, colony, state) => {
 
 const watch = (ai, colony) => {
 	console.log('watching', colony.name)
-	return Time.schedule(ProbabilisticTrigger.create(t => colonyRaidProbability(t, colony, ai.state), () => {
-		ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = Math.ceil(1.25*Colony.protection(colony))
+	return Time.schedule(ProbabilisticTrigger.create(t => colonyRaidProbability(t, colony, ai), () => {
+		ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = Math.ceil(1.25*Colony.protection(colony) / offensiveCapability(ai))
 		update.state(ai)
 	}))
 }
@@ -124,7 +145,7 @@ const initialize = ai => {
 				if (unit.owner === ai.owner && other.domain === 'land' && !relations.established) {
 					establishRelations(ai, other.owner)
 				}
-				if (relations.trust < 0.5 && relations.militancy > 1.5) {
+				if (relations.trust < 0 && relations.militancy > 1.5) {
 					if (unit.domain === other.domain && !other.colony) {
 						if (unit.owner === ai.owner) {						
 							Battle(unit, other)

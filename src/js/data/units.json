@@ -260,5 +260,41 @@
 		"speed": 2,
 		"combat": 1,
 		"radius": 1.5
+	},
+	"armednative": {
+		"frame": {
+			"default": 2
+		},
+		"name": {
+			"default": "Armed Native Warrior"
+		},
+		"domain": "land",
+		"speed": 2,
+		"combat": 2,
+		"radius": 1.5
+	},
+	"mountednative": {
+		"frame": {
+			"default": 20
+		},
+		"name": {
+			"default": "Mounted Native Warrior"
+		},
+		"domain": "land",
+		"speed": 5,
+		"combat": 2,
+		"radius": 2.5
+	},
+	"mountedarmednative": {
+		"frame": {
+			"default": 3
+		},
+		"name": {
+			"default": "Mounted Armed Native Warrior"
+		},
+		"domain": "land",
+		"speed": 5,
+		"combat": 3,
+		"radius": 2.5
 	}
 }

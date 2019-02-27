@@ -2,6 +2,7 @@ import Util from 'util/util'
 import Record from 'util/record'
 
 import Unit from 'entity/unit'
+import Storage from 'entity/storage'
 
 import MoveUnit from 'ai/actions/moveUnit'
 import Units from 'ai/resources/units'
@@ -20,6 +21,7 @@ const create = unit => {
 			return prev.commit().then(() => {
 				Units.unassign(unit)
 				if (!unit.disbanded) {				
+					Storage.transfer(unit.equipment, closest.tribe.storage)
 					Unit.disband(unit)
 					closest.population += 1
 				}

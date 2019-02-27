@@ -10,7 +10,7 @@ const create = ({ good, amount }) => {
 	sprite.hitArea = new PIXI.Rectangle(16, 0, 32, 64)
 
 	let currentAmount = amount
-	const number = Text.create(amount)
+	const number = Text.create(Math.floor(amount))
 
 	const update = amount => {
 		if (amount !== currentAmount) {

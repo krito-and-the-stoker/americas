@@ -9,6 +9,7 @@ import Message from 'util/message'
 import MapEntity from 'entity/map'
 import Settlement from 'entity/settlement'
 import Owner from 'entity/owner'
+import Storage from 'entity/storage'
 
 import Natives from 'ai/natives'
 
@@ -69,7 +70,8 @@ const create = (id, owner) => {
 		id,
 		owner,
 		civilizationLevel: 1 + 9 * Math.random(),
-		settlements: []
+		settlements: [],
+		storage: Storage.create()
 	}
 
 	tribe.name = Util.choose(tribeNames)
@@ -98,11 +100,13 @@ const save = tribe => ({
 	image: tribe.image,
 	civilizationLevel: tribe.civilizationLevel,
 	settlements: tribe.settlements.map(Record.reference),
-	owner: Record.reference(tribe.owner)
+	owner: Record.reference(tribe.owner),
+	storage: Storage.save(tribe.storage)
 })
 
 const load = tribe => {
 	tribe.owner = Record.dereference(tribe.owner)
+	tribe.storage = Storage.load(tribe.storage)
 	Record.entitiesLoaded(() => {
 		tribe.settlements = tribe.settlements.map(Record.dereference)
 	})

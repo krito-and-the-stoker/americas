@@ -38,6 +38,7 @@ export default (attacker, other) => {
 			if (attacker.owner.type === 'natives') {
 				const relation = attacker.owner.ai.state.relations[defender.owner.referenceId]
 				relation.militancy += 0.1
+				Storage.transfer(defender.equipment, attacker.owner.ai.tribe.storage)
 			}
 			if (defender.owner.type === 'natives') {
 				const relation = defender.owner.ai.state.relations[attacker.owner.referenceId]
@@ -54,6 +55,7 @@ export default (attacker, other) => {
 			if (defender.owner.type === 'natives') {
 				const relation = defender.owner.ai.state.relations[attacker.owner.referenceId]
 				relation.militancy += 0.1
+				Storage.transfer(attacker.equipment, attacker.owner.ai.tribe.storage)
 			}
 		}
 		const coords = {

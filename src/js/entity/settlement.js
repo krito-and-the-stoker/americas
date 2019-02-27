@@ -96,7 +96,7 @@ const dialog = (settlement, unit, answer) => {
 		settlement.lastTaxation = Time.get().currentTime
 		const amount = Math.round(settlement.population * (1 + 2 * Math.random()))
 		return {
-			text: 'We do not really have a surplus, but take these ${amount} food if you must.',
+			text: `We do not really have a surplus, but take these ${amount} food if you must.`,
 			type: 'natives',
 			image: settlement.tribe.image,
 			options: [{
@@ -110,7 +110,7 @@ const dialog = (settlement, unit, answer) => {
 	if (answer === 'taxes') {
 		if (settlement.lastTaxation > Time.get().currentTime - Time.YEAR) {
 			return {
-				text: 'We have already paid your "taxes" and cannot make any further concessions.',
+				text: 'We have already paid your "taxes" and will not submit to these demands.',
 				type: 'natives',
 				image: settlement.tribe.image,
 				options: [{
@@ -177,7 +177,7 @@ const dialog = (settlement, unit, answer) => {
 					default: true,
 					action: () => {
 						settlement.presentGiven = true
-						const radius = Math.round(5 * (1 + Math.random()))
+						const radius = Math.round(4 * (1 + Math.random()))
 						const tiles = Util.quantizedRadius(unit.mapCoordinates, radius).map(MapEntity.tile)
 						tiles.forEach(tile => {
 							if (Math.random() > 0.4) {
@@ -188,7 +188,7 @@ const dialog = (settlement, unit, answer) => {
 				}]
 			}
 		}
-		const worth = Math.round(settlement.tribe.civilizationLevel * settlement.tribe.population * (1 + 3*Math.random()))
+		const worth = Math.round(settlement.tribe.civilizationLevel * settlement.population * (1 + 3*Math.random()))
 		return {
 			text: `${welcomeText} Have these valuable beads (${worth}) as our gift.`,
 			type: 'natives',
@@ -216,13 +216,6 @@ const dialog = (settlement, unit, answer) => {
 			}]
 		}
 	}
-	if (answer === 'tribute') {
-		return {
-			text: 'We will not pay you tribute!',
-			type: 'natives',
-			image: settlement.tribe.image,
-		}
-	}
 	if (answer === 'enter') {	
 		if (unit.name === 'scout') {
 			return {
@@ -231,8 +224,6 @@ const dialog = (settlement, unit, answer) => {
 				options: [{
 					text: 'Ask to speek with the chief',
 					answer: 'chief'
-				}, {
-					text: 'Demand tribute'
 				}, {
 					text: 'Leave'
 				}]
