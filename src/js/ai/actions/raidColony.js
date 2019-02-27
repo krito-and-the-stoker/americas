@@ -24,7 +24,6 @@ const create = ({ tribe, state, colony }) => {
 			},
 			commit: () => {
 				return Promise.all(moves.map(move => new Promise(resolve => {
-					const unit = move.unit
 					let cleanup = () => {
 						// only do this once
 						cleanup = () => {}
@@ -32,11 +31,11 @@ const create = ({ tribe, state, colony }) => {
 						Util.execute[unsubscribeBattle, unsubscribeRaid]
 						state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned -= 1
 
-						if (!unit.disbanded) {
+						if (!move.unit.disbanded) {
 							// state.relations[colony.owner.referenceId].militancy += 0.1
-							Units.unassign(unit)
+							Units.unassign(move.unit)
 	
-							const disbandAction = Disband.create(unit)
+							const disbandAction = Disband.create(move.unit)
 							cancelDisband.push(disbandAction.commit())						
 						}
 						resolve()
@@ -44,7 +43,7 @@ const create = ({ tribe, state, colony }) => {
 
 					// raid when in range
 					const unsubscribeRaid = Events.listen('meet', params => {
-						if (params.colony === colony && params.unit === unit) {
+						if (params.colony === colony && params.unit === move.unit) {
 							console.log('raiding', params.unit, colony)
 							Raid(colony, params.unit)
 
@@ -54,7 +53,8 @@ const create = ({ tribe, state, colony }) => {
 
 					// die trying..
 					const unsubscribeBattle = Events.listen('battle', params => {
-						if (params.loser === unit) {
+						if (params.loser === move.unit) {
+							console.log('raider has died in battle')
 							cleanup()
 						}
 					})

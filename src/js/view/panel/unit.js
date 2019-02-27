@@ -166,12 +166,12 @@ const initialize = () => {
 
 			const updateCommands = () => {
 				const moving = unit.mapCoordinates.x !== unit.tile.mapCoordinates.x || unit.mapCoordinates.y !== unit.tile.mapCoordinates.y
-				gotoText.visible = true
-				foundColony.visible = unit.properties.canFound && !moving && !Tile.radius(unit.tile).some(tile => tile.colony) && !unit.tile.settlement
-				buildRoadText.visible = unit.properties.canTerraform && !moving && !unit.tile.road && !unit.tile.settlement
-				plowText.visible = unit.properties.canTerraform && !moving && !unit.tile.forest && !unit.tile.plowed && !unit.tile.settlement
-				cutForestText.visible = unit.properties.canTerraform && !moving && unit.tile.forest && !unit.tile.settlement
-				trade.visible = unit.properties.cargo > 0 && unit.passengers.length === 0
+				gotoText.visible = !unit.pioneering
+				foundColony.visible = unit.properties.canFound && !moving && !Tile.radius(unit.tile).some(tile => tile.colony) && !unit.tile.settlement && !unit.pioneering
+				buildRoadText.visible = unit.properties.canTerraform && !moving && !unit.tile.road && !unit.tile.settlement && !unit.pioneering
+				plowText.visible = unit.properties.canTerraform && !moving && !unit.tile.forest && !unit.tile.plowed && !unit.tile.settlement && !unit.pioneering
+				cutForestText.visible = unit.properties.canTerraform && !moving && unit.tile.forest && !unit.tile.settlement && !unit.pioneering
+				trade.visible = unit.properties.cargo > 0 && unit.passengers.length === 0 && !unit.pioneering
 			}
 			
 			const unsubscribeCoords = Unit.listen.mapCoordinates(unit, updateCommands)

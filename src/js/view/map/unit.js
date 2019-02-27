@@ -212,15 +212,13 @@ const initialize = () => {
 					if (unit.colony && unit.colony.owner === unit.owner) {
 						unit.colony.screen = ColonyView.open(unit.colony)
 					} else {
-						if (!unit.pioneering) {
-							if (unit === selectedUnit()) {
-								// cycle through units on tile
-								const others = Unit.at(unit.mapCoordinates)
-								const index = others.indexOf(unit) % others.length
-								select(others[index])
-							} else {
-								select(unit)
-							}
+						if (unit === selectedUnit()) {
+							// cycle through units on tile
+							const others = Unit.at(unit.mapCoordinates)
+							const index = (others.indexOf(unit) + 1) % others.length
+							select(others[index])
+						} else {
+							select(unit)
 						}
 					}
 				}) : null),
