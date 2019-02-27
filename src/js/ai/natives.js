@@ -126,6 +126,7 @@ const initialize = ai => {
 				if (unit.owner === ai.owner && relations.trust < 0.5 && relations.militancy > 1.5) {
 					if (unit.domain === other.domain && !other.colony) {
 						Battle(unit, other)
+						makePlansAndRunThem(ai)
 					}
 				}
 			}

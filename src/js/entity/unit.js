@@ -250,6 +250,7 @@ const strength = unit => {
 		}
 	}
 
+	result += (unit.expert === 'soldier' ? 1 : 0)
 	result /= (1 + overWeight(unit))
 
 	return result
