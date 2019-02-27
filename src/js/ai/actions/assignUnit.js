@@ -26,5 +26,4 @@ const create = ({ owner, coords }) => {
 
 export default {
 	create,
-	name
 }

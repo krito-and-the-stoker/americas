@@ -73,7 +73,7 @@ const colonyRaidProbability = (t, colony, ai) => {
 const watch = (ai, colony) => {
 	console.log('watching', colony.name)
 	return Time.schedule(ProbabilisticTrigger.create(t => colonyRaidProbability(t, colony, ai), () => {
-		ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = Math.ceil(1.25*Colony.protection(colony) / offensiveCapability(ai))
+		ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = Math.ceil(1.25*Colony.protection(colony))
 		update.state(ai)
 	}))
 }

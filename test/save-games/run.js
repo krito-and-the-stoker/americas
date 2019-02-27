@@ -9,7 +9,7 @@ import Meet from 'task/meet'
 
 
 export default (game, steps = 750) => {
-	test('load save game', () => {
+	test.skip('load save game', () => {
 		Europe.initialize()
 
 		Message.log('Restoring game state...')

@@ -6,6 +6,7 @@ import Events from 'util/events'
 import Time from 'timeline/time'
 
 import Unit from 'entity/unit'
+import Storage from 'entity/storage'
 
 export default (attacker, other) => {
 	Time.schedule({ priority: true, init: () => { 

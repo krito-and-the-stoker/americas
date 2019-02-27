@@ -38,7 +38,7 @@ export default (colony, raider) => {
 
 		Storage.goods(colony.storage).forEach(pack => {
 			pack.amount *= Math.random()
-			Storage.transfer(colony.storage, raider.owner.ai.tribe.storage, pack)
+			Storage.transfer(colony.storage, raider.equipment, pack)
 		})
 	} else {
 		const plunderChance = 0.5 / (colony.buildings.fortifications.level + 1)
@@ -46,7 +46,7 @@ export default (colony, raider) => {
 			Message.send(`A ${raiderName} could not overcome the defenders of ${colony.name}. However, massive amounts of goods are missing after the attack. The colonists are outraged.`)
 			Storage.goods(colony.storage).forEach(pack => {
 				pack.amount *= plunderChance * Math.random()
-				Storage.transfer(colony.storage, raider.owner.ai.tribe.storage, pack)
+				Storage.transfer(colony.storage, raider.equipment, pack)
 			})
 			Events.trigger('notification', { type: 'raid', colony, unit: raider })
 		} else {
