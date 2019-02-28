@@ -78,6 +78,42 @@ const watch = (ai, colony) => {
 	}))
 }
 
+const describeRelations = relations => {
+	if (relations.militancy > 1.5) {	
+		if (relations.trust >= 1) {
+			return 'proud'
+		}
+
+		if (relations.trust >= 0) {
+			return 'alerted'
+		}
+
+		return 'hostile'
+	}
+
+	if (relations.militancy >= 0) {
+		if (relations.trust >= 1) {
+			return 'friendly'
+		}
+
+		if (relations.trust >= 0) {
+			return 'curious'
+		}
+
+		return 'nervous'
+	}
+
+	if (relations.trust >= 1) {
+		return 'happy'
+	}
+
+	if (relations.trust >= 0) {
+		return 'cautious'
+	}
+
+	return 'submissive'
+}
+
 
 const initialize = ai => {
 	Util.execute(ai.destroy)
@@ -118,7 +154,7 @@ const initialize = ai => {
 								visited: false,
 								raidPlanned: false
 							}
-							ai.state.relations[colony.owner.referenceId].trust -= 0.1
+							ai.state.relations[colony.owner.referenceId].trust -= 0.07
 							update.state(ai)
 
 							return () => {
@@ -288,5 +324,6 @@ export default {
 	update,
 	listen,
 	load,
-	save
+	save,
+	describeRelations
 }

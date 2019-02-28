@@ -10,6 +10,8 @@ export default (settlement, unit) => {
 	state.relations[unit.owner.referenceId].militancy += 1
 	state.relations[unit.owner.referenceId].militancy *= 0.9
 
+	Unit.update.radius(unit, 0)
+
 	if (Math.random() * settlement.population < 1) {
 		Settlement.disband(settlement)
 
