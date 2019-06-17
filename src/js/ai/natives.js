@@ -143,8 +143,8 @@ const initialize = ai => {
 									ai.state.relations[owner.referenceId] = {
 										established: false,
 										colonies: {},
-										militancy: 0,
-										trust: 1,
+										militancy: 0.25 - 0.5*Math.random(),
+										trust: 0.75 + 0.5*Math.random(),
 									}
 
 									update.state(ai)
