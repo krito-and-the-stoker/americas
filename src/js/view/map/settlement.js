@@ -1,4 +1,5 @@
 import Goods from 'data/goods'
+import Units from 'data/units'
 
 import Util from 'util/util'
 import Record from 'util/record'
@@ -9,8 +10,12 @@ import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Settlement from 'entity/settlement'
 
+import Natives from 'ai/natives'
+
 import Resources from 'render/resources'
 import Foreground from 'render/foreground'
+
+import Dialog from 'view/ui/dialog'
 
 
 const TILE_SIZE = 64
@@ -23,7 +28,19 @@ const create = settlement => {
 			sprite.x = TILE_SIZE * settlement.mapCoordinates.x
 			sprite.y = TILE_SIZE * settlement.mapCoordinates.y
 
-			Click.on(sprite, () => console.log(settlement.owner.ai.state.relations))
+			Click.on(sprite, () => {
+				const relation = Natives.describeRelations(settlement.owner.ai.state.relations)
+				console.log(settlement, relation)
+				const tribe = settlement.tribe.name
+				const expertName = Units.settler.name[settlement.expert]
+				const knowledge = settlement.presentGiven ?
+					`This settlement has the knowledge to train a ${expertName}.` : 'We have not visited this village yet and cannot say anything more about it.'
+				const text = `The ${tribe} seem ${relation} at the moment.\n\n${knowledge}`
+				Dialog.create({
+					type: 'scout',
+					text
+				})
+			})
 			Foreground.addTerrain(sprite)
 
 			const unsubscribeMission = Settlement.listen.mission(settlement, mission => {

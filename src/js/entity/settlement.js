@@ -193,7 +193,8 @@ const dialog = (settlement, unit, answer) => {
 				}]
 			}
 		}
-		if (settlement.presentGiven || choice < 0.3) {		
+		if (settlement.presentGiven || choice < 0.3) {
+			settlement.presentGiven = true
 			return {
 				text: `${welcomeText} We are always pleased to welcome English travelers.`,
 				type: 'natives',
