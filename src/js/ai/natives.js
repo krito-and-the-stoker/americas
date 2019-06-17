@@ -52,11 +52,15 @@ const colonyRaidProbability = (t, colony, ai) => {
 		return 0
 	}
 
-	const state = ai.state
-	const attraction = Util.clamp(1 - state.relations[colony.owner.referenceId].trust) * Goods.value(colony.storage)
+	const relations = ai.state.relations[colony.owner.referenceId]
+	if (relations.trust > 0.8 || militancy <= 0) {
+		return 0
+	}
+
+	const attraction = Util.clamp(1 - relations.trust) * Goods.value(colony.storage)
 	const protection = Colony.protection(colony)
 	const offense = offensiveCapability(ai)
-	const defense = 100 * protection * protection / Util.clamp(offense*offense + state.relations[colony.owner.referenceId].militancy, 0.1, 100 * protection * protection)
+	const defense = 100 * protection * protection / Util.clamp(offense*offense + relations.militancy, 0.1, 100 * protection * protection)
 
 	if (defense > attraction) {
 		// console.log(`${colony.name}: ${Math.round(attraction)} vs ${Math.round(defense)}`)
