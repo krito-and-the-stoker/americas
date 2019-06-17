@@ -14,6 +14,8 @@ import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
 import Owner from 'entity/owner'
 
+import PaySoldier from 'task/paySoldier'
+
 import Commander from 'command/commander'
 
 import EnterColony from 'interaction/enterColony'
@@ -80,7 +82,7 @@ const initialize = unit => {
 		Tile.diagonalNeighbors(unit.tile).forEach(other => Tile.discover(other, unit.owner))
 	}
 
-	[
+	return [
 		Time.schedule(unit.commander),
 		Time.schedule({ update: (currentTime, deltaTime) => {
 			if (unit.vehicle || (unit.colonist && unit.colonist.colony)) {
@@ -171,7 +173,11 @@ const initialize = unit => {
 			}
 		}),
 
-		listen.colonist(unit, colonist => colonist ? Colonist.listen.expert(colonist, expert => update.expert(unit, expert)) : null)
+		listen.colonist(unit, colonist =>
+			colonist ? Colonist.listen.expert(colonist, expert =>
+				update.expert(unit, expert)) : null),
+
+		Storage.listen(unit.equipment, equipment => equipment.guns >= 50 ? Time.schedule(PaySoldier.create(unit)) : null)
 	]
 }
 

@@ -9,7 +9,7 @@ import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
 import Treasure from 'entity/treasure'
 
-const BELLS_TO_GOLD_FACTOR = 5
+const BELLS_TO_GOLD_FACTOR = 10
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
 const create = (colony, building, colonist) => {
