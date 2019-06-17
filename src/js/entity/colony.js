@@ -21,6 +21,8 @@ import Harvest from 'task/harvest'
 import Consume from 'task/consume'
 import Deteriorate from 'task/deteriorate'
 import GrowHorses from 'task/growHorses'
+import FeedHorses from 'task/feedHorses'
+import EatHorses from 'task/eatHorses'
 import ColonyProduction from 'task/colonyProduction'
 import ProductionSummary from 'task/productionSummary'
 import TeachingSummary from 'task/teachingSummary'
@@ -190,6 +192,8 @@ const initialize = colony => {
 	destroy.push(Time.schedule(Deteriorate.create(colony)))
 	destroy.push(Time.schedule(ProductionSummary.create(colony)))
 	destroy.push(Time.schedule(GrowHorses.create(colony)))
+	destroy.push(Time.schedule(FeedHorses.create(colony)))
+	destroy.push(Time.schedule(EatHorses.create(colony)))
 	destroy.push(listen.colonists(colony, () => listen.bells(colony, () => {
 		let bonus = 0
 		if (tories(colony).number > 14) {
