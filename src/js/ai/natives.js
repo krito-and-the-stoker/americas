@@ -53,7 +53,7 @@ const colonyRaidProbability = (t, colony, ai) => {
 	}
 
 	const relations = ai.state.relations[colony.owner.referenceId]
-	if (relations.trust > 0.8 || militancy <= 0) {
+	if (relations.trust > 0.8 || relations.militancy <= 0) {
 		return 0
 	}
 

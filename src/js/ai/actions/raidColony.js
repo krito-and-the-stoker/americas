@@ -55,8 +55,8 @@ const create = ({ tribe, state, colony }) => {
 					// die trying..
 					const unsubscribeBattle = Events.listen('battle', params => {
 						if (params.loser === move.unit) {
-							state.relations[colony.owner.referenceId].militancy -= 0.02
-							state.relations[colony.owner.referenceId].trust -= 0.02
+							state.relations[colony.owner.referenceId].militancy -= 0.05
+							state.relations[colony.owner.referenceId].trust -= 0.05
 							console.log('raider has died in battle')
 							cleanup()
 						}
