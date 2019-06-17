@@ -142,7 +142,6 @@ const initialize = colony => {
 		Tile.colonyProductionGoods(tile).map(good =>
 			Time.schedule(Harvest.create(colony, tile, good)))))
 	destroy.push(listen.colonists(colony, colonists => [
-		Time.schedule(Consume.create(colony, 'food', 2 * colonists.length)),
 		Time.schedule(Consume.create(colony, 'bells', 1 * colonists.length))
 	]))
 	destroy.push(listenEach.units(colony, (unit, added) => {

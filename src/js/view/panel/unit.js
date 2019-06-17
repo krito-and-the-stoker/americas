@@ -267,15 +267,13 @@ const initialize = () => {
 					})
 				})
 
-				return () => {
-					Util.execute([
-						unsubscribeTreasure,
-						unsubscribePassengers,
-						unsubscribeStorage,
-						unsubscribeCoords,
-						unsubscribeTile,
-					])
-				}
+				return [
+					unsubscribeTreasure,
+					unsubscribePassengers,
+					unsubscribeStorage,
+					unsubscribeCoords,
+					unsubscribeTile,
+				]
 			})
 
 			return () => {
@@ -295,9 +293,12 @@ const initialize = () => {
 				Foreground.get().notifications.removeChild(costIcon)
 
 				Foreground.get().notifications.removeChild(container)
-				unsubscribePassengersAndStorage()
-				Util.execute(unsubscribeClick)
-				Util.execute(unsubscribeSpeedAndStorage)
+
+				Util.execute([
+					unsubscribePassengersAndStorage,
+					unsubscribeClick,
+					unsubscribeSpeedAndStorage
+				])
 			}
 		}
 	})

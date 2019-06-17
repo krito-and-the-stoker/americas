@@ -15,6 +15,8 @@ import Colonist from 'entity/colonist'
 import Owner from 'entity/owner'
 
 import PaySoldier from 'task/paySoldier'
+import ConsumeFood from 'task/consumeFood'
+import FillFoodStock from 'task/fillFoodStock'
 
 import Commander from 'command/commander'
 
@@ -46,6 +48,8 @@ const create = (name, coords, owner) => {
 		unit.storage = Storage.create()
 		unit.equipment = Storage.create()
 		unit.commander = Commander.create({ keep: true, unit })
+
+		unit.equipment.food = 20
 
 		if (name === 'pioneer') {
 			unit.equipment.tools = 100
@@ -84,6 +88,7 @@ const initialize = unit => {
 
 	return [
 		Time.schedule(unit.commander),
+		Time.schedule(ConsumeFood.create(unit)),
 		Time.schedule({ update: (currentTime, deltaTime) => {
 			if (unit.vehicle || (unit.colonist && unit.colonist.colony)) {
 				if (unit.radius > 0) {
@@ -177,7 +182,10 @@ const initialize = unit => {
 			colonist ? Colonist.listen.expert(colonist, expert =>
 				update.expert(unit, expert)) : null),
 
-		listen.properties(unit, () => Time.schedule(PaySoldier.create(unit)))
+		listen.properties(unit, () => Time.schedule(PaySoldier.create(unit))),
+
+		listen.colony(unit, colony =>
+			colony ? Time.schedule(FillFoodStock.create(unit, colony)) : null)
 	]
 }
 
@@ -249,6 +257,7 @@ const area = unit => {
 }
 
 const additionalEquipment = unit => Storage.goods(unit.equipment)
+	.filter(pack => !pack.good === 'food')
 	.filter(pack => !((unit.name === 'soldier' || unit.name === 'dragoon') && pack.good === 'guns'))
 	.filter(pack => !((unit.name === 'scout' || unit.name === 'dragoon') && pack.good === 'horses'))
 	.filter(pack => !(unit.name === 'pioneer' && pack.good === 'tools'))
