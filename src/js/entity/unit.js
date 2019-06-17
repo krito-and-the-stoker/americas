@@ -261,6 +261,10 @@ const support = unit => Util.max(Record.getAll('unit')
 const strength = unit => {
 	let result = unit.properties.combat || 1
 
+	if (!unit.properties.combat && unit.colony) {
+		result += Math.min(unit.colony.storage.guns / 50, 1)
+	}
+
 	const supportUnit = support(unit)
 	if (supportUnit) {
 		result += supportUnit.properties.support
