@@ -1,5 +1,7 @@
 import Time from 'timeline/time'
 
+import Util from 'util/util'
+
 import Storage from 'entity/storage'
 
 
@@ -18,6 +20,7 @@ const create = (colony) => {
 			deltaTime *
 			horseGrowthRate *
 			colony.storage.horses *
+			Util.clamp(colony.storage.food / 5) *
 			PRODUCTION_BASE_FACTOR
 		
 		const unscaledAmount = amount / (PRODUCTION_BASE_FACTOR * deltaTime)

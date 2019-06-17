@@ -1,5 +1,7 @@
 import Time from 'timeline/time'
 
+import Util from 'util/util'
+
 import Storage from 'entity/storage'
 
 
@@ -13,7 +15,7 @@ const create = (colony) => {
       return true
     }
 
-    const amount = Math.max(0, Math.min(-colony.storage.food, horseToFoodConversionRate * colony.storage.horses))
+    const amount = Util.clamp(-colony.storage.food, 0, horseToFoodConversionRate * colony.storage.horses)
     const unscaledAmount = amount / (deltaTime * PRODUCTION_BASE_FACTOR)
     Storage.update(colony.storage, { good: 'food', amount })
     Storage.update(colony.storage, { good: 'horses', amount: -amount / horseToFoodConversionRate })
