@@ -96,7 +96,7 @@ const dialog = (settlement, unit, answer) => {
 		}
 
 		relations.trust -= .05
-		relations.militancy += .2
+		relations.militancy += .1
 		settlement.lastTaxation = Time.get().currentTime
 		const amount = Math.round(settlement.population * (1 + 2 * Math.random()))
 		return {
@@ -149,14 +149,24 @@ const dialog = (settlement, unit, answer) => {
 				}
 			}]
 		}
-	}	if (answer === 'mission') {
-		if (relations(settlement, unit)) {
+	}
+	if (answer === 'mission') {
+		if (relations.militancy > 0.2 && 0.4*Math.random() >= relations.trust) {
 			return {
-				text: ''
+				text: 'Your missionary was unable to establish friendly contact with the natives and has vanished.',
+				type: 'religion',
+				options: [{
+					default: true,
+					action: () => {
+						Unit.disband(unit)
+					}
+				}]
 			}
 		}
+
+		const description = relations.trust > 0 ? 'with curiousity' : 'cautiously'
 		return {
-			text: 'The natives come to your mission with curiousity.',
+			text: `The natives join your mission ${description}.`,
 			type: 'religion',
 			options: [{
 				default: true,			
