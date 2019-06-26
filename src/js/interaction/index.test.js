@@ -27,7 +27,7 @@ const tools = () => ({ good: 'tools', amount: 79 })
 
 
 test('battle', () => {
-	Interaction.Battle(soldier, settler)
+	Interaction.Battle(soldier(), settler())
 })
 
 test('become colonist', () => {
