@@ -69,14 +69,19 @@ const initialize = () => {
 
 	const unitSpeed = Text.create('')
 	const unitStrength = Text.create('')
+	const unitCost = Text.create('')
 	const speedIcon = Icon.create('go')
 	const strengthIcon = Icon.create('combat')
+	const costIcon = Icon.create('gold')
 	speedIcon.scale.set(0.5)
 	strengthIcon.scale.set(0.5)
+	costIcon.scale.set(0.5)
 	speedIcon.x = 10
 	unitSpeed.x = 45
 	strengthIcon.x = 110
 	unitStrength.x = 145
+	costIcon.x = 210
+	unitCost.x = 245
 
 	const container = new PIXI.Container()
 	container.x = 10
@@ -96,6 +101,16 @@ const initialize = () => {
 					const newStrength = Math.round(10 * Unit.strength(unit)) / 10
 					if (oldUnitStrength !== newStrength) {
 						unitStrength.text = `${newStrength}`
+					}
+				}),
+
+				Unit.listen.properties(unit, properties => {
+					if (properties.cost && properties.cost > 0) {
+						costIcon.visible = true
+						unitCost.text = `${properties.cost}`
+					} else {
+						costIcon.visible = false
+						unitCost.text = ''
 					}
 				})
 			]
@@ -187,8 +202,11 @@ const initialize = () => {
 
 			Foreground.get().notifications.addChild(unitSpeed)
 			Foreground.get().notifications.addChild(unitStrength)
+			Foreground.get().notifications.addChild(unitCost)
 			Foreground.get().notifications.addChild(speedIcon)
 			Foreground.get().notifications.addChild(strengthIcon)
+			Foreground.get().notifications.addChild(costIcon)
+
 
 			Foreground.get().notifications.addChild(container)
 			const unsubscribePassengersAndStorage = Unit.listen.passengers(unit, passengers => {
@@ -271,8 +289,10 @@ const initialize = () => {
 
 				Foreground.get().notifications.removeChild(unitSpeed)
 				Foreground.get().notifications.removeChild(unitStrength)
+				Foreground.get().notifications.removeChild(unitCost)
 				Foreground.get().notifications.removeChild(speedIcon)
 				Foreground.get().notifications.removeChild(strengthIcon)
+				Foreground.get().notifications.removeChild(costIcon)
 
 				Foreground.get().notifications.removeChild(container)
 				unsubscribePassengersAndStorage()
@@ -289,8 +309,11 @@ const initialize = () => {
 
 		unitSpeed.y = dimensions.y - lineOffset - 2 * lineHeight
 		unitStrength.y = dimensions.y - lineOffset - 2 * lineHeight
+		unitCost.y = dimensions.y - lineOffset - 2 * lineHeight
 		speedIcon.y = dimensions.y - lineOffset - 2 * lineHeight
 		strengthIcon.y = dimensions.y - lineOffset - 2 * lineHeight
+		costIcon.y = dimensions.y - lineOffset - 2 * lineHeight
+
 
 		unitName.y = dimensions.y - lineOffset - 1 * lineHeight
 		gotoText.y = dimensions.y - lineOffset - 3 * lineHeight - 20
