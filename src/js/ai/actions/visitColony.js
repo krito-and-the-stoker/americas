@@ -24,7 +24,8 @@ const create = ({ tribe, state, colony }) => {
 
 const commit = (tribe, state, colony) => {
 	const good = Util.choose(['food', 'cotton', 'furs', 'tobacco', 'sugar', 'coats', 'cloth'])
-	const amount = Math.round(4 + 10 * Math.random())
+	const amount = Math.round(4 + 16 * Math.random())
+	// error: cannot set property visited of undefined
 	state.relations[colony.owner.referenceId].colonies[colony.referenceId].visited = true
 	Events.trigger('dialog', {
 		type: 'natives',
