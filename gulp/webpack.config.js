@@ -32,7 +32,7 @@ const config = () => {
 				test: path.resolve(__dirname, '../test')
 			}
 		},
-		devtool: (yargs.argv.production || yargs.argv.staging) ? 'eval' : 'source-map',
+		devtool: (yargs.argv.production || yargs.argv.staging) ? 'eval' : 'cheap-module-eval-source-map',
 		context: path.resolve(__dirname, '../src/js/'),
 		plugins: plugins,
 		// rules: [{
