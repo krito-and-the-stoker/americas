@@ -177,7 +177,7 @@ const initialize = unit => {
 			colonist ? Colonist.listen.expert(colonist, expert =>
 				update.expert(unit, expert)) : null),
 
-		Storage.listen(unit.equipment, equipment => equipment.guns >= 50 ? Time.schedule(PaySoldier.create(unit)) : null)
+		listen.properties(unit, () => Time.schedule(PaySoldier.create(unit)))
 	]
 }
 
