@@ -67,8 +67,11 @@ const update = (instance, key, value) => {
 	}
 	if (instance[listeners]) {
 		instance[listeners]
-			.forEach(listener => Util.execute(listener.cleanup, false))
-		instance[listeners].forEach(add)
+			.forEach(listener => {
+				Util.execute(listener.cleanup, false)
+				listener.cleanup = undefined
+				add(listener)
+			})
 		instance[listeners]
 			.filter(listener => !listener.keep)
 			.forEach(listener => remove(listener))
