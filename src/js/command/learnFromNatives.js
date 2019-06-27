@@ -5,6 +5,7 @@ import Events from 'util/events'
 import Unit from 'entity/unit'
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
+import Storage from 'entity/storage'
 
 import Factory from 'command/factory'
 
@@ -31,6 +32,10 @@ export default Factory.create('LearnFromNatives', {
 	}
 	
 	const update = (currentTime, deltaTime) => {
+		// natives share food with you, but not very much and they expect you to share your food with tem
+		unit.equipment.food = 4
+		Storage.update(unit.equipment)
+
 		const scale = deltaTime * TEACH_BASE_FACTOR
 		if (student.education.profession !== profession) {
 			student.education.profession = profession
