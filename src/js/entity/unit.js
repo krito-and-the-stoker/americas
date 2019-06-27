@@ -24,6 +24,7 @@ import EnterColony from 'interaction/enterColony'
 import LeaveColony from 'interaction/leaveColony'
 import EnterEurope from 'interaction/enterEurope'
 
+const UNIT_FOOD_CAPACITY = 10
 
 const RADIUS_GROWTH = 1.0 / 2500
 const create = (name, coords, owner) => {
@@ -49,7 +50,7 @@ const create = (name, coords, owner) => {
 		unit.equipment = Storage.create()
 		unit.commander = Commander.create({ keep: true, unit })
 
-		unit.equipment.food = 20
+		unit.equipment.food = UNIT_FOOD_CAPACITY
 
 		if (name === 'pioneer') {
 			unit.equipment.tools = 100
@@ -274,7 +275,7 @@ const additionalEquipment = unit => Storage.goods(unit.equipment)
 	.filter(pack => !(unit.name === 'pioneer' && pack.good === 'tools'))
 
 const overWeight = unit => {
-	const equipmentCapacity = 70 + unit.equipment.horses
+	const equipmentCapacity = 50 + unit.equipment.horses + UNIT_FOOD_CAPACITY
 	return Math.max((Storage.total(unit.equipment) - equipmentCapacity) / equipmentCapacity, 0)
 }
 
@@ -435,5 +436,6 @@ export default {
 	at,
 	area,
 	strength,
-	name
+	name,
+	UNIT_FOOD_CAPACITY
 }

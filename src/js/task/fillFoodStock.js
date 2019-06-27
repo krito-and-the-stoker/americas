@@ -7,7 +7,6 @@ import Unit from 'entity/unit'
 
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
-const MAX_FOOD_STOCK = 20
 const FOOD_COST = 2
 
 const create = (unit, colony) => {
@@ -23,7 +22,7 @@ const create = (unit, colony) => {
     } else {
       // we are in range of a colony and want to equip us with food from there
       // always take twice the amount needed until local storage is full
-      const desiredAmount = Math.min(2 * FOOD_COST * deltaTime * PRODUCTION_BASE_FACTOR, MAX_FOOD_STOCK - unit.equipment.food)
+      const desiredAmount = Math.min(2 * FOOD_COST * deltaTime * PRODUCTION_BASE_FACTOR, Unit.UNIT_FOOD_CAPACITY - unit.equipment.food)
       const scaledAmount = Math.min(desiredAmount, colony.storage.food)
       const unscaledAmount = scaledAmount / (deltaTime * PRODUCTION_BASE_FACTOR)
 
