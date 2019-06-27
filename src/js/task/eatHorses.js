@@ -16,7 +16,9 @@ const create = (colony) => {
       return true
     }
 
-    const amount = Util.clamp(Unit.UNIT_FOOD_CAPACITY - colony.storage.food, 0, horseToFoodConversionRate * colony.storage.horses)
+    // TODO: convert more smoothely
+    // const amount = Util.clamp(Unit.UNIT_FOOD_CAPACITY - colony.storage.food, 0, horseToFoodConversionRate * colony.storage.horses)
+    const amount = Util.clamp(-colony.storage.food, 0, horseToFoodConversionRate * colony.storage.horses)
     const unscaledAmount = amount / (deltaTime * PRODUCTION_BASE_FACTOR)
     Storage.update(colony.storage, { good: 'food', amount })
     Storage.update(colony.storage, { good: 'horses', amount: -amount / horseToFoodConversionRate })
