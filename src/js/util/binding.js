@@ -1,13 +1,12 @@
 import Util from 'util/util'
 
-const doNothing = () => {}
-
 const create = (instance, key) => {
 	const listeners = listenerKey(key)
 	instance[listeners] = []
 }
 
-const remove = (instance, key, listener) => {	
+const remove = (instance, key, listener) => {
+	listener.alive = false
 	const listeners = listenerKey(key)
 	if (listener.cleanup) {
 		Util.execute(listener.cleanup, true)
@@ -19,12 +18,13 @@ const remove = (instance, key, listener) => {
 const listen = (instance, key, fn) => {
 	const listeners = listenerKey(key)
 	const value = key ? instance[key] : instance
-	const cleanup = fn(value) || doNothing
+	const cleanup = fn(value)
 	const listener = {
 		fn,
 		cleanup,
 		instance,
 		key,
+		alive: true,
 		keep: true
 	}
 
@@ -80,8 +80,10 @@ const update = (instance, key, value) => {
 
 const applyUpdate = () => {
 	scheduled.forEach(listener => {
-		const value = listener.key ? listener.instance[listener.key] : listener.instance
-		listener.cleanup = listener.fn(value)
+		if (listener.alive) {		
+			const value = listener.key ? listener.instance[listener.key] : listener.instance
+			listener.cleanup = listener.fn(value)
+		}
 	})
 	scheduled.clear()
 
