@@ -12,8 +12,8 @@ const FOOD_COST = 2
 const create = (unit, colony) => {
   const update = (currentTime, deltaTime) => {
     if (unit.colonist && unit.colonist.colony === colony) {
-      // when in colony just balance the storage to 0
-      const scaledAmount = -unit.equipment.food
+      // when in colony just balance the storage towards 0
+      const scaledAmount = Math.min(-unit.equipment.food, colony.storage.food)
       const unscaledAmount = scaledAmount / (deltaTime * PRODUCTION_BASE_FACTOR)
 
       Storage.update(unit.equipment, { good: 'food', amount: scaledAmount })

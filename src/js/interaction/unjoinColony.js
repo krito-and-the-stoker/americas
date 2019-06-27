@@ -9,7 +9,9 @@ export default colonist => {
 	const colony = colonist.colony
 	const unit = colonist.unit
 
-	EquipUnitFromColony(colony, unit, { good: 'food', amount: colony.storage.food })
+	if (unit) {
+		EquipUnitFromColony(colony, unit, { good: 'food', amount: colony.storage.food })
+	}
 	Colonist.stopWorking(colonist)
 	Colony.remove.colonist(colonist)
 	Colonist.update.colony(colonist, null)
