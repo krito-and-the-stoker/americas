@@ -54,7 +54,7 @@ if (process.env.SENTRY_DSN) {
 	})
 }
 
-const AUTOSAVE_INTERVAL = 60000
+const AUTOSAVE_INTERVAL = 5 * 60 * 1000 // autosave every 5 minutes
 const initialize = () => {
 	let timeStamp = 0
 	setInterval(Record.autosave, AUTOSAVE_INTERVAL)
