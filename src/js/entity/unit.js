@@ -88,7 +88,6 @@ const initialize = unit => {
 
 	return [
 		Time.schedule(unit.commander),
-		Time.schedule(ConsumeFood.create(unit)),
 		Time.schedule({ update: (currentTime, deltaTime) => {
 			if (unit.vehicle || (unit.colonist && unit.colonist.colony)) {
 				if (unit.radius > 0) {
@@ -183,9 +182,21 @@ const initialize = unit => {
 				update.expert(unit, expert)) : null),
 
 		listen.properties(unit, () => Time.schedule(PaySoldier.create(unit))),
+		listen.properties(unit, () =>
+			// only these units need food
+			['settler', 'scout', 'soldier', 'dragoon', 'missionary', 'pioneer'].includes(unit.name) ?
+				// in europe nobody needs to eat
+				listen.offTheMap(unit, offTheMap =>
+					!offTheMap ? [
+						// do not eat when on a ship
+						listen.vehicle(unit, vehicle =>
+							!vehicle ? Time.schedule(ConsumeFood.create(unit)) : null),
 
-		listen.colony(unit, colony =>
-			colony ? Time.schedule(FillFoodStock.create(unit, colony)) : null)
+						listen.tile(unit, tile =>
+							Tile.radius(tile).map(other =>
+								Tile.listen.colony(other, colony =>
+									colony ? Time.schedule(FillFoodStock.create(unit, colony)) : null)))
+					] : null) : null)
 	]
 }
 
@@ -263,7 +274,7 @@ const additionalEquipment = unit => Storage.goods(unit.equipment)
 	.filter(pack => !(unit.name === 'pioneer' && pack.good === 'tools'))
 
 const overWeight = unit => {
-	const equipmentCapacity = 50 + unit.equipment.horses
+	const equipmentCapacity = 70 + unit.equipment.horses
 	return Math.max((Storage.total(unit.equipment) - equipmentCapacity) / equipmentCapacity, 0)
 }
 

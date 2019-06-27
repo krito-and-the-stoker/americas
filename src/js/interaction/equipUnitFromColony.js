@@ -18,4 +18,9 @@ export default (colony, unit, pack) => {
 			Storage.transfer(colony.storage, unit.equipment, { good, amount: maximumAmount })
 		}
 	}
+
+	if (good === 'food') {
+		const maximumAmount = Math.min(amount, 20 - unit.equipment.food)
+		Storage.transfer(colony.storage, unit.equipment, { good, amount: maximumAmount })
+	}
 }

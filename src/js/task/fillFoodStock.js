@@ -8,17 +8,29 @@ import Unit from 'entity/unit'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const MAX_FOOD_STOCK = 20
-const MAX_FOOD_FILL = 50
+const FOOD_COST = 2
 
 const create = (unit, colony) => {
   const update = (currentTime, deltaTime) => {
-    const desiredAmount = Util.clamp(MAX_FOOD_STOCK - unit.equipment.food, 0, MAX_FOOD_FILL)
-    const scaledAmount = Math.min(colony.storage.food, deltaTime * desiredAmount * PRODUCTION_BASE_FACTOR)
-    const unscaledAmount = scaledAmount / (deltaTime * PRODUCTION_BASE_FACTOR)
+    if (unit.colonist && unit.colonist.colony === colony) {
+      // when in colony just balance the storage to 0
+      const scaledAmount = -unit.equipment.food
+      const unscaledAmount = scaledAmount / (deltaTime * PRODUCTION_BASE_FACTOR)
 
-    Storage.update(unit.equipment, { good: 'food', amount: scaledAmount })
-    Storage.update(colony.storage, { good: 'food', amount: -scaledAmount })
-    Storage.update(colony.productionRecord, { good: 'food', amount: -unscaledAmount })
+      Storage.update(unit.equipment, { good: 'food', amount: scaledAmount })
+      Storage.update(colony.storage, { good: 'food', amount: -scaledAmount })
+      Storage.update(colony.productionRecord, { good: 'food', amount: -unscaledAmount })
+    } else {
+      // we are in range of a colony and want to equip us with food from there
+      // always take twice the amount needed until local storage is full
+      const desiredAmount = Math.min(2 * FOOD_COST * deltaTime * PRODUCTION_BASE_FACTOR, MAX_FOOD_STOCK - unit.equipment.food)
+      const scaledAmount = Math.min(desiredAmount, colony.storage.food)
+      const unscaledAmount = scaledAmount / (deltaTime * PRODUCTION_BASE_FACTOR)
+
+      Storage.update(unit.equipment, { good: 'food', amount: scaledAmount })
+      Storage.update(colony.storage, { good: 'food', amount: -scaledAmount })
+      Storage.update(colony.productionRecord, { good: 'food', amount: -unscaledAmount })
+    }
     
     return true
   }
