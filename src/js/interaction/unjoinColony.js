@@ -18,6 +18,7 @@ export default colonist => {
 
 	if (colony.colonists.length === 0 && unit) {
 		Storage.transfer(colony.storage, unit.equipment)
-		Colony.disband(colony)
 	}
+
+	Colony.disband(colony) 
 }
