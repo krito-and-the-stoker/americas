@@ -16,9 +16,10 @@ export default colonist => {
 	Colony.remove.colonist(colonist)
 	Colonist.update.colony(colonist, null)
 
-	if (colony.colonists.length === 0 && unit) {
-		Storage.transfer(colony.storage, unit.equipment)
+	if (colony.colonists.length === 0) {
+		if (unit) {
+			Storage.transfer(colony.storage, unit.equipment)
+		}
+		Colony.disband(colony) 
 	}
-
-	Colony.disband(colony) 
 }
