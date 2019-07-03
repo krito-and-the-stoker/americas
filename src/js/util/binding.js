@@ -25,7 +25,7 @@ const listen = (instance, key, fn) => {
 		instance,
 		key,
 		alive: true,
-		keep: true
+		// keep: true
 	}
 
 	if (!instance[listeners]) {
@@ -52,10 +52,14 @@ const listen = (instance, key, fn) => {
 // 	return () => remove(instance, key, listener)
 // }
 
-let resolve = null
-let promise = new Promise(res => { resolve = res })
-let scheduled = new Set()
-const add = scheduled.add.bind(scheduled)
+const pages = [
+	new Set(),
+	new Set
+];
+
+const add = listener => {
+	pages[0].add(listener)
+}
 
 const update = (instance, key, value) => {
 	const listeners = listenerKey(key)
@@ -72,13 +76,16 @@ const update = (instance, key, value) => {
 				listener.cleanup = undefined
 				add(listener)
 			})
-		instance[listeners]
-			.filter(listener => !listener.keep)
-			.forEach(listener => remove(listener))
+		// instance[listeners]
+		// 	.filter(listener => !listener.keep)
+		// 	.forEach(listener => remove(listener))
 	}
 }
 
 const applyUpdate = () => {
+	const scheduled = pages[0]
+	pages.reverse()
+
 	scheduled.forEach(listener => {
 		if (listener.alive) {		
 			const value = listener.key ? listener.instance[listener.key] : listener.instance
@@ -86,19 +93,11 @@ const applyUpdate = () => {
 		}
 	})
 	scheduled.clear()
-
-	resolve()
-	promise = new Promise(res => { resolve = res })
 }
 
 const applyAllUpdates = () => {
-	let guard = 0
-	while(scheduled.size > 0 && guard < 100) {
+	while(pages[0].size > 0) {
 		applyUpdate()
-		guard += 1
-	}
-	if (guard === 100) {
-		throw new Error('apply updates has reached maximum iterations.')
 	}
 }
 
