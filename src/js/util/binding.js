@@ -25,7 +25,6 @@ const listen = (instance, key, fn) => {
 		instance,
 		key,
 		alive: true,
-		// keep: true
 	}
 
 	if (!instance[listeners]) {
@@ -36,21 +35,6 @@ const listen = (instance, key, fn) => {
 	return () => remove(instance, key, listener)
 }
 
-// currently unused
-// const once = (instance, key, fn) => {
-// 	const listeners = listenerKey(key)
-// 	const listener = {
-// 		fn,
-// 		keep: false
-// 	}
-
-// 	if (!instance[listeners]) {
-// 		create(instance, key)
-// 	}
-
-// 	instance[listeners].push(listener)
-// 	return () => remove(instance, key, listener)
-// }
 
 const pages = [
 	new Set(),
@@ -76,9 +60,6 @@ const update = (instance, key, value) => {
 				listener.cleanup = undefined
 				add(listener)
 			})
-		// instance[listeners]
-		// 	.filter(listener => !listener.keep)
-		// 	.forEach(listener => remove(listener))
 	}
 }
 
