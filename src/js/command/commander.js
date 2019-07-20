@@ -36,6 +36,9 @@ const schedule = {
 		// console.log('clearing', parent.tag)
 		parent.state.commands.forEach(cmd => cmd.canceled ? cmd.canceled() : null)
 		parent.state.commands.length = 0
+		if (parent.state.currentCommand && parent.state.currentCommand.cancel) {
+			parent.state.currentCommand.cancel()
+		}
 		if (parent.state.currentCommand && parent.state.currentCommand.state) {
 			schedule.clear(parent.state.currentCommand)
 		}

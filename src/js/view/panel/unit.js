@@ -42,6 +42,7 @@ const initialize = () => {
 	const foundColony = Text.create('Found colony')
 	const buildRoadText = Text.create('Build road')
 	const plowText = Text.create('Plow')
+	const cancelPioneeringText = Text.create('Cancel pioneering')
 	const cutForestText = Text.create('Cut down forest')
 	const trade = Text.create('Trade route')
 
@@ -50,6 +51,7 @@ const initialize = () => {
 	foundColony.x = 10
 	buildRoadText.x = 10
 	plowText.x = 10
+	cancelPioneeringText.x = 10
 	cutForestText.x = 10
 	trade.x = 10
 
@@ -57,6 +59,7 @@ const initialize = () => {
 	foundColony.visible = false
 	buildRoadText.visible = false
 	plowText.visible = false
+	cancelPioneeringText.visible = false
 	cutForestText.visible = false
 	trade.visible = false
 
@@ -64,6 +67,7 @@ const initialize = () => {
 	foundColony.buttonMode = true
 	buildRoadText.buttonMode = true
 	plowText.buttonMode = true
+	cancelPioneeringText.buttonMode = true
 	cutForestText.buttonMode = true
 	trade.buttonMode = true
 
@@ -130,6 +134,10 @@ const initialize = () => {
 				Click.on(plowText, () => {
 					Commander.scheduleInstead(unit.commander, Plow.create({ unit }))
 				}),
+				Click.on(cancelPioneeringText, () => {
+					Commander.clearSchedule(unit.commander)
+					console.log('canceled pioneering', unit.commander)
+				}),
 				Click.on(cutForestText, () => {
 					Commander.scheduleInstead(unit.commander, CutForest.create({ unit }))
 				}),
@@ -185,18 +193,21 @@ const initialize = () => {
 				foundColony.visible = unit.properties.canFound && !moving && !Tile.radius(unit.tile).some(tile => tile.colony) && !unit.tile.settlement && !unit.pioneering
 				buildRoadText.visible = unit.properties.canTerraform && !moving && !unit.tile.road && !unit.tile.settlement && !unit.pioneering
 				plowText.visible = unit.properties.canTerraform && !moving && !unit.tile.forest && !unit.tile.plowed && !unit.tile.settlement && !unit.pioneering
+				cancelPioneeringText.visible = unit.pioneering
 				cutForestText.visible = unit.properties.canTerraform && !moving && unit.tile.forest && !unit.tile.settlement && !unit.pioneering
 				trade.visible = unit.properties.cargo > 0 && unit.passengers.length === 0 && !unit.pioneering
 			}
 			
 			const unsubscribeCoords = Unit.listen.mapCoordinates(unit, updateCommands)
 			const unsubscribeTile = Unit.listen.tile(unit, updateCommands)
+			const unsubscribePioneering = Unit.listen.pioneering(unit, updateCommands)
 
 			Foreground.get().notifications.addChild(unitName)
 			Foreground.get().notifications.addChild(gotoText)
 			Foreground.get().notifications.addChild(foundColony)
 			Foreground.get().notifications.addChild(buildRoadText)
 			Foreground.get().notifications.addChild(plowText)
+			Foreground.get().notifications.addChild(cancelPioneeringText)
 			Foreground.get().notifications.addChild(cutForestText)
 			Foreground.get().notifications.addChild(trade)
 
@@ -273,6 +284,7 @@ const initialize = () => {
 					unsubscribeStorage,
 					unsubscribeCoords,
 					unsubscribeTile,
+					unsubscribePioneering
 				]
 			})
 
@@ -282,6 +294,7 @@ const initialize = () => {
 				Foreground.get().notifications.removeChild(foundColony)
 				Foreground.get().notifications.removeChild(buildRoadText)
 				Foreground.get().notifications.removeChild(plowText)
+				Foreground.get().notifications.removeChild(cancelPioneeringText)
 				Foreground.get().notifications.removeChild(cutForestText)
 				Foreground.get().notifications.removeChild(trade)
 
@@ -318,6 +331,7 @@ const initialize = () => {
 
 		unitName.y = dimensions.y - lineOffset - 1 * lineHeight
 		gotoText.y = dimensions.y - lineOffset - 3 * lineHeight - 20
+		cancelPioneeringText.y = dimensions.y - lineOffset - 3 * lineHeight - 20
 		trade.y = dimensions.y - lineOffset - 4 * lineHeight - 20
 		foundColony.y = dimensions.y - lineOffset - 4 * lineHeight - 20
 		buildRoadText.y = dimensions.y - lineOffset - 5 * lineHeight - 20

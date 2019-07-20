@@ -31,6 +31,11 @@ export default Factory.create('Road', {
 		}
 	}
 
+	const cancel = () => {
+		eta = null
+		Unit.update.pioneering(unit, false)
+	}
+
 	const update = currentTime => eta && currentTime < eta
 	const finished = () => {
 		if (eta) {
@@ -45,6 +50,7 @@ export default Factory.create('Road', {
 	return {
 		init,
 		update,
+		cancel,
 		finished
 	}
 })
