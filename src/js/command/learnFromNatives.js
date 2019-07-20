@@ -41,7 +41,7 @@ export default Factory.create('LearnFromNatives', {
 			student.education.profession = profession
 			student.education.progress = 0
 		}
-		student.education.progress += 3 * scale
+		student.education.progress += 2 * scale
 		if (student.education.progress >= Colony.expertLevel[profession]) {
 			return false
 		}
