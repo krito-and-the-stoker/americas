@@ -11,6 +11,7 @@ import Time from 'timeline/time'
 import Harvest from 'task/harvest'
 import Produce from 'task/produce'
 import Teach from 'task/teach'
+import Learn from 'task/learn'
 
 import UnjoinColony from 'interaction/unjoinColony'
 
@@ -75,11 +76,14 @@ const update = {
 }
 
 const initialize = colonist => {
-	listen.unit(colonist, unit => {
-		if (!unit) {
-			disband(colonist)
-		}
-	})
+	return [
+		listen.unit(colonist, unit => {
+			if (!unit) {
+				disband(colonist)
+			}
+		}),
+		Time.schedule(Learn.create(colonist))
+	]
 }
 
 const create = unit => {
@@ -95,7 +99,7 @@ const create = unit => {
 		beingEducated: false
 	}
 
-	initialize(colonist)
+	colonist.destroy = initialize(colonist)
 
 	Record.add('colonist', colonist)
 	return colonist
@@ -109,6 +113,7 @@ const disband = colonist => {
 		Unit.update.colonist(colonist.unit, null)
 	}
 
+	Util.execute(colonist.destroy)
 	Record.remove(colonist)
 }
 
