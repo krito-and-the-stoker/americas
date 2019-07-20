@@ -62,7 +62,10 @@ test('schedule instead & schedule behind', () => {
 	Commander.scheduleInstead(jack.commander, MoveTo.create({ unit: jack, coords: farPlace() }))
 	Commander.scheduleInstead(john.commander, MoveTo.create({ unit: john, coords: farPlace() }))
 
-	advance(25)
+	advance(50)
+	joe.equipment.food = 6
+	jack.equipment.food = 6
+	john.equipment.food = 6
 
 	// send joe back
 	Commander.scheduleInstead(joe.commander, MoveTo.create({ unit: joe, coords: firstPlace() }))
@@ -70,7 +73,10 @@ test('schedule instead & schedule behind', () => {
 	// schedule jack back
 	Commander.scheduleBehind(jack.commander, MoveTo.create({ unit: jack, coords: firstPlace() }))
 
-	advance(125)
+	advance(150)
+	joe.equipment.food = 6
+	jack.equipment.food = 6
+	john.equipment.food = 6
 
 	// joe should have made it back by now
 	expect(joe.mapCoordinates).toEqual(firstPlace())
@@ -79,14 +85,24 @@ test('schedule instead & schedule behind', () => {
 	expect(jack.mapCoordinates).not.toEqual(farPlace())
 	expect(john.mapCoordinates).not.toEqual(farPlace())
 
-	advance(125)
+	advance(150)
+	joe.equipment.food = 6
+	jack.equipment.food = 6
+	john.equipment.food = 6
+
 	// jack should be there now
 	expect(john.mapCoordinates).toEqual(farPlace())
 	// jack should be still on his way
 	expect(jack.mapCoordinates).not.toEqual(farPlace())
 	expect(jack.mapCoordinates).not.toEqual(firstPlace())
 
-	advance(250)
+	advance(150)
+	joe.equipment.food = 6
+	jack.equipment.food = 6
+	john.equipment.food = 6
+
+	advance(150)
+
 	// jack should have made it eventually
 	expect(jack.mapCoordinates).toEqual(firstPlace())
 })
