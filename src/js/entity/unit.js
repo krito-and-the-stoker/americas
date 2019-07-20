@@ -24,7 +24,7 @@ import EnterColony from 'interaction/enterColony'
 import LeaveColony from 'interaction/leaveColony'
 import EnterEurope from 'interaction/enterEurope'
 
-const UNIT_FOOD_CAPACITY = 10
+const UNIT_FOOD_CAPACITY = 6
 
 const RADIUS_GROWTH = 1.0 / 2500
 const create = (name, coords, owner) => {

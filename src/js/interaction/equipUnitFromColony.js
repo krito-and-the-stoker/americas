@@ -1,4 +1,5 @@
 import Storage from 'entity/storage'
+import Unit from 'entity/unit'
 
 
 export default (colony, unit, pack) => {
@@ -20,7 +21,7 @@ export default (colony, unit, pack) => {
 	}
 
 	if (good === 'food') {
-		const maximumAmount = Math.min(amount, 20 - unit.equipment.food)
+		const maximumAmount = Math.min(amount, Unit.UNIT_FOOD_CAPACITY - unit.equipment.food)
 		Storage.transfer(colony.storage, unit.equipment, { good, amount: maximumAmount })
 	}
 }
