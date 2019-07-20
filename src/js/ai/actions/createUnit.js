@@ -3,7 +3,7 @@ import Settlements from 'ai/resources/settlements'
 const create = ({ owner, coords }) => {
 	const settlement = Settlements.cheapest(owner, coords)
 
-	return {
+	return settlement && {
 		cost: Settlements.reserve(settlement),
 		coords: settlement.mapCoordinates,
 		commit: () => commit(settlement),
