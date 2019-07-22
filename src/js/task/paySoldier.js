@@ -14,8 +14,10 @@ const create = unit => {
       return false
     }
 
-    const amount = deltaTime * PRODUCTION_BASE_FACTOR * UNIT_COST_FACTOR * unit.properties.cost
-    Treasure.gain(-amount)
+    if (!(unit.domain === 'land' && unit.offTheMap)) {
+      const amount = deltaTime * PRODUCTION_BASE_FACTOR * UNIT_COST_FACTOR * unit.properties.cost
+      Treasure.gain(-amount)
+    }
 
     return true
   }
