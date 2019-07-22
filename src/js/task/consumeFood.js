@@ -7,7 +7,7 @@ import Unit from 'entity/unit'
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const FOOD_COST = 2
 const FOOD_COST_PER_HORSE = 0.02 // 1 food per 50 horses
-const CHANCE_OF_DEATH = 0.05
+const CHANCE_OF_DEATH = 0.01
 
 const create = unit => {
   const update = (currentTime, deltaTime) => {
