@@ -44,5 +44,9 @@
     "webpack-dev-middleware": "^3.5.2",
     "webpack-hot-middleware": "^2.24.3",
     "yargs": "^11.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-plugin-jest": "^22.13.4"
   }
 }
