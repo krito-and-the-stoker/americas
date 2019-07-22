@@ -5,8 +5,6 @@ import Record from 'util/record'
 import Storage from 'entity/storage'
 import Colony from 'entity/colony'
 import Unit from 'entity/unit'
-import Tile from 'entity/tile'
-import MapEntity from 'entity/map'
 import Europe from 'entity/europe'
 import Treasure from 'entity/treasure'
 import Market from 'entity/market'
@@ -16,7 +14,7 @@ import Forecast from 'entity/forecast'
 const NOTHING = 0
 const IMPORT = 1
 const EXPORT = 2
-const HUB = 3
+const BALANCE = 3
 const BUY = 4
 const SELL = 5
 
@@ -34,14 +32,30 @@ const TRADE_ROUTE_MIN_GOODS = 5
 const TREASURE_TARGET = 5000
 const TREASURE_MIN = 500
 
-const canExport = (colony, good) => [EXPORT, HUB].includes(colony.trade[good])
-const canImport = (colony, good) => [IMPORT, HUB].includes(colony.trade[good])
+const canExport = (colony, good) => [EXPORT, BALANCE].includes(colony.trade[good]) && canExportAmount(colony, good) > 0
+const canImport = (colony, good) => [IMPORT, BALANCE].includes(colony.trade[good]) && canImportAmount(colony, good) > 0
+const canTrade = (colony, good) => [IMPORT, EXPORT, BALANCE, BUY, SELL].includes(colony.trade[good])
 const canBuy = (europe, good) => europe.trade[good] === BUY
 const canSell = (europe, good) => europe.trade[good] === SELL
-const isHub = (colony, good) => colony.trade[good] === HUB
 
-const canExportAmount = (colony, good) => Math.max(colony.storage[good] + Forecast.get(colony, good), 0)
-const canImportAmount = (colony, good) => Math.max(colony.capacity - (colony.storage[good] + Forecast.get(colony, good)), 0)
+const averageRelativeStorageFill = good => {
+	const relevantColonies = 	Record.getAll('colony')
+		.filter(colony => canTrade(colony, good))
+
+	return Util.average(relevantColonies.map(colony => colony.storage[good] / colony.capacity))
+}
+
+
+const targetAmount = (colony, good) => ({
+	[IMPORT]: colony.capacity,
+	[EXPORT]: 0,
+	[BALANCE]: colony.capacity * averageRelativeStorageFill(good)
+}[colony.trade[good]])
+
+
+const estimatedAmount = (colony, good) => colony.storage[good] + Forecast.get(colony, good)
+const canExportAmount = (colony, good) => Util.clamp(estimatedAmount(colony, good) - targetAmount(colony, good), 0, colony.capacity)
+const canImportAmount = (colony, good) => Util.clamp(targetAmount(colony, good) - estimatedAmount(colony, good), 0, colony.capacity)
 
 // how much can we buy depends on treasure
 const canBuyAmount = (europe, good) => Math.floor((Treasure.amount() - TREASURE_MIN) / Market.ask(good))
@@ -54,22 +68,9 @@ const buyPriority = () => Math.max(Treasure.amount() / TREASURE_TARGET, 0)
 // higher priority when low on money
 const sellPriority = () => Math.max(1 - (Treasure.amount() - TREASURE_MIN) / TREASURE_TARGET, 0)
 
-const areaPriority = (hub, area, good) => Record.getAll('colony')
-	.filter(colony => colony !== hub)
-	.filter(colony => Tile.radius(MapEntity.tile(colony.mapCoordinates)).map(tile => tile.area).includes(area))
-	.filter(colony => canExport(colony, good) || canImport(colony, good))
-	.filter(colony => !isHub(colony, good))
-	.map(colony => ({
-		export: canExport(colony, good) ? exportPriority(colony, good) : 0,
-		import: canImport(colony, good) ? importPriority(colony, good) : 0,
-	}))
-	.reduce((sum, item) => ({
-		export: sum.export + item.export,
-		import: sum.import + item.import,
-	}), { export: 0, import: 0 })
 
 
-const distanceToSrc = (src, transport) => {
+const distanceCurrentPositionToSrc = (src, transport) => {
 	if (src.isEurope) {
 		if (Europe.has.unit(transport)) {
 			return 0
@@ -80,7 +81,7 @@ const distanceToSrc = (src, transport) => {
 
 	return PathFinder.distance(transport.mapCoordinates, src.mapCoordinates, transport, TRADE_ROUTE_DISTANCE_CAP*transport.properties.speed + 1)
 }
-const distanceOfRoute = (src, dest, transport) => {
+const distanceSrcToDest = (src, dest, transport) => {
 	if (src.isEurope) {
 		return PathFinder.distanceToEurope(dest.mapCoordinates)
 	}
@@ -92,9 +93,8 @@ const distanceOfRoute = (src, dest, transport) => {
 }
 
 const routeDistance = (src, dest, transport) =>
-	distanceToSrc(src, transport) + distanceOfRoute(src, dest, transport)
+	distanceCurrentPositionToSrc(src, transport) + distanceSrcToDest(src, dest, transport)
 
-const otherDomain = domain => domain === 'land' ? 'sea' : 'land'
 
 const match = transport => {
 	const europe = {
@@ -118,30 +118,6 @@ const match = transport => {
 				.map(pack => pack.good)
 				.filter(good => (canExport(route.src, good) || canBuy(route.src, good)) && (canImport(route.dest, good) || canSell(route.dest, good)))
 				.map(good => {
-					if (isHub(route.src, good) && isHub(route.dest, good)) {
-						const srcArea = Colony.area(route.src, otherDomain(transport.domain))
-						const destArea = Colony.area(route.dest, otherDomain(transport.domain))
-						if (srcArea && destArea && srcArea !== destArea) {
-							const srcPriority = areaPriority(route.src, srcArea, good)
-							const destPriority = areaPriority(route.dest, destArea, good)
-							const exportAmount = canExportAmount(route.src, good)
-							const importAmount = canImportAmount(route.dest, good)
-							const amount = Math.floor(Math.min(exportAmount, importAmount, capacity))
-							const exportPriorityFinal = (srcPriority.export - srcPriority.import)
-							const importPriorityFinal = (destPriority.import - destPriority.export)
-							if (exportPriorityFinal > 0 && importPriorityFinal > 0) {
-								const importance = amount * (1 + exportPriorityFinal) * (0.5 + importPriorityFinal)
-								return {
-									good,
-									amount,
-									importance
-								}
-							}
-						}
-
-						return null
-					}
-
 					// calculate amount and importance
 					const exportAmount = route.src.isEurope ? canBuyAmount(route.src, good) : canExportAmount(route.src, good)
 					const importAmount = route.dest.isEurope ? exportAmount : canImportAmount(route.dest, good)
@@ -156,8 +132,6 @@ const match = transport => {
 						importance,
 					}
 				})
-				// discard unfit orders from hub to hub
-				.filter(order => !!order)
 				.filter(order => order.amount > 0 && order.importance > 0)
 				// sort by importance descending
 				.sort((a, b) => b.importance - a.importance)
@@ -204,8 +178,8 @@ export default {
 	NOTHING,
 	IMPORT,
 	EXPORT,
-	HUB,
 	BUY,
 	SELL,
+	BALANCE,
 	TREASURE_MIN
 }

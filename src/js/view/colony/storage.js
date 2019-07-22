@@ -38,10 +38,7 @@ const create = (colony, originalDimensions) => {
 		}
 		Drag.makeDraggable(sprite, args)
 		Click.on(sprite, () => {
-			const options = [Trade.NOTHING, Trade.IMPORT, Trade.EXPORT]
-			if (Colony.isCoastal(colony)) {
-				options.push(Trade.HUB)
-			}
+			const options = [Trade.NOTHING, Trade.IMPORT, Trade.EXPORT, Trade.BALANCE]
 			colony.trade[good] = options[(colony.trade[good] + 1) % options.length]
 			Trade.update(colony.trade)
 		})
@@ -58,7 +55,7 @@ const create = (colony, originalDimensions) => {
 				const icon = {
 					[Trade.IMPORT]: 'import',
 					[Trade.EXPORT]: 'export',
-					[Trade.HUB]: 'tradeHub',
+					[Trade.BALANCE]: 'balance',
 				}
 				const sprite = Icon.create(icon[amount])
 				sprite.x = Math.round(index * (originalDimensions.x + 11) / numberOfGoods) + 55

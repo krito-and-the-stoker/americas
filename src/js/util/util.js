@@ -81,6 +81,7 @@ const quantizedRadius = (coords, radius) => range(2 * radius)
 const choose = array => array[Math.floor(Math.random() * array.length)]
 const unique = (value, index, self) => self.indexOf(value) === index
 const sum = array => array.reduce((all, single) => all + single, 0)
+const average = array => array.length > 0 ? sum(array) / array.length : 0
 
 // const minDistance = (many, one) => many.reduce((min, test) => Math.min(min, distance(test, one)), 1e10)
 const minDistance = (many, one) => distance(min(many, other => distance(one, other)), one)
@@ -140,5 +141,6 @@ export default {
 	minPair,
 	minPairValue,
 	pairs,
-	sum
+	sum,
+	average
 }
