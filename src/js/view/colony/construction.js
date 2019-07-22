@@ -1,12 +1,15 @@
 import * as PIXI from 'pixi.js'
 
+import Util from 'util/util'
+import Binding from 'util/binding'
+
 import Colony from 'entity/colony'
 import Building from 'entity/building'
+import Storage from 'entity/storage'
+
 import Dialog from 'view/ui/dialog'
 import Button from 'view/ui/button'
-import Util from 'util/util'
 import ProductionView from 'view/production'
-import Binding from 'util/binding'
 import Text from 'render/text'
 
 
@@ -75,39 +78,41 @@ const create = (colony, originalDimensions) => {
 	}		
 
 
-	const unsubscribeAmount = Colony.listen.construction(colony, Binding.map(updateConstructionPanel, getAmount))
-	const unsubscribeTarget = Colony.listen.construction(colony, Binding.map(updateConstructionPanel, getTarget))
+	const unsubscribeAmount = Colony.listen.construction(colony, Binding.map(getAmount, updateConstructionPanel))
+	const unsubscribeTarget = Colony.listen.construction(colony, Binding.map(getTarget, updateConstructionPanel))
 
-	const getTools = construction => Math.floor(construction.tools)
-	const getToolsNeeded = construction => construction.cost.tools
-	const updateToolsPanel = (have, needed) => {
+	const getToolsUsed = construction => Math.floor(construction.tools)
+	const getToolsNeeded = construction => Math.floor(construction.cost.tools)
+	const getToolsAvailable = storage => Math.floor(storage.tools)
+	const updateToolsPanel = (used, have, needed) => {
 		if (!needed) {
 			return
 		}
 
-		const fraction = Math.min(have / needed, 1)
-		const haveView = ProductionView.create('tools', Math.min(have, needed), fraction * 260)
-		haveView.forEach(s => {
+		const fraction = Math.min(used / needed, 1)
+		const usedView = ProductionView.create('tools', Math.min(used, needed), fraction * 260)
+		usedView.forEach(s => {
 			s.y = originalDimensions.y / 2 - 5 + 3 * 30
 			s.x += originalDimensions.x - 460
 			container.panel.addChild(s)
 		})
-		const needView = ProductionView.create('tools', Math.min(have - needed, 0), (1- fraction) * 260)
-		needView.forEach(s => {
+		const missingView = ProductionView.create('tools', Util.clamp(have + used - needed, -needed, 0), (1 - fraction) * 260)
+		missingView.forEach(s => {
 			s.y = originalDimensions.y / 2 - 5 + 3 * 30
 			s.x += originalDimensions.x - 460 + fraction * 260
 			container.panel.addChild(s)
 		})
 
 		return () => {
-			haveView.forEach(s => container.panel.removeChild(s))
-			needView.forEach(s => container.panel.removeChild(s))
+			usedView.forEach(s => container.panel.removeChild(s))
+			missingView.forEach(s => container.panel.removeChild(s))
 		}
 	}
 
-	const unsubscribeTools = Colony.listen.construction(colony, Binding.map(needed =>
-		Colony.listen.construction(colony, Binding.map(have =>
-			updateToolsPanel(have, needed), getTools)), getToolsNeeded))
+	const unsubscribeTools = Colony.listen.construction(colony, Binding.map(getToolsNeeded, needed =>
+		Storage.listen(colony.storage, Binding.map(getToolsAvailable, have =>
+			Colony.listen.construction(colony, Binding.map(getToolsUsed, used =>
+				updateToolsPanel(used, have, needed)))))))
 
 
 	const unsubscribe = () => {

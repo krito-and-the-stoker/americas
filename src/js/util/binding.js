@@ -110,7 +110,7 @@ const shared = fn => {
 }
 
 
-const map = (fn, mapping, equals = (a, b) => a === b) => {
+const map = (mapping, fn, equals = (a, b) => a === b) => {
 	let oldValue = null
 	let oldCleanup = null
 	const cleanup = final => {

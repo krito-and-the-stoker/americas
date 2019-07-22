@@ -35,7 +35,7 @@ const create = colony => {
 		}
 	}
 
-	const unsubscribe = Storage.listen(colony.productionSummary, Binding.map(updateProductionSummary, Storage.copy, Storage.equals))
+	const unsubscribe = Storage.listen(colony.productionSummary, Binding.map(Storage.copy, updateProductionSummary, Storage.equals))
 
 	return {
 		unsubscribe,

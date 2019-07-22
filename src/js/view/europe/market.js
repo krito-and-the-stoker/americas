@@ -77,10 +77,10 @@ const create = (originalDimensions) => {
 	const unsubscribePriceViews = priceViews.map(view => view.unsubscribe)
 	const perGoodMapping = Object.values(Goods.types).map(good => [good, () => Market.bid(good)])
 	const unsubscribeMarket = perGoodMapping.map(([good, mapping]) => 
-		Market.listen.europe(Binding.map(bid => {
+		Market.listen.europe(Binding.map(mapping, bid => {
 			const ask = Market.ask(good)
 			priceViews.find(view => view.good === good).price.text = `${bid}/${ask}`
-		}, mapping)))
+		})))
 
 	const text = Text.create('', {
 		fontSize: 36
