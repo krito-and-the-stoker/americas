@@ -12,7 +12,7 @@ const create = (colony) => {
 	let lastAmount = 0
 	const update = (currentTime, deltaTime) => {
 		// only grow when we have horses and only when the settler have food
-		if (!colony.storage.horses ||  colony.storage.horses >= colony.capacity || colony.storage.food <= 0) {
+		if (!colony.storage.horses || colony.storage.food <= 0) {
 			return true
 		}
 
