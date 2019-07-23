@@ -3,7 +3,7 @@ import Time from 'timeline/time'
 
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
-const TRUST_GAIN = 0.05
+const TRUST_GAIN = 0.01
 
 const create = settlement => {
 	const update = (currentTime, deltaTime) => {
