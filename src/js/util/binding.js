@@ -39,7 +39,7 @@ const listen = (instance, key, fn) => {
 const pages = [
 	new Set(),
 	new Set
-];
+]
 
 const add = listener => {
 	pages[0].add(listener)
@@ -98,7 +98,7 @@ const shared = fn => {
 			Util.execute(destroy)
 			destroyExecuted += 1
 		}
-		destroy = fn(arg) || doNothing
+		destroy = fn(arg)
 		return () => {
 			destroyScheduled += 1
 			if (destroyScheduled > destroyExecuted) {
@@ -114,17 +114,15 @@ const map = (mapping, fn, equals = (a, b) => a === b) => {
 	let oldValue = null
 	let oldCleanup = null
 	const cleanup = final => {
-		if (final && oldCleanup) {
-			oldCleanup()
+		if (final) {
+			Util.execute(oldCleanup)
 		}
 	}
 	const optimizedListener = newValue => {
 		const mapped = mapping(newValue)
 		if (!equals(mapped, oldValue)) {
 			oldValue = mapped
-			if (oldCleanup) {
-				oldCleanup()
-			}
+			Util.execute(oldCleanup)
 			oldCleanup = fn(mapped)
 		}
 

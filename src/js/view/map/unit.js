@@ -215,12 +215,15 @@ const initialize = () => {
 					if (decline) {					
 						const icon = Resources.sprite('map', { frame: Goods.food.id })
 						icon.scale.set(0.5, 0.5)
-						icon.position.x = 32
-						icon.tint = 0xFF6666
+						icon.position.x = 32					
 						view.sprite.addChild(icon)
-						return () => {
-							view.sprite.removeChild(icon)
-						}
+						return [
+							() => { view.sprite.removeChild(icon) },
+							Storage.listen(unit.equipment, storage => {
+								const redness = Util.clamp(1 - storage.food / Unit.UNIT_FOOD_CAPACITY)
+								icon.tint = Util.interpolateColors(0xFFFFFF, 0xFF0000, redness)
+							})
+						]
 					}
 				}))),
 

@@ -115,6 +115,22 @@ const uid = () => {
 
 const clamp = (value, lower = 0, upper = 1) => Math.min(Math.max(value, lower), upper)
 
+const numberToColor = number => ({
+	r: (number & 0xFF0000) / 0xFF0000,
+	g: (number & 0x00FF00) / 0x00FF00,
+	b: (number & 0x0000FF) / 0x0000FF
+})
+const colorToNumber = ({ r, g, b }) => Math.round(0xFF0000 * r + 0x00FF00 * g + 0x0000FF * b)
+const interpolateColors = (number1, number2, value) => {
+	const color1 = numberToColor(number1)
+	const color2 = numberToColor(number2)
+	return colorToNumber({
+		r: (1 - value) * color1.r + value * color2.r,
+		g: (1 - value) * color1.g + value * color2.g,
+		b: (1 - value) * color1.b + value * color2.b,
+	})
+}
+
 export default {
 	clone,
 	makeObject,
@@ -142,5 +158,6 @@ export default {
 	minPairValue,
 	pairs,
 	sum,
-	average
+	average,
+	interpolateColors
 }

@@ -31,7 +31,7 @@ import Dialog from 'view/ui/dialog'
 const TILE_SIZE = 64
 const MAP_COLONY_FRAME_ID = 53
 
-const buyLandDialog = (tile, settlement) => Dialog.create({
+const buyLandDialog = (tile, colony, settlement) => Dialog.create({
 	text: 'We already use this land and will appreciate if you stay clear of it.',
 	type: 'natives',
 	image: settlement.tribe.image,
@@ -175,7 +175,7 @@ const create = (colony, originalDimensions) => {
 							container.colonists.addChild(icon)
 							return [
 								() => container.colonists.removeChild(icon),
-								Click.on(icon, () => buyLandDialog(tile, harvester))
+								Click.on(icon, () => buyLandDialog(tile, colony, harvester))
 							]
 						}
 					}
@@ -194,7 +194,7 @@ const create = (colony, originalDimensions) => {
 					return false
 				}
 				if (tile.harvestedBy && tile.harvestedBy.type === 'settlement' && !tile.settlement) {
-					await buyLandDialog(tile, tile.harvestedBy)
+					await buyLandDialog(tile, colony, tile.harvestedBy)
 				}
 				if (!tile.harvestedBy) {
 					if (!unit && !args.colonist) {
