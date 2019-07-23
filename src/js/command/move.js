@@ -98,8 +98,10 @@ export default Factory.create('Move', {
 				EnterColony(targetTile.colony, unit)
 			}
 
-			Tile.discover(targetTile, unit.owner)
-			Tile.diagonalNeighbors(targetTile).forEach(other => Tile.discover(other, unit.owner))
+			if (unit.properties.canExplore) {			
+				Tile.discover(targetTile, unit.owner)
+				Tile.diagonalNeighbors(targetTile).forEach(other => Tile.discover(other, unit.owner))
+			}
 		}
 	}
 

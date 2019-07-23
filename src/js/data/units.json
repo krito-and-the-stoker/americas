@@ -12,7 +12,8 @@
 		"cargo": 2,
 		"combat": 1,
 		"radius": 1,
-		"cost": 2
+		"cost": 2,
+		"canExplore": true
 	},
 	"privateer": {
 		"frame": {
@@ -28,7 +29,8 @@
 		"combat": 4,
 		"support": 0.5,
 		"radius": 2,
-		"cost": 4
+		"cost": 4,
+		"canExplore": true
 	},
 	"frigate": {
 		"frame": {
@@ -44,7 +46,8 @@
 		"combat": 8,
 		"support": 1,
 		"radius": 3,
-		"cost": 6
+		"cost": 6,
+		"canExplore": true
 	},
 	"galleon": {
 		"frame": {
@@ -61,7 +64,8 @@
 		"combat": 5,
 		"support": 0.5,
 		"radius": 1,
-		"cost": 4
+		"cost": 4,
+		"canExplore": true
 	},
 	"merchantman": {
 		"frame": {
@@ -76,7 +80,8 @@
 		"cargo": 4,
 		"combat": 3,
 		"radius": 1,
-		"cost": 3
+		"cost": 3,
+		"canExplore": true
 	},
 	"wagontrain": {
 		"frame": {
@@ -106,7 +111,9 @@
 		"speed": 1,
 		"combat": 1,
 		"radius": 2,
-		"cost": 2
+		"cost": 2,
+		"needsFood": true,
+		"canExplore": true
 	},
 	"pioneer": {
 		"frame": {
@@ -121,7 +128,9 @@
 		"canFound": true,
 		"canTerraform": true,
 		"speed": 1,
-		"radius": 0.5
+		"radius": 0.5,
+		"needsFood": true,
+		"canExplore": true
 	},
 	"settler": {
 		"frame": {
@@ -179,7 +188,9 @@
 		"domain": "land",
 		"canFound": true,
 		"speed": 1,
-		"radius": 0.5
+		"radius": 0.5,
+		"needsFood": true,
+		"canExplore": true
 	},
 	"scout": {
 		"frame": {
@@ -194,7 +205,9 @@
 		"canFound": true,
 		"speed": 4,
 		"combat": 1,
-		"radius": 2
+		"radius": 2,
+		"needsFood": true,
+		"canExplore": true
 	},
 	"soldier": {
 		"frame": {
@@ -211,7 +224,9 @@
 		"speed": 1,
 		"combat": 2,
 		"radius": 1.25,
-		"cost": 2
+		"cost": 2,
+		"needsFood": true,
+		"canExplore": true
 	},
 	"dragoon": {
 		"frame": {
@@ -228,7 +243,9 @@
 		"combat": 3,
 		"radius": 2,
 		"colonyDefense": -1,
-		"cost": 3
+		"cost": 3,
+		"needsFood": true,
+		"canExplore": true
 	},
 	"treasure": {
 		"frame": {
@@ -255,7 +272,9 @@
 		"canFound": true,
 		"canMission": true,
 		"speed": 2,
-		"radius": 0.5
+		"radius": 0.5,
+		"needsFood": true,
+		"canExplore": true
 	},
 	"native": {
 		"frame": {
@@ -267,7 +286,8 @@
 		"domain": "land",
 		"speed": 2,
 		"combat": 1,
-		"radius": 1.5
+		"radius": 1.5,
+		"canExplore": true
 	},
 	"armednative": {
 		"frame": {
@@ -279,7 +299,8 @@
 		"domain": "land",
 		"speed": 2,
 		"combat": 2,
-		"radius": 1.5
+		"radius": 1.5,
+		"canExplore": true
 	},
 	"mountednative": {
 		"frame": {
@@ -291,7 +312,8 @@
 		"domain": "land",
 		"speed": 5,
 		"combat": 2,
-		"radius": 2.5
+		"radius": 2.5,
+		"canExplore": true
 	},
 	"mountedarmednative": {
 		"frame": {
@@ -303,6 +325,7 @@
 		"domain": "land",
 		"speed": 5,
 		"combat": 3,
-		"radius": 2.5
+		"radius": 2.5,
+		"canExplore": true
 	}
 }

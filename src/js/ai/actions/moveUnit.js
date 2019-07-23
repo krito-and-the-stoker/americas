@@ -30,8 +30,11 @@ const create = ({ owner, unit, coords }) => {
 					move.unit = unit
 					if (Util.distance(unit.mapCoordinates, coords) > 0) {
 						cancel = commit(unit, coords, () => resolve(unit))
+					} else {
+						resolve(unit)
 					}
 				}),
+				dismiss: Util.execute(prev.dismiss),
 				cancel: () => Util.execute(cancel)
 			}
 

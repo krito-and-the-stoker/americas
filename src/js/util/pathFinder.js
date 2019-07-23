@@ -26,6 +26,7 @@ const initialize = () => {
 			index: tile.index,
 			area: tile.area,
 			cost: () => Tile.movementCost(center, tile),
+			discoveredBy: owner => tile.discoveredBy.includes(owner),
 			tile
 		}))
 
@@ -46,18 +47,18 @@ const findNextToArea = (from, area) => {
 
 const findHighSeas = from => {
 	const target = node => node.tile.terrainName === 'sea lane'
-	return find(from, target, null, from.colony ? Colony.area(from.colony, 'sea') : null)
+	return find(from, target, null, from.colony && Colony.area(from.colony, 'sea'))
 }
 const findPathXY = (from, to, unit) => findPath(MapEntity.tile(from), MapEntity.tile(to), unit)
 const findPath = (from, to, unit) => {
-	return find(from, null, to, Unit.area(unit))
+	return find(from, null, to, Unit.area(unit), !unit.properties.canExplore && unit.owner)
 }
 
 const distance = (fromCoords, toCoords, unit, max = CANNOT_MOVE_COST) => {
 	const from = MapEntity.tile(fromCoords)
 	const to = MapEntity.tile(toCoords)
 	const isTarget = node => (node.cost > max || node.index === to.index)
-	const path = find(from, isTarget, to, Unit.area(unit))
+	const path = find(from, isTarget, to, Unit.area(unit), !unit.properties.canExplore && unit.owner)
 	return path
 		.filter((p, i) => i > 0)
 		.reduce(({ distance, from }, to) => ({
@@ -78,7 +79,7 @@ const	tileDistance = (from, to) => {
 }
 
 
-const find = (from, isTarget, target, area = null) => {
+const find = (from, isTarget, target, area = null, discoveredByOwner = null) => {
 	// TODO: Do something about this message, it is very annoying and needs to go away quickly
 	if (isTarget && target && area && target.area !== area && !target.colony) {
 		console.warn('The case of having a special is target function and an area will probably lead to unexpected results.')
@@ -92,7 +93,7 @@ const find = (from, isTarget, target, area = null) => {
 		const newTarget = findNextToArea(target, area)
 		const newIsTarget = node => node.neighbors.some(n => n.index === newTarget.index)
 
-		return find(from, newIsTarget, { ...newTarget, area }, area)
+		return find(from, newIsTarget, { ...newTarget, area }, area, discoveredByOwner)
 	}
 
 
@@ -144,7 +145,9 @@ const find = (from, isTarget, target, area = null) => {
 
 		explored[node.value.index] = true
 		node.value.neighbors.forEach(neighbor => {
-			if (!explored[neighbor.index] && (!area || neighbor.area === area || neighbor.tile.colony)) {
+			if (!explored[neighbor.index] &&
+					(!discoveredByOwner || neighbor.discoveredBy(discoveredByOwner)) &&
+					(!area || neighbor.area === area || neighbor.tile.colony)) {
 				const neighborNode = graph.node(neighbor.index)
 				const newCost = node.value.cost + neighbor.cost()
 

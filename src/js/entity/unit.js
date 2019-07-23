@@ -17,6 +17,7 @@ import Owner from 'entity/owner'
 import PaySoldier from 'task/paySoldier'
 import ConsumeFood from 'task/consumeFood'
 import FillFoodStock from 'task/fillFoodStock'
+import SupplyFromTransport from 'task/SupplyFromTransport'
 
 import Commander from 'command/commander'
 
@@ -50,7 +51,7 @@ const create = (name, coords, owner) => {
 		unit.equipment = Storage.create()
 		unit.commander = Commander.create({ keep: true, unit })
 
-		unit.equipment.food = UNIT_FOOD_CAPACITY
+		unit.equipment.food = unit.properties.needsFood ? UNIT_FOOD_CAPACITY : 0
 
 		if (name === 'pioneer') {
 			unit.equipment.tools = 100
@@ -179,25 +180,31 @@ const initialize = unit => {
 		}),
 
 		listen.colonist(unit, colonist =>
-			colonist ? Colonist.listen.expert(colonist, expert =>
-				update.expert(unit, expert)) : null),
+			colonist && Colonist.listen.expert(colonist, expert =>
+				update.expert(unit, expert))),
 
 		listen.properties(unit, () => Time.schedule(PaySoldier.create(unit))),
-		listen.properties(unit, () =>
+		listen.properties(unit, properties =>
 			// only these units need food
-			['settler', 'scout', 'soldier', 'dragoon', 'missionary', 'pioneer'].includes(unit.name) ?
+			properties.needsFood &&
 				// in europe nobody needs to eat
 				listen.offTheMap(unit, offTheMap =>
-					!offTheMap ? [
+					!offTheMap && [
 						// do not eat when on a ship
 						listen.vehicle(unit, vehicle =>
-							!vehicle ? Time.schedule(ConsumeFood.create(unit)) : null),
+							!vehicle && Time.schedule(ConsumeFood.create(unit))),
 
 						listen.tile(unit, tile =>
-							Tile.radius(tile).map(other =>
+							Tile.radius(tile).map(other => [
 								Tile.listen.colony(other, colony =>
-									colony ? Time.schedule(FillFoodStock.create(unit, colony)) : null)))
-					] : null) : null)
+									colony && Time.schedule(FillFoodStock.create(unit, colony))),
+								!unit.colony && Tile.listen.units(other, units =>
+									units
+										.filter(u => u.owner === unit.owner && u.properties.cargo > 0)
+										.map(transport =>
+											Time.schedule(SupplyFromTransport.create(transport, unit))))
+							]))
+					]))
 	]
 }
 
@@ -310,7 +317,8 @@ const strength = unit => {
 	return result
 }
 
-const speed = unit => unit.properties.speed / (1 + overWeight(unit))
+const speed = unit => (unit.properties.speed +
+	(unit.name === 'scout' && unit.expert === 'scout' ? 1 : 0)) / (1 + overWeight(unit))
 
 const loadGoods = (unit, pack) => {
 	if (!hasCapacity(unit, pack) && pack.amount > 0) {
