@@ -737,8 +737,7 @@ const createRaid = (colony, unit, pack) => {
 		Dialog.create({
 			type: 'govenor',
 			text: `The storage of ${colony.name} has been plundered. ${Math.round(pack.amount)} ${pack.good} are missing.`,
-			coords: colony.mapCoordinates,
-			pause: true
+			coords: colony.mapCoordinates
 		})
 	}
 
@@ -809,8 +808,7 @@ const createCombat = (attacker, defender, loser, strength) => {
 		MapView.centerAt(coords, 350)
 		Dialog.create({
 			type: 'marshal',
-			text: `A ${Unit.name(winner)} (strength ${winnerStrength}) has defeated a ${Unit.name(loser)} (strength ${loserStrength} in battle.`,
-			pause: true
+			text: `A ${Unit.name(winner)} (${winnerStrength}) has defeated a ${Unit.name(loser)} (${loserStrength}) in battle.`,
 		})
 	}
 
@@ -819,7 +817,7 @@ const createCombat = (attacker, defender, loser, strength) => {
 	const dialog = {
 		type: 'marshal',
 		text: 'There has been a fight!',
-		coords: defender.mapCoordinates,
+		coords: defender.mapCoordinates
 	}
 
 	return {
