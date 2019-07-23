@@ -14,6 +14,8 @@ import Storage from 'entity/storage'
 import Commander from 'command/commander'
 import LearnFromNatives from 'command/learnFromNatives'
 
+import ConvertNatives from 'task/convertNatives'
+
 import Bombard from 'interaction/bombard'
 
 import Natives from 'ai/natives'
@@ -40,7 +42,7 @@ const create = (tribe, coords, owner) => {
 		hasLearned: false,
 		lastTaxation: 0,
 		expert: Util.choose(Object.keys(experts)),
-		mission: false,
+		mission: null,
 		population: Math.ceil(tribe.civilizationLevel * (1 + 3*Math.random()))
 	}
 
@@ -77,6 +79,8 @@ const initialize = settlement => {
 
 	settlement.destroy = [
 		Tribe.add.settlement(settlement.tribe, settlement),
+		listen.mission(settlement, mission =>
+			mission && ConvertNatives.create(settlement, mission))
 	]
 }
 
@@ -171,7 +175,7 @@ const dialog = (settlement, unit, answer) => {
 			options: [{
 				default: true,			
 				action: () => {
-					update.mission(settlement, true)
+					update.mission(settlement, unit.owner)
 					Unit.disband(unit)
 				}
 			}]
@@ -180,7 +184,7 @@ const dialog = (settlement, unit, answer) => {
 	if (answer === 'chief') {
 		const welcomeText = `Welcome stranger! We are well known for our ${experts[settlement.expert]}.`
 		const choice = Math.random()
-		if (relations.militancy > 0.1 && 0.8*Math.random() >= relations.trust) {
+		if (Math.random() * relations.militancy > 0.5 && relations.trust < 0) {
 			return {
 				text: 'Your people have been untrustworthy and reckless against us. We will use you for target practice.',
 				type: 'natives',
@@ -236,7 +240,7 @@ const dialog = (settlement, unit, answer) => {
 		}
 	}
 	if (answer === 'live') {
-		if (Math.random() < relations.militancy && Math.random() >= relations.trust) {
+		if (Math.random() > relations.militancy && relations.trust < -0.5) {
 			return {
 				text: 'How dare you asking for our help when you brought so much misery to our people. Prepare to die for your foolishness.',
 				type: 'natives',
@@ -249,7 +253,7 @@ const dialog = (settlement, unit, answer) => {
 				}]
 			}
 		}
-		if (relations.trust < 0.4) {
+		if (relations.trust < -0.2) {
 			return {
 				text: 'We do not feel comfortable around your people at this time. Please leave.',
 				type: 'natives',
@@ -285,7 +289,7 @@ const dialog = (settlement, unit, answer) => {
 		}
 		if (unit.name === 'settler') {
 			if (!unit.expert || unit.expert === 'servant') {
-				if (settlement.hasLearned) {
+				if (settlement.hasLearned && relations.trust < 0.5) {
 					return {
 						text: 'We have already shared our knowledge with you. Now go your way and spread it amongst your people.',
 						type: 'natives',
@@ -415,7 +419,7 @@ const save = settlement => ({
 	expert: settlement.expert,
 	presentGiven: settlement.presentGiven,
 	hasLearned: settlement.hasLearned,
-	mission: settlement.mission,
+	mission: Record.reference(settlement.mission),
 	population: settlement.population,
 	lastTaxation: settlement.lastTaxation
 })
@@ -423,6 +427,7 @@ const save = settlement => ({
 const load = settlement => {
 	settlement.tribe = Record.dereference(settlement.tribe)
 	settlement.owner = Record.dereference(settlement.owner)
+	settlement.mission = Record.dereference(settlement.mission)
 
 	Record.entitiesLoaded(() => initialize(settlement))
 	return settlement

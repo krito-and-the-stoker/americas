@@ -28,6 +28,11 @@ import State from 'ai/state'
 import Units from 'ai/resources/units'
 import Goods from 'ai/resources/goods'
 
+
+const MILITANCY_UPDATE_FACTOR = 1.0 / (1*Time.YEAR)
+const MILITANCY_DECAY_FACTOR = 0.999
+const TRUST_DECAY_FACTOR = 0.999
+
 const offensiveCapability = ai => {
 	let offense = 1
 	if (ai.tribe.storage.guns >= 25 && ai.tribe.storage.horses >= 25) {
@@ -57,7 +62,7 @@ const colonyRaidProbability = (t, colony, ai) => {
 		return 0
 	}
 
-	const attraction = Util.clamp(1 - relations.trust) * Goods.value(colony.storage)
+	const attraction = Util.clamp(1 - relations.trust) * 0.2 * Goods.value(colony.storage)
 	const protection = Colony.protection(colony)
 	const offense = offensiveCapability(ai)
 	const defense = 100 * protection * protection / Util.clamp(offense*offense + relations.militancy, 0.1, 100 * protection * protection)
@@ -83,25 +88,25 @@ const watch = (ai, colony) => {
 }
 
 const describeRelations = relations => {
-	if (relations.militancy > 1.5) {	
+	if (relations.militancy > 1.0) {	
 		if (relations.trust >= 1) {
 			return 'proud'
 		}
 
 		if (relations.trust >= 0) {
-			return 'alerted'
+			return 'angry'
 		}
 
 		return 'hostile'
 	}
 
-	if (relations.militancy >= 0) {
+	if (relations.militancy > 0) {
 		if (relations.trust >= 1) {
 			return 'friendly'
 		}
 
-		if (relations.trust >= 0) {
-			return 'curious'
+		if (relations.trust > 0) {
+			return 'undecided'
 		}
 
 		return 'nervous'
@@ -117,6 +122,7 @@ const describeRelations = relations => {
 
 	return 'submissive'
 }
+
 
 
 const initialize = ai => {
@@ -143,8 +149,8 @@ const initialize = ai => {
 									ai.state.relations[owner.referenceId] = {
 										established: false,
 										colonies: {},
-										militancy: 0.25 - 0.5*Math.random(),
-										trust: 0.75 + 0.5*Math.random(),
+										militancy: 0,
+										trust: 0.1,
 									}
 
 									update.state(ai)
@@ -178,6 +184,15 @@ const initialize = ai => {
 		listen.state(ai, () => {
 			makePlansAndRunThem(ai)
 		}),
+
+		Time.schedule(({ update: (currentTime, deltaTime) => {
+			Object.values(ai.state.relations).forEach(relations => {
+				relations.militancy = Util.clamp(MILITANCY_DECAY_FACTOR * relations.militancy - deltaTime * MILITANCY_UPDATE_FACTOR * relations.trust, 0, 3)
+				relations.trust = Util.clamp(relations.trust * TRUST_DECAY_FACTOR, -1, 1)
+			})
+
+			return true
+		}})),
 
 		Events.listen('meet', ({ unit, other }) => {
 			if (unit && other) {			

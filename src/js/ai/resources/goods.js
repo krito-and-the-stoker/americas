@@ -13,14 +13,14 @@ const value = storage => {
 		wood: 2,
 		ore: 1,
 		silver: 3,
-		horses: 20,
+		horses: 15,
 		rum: 8,
 		cigars: 7,
 		cloth: 10,
 		coats: 10,
 		tradeGoods: 7,
 		tools: 15,
-		guns: 20,
+		guns: 15,
 	}
 
 	return Util.sum(Storage.goods(storage).map(pack => prices[pack.good] * pack.amount))
