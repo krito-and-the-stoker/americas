@@ -1,7 +1,7 @@
 import Binding from 'util/binding'
 
 const DAY = 300
-const WEEK = 7* DAY
+const WEEK = 7 * DAY
 const MONTH = 30 * DAY
 const YEAR = 365 * DAY
 

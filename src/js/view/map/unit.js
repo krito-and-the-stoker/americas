@@ -1,7 +1,12 @@
 import * as PIXI from 'pixi.js'
 import TWEEN from '@tweenjs/tween.js'
 
+import Goods from 'data/goods.json'
+
 import Tween from 'util/tween'
+import Util from 'util/util'
+import Record from 'util/record'
+import Binding from 'util/binding'
 
 import Foreground from 'render/foreground'
 import Resources from 'render/resources'
@@ -14,13 +19,10 @@ import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
 import Owner from 'entity/owner'
 import Tile from 'entity/tile'
+import Storage from 'entity/storage'
 
 import ColonyView from 'view/colony'
 import Events from 'util/events'
-
-import Util from 'util/util'
-import Record from 'util/record'
-import Binding from 'util/binding'
 
 import Dialog from 'view/ui/dialog'
 
@@ -155,6 +157,17 @@ const updateRadius = view => {
 	view.circle.scale.set(0.5 * view.unit.radius)
 }
 
+
+const createFoodDeclineMapping = () => {
+	let lastFood = null
+	return storage => {
+		const result = lastFood && lastFood > storage.food
+		lastFood = storage.food
+
+		return result
+	}
+}
+
 const updateVisibility = view => visibleOnMap(view) ? show(view) : hide(view)
 const visibleOnMap = view => (view === state.selectedView || !view.unit.colony) &&
 	!view.unit.vehicle &&
@@ -197,6 +210,19 @@ const initialize = () => {
 			Unit.listen.properties(unit, () => { updateTexture(view) }),
 			Unit.listen.expert(unit, () => { updateTexture(view) }),
 			Unit.listen.radius(unit, () => { updateRadius(view)} ),
+			Unit.listen.properties(unit, properties =>
+				properties.needsFood && Storage.listen(unit.equipment, Binding.map(createFoodDeclineMapping(), decline => {
+					if (decline) {					
+						const icon = Resources.sprite('map', { frame: Goods.food.id })
+						icon.scale.set(0.5, 0.5)
+						icon.position.x = 32
+						icon.tint = 0xFF6666
+						view.sprite.addChild(icon)
+						return () => {
+							view.sprite.removeChild(icon)
+						}
+					}
+				}))),
 
 			Unit.listen.pioneering(unit, pioneering => {
 				if (pioneering) {
