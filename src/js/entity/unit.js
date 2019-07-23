@@ -269,7 +269,7 @@ const area = unit => {
 }
 
 const additionalEquipment = unit => Storage.goods(unit.equipment)
-	.filter(pack => !pack.good === 'food')
+	.filter(pack => pack.good !== 'food')
 	.filter(pack => !((unit.name === 'soldier' || unit.name === 'dragoon') && pack.good === 'guns'))
 	.filter(pack => !((unit.name === 'scout' || unit.name === 'dragoon') && pack.good === 'horses'))
 	.filter(pack => !(unit.name === 'pioneer' && pack.good === 'tools'))
