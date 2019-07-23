@@ -200,7 +200,7 @@ const initialize = unit => {
 									colony && Time.schedule(FillFoodStock.create(unit, colony))),
 								!unit.colony && Tile.listen.units(other, units =>
 									units
-										.filter(u => u.owner === unit.owner && u.properties.cargo > 0)
+										.filter(u => u.owner === unit.owner && u.properties.cargo > 0 && !u.colony)
 										.map(transport =>
 											Time.schedule(SupplyFromTransport.create(transport, unit))))
 							]))

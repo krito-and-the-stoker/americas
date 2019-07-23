@@ -13,8 +13,10 @@ const create = (transport, unit) => {
 		const desiredAmount = Math.min(2 * FOOD_COST * deltaTime * PRODUCTION_BASE_FACTOR, Unit.UNIT_FOOD_CAPACITY - unit.equipment.food)
 		const scaledAmount = Math.min(desiredAmount, transport.storage.food + transport.storage.horses)
 
-		Storage.update(unit.equipment, { good: 'food', amount: scaledAmount })
-		Storage.update(transport.storage, { good: 'food', amount: -scaledAmount })
+		if (scaledAmount > 0) {		
+			Storage.update(unit.equipment, { good: 'food', amount: scaledAmount })
+			Storage.update(transport.storage, { good: 'food', amount: -scaledAmount })
+		}
 		
 		return true
 	}
