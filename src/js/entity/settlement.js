@@ -80,7 +80,7 @@ const initialize = settlement => {
 	settlement.destroy = [
 		Tribe.add.settlement(settlement.tribe, settlement),
 		listen.mission(settlement, mission =>
-			mission && ConvertNatives.create(settlement, mission))
+			mission && Time.schedule(ConvertNatives.create(settlement, mission)))
 	]
 }
 
