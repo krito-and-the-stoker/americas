@@ -62,7 +62,7 @@ const colonyRaidProbability = (t, colony, ai) => {
 		return 0
 	}
 
-	const attraction = Util.clamp(1 - relations.trust) * 0.2 * Goods.value(colony.storage)
+	const attraction = Util.clamp(1 - relations.trust) * relations.militancy * Goods.value(colony.storage)
 	const protection = Colony.protection(colony)
 	const offense = offensiveCapability(ai)
 	const defense = 100 * protection * protection / Util.clamp(offense*offense + relations.militancy, 0.1, 100 * protection * protection)
