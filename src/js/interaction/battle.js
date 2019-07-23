@@ -3,8 +3,6 @@ import Util from 'util/util'
 import Message from 'util/message'
 import Events from 'util/events'
 
-import Time from 'timeline/time'
-
 import Unit from 'entity/unit'
 import Storage from 'entity/storage'
 
@@ -21,10 +19,16 @@ export default (attacker, other) => {
 	Unit.update.radius(attacker, 0)
 	Unit.update.radius(defender, 0)
 
-	let probability = {
-		attacker: Math.pow(Unit.strength(attacker), 2),
-		defender: Math.pow(Unit.strength(defender), 2),
+	const strength = {
+		attacker: Unit.strength(attacker),
+		defender: Unit.strength(defender),
 	}
+
+	const probability = {
+		attacker: Math.pow(strength.attacker, 2),
+		defender: Math.pow(strength.defender, 2),
+	}
+
 
 	const chance = Math.random() * (probability.attacker + probability.defender)
 
@@ -36,7 +40,7 @@ export default (attacker, other) => {
 	if (chance < probability.attacker) {
 		loser = defender
 		Message.send(`A ${attackerName} defeated a ${defenderName} on the battle field`)
-		Events.trigger('notification', { type: 'combat', attacker, defender, loser })
+		Events.trigger('notification', { type: 'combat', attacker, defender, loser, strength })
 		Unit.disband(defender)
 		if (attacker.owner.type === 'natives') {
 			const relation = attacker.owner.ai.state.relations[defender.owner.referenceId]
@@ -50,7 +54,7 @@ export default (attacker, other) => {
 	} else {
 		loser = attacker
 		Message.send(`A ${defenderName} defeated a ${attackerName} on the battle field`)
-		Events.trigger('notification', { type: 'combat', attacker, defender, loser })
+		Events.trigger('notification', { type: 'combat', attacker, defender, loser, strength })
 		Unit.disband(attacker)
 		if (attacker.owner.type === 'natives') {
 			const relation = attacker.owner.ai.state.relations[defender.owner.referenceId]
@@ -66,5 +70,5 @@ export default (attacker, other) => {
 		x: (attacker.mapCoordinates.x + defender.mapCoordinates.x) / 2,
 		y: (attacker.mapCoordinates.y + defender.mapCoordinates.y) / 2,
 	}
-	Events.trigger('combat', { coords, attacker, defender, loser })
+	Events.trigger('combat', { coords, attacker, defender, loser, strength })
 }

@@ -58,57 +58,53 @@ const advance = deltaTime => {
 		return
 	}
 	currentTime += deltaTime * time.scale
-	// TODO: move this away from here
-	try {
-		lowPrioDeltaTime += deltaTime * time.scale
 
-		const tasks = (lowPrioDeltaTime >= LOW_PRIORITY_DELTA_TIME ? scheduled : prioritized)
-			.filter(e => {
-				if (!e.started && e.init) {
-					e.alive = e.init(currentTime)
-					e.started = true
-				} else {
-					e.alive = true
-				}
-				return e.started || !e.init
-			})
+	lowPrioDeltaTime += deltaTime * time.scale
 
-		tasks
-			.filter(e => !e.alive || !e.update || !e.update(currentTime, e.priority ? deltaTime : lowPrioDeltaTime))
-			.forEach(e => {
-				if (e.finished) {
-					e.finished()
-				}
-				e.cleanup = true
-			})
+	const tasks = (lowPrioDeltaTime >= LOW_PRIORITY_DELTA_TIME ? scheduled : prioritized)
+		.filter(e => {
+			if (!e.started && e.init) {
+				e.alive = e.init(currentTime)
+				e.started = true
+			} else {
+				e.alive = true
+			}
+			return e.started || !e.init
+		})
 
-		scheduled
-			.filter(e => e.willStop)
-			.forEach(e => {
-				if (e.stopped) {
-					e.stopped()
-				}
-				e.cleanup = true
-			})
+	tasks
+		.filter(e => !e.alive || !e.update || !e.update(currentTime, e.priority ? deltaTime : lowPrioDeltaTime))
+		.forEach(e => {
+			if (e.finished) {
+				e.finished()
+			}
+			e.cleanup = true
+		})
 
-		scheduled = scheduled.filter(e => !e.cleanup)
-		prioritized = prioritized.filter(e => !e.cleanup)
+	scheduled
+		.filter(e => e.willStop)
+		.forEach(e => {
+			if (e.stopped) {
+				e.stopped()
+			}
+			e.cleanup = true
+		})
 
-		if (lowPrioDeltaTime >= LOW_PRIORITY_DELTA_TIME) {
-			lowPrioDeltaTime = 0
-		}
+	scheduled = scheduled.filter(e => !e.cleanup)
+	prioritized = prioritized.filter(e => !e.cleanup)
 
-		update.timeOfYear((currentTime % YEAR) / YEAR)
-		update.year(Math.floor(startYear + currentTime / YEAR))
-		if (Math.floor(12 * time.timeOfYear) !== time.monthNumber) {
-			time.monthNumber = Math.floor(12 * time.timeOfYear)
-			update.month(months[time.monthNumber])
-		}
-
-		Binding.applyAllUpdates()
-	}	catch(error) {
-		throw error
+	if (lowPrioDeltaTime >= LOW_PRIORITY_DELTA_TIME) {
+		lowPrioDeltaTime = 0
 	}
+
+	update.timeOfYear((currentTime % YEAR) / YEAR)
+	update.year(Math.floor(startYear + currentTime / YEAR))
+	if (Math.floor(12 * time.timeOfYear) !== time.monthNumber) {
+		time.monthNumber = Math.floor(12 * time.timeOfYear)
+		update.month(months[time.monthNumber])
+	}
+
+	Binding.applyAllUpdates()
 }
 
 let lastCurve = 0
@@ -211,5 +207,9 @@ export default {
 	CONSTRUCT_ROAD,
 	TEACH_BASE_TIME,
 	LEARN_BASE_TIME,
-	CARGO_LOAD_TIME
+	CARGO_LOAD_TIME,
+	DAY,
+	WEEK,
+	MONTH,
+	YEAR
 }

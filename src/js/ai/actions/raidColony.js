@@ -45,7 +45,6 @@ const create = ({ tribe, state, colony }) => {
 					// raid when in range
 					const unsubscribeRaid = Events.listen('meet', params => {
 						if (params.colony === colony && params.unit === move.unit) {
-							console.log('raiding', params.unit, colony)
 							Raid(colony, params.unit)
 
 							cleanup()
@@ -57,7 +56,6 @@ const create = ({ tribe, state, colony }) => {
 						if (params.loser === move.unit) {
 							state.relations[colony.owner.referenceId].militancy -= 0.05
 							state.relations[colony.owner.referenceId].trust -= 0.05
-							console.log('raider has died in battle')
 							cleanup()
 						}
 					})

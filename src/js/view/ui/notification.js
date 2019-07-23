@@ -477,20 +477,18 @@ const createStarving = colony => {
 	}
 }
 
-const createDied = (colony, unit) => {
-	const colonyView = colonyIcon(colony)
+const createDied = unit => {
 	const unitView = Resources.sprite('map', { frame: UnitView.getFrame(unit) })
+	const good = Resources.sprite('map', { frame: Goods.food.id })
 	const minus = Icon.create('minus')
-	const container = combine(colonyView, unitView, minus)
+	const container = combine(unitView, good, minus)
 
-	const action = () => ColonyView.open(colony)
-	const dismiss = {
-		colonyScreen: c => c === colony
-	}
+	const action = () => MapView.centerAt(unit.mapCoordinates, 350)
+	const dismiss = {}
 
 	const dialog = {
-		text: `A ${Unit.name(unit)} has died of starvation in ${colony.name}`,
-		coords: colony.mapCoordinates,
+		text: `A ${Unit.name(unit)} has died of starvation`,
+		coords: unit.mapCoordinates,
 		type: 'govenor'
 	}
 
@@ -727,7 +725,7 @@ const createDecimated = settlement => {
 	}
 }
 
-const createRaid = (colony, unit) => {
+const createRaid = (colony, unit, pack) => {
 	const colonyView = colonyIcon(colony)
 	const unitView = Resources.sprite('map', { frame: UnitView.getFrame(unit) })
 	const icon = Icon.create('minus')
@@ -736,6 +734,12 @@ const createRaid = (colony, unit) => {
 
 	const action = () => {
 		MapView.centerAt(colony.mapCoordinates, 350)
+		Dialog.create({
+			type: 'govenor',
+			text: `The storage of ${colony.name} has been plundered. ${Math.round(pack.amount)} ${pack.good} are missing.`,
+			coords: colony.mapCoordinates,
+			pause: true
+		})
 	}
 
 	const dismiss = {}
@@ -755,7 +759,7 @@ const createRaid = (colony, unit) => {
 	}
 }
 
-const createCombat = (attacker, defender, loser) => {
+const createCombat = (attacker, defender, loser, strength) => {
 	const coords = {
 		x: Math.round((attacker.mapCoordinates.x + defender.mapCoordinates.x) / 2),
 		y: Math.round((attacker.mapCoordinates.y + defender.mapCoordinates.y) / 2)
@@ -797,16 +801,25 @@ const createCombat = (attacker, defender, loser) => {
 
 	container.scale.set(1.5)
 
+	const winner = attacker === loser ? defender : attacker
+	const winnerStrength = Math.round(10 * (attacker === winner ? strength.attacker : strength.defender)) / 10
+	const loserStrength = Math.round(10 * (attacker === loser ? strength.attacker : strength.defender)) / 10
+
 	const action = () => {
 		MapView.centerAt(coords, 350)
+		Dialog.create({
+			type: 'marshal',
+			text: `A ${Unit.name(winner)} (strength ${winnerStrength}) has defeated a ${Unit.name(loser)} (strength ${loserStrength} in battle.`,
+			pause: true
+		})
 	}
 
 	const dismiss = {}
 
 	const dialog = {
 		type: 'marshal',
-		'text': 'There has been a fight!',
-		coords,
+		text: 'There has been a fight!',
+		coords: defender.mapCoordinates,
 	}
 
 	return {
@@ -835,15 +848,15 @@ const createType = {
 	rumor: params => createRumor(params.option, params.tile, params.unit),
 	born: params => createSettlerBorn(params.colony, params.unit),
 	starving: params => createStarving(params.colony),
-	died: params => createDied(params.colony, params.unit),
+	died: params => createDied(params.unit),
 	storageEmpty: params => createStorageEmpty(params.colony, params.good),
 	storageFull: params => createStorageFull(params.colony, params.good),
 	arrive: params => createArrive(params.colony, params.unit),
 	settlement: params => createSettlement(params.settlement, params.unit),
 	learned: params => createLearned(params),
 	treasure: params => createTreasure(params.colony, params.unit),
-	combat: params => createCombat(params.attacker, params.defender, params.loser),
-	raid: params => createRaid(params.colony, params.unit),
+	combat: params => createCombat(params.attacker, params.defender, params.loser, params.strength),
+	raid: params => createRaid(params.colony, params.unit, params.pack),
 	destroyed: params => createDestroyed(params.settlement, params.treasure),
 	decimated: params => createDecimated(params.settlement)
 }

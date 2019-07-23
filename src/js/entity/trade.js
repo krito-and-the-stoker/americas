@@ -145,7 +145,7 @@ const match = transport => {
 					return false
 				})
 
-			return {			
+			return {
 				...route,
 				distance: routeDistance(route.src, route.dest, transport),
 				orders,

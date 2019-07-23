@@ -428,6 +428,7 @@ export default {
 	update,
 	loadGoods,
 	loadUnit,
+	updateType,
 	unloadUnit,
 	unloadAllUnits,
 	hasCapacity,
