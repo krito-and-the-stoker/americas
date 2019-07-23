@@ -155,7 +155,7 @@ const dialog = (settlement, unit, answer) => {
 		}
 	}
 	if (answer === 'mission') {
-		if (relations.militancy > 0.2 && 0.4*Math.random() >= relations.trust) {
+		if (Math.random() * relations.militancy > 0.2 && relations.trust < 0) {
 			return {
 				text: 'Your missionary was unable to establish friendly contact with the natives and has vanished.',
 				type: 'religion',

@@ -19,9 +19,10 @@ const create = ({ tribe, state, colony }) => {
 		let cancelDisband = []
 		return {
 			cancel: () => {
-				moves.forEach(move => move.cancel())
+				Util.execute(moves.map(move => move.cancel))
 				Util.execute(cancelDisband)
 			},
+			dismiss: () => Util.execute(moves.dismiss),
 			commit: () => {
 				return Promise.all(moves.map(move => new Promise(resolve => {
 					let cleanup = () => {

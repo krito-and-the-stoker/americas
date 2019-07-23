@@ -29,8 +29,30 @@ import Dialog from 'view/ui/dialog'
 
 
 const TILE_SIZE = 64
-const MAP_COLONY_FRAME_ID = 53 
+const MAP_COLONY_FRAME_ID = 53
 
+const buyLandDialog = (tile, settlement) => Dialog.create({
+	text: 'We already use this land and will appreciate if you stay clear of it.',
+	type: 'natives',
+	image: settlement.tribe.image,
+	options: [{
+		text: 'We will respect your wishes',
+	}, {
+		text: 'We offer you 500 gold as a compensation for.',
+		action: () => {
+			settlement.owner.ai.state.relations[colony.owner.referenceId].trust -= 0.025
+			Treasure.spend(500)
+			Tile.update.harvestedBy(tile, null)
+		},
+		disabled: Treasure.amount() < 500
+	}, {
+		text: 'We have rightfully claimed this land for the crown of England and will use it.',
+		action: () => {
+			settlement.owner.ai.state.relations[colony.owner.referenceId].trust -= 0.1
+			Tile.update.harvestedBy(tile, null)
+		}
+	}]
+})
 
 const create = (colony, originalDimensions) => {
 	const container = {
@@ -137,15 +159,28 @@ const create = (colony, originalDimensions) => {
 					}
 
 					if (harvester.type === 'settlement') {
-						const icon = Icon.create('natives')
-						icon.x = position.x + 16
-						icon.y = position.y + 16
-						icon.scale.set(0.5)
-						container.colonists.addChild(icon)
-						return () => { container.colonists.removeChild(icon) }
+						if (tile.settlement) {
+							const sprite = Resources.sprite('map', { frame: tile.settlement.tribe.id - 1 })
+							sprite.x = position.x
+							sprite.y = position.y
+							container.colonists.addChild(sprite)
+							return () => {
+								container.colonists.removeChild(sprite)
+							}
+						} else {
+							const icon = Icon.create('natives')
+							icon.x = position.x + 16
+							icon.y = position.y + 16
+							icon.scale.set(0.5)
+							container.colonists.addChild(icon)
+							return [
+								() => container.colonists.removeChild(icon),
+								Click.on(icon, () => buyLandDialog(tile, harvester))
+							]
+						}
 					}
 				}
-			})			
+			})
 
 			const destroyDrag = Drag.makeDragTarget(sprites[sprites.length - 1], async args => {
 				const { unit } = args
@@ -158,30 +193,8 @@ const create = (colony, originalDimensions) => {
 				if (unit && !unit.properties.canFound) {
 					return false
 				}
-				if (tile.harvestedBy && tile.harvestedBy.type === 'settlement') {
-					const settlement = tile.harvestedBy
-					await Dialog.create({
-						text: 'We already use this land and will appreciate if you stay clear of it.',
-						type: 'natives',
-						image: settlement.tribe.image,
-						options: [{
-							text: 'We will respect your wishes',
-						}, {
-							text: 'Although we already own this land we offer you 500 gold as a compensation for.',
-							action: () => {
-								settlement.owner.ai.state.relations[colony.owner.referenceId].trust -= 0.025
-								Treasure.spend(500)
-								Tile.update.harvestedBy(tile, null)
-							},
-							disabled: Treasure.amount() < 500
-						}, {
-							text: 'We have rightfully claimed this land for the crown of England and will therefore use it.',
-							action: () => {
-								settlement.owner.ai.state.relations[colony.owner.referenceId].trust -= 0.1
-								Tile.update.harvestedBy(tile, null)
-							}
-						}]
-					})
+				if (tile.harvestedBy && tile.harvestedBy.type === 'settlement' && !tile.settlement) {
+					await buyLandDialog(tile, tile.harvestedBy)
 				}
 				if (!tile.harvestedBy) {
 					if (!unit && !args.colonist) {
