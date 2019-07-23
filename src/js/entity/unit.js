@@ -27,7 +27,7 @@ import EnterEurope from 'interaction/enterEurope'
 
 const UNIT_FOOD_CAPACITY = 6
 
-const RADIUS_GROWTH = 1.0 / 2500
+const RADIUS_GROWTH = 1.0 / (2* Time.WEEK)
 const create = (name, coords, owner) => {
 	if (Units[name]) {
 		const unit = {
