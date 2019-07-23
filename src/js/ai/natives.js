@@ -89,35 +89,35 @@ const watch = (ai, colony) => {
 
 const describeRelations = relations => {
 	if (relations.militancy > 1.0) {	
-		if (relations.trust >= 1) {
+		if (relations.trust >= 0.7) {
 			return 'proud'
 		}
 
 		if (relations.trust >= 0) {
-			return 'angry'
+			return 'alert'
 		}
 
 		return 'hostile'
 	}
 
 	if (relations.militancy > 0) {
-		if (relations.trust >= 1) {
+		if (relations.trust >= 0.7) {
 			return 'friendly'
 		}
 
-		if (relations.trust > 0) {
-			return 'undecided'
+		if (relations.trust >= 0) {
+			return 'reserved'
 		}
 
 		return 'nervous'
 	}
 
-	if (relations.trust >= 1) {
+	if (relations.trust >= 0.7) {
 		return 'happy'
 	}
 
 	if (relations.trust >= 0) {
-		return 'cautious'
+		return 'cordial'
 	}
 
 	return 'submissive'
