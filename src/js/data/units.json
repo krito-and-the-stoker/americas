@@ -94,7 +94,8 @@
 		"domain": "land",
 		"canFound": false,
 		"speed": 1,
-		"radius": 0.5
+		"radius": 0.5,
+		"cost": 1
 	},
 	"artillery": {
 		"frame": {

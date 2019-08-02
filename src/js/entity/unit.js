@@ -25,7 +25,10 @@ import EnterColony from 'interaction/enterColony'
 import LeaveColony from 'interaction/leaveColony'
 import EnterEurope from 'interaction/enterEurope'
 
-const UNIT_FOOD_CAPACITY = 6
+const UNIT_FOOD_CAPACITY = 25
+const FOOD_COST = 5
+const FOOD_COST_PER_HORSE = 0.1 // 5 food per 50 horses
+
 
 const RADIUS_GROWTH = 1.0 / (2* Time.WEEK)
 const create = (name, coords, owner) => {
@@ -446,5 +449,7 @@ export default {
 	area,
 	strength,
 	name,
-	UNIT_FOOD_CAPACITY
+	UNIT_FOOD_CAPACITY,
+	FOOD_COST,
+	FOOD_COST_PER_HORSE
 }

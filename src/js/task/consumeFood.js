@@ -7,8 +7,6 @@ import Unit from 'entity/unit'
 
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
-const FOOD_COST = 2
-const FOOD_COST_PER_HORSE = 0.02 // 1 food per 50 horses
 const CHANCE_OF_DEATH = 0.01
 
 const create = unit => {
@@ -22,7 +20,7 @@ const create = unit => {
 			return true
 		}
 
-		const unscaledAmount = FOOD_COST + (unit.equipment.horses + unit.storage.horses) * FOOD_COST_PER_HORSE
+		const unscaledAmount = Unit.FOOD_COST + (unit.equipment.horses + unit.storage.horses) * Unit.FOOD_COST_PER_HORSE
 		const scaledAmount = deltaTime * PRODUCTION_BASE_FACTOR * unscaledAmount
 
 		Storage.update(unit.equipment, { good: 'food', amount: -scaledAmount })

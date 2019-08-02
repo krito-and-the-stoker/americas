@@ -1,20 +1,20 @@
 import Binding from 'util/binding'
 
-const DAY = 300
+const DAY = 750
 const WEEK = 7 * DAY
 const MONTH = 30 * DAY
 const YEAR = 365 * DAY
 
-const MOVE_BASE_TIME = 6 * WEEK
+const MOVE_BASE_TIME = 2 * WEEK
 const UNLOAD_TIME = 2 * WEEK
 const LOAD_TIME = 2 * WEEK
 const EUROPE_SAIL_TIME = 4 * MONTH
-const PRODUCTION_BASE_TIME = 6 * MONTH
+const PRODUCTION_BASE_TIME = MONTH
 const TEACH_BASE_TIME = 3 * YEAR
 const LEARN_BASE_TIME = 20 * YEAR
-const CUT_FOREST = 1.5 * YEAR
-const PLOW = 1.5 * YEAR
-const CONSTRUCT_ROAD = 1.5 * YEAR
+const CUT_FOREST = 0.5 * YEAR
+const PLOW = 0.5 * YEAR
+const CONSTRUCT_ROAD = 1.0 * YEAR
 const CARGO_LOAD_TIME = 2 * DAY
 
 const LOW_PRIORITY_DELTA_TIME = 500

@@ -17,7 +17,7 @@
 	"desert":{
 		"field":{
 			"food":{
-				"base": 1,
+				"base": 3,
 				"plowed": "+1",
 				"river": "+1",
 				"resource":"+3",
@@ -30,7 +30,7 @@
 				"expert": "*2"
 			},
 			"ore":{
-				"base": 1,
+				"base": 2,
 				"road": "+1",
 				"river": "+1",
 				"expert": "*2"
@@ -38,7 +38,7 @@
 		},
 		"colony":{
 			"food":{
-				"base": 1,
+				"base": 2,
 				"river": "+1",
 				"resource":"+3"
 			},
@@ -51,7 +51,7 @@
 	"desertWithForest":{
 		"field":{		
 			"food":{
-				"base": 1,
+				"base": 3,
 				"river": "+1",	
 				"resource": "+2",
 				"resource2": "+4",
@@ -83,7 +83,7 @@
 		},
 		"colony":{
 			"food":{
-				"base": 1,
+				"base": 2,
 				"river": "+1",
 				"resource": "+3"
 			},
@@ -95,7 +95,7 @@
 	"grassland":{
 		"field":{
 			"food":{
-				"base": 2,
+				"base": 5,
 				"plowed": "+1",
 				"river": "+1",			
 				"expert": "+3"
@@ -123,7 +123,7 @@
 	"grasslandWithForest":{
 		"field":{
 			"food":{
-				"base": 1,
+				"base": 3,
 				"river": "+1",	
 				"expert": "+3"
 			},
@@ -159,7 +159,7 @@
 	"hills":{
 		"field":{
 			"food":{
-				"base": 1,
+				"base": 3,
 				"river": "+1",			
 				"expert": "+3"
 			},
@@ -185,7 +185,7 @@
 	"marsh":{
 		"field":{
 			"food":{
-				"base": 2,
+				"base": 5,
 				"plowed": "+1",
 				"river": "+1",			
 				"expert": "+3"
@@ -225,7 +225,7 @@
 	"marshWithForest":{
 		"field":{
 			"food":{
-				"base": 1,
+				"base": 3,
 				"river": "+1",	
 				"expert": "+3"
 			},
@@ -301,7 +301,7 @@
 	"ocean":{
 		"field":{
 			"food":{
-				"base": 3,
+				"base": 7,
 				"coast": "+1",
 				"river": "+1",
 				"resource": "+3", 
@@ -312,7 +312,7 @@
 	"plains":{
 		"field":{
 			"food":{
-				"base": 4,
+				"base": 9,
 				"plowed": "+1",
 				"river": "+1",
 				"resource": "+3",
@@ -334,7 +334,7 @@
 		},
 		"colony":{
 			"food":{
-				"base": 2,
+				"base": 3,
 				"river": "+1",
 				"plowed": "+1",
 				"resource": "+3",
@@ -348,7 +348,7 @@
 	"plainsWithForest":{
 		"field":{
 			"food":{
-				"base": 2,
+				"base": 5,
 				"river": "+1",	
 				"expert": "+3"
 			},
@@ -385,7 +385,7 @@
 	"prairie":{
 		"field":{
 			"food":{
-				"base": 2,
+				"base": 5,
 				"plowed": "+1",
 				"river": "+1",	
 				"expert": "+3"
@@ -413,7 +413,7 @@
 	"prairieWithForest":{
 		"field":{
 			"food":{
-				"base": 1,
+				"base": 5,
 				"river": "+1",	
 				"resource": "+2",
 				"resource2": "+4",
@@ -452,7 +452,7 @@
 	"savannah":{
 		"field":{
 			"food":{
-				"base": 3,
+				"base": 7,
 				"plowed": "+1",
 				"river": "+1",	
 				"expert": "+3"
@@ -467,7 +467,7 @@
 		},
 		"colony":{
 			"food":{
-				"base": 3,
+				"base": 6,
 				"river": "+1"
 			},
 			"sugar":{
@@ -481,7 +481,7 @@
 	"savannahWithForest":{
 		"field":{
 			"food":{
-				"base": 2,
+				"base": 5,
 				"river": "+1",	
 				"expert": "+3"
 			},
@@ -517,7 +517,7 @@
 	"swamp":{
 		"field":{		
 			"food":{
-				"base": 2,
+				"base": 5,
 				"plowed": "+1",
 				"river": "+1",	
 				"expert": "+3"
@@ -551,7 +551,7 @@
 	"swampWithForest":{
 		"field":{
 			"food":{
-				"base": 1,
+				"base": 3,
 				"river": "+1",	
 				"expert": "+3"
 			},
@@ -593,7 +593,7 @@
 	"tundra":{
 		"field":{
 			"food":{
-				"base": 2,
+				"base": 5,
 				"plowed": "+1",
 				"river": "+1",	
 				"expert": "+3"
@@ -621,7 +621,7 @@
 	"tundraWithForest":{
 		"field":{
 			"food":{
-				"base": 1,
+				"base": 3,
 				"river": "+1",	
 				"resource": "+2",
 				"resource2": "+4",
