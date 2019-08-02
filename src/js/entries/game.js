@@ -136,7 +136,6 @@ const start = async () => {
 			preload()
 		}
 
-		await loadingResources
 		await nextFrame()
 
 		Owner.initialize()
@@ -149,6 +148,8 @@ const start = async () => {
 		new RenderMap()
 
 		await nextFrame()
+
+		await loadingResources
 
 		RenderView.initialize()
 
@@ -218,11 +219,13 @@ const load = async () => {
 		}
 
 		await loadingResources
+		
 		await nextFrame()
-
 		RenderView.initialize()
+
 		await nextFrame()
 		Tween.initialize()
+
 		MapView.initialize()
 		await nextFrame()
 
