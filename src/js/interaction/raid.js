@@ -5,8 +5,7 @@ import Events from 'util/events'
 import Unit from 'entity/unit'
 import Storage from 'entity/storage'
 
-const MAXIMUM_RAID_FRACTION = 0.8
-
+const relativeRaidAmont = () => 0.25 + 0.5 * Math.random()
 
 export default (colony, raider) => {
 	if (Storage.total(raider.storage) > 0) {
@@ -51,7 +50,7 @@ export default (colony, raider) => {
 		}
 
 		const pack = Util.choose(Storage.goods(colony.storage).filter(p => p.amount >= 1))
-		pack.amount = Util.clamp(MAXIMUM_RAID_FRACTION * Math.random() * pack.amount, 1, 50)
+		pack.amount = Util.clamp(relativeRaidAmont() * pack.amount, 1, 50)
 		Storage.transfer(colony.storage, raider.storage, pack)
 		Events.trigger('notification', { type: 'raid', colony, unit: raider, pack })
 	} else {
@@ -60,7 +59,7 @@ export default (colony, raider) => {
 			Message.send(`A ${raiderName} could not overcome the defenders of ${colony.name}. However, massive amounts of goods are missing after the attack. The colonists are outraged.`)
 
 			const pack = Util.choose(Storage.goods(colony.storage).filter(p => p.amount >= 1))
-			pack.amount = Util.clamp(MAXIMUM_RAID_FRACTION * Math.random() * pack.amount, 1, 50)
+			pack.amount = Util.clamp(relativeRaidAmont() * pack.amount, 1, 50)
 			Storage.transfer(colony.storage, raider.storage, pack)
 			Events.trigger('notification', { type: 'raid', colony, unit: raider, pack })
 		} else {

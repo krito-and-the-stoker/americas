@@ -32,8 +32,8 @@ export default Factory.create('LearnFromNatives', {
 	}
 	
 	const update = (currentTime, deltaTime) => {
-		// natives share food with you, but not very much and they expect you to share your food with tem
-		unit.equipment.food = 4
+		// support unit when living with the natives
+		unit.equipment.food = Unit.UNIT_FOOD_CAPACITY
 		Storage.update(unit.equipment)
 
 		const scale = deltaTime * TEACH_BASE_FACTOR
