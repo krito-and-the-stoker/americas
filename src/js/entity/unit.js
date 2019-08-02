@@ -17,7 +17,7 @@ import Owner from 'entity/owner'
 import PaySoldier from 'task/paySoldier'
 import ConsumeFood from 'task/consumeFood'
 import FillFoodStock from 'task/fillFoodStock'
-import SupplyFromTransport from 'task/SupplyFromTransport'
+import SupplyFromTransport from 'task/supplyFromTransport'
 
 import Commander from 'command/commander'
 
