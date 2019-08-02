@@ -27,7 +27,6 @@ import ColonyProduction from 'task/colonyProduction'
 import ProductionSummary from 'task/productionSummary'
 import TeachingSummary from 'task/teachingSummary'
 
-import ShrinkFromStarvation from 'interaction/shrinkFromStarvation'
 import UnjoinColony from 'interaction/unjoinColony'
 import LeaveColony from 'interaction/leaveColony'
 
@@ -150,10 +149,6 @@ const initialize = colony => {
 		}
 	}))
 	destroy.push(Time.schedule(TeachingSummary.create(colony)))
-
-	// let starvationMessageSent = false
-	// const needsToSendEmptyWarning = Util.makeObject(Goods.types.map(good => [good, false]))
-	// const needsToSendFullWarning = Util.makeObject(Goods.types.map(good => [good, false]))
 	destroy.push(listen.growth(colony, growth => {
 		if (growth > 200) {
 			const unit = Unit.create('settler', colony.mapCoordinates, colony.owner)
@@ -161,22 +156,6 @@ const initialize = colony => {
 			colony.growth = 0
 		}
 	}))
-	// destroy.push(Storage.listen(colony.storage, storage => {
-	// 	if (storage.food < -1 && !starvationMessageSent) {
-	// 		Message.send(`The food storage of ${colony.name} is empty. We need to get food quickly to prevent losses amongst the colonists`)
-	// 		Events.trigger('notification', { type: 'starving', colony })
-	// 		starvationMessageSent = true
-	// 	}
-	// 	if (storage.food < -5) {
-	// 		starvationMessageSent = false
-	// 	}
-	// 	if (storage.food < -10) {
-	// 		Message.send(`A colonist in ${colony.name} died due to inadequate food supplies`)
-	// 		ShrinkFromStarvation(colony)
-	// 		storage.food = 0
-	// 		starvationMessageSent = false
-	// 	}
-	// }))
 	colony.construction = {
 		amount: colony.construction.amount,
 		tools: colony.construction.tools,
