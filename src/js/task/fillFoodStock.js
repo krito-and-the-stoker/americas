@@ -7,7 +7,7 @@ import Unit from 'entity/unit'
 
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
-
+const foodNutritionFraction = 0.7
 
 const create = (unit, colony) => {
 	const inColony = () => unit.colonist && unit.colonist.colony === colony
@@ -21,9 +21,12 @@ const create = (unit, colony) => {
 			Math.min(2 * Unit.FOOD_COST * deltaTime * PRODUCTION_BASE_FACTOR, Unit.UNIT_FOOD_CAPACITY - unit.equipment.food)
 
 		const scaledAmount = Math.min(desiredAmount, colony.storage.food + colony.storage.horses)
-		const averageTargetAmount = (colony.storage.food + colony.storage.horses - scaledAmount) / 2
-		const horsesAmount = Util.clamp(colony.storage.horses - averageTargetAmount, 0, scaledAmount)
-		const foodAmount = Util.clamp(colony.storage.food - averageTargetAmount, 0, scaledAmount)
+		// take the food you want
+		let foodAmount = Util.clamp(scaledAmount * foodNutritionFraction, 0, colony.storage.food)
+		// use horses for the rest
+		let horsesAmount = Util.clamp(scaledAmount - foodAmount, 0, colony.storage.horses)
+		// if needed take more food
+		foodAmount = Util.clamp(scaledAmount - horsesAmount, 0, colony.storage.food)
 
 		Storage.update(unit.equipment, { good: 'food', amount: scaledAmount })
 		Storage.update(colony.storage, { good: 'horses', amount: -horsesAmount })

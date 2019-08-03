@@ -5,7 +5,7 @@ import Storage from 'entity/storage'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
-const horseGrowthRate = 0.15 // means 100 horses produce 5 food net
+const horseGrowthRate = 0.075 // means 100 horses produce 2.5 food net
 const create = (colony) => {
 	const update = (currentTime, deltaTime) => {
 		// only grow when we have horses and only when the settler have food
