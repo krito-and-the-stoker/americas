@@ -35,11 +35,11 @@
 		"capacity": 400
 	},
 	"wood": {
-		"difference": 5,
+		"difference": 3,
 		"low": 4,
 		"high": 5,
-		"consumption": -1,
-		"capacity": 2000
+		"consumption": 1,
+		"capacity": 1000
 	},
 	"ore": {
 		"difference": 2,
