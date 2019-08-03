@@ -111,10 +111,6 @@ const shared = fn => {
 }
 
 const map = (mapping, fn, equals = (a, b) => a === b) => {
-	const name = Util.tag()
-	if (logCurrently) {
-		loggedTags.push(name)
-	}
 	let oldValue = null
 	let oldCleanup = null
 	const cleanup = final => {
