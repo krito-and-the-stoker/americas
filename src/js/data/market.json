@@ -1,6 +1,6 @@
 {
 	"food": {
-		"difference": 3,
+		"difference": 1,
 		"low": 6,
 		"high": 7,
 		"consumption": -1,
@@ -57,8 +57,8 @@
 	},
 	"horses": {
 		"difference": 1,
-		"low": 1,
-		"high": 2,
+		"low": 10,
+		"high": 15,
 		"consumption": 0,
 		"capacity": 200
 	},
@@ -99,15 +99,15 @@
 	},
 	"tools": {
 		"difference": 1,
-		"low": 1,
-		"high": 2,
+		"low": 3,
+		"high": 5,
 		"consumption": 1,
 		"capacity": 200
 	},
 	"guns": {
 		"difference": 1,
-		"low": 1,
-		"high": 2,
+		"low": 5,
+		"high": 10,
 		"consumption": 1,
 		"capacity": 200
 	}
