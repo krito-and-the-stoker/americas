@@ -14,7 +14,7 @@ import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
 import Owner from 'entity/owner'
 
-import PaySoldier from 'task/paySoldier'
+import PayUnits from 'task/payUnits'
 import ConsumeFood from 'task/consumeFood'
 import FillFoodStock from 'task/fillFoodStock'
 import SupplyFromTransport from 'task/supplyFromTransport'
@@ -186,7 +186,7 @@ const initialize = unit => {
 			colonist && Colonist.listen.expert(colonist, expert =>
 				update.expert(unit, expert))),
 
-		listen.properties(unit, () => Time.schedule(PaySoldier.create(unit))),
+		listen.properties(unit, () => Time.schedule(PayUnits.create(unit))),
 		listen.properties(unit, properties =>
 			// only these units need food
 			properties.needsFood &&

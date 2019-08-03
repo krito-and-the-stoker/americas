@@ -7,7 +7,7 @@ import Unit from 'entity/unit'
 
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
-const foodNutritionFraction = 0.7
+const foodNutritionFraction = 0.9
 
 const create = (unit, colony) => {
 	const inColony = () => unit.colonist && unit.colonist.colony === colony
