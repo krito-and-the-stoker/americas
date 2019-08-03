@@ -148,7 +148,7 @@ const initialize = colony => {
 	}))
 	destroy.push(Time.schedule(TeachingSummary.create(colony)))
 	destroy.push(listen.growth(colony, growth => {
-		if (growth > 200) {
+		if (growth > 1000) {
 			const unit = Unit.create('settler', colony.mapCoordinates, colony.owner)
 			Events.trigger('notification', { type: 'born', colony, unit })
 			colony.growth = 0

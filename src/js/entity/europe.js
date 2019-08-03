@@ -235,7 +235,7 @@ const initialize = () => {
 			Unit.update.offTheMap(unit, true)
 			add.unit(unit)
 			update.crosses(-europe.crossesNeeded)
-			europe.crossesNeeded += 2
+			europe.crossesNeeded += 10
 			Events.trigger('notification', { type: 'immigration', unit })
 			Events.trigger('immigration')
 			Message.send(`Religious unrest in Europe has caused a ${chosen.name} to line up for migration to the new world.`)
