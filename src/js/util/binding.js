@@ -56,8 +56,6 @@ const update = (instance, key, value) => {
 	if (instance[listeners]) {
 		instance[listeners]
 			.forEach(listener => {
-				Util.execute(listener.cleanup, false)
-				listener.cleanup = undefined
 				add(listener)
 			})
 	}
@@ -68,7 +66,10 @@ const applyUpdate = () => {
 	pages.reverse()
 
 	scheduled.forEach(listener => {
-		if (listener.alive) {		
+		if (listener.alive) {
+			Util.execute(listener.cleanup, false)
+			listener.cleanup = undefined
+
 			const value = listener.key ? listener.instance[listener.key] : listener.instance
 			listener.cleanup = listener.fn(value)
 		}
@@ -109,13 +110,16 @@ const shared = fn => {
 	}
 }
 
-
 const map = (mapping, fn, equals = (a, b) => a === b) => {
+	const name = Util.tag()
+	if (logCurrently) {
+		loggedTags.push(name)
+	}
 	let oldValue = null
 	let oldCleanup = null
 	const cleanup = final => {
 		if (final) {
-			Util.execute(oldCleanup)
+			Util.execute(oldCleanup, true)
 		}
 	}
 	const optimizedListener = newValue => {
