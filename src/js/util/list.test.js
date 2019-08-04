@@ -64,3 +64,19 @@ test('it works when prefilled and with unique numbers', () => {
 
 	unsubscribe()
 })
+
+test('added argument works', () => {
+	obj.list = [1]
+
+	let count = 0
+	const unsubscribe = List.listen(obj, 'list', (number, added) => {
+		count += 1
+		expect(number !== 1).toBe(added)
+	})
+
+	add(2)
+
+	expect(count).toBe(2)
+
+	unsubscribe()
+})
