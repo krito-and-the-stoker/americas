@@ -18,7 +18,7 @@ const remove = (instance, key, listener) => {
 
 const listen = (instance, key, fn) => {
 	const listeners = listenerKey(key)
-	const value = key ? instance[key] : instance
+	const value = (key && key !== '*') ? instance[key] : instance
 	const cleanup = fn(value)
 	const listener = {
 		fn,
@@ -62,13 +62,13 @@ const update = (instance, key, value) => {
 			})
 	}
 	// notify global listeners on object
-	// or maybe don't
-	// if (key && instance[listenerKey()]) {
-	// 	instance[listenerKey()]
-	// 		.forEach(listener => {
-	// 			add(listener)
-	// 		})
-	// }
+	// this may cause mayhem, although it really shouldn't..
+	if (key && instance[listenerKey('*')]) {
+		instance[listenerKey('*')]
+			.forEach(listener => {
+				add(listener)
+			})
+	}
 }
 
 const applyUpdate = () => {
