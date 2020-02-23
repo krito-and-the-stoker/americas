@@ -120,7 +120,7 @@ gulp.task('assets', resolve => {
 	})
 })
 
-gulp.task('build', gulp.series('climate', gulp.parallel(['pug', 'js', 'sass', 'static', 'assets'])))
+gulp.task('build', gulp.series(gulp.parallel(['pug', 'js', 'sass', 'static', 'assets'])))
 
 gulp.task('watch', () => {
 	gulp.watch('src/pages/**/*.pug', gulp.series('pug'))

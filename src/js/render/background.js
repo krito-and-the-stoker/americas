@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js'
 import Util from 'util/util'
-import Climate from 'data/climate'
 import Layer from './layer'
 import RenderView from './view'
 import TileCache from './tileCache'
@@ -9,7 +8,6 @@ import MapView from 'render/map'
 import MapEntity from 'entity/map'
 import Message from 'util/message'
 import Tile from 'entity/tile'
-import Time from 'timeline/time'
 
 
 const MAX_TILES = 30000
@@ -21,7 +19,6 @@ let undiscovered = null
 let tiles = null
 let scale = 1
 let renderRequested = false
-let opacityRequested = false
 let visible = true
 let visibleTiles = []
 
@@ -91,12 +88,11 @@ const createSpriteFromFrames = (resource, frames) => frames.map(frame => {
 	return sprite
 })
 
-const mapNames = ['map', 'mapWinter', 'mapSummer']
+const mapName = 'map'
 const createSprite = frames => {
-	const mapName = mapNames[frames[frames.length - 1]]
-	return createSpriteFromFrames(mapName, frames.slice(0, -1))
+	return createSpriteFromFrames(mapName, frames)
 }
-const createSpritesFromTile = tile => createSpriteFromFrames('mapSummer', MapView.instance.assembleTile(tile))
+const createSpritesFromTile = tile => createSpriteFromFrames(mapName, MapView.instance.assembleTile(tile))
 
 const createTiles = tileStacks => tileStacks.map((stack, index) => ({
 	index,
@@ -104,31 +100,17 @@ const createTiles = tileStacks => tileStacks.map((stack, index) => ({
 	stack,
 	container: null,
 	initialized: false,
-	// createSprites: () => stack.frames.map(frame => {
-	// 	const sprite = Resources.sprite('map', { frame: Math.abs(frame) - 1 })
-	// 	sprite.x = stack.position.x
-	// 	sprite.y = stack.position.y
-	// 	sprite.blendMode = frame > 0 ? PIXI.BLEND_MODES.NORMAL : PIXI.BLEND_MODES.OVERLAY
-	// 	return sprite
-	// }),
 	createCachedSprites: () => {
-		let result = []
-		if (MapEntity.get().tiles[index].domain === 'land' || MapEntity.get().tiles[index].coast) {
-			const baseSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 0])
-			const winterSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 1])
-			const summerSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 2])
-			result = [baseSprite, winterSprite, summerSprite].filter(x => !!x)
-		} else {
-			const baseSprite = TileCache.createCachedSprite(createSprite, [...stack.frames, 0])
-			result = [baseSprite].filter(x => !!x)
+		const result = TileCache.createCachedSprite(createSprite, stack.frames)
+		if (result) {		
+			result.position.x = stack.position.x
+			result.position.y = stack.position.y
+
+			return [result]
 		}
 
-		result.forEach(sprite => {			
-			sprite.position.x = stack.position.x
-			sprite.position.y = stack.position.y
-		})
-
-		return result
+		// why would you return nothing here?
+		return []
 	},
 	update: (tile, coords) => {
 		if (tile.initialized) {
@@ -148,8 +130,7 @@ const createTiles = tileStacks => tileStacks.map((stack, index) => ({
 	},
 	initialize: tile => {
 		tile.sprites = tile.createCachedSprites()
-		const indices = Util.range(tile.sprites.length).map(i => TileCache.getTextureIndex([...tile.stack.frames, i]))
-		tile.containers = indices.map(getContainer)
+		tile.containers = tile.stack.frames.map(getContainer)
 		tile.initialized = true
 		tile.dirty = false
 	}
@@ -210,63 +191,6 @@ const resize = () => {
 	render()
 }
 
-// const temperatureToAlpha = temperature => [
-// 	Util.clamp(-(temperature - 5) / 15), // winter
-// 	Util.clamp((temperature - 10) / 10) // summer
-// ]
-
-const winterFrom = Climate.winter.from
-const winterRange = Climate.winter.to - Climate.winter.from
-const summerFrom = Climate.summer.from
-const summerRange = Climate.summer.to - Climate.summer.from
-const alphaFrom = (temperature, i) => i ? Util.clamp((temperature - summerFrom) / summerRange) : Util.clamp((temperature - winterFrom) / winterRange)
-// const alphaFrom = (temperature, i) => i ? Util.clamp((temperature - 10) / 10) : Util.clamp(-(temperature - 5) / 15)
-
-
-// const interpolateColor = (rgb1, rgb2, amount) => {
-// 	amount = Math.max(Math.min(amount, 1), 0)
-// 	const color = []
-
-// 	Util.range(3).forEach(i => {
-// 		const color1 = rgb1[i] * rgb1[i]
-// 		const color2 = rgb2[i] * rgb2[i]
-// 		color[i] = (Math.sqrt(amount * (color2 - color1) + color1)) >> 0
-// 	})
-
-// 	return color
-// }
-
-// const showHeatmap = false
-// const colorToNumber = rgb => rgb[2] + 256*rgb[1] + 256*256*rgb[0]
-
-// const heatmap = () => {
-// 	visibleTiles.forEach(tile => {
-// 		const temperature = Tile.temperature(MapEntity.get().tiles[tile.index], 0)
-// 		tile.sprites.forEach(sprite => {
-// 			sprite.tint = colorToNumber(interpolateColor([0, 0, 0], [256, 256, 256], (temperature + 30) / 70))
-// 		})
-// 	})
-// }
-const opacityTask = () => ({
-	update: () => {
-		opacityRequested = true
-
-		return true
-	}
-})
-
-
-const updateOpacity = () => {
-	const season = Time.season()
-	visibleTiles.forEach(tile => {
-		const temperature = Tile.temperature(MapEntity.get().tiles[tile.index], season)
-		tile.sprites.forEach((sprite, i) => {
-			if (i > 0) {
-				sprite.alpha = alphaFrom(temperature, i-1)
-			}
-		})
-	})
-}
 
 
 const render = () => {
@@ -274,12 +198,6 @@ const render = () => {
 }
 
 const doRenderWork = () => {
-	if (opacityRequested && visible) {
-		opacityRequested = false
-		updateOpacity()
-		layer.app.render()
-	}
-
 	if (!renderRequested || !visible) {
 		return
 	}
@@ -312,11 +230,14 @@ const doRenderWork = () => {
 					tiles[index].initialize(tiles[index])
 				}
 				tiles[index].sprites.forEach((sprite, i) => {
+					if (!tiles[index].containers[i]) {
+						console.warn('no containers', index, tiles[index])
+					}
 					tiles[index].containers[i].addChild(sprite)
 				})
 			})
 		})
-		updateOpacity()
+
 		layer.app.render()
 		renderRequested = false
 	}
@@ -333,6 +254,5 @@ export default {
 	updateCoords,
 	updateScale,
 	createSpritesFromTile,
-	opacityTask,
 	get
 }

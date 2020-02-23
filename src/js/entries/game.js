@@ -59,7 +59,6 @@ const initialize = () => {
 	setInterval(Record.autosave, AUTOSAVE_INTERVAL)
 
 	Time.schedule(Meet.create())
-	Time.schedule(Background.opacityTask())
 
 	const loop = t => {
 		const deltaTime = Math.min(t - timeStamp, 150)
