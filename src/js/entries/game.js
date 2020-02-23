@@ -33,7 +33,6 @@ import Background from 'render/background'
 import MapView from 'view/map'
 import AutosaveView from 'view/autosave'
 import FullscreenEvents from 'view/fullscreenEvents'
-import Tutorial from 'view/tutorial'
 
 import Dialog from 'view/ui/dialog'
 
@@ -199,7 +198,6 @@ const start = async () => {
 		}, 3500)
 
 		FullscreenEvents.initialize()
-		Tutorial.initialize()
 
 		await nextFrame()
 		initialize()
@@ -256,7 +254,6 @@ const load = async () => {
 		}, 3000)
 
 		FullscreenEvents.initialize()
-		Tutorial.initialize()
 
 		initialize()
 	} catch (err) {
