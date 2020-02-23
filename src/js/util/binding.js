@@ -3,7 +3,6 @@ import Util from 'util/util'
 const create = (instance, key) => {
 	const listeners = listenerKey(key)
 	instance[listeners] = []
-	instance[listenerKey()] = []
 }
 
 const remove = (instance, key, listener) => {
@@ -46,7 +45,6 @@ const add = listener => {
 	pages[0].add(listener)
 }
 
-
 const update = (instance, key, value) => {
 	const listeners = listenerKey(key)
 	if (value !== undefined) {
@@ -60,13 +58,6 @@ const update = (instance, key, value) => {
 			.forEach(listener => {
 				add(listener)
 			})
-		// notify global listeners on object
-		if (key) {
-			instance[listenerKey()]
-				.forEach(listener => {
-					add(listener)
-				})
-		}
 	}
 }
 
