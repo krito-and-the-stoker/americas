@@ -36,7 +36,11 @@ const create = colony => {
 
 	Drag.makeDragTarget(leaveColonyZone, args => {
 		if (args.colonist && args.colonist.colony) {
-			UnjoinColony(args.colonist)
+			if (args.colonist.colony && args.colonist.colony.colonists.length > 1) {
+				UnjoinColony(args.colonist)
+			} else {
+				return false
+			}
 		}
 		if (args.passenger) {
 			LoadUnitFromShipToColony(colony, args.passenger)
