@@ -210,17 +210,17 @@ const initialize = ai => {
 							}
 						}
 					}
-				}
 
-				// TODO: move this to a more appropriate place
-				// auto attack natives when in state of war
-				if (other.owner === ai.owner) {
-					const relations = ai.state.relations[unit.owner.referenceId]
-					if (relations.trust < 0 && relations.militancy > 1.5) {
-						if (unit.domain === other.domain && !unit.properties.support && Unit.strength(unit) > 2 && Unit.strength(unit) > 2 * Unit.strength(other)) {
-							console.log('defending hostile', unit, other)
-							Battle(unit, other)
-							makePlansAndRunThem(ai)
+					// TODO: move this to a more appropriate place
+					// auto attack natives when in state of war
+					if (other.owner === ai.owner) {
+						const relations = ai.state.relations[unit.owner.referenceId]
+						if (relations.trust < 0 && relations.militancy > 1.5) {
+							if (unit.domain === other.domain && !unit.properties.support && Unit.strength(unit) > 2 && Unit.strength(unit) > 2 * Unit.strength(other)) {
+								console.log('defending hostile', unit, other)
+								Battle(unit, other)
+								makePlansAndRunThem(ai)
+							}
 						}
 					}
 				}
