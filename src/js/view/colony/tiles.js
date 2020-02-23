@@ -184,9 +184,6 @@ const create = (colony, originalDimensions) => {
 
 			const destroyDrag = Drag.makeDragTarget(sprites[sprites.length - 1], async args => {
 				const { unit } = args
-				if (!colony.buildings.harbour.level && tile.domain === 'sea') {
-					return false
-				}
 				if (colony.disbanded) {
 					return false
 				}

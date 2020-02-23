@@ -340,13 +340,13 @@ const	applyModifier = (tile, base, name, resource, where) => {
 
 const production = (tile, resource, colonist = null) => {
 	const where = colonist ? 'field' : 'colony'
-	if (tile.domain === 'sea' && colonist && colonist.colony && !colonist.colony.buildings.harbour.level) {
-		return 0
-	}
-
 	let base = applyModifier(tile, 0, 'base', resource, where)
 	if (base > 0 && colonist && colonist.colony) {
 		base += colonist.colony.productionBonus
+	}
+
+	if (tile.domain === 'sea' && colonist && colonist.colony && !colonist.colony.buildings.harbour.level) {
+		base = Math.floor(base / 2)
 	}
 
 	const modifiers = ['coast', 'plowed', 'river', 'road']
