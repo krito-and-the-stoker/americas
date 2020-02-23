@@ -21,11 +21,11 @@ const create = (unit, colony) => {
 
 		const scaledAmount = Math.min(desiredAmount, colony.storage.food + Unit.FOOD_GAIN_PER_HORSE * colony.storage.horses)
 		if (colony.storage.food + colony.storage.horses > 0) {		
-			const foodRatio = (1 + colony.storage.food / (colony.storage.food + Unit.GOOD_GAIN_PER_HORSE * colony.storage.horses)) / 2
+			const foodRatio = (1 + colony.storage.food / (colony.storage.food + Unit.FOOD_GAIN_PER_HORSE * colony.storage.horses)) / 2
 			// take the food you want
 			let foodAmount = Util.clamp(scaledAmount * foodRatio, 0, colony.storage.food)
 			// use horses for the rest
-			let horsesAmount = Util.clamp(scaledAmount - foodAmount, 0, Unit.GOOD_GAIN_PER_HORSE * colony.storage.horses)
+			let horsesAmount = Util.clamp(scaledAmount - foodAmount, 0, Unit.FOOD_GAIN_PER_HORSE * colony.storage.horses)
 			// if needed take more food
 			foodAmount = Util.clamp(scaledAmount - horsesAmount, 0, colony.storage.food)
 
