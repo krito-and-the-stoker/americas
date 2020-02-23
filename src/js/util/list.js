@@ -12,7 +12,7 @@ const add = (entity, key, member) => {
 	if (entity[listeners]) {
 		entity[listeners].forEach(listener => {
 			const cleanup = {
-				fn: listener.fn(member, true),
+				fn: listener.fn(member),
 				member
 			}
 			listener.cleanup.push(cleanup)
@@ -57,7 +57,7 @@ const listen = (entity, key, fn) => {
 
 	entity[key].forEach(member => {	
 		const cleanup = {
-			fn: listener.fn(member, false),
+			fn: listener.fn(member),
 			member
 		}
 		listener.cleanup.push(cleanup)

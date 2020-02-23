@@ -60,15 +60,14 @@ const update = (instance, key, value) => {
 			.forEach(listener => {
 				add(listener)
 			})
+		// notify global listeners on object
+		if (key) {
+			instance[listenerKey()]
+				.forEach(listener => {
+					add(listener)
+				})
+		}
 	}
-	// notify global listeners on object
-	// or maybe don't
-	// if (key && instance[listenerKey()]) {
-	// 	instance[listenerKey()]
-	// 		.forEach(listener => {
-	// 			add(listener)
-	// 		})
-	// }
 }
 
 const applyUpdate = () => {

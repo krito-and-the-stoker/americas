@@ -14,8 +14,8 @@ const	remove = (entity, key, member) => {
 const has = (entity, key, member) => entity[key].includes(member)
 
 const listenEach = (entity, key, fn) => {
-	return List.listen(entity,  key, (entity, added) =>
-		Binding.listen(entity, null, x => fn(x, added)))
+	return List.listen(entity,  key, entity =>
+		Binding.listen(entity, null, (x, added) => fn(x, added)))
 }
 
 
