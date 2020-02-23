@@ -12,11 +12,10 @@ import Commander from 'command/commander'
 import GoTo from 'command/goTo'
 
 
-const ship = () => Unit.create('caravel', { x: 0, y: 5 })
+// const ship = () => Unit.create('caravel', { x: 0, y: 5 })
 const advance = (n = 1) => Util.range(n).forEach(() => Time.advance(500))
 
 const soldier = () => Unit.create('soldier', { x: 1, y: 2 })
-const homeSoldier = () => Unit.create('soldier', firstPlace())
 const home = () => Colony.create(firstPlace())
 const jamestown = () => Colony.create(place())
 const roanoke = () => Colony.create(farPlace())
@@ -27,13 +26,6 @@ const firstPlace = () => ({ x: 1, y: 2 })
 test('create & schedule', () => {
 	const unit = soldier()
 	Commander.scheduleBehind(unit.commander, GoTo.create({ unit, colony: jamestown() }))
-})
-
-test('create at home & advance', () => {
-	const city = home()
-	const unit = homeSoldier()
-
-	advance(5)
 })
 
 test('moving', () => {
