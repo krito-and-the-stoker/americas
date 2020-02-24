@@ -19,6 +19,7 @@ const CARGO_LOAD_TIME = 2 * DAY
 
 const LOW_PRIORITY_DELTA_TIME = 500
 
+
 let currentTime = 0
 let scheduled = []
 let prioritized = []
