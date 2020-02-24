@@ -27,8 +27,8 @@ import EnterEurope from 'interaction/enterEurope'
 
 const UNIT_FOOD_CAPACITY = 25
 const FOOD_COST = 5
-const FOOD_COST_PER_HORSE = 0.05 // 5 food per 100 horses
-const FOOD_GAIN_PER_HORSE = 0.25 // 25 food per 100 horses
+const FOOD_COST_PER_HORSE = 0.05 // food support per horses in stock
+const FOOD_GAIN_PER_HORSE = 1 // food gain when eating horse
 
 
 const RADIUS_GROWTH = 1.0 / (2* Time.WEEK)

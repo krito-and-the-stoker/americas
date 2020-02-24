@@ -210,6 +210,5 @@ export default {
 	CARGO_LOAD_TIME,
 	DAY,
 	WEEK,
-	MONTH,
-	YEAR
+	MONTH
 }
