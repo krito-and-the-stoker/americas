@@ -1,4 +1,3 @@
-import Climate from 'maps/america-large.climate.json'
 import Terrain from 'data/terrain.json'
 import MovementCosts from 'data/movementCosts'
 import Yield from 'data/yield'
@@ -66,9 +65,6 @@ const create = ({ id, layers, index }) => {
 }
 
 const initialize = tile => {
-	tile.seasonStrength = Climate[tile.index].seasonStrength
-	tile.temperature = Climate[tile.index].temperature
-
 	const updateTreeVariation = colonyOrSettlement => {
 		if (colonyOrSettlement) {
 			if (tile.forest) {
