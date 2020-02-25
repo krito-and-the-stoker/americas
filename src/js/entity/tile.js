@@ -319,16 +319,18 @@ const decideCoastalSea = tile => {
 
 const	applyModifier = (tile, base, name, resource, where) => {
 	const terrainName = tile.terrainName
-	if (Yield[terrainName][where][resource]) {
+	if (Yield[terrainName] &&
+		Yield[terrainName][where] &&
+		Yield[terrainName][where][resource] &&
+		Yield[terrainName][where][resource][name]) {
 		const mod = Yield[terrainName][where][resource][name]
-		if (mod) {
-			if (mod[0] === '+')
-				return base + parseFloat(mod.substr(1))
-			if (mod[0] === '*')
-				return base * parseFloat(mod.substr(1))
 
-			return mod
-		}
+		if (mod[0] === '+')
+			return base + parseFloat(mod.substr(1))
+		if (mod[0] === '*')
+			return base * parseFloat(mod.substr(1))
+
+		return mod
 	}
 
 	return base
@@ -337,12 +339,12 @@ const	applyModifier = (tile, base, name, resource, where) => {
 const production = (tile, resource, colonist = null) => {
 	const where = colonist ? 'field' : 'colony'
 	let base = applyModifier(tile, 0, 'base', resource, where)
-	if (base > 0 && colonist && colonist.colony) {
-		base += colonist.colony.productionBonus
-	}
-
 	if (tile.domain === 'sea' && colonist && colonist.colony && !colonist.colony.buildings.harbour.level) {
 		base = Math.floor(base / 2)
+	}
+
+	if (base > 0 && colonist && colonist.colony) {
+		base += colonist.colony.productionBonus
 	}
 
 	const modifiers = ['coast', 'plowed', 'river', 'road']
