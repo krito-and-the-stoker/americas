@@ -57,6 +57,10 @@ const findPath = (from, to, unit) => {
 const distance = (fromCoords, toCoords, unit, max = CANNOT_MOVE_COST) => {
 	const from = MapEntity.tile(fromCoords)
 	const to = MapEntity.tile(toCoords)
+	if (!from || ! to) {
+		console.warn('could not find distance', fromCoords, toCoords)
+		return CANNOT_MOVE_COST
+	}
 	const isTarget = node => (node.cost > max || node.index === to.index)
 	const path = find(from, isTarget, to, Unit.area(unit), !unit.properties.canExplore && unit.owner)
 	return path
