@@ -26,7 +26,7 @@ const update = (trade, pack) => Storage.update(trade, pack)
 const goods = trade => Storage.goods(trade)
 
 
-const TRADE_ROUTE_DISTANCE_CAP = 15
+const TRADE_ROUTE_DISTANCE_CAP = 10
 const TRADE_ROUTE_MIN_GOODS = 10
 
 const TREASURE_TARGET = 5000
