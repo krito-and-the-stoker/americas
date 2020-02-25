@@ -102,6 +102,7 @@
 		"id": 134
 	},
 	"gold":{
-		"id": 116
+		"id": 116,
+		"displayFactor": 10
 	}
 }

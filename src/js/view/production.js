@@ -11,8 +11,9 @@ const MAX_DISTANCE = 30
 const	create = (resource, amount, width = 100) => {
 	if (amount !== 0) {
 		let absoluteAmount = Math.abs(amount)
-		let numberOfSprites = absoluteAmount
-		let distance = Math.min(MAX_DISTANCE, width / absoluteAmount)
+		const displayFactor = Goods[resource].displayFactor || 1
+		let numberOfSprites = absoluteAmount / displayFactor
+		let distance = Math.min(MAX_DISTANCE, width / numberOfSprites)
 		if (distance < MIN_DISTANCE) {
 			distance = MIN_DISTANCE
 			numberOfSprites = Math.round(width / distance)
@@ -26,7 +27,7 @@ const	create = (resource, amount, width = 100) => {
 			}
 			return sprite
 		})
-		if (result.length >= 6) {
+		if (absoluteAmount >= 6) {
 			const number = Text.create(absoluteAmount, {
 				fill: amount > 0 ? 0xffffff : 0xFF6666,
 			})
