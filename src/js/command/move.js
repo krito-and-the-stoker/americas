@@ -32,6 +32,10 @@ export default Factory.create('Move', {
 	startCoords: {
 		type: 'raw'
 	}
+}, {
+	id: 'move',
+	display: 'Travelling',
+	icon: 'go'
 }, ({ unit, coords, startTime, duration, startCoords }) => {
 	if (coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y) {
 		console.warn('coords out of range', coords)

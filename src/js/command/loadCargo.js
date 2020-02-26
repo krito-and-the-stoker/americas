@@ -38,6 +38,9 @@ export default Factory.create('LoadCargo', {
 	eta: {
 		type: 'raw'
 	}
+}, {
+	id: 'loadCargo',
+	display: 'Loading cargo'
 }, ({ colony, unit, pack, eta }) => {
 	Forecast.add(colony, pack)
 

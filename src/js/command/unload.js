@@ -82,7 +82,11 @@ const create = (unit, coords) => {
 	return {
 		update,
 		init,
-		save
+		save,
+		description: {
+			id: 'unload',
+			display: 'Unloading unit'
+		}
 	}
 }
 

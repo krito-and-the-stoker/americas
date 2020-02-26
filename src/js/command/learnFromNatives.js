@@ -21,6 +21,9 @@ export default Factory.create('LearnFromNatives', {
 		type: 'raw',
 		required: true
 	}
+}, {
+	id: 'LearnFromNatives',
+	display: 'Learning from natives'
 }, ({ unit, profession }) => {
 	if (!unit.colonist) {
 		Unit.update.colonist(unit, Colonist.create(unit))

@@ -8,6 +8,9 @@ export default Factory.create('Disband', {
 		type: 'entity',
 		required: true
 	}
+}, {
+	id: 'disband',
+	display: 'Disbanding'
 }, ({ unit }) => {
 	const init = () => {
 		Unit.disband(unit)

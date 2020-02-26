@@ -50,6 +50,7 @@ const create = (name, coords, owner) => {
 			colonist: null,
 			pioneering: false,
 			radius: 0,
+			command: null
 		}
 		unit.storage = Storage.create()
 		unit.equipment = Storage.create()
@@ -94,6 +95,9 @@ const initialize = unit => {
 
 	return [
 		Time.schedule(unit.commander),
+		Binding.listen(unit.commander.state, 'info', info => {
+			update.command(unit, info)
+		}),
 		Time.schedule({ update: (currentTime, deltaTime) => {
 			if (unit.vehicle || (unit.colonist && unit.colonist.colony)) {
 				if (unit.radius > 0) {
@@ -237,6 +241,7 @@ const listen = {
 	pioneering: (unit, fn) => Binding.listen(unit, 'pioneering', fn),
 	tile: (unit, fn) => Binding.listen(unit, 'tile', fn),
 	radius: (unit, fn) => Binding.listen(unit, 'radius', fn),
+	command: (unit, fn) => Binding.listen(unit, 'command', fn),
 }
 
 const update = {
@@ -251,6 +256,7 @@ const update = {
 	pioneering: (unit, value) => Binding.update(unit, 'pioneering', value),
 	tile: (unit, value) => Binding.update(unit, 'tile', value),
 	radius: (unit, value) => Binding.update(unit, 'radius', value),
+	command: (unit, value) => Binding.update(unit, 'command', value)
 }
 
 const updateType = (unit, name) => {

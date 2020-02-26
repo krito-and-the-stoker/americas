@@ -23,6 +23,10 @@ export default Factory.commander('TradeRoute', {
 		type: 'raw',
 		default: true
 	}
+}, {
+	id: 'tradeRoute',
+	display: 'Transporting goods',
+	icon: 'tradeRoute'
 }, state => {
 	const { unit, commander } = state
 	const unsubscribe = Events.listen('trade-route-complete', params => {

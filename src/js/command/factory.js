@@ -3,6 +3,7 @@ import Commander from 'command/commander'
 import Util from 'util/util'
 import Record from 'util/record'
 
+
 const createTypes = name => {
 	const types = {
 		save: {
@@ -46,7 +47,7 @@ const revive = command => {
 }
 
 
-const create = (name, params, functionFactory) => {
+const create = (name, params, info, functionFactory) => {
 	const types = createTypes(name)
 
 	params.tag = {
@@ -66,7 +67,7 @@ const create = (name, params, functionFactory) => {
 		})
 
 		args.tag = args.tag || `${name} - ${Util.tag()}`
-
+		args.info = args.info || info
 
 		Object.entries(params)
 			.filter(([, description]) => description.required)
@@ -110,6 +111,7 @@ const create = (name, params, functionFactory) => {
 					...args,
 					...originalInit(...initArgs),
 					tag: args.tag,
+					info: args.info,
 					initHasBeenCalled: true
 				}
 
@@ -120,7 +122,8 @@ const create = (name, params, functionFactory) => {
 		return {
 			...functions,
 			save,
-			tag: args.tag
+			tag: args.tag,
+			info: args.info
 		}
 	}
 
@@ -157,10 +160,11 @@ const wrap = (commander, command) => ({
 	},
 	priority: true,
 	state: commander.state,
-	tag: `Wrapped ${command.tag}`
+	tag: `Wrapped ${command.tag}`,
+	info: command.info
 })
 
-const commander = (name, params, functionFactory) => {
+const commander = (name, params, info, functionFactory) => {
 	const types = createTypes(name)
 	params.commander = {
 		type: 'command'
@@ -170,11 +174,12 @@ const commander = (name, params, functionFactory) => {
 		type: 'raw'
 	}
 
+
 	return {
 		create: (...args) => {
 			const commander = Commander.create()
 			params.commander.initialized = commander
-			const factory = create(name, params, functionFactory)
+			const factory = create(name, params, info, functionFactory)
 			const inner = factory.create(...args)
 
 			return wrap(commander, inner)
@@ -184,7 +189,7 @@ const commander = (name, params, functionFactory) => {
 
 			const args = Util.makeObject(Object.entries(params).filter(([key]) => key !== 'commander').map(([key, description]) => [key, types.load[description.type](data[key])]))
 			args.commander = commander
-			const inner = revive(create(name, params, functionFactory).create(args))
+			const inner = revive(create(name, params, info, functionFactory).create(args))
 
 			return wrap(commander, inner)
 		}

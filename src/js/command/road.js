@@ -18,6 +18,9 @@ export default Factory.create('Road', {
 	eta: {
 		type: 'raw'
 	}
+}, {
+	id: 'road',
+	display: 'Building road'
 }, ({ unit, eta }) => {
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)

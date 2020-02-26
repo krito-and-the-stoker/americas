@@ -34,6 +34,10 @@ export default Factory.commander('MoveTo', {
 	lastPoint: {
 		type: 'raw'
 	}
+}, {
+	id: 'moveTo',
+	display: 'Travelling',
+	icon: 'go'
 }, ({ unit, coords, commander, lastPoint }) => {
 	if (coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y) {
 		console.warn('invalid coords', unit.name, coords)

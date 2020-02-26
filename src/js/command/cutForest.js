@@ -19,6 +19,9 @@ export default Factory.create('CutForest', {
 	eta: {
 		type: 'raw'
 	},
+}, {
+	id: 'cutForest',
+	display: 'Cutting forest'
 }, ({ unit, eta }) => {
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)

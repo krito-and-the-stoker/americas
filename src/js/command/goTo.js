@@ -1,5 +1,4 @@
 import PathFinder from 'util/pathFinder'
-import Record from 'util/record'
 
 import MapEntity from 'entity/map'
 import Europe from 'entity/europe'
@@ -25,6 +24,10 @@ export default Factory.commander('GoTo', {
 		type: 'raw',
 		default: false
 	}
+}, {
+	id: 'goTo',
+	display: 'Travelling',
+	icon: 'go'
 }, ({ unit, colony, europe, commander }) => {
 	const init = () => {
 		if (colony) {

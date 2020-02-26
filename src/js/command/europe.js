@@ -17,6 +17,9 @@ export default Factory.create('Europe', {
 	eta: {
 		type: 'raw'
 	}
+}, {
+	id: 'europe',
+	display: 'Travelling to Europe'
 }, ({ unit, eta }) => {
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)

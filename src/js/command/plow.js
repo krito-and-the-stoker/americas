@@ -18,6 +18,9 @@ export default Factory.create('Plow', {
 	eta: {
 		type: 'raw'
 	}
+}, {
+	id: 'plow',
+	display: 'Plowing earth'
 }, ({ unit, eta }) => {
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)

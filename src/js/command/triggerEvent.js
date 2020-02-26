@@ -27,6 +27,9 @@ export default Factory.create('TriggerEvent', {
 	eta: {
 		type: 'raw'
 	}
+}, {
+	id: 'triggerEvent',
+	display: 'Triggering event'
 }, ({ name, type, unit, colony, id, wait, eta }) => {
 	const init = currentTime => {
 		eta = currentTime + wait

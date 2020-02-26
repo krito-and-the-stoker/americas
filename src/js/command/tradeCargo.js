@@ -40,6 +40,9 @@ export default Factory.create('TradeCargo', {
 	eta: {
 		type: 'raw'
 	}
+}, {
+	id: 'tradeCargo',
+	display: 'Trading in Europe'
 }, ({ unit, pack, eta }) => {
 	const init = currentTime => {
 		if (!Europe.has.unit(unit)) {

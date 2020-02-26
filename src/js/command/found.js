@@ -17,6 +17,9 @@ export default Factory.create('Found', {
 		type: 'entity',
 		required: true
 	}
+}, {
+	id: 'found',
+	display: 'Founding Colony'
 }, ({ unit }) => {
 	const init = () => {
 		if (!unit.properties.canFound) {

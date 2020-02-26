@@ -36,40 +36,33 @@ import Dialog from 'view/ui/dialog'
 
 const cargoScale = .6
 
+const createCommandText = text => {
+	const result = Text.create(text)
+	result.x = 10
+	result.visible = false
+	result.buttonMode = true
+
+	return result
+}
+
 const initialize = () => {
-	const unitName = Text.create('')
-	const gotoText = Text.create('Go to')
-	const foundColony = Text.create('Found colony')
-	const buildRoadText = Text.create('Build road')
-	const plowText = Text.create('Plow')
-	const cancelPioneeringText = Text.create('Cancel pioneering')
-	const cutForestText = Text.create('Cut down forest')
-	const trade = Text.create('Trade route')
-
+	const unitName = Text.create()
+	unitName.buttonMode = true
 	unitName.x = 10
-	gotoText.x = 10
-	foundColony.x = 10
-	buildRoadText.x = 10
-	plowText.x = 10
-	cancelPioneeringText.x = 10
-	cutForestText.x = 10
-	trade.x = 10
+	unitName.visible = true
 
-	gotoText.visible = false
-	foundColony.visible = false
-	buildRoadText.visible = false
-	plowText.visible = false
-	cancelPioneeringText.visible = false
-	cutForestText.visible = false
-	trade.visible = false
+	const commandName = Text.create()
+	commandName.x = 10
+	commandName.visible = true
 
-	gotoText.buttonMode = true
-	foundColony.buttonMode = true
-	buildRoadText.buttonMode = true
-	plowText.buttonMode = true
-	cancelPioneeringText.buttonMode = true
-	cutForestText.buttonMode = true
-	trade.buttonMode = true
+	const gotoText = createCommandText('Go to')
+	const foundColony = createCommandText('Found colony')
+	const buildRoadText = createCommandText('Build road')
+	const plowText = createCommandText('Plow')
+	const cancelPioneeringText = createCommandText('Cancel pioneering')
+	const cutForestText = createCommandText('Cut down forest')
+	const trade = createCommandText('transport route')
+	const cancelTrade = createCommandText('Cancel transport route')
 
 	const unitSpeed = Text.create('')
 	const unitStrength = Text.create('')
@@ -120,7 +113,9 @@ const initialize = () => {
 			]
 
 			unitName.text = `${Unit.name(unit)}`
-			unitName.buttonMode = true
+			const unsubscribeCommand = Unit.listen.command(unit, command => {
+				commandName.text = command ? command.display : ''
+			})
 			const unsubscribeClick = [
 				Click.on(unitName, () => {
 					MapView.centerAt(unit.mapCoordinates, 350)
@@ -143,6 +138,9 @@ const initialize = () => {
 				}),
 				Click.on(trade, () => {
 					Commander.scheduleInstead(unit.commander, TradeRoute.create({ unit }))
+				}),
+				Click.on(cancelTrade, () => {
+					Commander.clearSchedule(unit.commander)
 				}),
 				Click.on(gotoText, () => {
 					if (unit.domain === 'sea') {
@@ -195,7 +193,8 @@ const initialize = () => {
 				plowText.visible = unit.properties.canTerraform && !moving && !unit.tile.forest && !unit.tile.plowed && !unit.tile.settlement && !unit.pioneering
 				cancelPioneeringText.visible = unit.pioneering
 				cutForestText.visible = unit.properties.canTerraform && !moving && unit.tile.forest && !unit.tile.settlement && !unit.pioneering
-				trade.visible = unit.properties.cargo > 0 && unit.passengers.length === 0 && !unit.pioneering
+				trade.visible = unit.properties.cargo > 0 && unit.passengers.length === 0 && !unit.pioneering && !unit.trading
+				cancelTrade.visible = unit.trading
 			}
 			
 			const unsubscribeCoords = Unit.listen.mapCoordinates(unit, updateCommands)
@@ -203,6 +202,7 @@ const initialize = () => {
 			const unsubscribePioneering = Unit.listen.pioneering(unit, updateCommands)
 
 			Foreground.get().notifications.addChild(unitName)
+			Foreground.get().notifications.addChild(commandName)
 			Foreground.get().notifications.addChild(gotoText)
 			Foreground.get().notifications.addChild(foundColony)
 			Foreground.get().notifications.addChild(buildRoadText)
@@ -210,6 +210,7 @@ const initialize = () => {
 			Foreground.get().notifications.addChild(cancelPioneeringText)
 			Foreground.get().notifications.addChild(cutForestText)
 			Foreground.get().notifications.addChild(trade)
+			Foreground.get().notifications.addChild(cancelTrade)
 
 			Foreground.get().notifications.addChild(unitSpeed)
 			Foreground.get().notifications.addChild(unitStrength)
@@ -290,6 +291,7 @@ const initialize = () => {
 
 			return () => {
 				Foreground.get().notifications.removeChild(unitName)
+				Foreground.get().notifications.removeChild(commandName)
 				Foreground.get().notifications.removeChild(gotoText)
 				Foreground.get().notifications.removeChild(foundColony)
 				Foreground.get().notifications.removeChild(buildRoadText)
@@ -297,6 +299,7 @@ const initialize = () => {
 				Foreground.get().notifications.removeChild(cancelPioneeringText)
 				Foreground.get().notifications.removeChild(cutForestText)
 				Foreground.get().notifications.removeChild(trade)
+				Foreground.get().notifications.removeChild(cancelTrade)
 
 				Foreground.get().notifications.removeChild(unitSpeed)
 				Foreground.get().notifications.removeChild(unitStrength)
@@ -308,6 +311,7 @@ const initialize = () => {
 				Foreground.get().notifications.removeChild(container)
 
 				Util.execute([
+					unsubscribeCommand,
 					unsubscribePassengersAndStorage,
 					unsubscribeClick,
 					unsubscribeSpeedAndStorage
@@ -328,15 +332,16 @@ const initialize = () => {
 		strengthIcon.y = dimensions.y - lineOffset - 2 * lineHeight
 		costIcon.y = dimensions.y - lineOffset - 2 * lineHeight
 
-
-		unitName.y = dimensions.y - lineOffset - 1 * lineHeight
-		gotoText.y = dimensions.y - lineOffset - 3 * lineHeight - 20
-		cancelPioneeringText.y = dimensions.y - lineOffset - 3 * lineHeight - 20
-		trade.y = dimensions.y - lineOffset - 4 * lineHeight - 20
-		foundColony.y = dimensions.y - lineOffset - 4 * lineHeight - 20
-		buildRoadText.y = dimensions.y - lineOffset - 5 * lineHeight - 20
-		plowText.y = dimensions.y - lineOffset - 6 * lineHeight - 20
-		cutForestText.y = dimensions.y - lineOffset - 6 * lineHeight - 20
+		commandName.y = dimensions.y - lineOffset - 1 * lineHeight
+		unitName.y = dimensions.y - lineOffset - 3 * lineHeight
+		gotoText.y = dimensions.y - lineOffset - 4 * lineHeight - 20
+		cancelPioneeringText.y = dimensions.y - lineOffset - 4 * lineHeight - 20
+		trade.y = dimensions.y - lineOffset - 5 * lineHeight - 20
+		cancelTrade.y = dimensions.y - lineOffset - 5 * lineHeight - 20
+		foundColony.y = dimensions.y - lineOffset - 5 * lineHeight - 20
+		buildRoadText.y = dimensions.y - lineOffset - 6 * lineHeight - 20
+		plowText.y = dimensions.y - lineOffset - 7 * lineHeight - 20
+		cutForestText.y = dimensions.y - lineOffset - 7 * lineHeight - 20
 	})
 }
 

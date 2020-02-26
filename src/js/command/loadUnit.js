@@ -17,6 +17,9 @@ export default Factory.create('LoadUnit', {
 	eta: {
 		type: 'raw'
 	}
+}, {
+	id: 'loadUnit',
+	display: 'Boarding unit'
 }, ({ transport, passenger, eta }) => {
 	const init = currentTime => {
 		eta = currentTime + Time.LOAD_TIME
