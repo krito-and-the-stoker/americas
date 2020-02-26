@@ -34,7 +34,7 @@ const create = ({ owner, unit, coords }) => {
 						resolve(unit)
 					}
 				}),
-				dismiss: Util.execute(prev.dismiss),
+				dismiss: () => Util.execute(prev.dismiss),
 				cancel: () => Util.execute(cancel)
 			}
 

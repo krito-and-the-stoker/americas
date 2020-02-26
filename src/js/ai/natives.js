@@ -89,38 +89,38 @@ const watch = (ai, colony) => {
 
 const describeRelations = relations => {
 	if (relations.militancy > 1.0) {	
-		if (relations.trust >= 0.7) {
-			return 'proud'
+		if (relations.trust >= 0.6) {
+			return `proud (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 		}
 
 		if (relations.trust >= 0) {
-			return 'alert'
+			return `alert (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 		}
 
-		return 'hostile'
+		return `hostile (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 	}
 
 	if (relations.militancy > 0) {
-		if (relations.trust >= 0.7) {
-			return 'friendly'
+		if (relations.trust >= 0.6) {
+			return `friendly (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 		}
 
 		if (relations.trust >= 0) {
-			return 'reserved'
+			return `reserved (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 		}
 
-		return 'nervous'
+		return `nervous (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 	}
 
-	if (relations.trust >= 0.7) {
-		return 'happy'
+	if (relations.trust >= 0.6) {
+		return `happy (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 	}
 
 	if (relations.trust >= 0) {
-		return 'cordial'
+		return `cordial (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 	}
 
-	return 'submissive'
+	return `submissive (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 }
 
 
@@ -249,51 +249,55 @@ const establishRelations = (ai, owner) => {
 
 const makePlansAndRunThem = ai => {
 	Util.execute(ai.stopAllPlans)
-	Units.unassignAll(ai.owner)
+	Time.schedule({
+		init: () => {
+			Units.unassignAll(ai.owner)
 
-	const executeAction = action => {
-		if (action) {
-			action.commit().then(() => makePlansAndRunThem(ai))
-			return action.cancel
+			const executeAction = action => {
+				if (action) {
+					action.commit().then(() => makePlansAndRunThem(ai))
+					return action.cancel
+				}
+			}
+
+			ai.stopAllPlans = [
+				// establish contact with all strangers
+				State.all(ai.state, 'relations')
+					.filter(contact => !ai.state.relations[contact.referenceId].established)
+					.map(contact => EstablishRelations.create({ owner: ai.owner, contact }))
+					.map(executeAction),
+
+				// visit new colonies
+				Object.entries(ai.state.relations)
+					.map(([referenceId, relation]) => State.all(relation, 'colonies')
+						.filter(colony => !ai.state.relations[referenceId].colonies[colony.referenceId].visited)
+						.map(colony => VisitColony.create({ tribe: ai.tribe, state: ai.state, colony }))
+						.map(executeAction)),
+
+				// raid colonies
+				Object.entries(ai.state.relations)
+					.map(([referenceId, relation]) => State.all(relation, 'colonies')
+						.filter(colony => ai.state.relations[referenceId].colonies[colony.referenceId].raidPlanned > 0)
+						.map(colony => ({
+							action: RaidColony.create({ tribe: ai.tribe, state: ai.state, colony }),
+							colony
+						}))
+						.map(({ action, colony }) => {
+							if (action) {
+								action.commit()
+									.then(() => watch(ai, colony))
+									.then(() => makePlansAndRunThem(ai))
+								return action.cancel
+							}
+						})),
+
+				// collect free and unused units
+				Units.free(ai.owner)
+					.map(unit => Disband.create(unit))
+					.map(executeAction),
+			]
 		}
-	}
-
-	ai.stopAllPlans = [
-		// establish contact with all strangers
-		State.all(ai.state, 'relations')
-			.filter(contact => !ai.state.relations[contact.referenceId].established)
-			.map(contact => EstablishRelations.create({ owner: ai.owner, contact }))
-			.map(executeAction),
-
-		// visit new colonies
-		Object.entries(ai.state.relations)
-			.map(([referenceId, relation]) => State.all(relation, 'colonies')
-				.filter(colony => !ai.state.relations[referenceId].colonies[colony.referenceId].visited)
-				.map(colony => VisitColony.create({ tribe: ai.tribe, state: ai.state, colony }))
-				.map(executeAction)),
-
-		// raid colonies
-		Object.entries(ai.state.relations)
-			.map(([referenceId, relation]) => State.all(relation, 'colonies')
-				.filter(colony => ai.state.relations[referenceId].colonies[colony.referenceId].raidPlanned > 0)
-				.map(colony => ({
-					action: RaidColony.create({ tribe: ai.tribe, state: ai.state, colony }),
-					colony
-				}))
-				.map(({ action, colony }) => {
-					if (action) {
-						action.commit()
-							.then(() => watch(ai, colony))
-							.then(() => makePlansAndRunThem(ai))
-						return action.cancel
-					}
-				})),
-
-		// collect free and unused units
-		Units.free(ai.owner)
-			.map(unit => Disband.create(unit))
-			.map(executeAction),
-	]
+	})
 }
 
 const create = owner => {
