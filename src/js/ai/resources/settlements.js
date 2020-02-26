@@ -22,7 +22,9 @@ const cost = settlement => {
 	return Util.clamp(10 - population, 1, 10)
 }
 
-const unreserve = settlement => reservedPopulation[settlement.referenceId] = reserved(settlement) - 1
+const unreserve = settlement => {
+	reservedPopulation[settlement.referenceId] = reserved(settlement) - 1
+}
 
 const cheapest = (owner, coords) => {
 	const settlements = Record.getAll('settlement')
