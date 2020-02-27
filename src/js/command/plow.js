@@ -4,7 +4,6 @@ import Time from 'timeline/time'
 
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
-import Unit from 'entity/unit'
 import Storage from 'entity/storage'
 
 import Factory from 'command/factory'
@@ -26,7 +25,6 @@ export default Factory.create('Plow', {
 		const tile = MapEntity.tile(unit.mapCoordinates)
 		if (unit.properties.canTerraform && !tile.forest && !tile.settlement && !tile.plowed) {
 			eta = currentTime + Time.PLOW * (unit.expert === 'pioneer' ? 0.6 : 1)
-			Unit.update.pioneering(unit, true)
 		}
 
 		return {
@@ -36,7 +34,6 @@ export default Factory.create('Plow', {
 
 	const cancel = () => {
 		eta = null
-		Unit.update.pioneering(unit, false)
 	}
 
 	const update = currentTime => eta && currentTime < eta
@@ -44,7 +41,6 @@ export default Factory.create('Plow', {
 		if (eta) {
 			Storage.update(unit.equipment, { good: 'tools', amount: -20 })	
 			Tile.plow(MapEntity.tile(unit.mapCoordinates))
-			Unit.update.pioneering(unit, false)
 			Events.trigger('notification', { type: 'terraforming', unit })
 			Events.trigger('terraform')
 		}

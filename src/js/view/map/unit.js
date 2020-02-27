@@ -227,7 +227,7 @@ const initialize = () => {
 					}
 				}))),
 
-			Unit.listen.pioneering(unit, pioneering => {
+			Unit.computed.pioneering(unit, pioneering => {
 				if (pioneering) {
 					lookGrey(view)
 					unselect(unit)

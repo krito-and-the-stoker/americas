@@ -6,7 +6,6 @@ import Time from 'timeline/time'
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Storage from 'entity/storage'
-import Unit from 'entity/unit'
 
 import Factory from 'command/factory'
 
@@ -27,7 +26,6 @@ export default Factory.create('CutForest', {
 		const tile = MapEntity.tile(unit.mapCoordinates)
 		if (unit.properties.canTerraform && tile.forest && !tile.settlement) {
 			eta = currentTime + Time.CUT_FOREST * (unit.expert === 'pioneer' ? 0.6 : 1)
-			Unit.update.pioneering(unit, true)
 		}
 
 		return {
@@ -37,7 +35,6 @@ export default Factory.create('CutForest', {
 
 	const cancel = () => {
 		eta = null
-		Unit.update.pioneering(unit, false)
 	}
 
 	const update = currentTime => eta && currentTime < eta
@@ -51,7 +48,6 @@ export default Factory.create('CutForest', {
 				const amount = 10 + Math.random() * (unit.expert === 'pioneer' ? 90 : 50)
 				Storage.update(colony.storage, { good: 'wood', amount })
 			}
-			Unit.update.pioneering(unit, false)
 			Events.trigger('notification', { type: 'terraforming', unit })
 			Events.trigger('terraform')
 		}

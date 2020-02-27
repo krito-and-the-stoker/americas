@@ -61,8 +61,8 @@ const initialize = () => {
 	const plowText = createCommandText('Plow')
 	const cancelPioneeringText = createCommandText('Cancel pioneering')
 	const cutForestText = createCommandText('Cut down forest')
-	const trade = createCommandText('transport route')
-	const cancelTrade = createCommandText('Cancel transport route')
+	const trade = createCommandText('Trade route')
+	const cancelTrade = createCommandText('Cancel trade route')
 
 	const unitSpeed = Text.create('')
 	const unitStrength = Text.create('')
@@ -131,7 +131,6 @@ const initialize = () => {
 				}),
 				Click.on(cancelPioneeringText, () => {
 					Commander.clearSchedule(unit.commander)
-					console.log('canceled pioneering', unit.commander)
 				}),
 				Click.on(cutForestText, () => {
 					Commander.scheduleInstead(unit.commander, CutForest.create({ unit }))
@@ -186,20 +185,22 @@ const initialize = () => {
 
 
 			const updateCommands = () => {
+				const pioneering = ['cutForest', 'plow', 'road'].includes(unit.command.id)
+				const trading = unit.command.id === 'tradeRoute'
 				const moving = unit.mapCoordinates.x !== unit.tile.mapCoordinates.x || unit.mapCoordinates.y !== unit.tile.mapCoordinates.y
-				gotoText.visible = !unit.pioneering
-				foundColony.visible = unit.properties.canFound && !moving && !Tile.radius(unit.tile).some(tile => tile.colony) && !unit.tile.settlement && !unit.pioneering
-				buildRoadText.visible = unit.properties.canTerraform && !moving && !unit.tile.road && !unit.tile.settlement && !unit.pioneering
-				plowText.visible = unit.properties.canTerraform && !moving && !unit.tile.forest && !unit.tile.plowed && !unit.tile.settlement && !unit.pioneering
-				cancelPioneeringText.visible = unit.pioneering
-				cutForestText.visible = unit.properties.canTerraform && !moving && unit.tile.forest && !unit.tile.settlement && !unit.pioneering
-				trade.visible = unit.properties.cargo > 0 && unit.passengers.length === 0 && !unit.pioneering && !unit.trading
-				cancelTrade.visible = unit.trading
+				gotoText.visible = !pioneering
+				foundColony.visible = unit.properties.canFound && !moving && !Tile.radius(unit.tile).some(tile => tile.colony) && !unit.tile.settlement && !pioneering
+				buildRoadText.visible = unit.properties.canTerraform && !moving && !unit.tile.road && !unit.tile.settlement && !pioneering
+				plowText.visible = unit.properties.canTerraform && !moving && !unit.tile.forest && !unit.tile.plowed && !unit.tile.settlement && !pioneering
+				cancelPioneeringText.visible = pioneering
+				cutForestText.visible = unit.properties.canTerraform && !moving && unit.tile.forest && !unit.tile.settlement && !pioneering
+				trade.visible = unit.properties.cargo > 0 && unit.passengers.length === 0 && !pioneering && !trading
+				cancelTrade.visible = trading
 			}
-			
+
 			const unsubscribeCoords = Unit.listen.mapCoordinates(unit, updateCommands)
 			const unsubscribeTile = Unit.listen.tile(unit, updateCommands)
-			const unsubscribePioneering = Unit.listen.pioneering(unit, updateCommands)
+			const unsubscribePioneering = Unit.listen.command(unit, updateCommands)
 
 			Foreground.get().notifications.addChild(unitName)
 			Foreground.get().notifications.addChild(commandName)

@@ -109,7 +109,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 			UnitMapView.select(unit)
 		})
 
-		const unsubscribePioneering = Unit.listen.pioneering(unit, pioneering => {
+		const unsubscribePioneering = Unit.computed.pioneering(unit, pioneering => {
 			sprite.filters = pioneering ? [greyScaleFilter] : []
 		})
 

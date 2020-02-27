@@ -228,6 +228,11 @@ const remove = {
 	passenger: passenger => Member.remove(passenger.vehicle, 'passengers', passenger),
 }
 
+const computed = {
+	pioneering: (unit, fn) => listen.command(unit, Binding.map(command =>
+		command && ['cutForest', 'plow', 'road'].includes(command.id), fn))	
+}
+
 const listen = {
 	passengers: (unit, fn) => Binding.listen(unit, 'passengers', fn),
 	vehicle: (unit, fn) => Binding.listen(unit, 'vehicle', fn),
@@ -238,10 +243,9 @@ const listen = {
 	properties: (unit, fn) => Binding.listen(unit, 'properties', fn),
 	name: (unit, fn) => Binding.listen(unit, 'name', fn),
 	expert: (unit, fn) => Binding.listen(unit, 'expert', fn),
-	pioneering: (unit, fn) => Binding.listen(unit, 'pioneering', fn),
 	tile: (unit, fn) => Binding.listen(unit, 'tile', fn),
 	radius: (unit, fn) => Binding.listen(unit, 'radius', fn),
-	command: (unit, fn) => Binding.listen(unit, 'command', fn),
+	command: (unit, fn) => Binding.listen(unit, 'command', fn)
 }
 
 const update = {
@@ -253,7 +257,6 @@ const update = {
 	properties: (unit, value) => Binding.update(unit, 'properties', value),
 	name: (unit, value) => Binding.update(unit, 'name', value),
 	expert: (unit, value) => Binding.update(unit, 'expert', value),
-	pioneering: (unit, value) => Binding.update(unit, 'pioneering', value),
 	tile: (unit, value) => Binding.update(unit, 'tile', value),
 	radius: (unit, value) => Binding.update(unit, 'radius', value),
 	command: (unit, value) => Binding.update(unit, 'command', value)
@@ -444,6 +447,7 @@ export default {
 	add,
 	remove,
 	update,
+	computed,
 	loadGoods,
 	loadUnit,
 	updateType,
