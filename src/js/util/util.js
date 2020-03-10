@@ -27,17 +27,17 @@ const isFunction = something => typeof something === 'function'
 
 // const mergeFunctions = funcArray => funcArray.filter(fn => isFunction(fn)).reduce((all, fn) => arg => { all(arg); fn(arg) }, () => {})
 // const mergeFunctionsFlat = funcArray => mergeFunctions(flatten(funcArray))
-const execute = (something, arg) => {
+const execute = (something, ...arg) => {
 	if (!something) {
 		return null
 	}
 
 	if (isFunction(something)) {
-		return something(arg)
+		return something(...arg)
 	}
 
 	if (isArray(something)) {
-		return flatten(something).filter(isFunction).map(fn => fn(arg))
+		return flatten(something).filter(isFunction).map(fn => fn(...arg))
 	}
 
 	console.warn('unable to execute', something)

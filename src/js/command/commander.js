@@ -49,7 +49,7 @@ const startCurrentCommand = state => {
 	const command = state.currentCommand
 	const originalFinished = command.finished
 
-	const unsubscribeCommandInfo = Binding.listen(command, 'info', info =>
+	const unsubscribeCommandInfo = Binding.listen(command.state, 'info', info =>
 		Binding.update(state, 'info', info))
 
 	state.currentCommand.finished = () => {
@@ -139,8 +139,7 @@ const { create, load } = Factory.create('Commander', {
 		update,
 		stopped,
 		loaded,
-		cancel,
-		state
+		cancel
 	}
 
 	return commander

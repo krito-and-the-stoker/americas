@@ -1,6 +1,7 @@
 import Commander from 'command/commander'
 
 import Util from 'util/util'
+import Binding from 'util/binding'
 import Record from 'util/record'
 
 
@@ -120,7 +121,7 @@ const create = (name, params, info, functionFactory) => {
 			...functions,
 			save,
 			tag: args.tag,
-			info: args.info
+			state: args
 		}
 	}
 
@@ -137,31 +138,43 @@ const create = (name, params, info, functionFactory) => {
 	}
 }
 
-const wrap = (commander, command) => ({
-	...command,
-	update: (...x) => {
-		if (command.update) {
-			if (!command.update(...x)) {
-				// console.log('should stop commander here')
-				// commander.schedule.stop()
+const wrap = (commander, command) => {
+	let unsubscribe
+	const wrappedCommand = {	
+		...command,
+		init: (...x) => {
+			unsubscribe = Binding.listen(command.state, 'info', info =>
+				Binding.update(wrappedCommand.state, 'info', info))
+			Util.execute(command.init, ...x)
+			return true
+		},
+		update: (...x) => {
+			if (command.update) {
+				if (!command.update(...x)) {
+					// console.log('should stop commander here')
+					// commander.schedule.stop()
+				}
 			}
-		}
 
-		return commander.update(...x)
-	},
-	stopped: (...x) => {
-		if (command.stopped) {
-			command.stopped(...x)
-		}
-		commander.stopped(...x)
-	},
-	cancel: () => {
-		Util.execute(commander.cancel)
-	},
-	priority: true,
-	tag: `Wrapped ${command.tag}`,
-	info: command.info
-})
+			return commander.update(...x)
+		},
+		stopped: (...x) => {
+			Util.execute(command.stopped, ...x)
+			Util.execute(commander.stopped, ...x)
+		},
+		cancel: () => {
+			Util.execute(commander.cancel)
+		},
+		finished: (...x) => {
+			Util.execute(unsubscribe)
+			return Util.execute(command.finished, ...x)
+		},
+		priority: true,
+		tag: `Wrapped ${command.tag}`,
+	}
+
+	return wrappedCommand
+}
 
 const commander = (name, params, info, functionFactory) => {
 	const types = createTypes(name)
