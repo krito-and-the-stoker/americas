@@ -16,6 +16,7 @@ import Plow from 'command/plow'
 import CutForest from 'command/cutForest'
 import TradeRoute from 'command/tradeRoute'
 import MoveTo from 'command/moveTo'
+import GoTo from 'command/goTo'
 import Europe from 'command/europe'
 import TriggerEvent from 'command/triggerEvent'
 
@@ -152,16 +153,13 @@ const initialize = () => {
 							options: colonies.map(colony => ({
 								text: `${colony.name} (${colony.colonists.length})`,
 								action: () => {
-									Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: colony.mapCoordinates }))
+									Commander.scheduleInstead(unit.commander, GoTo.create({ unit, colony }))
 								}
 							})).concat([{
 								text: 'London',
 								margin: true,
 								action: () => {
-									const pathToHighSeas = PathFinder.findHighSeas(unit.tile)
-									const target = pathToHighSeas[pathToHighSeas.length - 1]
-									Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: target.mapCoordinates }))
-									Commander.scheduleBehind(unit.commander, Europe.create({ unit }))
+									Commander.scheduleInstead(unit.commander, GoTo.create({ unit, europe: true }))
 									Commander.scheduleBehind(unit.commander, TriggerEvent.create({ name: 'notification', type: 'europe', unit }))
 								}
 							}])
@@ -175,7 +173,7 @@ const initialize = () => {
 							options: colonies.map(colony => ({
 								text: `${colony.name} (${colony.colonists.length})`,
 								action: () => {
-									Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: colony.mapCoordinates }))
+									Commander.scheduleInstead(unit.commander, GoTo.create({ unit, colony }))
 								}
 							}))
 						})

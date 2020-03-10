@@ -1,6 +1,5 @@
 import Message from 'util/message'
 import Events from 'util/events'
-import Binding from 'util/binding'
 
 import MapEntity from 'entity/map'
 import Storage from 'entity/storage'
@@ -61,10 +60,7 @@ export default Factory.commander('TradeRoute', {
 			if (route) {
 				const goods = route.orders.reduce((s, order) => s ? `${s}, ${order.amount} ${order.good}` : `${order.amount} ${order.good}`, null)
 				Message.send(`A ${unit.name} will bring ${goods} from ${route.src.name} to ${route.dest.name}`)
-				Binding.update(state, 'info', {
-					...state.info,
-					display: `Transporting ${goods} from ${route.src.name} to ${route.dest.name}`
-				})
+				Factory.update.display(state, `Transporting ${goods} from ${route.src.name} to ${route.dest.name}`)
 
 				Commander.scheduleInstead(commander, GoTo.create({
 					unit,
@@ -99,10 +95,7 @@ export default Factory.commander('TradeRoute', {
 				Commander.scheduleBehind(commander, TriggerEvent.create({ name: 'trade-route-complete', id: commander.tag }))
 			} else {
 				Message.send(`A ${unit.name} has not found any routes and will look again shortly`)
-				Binding.update(state, 'info', {
-					...state.info,
-					display: 'Waiting for transport routes'
-				})
+				Factory.update.display(state, 'Waiting for transport routes')
 				Commander.scheduleBehind(commander, TriggerEvent.create({ name: 'trade-route-complete', id: commander.tag, wait: 2500 }))
 			}
 		}

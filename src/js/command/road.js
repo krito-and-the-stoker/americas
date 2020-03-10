@@ -1,4 +1,5 @@
 import Events from 'util/events'
+import PathFinder from 'util/pathFinder'
 
 import Time from 'timeline/time'
 

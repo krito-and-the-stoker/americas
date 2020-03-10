@@ -50,19 +50,19 @@ export default Factory.create('Europe', {
 			Message.send(`A ${unit.name} arrived in Europe.`)
 			EnterEurope(unit)
 		} else {
+			console.log(state)
 			Message.send(`A ${unit.name} arrived back in the Americas.`)
 			Unit.update.offTheMap(unit, false)
 		}
 	}
 
-	const cancel = () => {
-		state.direction *= -1
-	}
+	// const cancel = () => {
+	// 	state.direction *= -1
+	// }
 
 	return {
 		init,
 		update,
-		cancel,
 		finished
 	}
 })
