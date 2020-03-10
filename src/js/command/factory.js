@@ -91,7 +91,7 @@ const create = (name, params, info, functionFactory) => {
 			})
 
 		const save = () => {
-			console.log('saving', params, args)
+			// console.log('saving', params, args)
 			const result = Util.makeObject(Object.entries(params).concat([['module', { type: 'name' }]]).map(([key, description]) => [key, types.save[description.type](args[key])]))
 			// console.log(result)
 			return result

@@ -42,7 +42,6 @@ export default Factory.create('Europe', {
 
 	const update = (currentTime, deltaTime) => {
 		state.progress += state.direction * (deltaTime / Time.EUROPE_SAIL_TIME)
-		console.log(state, state.progress)
 		return state.progress >= 0 && state.progress <= 1
 	}
 
