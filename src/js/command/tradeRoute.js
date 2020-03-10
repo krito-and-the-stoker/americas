@@ -28,6 +28,7 @@ export default Factory.commander('TradeRoute', {
 	display: 'Transporting goods',
 	icon: 'tradeRoute'
 }, state => {
+	let tradeRouteActive = true
 	const { unit, commander } = state
 	const unsubscribe = Events.listen('trade-route-complete', params => {
 		if (params.id === commander.tag) {
@@ -97,11 +98,17 @@ export default Factory.commander('TradeRoute', {
 			}
 		}
 
-		return true
+		return tradeRouteActive
+	}
+
+	const cancel = () => {
+		Commander.clearSchedule(commander)
+		tradeRouteActive = false
 	}
 
 	return {
 		update,
+		cancel,
 		finished: unsubscribe,
 		canceled: unsubscribe
 	}

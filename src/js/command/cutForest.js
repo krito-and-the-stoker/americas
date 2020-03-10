@@ -21,25 +21,24 @@ export default Factory.create('CutForest', {
 }, {
 	id: 'cutForest',
 	display: 'Cutting forest'
-}, ({ unit, eta }) => {
+}, state => {
+	const { unit } = state
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)
 		if (unit.properties.canTerraform && tile.forest && !tile.settlement) {
-			eta = currentTime + Time.CUT_FOREST * (unit.expert === 'pioneer' ? 0.6 : 1)
-		}
-
-		return {
-			eta,
+			return {
+				eta: currentTime + Time.CUT_FOREST * (unit.expert === 'pioneer' ? 0.6 : 1)
+			}
 		}
 	}
 
 	const cancel = () => {
-		eta = null
+		state.eta = null
 	}
 
-	const update = currentTime => eta && currentTime < eta
+	const update = currentTime => state.eta && currentTime < state.eta
 	const finished = () => {
-		if (eta) {		
+		if (state.eta) {
 			Storage.update(unit.equipment, { good: 'tools', amount: -20 })	
 			const tile = MapEntity.tile(unit.mapCoordinates)
 			Tile.clearForest(tile)

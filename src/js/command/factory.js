@@ -91,9 +91,9 @@ const create = (name, params, info, functionFactory) => {
 			})
 
 		const save = () => {
-			// console.log('saving', params, args)
+			console.log('saving', params, args)
 			const result = Util.makeObject(Object.entries(params).concat([['module', { type: 'name' }]]).map(([key, description]) => [key, types.save[description.type](args[key])]))
-			// console.log(tag, result)
+			// console.log(result)
 			return result
 		}
 
@@ -107,12 +107,9 @@ const create = (name, params, info, functionFactory) => {
 			const originalInit = functions.init
 
 			functions.init = (...initArgs) => {
-				args = {
-					...args,
-					...originalInit(...initArgs),
-					tag: args.tag,
-					info: args.info,
-					initHasBeenCalled: true
+				const initResult = originalInit(...initArgs)
+				if (initResult) {
+					Object.assign(args, initResult, { initHasBeenCalled: true })
 				}
 
 				return true
@@ -158,8 +155,10 @@ const wrap = (commander, command) => ({
 		}
 		commander.stopped(...x)
 	},
+	cancel: () => {
+		Util.execute(commander.cancel)
+	},
 	priority: true,
-	state: commander.state,
 	tag: `Wrapped ${command.tag}`,
 	info: command.info
 })

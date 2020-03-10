@@ -42,9 +42,6 @@ const schedule = {
 		if (parent.state.currentCommand) {
 			Util.execute(parent.state.currentCommand.cancel)
 		}
-		if (parent.state.currentCommand && parent.state.currentCommand.state) {
-			schedule.clear(parent.state.currentCommand)
-		}
 	},
 }
 
@@ -133,13 +130,20 @@ const { create, load } = Factory.create('Commander', {
 		}
 	}
 
-	return {
+	const cancel = () => {
+		clearSchedule(commander)
+	}
+
+	const commander = {
 		priority: true,
 		update,
 		stopped,
 		loaded,
+		cancel,
 		state
 	}
+
+	return commander
 })
 
 

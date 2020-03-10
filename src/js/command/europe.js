@@ -14,40 +14,56 @@ export default Factory.create('Europe', {
 		type: 'entity',
 		required: true
 	},
-	eta: {
+	progress: {
+		type: 'raw'
+	},
+	direction: {
 		type: 'raw'
 	}
 }, {
 	id: 'europe',
 	display: 'Travelling to Europe'
-}, ({ unit, eta }) => {
-	const init = currentTime => {
+}, state => {
+	const { unit } = state
+
+	const init = () => {
 		const tile = MapEntity.tile(unit.mapCoordinates)
 		if (tile.name !== 'sea lane') {
 			console.warn('not going to europe', tile.name, unit, tile)
 			return false
 		}
 
-		eta = currentTime + Time.EUROPE_SAIL_TIME
 		Unit.update.offTheMap(unit, true)
-
 		return {
-			eta
+			progress: 0,
+			direction: 1
 		}
 	}
 
-	const update = currentTime => eta > currentTime
+	const update = (currentTime, deltaTime) => {
+		state.progress += state.direction * (deltaTime / Time.EUROPE_SAIL_TIME)
+		console.log(state, state.progress)
+		return state.progress >= 0 && state.progress <= 1
+	}
 
 	const finished = () => {
-		if (eta) {
+		if (state.progress >= 1) {
 			Message.send(`A ${unit.name} arrived in Europe.`)
 			EnterEurope(unit)
+		} else {
+			Message.send(`A ${unit.name} arrived back in the Americas.`)
+			Unit.update.offTheMap(unit, false)
 		}
+	}
+
+	const cancel = () => {
+		state.direction *= -1
 	}
 
 	return {
 		init,
 		update,
+		cancel,
 		finished
 	}
 })

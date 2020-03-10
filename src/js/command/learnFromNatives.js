@@ -25,6 +25,7 @@ export default Factory.create('LearnFromNatives', {
 	id: 'LearnFromNatives',
 	display: 'Learning from natives'
 }, ({ unit, profession }) => {
+	let wantsToLearn = true
 	if (!unit.colonist) {
 		Unit.update.colonist(unit, Colonist.create(unit))
 	}
@@ -49,7 +50,7 @@ export default Factory.create('LearnFromNatives', {
 			return false
 		}
 
-		return true
+		return !wantsToLearn
 	}
 
 	const finished = () => {
@@ -59,9 +60,14 @@ export default Factory.create('LearnFromNatives', {
 		Unit.update.offTheMap(unit, false)
 	}
 
+	const cancel = () => {
+		wantsToLearn = false
+	}
+
 	return {
 		init,
 		update,
 		finished,
+		cancel
 	}
 })

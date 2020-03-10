@@ -20,25 +20,24 @@ export default Factory.create('Plow', {
 }, {
 	id: 'plow',
 	display: 'Plowing earth'
-}, ({ unit, eta }) => {
+}, state => {
+	const { unit } = state
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)
 		if (unit.properties.canTerraform && !tile.forest && !tile.settlement && !tile.plowed) {
-			eta = currentTime + Time.PLOW * (unit.expert === 'pioneer' ? 0.6 : 1)
-		}
-
-		return {
-			eta
+			return {
+				eta: currentTime + Time.PLOW * (unit.expert === 'pioneer' ? 0.6 : 1)
+			}
 		}
 	}
 
 	const cancel = () => {
-		eta = null
+		state.eta = null
 	}
 
-	const update = currentTime => eta && currentTime < eta
+	const update = currentTime => state.eta && currentTime < state.eta
 	const finished = () => {
-		if (eta) {
+		if (state.eta) {
 			Storage.update(unit.equipment, { good: 'tools', amount: -20 })	
 			Tile.plow(MapEntity.tile(unit.mapCoordinates))
 			Events.trigger('notification', { type: 'terraforming', unit })
@@ -48,8 +47,8 @@ export default Factory.create('Plow', {
 
 	return {
 		init,
-		update,
 		cancel,
+		update,
 		finished
 	}
 })
