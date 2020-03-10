@@ -25,6 +25,9 @@ export default Factory.create('Road', {
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)
 		if (unit.properties.canTerraform && !tile.road && !tile.settlement) {
+			const closeColony = PathFinder.findNearColony(unit)
+			const colonyText = closeColony ? ` near ${closeColony.name}` : ''
+			Factory.update.display(state, `Building road ${colonyText}`)
 			return {
 				eta: currentTime + Time.CONSTRUCT_ROAD * (unit.expert === 'pioneer' ? 0.6 : 1)
 			}

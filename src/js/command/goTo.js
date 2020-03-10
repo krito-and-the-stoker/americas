@@ -1,4 +1,5 @@
 import PathFinder from 'util/pathFinder'
+import Binding from 'util/binding'
 
 import MapEntity from 'entity/map'
 import Europe from 'entity/europe'
@@ -28,7 +29,8 @@ export default Factory.commander('GoTo', {
 	id: 'goTo',
 	display: 'Travelling',
 	icon: 'go'
-}, ({ unit, colony, europe, commander }) => {
+}, state => {
+	const { unit, colony, europe, commander } = state
 	const init = () => {
 		if (colony) {
 			// from europe to colony
@@ -42,6 +44,10 @@ export default Factory.commander('GoTo', {
 				// from somewhere to colony
 				Commander.scheduleBehind(commander, MoveTo.create({ unit, coords: colony.mapCoordinates }))
 			}
+			Binding.update(state, 'info', {
+				...state.info,
+				display: `Travelling to ${colony.name}`
+			})
 		}
 
 		if (europe) {
@@ -53,6 +59,10 @@ export default Factory.commander('GoTo', {
 				Commander.scheduleBehind(commander, EuropeCommand.create({ unit }))
 			}
 			// from europe to europe -> nothing to do
+			Binding.update(state, 'info', {
+				...state.info,
+				display: 'Travelling to London'
+			})
 		}
 	}	
 

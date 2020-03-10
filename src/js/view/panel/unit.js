@@ -51,7 +51,7 @@ const initialize = () => {
 	unitName.x = 10
 	unitName.visible = true
 
-	const commandName = Text.create()
+	const commandName = Text.create('', { fontSize: 24 })
 	commandName.x = 10
 	commandName.visible = true
 

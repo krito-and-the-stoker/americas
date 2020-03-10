@@ -54,6 +54,13 @@ const findPath = (from, to, unit) => {
 	return find(from, null, to, Unit.area(unit), !unit.properties.canExplore && unit.owner)
 }
 
+const NEAR_COLONY_COST = 10
+const findNearColony = unit => {
+	const target = node => node.cost > NEAR_COLONY_COST || node.tile.colony
+	const tile = find(unit.tile, target, null, Unit.area(unit), unit.owner).pop()
+	return tile.colony
+}
+
 const distance = (fromCoords, toCoords, unit, max = CANNOT_MOVE_COST) => {
 	const from = MapEntity.tile(fromCoords)
 	const to = MapEntity.tile(toCoords)
@@ -194,6 +201,7 @@ export default {
 	findPath,
 	findPathXY,
 	findHighSeas,
+	findNearColony,
 	distance,
 	distanceToEurope
 }

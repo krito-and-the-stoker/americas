@@ -83,9 +83,11 @@ const create = (unit, coords) => {
 		update,
 		init,
 		save,
-		description: {
-			id: 'unload',
-			display: 'Unloading unit'
+		state: {
+			info: {
+				id: 'unload',
+				display: 'Unloading unit'
+			}
 		}
 	}
 }

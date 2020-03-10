@@ -58,7 +58,7 @@ const startCurrentCommand = state => {
 		state.currentCommand = null
 		Binding.update(state, 'info', {
 			id: 'idle',
-			display: 'Resting'
+			display: 'Waiting for orders'
 		})
 	}
 
@@ -131,7 +131,7 @@ const { create, load } = Factory.create('Commander', {
 	}
 
 	const cancel = () => {
-		clearSchedule(commander)
+		schedule.clear({ state })
 	}
 
 	const commander = {

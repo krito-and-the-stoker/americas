@@ -208,4 +208,12 @@ const commander = (name, params, info, functionFactory) => {
 	}
 }
 
-export default { create, commander }
+const update = {
+	info: (state, info) => Binding.update(state, 'info', info),
+	display: (state, display) => Binding.update(state, 'info', {
+		...state.info,
+		display
+	})
+}
+
+export default { create, commander, update }

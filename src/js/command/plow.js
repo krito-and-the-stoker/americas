@@ -1,4 +1,5 @@
 import Events from 'util/events'
+import PathFinder from 'util/pathFinder'
 
 import Time from 'timeline/time'
 
@@ -25,6 +26,9 @@ export default Factory.create('Plow', {
 	const init = currentTime => {
 		const tile = MapEntity.tile(unit.mapCoordinates)
 		if (unit.properties.canTerraform && !tile.forest && !tile.settlement && !tile.plowed) {
+			const closeColony = PathFinder.findNearColony(unit)
+			const colonyText = closeColony ? ` near ${closeColony.name}` : ''
+			Factory.update.display(state, `Plowing earth ${colonyText}`)
 			return {
 				eta: currentTime + Time.PLOW * (unit.expert === 'pioneer' ? 0.6 : 1)
 			}
