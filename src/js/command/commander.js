@@ -85,7 +85,7 @@ const { create, load } = Factory.create('Commander', {
 	}
 }, {
 	id: 'idle',
-	display: 'Resting'
+	display: 'Waiting for orders'
 }, state => {
 	const { keep, unit } = state
 	let unschedule = null

@@ -12,6 +12,12 @@ const create = (unit, colony) => {
 	const inColony = () => unit.colonist && unit.colonist.colony === colony
 
 	const update = (currentTime, deltaTime) => {
+		if (unit.equipment.food > Unit.UNIT_FOOD_CAPACITY) {
+			const pack = { good: 'food', amount: unit.equipment.food - Unit.UNIT_FOOD_CAPACITY }
+			console.log(pack)
+			Storage.transfer(unit.equipment, colony.storage, pack)
+		}
+
 		const unscale = amount => amount / (deltaTime * PRODUCTION_BASE_FACTOR)
 		// when in colony just balance the storage towards 0
 		const desiredAmount = inColony() ? -unit.equipment.food :

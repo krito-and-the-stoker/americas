@@ -38,7 +38,8 @@ export default Factory.commander('MoveTo', {
 	id: 'moveTo',
 	display: 'Travelling',
 	icon: 'go'
-}, ({ unit, coords, commander, lastPoint }) => {
+}, state => {
+	const { unit, coords, commander } = state
 	if (coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y) {
 		console.warn('invalid coords', unit.name, coords)
 	}
@@ -52,15 +53,36 @@ export default Factory.commander('MoveTo', {
 			}
 		}
 
+		const targetTile = MapEntity.tile(coords)
+		let displayName = 'Travelling'
+		if (targetTile.colony) {
+			displayName += ` to ${targetTile.colony.name}`
+		} else if (targetTile.settlement) {
+			displayName += ` to ${targetTile.settlement.tribe.name} village`
+		} else {
+			const closeColony = PathFinder.findNearColony(unit)
+			if (targetTile.forest) {
+				displayName += ' to forest'
+			} else if (targetTile.mountains) {
+				displayName += ' to mountains'
+			} else if (targetTile.hills) {
+				displayName += ' to hills'
+			} else {
+				displayName += ' to planes'
+			}
+			if (closeColony) {
+				displayName += ` near ${closeColony.name}`
+			}
+		}
+		Factory.update.display(state, displayName)
+
 		const path = PathFinder.findPathXY(unit.mapCoordinates, coords, unit).filter((waypoint, index) => index > 0)
 		const schedule = command => Commander.scheduleBehind(commander, command)
 		const commands = (unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y) ?
 			[] : path.map(waypoint => Move.create({ unit, coords: waypoint.mapCoordinates }))
 		commands.forEach(schedule)
-		lastPoint = path.length > 0 ? path[path.length - 1].mapCoordinates : unit.mapCoordinates
-
 		return {
-			lastPoint
+			lastPoint: path.length > 0 ? path[path.length - 1].mapCoordinates : unit.mapCoordinates
 		}
 	}
 
@@ -81,7 +103,7 @@ export default Factory.commander('MoveTo', {
 			unit.passengers.length > 0 &&
 			target.domain === 'land' &&
 			!target.colony
-			&& Util.distance(unit.mapCoordinates, lastPoint) < 1) {
+			&& Util.distance(unit.mapCoordinates, state.lastPoint) < 1) {
 			const targetCoords = Tile.diagonalNeighbors(MapEntity.tile(unit.mapCoordinates))
 				.filter(n => n.domain === 'land')
 				.map(n => n.mapCoordinates)

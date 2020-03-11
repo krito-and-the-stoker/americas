@@ -54,7 +54,7 @@ const findPath = (from, to, unit) => {
 	return find(from, null, to, Unit.area(unit), !unit.properties.canExplore && unit.owner)
 }
 
-const NEAR_COLONY_COST = 10
+const NEAR_COLONY_COST = 7
 const findNearColony = unit => {
 	const target = node => node.cost > NEAR_COLONY_COST || node.tile.colony
 	const tile = find(unit.tile, target, null, Unit.area(unit), unit.owner).pop()
