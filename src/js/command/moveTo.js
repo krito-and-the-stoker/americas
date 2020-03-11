@@ -55,24 +55,32 @@ export default Factory.commander('MoveTo', {
 
 		const targetTile = MapEntity.tile(coords)
 		let displayName = 'Travelling'
-		if (targetTile.colony) {
-			displayName += ` to ${targetTile.colony.name}`
-		} else if (targetTile.settlement) {
-			displayName += ` to ${targetTile.settlement.tribe.name} village`
-		} else {
-			const closeColony = PathFinder.findNearColony(unit)
-			if (targetTile.forest) {
-				displayName += ' to forest'
-			} else if (targetTile.mountains) {
-				displayName += ' to mountains'
-			} else if (targetTile.hills) {
-				displayName += ' to hills'
+		if (targetTile.discoveredBy.includes(unit.owner)) {		
+			if (targetTile.colony) {
+				displayName += ` to ${targetTile.colony.name}`
+			} else if (targetTile.settlement) {
+				displayName += ` to ${targetTile.settlement.tribe.name} village`
 			} else {
-				displayName += ' to planes'
+				if (targetTile.domain === 'sea') {
+					displayName += ' seabound'
+				} else {					
+					const closeColony = PathFinder.findNearColony(unit)
+					if (targetTile.forest) {
+						displayName += ' to forest'
+					} else if (targetTile.mountains) {
+						displayName += ' to mountains'
+					} else if (targetTile.hills) {
+						displayName += ' to hills'
+					} else {
+						displayName += ' to planes'
+					}
+					if (closeColony) {
+						displayName += ` near ${closeColony.name}`
+					}
+				}
 			}
-			if (closeColony) {
-				displayName += ` near ${closeColony.name}`
-			}
+		} else {
+			displayName += ' to undiscovered ' + (unit.domain === 'sea' ? 'waters' : 'lands')
 		}
 		Factory.update.display(state, displayName)
 
