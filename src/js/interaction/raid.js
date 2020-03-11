@@ -8,7 +8,8 @@ import Storage from 'entity/storage'
 const relativeRaidAmont = () => 0.25 + 0.5 * Math.random()
 
 export default (colony, raider) => {
-	if (Storage.total(raider.storage) > 0) {
+	// TODO: find a more reasonable solution
+	if (Storage.total(raider.equipment) > 0) {
 		return false
 	}
 
@@ -51,7 +52,7 @@ export default (colony, raider) => {
 
 		const pack = Util.choose(Storage.goods(colony.storage).filter(p => p.amount >= 1))
 		pack.amount = Util.clamp(relativeRaidAmont() * pack.amount, 1, 50)
-		Storage.transfer(colony.storage, raider.storage, pack)
+		Storage.transfer(colony.storage, raider.equipment, pack)
 		Events.trigger('notification', { type: 'raid', colony, unit: raider, pack })
 	} else {
 		const plunderChance = 0.5 / (colony.buildings.fortifications.level + 1)
@@ -60,7 +61,7 @@ export default (colony, raider) => {
 
 			const pack = Util.choose(Storage.goods(colony.storage).filter(p => p.amount >= 1))
 			pack.amount = Util.clamp(relativeRaidAmont() * pack.amount, 1, 50)
-			Storage.transfer(colony.storage, raider.storage, pack)
+			Storage.transfer(colony.storage, raider.equipment, pack)
 			Events.trigger('notification', { type: 'raid', colony, unit: raider, pack })
 		} else {
 			Message.send(`A ${raiderName} has been killed in the attempt to attack ${colony.name}.`)

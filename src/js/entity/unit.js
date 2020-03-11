@@ -133,16 +133,16 @@ const initialize = unit => {
 			if (unit.name === 'soldier' && equipment.guns < 50) {
 				updateType(unit, 'settler')
 			}
-			if (unit.name === 'mountedarmednative' && equipment.guns < 25) {
+			if (unit.name === 'mountedarmednative' && equipment.guns < 20) {
 				updateType(unit, 'mountednative')
 			}
-			if (unit.name === 'mountedarmednative' && equipment.horses < 25) {
+			if (unit.name === 'mountedarmednative' && equipment.horses < 20) {
 				updateType(unit, 'armednative')
 			}
-			if (unit.name === 'armednative' && equipment.guns < 25) {
+			if (unit.name === 'armednative' && equipment.guns < 20) {
 				updateType(unit, 'native')
 			}
-			if (unit.name === 'mountednative' && equipment.horses < 25) {
+			if (unit.name === 'mountednative' && equipment.horses < 20) {
 				updateType(unit, 'native')
 			}
 
@@ -173,16 +173,16 @@ const initialize = unit => {
 				}
 			}
 
-			if (unit.name === 'native' && equipment.horses >= 25) {
+			if (unit.name === 'native' && equipment.horses >= 20) {
 				updateType(unit, 'mountednative')
 			}
-			if (unit.name === 'native' && equipment.guns >= 25) {
+			if (unit.name === 'native' && equipment.guns >= 20) {
 				updateType(unit, 'armednative')
 			}
-			if (unit.name === 'mountednative' && equipment.guns >= 25) {
+			if (unit.name === 'mountednative' && equipment.guns >= 20) {
 				updateType(unit, 'mountedarmednative')
 			}
-			if (unit.name === 'armednative' && equipment.horses >= 25) {
+			if (unit.name === 'armednative' && equipment.horses >= 20) {
 				updateType(unit, 'mountedarmednative')
 			}
 		}),
@@ -306,7 +306,7 @@ const support = unit => Util.max(Record.getAll('unit')
 	.filter(support => Util.inBattleDistance(support, unit)), support => support.properties.support)
 
 const strength = unit => {
-	let result = unit.properties.combat || 0.75
+	let result = unit.properties.combat || 0.7
 
 	if (!unit.properties.combat && unit.colony) {
 		result += Math.min(unit.colony.storage.guns / 50, 1)

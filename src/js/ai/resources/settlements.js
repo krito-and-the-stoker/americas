@@ -37,11 +37,11 @@ const cheapest = (owner, coords) => {
 
 const recruit = settlement => {
 	const unit = Units.create('native', settlement)
-	if (settlement.tribe.storage.guns >= 25) {
-		Storage.transfer(settlement.tribe.storage, unit.equipment, { good: 'guns', amount: 25 })
+	if (settlement.tribe.storage.guns >= 20) {
+		Storage.transfer(settlement.tribe.storage, unit.equipment, { good: 'guns', amount: 20 })
 	}
-	if (settlement.tribe.storage.horses >= 25) {
-		Storage.transfer(settlement.tribe.storage, unit.equipment, { good: 'horses', amount: 25 })
+	if (settlement.tribe.storage.horses >= 20) {
+		Storage.transfer(settlement.tribe.storage, unit.equipment, { good: 'horses', amount: 20 })
 	}
 
 	return unit	

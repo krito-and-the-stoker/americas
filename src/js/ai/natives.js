@@ -35,16 +35,16 @@ const TRUST_DECAY_FACTOR = 0.999
 
 const offensiveCapability = ai => {
 	let offense = 1
-	if (ai.tribe.storage.guns >= 25 && ai.tribe.storage.horses >= 25) {
+	if (ai.tribe.storage.guns >= 20 && ai.tribe.storage.horses >= 20) {
 		offense = UnitProperties.mountedarmednative.combat
 	}
-	if (ai.tribe.storage.guns >= 25 && ai.tribe.storage.horses < 25) {
+	if (ai.tribe.storage.guns >= 20 && ai.tribe.storage.horses < 20) {
 		offense = UnitProperties.armednative.combat
 	}
-	if (ai.tribe.storage.guns < 25 && ai.tribe.storage.horses >= 25) {
+	if (ai.tribe.storage.guns < 20 && ai.tribe.storage.horses >= 20) {
 		offense = UnitProperties.mountednative.combat
 	}
-	if (ai.tribe.storage.guns < 25 && ai.tribe.storage.horses < 25) {
+	if (ai.tribe.storage.guns < 20 && ai.tribe.storage.horses < 20) {
 		offense = UnitProperties.native.combat
 	}
 
@@ -88,31 +88,31 @@ const watch = (ai, colony) => {
 }
 
 const describeRelations = relations => {
-	if (relations.militancy > 1.0) {	
-		if (relations.trust >= 0.6) {
-			return `proud (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+	if (relations.militancy > 0.5) {	
+		if (relations.trust >= 0.5) {
+			return `warmongering (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 		}
 
 		if (relations.trust >= 0) {
-			return `alert (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+			return `hostile (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 		}
 
-		return `hostile (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+		return `desperate (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 	}
 
 	if (relations.militancy > 0) {
-		if (relations.trust >= 0.6) {
+		if (relations.trust >= 0.5) {
 			return `friendly (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 		}
 
 		if (relations.trust >= 0) {
-			return `reserved (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+			return `neutral (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 		}
 
-		return `nervous (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+		return `offended (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 	}
 
-	if (relations.trust >= 0.6) {
+	if (relations.trust >= 0.5) {
 		return `happy (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 	}
 
