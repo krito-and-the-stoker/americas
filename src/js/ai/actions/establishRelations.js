@@ -9,8 +9,8 @@ const create = ({ owner, contact }) => {
 	console.warn('establishing', contact.referenceId)
 	const prev = Plan.cheapest(Record.getAll('unit')
 		.filter(unit => unit.owner.referenceId === contact.referenceId)
-		.filter(unit => unit.tile.domain === 'land')
-		.map(unit => MoveUnit.create(({ owner, coords: unit.tile.mapCoordinates }))))
+		.filter(unit => unit.domain === 'land')
+		.map(unit => MoveUnit.create(({ owner, coords: unit.mapCoordinates }))))
 
 	return prev && {
 		cost: prev.cost,

@@ -141,7 +141,7 @@ const initialize = ai => {
 				return tiles.map(tile => [
 					Tile.listen.units(tile, units => {
 						units
-							.filter(unit => unit.tile.domain !== 'sea')
+							.filter(unit => unit.domain !== 'sea' && !unit.vehicle)
 							.map(unit => unit.owner)
 							.filter(owner => owner !== ai.owner)
 							.forEach(owner => {

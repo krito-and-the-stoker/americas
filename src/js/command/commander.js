@@ -106,12 +106,12 @@ const { create, load } = Factory.create('Commander', {
 		}
 
 		if (unit && !state.currentCommand && state.commands.length === 0) {
-			if (unit.owner.input && unit.tile.rumors && !done.investigateRumors) {
+			if (unit.owner.input && unit.tile && unit.tile.rumors && !done.investigateRumors) {
 				done.investigateRumors = true
 				InvestigateRumors(unit)
 			}
 
-			if (unit.owner.input && unit.tile.settlement && !done.enterSettlement) {
+			if (unit.owner.input && unit.tile && unit.tile.settlement && !done.enterSettlement) {
 				done.enterSettlement = true
 				EnterSettlement(unit.tile.settlement, unit)
 			}

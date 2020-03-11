@@ -393,6 +393,8 @@ const neighborString = (tile, other) => {
 	return result(tile.mapCoordinates, other.mapCoordinates)
 }
 
+const closest = coords => MapEntity.tile({ x: Math.round(coords.x), y: Math.round(coords.y) })
+
 const add = {
 	unit: (tile, unit) => Member.add(tile, 'units', unit)
 }
@@ -481,6 +483,7 @@ export default {
 	up,
 	down,
 	add,
+	closest,
 	serializableCopy,
 	temperature
 }

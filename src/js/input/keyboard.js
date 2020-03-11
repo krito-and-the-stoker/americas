@@ -40,7 +40,7 @@ const handleKeydown = e => {
 		if (e.key === 'w') {
 			const unit = UnitView.selectedUnit()
 			if (unit) {
-				const treasure = Unit.create('treasure', unit.tile.mapCoordinates)
+				const treasure = Unit.create('treasure', unit.mapCoordinates)
 				treasure.treasure = Math.round(250 * Math.random())
 			}
 		}

@@ -31,8 +31,8 @@ const messageFunctions = {
 	},
 	move: {
 		subscribe: () => Record.getAll('unit').map(unit =>
-			Unit.listen.mapCoordinates(unit, coords => {
-				if (coords.x < unit.tile.mapCoordinates.x) {
+			Unit.listen.tile(unit, tile => {
+				if (!tile) {
 					markDone('move')
 				}
 			}))

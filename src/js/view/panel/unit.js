@@ -90,7 +90,7 @@ const initialize = () => {
 
 			let oldUnitStrength = null
 			const unsubscribeSpeedAndStorage = [
-				Storage.listen(unit.equipment, () => {			
+				Storage.listen(unit.equipment, () => {
 					unitSpeed.text = `${Math.round(10 * Unit.speed(unit)) / 10}`
 					unitStrength.text = `${Math.round(10 * Unit.strength(unit)) / 10}`
 				}),
@@ -110,10 +110,14 @@ const initialize = () => {
 						costIcon.visible = false
 						unitCost.text = ''
 					}
+				}),
+
+				Unit.listen.name(unit, name => {
+					unitName.text = `${Unit.name(unit)}`
 				})
 			]
 
-			unitName.text = `${Unit.name(unit)}`
+			
 			const unsubscribeCommand = Unit.listen.command(unit, command => {
 				commandName.text = command ? command.display : ''
 			})
@@ -185,7 +189,7 @@ const initialize = () => {
 			const updateCommands = () => {
 				const pioneering = ['cutForest', 'plow', 'road'].includes(unit.command.id)
 				const trading = unit.command.id === 'tradeRoute'
-				const moving = unit.mapCoordinates.x !== unit.tile.mapCoordinates.x || unit.mapCoordinates.y !== unit.tile.mapCoordinates.y
+				const moving = !unit.tile
 				gotoText.visible = !pioneering
 				foundColony.visible = unit.properties.canFound && !moving && !Tile.radius(unit.tile).some(tile => tile.colony) && !unit.tile.settlement && !pioneering
 				buildRoadText.visible = unit.properties.canTerraform && !moving && !unit.tile.road && !unit.tile.settlement && !pioneering
@@ -199,6 +203,7 @@ const initialize = () => {
 			const unsubscribeCoords = Unit.listen.mapCoordinates(unit, updateCommands)
 			const unsubscribeTile = Unit.listen.tile(unit, updateCommands)
 			const unsubscribePioneering = Unit.listen.command(unit, updateCommands)
+			const unsubscribeName = Unit.listen.name(unit, updateCommands)
 
 			Foreground.get().notifications.addChild(unitName)
 			Foreground.get().notifications.addChild(commandName)

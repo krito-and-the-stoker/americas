@@ -174,7 +174,7 @@ const visibleOnMap = view => (view === state.selectedView || !view.unit.colony) 
 	!Europe.has.unit(view.unit) &&
 	!view.unit.offTheMap &&
 	!(view.unit.colonist && view.unit.colonist.colony) &&
-	(view.unit.owner.visible || view.unit.tile.discovered()) &&
+	(view.unit.owner.visible || Tile.closest(view.unit.mapCoordinates).discovered()) &&
 	!view.destroyed
 
 let views = []

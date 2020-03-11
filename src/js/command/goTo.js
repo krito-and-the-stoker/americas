@@ -4,6 +4,7 @@ import Binding from 'util/binding'
 import MapEntity from 'entity/map'
 import Europe from 'entity/europe'
 import Unit from 'entity/unit'
+import Tile from 'entity/tile'
 
 import Commander from 'command/commander'
 import Factory from 'command/factory'
@@ -31,6 +32,7 @@ export default Factory.commander('GoTo', {
 	icon: 'go'
 }, state => {
 	const { unit, colony, europe, commander } = state
+
 	const init = () => {
 		if (colony) {
 			// from europe to colony
@@ -44,25 +46,19 @@ export default Factory.commander('GoTo', {
 				// from somewhere to colony
 				Commander.scheduleBehind(commander, MoveTo.create({ unit, coords: colony.mapCoordinates }))
 			}
-			Binding.update(state, 'info', {
-				...state.info,
-				display: `Travelling to ${colony.name}`
-			})
+			Factory.update.display(state, `Travelling to ${colony.name}`)
 		}
 
 		if (europe) {
 			if (!Europe.has.unit(unit)) {
 				// from somehwere to europe
-				const pathToHighSeas = PathFinder.findHighSeas(unit.tile)
+				const pathToHighSeas = PathFinder.findHighSeas(Tile.closest(unit.mapCoordinates))
 				const target = pathToHighSeas[pathToHighSeas.length - 1]
 				Commander.scheduleInstead(commander, MoveTo.create({ unit, coords: target.mapCoordinates }))
 				Commander.scheduleBehind(commander, EuropeCommand.create({ unit }))
 			}
 			// from europe to europe -> nothing to do
-			Binding.update(state, 'info', {
-				...state.info,
-				display: 'Travelling to London'
-			})
+			Factory.update.display(state, 'Travelling to London')
 		}
 	}	
 

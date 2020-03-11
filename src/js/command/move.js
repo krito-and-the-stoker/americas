@@ -74,6 +74,9 @@ export default Factory.create('Move', {
 
 		startTime = currentTime
 
+		unit.movement.target = targetTile
+		Unit.update.tile(unit, null)
+
 		return {
 			startTime,
 			duration,

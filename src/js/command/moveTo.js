@@ -44,6 +44,12 @@ export default Factory.commander('MoveTo', {
 		console.warn('invalid coords', unit.name, coords)
 	}
 
+	if (!MapEntity.tile(coords)) {
+		console.warn('no targetTile', coords, unit.name, state)
+		coords.x = Math.round(coords.x)
+		coords.y = Math.round(coords.y)
+	}
+
 	const init = () => {
 		if (!MapEntity.tile(unit.mapCoordinates)) {
 			console.warn('unit is adrift. This is definitely an error. Trying to fix...', unit.mapCoordinates, unit.name, unit.referenceId)

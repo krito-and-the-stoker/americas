@@ -50,7 +50,10 @@ const create = (name, coords, owner) => {
 			colonist: null,
 			pioneering: false,
 			radius: 0,
-			command: null
+			command: null,
+			movement: {
+				target: MapEntity.tile(coords)
+			}
 		}
 		unit.storage = Storage.create()
 		unit.equipment = Storage.create()
@@ -105,10 +108,6 @@ const initialize = unit => {
 				}
 				return true
 			}
-			if (unit.domain !== unit.tile.domain) {
-				update.radius(unit, 0)
-				return true
-			}
 			if (unit.radius < unit.properties.radius) {
 				update.radius(unit, Math.min(unit.radius + RADIUS_GROWTH*deltaTime, unit.properties.radius))
 			}
@@ -117,7 +116,7 @@ const initialize = unit => {
 		}, priority: true }),
 
 		listen.tile(unit, tile =>
-			Tile.add.unit(tile, unit)),
+			tile && Tile.add.unit(tile, unit)),
 
 		Storage.listen(unit.equipment, equipment => {
 			// lose status
@@ -202,21 +201,23 @@ const initialize = unit => {
 						listen.vehicle(unit, vehicle =>
 							!vehicle && Time.schedule(ConsumeFood.create(unit))),
 
-						listen.tile(unit, tile =>
-							Tile.radius(tile).map(other => [
+						listen.mapCoordinates(unit, Binding.map(coords => Tile.closest(coords),
+							tile => tile && Tile.radius(tile).map(other => [
 								Tile.listen.colony(other, colony =>
+									// supply from colony
 									colony && Time.schedule(FillFoodStock.create(unit, colony))),
 								!unit.colony && Tile.listen.units(other, units =>
 									units
 										.filter(u => u.owner === unit.owner && u.properties.cargo > 0 && !u.colony)
 										.map(transport =>
+											// supply from transports
 											Time.schedule(SupplyFromTransport.create(transport, unit))))
-							]))
+							])))
 					]))
 	]
 }
 
-const isIdle = unit => !unit.commander.state.currentCommand && unit.commander.state.commands.length === 0
+const isIdle = unit => !unit.command || unit.command.id === 'idle'
 
 const name = unit => unit.expert ? unit.properties.name[unit.expert] || unit.properties.name.default : unit.properties.name.default
 
@@ -280,10 +281,16 @@ const hasCapacity = (unit, pack) => {
 }
 
 const area = unit => {
-	const tile = unit.tile
+	let tile = unit.movement.target
 	if (tile.domain === unit.domain) {
 		return tile.area
 	}
+
+	tile = Tile.closest(unit.mapCoordinates)
+	if (tile.domain === unit.domain) {
+		return tile.area
+	}
+
 	return Tile.radius(tile)
 		.find(neighbor => neighbor.domain === unit.domain).area
 }
@@ -367,8 +374,10 @@ const unloadUnit = (unit, desiredPassenger = null) => {
 			EnterEurope(passenger)
 		}
 
+		console.log('unloaded', passenger)
 		return passenger
 	}
+
 	console.warn('could not unload, no units on board', unit)
 	return null
 }
@@ -417,6 +426,9 @@ const save = unit => ({
 	tile: Record.referenceTile(unit.tile),
 	owner: Record.reference(unit.owner),
 	radius: unit.radius,
+	movement: {
+		target: Record.referenceTile(unit.movement.target)
+	}
 })
 
 const load = unit => {
@@ -425,6 +437,9 @@ const load = unit => {
 	unit.passengers = unit.passengers.map(Record.dereference)
 	unit.owner = Record.dereference(unit.owner)
 	unit.tile = Record.dereferenceTile(unit.tile)
+	unit.movement = {
+		target: Record.dereferenceTile(unit.movement.target)
+	}
 	Record.dereferenceLazy(unit.colony, colony => unit.colony = colony)
 	Record.dereferenceLazy(unit.colonist, colonist => unit.colonist = colonist)
 	Record.dereferenceLazy(unit.vehicle, vehicle => unit.vehicle = vehicle)
