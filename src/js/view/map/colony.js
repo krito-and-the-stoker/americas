@@ -39,14 +39,14 @@ const create = colony => {
 				}) : null)
 
 			view.text = Text.create(colony.name, {
-				fontSize: 22,
+				fontSize: 24,
 			})
 			view.text.position.x = view.sprite.x + TILE_SIZE / 2
-			view.text.position.y = view.sprite.y + TILE_SIZE + 10
+			view.text.position.y = view.sprite.y + TILE_SIZE
 			view.text.anchor.set(0.5)
 
 			view.number = Text.create(colony.colonists.length, {
-				fontSize: 22,
+				fontSize: 24,
 			})
 			view.number.position.x = view.sprite.x + TILE_SIZE / 2
 			view.number.position.y = view.sprite.y + TILE_SIZE / 2

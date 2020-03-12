@@ -9,7 +9,9 @@ const relativeRaidAmont = () => 0.25 + 0.5 * Math.random()
 
 export default (colony, raider) => {
 	// TODO: find a more reasonable solution
-	if (Storage.total(raider.equipment) > 0) {
+	if (Util.sum(Storage.goods(raider.equipment)
+		.filter(pack => pack.good !== 'guns' && pack.good !== 'horses')
+		.map(pack => pack.amount)) > 0) {
 		return false
 	}
 

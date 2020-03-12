@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 
 const create = (text = '', props = {}) => new PIXI.Text(`${text}`, {
-	fontFamily: ['Helvetica', 'Arial', 'sans-serif'],
+	fontFamily: ['Courier New', 'Courier', 'monospace'],
 	fontSize: 32,
 	fill: 0xffffff,
 	align: 'center',

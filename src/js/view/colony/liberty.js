@@ -13,10 +13,12 @@ const create = colony => {
 
 	const rebelText = Text.create(`integrated: ${rebels.percentage}% (${rebels.number})`, {
 		fill: color,
+		fontSize: 24
 	})
 
 	const toriesText = Text.create(`unorganized: ${tories.percentage}% (${tories.number})`, {
 		fill: color,
+		fontSize: 24
 	})
 
 	rebelText.x = 10
@@ -32,17 +34,11 @@ const create = colony => {
 		const rebels  = Colony.rebels(colony)
 		const tories = Colony.tories(colony)
 		const color = tories.number > 9 ? 0xFF8888 : rebels.percentage >= 100 ? 0x88FFFF : rebels.percentage >= 50 ? 0x88FF88 : 0xFFFFFF
-		const style = {
-			fontFamily: 'Times New Roman',
-			fontSize: 32,
-			fill: color,
-			align: 'center'
-		}
 
 		rebelText.text = `integrated: ${rebels.percentage}% (${rebels.number})`
 		toriesText.text = `unorganized: ${tories.percentage}% (${tories.number})`
-		rebelText.style = style
-		toriesText.style = style
+		rebelText.style.fill = color
+		toriesText.style.fill = color
 	}
 
 	const unsubscribeBells = Colony.listen.bells(colony, Binding.map(freedomPercentage, updateRebelsAndTories))
