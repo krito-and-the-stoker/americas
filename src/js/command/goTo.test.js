@@ -8,6 +8,7 @@ import Time from 'timeline/time'
 
 import Unit from 'entity/unit'
 import Colony from 'entity/colony'
+import Storage from 'entity/storage'
 import Commander from 'command/commander'
 import GoTo from 'command/goTo'
 
@@ -90,6 +91,7 @@ test('schedule instead & schedule behind', () => {
 	expect(jack.mapCoordinates).not.toEqual(farPlace())
 	expect(jack.mapCoordinates).not.toEqual(firstPlace())
 
+	Storage.update(jack.equipment, { good: 'food', amount: 20 })
 	advance(250)
 	// jack should have made it eventually
 	expect(jack.mapCoordinates).toEqual(firstPlace())

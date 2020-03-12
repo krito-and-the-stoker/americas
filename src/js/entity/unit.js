@@ -377,7 +377,6 @@ const unloadUnit = (unit, desiredPassenger = null) => {
 			EnterEurope(passenger)
 		}
 
-		console.log('unloaded', passenger)
 		return passenger
 	}
 
