@@ -75,7 +75,7 @@ const create = (colony, originalDimensions) => {
 			if (amount > colony.capacity) {
 				color = 0xff8800
 			}
-			if (!amount) {
+			if (!Math.floor(amount)) {
 				color = 0x777777
 			}
 			updateAndArgs[i].update(Math.floor(amount), {

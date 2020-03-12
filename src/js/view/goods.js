@@ -18,7 +18,7 @@ const create = ({ good, amount }) => {
 			number.text = `${Math.floor(Math.max(0, amount))}`
 			Object.assign(number.style, style)
 		}
-		sprite.tint = amount ? 0xffffff : 0x999999
+		sprite.tint = Math.floor(amount) ? 0xffffff : 0x999999
 	}
 
 	return {
