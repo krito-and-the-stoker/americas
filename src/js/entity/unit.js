@@ -14,6 +14,7 @@ import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
 import Owner from 'entity/owner'
 
+import Move from 'task/move'
 import PayUnits from 'task/payUnits'
 import ConsumeFood from 'task/consumeFood'
 import FillFoodStock from 'task/fillFoodStock'
@@ -98,6 +99,7 @@ const initialize = unit => {
 
 	return [
 		Time.schedule(unit.commander),
+		Time.schedule(Move.create(unit)),
 		Binding.listen(unit.commander.state, 'info', info => {
 			update.command(unit, info)
 		}),
