@@ -12,11 +12,13 @@ const create = ({ good, amount }) => {
 	let currentAmount = amount
 	const number = Text.create(Math.floor(amount))
 
-	const update = amount => {
-		if (amount !== currentAmount) {
+	const update = (amount, style = {}) => {
+		if (amount !== currentAmount || style) {
 			currentAmount = amount
 			number.text = `${Math.floor(Math.max(0, amount))}`
+			Object.assign(number.style, style)
 		}
+		sprite.tint = amount ? 0xffffff : 0x999999
 	}
 
 	return {

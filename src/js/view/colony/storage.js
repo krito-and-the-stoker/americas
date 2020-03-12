@@ -4,7 +4,6 @@ import Goods from 'data/goods'
 
 import Storage from 'entity/storage'
 import Trade from 'entity/trade'
-import Colony from 'entity/colony'
 
 import Click from 'input/click'
 import Drag from 'input/drag'
@@ -29,6 +28,7 @@ const create = (colony, originalDimensions) => {
 		number.anchor.set(0.5)
 		number.position.x = (index + 0.5) * width
 		number.position.y = originalDimensions.y - width / 4
+		number.style.fontSize = 40
 		container.addChild(number)
 
 		let args = {
@@ -71,7 +71,16 @@ const create = (colony, originalDimensions) => {
 
 	const unsubscribeStorage = Storage.listen(colony.storage, storage => {
 		Storage.goods(storage).forEach(({ amount }, i) => {
-			updateAndArgs[i].update(Math.floor(amount))
+			let color = 0xffffff
+			if (amount > colony.capacity) {
+				color = 0xff8800
+			}
+			if (!amount) {
+				color = 0x777777
+			}
+			updateAndArgs[i].update(Math.floor(amount), {
+				fill: color
+			})
 			updateAndArgs[i].args.amount = Math.min(100, Math.floor(amount))
 		})
 	})
