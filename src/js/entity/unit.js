@@ -364,6 +364,7 @@ const loadUnit = (unit, passenger) => {
 const unloadUnit = (unit, desiredPassenger = null) => {
 	if (unit.passengers.length > 0) {
 		const passenger = unit.passengers.find(p => p === desiredPassenger) || unit.passengers[0]
+		passenger.movement.target = unit.tile
 		remove.passenger(passenger)
 		update.mapCoordinates(passenger, { ...unit.mapCoordinates })
 		update.tile(passenger, unit.tile)

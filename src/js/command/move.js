@@ -3,9 +3,6 @@ import MapEntity from 'entity/map'
 import Factory from 'command/factory'
 
 
-const unloading = (unit, fromTile, toTile) => unit.domain === 'land' && fromTile.domain === 'sea' && toTile.domain === 'land'
-
-
 export default Factory.create('Move', {
 	unit: {
 		type: 'entity',
@@ -30,7 +27,7 @@ export default Factory.create('Move', {
 	}
 
 	const update = () => {
-		return (unit.tile === unit.movement.target)
+		return (unit.tile !== unit.movement.target)
 	}
 
 	return {

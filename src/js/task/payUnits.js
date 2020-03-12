@@ -5,7 +5,6 @@ import Europe from 'entity/europe'
 
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
-const UNIT_COST_FACTOR = 10
 
 const create = unit => {
 	const update = (currentTime, deltaTime) => {
@@ -14,7 +13,7 @@ const create = unit => {
 		}
 
 		if (!Europe.has.unit(unit) && !unit.colony) {
-			const amount = deltaTime * PRODUCTION_BASE_FACTOR * UNIT_COST_FACTOR * unit.properties.cost
+			const amount = deltaTime * PRODUCTION_BASE_FACTOR * unit.properties.cost
 			Treasure.gain(-amount)
 		}
 

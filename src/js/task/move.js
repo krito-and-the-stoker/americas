@@ -29,7 +29,7 @@ const create = unit => {
 		const speed = Unit.speed(unit)
 		const progress = deltaTime * speed / (movementCost * Time.MOVE_BASE_TIME)
 
-		// arrive!
+		// arrive
 		if (LA.distance(direction) < progress) {
 			unit.mapCoordinates = target.mapCoordinates
 			Unit.update.tile(unit, target)
