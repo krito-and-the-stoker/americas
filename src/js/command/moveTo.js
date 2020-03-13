@@ -1,4 +1,4 @@
-import Util from 'util/util'
+import LA from 'util/la'
 import PathFinder from 'util/pathFinder'
 
 import MapEntity from 'entity/map'
@@ -84,29 +84,24 @@ export default Factory.commander('MoveTo', {
 	}
 
 	const finished = () => {
-		const target = MapEntity.tile(coords)
-		return
+		const target = Tile.get(coords)
 
 		const shipsAtTarget = Unit.at(coords).filter(unit => unit.domain === 'sea')
 		if (unit.domain === 'land' &&
 				target.domain === 'sea' &&
 				shipsAtTarget.some(unit.treasure ? canLoadTreasure : canLoad) &&
 				inMoveDistance(unit.tile.mapCoordinates, coords)) {
-			const ship = shipsAtTarget.find(unit.treasure ? canLoadTreasure : canLoad)
-			Commander.scheduleBehind(ship.commander, LoadUnit.create({ transport: ship, passenger: unit }))
-			Commander.scheduleInstead(unit.commander, Move.create({ unit, coords }))
+			const transport = shipsAtTarget.find(unit.treasure ? canLoadTreasure : canLoad)
+			Commander.scheduleBehind(transport.commander, LoadUnit.create({ transport, passenger: unit }))
+			// Commander.scheduleInstead(unit.commander, BoardTransport.create({ unit, transport }))
 		}
 
 		if (unit.domain === 'sea' &&
 			unit.passengers.length > 0 &&
 			target.domain === 'land' &&
 			!target.colony
-			&& Util.distance(unit.mapCoordinates, state.lastPoint) < 1) {
-			const targetCoords = Tile.diagonalNeighbors(MapEntity.tile(unit.mapCoordinates))
-				.filter(n => n.domain === 'land')
-				.map(n => n.mapCoordinates)
-				.reduce((min, c) => Util.distance(coords, c) < Util.distance(coords, min) ? c : min, unit.mapCoordinates)
-			Commander.scheduleInstead(unit.commander, Unload.create(unit, targetCoords))
+			&& LA.distanceManhatten(unit.mapCoordinates, target.mapCoordinates) <= 1) {
+			Commander.scheduleInstead(unit.commander, Unload.create(unit, target.mapCoordinates))
 		}
 	}
 
