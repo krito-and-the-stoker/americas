@@ -105,6 +105,7 @@ export default {
 	multiply,
 	distance,
 	sqDistance,
+	distanceManhatten,
 	normalize,
 	normalizeManhatten,
 	product,

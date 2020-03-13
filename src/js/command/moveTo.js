@@ -90,10 +90,10 @@ export default Factory.commander('MoveTo', {
 		}
 		Factory.update.display(state, displayName)
 
-		const path = PathFinder.findPathXY(unit.mapCoordinates, coords, unit).filter((waypoint, index) => index > 0)
+		const path = PathFinder.findPath(unit.mapCoordinates, coords, unit).filter((waypoint, index) => index > 0)
 		const schedule = command => Commander.scheduleBehind(commander, command)
 		const commands = (unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y) ?
-			[] : path.map(waypoint => Move.create({ unit, coords: waypoint.mapCoordinates }))
+			[] : path.map(waypoint => Move.create({ unit, coords: waypoint }))
 		commands.forEach(schedule)
 		return {
 			lastPoint: path.length > 0 ? path[path.length - 1].mapCoordinates : unit.mapCoordinates

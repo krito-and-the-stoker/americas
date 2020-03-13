@@ -15,7 +15,7 @@ import MoveTo from 'command/moveTo'
 const advance = (n = 1) => Util.range(n).forEach(() => Time.advance(500))
 
 const soldier = () => Unit.create('soldier', { x: 1, y: 2 })
-const place = () => ({ x: 2, y: 4 })
+const place = () => ({ x: 7, y: 4 })
 const farPlace = () => ({ x: 6, y: 8 })
 const firstPlace = () => ({ x: 1, y: 2 })
 

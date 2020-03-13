@@ -24,8 +24,7 @@ const create = unit => {
 		const direction = LA.subtract(target.mapCoordinates, unit.mapCoordinates)
 		const normDirection =LA.normalizeManhatten(direction)
 		const fromCoords = LA.round(LA.subtract(target.mapCoordinates, normDirection))
-		const fromTile = MapEntity.tile(fromCoords)
-		const movementCost = Tile.movementCost(fromTile, target)
+		const movementCost = Tile.movementCost(fromCoords, target.mapCoordinates)
 		const speed = Unit.speed(unit)
 		const progress = deltaTime * speed / (movementCost * Time.MOVE_BASE_TIME)
 

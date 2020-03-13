@@ -6,6 +6,7 @@ import Goods from 'data/goods'
 import Member from 'util/member'
 import Record from 'util/record'
 import Binding from 'util/binding'
+import LA from 'util/la'
 
 import Owner from 'entity/owner'
 import MapEntity from 'entity/map'
@@ -276,26 +277,33 @@ const down = tile => MapEntity.tile({
 
 const isNextTo = (tile, other) => neighbors(tile).includes(other)
 
-const movementCost = (from, to) => {
+const movementCost = (fromCoords, toCoords) => {
+	const direction = LA.subtract(toCoords, fromCoords)
+	const distance = LA.distanceManhatten(fromCoords, toCoords)
+	const normDirection =LA.normalizeManhatten(direction)
+	const fromRoundCoords = LA.round(LA.subtract(toCoords, normDirection))
+	const from = MapEntity.tile(fromRoundCoords)
+	const to = MapEntity.tile(toCoords)
+
 	if (neighbors(to).includes(from)) {
 		if (to.domain === 'land' && from.domain === 'land' && to.river && from.river) {
-			return MovementCosts.river
+			return distance * MovementCosts.river
 		}
 	}
 	if (from.road && to.road) {
-		return MovementCosts.road
+		return distance * MovementCosts.road
 	}
 	if (to.colony) {
 		if (from.domain === 'sea') {
-			return MovementCosts.harbour
+			return distance * MovementCosts.harbour
 		} else {
-			return MovementCosts.colony
+			return distance * MovementCosts.colony
 		}
 	}
 	if (from.domain === 'sea' || to.domain === 'sea') {
-		return MovementCosts.ocean
+		return distance * MovementCosts.ocean
 	}
-	return MovementCosts[to.terrainName]
+	return distance * MovementCosts[to.terrainName]
 }
 
 const decideCoastTerrain = tile => {
