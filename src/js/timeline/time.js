@@ -61,6 +61,7 @@ const advance = deltaTime => {
 	currentTime += deltaTime * time.scale
 
 	lowPrioDeltaTime += deltaTime * time.scale
+	const highPrioDeltaTime = deltaTime * time.scale
 
 	const tasks = (lowPrioDeltaTime >= LOW_PRIORITY_DELTA_TIME ? scheduled : prioritized)
 		.filter(e => {
@@ -74,7 +75,7 @@ const advance = deltaTime => {
 		})
 
 	tasks
-		.filter(e => !e.alive || !e.update || !e.update(currentTime, e.priority ? deltaTime : lowPrioDeltaTime))
+		.filter(e => !e.alive || !e.update || !e.update(currentTime, e.priority ? highPrioDeltaTime : lowPrioDeltaTime))
 		.forEach(e => {
 			if (e.finished) {
 				e.finished()
