@@ -31,11 +31,11 @@ const allNeighbors = coords => tile(coords)
 	})]
 
 const getNeighborsForUnit = unit => node => allNeighbors(node.coords)
-	.filter(t => t.area === Unit.area(unit))
-	.filter(t => unit.properties.canExplore || t.discoveredBy.includes(unit.owner))
-	.map(t => t.mapCoordinates)
+	.filter(tile => tile.area === Unit.area(unit) || tile.colony)
+	.filter(tile => unit.properties.canExplore || tile.discoveredBy.includes(unit.owner))
+	.map(tile => tile.mapCoordinates)
 const getAllNeighbors = () => node => allNeighbors(node.coords)
-	.map(t => t.mapCoordinates)
+	.map(tile => tile.mapCoordinates)
 
 const getCostForUnit = unit => (n1, n2) => Tile.movementCost(n1.coords, n2.coords)
 const mapToCoords = path => path.map(node => node.coords)
@@ -55,10 +55,10 @@ const findNextToArea = (toCoords, unit) => {
 	return path && path.length > 0 && path[path.length - 1].coords
 }
 
-const findHighSeas = (coords, unit) => {
+const findHighSeas = (fromCoords, unit) => {
 	const isTarget = node => tile(node.coords) && tile(node.coords).terrainName === 'sea lane'
 
-	return mapToCoords(runDijksrta(coords,
+	return mapToCoords(runDijksrta(fromCoords,
 		isTarget,
 		getNeighborsForUnit(unit),
 		getCostForUnit(unit),
@@ -74,8 +74,7 @@ const findPath = (fromCoords, toCoords, unit) => {
 		return null
 	}
 
-	if (target.area !== area) {
-		console.log('cannot move to target, different areas')
+	if (target.area !== area && !target.colony) {
 		const newCoords = findNextToArea(toCoords, unit)
 		if (newCoords) {
 			return findPath(fromCoords, newCoords, unit)

@@ -37,8 +37,7 @@ export default Factory.commander('GoTo', {
 		if (colony) {
 			// from europe to colony
 			if (Europe.has.unit(unit)) {
-				const tile = MapEntity.tile(colony.mapCoordinates)
-				const path = PathFinder.findHighSeas(tile)
+				const path = PathFinder.findHighSeas(unit.mapCoordinates, unit)
 				Unit.update.mapCoordinates(unit, path[path.length - 1].mapCoordinates)
 				Commander.scheduleBehind(commander, America.create({ unit }))
 				Commander.scheduleBehind(commander, MoveTo.create({ unit, coords: colony.mapCoordinates }))
@@ -52,9 +51,9 @@ export default Factory.commander('GoTo', {
 		if (europe) {
 			if (!Europe.has.unit(unit)) {
 				// from somehwere to europe
-				const pathToHighSeas = PathFinder.findHighSeas(Tile.closest(unit.mapCoordinates))
-				const target = pathToHighSeas[pathToHighSeas.length - 1]
-				Commander.scheduleInstead(commander, MoveTo.create({ unit, coords: target.mapCoordinates }))
+				const pathToHighSeas = PathFinder.findHighSeas(unit.mapCoordinates, unit)
+				const targetCoordinates = pathToHighSeas[pathToHighSeas.length - 1]
+				Commander.scheduleInstead(commander, MoveTo.create({ unit, coords: targetCoordinates }))
 				Commander.scheduleBehind(commander, EuropeCommand.create({ unit }))
 			}
 			// from europe to europe -> nothing to do
