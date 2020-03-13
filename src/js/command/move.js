@@ -1,5 +1,3 @@
-import LA from 'util/la'
-
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Unit from 'entity/unit'

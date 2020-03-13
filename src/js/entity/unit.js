@@ -4,6 +4,7 @@ import Util from 'util/util'
 import Record from 'util/record'
 import Binding from 'util/binding'
 import Member from 'util/member'
+import PathFinder from 'util/pathFinder'
 
 import Time from 'timeline/time'
 
@@ -94,10 +95,16 @@ const create = (name, coords, owner) => {
 const goTo = (unit, target) => {
 	if (!target) {
 		console.warn('goto without target is not allowed', target)
+		return
 	}
 
+	// set the target to a place we can actually go to
+	const path = PathFinder.findPath(unit.mapCoordinates, target.mapCoordinates, unit)
+		.map(Tile.get)
+
 	unit.movement = {
-		target
+		target: path[path.length - 1],
+		path
 	}
 }
 
