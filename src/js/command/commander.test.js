@@ -49,9 +49,7 @@ test('clearSchedule and reschedule', () => {
 	const unit = Unit.create('settler', { x: 1, y: 1 })
 	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: target }))
 
-	Time.advance(1000)
-	Time.advance(1000)
-	Time.advance(1000)
+	Util.range(9).forEach(() => Time.advance(1000))
 	Commander.clearSchedule(unit.commander)
 
 	Util.range(20).forEach(() => Time.advance(1000))

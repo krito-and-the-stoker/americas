@@ -1,14 +1,55 @@
 import LA from 'util/la'
+import PathFinder from 'util/pathFinder'
 
 import Time from 'timeline/time'
 
 import Tile from 'entity/tile'
-import MapEntity from 'entity/map'
 import Unit from 'entity/unit'
 
 import EnterColony from 'interaction/enterColony'
 import LeaveColony from 'interaction/leaveColony'
 
+const getPath = unit => {
+	if (!unit.movement.path) {
+		unit.movement.path = PathFinder.findPath(unit.mapCoordinates, unit.movement.target.mapCoordinates, unit)
+			.map(coords => Tile.get(coords))
+			.filter(tile => tile)
+	}
+
+	return unit.movement.path
+}
+const getNextTarget = unit => {
+	// unit already at target
+	if (unit.tile === unit.movement.target) {
+		return unit.movement.target
+	}
+
+	// no next target set, get one
+	if (!unit.movement.nextTarget) {
+		unit.movement.nextTarget = getPath(unit).shift()
+	}
+
+	// next target reached, get next one
+	if (unit.movement.nextTarget === unit.tile) {
+		unit.movement.nextTarget = getPath(unit).shift()
+	}
+
+	// filter empty path tiles
+	if (!unit.movement.nextTarget) {
+		return getNextTarget(unit)
+	}
+
+	// next target too far away
+	const distance = LA.distanceManhatten(unit.mapCoordinates, unit.movement.nextTarget)
+	if (distance > 1) {
+		// recalculate
+		unit.movement.path = null
+		unit.movement.nextTarget = null
+		return getNextTarget(unit)
+	}
+
+	return unit.movement.nextTarget
+}
 
 const create = unit => {
 	const update = (currentTime, deltaTime) => {
@@ -16,15 +57,15 @@ const create = unit => {
 			return true
 		}
 
-		const target = unit.movement.target
+		const target = getNextTarget(unit)
 		if (unit.tile === target) {
 			return true
 		}
 
 		const direction = LA.subtract(target.mapCoordinates, unit.mapCoordinates)
 		const normDirection =LA.normalizeManhatten(direction)
-		const fromCoords = LA.round(LA.subtract(target.mapCoordinates, normDirection))
-		const movementCost = Tile.movementCost(fromCoords, target.mapCoordinates)
+		// const fromCoords = LA.round(LA.subtract(target.mapCoordinates, normDirection))
+		const movementCost = Tile.movementCost(unit.mapCoordinates, target.mapCoordinates)
 		const speed = Unit.speed(unit)
 		const progress = deltaTime * speed / (movementCost * Time.MOVE_BASE_TIME)
 

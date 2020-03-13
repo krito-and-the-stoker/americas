@@ -462,6 +462,8 @@ const updateTile = center => {
 	radius(center).forEach(update.tile)
 }
 
+const get = coords => MapEntity.tile(coords)
+
 
 export default {
 	initialize,
@@ -492,6 +494,7 @@ export default {
 	down,
 	add,
 	closest,
+	get,
 	serializableCopy,
 	temperature
 }

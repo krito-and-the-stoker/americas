@@ -91,6 +91,18 @@ const create = (name, coords, owner) => {
 	}
 }
 
+const goTo = (unit, target) => {
+	if (!target) {
+		console.warn('goto without target is not allowed', target)
+	}
+
+	unit.movement = {
+		target
+	}
+}
+
+const isMoving = unit => unit.tile !== unit.movement.target
+
 const initialize = unit => {
 	if (unit.tile) {
 		Tile.discover(unit.tile, unit.owner)
@@ -233,7 +245,7 @@ const remove = {
 
 const computed = {
 	pioneering: (unit, fn) => listen.command(unit, Binding.map(command =>
-		command && ['cutForest', 'plow', 'road'].includes(command.id), fn))	
+		command && ['cutForest', 'plow', 'road'].includes(command.id), fn))
 }
 
 const listen = {
@@ -461,6 +473,8 @@ export default {
 	isIdle,
 	disband,
 	listen,
+	isMoving,
+	goTo,
 	add,
 	remove,
 	update,

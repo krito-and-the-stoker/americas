@@ -100,7 +100,7 @@ test('schedule instead & schedule behind', () => {
 	jack.equipment.food = Unit.UNIT_FOOD_CAPACITY
 	john.equipment.food = Unit.UNIT_FOOD_CAPACITY
 
-	// jack should be there now
+	// john should be there now
 	expect(john.mapCoordinates).toEqual(farPlace())
 	// jack should be still on his way
 	expect(jack.mapCoordinates).not.toEqual(farPlace())

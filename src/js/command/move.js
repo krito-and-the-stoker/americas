@@ -1,4 +1,8 @@
+import LA from 'util/la'
+
+import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
+import Unit from 'entity/unit'
 
 import Factory from 'command/factory'
 
@@ -21,18 +25,22 @@ export default Factory.create('Move', {
 		console.warn('coords out of range', coords)
 	}
 
-	const targetTile = MapEntity.tile(coords)
+	let active = true
+	const targetTile = Tile.get(coords)
 	const init = () => {
-		unit.movement.target = targetTile
+		Unit.goTo(unit, targetTile)
 	}
 
-	const update = () => {
-		return (unit.tile !== unit.movement.target)
+	const cancel = () => {
+		active = false
 	}
+
+	const update = () => active && Unit.isMoving(unit)
 
 	return {
 		init,
 		update,
+		cancel,
 		priority: true,
 	}
 })

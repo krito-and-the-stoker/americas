@@ -31,9 +31,6 @@ export default Factory.commander('MoveTo', {
 		type: 'raw',
 		required: true
 	},
-	lastPoint: {
-		type: 'raw'
-	}
 }, {
 	id: 'moveTo',
 	display: 'Travelling',
@@ -51,15 +48,8 @@ export default Factory.commander('MoveTo', {
 	}
 
 	const init = () => {
-		if (!MapEntity.tile(unit.mapCoordinates)) {
-			console.warn('unit is adrift. This is definitely an error. Trying to fix...', unit.mapCoordinates, unit.name, unit.referenceId)
-			unit.mapCoordinates = {
-				x: Math.round(unit.mapCoordinates.x),
-				y: Math.round(unit.mapCoordinates.y),
-			}
-		}
-
 		const targetTile = MapEntity.tile(coords)
+
 		let displayName = Unit.area(unit) === 'land' ? 'Travelling' : 'Navigating'
 		if (targetTile.discoveredBy.includes(unit.owner)) {		
 			if (targetTile.colony) {
@@ -90,18 +80,12 @@ export default Factory.commander('MoveTo', {
 		}
 		Factory.update.display(state, displayName)
 
-		const path = PathFinder.findPath(unit.mapCoordinates, coords, unit).filter((waypoint, index) => index > 0)
-		const schedule = command => Commander.scheduleBehind(commander, command)
-		const commands = (unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y) ?
-			[] : path.map(waypoint => Move.create({ unit, coords: waypoint }))
-		commands.forEach(schedule)
-		return {
-			lastPoint: path.length > 0 ? path[path.length - 1].mapCoordinates : unit.mapCoordinates
-		}
+		Commander.scheduleInstead(commander, Move.create({ unit, coords }))
 	}
 
 	const finished = () => {
 		const target = MapEntity.tile(coords)
+		return
 
 		const shipsAtTarget = Unit.at(coords).filter(unit => unit.domain === 'sea')
 		if (unit.domain === 'land' &&
