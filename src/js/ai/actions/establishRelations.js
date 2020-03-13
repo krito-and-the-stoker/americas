@@ -1,4 +1,5 @@
 import Record from 'util/record'
+import LA from 'util/la'
 
 import Plan from 'ai/plan'
 import MoveUnit from 'ai/actions/moveUnit'
@@ -10,7 +11,8 @@ const create = ({ owner, contact }) => {
 	const prev = Plan.cheapest(Record.getAll('unit')
 		.filter(unit => unit.owner.referenceId === contact.referenceId)
 		.filter(unit => unit.domain === 'land')
-		.map(unit => MoveUnit.create(({ owner, coords: unit.mapCoordinates }))))
+		// TODO: make a follow command
+		.map(unit => MoveUnit.create(({ owner, coords: LA.round(unit.mapCoordinates) }))))
 
 	return prev && {
 		cost: prev.cost,
