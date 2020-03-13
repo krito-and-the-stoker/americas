@@ -1,7 +1,9 @@
 import 'util/polyfills'
 import Names from 'data/names'
 import Clone from 'clone'
+import LA from 'util/la'
 
+const distance = LA.distance
 const inBattleDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
 const inDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
 
@@ -83,9 +85,7 @@ const unique = (value, index, self) => self.indexOf(value) === index
 const sum = array => array.reduce((all, single) => all + single, 0)
 const average = array => array.length > 0 ? sum(array) / array.length : 0
 
-// const minDistance = (many, one) => many.reduce((min, test) => Math.min(min, distance(test, one)), 1e10)
 const minDistance = (many, one) => distance(min(many, other => distance(one, other)), one)
-const distance = (first, second) => Math.sqrt((first.x - second.x) * (first.x - second.x) + (first.y - second.y) * (first.y - second.y))
 const entityDistance = (one, other) => distance(one.mapCoordinates, other.mapCoordinates)
 
 const min = (many, fn = x=>x) => many.reduce((best, test) => (best && fn(best) < fn(test)) ? best : test, null)

@@ -60,7 +60,7 @@ export default Factory.commander('MoveTo', {
 		}
 
 		const targetTile = MapEntity.tile(coords)
-		let displayName = 'Travelling'
+		let displayName = Unit.area(unit) === 'land' ? 'Travelling' : 'Navigating'
 		if (targetTile.discoveredBy.includes(unit.owner)) {		
 			if (targetTile.colony) {
 				displayName += ` to ${targetTile.colony.name}`
@@ -68,7 +68,7 @@ export default Factory.commander('MoveTo', {
 				displayName += ` to ${targetTile.settlement.tribe.name} village`
 			} else {
 				if (targetTile.domain === 'sea') {
-					displayName += ' seabound'
+					displayName += ' to the sea'
 				} else {					
 					const closeColony = PathFinder.findNearColony(unit)
 					if (targetTile.forest) {

@@ -2,7 +2,6 @@ import Util from 'util/util'
 
 import Units from 'ai/resources/units'
 
-
 const create = ({ owner, coords }) => {
 	const unit = Util.min(Units.free(owner), unit => Util.distance(unit.mapCoordinates, coords))
 
