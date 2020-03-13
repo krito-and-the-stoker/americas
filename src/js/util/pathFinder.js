@@ -222,6 +222,8 @@ const runDijksrta = (startCoordinates, isTarget, getNeighbors, getCost, minimumE
 				}
 			})
 	}
+
+	return [{ coords: startCoordinates, prev: null, cost: 0 }]
 }
 
 

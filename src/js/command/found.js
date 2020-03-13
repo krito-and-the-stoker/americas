@@ -1,7 +1,6 @@
 import Events from 'util/events'
 
 import Colony from 'entity/colony'
-import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Unit from 'entity/unit'
 
@@ -26,8 +25,8 @@ export default Factory.create('Found', {
 			return
 		}
 
-		const tile = MapEntity.tile(unit.mapCoordinates)
-		if (tile.settlement) {
+		const tile = unit.tile
+		if (!tile || tile.settlement) {
 			return
 		}
 		if (Tile.radius(tile).some(neighbor => neighbor.colony)) {

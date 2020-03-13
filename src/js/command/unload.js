@@ -16,12 +16,18 @@ const createUnloadingOnly = unloadingStartedAt => {
 
 	const save = () => ({
 		unloadingStartedAt,
-		decision: 0,
+		decision: 0
 	})
 
 	return {
 		update,
-		save
+		save,
+		state: {
+			info: {
+				id: 'unload',
+				display: 'Unloading unit'
+			}
+		}
 	}
 }
 

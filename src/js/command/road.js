@@ -24,8 +24,8 @@ export default Factory.create('Road', {
 }, state => {
 	const { unit } = state
 	const init = currentTime => {
-		const tile = MapEntity.tile(unit.mapCoordinates)
-		if (unit.properties.canTerraform && !tile.road && !tile.settlement) {
+		const tile = unit.tile
+		if (tile && unit.properties.canTerraform && !tile.road && !tile.settlement) {
 			const closeColony = PathFinder.findNearColony(unit)
 			const colonyText = closeColony ? ` near ${closeColony.name}` : ''
 			Factory.update.display(state, `Building road ${colonyText}`)
@@ -43,7 +43,7 @@ export default Factory.create('Road', {
 	const finished = () => {
 		if (state.eta) {
 			Storage.update(unit.equipment, { good: 'tools', amount: -20 })	
-			Tile.constructRoad(MapEntity.tile(unit.mapCoordinates))
+			Tile.constructRoad(unit.tile)
 			Events.trigger('notification', { type: 'terraforming', unit })
 			Events.trigger('terraform')
 		}

@@ -44,6 +44,7 @@ const update = {
 
 let blinkTween = null
 const select = unit => {
+	console.log('select', unit)
 	const view = getView(unit)
 	if (view.destroyed) {
 		return

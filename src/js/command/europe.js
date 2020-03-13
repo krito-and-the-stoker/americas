@@ -27,8 +27,8 @@ export default Factory.create('Europe', {
 	const { unit } = state
 
 	const init = () => {
-		const tile = MapEntity.tile(unit.mapCoordinates)
-		if (tile.name !== 'sea lane') {
+		const tile = unit.tile
+		if (!tile || tile.name !== 'sea lane') {
 			console.warn('not going to europe', tile.name, unit, tile)
 			return false
 		}

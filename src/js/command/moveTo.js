@@ -100,7 +100,7 @@ export default Factory.commander('MoveTo', {
 			unit.passengers.length > 0 &&
 			target.domain === 'land' &&
 			!target.colony
-			&& LA.distanceManhatten(unit.mapCoordinates, target.mapCoordinates) <= 1) {
+			&& Tile.radius(target).includes(unit.tile)) {
 			Commander.scheduleInstead(unit.commander, Unload.create(unit, target.mapCoordinates))
 		}
 	}

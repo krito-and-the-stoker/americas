@@ -25,8 +25,8 @@ export default Factory.create('CutForest', {
 }, state => {
 	const { unit } = state
 	const init = currentTime => {
-		const tile = MapEntity.tile(unit.mapCoordinates)
-		if (unit.properties.canTerraform && tile.forest && !tile.settlement) {
+		const tile = unit.tile
+		if (tile && unit.properties.canTerraform && tile.forest && !tile.settlement) {
 			const closeColony = PathFinder.findNearColony(unit)
 			const colonyText = closeColony ? ` near ${closeColony.name}` : ''
 			Factory.update.display(state, `Cutting forest ${colonyText}`)
@@ -44,7 +44,7 @@ export default Factory.create('CutForest', {
 	const finished = () => {
 		if (state.eta) {
 			Storage.update(unit.equipment, { good: 'tools', amount: -20 })	
-			const tile = MapEntity.tile(unit.mapCoordinates)
+			const tile = unit.tile
 			Tile.clearForest(tile)
 			const colony = Util.choose(Tile.radius(tile).filter(tile => tile.colony).map(tile => tile.colony))
 			if (colony) {
