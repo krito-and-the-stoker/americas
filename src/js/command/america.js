@@ -54,13 +54,14 @@ export default Factory.create('America', {
 		}
 	}
 
-	// const cancel = () => {
-	// 	state.direction *= -1
-	// }
+	const cancel = () => {
+		state.direction *= -1
+	}
 
 
 	return {
 		init,
+		cancel,
 		update,
 		finished,
 	}		

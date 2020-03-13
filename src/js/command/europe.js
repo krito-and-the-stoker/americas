@@ -2,7 +2,6 @@ import Message from 'util/message'
 
 import Time from 'timeline/time'
 
-import MapEntity from 'entity/map'
 import Unit from 'entity/unit'
 
 import Factory from 'command/factory'
@@ -55,13 +54,14 @@ export default Factory.create('Europe', {
 		}
 	}
 
-	// const cancel = () => {
-	// 	state.direction *= -1
-	// }
+	const cancel = () => {
+		state.direction *= -1
+	}
 
 	return {
 		init,
 		update,
+		cancel,
 		finished
 	}
 })

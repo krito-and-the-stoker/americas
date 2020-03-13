@@ -110,8 +110,9 @@ const create = (name, params, info, functionFactory) => {
 			functions.init = (...initArgs) => {
 				const initResult = originalInit(...initArgs)
 				if (initResult) {
-					Object.assign(args, initResult, { initHasBeenCalled: true })
+					Object.assign(args, initResult)
 				}
+				Object.assign(args, { initHasBeenCalled: true })
 
 				return true
 			}
@@ -139,15 +140,8 @@ const create = (name, params, info, functionFactory) => {
 }
 
 const wrap = (commander, command) => {
-	let unsubscribe
 	const wrappedCommand = {	
 		...command,
-		init: (...x) => {
-			unsubscribe = Binding.listen(command.state, 'info', info =>
-				Binding.update(wrappedCommand.state, 'info', info))
-			Util.execute(command.init, ...x)
-			return true
-		},
 		update: (...x) => {
 			if (command.update) {
 				if (!command.update(...x)) {
@@ -164,10 +158,6 @@ const wrap = (commander, command) => {
 		},
 		cancel: () => {
 			Util.execute(commander.cancel)
-		},
-		finished: (...x) => {
-			Util.execute(unsubscribe)
-			return Util.execute(command.finished, ...x)
 		},
 		priority: true,
 		tag: `Wrapped ${command.tag}`,

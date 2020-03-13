@@ -24,6 +24,7 @@ export default Factory.create('CutForest', {
 	display: 'Cutting forest'
 }, state => {
 	const { unit } = state
+
 	const init = currentTime => {
 		const tile = unit.tile
 		if (tile && unit.properties.canTerraform && tile.forest && !tile.settlement) {
