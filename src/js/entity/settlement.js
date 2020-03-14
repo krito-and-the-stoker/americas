@@ -40,7 +40,7 @@ const create = (tribe, coords, owner) => {
 		owner,
 		presentGiven: false,
 		hasLearned: false,
-		lastTaxation: 0,
+		lastTaxation: -Time.YEAR,
 		expert: Util.choose(Object.keys(experts)),
 		mission: null,
 		population: Math.ceil(tribe.civilizationLevel * (1 + 3*Math.random()))
