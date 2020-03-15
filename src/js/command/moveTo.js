@@ -50,7 +50,7 @@ export default Factory.commander('MoveTo', {
 	const init = () => {
 		const targetTile = MapEntity.tile(coords)
 
-		let displayName = Unit.area(unit) === 'land' ? 'Travelling' : 'Navigating'
+		let displayName = unit.domain === 'land' ? 'Travelling' : 'Navigating'
 		if (targetTile.discoveredBy.includes(unit.owner)) {		
 			if (targetTile.colony) {
 				displayName += ` to ${targetTile.colony.name}`
