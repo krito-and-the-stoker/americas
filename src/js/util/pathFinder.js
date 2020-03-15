@@ -2,6 +2,8 @@ import { FibonacciHeap } from '@tyriar/fibonacci-heap'
 
 import LA from 'util/la'
 
+import Time from 'timeline/time'
+
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Unit from 'entity/unit'
@@ -10,7 +12,6 @@ import Unit from 'entity/unit'
 const CANNOT_MOVE_COST = 500
 const MIN_TERRAIN_COST = 0.33
 const MIN_SEA_COST = 1
-const EUROPE_TRAVEL_COST = 111
 
 const tile = MapEntity.tile
 
@@ -116,9 +117,12 @@ const distance = (fromCoords, toCoords, unit, max = CANNOT_MOVE_COST) => {
 		relativeEstimate(fromCoords, toCoords, unit.domain)))
 }
 
-const distanceToEurope = coords => {
+const distanceToEurope = (coords, unit) => {
 	// TODO: Calculate this properly with find high seas
-	return EUROPE_TRAVEL_COST
+	if (unit.domain !== 'sea') {
+		return CANNOT_MOVE_COST
+	}
+	return unit.properties.speed * Time.EUROPE_SAIL_TIME / Time.MOVE_BASE_TIME
 }
 
 

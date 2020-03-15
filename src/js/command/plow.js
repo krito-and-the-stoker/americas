@@ -28,7 +28,7 @@ export default Factory.create('Plow', {
 		if (tile && unit.properties.canTerraform && !tile.forest && !tile.settlement && !tile.plowed) {
 			const closeColony = PathFinder.findNearColony(unit)
 			const colonyText = closeColony ? ` near ${closeColony.name}` : ''
-			Factory.update.display(state, `Plowing earth ${colonyText}`)
+			Factory.update.display(state, `Plowing earth${colonyText}`)
 			return {
 				eta: currentTime + Time.PLOW * (unit.expert === 'pioneer' ? 0.6 : 1)
 			}

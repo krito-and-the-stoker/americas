@@ -30,7 +30,7 @@ export default Factory.create('CutForest', {
 		if (tile && unit.properties.canTerraform && tile.forest && !tile.settlement) {
 			const closeColony = PathFinder.findNearColony(unit)
 			const colonyText = closeColony ? ` near ${closeColony.name}` : ''
-			Factory.update.display(state, `Cutting forest ${colonyText}`)
+			Factory.update.display(state, `Cutting forest${colonyText}`)
 			return {
 				eta: currentTime + Time.CUT_FOREST * (unit.expert === 'pioneer' ? 0.6 : 1)
 			}

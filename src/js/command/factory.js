@@ -127,9 +127,10 @@ const create = (name, params, info, functionFactory) => {
 	}
 
 	const load = data => {
-		// console.log('loading', data.tag, params, data)
-		const args = Util.makeObject(Object.entries(params).map(([key, description]) => [key, types.load[description.type](data[key])]))
-		// console.log(args)
+		const args = Util.makeObject(Object.entries(params)
+			.map(([key, description]) =>
+				[key, types.load[description.type](data[key] || (description.default && Util.clone(description.default)))]))
+
 		return revive(create(args))
 	}
 

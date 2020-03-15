@@ -96,7 +96,6 @@ const create = unit => {
 
 			// arrive at final target
 			if (target === nextTarget) {
-				console.log('arrived at final target', unit.name, unit.mapCoordinates)
 				Unit.update.tile(unit, target)
 
 				if (target.colony) {

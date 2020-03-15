@@ -26,11 +26,9 @@ const update = (trade, pack) => Storage.update(trade, pack)
 const goods = trade => Storage.goods(trade)
 
 
-const TRADE_ROUTE_DISTANCE_CAP = 10
-const TRADE_ROUTE_MIN_GOODS = 10
-
-const TREASURE_TARGET = 5000
-const TREASURE_MIN = 500
+const TRADE_ROUTE_DISTANCE_CAP = 50 // really high distance cap, abount 2 years travel
+const TRADE_ROUTE_MIN_GOODS = 10 // transport at least that many goods
+const BUY_GOODS_RELATIVE_BUDGET = 0.3 // do not spend more than 30% of the current treasure for automatic trade
 
 const canExport = (colony, good) => [EXPORT, BALANCE].includes(colony.trade[good]) && canExportAmount(colony, good) > 0
 const canImport = (colony, good) => [IMPORT, BALANCE].includes(colony.trade[good]) && canImportAmount(colony, good) > 0
@@ -58,15 +56,15 @@ const canExportAmount = (colony, good) => Util.clamp(estimatedAmount(colony, goo
 const canImportAmount = (colony, good) => Util.clamp(targetAmount(colony, good) - estimatedAmount(colony, good), 0, colony.capacity)
 
 // how much can we buy depends on treasure
-const canBuyAmount = (europe, good) => Math.floor((Treasure.amount() - TREASURE_MIN) / Market.ask(good))
+const canBuyAmount = (europe, good) => Math.floor(BUY_GOODS_RELATIVE_BUDGET * Treasure.amount() / Market.ask(good))
 
 const exportPriority = (colony, good) => Math.max(colony.storage[good] / colony.capacity, 0)
 const importPriority = (colony, good) => Math.max(1 - (colony.storage[good] / colony.capacity), 0)
 
 // higher priority when have lots of money
-const buyPriority = () => Math.max(Treasure.amount() / TREASURE_TARGET, 0)
+const buyPriority = () => Math.max(Treasure.amount() / Treasure.maximum(), 0)
 // higher priority when low on money
-const sellPriority = () => Math.max(1 - (Treasure.amount() - TREASURE_MIN) / TREASURE_TARGET, 0)
+const sellPriority = () => Math.max(1 - (Treasure.amount() / Treasure.maximum()), 0)
 
 
 
@@ -76,17 +74,17 @@ const distanceCurrentPositionToSrc = (src, transport) => {
 			return 0
 		}
 
-		return PathFinder.distanceToEurope(transport.mapCoordinates)
+		return PathFinder.distanceToEurope(transport.mapCoordinates, transport)
 	}
 
 	return PathFinder.distance(transport.mapCoordinates, src.mapCoordinates, transport, TRADE_ROUTE_DISTANCE_CAP*transport.properties.speed + 1)
 }
 const distanceSrcToDest = (src, dest, transport) => {
 	if (src.isEurope) {
-		return PathFinder.distanceToEurope(dest.mapCoordinates)
+		return PathFinder.distanceToEurope(dest.mapCoordinates, transport)
 	}
 	if (dest.isEurope) {
-		return PathFinder.distanceToEurope(src.mapCoordinates)
+		return PathFinder.distanceToEurope(src.mapCoordinates, transport)
 	}
 
 	return PathFinder.distance(src.mapCoordinates, dest.mapCoordinates, transport, TRADE_ROUTE_DISTANCE_CAP*transport.properties.speed + 1)
@@ -145,24 +143,32 @@ const match = transport => {
 					return false
 				})
 
+			const importance = Util.sum(orders.map(order => order.importance))
+			const distance = routeDistance(route.src, route.dest, transport)
+
 			return {
 				...route,
-				distance: routeDistance(route.src, route.dest, transport),
 				orders,
+				distance,
 				amount: Util.sum(orders.map(order => order.amount)),
-				importance: Util.sum(orders.map(order => order.importance))
+				// smaller is better
+				priority: distance / Math.pow(importance, Math.sqrt(transport.properties.speed))
 			}
 		})
-		.filter(route => route.distance < TRADE_ROUTE_DISTANCE_CAP*transport.properties.speed)
+		.filter(route => route.distance < TRADE_ROUTE_DISTANCE_CAP * transport.properties.speed)
 		.filter(route => route.amount >= TRADE_ROUTE_MIN_GOODS)
 
-	// console.log(routes)
+	console.log(routes)
 
 	if (routes.length === 0) {
-		return null
+		return {}
 	}
 
-	return Util.min(routes, route => -route.importance)
+	const route = Util.min(routes, route => route.priority)
+	return {
+		route,
+		routes
+	}
 }
 
 
@@ -175,11 +181,11 @@ export default {
 	listen,
 	update,
 	goods,
+	canBuyAmount,
 	NOTHING,
 	IMPORT,
 	EXPORT,
 	BUY,
 	SELL,
-	BALANCE,
-	TREASURE_MIN
+	BALANCE
 }

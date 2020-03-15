@@ -6,14 +6,13 @@ import Storage from 'entity/storage'
 import Europe from 'entity/europe'
 import Market from 'entity/market'
 import Trade from 'entity/trade'
-import Treasure from 'entity/treasure'
 
 import Factory from 'command/factory'
 
 
 const tradeCargo = (unit, pack) => {
 	if (pack.amount > 0) {
-		const amount = Math.floor(Math.min(pack.amount, (Treasure.amount() - Trade.TREASURE_MIN) / Market.ask(pack.good)))
+		const amount = Math.floor(Math.min(pack.amount, Trade.canBuyAmount(null, pack.good)))
 		Market.buy({ good: pack.good, amount })
 		Storage.update(unit.storage, { good: pack.good, amount })
 		Events.trigger('buy', { good: pack.good, amount })

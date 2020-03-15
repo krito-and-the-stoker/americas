@@ -19,6 +19,7 @@ import Europe from 'entity/europe'
 import Market from 'entity/market'
 import Tribe from 'entity/tribe'
 import Owner from 'entity/owner'
+import Treasure from 'entity/treasure'
 
 import Meet from 'task/meet'
 
@@ -37,6 +38,21 @@ import FullscreenEvents from 'view/fullscreenEvents'
 import Dialog from 'view/ui/dialog'
 
 import GlobalPanel from 'view/panel/global'
+
+import Colony from 'entity/colony'
+import Colonist from 'entity/colonist'
+import Tile from 'entity/tile'
+if (true) {
+	window.Record = Record
+	window.Unit = Unit
+	window.Colony = Colony
+	window.Market = Market
+	window.Tribe = Tribe
+	window.Colonist = Colonist
+	window.Europe = Europe
+	window.Storage = Storage
+	window.Tile = Tile
+}
 
 
 const captureException = err => {
@@ -160,6 +176,7 @@ const start = async () => {
 		await nextFrame()
 
 		Europe.initialize()
+		Treasure.initialize()
 		Market.initialize()
 		await nextFrame()
 		Tribe.createFromMap(MapEntity.get())
@@ -228,6 +245,7 @@ const load = async () => {
 
 		// for no apparent reason the layers are not available inside TreasureView
 		Europe.initialize()
+		Treasure.initialize()
 		await nextFrame()
 		GlobalPanel.initialize(Foreground.get().permanent)
 		Message.log('Restoring game state...')

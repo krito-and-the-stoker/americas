@@ -20,7 +20,7 @@ const canLoadTreasure = ship => (!ship.commander.state.currentCommand ||
 	ship.commander.state.currentCommand.type === 'load' ||
 	ship.commander.state.currentCommand.type === 'unload') && ship.properties.canTransportTreasure
 
-const inMoveDistance = (coords1, coords2) => Math.abs(coords1.x - coords2.x) <= 1 && Math.abs(coords1.y - coords2.y) <= 1
+const inMoveDistance = (coords1, coords2) => LA.distanceManhatten(coords1, coords2) <= 1
 
 export default Factory.commander('MoveTo', {
 	unit: {
@@ -60,7 +60,6 @@ export default Factory.commander('MoveTo', {
 				if (targetTile.domain === 'sea') {
 					displayName += ' to the sea'
 				} else {					
-					const closeColony = PathFinder.findNearColony(unit)
 					if (targetTile.forest) {
 						displayName += ' to forest'
 					} else if (targetTile.mountains) {
@@ -70,6 +69,7 @@ export default Factory.commander('MoveTo', {
 					} else {
 						displayName += ' to planes'
 					}
+					const closeColony = PathFinder.findNearColony(unit)
 					if (closeColony) {
 						displayName += ` near ${closeColony.name}`
 					}
@@ -90,9 +90,10 @@ export default Factory.commander('MoveTo', {
 		if (unit.domain === 'land' &&
 				target.domain === 'sea' &&
 				shipsAtTarget.some(unit.treasure ? canLoadTreasure : canLoad) &&
-				inMoveDistance(unit.tile.mapCoordinates, coords)) {
-			const transport = shipsAtTarget.find(unit.treasure ? canLoadTreasure : canLoad)
-			Commander.scheduleBehind(transport.commander, LoadUnit.create({ transport, passenger: unit }))
+				inMoveDistance(unit.mapCoordinates, coords)) {
+			console.warn('boarding ships is unsupported now')
+			// const transport = shipsAtTarget.find(unit.treasure ? canLoadTreasure : canLoad)
+			// Commander.scheduleBehind(transport.commander, LoadUnit.create({ transport, passenger: unit }))
 			// Commander.scheduleInstead(unit.commander, BoardTransport.create({ unit, transport }))
 		}
 

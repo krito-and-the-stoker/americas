@@ -1,44 +1,64 @@
-let treasureListeners = []
-let treasure = 1000
+import Binding from 'util/binding'
+
+let treasure = {
+	amount: 1000,
+	maximum: 1000
+}
+
+const initialize = () => {
+	listen.amount(amount => {
+		if (amount > treasure.maximum) {
+			treasure.maximum = amount
+		}
+	})
+}
+
 const spend = amount => {
-	if (treasure >= amount) {
-		treasure -= amount
-		treasureListeners.forEach(fn => fn(treasure))
+	if (treasure.amount >= amount) {
+		set(treasure.amount - amount)
+
 		return true
 	}
 	return false
 }
 
 const gain = amount => {
-	treasure += amount
-	treasureListeners.forEach(fn => fn(treasure))
+	set(treasure.amount + amount)
 }
 
-const bind = fn => {
-	fn(treasure)
-	treasureListeners.push(fn)
-
-	return () => {
-		treasureListeners = treasureListeners.filter(f => f !== fn)
-	}
+const set = amount => {
+	update.amount(amount)
 }
 
-const set = amount => treasure = amount
+const amount = () => treasure.amount
+const maximum = () => treasure.maximum
 
-const amount = () => treasure
+const listen = {
+	amount: fn => Binding.listen(treasure, 'amount', fn)
+}
 
-const save = () => treasure
+const update = {
+	amount: value => Binding.update(treasure, 'amount', value)
+}
+
+const save = () => ({
+	amount: treasure.amount,
+	maximum: treasure.maximum
+})
+
 const load = data => {
-	treasure = data
-	treasureListeners.forEach(fn => fn(treasure))
+	update.amount(data.amount)
+	treasure.amount = data.amount
 }
 
 export default {
 	spend,
 	gain,
-	bind,
+	listen,
 	amount,
+	maximum,
 	save,
 	load,
+	initialize,
 	set
 }

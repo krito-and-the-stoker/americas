@@ -13,6 +13,8 @@ const add = (colony, pack) => {
 		init(colony.name)
 	}
 	scheduled()[colony.name][pack.good] -= pack.amount
+
+	return () => remove(colony, pack)
 }
 const remove = (colony, pack) => {
 	if (!scheduled()[colony.name]) {

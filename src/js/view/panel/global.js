@@ -20,7 +20,7 @@ const createTreasure = () => {
 		container.x = dimensions.x - (container.width + 10)
 		currentDimensions = dimensions
 	})
-	const unsubscribe = Treasure.bind(amount => {
+	const unsubscribe = Treasure.listen.amount(amount => {
 		container.text = `Treasure: ${Math.round(amount)}`
 		container.x = currentDimensions.x - (container.width + 10)
 	})
