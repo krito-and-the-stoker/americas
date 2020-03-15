@@ -1,22 +1,17 @@
 /* eslint-disable no-console */
 
 const config = {
-	send: true,
 	log: true,
 	event: false,
 	warn: true
 }
 
-const send = text => {
-	if (config.send) {
-		console.log(`Message: ${text}`)
-	}
-}
+const send = (...args) => log(...args)
 
-const log = text => {
+const log = (text, ...args) => {
 	if (config.log) {	
 		if (typeof document !== 'undefined') {	
-			console.log(`Log: ${text}`)
+			console.log(`Log: ${text}`, ...args)
 			const logElement = document.querySelector('#log')
 			if (logElement) {
 				logElement.innerHTML = text
