@@ -20,7 +20,6 @@ const initialize = () => {
 
 	let globalPanel = document.createElement('div')
 	document.body.appendChild(globalPanel)
-
 	const render = ({ screen, scale, treasure, time, help, isMap }) => {
 		const view = h('div', { class: { 'global-panel': true, isMap } }, [
 			isMap && h('div', { on: { click: screen.click }, class: { click: true } }, screen.text),
@@ -33,6 +32,13 @@ const initialize = () => {
 		globalPanel = patch(globalPanel, view)
 	}
 
+	let centeredMessage = document.createElement('div')
+	document.body.appendChild(centeredMessage)
+	Time.listen.paused(paused => {
+		const view = h('div.centered-message', paused ? h('h1', 'Game paused') : [])
+		centeredMessage = patch(centeredMessage, view)
+	})
+
 	Foreground.listen.screen(screen =>
 		Time.listen.scale(scale =>
 			Time.listen.paused(paused =>
@@ -40,7 +46,6 @@ const initialize = () => {
 					Time.listen.month(month =>
 						Treasure.listen.amount(amount => {
 							const isEurope = screen && screen.params.name === 'europe'
-							console.log(screen)
 							render({
 								isMap: screen === null,
 								screen: {

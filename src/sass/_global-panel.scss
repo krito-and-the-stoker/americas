@@ -30,3 +30,21 @@
     bottom: 0;
   }
 }
+
+.centered-message {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  h1 {
+    font-size: 70px;
+    color: white;
+    font-weight: normal;
+    margin: 0;
+  }
+}
