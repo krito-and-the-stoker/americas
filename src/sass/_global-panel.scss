@@ -1,0 +1,32 @@
+
+.global-panel {  
+  z-index: 1;
+  position: fixed;
+  top: 0;
+  right: 0;
+
+  margin: 0;
+  padding: 10px;
+
+  background-color: rgba(240, 233, 201, 0.6);
+  box-shadow: 0 0 5px 5px rgba(240, 233, 201, 0.6);
+  color: black;
+  font-size: 24px;
+  display: flex;
+  justify-content: space-between;
+  > div {
+    text-algin: center;
+    &:not(:last-child) {
+      margin-right: 20px;
+    }
+
+    &.click {
+      cursor: pointer;
+    }
+  }
+
+  &.isMap {
+    display: block;
+    bottom: 0;
+  }
+}

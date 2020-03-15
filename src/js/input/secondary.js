@@ -23,6 +23,11 @@ const on = (target, fn) => {
 }
 
 const initialize = () => {
+	// document.querySelectorAll('canvas').forEach(el => {
+	// 	el.addEventListener('contextmenu', e => {
+	// 		e.preventDefault()
+	// 	})
+	// })
 	window.oncontextmenu = (e) => {
 		e.preventDefault()
 	}

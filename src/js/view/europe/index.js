@@ -53,7 +53,7 @@ const create = () => {
 	})
 	nameHeadline.anchor.set(0.5)
 	nameHeadline.position.x = originalDimensions.x / 2
-	nameHeadline.position.y = 35
+	nameHeadline.position.y = 80
 	normalContainer.addChild(nameHeadline)
 
 	const recruitButton = Button.create('recruit', () => Dialog.create({
