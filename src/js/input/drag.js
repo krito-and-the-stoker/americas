@@ -13,7 +13,11 @@ const DRAG_DISTANCE = 3
 let draggables = []
 const isDraggable = target => draggables.includes(target)
 
-const on = (target, onStart = null, onMove = null, onEnd = null, options = { highlight: true }) => {
+const defaultOptions = {
+	highlight: true
+}
+
+const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = {}) => {
 	draggables.push(target)
 
 	let initialCoords = null
@@ -59,6 +63,8 @@ const on = (target, onStart = null, onMove = null, onEnd = null, options = { hig
 			})
 		}
 	}
+
+	const options = Object.assign({}, defaultOptions, paramOptions)
 
 	if (options.highlight) {
 		target.cursor = 'grab'
