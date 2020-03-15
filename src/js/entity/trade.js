@@ -158,8 +158,6 @@ const match = transport => {
 		.filter(route => route.distance < TRADE_ROUTE_DISTANCE_CAP * transport.properties.speed)
 		.filter(route => route.amount >= TRADE_ROUTE_MIN_GOODS)
 
-	console.log(routes)
-
 	if (routes.length === 0) {
 		return {}
 	}

@@ -1,5 +1,6 @@
 import { FibonacciHeap } from '@tyriar/fibonacci-heap'
 
+import Message from 'util/message'
 import LA from 'util/la'
 
 import Time from 'timeline/time'
@@ -67,11 +68,10 @@ const findHighSeas = (fromCoords, unit) => {
 }
 
 const findPath = (fromCoords, toCoords, unit) => {
-	// console.log('find path', fromCoords, toCoords, unit.name, unit.domain)
 	const area = Unit.area(unit)
 	const target = MapEntity.tile(toCoords)
 	if (!target) {
-		console.warn('toCoords must resolve to a tile')
+		Message.warn('toCoords must resolve to a tile')
 		return null
 	}
 
@@ -80,7 +80,7 @@ const findPath = (fromCoords, toCoords, unit) => {
 		if (newCoords) {
 			return findPath(fromCoords, newCoords, unit)
 		}
-		console.warn('could not find path to target area')
+		Message.warn('could not find path to target area')
 		return null
 	}
 
@@ -205,7 +205,6 @@ const runDijksrta = (startCoordinates, isTarget, getNeighbors, getCost, minimumE
 		}
 
 		add(explored, node)
-		// console.log(node.coords, node.cost)
 		getNeighbors(node)
 			.map(coords => getNode(coords))
 			.filter(neighbor => !has(explored, neighbor))

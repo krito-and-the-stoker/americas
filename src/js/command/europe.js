@@ -28,7 +28,7 @@ export default Factory.create('Europe', {
 	const init = () => {
 		const tile = unit.tile
 		if (!tile || tile.name !== 'sea lane') {
-			console.warn('not going to europe', tile.name, unit, tile)
+			Message.warn('not going to europe', tile.name, unit, tile)
 			return false
 		}
 

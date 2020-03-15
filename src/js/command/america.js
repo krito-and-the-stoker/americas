@@ -27,7 +27,7 @@ export default Factory.create('America', {
 
 	const init = () => {
 		if (!Europe.has.unit(unit)) {
-			console.warn('unit is not in europe', unit.name)
+			Message.warn('unit is not in europe', unit.name)
 			return false
 		}
 

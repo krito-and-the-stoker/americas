@@ -54,7 +54,7 @@ const add = (type, entity) => {
 const remove = entity => {
 	const record = records.find(record => record.entity === entity)
 	if (!record) {
-		console.warn('cannot remove, entity not found. Possible duplicate removal', entity)
+		Message.warn('cannot remove, entity not found. Possible duplicate removal', entity)
 	} else {
 		Util.execute(record.destroy)
 	}
@@ -127,8 +127,8 @@ const revive = (record) => {
 }
 
 const dump = () => {
-	console.log(records)
-	console.log(globals)
+	Message.log(records)
+	Message.log(globals)
 
 	window.Record = {
 		add,
@@ -367,7 +367,7 @@ const dereference = ref => {
 		return revive(dead)
 	}
 
-	console.warn('could not find reference for ', ref, snapshot.entities)
+	Message.warn('could not find reference for ', ref, snapshot.entities)
 	return null
 }
 const dereferenceLazy = (ref, fn) => {
@@ -381,7 +381,7 @@ const dereferenceLazy = (ref, fn) => {
 		} else {
 			const dead = snapshot.entities.find(record => record.id === referenceId)
 			if (!dead) {
-				console.warn('Could not find reference for', ref)
+				Message.warn('Could not find reference for', ref)
 			} else {
 				dead.listeners.push(fn)
 			}
@@ -405,10 +405,10 @@ const unserialize = content => {
 
 	snapshot = JSON.parse(content)
 	if (snapshot.game !== 'americas') {
-		console.warn('The save game does not appear to be a valid americas save game.')
+		Message.warn('The save game does not appear to be a valid americas save game.')
 	}
 	if (snapshot.revision !== Version.revision) {
-		console.warn('The save games version does not match the version of the game. If you see no errors you can ignore this warning.')
+		Message.warn('The save games version does not match the version of the game. If you see no errors you can ignore this warning.')
 	}
 	globals.revision = snapshot.revision
 	globals = snapshot.globals

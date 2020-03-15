@@ -1,3 +1,5 @@
+import * as PIXI from 'pixi.js'
+
 import Util from 'util/util'
 import Binding from 'util/binding'
 
@@ -8,7 +10,12 @@ import Foreground from 'render/foreground'
 
 const DRAG_DISTANCE = 3
 
-const on = (target, onStart = null, onMove = null, onEnd = null) => {
+let draggables = []
+const isDraggable = target => draggables.includes(target)
+
+const on = (target, onStart = null, onMove = null, onEnd = null, options = { highlight: true }) => {
+	draggables.push(target)
+
 	let initialCoords = null
 	let inProgress = false
 
@@ -53,6 +60,9 @@ const on = (target, onStart = null, onMove = null, onEnd = null) => {
 		}
 	}
 
+	if (options.highlight) {
+		target.cursor = 'grab'
+	}
 
 	target.interactive = true
 	target
@@ -66,6 +76,7 @@ const on = (target, onStart = null, onMove = null, onEnd = null) => {
 		.on('touchendoutside', handleEnd)
 
 	const unsubscribe = () => {
+		draggables = draggables.filter(t => t !== target)
 		target
 			.off('mousedown', handleDown)
 			.off('touchstart', handleDown)
@@ -186,5 +197,6 @@ export default {
 	waitForDrag,
 	makeDraggable,
 	makeDragTarget,
-	listen
+	listen,
+	isDraggable
 }

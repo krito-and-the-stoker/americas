@@ -1,4 +1,5 @@
 import Events from 'util/events'
+import Message from 'util/message'
 
 import Time from 'timeline/time'
 
@@ -45,7 +46,7 @@ export default Factory.create('TradeCargo', {
 }, ({ unit, pack, eta }) => {
 	const init = currentTime => {
 		if (!Europe.has.unit(unit)) {
-			console.warn('unit wants to trade without being in europe', unit.name, pack)
+			Message.warn('unit wants to trade without being in europe', unit.name, pack)
 		}
 
 		eta = currentTime + Time.CARGO_LOAD_TIME

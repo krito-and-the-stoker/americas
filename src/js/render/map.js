@@ -157,7 +157,6 @@ class MapView{
 					!leftUp.discovered()
 				)
 				for(let name of cornerNames){
-					// console.error(tile, name)
 					undiscovered.push(Terrain.undiscovered[name])
 				}
 							

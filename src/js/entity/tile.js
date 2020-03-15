@@ -7,6 +7,7 @@ import Member from 'util/member'
 import Record from 'util/record'
 import Binding from 'util/binding'
 import LA from 'util/la'
+import Message from 'util/message'
 
 import Owner from 'entity/owner'
 import MapEntity from 'entity/map'
@@ -15,7 +16,7 @@ import MapEntity from 'entity/map'
 const create = ({ id, layers, index }) => {
 	const [name, terrain] = Object.entries(Terrain).find(([, terrain]) => terrain.id === id)
 	if (!terrain) {
-		console.warn(`No terrain type found for id ${id}.`)
+		Message.warn(`No terrain type found for id ${id}.`)
 		throw new Error(`No terrain type found for id ${id}.`)
 	}
 
@@ -181,7 +182,7 @@ const load = (data, index) => {
 	tile.index = index
 	const [name, terrain] = Object.entries(Terrain).find(([, terrain]) => terrain.id === tile.id)
 	if (!terrain) {
-		console.warn(`No terrain type found for id ${tile.id}.`)
+		Message.warn(`No terrain type found for id ${tile.id}.`)
 		throw new Error(`No terrain type found for id ${tile.id}.`)
 	}
 	tile.name = name
@@ -249,7 +250,7 @@ const diagonalNeighbors = tile => {
 		result = result.concat([left(down(tile)), right(down(tile))])
 	}
 	if (!up(tile) && !down(tile)) {
-		console.warn('tile has no vertical neighbors', tile)
+		Message.warn('tile has no vertical neighbors', tile)
 	}
 	return result.filter(n => n)
 }

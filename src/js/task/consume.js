@@ -26,7 +26,6 @@ const create = (colony, good, amount) => {
 
 			Storage.update(colony.productionRecord, { good, amount: -amount })
 		}
-		// console.log('consume', { good, amount: -amount })
 
 		return true
 	}

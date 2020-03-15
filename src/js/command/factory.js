@@ -1,5 +1,6 @@
 import Commander from 'command/commander'
 
+import Message from 'util/message'
 import Util from 'util/util'
 import Binding from 'util/binding'
 import Record from 'util/record'
@@ -63,7 +64,7 @@ const create = (name, params, info, functionFactory) => {
 	const create = (args = {}) => {
 		Object.keys(args).forEach(key => {
 			if (!params[key]) {
-				console.warn('unspecified command creation argument', key, args, params)
+				Message.warn('unspecified command creation argument', key, args, params)
 			}
 		})
 
@@ -92,10 +93,7 @@ const create = (name, params, info, functionFactory) => {
 			})
 
 		const save = () => {
-			// console.log('saving', params, args)
-			const result = Util.makeObject(Object.entries(params).concat([['module', { type: 'name' }]]).map(([key, description]) => [key, types.save[description.type](args[key])]))
-			// console.log(result)
-			return result
+			return Util.makeObject(Object.entries(params).concat([['module', { type: 'name' }]]).map(([key, description]) => [key, types.save[description.type](args[key])]))
 		}
 
 
@@ -146,7 +144,7 @@ const wrap = (commander, command) => {
 		update: (...x) => {
 			if (command.update) {
 				if (!command.update(...x)) {
-					// console.log('should stop commander here')
+					// TODO: why is this here, why should it maybe not be here?
 					// commander.schedule.stop()
 				}
 			}

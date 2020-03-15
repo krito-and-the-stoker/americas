@@ -5,6 +5,7 @@ import Messages from 'data/tutorial'
 import Util from 'util/util'
 import Record from 'util/record'
 import Events from 'util/events'
+import Message from 'util/message'
 
 import Time from 'timeline/time'
 
@@ -112,7 +113,7 @@ const prepareMessage = message => {
 			message[key] = funcs[key]
 		})
 	} else {
-		console.warn('no listeners attached to tutorial message', message.name, message)
+		Message.warn('no listeners attached to tutorial message', message.name, message)
 	}
 
 	return message

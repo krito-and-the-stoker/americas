@@ -1,5 +1,6 @@
 import Util from 'util/util'
 import Record from 'util/record'
+import Message from 'util/message'
 
 import Unit from 'entity/unit'
 import Storage from 'entity/storage'
@@ -9,7 +10,7 @@ import Units from 'ai/resources/units'
 
 
 const create = unit => {
-	console.log('disbanding', unit.referenceId)
+	Message.log('disbanding', unit.referenceId)
 	const settlements = Record.getAll('settlement').filter(settlement => settlement.owner === unit.owner)
 	const closest = Util.min(settlements, settlement =>
 		Util.distance(settlement.mapCoordinates, unit.mapCoordinates))

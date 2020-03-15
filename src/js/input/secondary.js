@@ -8,16 +8,6 @@ const on = (target, fn) => {
 		}
 
 		await handleClick()
-		// do not delete, this becomes relevant when there are right mouse drags
-		// requestAnimationFrame(async () => {
-		// 	if (Drag.isPossibleDragTarget(target)) {
-		// 		setTimeout(async () => {
-		// 			await handleClick()
-		// 		}, Drag.MIN_DRAG_TIME)
-		// 	} else {
-		// 		await handleClick()
-		// 	}
-		// })
 	}
 
 	target.interactive = true

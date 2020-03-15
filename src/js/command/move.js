@@ -1,3 +1,5 @@
+import Message from 'util/message'
+
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Unit from 'entity/unit'
@@ -20,7 +22,7 @@ export default Factory.create('Move', {
 	icon: 'go'
 }, ({ unit, coords }) => {
 	if (coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y) {
-		console.warn('coords out of range', coords)
+		Message.warn('coords out of range', coords)
 	}
 
 	let active = true

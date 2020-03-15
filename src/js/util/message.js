@@ -1,7 +1,10 @@
+/* eslint-disable no-console */
+
 const config = {
 	send: true,
 	log: true,
-	event: false
+	event: false,
+	warn: true
 }
 
 const send = text => {
@@ -22,6 +25,12 @@ const log = text => {
 	}
 }
 
+const warn = text => {
+	if (config.warn) {
+		console.warn(text)
+	}
+}
+
 
 const event = (text, args) => {
 	if (config.event) {
@@ -30,4 +39,4 @@ const event = (text, args) => {
 }
 
 
-export default { send, log, event }
+export default { send, log, event, warn }

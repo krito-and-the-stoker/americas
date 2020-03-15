@@ -102,7 +102,6 @@ const create = unit => {
 					EnterColony(target.colony, unit)
 				}
 			} else {
-				// console.log('go on', target.mapCoordinates, nextTarget.mapCoordinates)
 				// use the left progress
 				const nextDirection = LA.subtract(nextTarget.mapCoordinates, unit.mapCoordinates)
 				const nextNormDirection =LA.normalizeManhatten(nextDirection)

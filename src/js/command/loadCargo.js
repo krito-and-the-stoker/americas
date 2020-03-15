@@ -1,4 +1,5 @@
 import Events from 'util/events'
+import Message from 'util/message'
 
 import Time from 'timeline/time'
 
@@ -46,7 +47,7 @@ export default Factory.create('LoadCargo', {
 
 	const init = currentTime => {
 		if (unit.colony !== colony) {
-			console.warn('unit loads cargo but is not inside colony', colony.name, unit.name, pack)
+			Message.warn('unit loads cargo but is not inside colony', colony.name, unit.name, pack)
 		}
 
 		eta = currentTime + Time.CARGO_LOAD_TIME

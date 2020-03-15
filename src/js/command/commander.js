@@ -27,16 +27,13 @@ const clearSchedule = commander => {
 
 const schedule = {
 	instead: (parent, child) => {
-		// console.log(`scheduling ${child.tag} into ${parent.tag}`)
 		schedule.clear(parent)
 		schedule.behind(parent, child)
-		// console.log(parent.tag, 'commands', parent.state.commands)
 	},
 	behind: (parent, child) => {
 		parent.state.commands.push(child)
 	},
 	clear: (parent) => {
-		// console.log('clearing', parent.tag)
 		parent.state.commands.forEach(cmd => Util.execute(cmd.canceled))
 		parent.state.commands.length = 0
 		if (parent.state.currentCommand) {
@@ -96,7 +93,6 @@ const { create, load } = Factory.create('Commander', {
 	}
 
 	const update = () => {
-		// console.log(tag, state.currentCommand && state.currentCommand.tag, state.commands.map(cmd => cmd.tag))
 		if (!state.currentCommand && state.commands.length > 0) {
 			state.currentCommand = state.commands.shift()
 			unschedule = startCurrentCommand(state)

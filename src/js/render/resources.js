@@ -91,7 +91,7 @@ const rectangle = (index) => {
 
 const texture = (name, options = {}) => {
 	if (!textures[name]) {
-		console.warn('Texture not found in textures:', name, textures)
+		Message.warn('Texture not found in textures:', name, textures)
 		return textures.white
 	}
 	if (options.frame || options.frame === 0) {

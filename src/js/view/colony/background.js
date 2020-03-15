@@ -24,7 +24,7 @@ const create = colony => {
 	}
 
 	// capture click on background so we dont close the screen
-	Click.on(background, () => {})
+	Click.on(background)
 
 	const leaveColonyZone = new PIXI.Container()
 	leaveColonyZone.hitArea = new PIXI.Rectangle(

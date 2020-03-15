@@ -12,7 +12,6 @@ import Foreground from 'render/foreground'
 import Resources from 'render/resources'
 
 import Click from 'input/click'
-import Secondary from 'input/secondary'
 
 import Unit from 'entity/unit'
 import Europe from 'entity/europe'
@@ -23,8 +22,6 @@ import Storage from 'entity/storage'
 
 import ColonyView from 'view/colony'
 import Events from 'util/events'
-
-import Dialog from 'view/ui/dialog'
 
 
 const BLINK_TIME = 500
@@ -44,7 +41,6 @@ const update = {
 
 let blinkTween = null
 const select = unit => {
-	console.log('select', unit)
 	const view = getView(unit)
 	if (view.destroyed) {
 		return

@@ -111,7 +111,6 @@ export default Factory.commander('TradeRoute', {
 	reserveGoods(state)
 	const unsubscribeEvents = Events.listen('trade-route-complete', params => {
 		if (params.id === commander.tag) {
-			console.log('trade route new orders')
 			state.needsOrders = true
 		}
 	})
@@ -143,16 +142,14 @@ export default Factory.commander('TradeRoute', {
 			if (route) {
 				// already there
 				if ((unit.colony === route.src) || (route.src.type === 'europe' && Europe.has.unit(unit))) {
-					console.log('already there, scheduling', route)
 					scheduleRoute(state, route)
 				} else {
 					const subRoute = findAlternativeRoute(state, route, routes)
 					if (subRoute) {
-						console.log('found subroute, scheduling', subRoute)
 						scheduleRoute(state, subRoute)
 					} else {
-						console.log('no subroute found, move to', route.src)
 						// go to route src first
+						Message.log(`A ${unit.name} is moving to ${route.src.name} for next transport`)
 						Factory.update.display(state, `Moving to ${route.src.name} for next transport`)
 
 						// reserve goods
@@ -170,7 +167,6 @@ export default Factory.commander('TradeRoute', {
 						}))
 					}
 				}
-				console.log('schedule behind trigger event')
 				Commander.scheduleBehind(commander, TriggerEvent.create({ name: 'trade-route-complete', id: commander.tag }))
 			} else {
 				Message.send(`A ${unit.name} has not found any routes and will look again shortly`)

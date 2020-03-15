@@ -27,7 +27,7 @@ const createSprite = colony => Resources.sprite('map', { frame: frame(colony) })
 const create = colony => {
 	const view = {}
 	view.unsubscribe = Tile.listen.discovered(MapEntity.tile(colony.mapCoordinates), discovered => {
-		if (discovered) {		
+		if (discovered) {
 			view.sprite = createSprite(colony)
 			view.sprite.x = TILE_SIZE * colony.mapCoordinates.x
 			view.sprite.y = TILE_SIZE * colony.mapCoordinates.y
@@ -36,7 +36,7 @@ const create = colony => {
 			const unsubscribeOwner = Owner.listen.input(colony.owner, input =>
 				input ? Click.on(view.sprite, () => {
 					ColonyView.open(colony)
-				}) : null)
+				}, `inspect ${colony.name}`) : null)
 
 			view.text = Text.create(colony.name, {
 				fontSize: 24,

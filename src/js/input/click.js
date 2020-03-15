@@ -1,6 +1,10 @@
-import Input from 'input'
+import Util from 'util/util'
 
-const on = (target, fn) => {
+import Input from 'input'
+import Hints from 'input/hints'
+import Drag from 'input/drag'
+
+const on = (target, fn, helpText) => {
 	const handleDown = () => {
 		Input.makeHot(target)
 	}
@@ -8,37 +12,42 @@ const on = (target, fn) => {
 	const handleUp = async e => {
 		if (Input.isHot(target)) {
 			e.stopPropagation()
-			Input.clear()			
+			Input.clear()
 
 			target.interactive = false
-			await fn(e.data.global)
+			await Util.execute(fn, e.data.global)
 			target.interactive = true
 		}
-
-		// requestAnimationFrame(async () => {
-		// 	if (Drag.isPossibleDragTarget(target)) {
-		// 		setTimeout(async () => {
-		// 			await handleClick()
-		// 		}, Drag.MIN_DRAG_TIME)
-		// 	} else {
-		// 		await handleClick()
-		// 	}
-		// })
 	}
+
+	if (fn && !Drag.isDraggable(target)) {
+		target.cursor = 'pointer'
+	}
+
+	const hint = {
+		action: 'click',
+		text: helpText
+	}
+
+	const addHint = () => {
+		Hints.add(hint)
+	}
+	const removeHint = () => Hints.remove(hint)
 
 	target.interactive = true
 	target
 		.on('mousedown', handleDown)
-		.on('touchstart', handleDown)
 		.on('mouseup', handleUp)
-		.on('touchnend', handleUp)
+		.on('mouseover', addHint)
+		.on('mouseout', removeHint)
 
 	const unsubscribe = () => {
+		removeHint()
 		target
 			.off('mousedown', handleDown)
-			.off('touchstart', handleDown)
 			.off('mouseup', handleUp)
-			.off('touchnend', handleUp)
+			.on('mouseover', addHint)
+			.on('mouseout', removeHint)
 	}
 
 	return unsubscribe

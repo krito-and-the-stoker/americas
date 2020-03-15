@@ -1,19 +1,23 @@
 import * as PIXI from 'pixi.js'
 
+import Util from 'util/util'
 import Tween from 'util/tween'
-import Colony from 'entity/colony'
-import Colonist from 'entity/colonist'
-import UnitView from 'view/unit'
-import UnitMapView from 'view/map/unit'
-import MapView from 'view/map'
+import Message from 'util/message'
+
 import Click from 'input/click'
 import Drag from 'input/drag'
+
+import Colony from 'entity/colony'
+import Colonist from 'entity/colonist'
 import Unit from 'entity/unit'
-import Transport from 'view/transport'
-import Util from 'util/util'
 
 import EquipUnitFromShip from 'interaction/equipUnitFromShip'
 import EquipUnitFromColony from 'interaction/equipUnitFromColony'
+
+import UnitView from 'view/unit'
+import UnitMapView from 'view/map/unit'
+import MapView from 'view/map'
+import Transport from 'view/transport'
 
 
 const create = (colony, closeScreen, originalDimensions) => {
@@ -50,7 +54,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 			})
 			const position = shipPositions.find(pos => !pos.taken)
 			if (!position) {
-				console.warn('could not display unit, no position left', unit)
+				Message.warn('could not display unit, no position left', unit)
 				return
 			}
 
@@ -85,7 +89,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 	const drawLandUnit = (unit, added) => {
 		const position = landPositions.find(pos => !pos.taken)
 		if (!position) {
-			console.warn('could not display unit, no position left', unit)
+			Message.warn('could not display unit, no position left', unit)
 			return
 		}
 		position.taken = true

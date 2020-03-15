@@ -14,7 +14,6 @@ const create = (unit, colony) => {
 	const update = (currentTime, deltaTime) => {
 		if (unit.equipment.food > Unit.UNIT_FOOD_CAPACITY) {
 			const pack = { good: 'food', amount: unit.equipment.food - Unit.UNIT_FOOD_CAPACITY }
-			console.log(pack)
 			Storage.transfer(unit.equipment, colony.storage, pack)
 		}
 

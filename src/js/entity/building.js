@@ -6,7 +6,6 @@ import Events from 'util/events'
 
 import Colony from 'entity/colony'
 import Unit from 'entity/unit'
-import Storage from 'entity/storage'
 
 
 const create = () => {
@@ -33,7 +32,7 @@ const create = () => {
 		width: Buildings[name].width
 	}))
 	if (buildings.filter(building => building.width === 2).length < 2 * buildings.filter(building => building.width === 2)) {
-		console.warn('There might not be enough slots for double width buildings left', buildings, positions)
+		Message.warn('There might not be enough slots for double width buildings left', buildings, positions)
 	}
 	buildings.filter(building => building.width === 2).forEach(building => {
 		building.position = Util.choose(positions.filter(pos => !pos.taken && pos.width >= 2))
@@ -51,7 +50,7 @@ const create = () => {
 		}
 	})
 	if (buildings.filter(building => building.width === 1).length > positions.filter(pos => !pos.taken).length) {
-		console.warn('There is not enough slots left for buildings with size 1', buildings, positions)
+		Message.warn('There is not enough slots left for buildings with size 1', buildings, positions)
 	}
 	buildings.filter(building => building.width === 1).forEach(building => {
 		building.position = Util.choose(positions.filter(pos => !pos.taken))

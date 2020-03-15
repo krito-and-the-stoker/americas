@@ -14,7 +14,6 @@ import FindWork from 'interaction/findWork'
 
 test('1 colonist working', () => {
 	const timings = Util.range(100).map(() => 1000 * Math.random())
-	// const timings = Util.range(1000).map(i => i + 1)
 
 	const unit = Unit.create('settler', { x:1, y: 1 }, Owner.player())
 	const colony = Colony.create({ x:1, y: 1 }, Owner.player())
@@ -36,6 +35,5 @@ test('1 colonist working', () => {
 
 	timings.forEach(deltaTime => {
 		Time.advance(deltaTime)
-		// console.log('deltaTime', deltaTime, 'sum', { good: 'food', amount: colony.productionSummary.food })
 	})
 })

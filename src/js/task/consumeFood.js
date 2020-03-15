@@ -12,7 +12,6 @@ const CHANCE_OF_DEATH = 0.01
 const create = unit => {
 	const update = (currentTime, deltaTime) => {
 		if (unit.equipment.food < -0.1) {
-			// console.log('unit is starving now', unit, unit.equipment.food)
 			if (Math.random() < CHANCE_OF_DEATH) {
 				Unit.disband(unit)
 				Events.trigger('notification', { type: 'died', unit })

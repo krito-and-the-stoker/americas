@@ -1,5 +1,6 @@
 import Util from 'util/util'
 import Events from 'util/events'
+import Message from 'util/message'
 
 import Storage from 'entity/storage'
 
@@ -7,7 +8,7 @@ import MoveUnit from 'ai/actions/moveUnit'
 import Units from 'ai/resources/units'
 
 const create = ({ tribe, state, colony }) => {
-	console.log('visiting', colony.name)
+	Message.log('visiting', colony.name)
 	const prev = MoveUnit.create({ owner: tribe.owner, coords: colony.mapCoordinates })
 
 	return prev ? {

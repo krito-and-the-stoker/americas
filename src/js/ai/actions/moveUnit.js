@@ -1,5 +1,6 @@
 import Util from 'util/util'
 import Events from 'util/events'
+import Message from 'util/message'
 
 import Commander from 'command/commander'
 import MoveTo from 'command/moveTo'
@@ -58,7 +59,7 @@ const create = ({ owner, unit, coords }) => {
 		}
 	}
 
-	console.warn('moveUnit action needs either a unit or an owner.')
+	Message.warn('moveUnit action needs either a unit or an owner.')
 }
 
 

@@ -5,6 +5,7 @@ import Record from 'util/record'
 import Binding from 'util/binding'
 import Member from 'util/member'
 import PathFinder from 'util/pathFinder'
+import Message from 'util/message'
 
 import Time from 'timeline/time'
 
@@ -87,14 +88,14 @@ const create = (name, coords, owner) => {
 
 		return unit
 	} else {
-		console.warn('unit type not found', name)
+		Message.warn('unit type not found', name)
 		return null
 	}
 }
 
 const goTo = (unit, target) => {
 	if (!target) {
-		console.warn('goto without target is not allowed', target)
+		Message.warn('goto without target is not allowed', target)
 		return
 	}
 
@@ -399,7 +400,7 @@ const unloadUnit = (unit, desiredPassenger = null) => {
 		return passenger
 	}
 
-	console.warn('could not unload, no units on board', unit)
+	Message.warn('could not unload, no units on board', unit)
 	return null
 }
 

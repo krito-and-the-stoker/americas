@@ -1,5 +1,6 @@
 import LA from 'util/la'
 import PathFinder from 'util/pathFinder'
+import Message from 'util/message'
 
 import MapEntity from 'entity/map'
 import Unit from 'entity/unit'
@@ -8,7 +9,6 @@ import Tile from 'entity/tile'
 import Factory from 'command/factory'
 import Move from 'command/move'
 import Commander from 'command/commander'
-import LoadUnit from 'command/loadUnit'
 import Unload from 'command/unload'
 
 
@@ -38,11 +38,11 @@ export default Factory.commander('MoveTo', {
 }, state => {
 	const { unit, coords, commander } = state
 	if (coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y) {
-		console.warn('invalid coords', unit.name, coords)
+		Message.warn('invalid coords', unit.name, coords)
 	}
 
 	if (!MapEntity.tile(coords)) {
-		console.warn('no targetTile', coords, unit.name, state)
+		Message.warn('no targetTile', coords, unit.name, state)
 		coords.x = Math.round(coords.x)
 		coords.y = Math.round(coords.y)
 	}
@@ -91,7 +91,7 @@ export default Factory.commander('MoveTo', {
 				target.domain === 'sea' &&
 				shipsAtTarget.some(unit.treasure ? canLoadTreasure : canLoad) &&
 				inMoveDistance(unit.mapCoordinates, coords)) {
-			console.warn('boarding ships is unsupported now')
+			Message.warn('boarding ships is unsupported now')
 			// const transport = shipsAtTarget.find(unit.treasure ? canLoadTreasure : canLoad)
 			// Commander.scheduleBehind(transport.commander, LoadUnit.create({ transport, passenger: unit }))
 			// Commander.scheduleInstead(unit.commander, BoardTransport.create({ unit, transport }))

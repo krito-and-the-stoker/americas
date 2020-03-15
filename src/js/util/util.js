@@ -1,7 +1,11 @@
 import 'util/polyfills'
-import Names from 'data/names'
 import Clone from 'clone'
+
+import Names from 'data/names'
+
 import LA from 'util/la'
+import Message from 'util/message'
+
 
 const distance = LA.distance
 const inBattleDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
@@ -18,7 +22,7 @@ const tag = () => {
 	const name = choose(names)
 	names = names.filter(n => n !== name)
 	if (names.length === 0) {
-		console.warn('Resetting names. Consider using more in future.')
+		Message.warn('Resetting names. Consider using more in future.')
 		names = Names
 	}
 
@@ -42,7 +46,7 @@ const execute = (something, ...arg) => {
 		return flatten(something).filter(isFunction).map(fn => fn(...arg))
 	}
 
-	console.warn('unable to execute', something)
+	Message.warn('unable to execute', something)
 	throw new Error('unable to execute')
 }
 

@@ -6,6 +6,7 @@ import Util from 'util/util'
 import Binding from 'util/binding'
 import Record from 'util/record'
 import Events from 'util/events'
+import Message from 'util/message'
 
 import Time from 'timeline/time'
 
@@ -68,19 +69,15 @@ const colonyRaidProbability = (t, colony, ai) => {
 	const defense = 100 * protection * protection / Util.clamp(offense*offense + relations.militancy, 0.1, 100 * protection * protection)
 
 	if (defense > attraction) {
-		// console.log(`${colony.name}: ${Math.round(attraction)} vs ${Math.round(defense)}`)
 		return 0
 	}
 
 	const time = 1000 * defense / (attraction - defense)
 
-	// console.log(`${colony.name}: ${Math.round(attraction)} vs ${Math.round(defense)} (${Math.round(time)})`)
-
 	return 1 / time
 }
 
 const watch = (ai, colony) => {
-	// console.log('watching', colony.name)
 	return Time.schedule(ProbabilisticTrigger.create(t => colonyRaidProbability(t, colony, ai), () => {
 		ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = Math.ceil(1.25*Colony.protection(colony))
 		update.state(ai)
@@ -204,7 +201,7 @@ const initialize = ai => {
 					if (relations.trust < 0 && relations.militancy > 1.5) {
 						if (unit.domain === other.domain) {
 							if (unit.owner === ai.owner && !other.colony) {
-								console.log('attacking hostile', unit, other)
+								Message.log('attacking hostile', unit, other)
 								Battle(unit, other)
 								makePlansAndRunThem(ai)
 							}
@@ -217,7 +214,7 @@ const initialize = ai => {
 						const relations = ai.state.relations[unit.owner.referenceId]
 						if (relations.trust < 0 && relations.militancy > 1.5) {
 							if (unit.domain === other.domain && !unit.properties.support && Unit.strength(unit) > 2 && Unit.strength(unit) > 2 * Unit.strength(other)) {
-								console.log('defending hostile', unit, other)
+								Message.log('defending hostile', unit, other)
 								Battle(unit, other)
 								makePlansAndRunThem(ai)
 							}

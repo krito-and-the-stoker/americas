@@ -42,8 +42,6 @@ const create = settlement => {
 					type: 'scout',
 					text
 				})
-
-				console.log(relations, settlement)
 			})
 			Foreground.addTerrain(sprite)
 

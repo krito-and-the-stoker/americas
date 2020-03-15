@@ -231,7 +231,7 @@ const doRenderWork = () => {
 				}
 				tiles[index].sprites.forEach((sprite, i) => {
 					if (!tiles[index].containers[i]) {
-						console.warn('no containers', index, tiles[index])
+						Message.warn('no containers', index, tiles[index])
 					}
 					tiles[index].containers[i].addChild(sprite)
 				})
