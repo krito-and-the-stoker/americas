@@ -25,9 +25,9 @@ const log = text => {
 	}
 }
 
-const warn = text => {
+const warn = (...args) => {
 	if (config.warn) {
-		console.warn(text)
+		console.warn(...args)
 	}
 }
 
