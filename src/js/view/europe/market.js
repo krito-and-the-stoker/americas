@@ -59,7 +59,7 @@ const create = (originalDimensions) => {
 			const trade = Europe.trade()
 			trade[good] = options[(options.indexOf(trade[good]) + 1) % options.length]
 			Europe.update.trade()
-		})
+		}, `Set trade options for ${good}`)
 
 
 		const unsubscribe = () => {

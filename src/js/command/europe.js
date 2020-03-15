@@ -46,10 +46,10 @@ export default Factory.create('Europe', {
 
 	const finished = () => {
 		if (state.progress >= 1) {
-			Message.send(`A ${unit.name} arrived in Europe.`)
+			Message.send(`A ${Unit.name(unit)} arrived in Europe.`)
 			EnterEurope(unit)
 		} else {
-			Message.send(`A ${unit.name} arrived back in the Americas.`)
+			Message.send(`A ${Unit.name(unit)} arrived back in the Americas.`)
 			Unit.update.offTheMap(unit, false)
 		}
 	}

@@ -143,7 +143,7 @@ const create = (colony, originalDimensions) => {
 											Colonist.beginFieldWork(colonist, tile, decision.good)
 										}
 									}
-								}),
+								}, 'Select goods for production'),
 
 								Drag.makeDraggable(sprite, { colonist }),
 								destroySprite,
@@ -175,7 +175,7 @@ const create = (colony, originalDimensions) => {
 							container.colonists.addChild(icon)
 							return [
 								() => container.colonists.removeChild(icon),
-								Click.on(icon, () => buyLandDialog(tile, colony, harvester))
+								Click.on(icon, () => buyLandDialog(tile, colony, harvester), 'Buy land')
 							]
 						}
 					}

@@ -247,7 +247,7 @@ const initialize = () => {
 							select(unit)
 						}
 					}
-				}) : null),
+				}, `Select ${Unit.name(unit)}`) : null),
 
 			// Owner.listen.input(unit.owner, input =>
 			// 	!input ? Secondary.on(view.sprite, () => {

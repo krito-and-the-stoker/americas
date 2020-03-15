@@ -30,9 +30,15 @@ const on = (target, fn, helpText) => {
 	}
 
 	const addHint = () => {
-		Hints.add(hint)
+		if (helpText) {
+			Hints.add(hint)
+		}
 	}
-	const removeHint = () => Hints.remove(hint)
+	const removeHint = () => {
+		if (helpText) {
+			Hints.remove(hint)
+		}
+	}
 
 	target.interactive = true
 	target

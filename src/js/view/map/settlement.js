@@ -42,7 +42,7 @@ const create = settlement => {
 					type: 'scout',
 					text
 				})
-			})
+			}, `Inspect ${settlement.tribe.name} settlement`)
 			Foreground.addTerrain(sprite)
 
 			const unsubscribeMission = Settlement.listen.mission(settlement, mission => {

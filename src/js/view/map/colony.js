@@ -36,7 +36,7 @@ const create = colony => {
 			const unsubscribeOwner = Owner.listen.input(colony.owner, input =>
 				input ? Click.on(view.sprite, () => {
 					ColonyView.open(colony)
-				}, `inspect ${colony.name}`) : null)
+				}, `Inspect ${colony.name}`) : null)
 
 			view.text = Text.create(colony.name, {
 				fontSize: 24,

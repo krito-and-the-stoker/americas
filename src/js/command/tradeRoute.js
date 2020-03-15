@@ -19,7 +19,7 @@ import TriggerEvent from 'command/triggerEvent'
 const scheduleRoute = (state, route) => {
 	const { commander, unit } = state
 	const goods = route.orders.reduce((s, order) => s ? `${s}, ${order.amount} ${order.good}` : `${order.amount} ${order.good}`, null)
-	Message.send(`A ${unit.name} will bring ${goods} from ${route.src.name} to ${route.dest.name}`)
+	Message.send(`A ${Unit.name(unit)} will bring ${goods} from ${route.src.name} to ${route.dest.name}`)
 	Factory.update.display(state, `Transporting ${goods} from ${route.src.name} to ${route.dest.name}`)
 
 	route.orders.forEach(order => {
@@ -149,7 +149,7 @@ export default Factory.commander('TradeRoute', {
 						scheduleRoute(state, subRoute)
 					} else {
 						// go to route src first
-						Message.log(`A ${unit.name} is moving to ${route.src.name} for next transport`)
+						Message.log(`A ${Unit.name(unit)} is moving to ${route.src.name} for next transport`)
 						Factory.update.display(state, `Moving to ${route.src.name} for next transport`)
 
 						// reserve goods
@@ -169,7 +169,7 @@ export default Factory.commander('TradeRoute', {
 				}
 				Commander.scheduleBehind(commander, TriggerEvent.create({ name: 'trade-route-complete', id: commander.tag }))
 			} else {
-				Message.send(`A ${unit.name} has not found any routes and will look again shortly`)
+				Message.send(`A ${Unit.name(unit)} has not found any routes and will look again shortly`)
 				Factory.update.display(state, 'Waiting for transport routes')
 				Commander.scheduleBehind(commander, TriggerEvent.create({ name: 'trade-route-complete', id: commander.tag, wait: 2500 }))
 			}

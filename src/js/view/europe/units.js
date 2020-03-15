@@ -95,7 +95,7 @@ const create = () => {
 				const view = Transport.create(unit)
 
 				Click.on(view.sprite, () =>
-					selectTarget(unit))
+					selectTarget(unit), `Send ${Unit.name(unit)} to the Americas`)
 
 				position.taken = unit
 

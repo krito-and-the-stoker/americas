@@ -27,7 +27,7 @@ export default Factory.create('America', {
 
 	const init = () => {
 		if (!Europe.has.unit(unit)) {
-			Message.warn('unit is not in europe', unit.name)
+			Message.warn('unit is not in europe', Unit.name(unit))
 			return false
 		}
 
@@ -46,10 +46,10 @@ export default Factory.create('America', {
 
 	const finished = () => {
 		if (state.progress >= 1) {		
-			Message.send(`A ${unit.name} arrived in the new world.`)
+			Message.send(`A ${Unit.name(unit)} arrived in the new world.`)
 			Unit.update.offTheMap(unit, false)
 		} else {
-			Message.send(`A ${unit.name} arrived back in Europe.`)
+			Message.send(`A ${Unit.name(unit)} arrived back in Europe.`)
 			Europe.add.unit(unit)
 		}
 	}

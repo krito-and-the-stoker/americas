@@ -47,15 +47,15 @@ const create = (colony, closeScreen, originalDimensions) => {
 	const unsubscribeShips = Colony.listenEach.units(colony, (unit, added) => {
 		if (unit.domain === 'sea' || unit.properties.cargo > 0) {
 			const view = Transport.create(unit)
-			Click.on(view.sprite, () => {
+			const unsubscribeClick = Click.on(view.sprite, () => {
 				closeScreen()
 				MapView.centerAt(view.unit.mapCoordinates, 0)
 				UnitMapView.select(view.unit)
-			})
+			}, `Select ${Unit.name(unit)}`)
 			const position = shipPositions.find(pos => !pos.taken)
 			if (!position) {
 				Message.warn('could not display unit, no position left', unit)
-				return
+				return unsubscribeClick
 			}
 
 			position.taken = true
@@ -69,6 +69,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 
 			return () => {
 				Util.execute(view.unsubscribe)
+				unsubscribeClick()
 				position.taken = false
 				Tween.moveTo(view.container, { x: - 120, y: 500 }, 1500).then(() => {
 					container.removeChild(view.container)
@@ -107,11 +108,11 @@ const create = (colony, closeScreen, originalDimensions) => {
 
 		Drag.makeDraggable(sprite, { unit })
 
-		Click.on(sprite, () => {
+		const unsubscribeClick = Click.on(sprite, () => {
 			closeScreen()
 			MapView.centerAt(unit.mapCoordinates, 0)
 			UnitMapView.select(unit)
-		})
+		}, `Select ${Unit.name(unit)}`)
 
 		const unsubscribePioneering = Unit.computed.pioneering(unit, pioneering => {
 			sprite.filters = pioneering ? [greyScaleFilter] : []
@@ -131,6 +132,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 		})
 
 		return () => {
+			unsubscribeClick()
 			position.taken = false
 			container.removeChild(sprite)
 			Util.execute([

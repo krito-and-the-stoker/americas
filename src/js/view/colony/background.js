@@ -24,7 +24,7 @@ const create = colony => {
 	}
 
 	// capture click on background so we dont close the screen
-	Click.on(background)
+	const unsubscribeClick = Click.on(background)
 
 	const leaveColonyZone = new PIXI.Container()
 	leaveColonyZone.hitArea = new PIXI.Rectangle(
@@ -34,7 +34,7 @@ const create = colony => {
 		0.25 * originalDimensions.y)		
 	container.addChild(leaveColonyZone)
 
-	Drag.makeDragTarget(leaveColonyZone, args => {
+	const unsubscribeDragTarget = Drag.makeDragTarget(leaveColonyZone, args => {
 		if (args.colonist && args.colonist.colony) {
 			if (args.colonist.colony && args.colonist.colony.colonists.length > 1) {
 				UnjoinColony(args.colonist)
@@ -49,7 +49,11 @@ const create = colony => {
 
 	return {
 		container,
-		originalDimensions
+		originalDimensions,
+		unsubscribe: [
+			unsubscribeClick,
+			unsubscribeDragTarget
+		]
 	}
 }
 

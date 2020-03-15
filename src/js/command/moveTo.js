@@ -38,11 +38,11 @@ export default Factory.commander('MoveTo', {
 }, state => {
 	const { unit, coords, commander } = state
 	if (coords.x < 0 || coords.y < 0 || coords.x >= MapEntity.get().numTiles.x || coords.y >= MapEntity.get().numTiles.y) {
-		Message.warn('invalid coords', unit.name, coords)
+		Message.warn('invalid coords', Unit.name(unit), coords)
 	}
 
 	if (!MapEntity.tile(coords)) {
-		Message.warn('no targetTile', coords, unit.name, state)
+		Message.warn('no targetTile', coords, Unit.name(unit), state)
 		coords.x = Math.round(coords.x)
 		coords.y = Math.round(coords.y)
 	}

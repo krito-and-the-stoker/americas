@@ -46,7 +46,7 @@ export default Factory.create('TradeCargo', {
 }, ({ unit, pack, eta }) => {
 	const init = currentTime => {
 		if (!Europe.has.unit(unit)) {
-			Message.warn('unit wants to trade without being in europe', unit.name, pack)
+			Message.warn('unit wants to trade without being in europe', Unit.name(unit), pack)
 		}
 
 		eta = currentTime + Time.CARGO_LOAD_TIME

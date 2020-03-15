@@ -89,8 +89,9 @@ const create = colony => {
 		construction.unsubscribe,
 		info.unsubscribe,
 		headline.unsubscribe,
+		background.unsubscribe,
 		unsubscribeResize,
-		Click.on(colonyWoodBackground, close)
+		Click.on(colonyWoodBackground, close, 'Close Colony screen')
 	]
 	
 	return {

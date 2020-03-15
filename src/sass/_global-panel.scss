@@ -15,7 +15,6 @@
   display: flex;
   justify-content: space-between;
   > div {
-    text-algin: center;
     &:not(:last-child) {
       margin-right: 20px;
     }
@@ -23,11 +22,16 @@
     &.click {
       cursor: pointer;
     }
+
+    &.hints {
+      margin-top: auto;
+    }
   }
 
   &.isMap {
-    display: block;
     bottom: 0;
+    flex-direction: column;
+    justify-content: flex-start;
   }
 }
 

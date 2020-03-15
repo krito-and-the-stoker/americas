@@ -124,7 +124,7 @@ const initialize = () => {
 			const unsubscribeClick = [
 				Click.on(unitName, () => {
 					MapView.centerAt(unit.mapCoordinates, 350)
-				}),
+				}, `Center map on ${Unit.name(unit)}`),
 				Click.on(foundColony, () => {
 					Commander.scheduleInstead(unit.commander, Found.create({ unit }))
 				}),

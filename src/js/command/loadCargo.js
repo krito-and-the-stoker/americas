@@ -47,7 +47,7 @@ export default Factory.create('LoadCargo', {
 
 	const init = currentTime => {
 		if (unit.colony !== colony) {
-			Message.warn('unit loads cargo but is not inside colony', colony.name, unit.name, pack)
+			Message.warn('unit loads cargo but is not inside colony', colony.name, Unit.name(unit), pack)
 		}
 
 		eta = currentTime + Time.CARGO_LOAD_TIME
