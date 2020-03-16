@@ -61,9 +61,10 @@ window.addEventListener('load', async () => {
 	if (!isMobile()) {
 		Tracking.pageView()
 		console.log(`Revision: ${Version.revision}`)
-		console.log(`Build from ${Version.date}`)
+		console.log(`Built time ${Version.date}`)
+		const date = new Date(Version.date)
 		document.querySelector('#log').innerHTML = `Loading files...`
-		document.querySelector('#date').innerHTML = `Development build from ${Version.date}`
+		document.querySelector('#date').innerHTML = `${date.toLocaleString()} Development Build`
 
 		document.querySelector('.start').addEventListener('click', clickStart)
 		document.querySelector('.start').classList.remove('disabled')	

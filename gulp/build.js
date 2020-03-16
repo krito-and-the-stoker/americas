@@ -9,19 +9,12 @@ const path = require('path')
 const jimp = require('jimp')
 const fs = require('fs')
 const config = require('./webpack.config.js')
-const climate = require('../src/js/maps/climate')
 
 md.use(mila, {
 	attrs: {
 		target: '_blank',
 		rel: 'noopener'
 	}
-})
-
-gulp.task('climate', done => {
-	const analized = climate.analyse()
-	fs.writeFileSync(path.resolve(__dirname, '../src/js/maps/america-large.climate.json'), JSON.stringify(analized.americaLarge))
-	done()
 })
 
 
@@ -31,7 +24,7 @@ gulp.task('version', done => {
 		.toString().trim()
 	fs.writeFileSync(path.resolve(__dirname, '../src/version/version.json'), JSON.stringify({
 		revision,
-		date: new Date().toLocaleString()
+		date: new Date().toUTCString()
 	}))
 	done()
 })
