@@ -35,12 +35,25 @@ const initialize = () => {
 		globalPanel = patch(globalPanel, view)
 	}
 
-	let centeredMessage = document.createElement('div')
-	document.body.appendChild(centeredMessage)
-	Time.listen.paused(paused => {
-		const view = h('div.centered-message', paused ? h('h1', 'Game paused') : [])
-		centeredMessage = patch(centeredMessage, view)
-	})
+	let bottomPanel = document.createElement('div')
+	document.body.appendChild(bottomPanel)
+
+	Foreground.listen.screen(screen => 
+		Hints.listen(hints => {
+			const isMap = screen === null
+			const view = h('div.bottom-panel', !isMap
+				? hints.map(hint => h('div', hint.text))
+				: [])
+
+			bottomPanel = patch(bottomPanel, view)
+		}))
+
+	// let centeredMessage = document.createElement('div')
+	// document.body.appendChild(centeredMessage)
+	// Time.listen.paused(paused => {
+	// 	const view = h('div.centered-message', paused ? h('h1', 'Game paused') : [])
+	// 	centeredMessage = patch(centeredMessage, view)
+	// })
 
 	Foreground.listen.screen(screen =>
 		Time.listen.scale(scale =>

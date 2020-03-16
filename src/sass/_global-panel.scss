@@ -1,18 +1,21 @@
+@mixin panel {
+  background-color: rgba(240, 233, 201, 0.6);
+  box-shadow: 0 0 5px 5px rgba(240, 233, 201, 0.6);
+  color: black;
+  font-size: 24px;
+}
 
 .global-panel {  
   z-index: 1;
   position: fixed;
   top: 0;
   right: 0;
-  width: 250px;
 
   margin: 0;
   padding: 10px;
 
-  background-color: rgba(240, 233, 201, 0.6);
-  box-shadow: 0 0 5px 5px rgba(240, 233, 201, 0.6);
-  color: black;
-  font-size: 24px;
+  @include panel;
+
   display: flex;
   justify-content: space-between;
   > div {
@@ -33,6 +36,18 @@
     bottom: 0;
     flex-direction: column;
     justify-content: flex-start;
+    width: 300px;
+  }
+}
+
+.bottom-panel {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+
+  @include panel;
+  > div {
+    margin: 10px;
   }
 }
 
