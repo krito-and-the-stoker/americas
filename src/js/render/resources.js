@@ -144,5 +144,6 @@ export default {
 	video,
 	sprite,
 	texture,
+	rectangle,
 	numberOfAssets
 }

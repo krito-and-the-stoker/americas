@@ -2,7 +2,8 @@ import * as PIXI from 'pixi.js'
 
 import Util from 'util/util'
 import Record from 'util/record'
-import PathFinder from 'util/pathFinder'
+import Binding from 'util/binding'
+import { patch, h } from 'util/virtualDom'
 
 import Tile from 'entity/tile'
 import Unit from 'entity/unit'
@@ -15,9 +16,7 @@ import Road from 'command/road'
 import Plow from 'command/plow'
 import CutForest from 'command/cutForest'
 import TradeRoute from 'command/tradeRoute'
-import MoveTo from 'command/moveTo'
 import GoTo from 'command/goTo'
-import Europe from 'command/europe'
 import TriggerEvent from 'command/triggerEvent'
 
 import Click from 'input/click'
@@ -46,7 +45,47 @@ const createCommandText = text => {
 	return result
 }
 
+
 const initialize = () => {
+	window.h = h
+	window.patch = patch
+
+	let unitPanel = document.createElement('div')
+	document.body.appendChild(unitPanel)
+
+	const render = unit => {
+		if (unit) {
+			const name = Unit.name(unit)
+			const speed = Unit.speed(unit).toFixed(2)
+			const strength = Unit.strength(unit).toFixed(2)
+			const cost = unit.properties.cost ? unit.properties.cost.toFixed(0) : 0
+
+			const view = h('div.unit-panel.visible', [
+				h('div', name),
+				h('div', [
+					h('div', [Icon.html('go', 0.5), h('span', speed)]),
+					h('div', [Icon.html('combat', 0.5), h('span', strength)]),
+					cost && h('div', [Icon.html('gold', 0.5), h('span', cost)])
+				].filter(x => x))
+			])
+
+			unitPanel = patch(unitPanel, view)
+		} else {
+			unitPanel = patch(unitPanel, h('div.unit-panel'))
+		}
+	}
+
+
+	UnitMapView.listen.selectedView(Binding.map(selectedView =>
+		selectedView && selectedView.unit, unit => [
+		Unit.listen.properties(unit, () => render(unit)),
+		Unit.listen.mapCoordinates(Binding.map(() => Unit.strength(unit)), () => render(unit)),
+		Unit.listen.name(unit, () => render(unit))
+	]))
+}
+
+
+const initializeOld = () => {
 	const unitName = Text.create()
 	unitName.buttonMode = true
 	unitName.x = 10

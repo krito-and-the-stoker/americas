@@ -1,8 +1,4 @@
-import { init } from 'snabbdom'
-import Class from 'snabbdom/modules/class'
-import EventListeners from 'snabbdom/modules/eventlisteners'
-import Render from 'snabbdom/h'
-
+import { patch, h } from 'util/virtualDom'
 import Time from 'timeline/time'
 
 import Treasure from 'entity/treasure'
@@ -15,9 +11,6 @@ import Help from 'view/help'
 import Europe from 'view/europe'
 
 const initialize = () => {
-	const patch = init([ Class, EventListeners ])
-	const h = Render
-
 	let globalPanel = document.createElement('div')
 	document.body.appendChild(globalPanel)
 	const render = ({ screen, scale, treasure, time, help, hints, isMap }) => {
