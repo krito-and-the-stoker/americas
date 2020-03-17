@@ -15,7 +15,7 @@ const queueTextureVerbose = async path => new Promise(resolve => {
 
 const numberOfAssets = () => 2 + Object.entries(paths).length
 
-const paths = {
+const paths = Object.freeze({
 	map: 'images/map.png',
 	mapWinter: 'images/map-winter.png',
 	mapSummer: 'images/map-summer.png',
@@ -60,7 +60,7 @@ const paths = {
 	enteringVillage: 'images/fullscreen-events/entering-village.jpg',
 	firstFreight: 'images/fullscreen-events/first-freight.jpg',
 	tutorialFrame: 'images/tutorial-frame.png'
-}
+})
 
 const textures = {
 	white: PIXI.Texture.WHITE
@@ -145,5 +145,6 @@ export default {
 	sprite,
 	texture,
 	rectangle,
+	paths,
 	numberOfAssets
 }

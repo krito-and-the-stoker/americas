@@ -1,9 +1,9 @@
-import { patch, h } from 'util/virtualDom'
 import Time from 'timeline/time'
 
 import Treasure from 'entity/treasure'
 
 import Foreground from 'render/foreground'
+import Dom from 'render/dom'
 
 import Hints from 'input/hints'
 
@@ -11,6 +11,7 @@ import Help from 'view/help'
 import Europe from 'view/europe'
 
 const initialize = () => {
+	const { h, patch } = Dom
 	let globalPanel = document.createElement('div')
 	document.body.appendChild(globalPanel)
 	const render = ({ screen, scale, treasure, time, help, hints, isMap }) => {

@@ -15,22 +15,41 @@
  
   @include panel;
 
-  font-size: 32px;
+  font-size: 26px;
 
-  > div {
+  .commands {
+    font-size: 34px;
+    margin-bottom: 5px;
+    > * {
+      cursor: pointer;
+    }
+  }
+
+  .command-name {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .name {
+    font-size: 42px;
+    cursor: pointer;
+  }
+
+  .props {
     display: flex;
     align-items: center;
 
-    > div {
+    > * {
       &:not(:first-child) {
         margin-left: 25px;
       }
 
       > span {
-        line-height: 32px;
+        line-height: 26px;
       }
     }
   }
+
   .icon {
     margin: -16px;
   }

@@ -1,8 +1,10 @@
 import * as PIXI from 'pixi.js'
 
 import Goods from 'data/goods.json'
+
 import Resources from 'render/resources'
 import Text from 'render/text'
+import Dom from 'render/dom'
 
 
 const create = ({ good, amount }) => {
@@ -29,4 +31,9 @@ const create = ({ good, amount }) => {
 	}
 }
 
-export default { create }
+const html = (name, scale = 1) => Dom.sprite('map', Goods[name].id, scale)
+
+export default {
+	create,
+	html
+}

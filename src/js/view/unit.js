@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js'
 import Unit from 'entity/unit'
 
 import Resources from 'render/resources'
+import Dom from 'render/dom'
 
 
 const createTexture = unit => Resources.texture('map', { frame: getFrame(unit) })
@@ -25,8 +26,10 @@ const create = unit => {
 	}
 }
 
+const html = (unit, scale) => Dom.sprite('map', getFrame(unit), scale)
 
 export default {
 	getFrame,
-	create
+	create,
+	html
 }
