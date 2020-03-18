@@ -57,9 +57,16 @@ const create = unit => {
 			return true
 		}
 
-		const target = getNextTarget(unit)
+		let target = getNextTarget(unit)
 		if (unit.tile === target) {
 			return true
+		}
+
+		// already at next target, move to the next after that
+		// TODO: if the next target is final target this crashes
+		if (LA.distanceManhatten(target.mapCoordinates, unit.mapCoordinates) === 0) {
+			unit.movement.nextTarget = null
+			target = getNextTarget(unit)
 		}
 
 		const direction = LA.subtract(target.mapCoordinates, unit.mapCoordinates)

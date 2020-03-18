@@ -281,7 +281,7 @@ const isNextTo = (tile, other) => neighbors(tile).includes(other)
 const movementCost = (fromCoords, toCoords) => {
 	const direction = LA.subtract(toCoords, fromCoords)
 	const distance = LA.distanceManhatten(fromCoords, toCoords)
-	const normDirection =LA.normalizeManhatten(direction)
+	const normDirection = LA.normalizeManhatten(direction)
 	const fromRoundCoords = LA.round(LA.subtract(toCoords, normDirection))
 	const from = MapEntity.tile(fromRoundCoords)
 	const to = MapEntity.tile(toCoords)
