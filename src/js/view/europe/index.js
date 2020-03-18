@@ -1,9 +1,12 @@
 import * as PIXI from 'pixi.js'
 
+import Europe from 'entity/europe'
+
+import Click from 'input/click'
+
 import Resources from 'render/resources'
 import RenderView from 'render/view'
 import Foreground from 'render/foreground'
-import Europe from 'entity/europe'
 import Text from 'render/text'
 
 import Button from 'view/ui/button'
@@ -34,6 +37,7 @@ const create = () => {
 		x: background.width,
 		y: background.height
 	}
+	Click.on(background)
 	backgroundContainer.addChild(background)
 
 	const market = MarketView.create(originalDimensions)

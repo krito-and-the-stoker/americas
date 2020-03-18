@@ -28,7 +28,11 @@ const open = colony => {
 
 const create = colony => {
 	const container = new PIXI.Container()
-	const colonyWoodBackground = new PIXI.extras.TilingSprite(Resources.texture('colonyWoodBackground'), RenderView.getDimensions().x, RenderView.getDimensions().y)
+	// const colonyWoodBackground = new PIXI.extras.TilingSprite(Resources.texture('colonyWoodBackground'), RenderView.getDimensions().x, RenderView.getDimensions().y)
+	const colonyWoodBackground = Resources.sprite('white')
+	colonyWoodBackground.tint = 0x403506
+	colonyWoodBackground.alpha = 0.7
+	window.background = colonyWoodBackground
 	
 	const background = ColonyBackground.create(colony)
 	const originalDimensions = background.originalDimensions
@@ -68,7 +72,7 @@ const create = colony => {
 	const unsubscribeResize = RenderView.updateWhenResized(({ dimensions }) => {
 		const scaleX = dimensions.x / originalDimensions.x
 		const scaleY = dimensions.y / originalDimensions.y
-		const scale = 0.9 * Math.min(scaleX, scaleY)
+		const scale = 0.85 * Math.min(scaleX, scaleY)
 		container.scale.set(scale)
 		container.position.x = (dimensions.x - scale * originalDimensions.x) / 2
 		container.position.y = (dimensions.y - scale * originalDimensions.y) / 2

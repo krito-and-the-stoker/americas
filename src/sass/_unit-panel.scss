@@ -10,15 +10,20 @@
   position: fixed;
   bottom: 0;
   left: 0;
+  max-width: 27vw;
+  display: none;
+  &.visible {
+    display: block;
+  }
 
   padding: 10px;
  
   @include panel;
 
-  font-size: 26px;
+  font-size: 24px;
 
   .commands {
-    font-size: 34px;
+    font-size: 32px;
     margin-bottom: 5px;
     > * {
       cursor: pointer;
@@ -26,12 +31,12 @@
   }
 
   .command-name {
-    font-size: 24px;
+    font-size: 20px;
     margin-bottom: 10px;
   }
 
   .name {
-    font-size: 42px;
+    font-size: 40px;
     cursor: pointer;
   }
 
@@ -41,16 +46,28 @@
 
     > * {
       &:not(:first-child) {
-        margin-left: 25px;
+        margin-left: 20px;
+        display: flex;
       }
 
       > span {
-        line-height: 26px;
+        line-height: 32px;
       }
+    }
+  }
+
+  .cargo {
+    line-height: 32px;
+    .icon {
+      margin-right: 10px;
     }
   }
 
   .icon {
     margin: -16px;
+  }
+
+  .passengers .icon {
+    margin: 0;
   }
 }

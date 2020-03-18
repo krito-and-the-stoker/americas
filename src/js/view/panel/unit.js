@@ -17,6 +17,7 @@ import GoTo from 'command/goTo'
 import TriggerEvent from 'command/triggerEvent'
 
 import Dom from 'render/dom'
+import Foreground from 'render/foreground'
 
 import GoodsView from 'view/goods'
 import UnitView from 'view/unit'
@@ -28,7 +29,7 @@ import Dialog from 'view/ui/dialog'
 
 
 const CARGO_SCALE = .6
-const PASSENGER_SCALE = .6
+const PASSENGER_SCALE = 1
 const ICON_SCALE = .5
 
 const displayStorage = unit => unit.properties.cargo > 0 ? unit.storage : unit.equipment
@@ -92,29 +93,32 @@ const initialize = () => {
 		const command = (text, handler) => h('div', { on: { click: handler } }, text)
 
 		const cancelCommandName = {
-		}[unit.command.id] || 'Cancel'
+			cutForest: 'Cancel cutting forest',
+			plow: 'Cancel plow',
+			tradeRoute: 'Cancel trade route'
+		}[unit.command.id]
 
-		const goTo = command('Go to', () => handleGoTo(unit))
 		const foundColony = command('Found Colony', () => Commander.scheduleInstead(unit.commander, Found.create({ unit })))
-		const buildRoad = command('Build Road', () => Commander.scheduleInstead(unit.commander, Road.create({ unit })))
-		const plow = command('Plow', () => Commander.scheduleInstead(unit.commander, Plow.create({ unit })))
-		const cutForest = command('Cut Forest', () => Commander.scheduleInstead(unit.commander, CutForest.create({ unit })))
 		const trade = command('Trade Route', () => Commander.scheduleInstead(unit.commander, TradeRoute.create({ unit })))
+		const buildRoad = command('Build Road', () => Commander.scheduleInstead(unit.commander, Road.create({ unit })))
+		const cutForest = command('Cut Forest', () => Commander.scheduleInstead(unit.commander, CutForest.create({ unit })))
+		const plow = command('Plow', () => Commander.scheduleInstead(unit.commander, Plow.create({ unit })))
+		const goTo = command('Go to', () => handleGoTo(unit))
 		const cancel = command(cancelCommandName, () => Commander.clearSchedule(unit.commander))
 
 		return [
-			gotoTextVisible && goTo,
 			foundColonyVisible && foundColony,
-			buildRoadTextVisible && buildRoad,
-			plowTextVisible && plow,
-			cutForestTextVisible && cutForest,
 			tradeVisible && trade,
+			buildRoadTextVisible && buildRoad,
+			cutForestTextVisible && cutForest,
+			plowTextVisible && plow,
+			gotoTextVisible && goTo,
 			cancelCommandName && cancel
 		].filter(x => x)
 	}
 
 	const render = unit => {
-		if (unit) {
+		if (unit && !Foreground.hasOpenScreen()) {
 			const name = Unit.name(unit)
 			const commandName = (unit.command && unit.command.display) || ''
 			const speed = Unit.speed(unit).toFixed(2)
@@ -160,8 +164,9 @@ const initialize = () => {
 		Storage.listen(displayStorage(unit), () => render(unit)),
 		Unit.listen.passengers(unit, () => render(unit)),
 		Unit.listen.command(unit, () => render(unit)),
-		Unit.listen.tile(unit, () => render(unit))
-	]))
+		Unit.listen.tile(unit, () => render(unit)),
+		Foreground.listen.screen(() => render(unit))
+	] || render(null)))
 }
 
 export default { initialize }

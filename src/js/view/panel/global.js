@@ -34,8 +34,7 @@ const initialize = () => {
 
 	Foreground.listen.screen(screen => 
 		Hints.listen(hints => {
-			const isMap = screen === null
-			const view = h('div.bottom-panel', !isMap
+			const view = h('div.bottom-panel', screen && screen.params.name === 'colony'
 				? hints.map(hint => h('div', hint.text))
 				: [])
 
