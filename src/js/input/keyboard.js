@@ -19,6 +19,7 @@ import Foreground from 'render/foreground'
 
 import MapView from 'view/map'
 import UnitView from 'view/map/unit'
+import UnitScreen from 'view/screen/units'
 
 import Europe from 'view/europe'
 import Help from 'view/help'
@@ -77,6 +78,14 @@ const handleKeydown = e => {
 			}
 			controlAllPlayers = !controlAllPlayers
 			e.preventDefault()
+		}
+	}
+
+	if (e.key === 'u') {
+		if (UnitScreen.isOpen()) {
+			UnitScreen.close()
+		} else {
+			UnitScreen.open()
 		}
 	}
 

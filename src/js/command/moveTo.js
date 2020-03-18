@@ -59,7 +59,7 @@ export default Factory.commander('MoveTo', {
 			} else {
 				if (targetTile.domain === 'sea') {
 					displayName += ' to the sea'
-				} else {					
+				} else {
 					if (targetTile.forest) {
 						displayName += ' to forest'
 					} else if (targetTile.mountains) {

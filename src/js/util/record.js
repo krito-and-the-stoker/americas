@@ -70,18 +70,35 @@ const listen = (type, fn) => {
 	if (!listeners[type]) {
 		initListeners(type)
 	}
+
+	const destroys = []
 	records
 		.filter(record => record.type === type)
 		.forEach(record => {
+			const destroy = fn(record.entity)
+			destroys.push({
+				destroy,
+				record
+			})
 			record.destroy = [
 				record.destroy,
-				fn(record.entity)
+				destroy
 			]
 		})
 
 	listeners[type].push(fn)
 
-	return () => listeners[type] = listeners[type].filter(f => f !== fn)
+	return () => {
+		destroys.forEach(entry => {
+			// execute destroys
+			Util.execute(entry.destroy)
+
+			// and remove from record
+			entry.record.destroy = entry.record.destroy.filter(d => d !== entry.destroy)
+		})
+
+		listeners[type] = listeners[type].filter(f => f !== fn)
+	}
 }
 
 const update = (type, entity) => {
