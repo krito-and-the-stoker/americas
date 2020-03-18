@@ -163,7 +163,7 @@
 		"name": {
 			"default": "Settler",
 			"servant": "Indentured Servant",
-			"criminal": "Petty Ciriminal",
+			"criminal": "Petty Criminal",
 			"farmer": "Expert Farmer",
 			"sugarplanter": "Expert Sugarplanter",
 			"tobaccoplanter": "Expert Tobaccoplanter",
