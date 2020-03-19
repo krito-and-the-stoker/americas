@@ -36,18 +36,10 @@ const canTrade = (colony, good) => [IMPORT, EXPORT, BALANCE, BUY, SELL].includes
 const canBuy = (europe, good) => europe.trade[good] === BUY
 const canSell = (europe, good) => europe.trade[good] === SELL
 
-const averageRelativeStorageFill = good => {
-	const relevantColonies = 	Record.getAll('colony')
-		.filter(colony => canTrade(colony, good))
-
-	return Util.clamp(Util.average(relevantColonies.map(colony => colony.storage[good] / colony.capacity)))
-}
-
-
 const targetAmount = (colony, good) => ({
 	[IMPORT]: colony.capacity,
 	[EXPORT]: 0,
-	[BALANCE]: colony.capacity * averageRelativeStorageFill(good)
+	[BALANCE]: 0.5 * colony.capacity
 }[colony.trade[good]])
 
 
