@@ -2,6 +2,7 @@ import { FibonacciHeap } from '@tyriar/fibonacci-heap'
 
 import Message from 'util/message'
 import LA from 'util/la'
+import Cache from 'util/cache'
 
 import Time from 'timeline/time'
 
@@ -15,6 +16,23 @@ const MIN_TERRAIN_COST = 0.33
 const MIN_SEA_COST = 1
 
 const tile = MapEntity.tile
+
+const caching = {
+	keyFn: (coords1, coords2, unit) => `${coords1.x}x${coords1.y}x${coords2.x}x${coords2.y}x${unit.domain}`,
+	initFn:	(wipeCache) => {
+		MapEntity.get().tiles
+			.filter(tile => tile.domain === 'land')
+			.forEach(tile => {
+				Tile.listen.road(tile, () => {
+					wipeCache(key => key.indexOf('xsea') >= 0)
+				})
+				Tile.listen.forest(tile, () => {
+					wipeCache(key => key.indexOf('xsea') >= 0)
+				})
+				Tile.listen.colony(tile, () => wipeCache())
+			})
+	},
+}
 
 const allNeighbors = coords => tile(coords)
 	? Tile.diagonalNeighbors(tile(coords))
@@ -67,33 +85,38 @@ const findHighSeas = (fromCoords, unit) => {
 		relativeEstimate()))
 }
 
-const findPath = (fromCoords, toCoords, unit) => {
-	const area = Unit.area(unit)
-	const target = MapEntity.tile(toCoords)
-	if (!target) {
-		Message.warn('toCoords must resolve to a tile')
-		return null
-	}
-
-	if (target.area !== area && !target.colony) {
-		const newCoords = findNextToArea(toCoords, unit)
-		if (newCoords) {
-			return findPath(fromCoords, newCoords, unit)
+const findPath = Cache.create({
+	...caching,
+	name: 'path cache',
+	shouldCache: (result, coords1, coords2, unit) => unit.domain === 'sea',
+	valueFn: (fromCoords, toCoords, unit) => {
+		const area = Unit.area(unit)
+		const target = MapEntity.tile(toCoords)
+		if (!target) {
+			Message.warn('toCoords must resolve to a tile')
+			return null
 		}
-		Message.warn('could not find path to target area')
-		return null
+
+		if (target.area !== area && !target.colony) {
+			const newCoords = findNextToArea(toCoords, unit)
+			if (newCoords) {
+				return findPath(fromCoords, newCoords, unit)
+			}
+			Message.warn('could not find path to target area')
+			return null
+		}
+
+		const isTarget = node => tile(node.coords) && tile(node.coords) === target
+
+		const path = runDijksrta(fromCoords,
+			isTarget,
+			getNeighborsForUnit(unit),
+			getCostForUnit(unit),
+			relativeEstimate(fromCoords, toCoords, unit.domain))
+
+		return mapToCoords(path)
 	}
-
-	const isTarget = node => tile(node.coords) && tile(node.coords) === target
-
-	const path = runDijksrta(fromCoords,
-		isTarget,
-		getNeighborsForUnit(unit),
-		getCostForUnit(unit),
-		relativeEstimate(fromCoords, toCoords, unit.domain))
-
-	return mapToCoords(path)
-}
+})
 
 const NEAR_COLONY_COST = 6
 const findNearColony = unit => {
@@ -107,15 +130,19 @@ const findNearColony = unit => {
 	return tile(result.coords) && tile(result.coords).colony
 }
 
-const distance = (fromCoords, toCoords, unit, max = CANNOT_MOVE_COST) => {
-	const isTarget = node => node.cost > max || tile(node.coords) && tile(node.coords) === tile(toCoords)
+const distance = Cache.create({
+	...caching,
+	name: 'distance cache',
+	valueFn: (fromCoords, toCoords, unit, max = CANNOT_MOVE_COST) => {
+		const isTarget = node => node.cost > max || tile(node.coords) && tile(node.coords) === tile(toCoords)
 
-	return reduceToDistance(runDijksrta(fromCoords,
-		isTarget,
-		getNeighborsForUnit(unit),
-		getCostForUnit(unit),
-		relativeEstimate(fromCoords, toCoords, unit.domain)))
-}
+		return reduceToDistance(runDijksrta(fromCoords,
+			isTarget,
+			getNeighborsForUnit(unit),
+			getCostForUnit(unit),
+			relativeEstimate(fromCoords, toCoords, unit.domain)))
+	}
+})
 
 const distanceToEurope = (coords, unit) => {
 	// TODO: Calculate this properly with find high seas

@@ -286,10 +286,8 @@ const movementCost = (fromCoords, toCoords) => {
 	const from = MapEntity.tile(fromRoundCoords)
 	const to = MapEntity.tile(toCoords)
 
-	if (neighbors(to).includes(from)) {
-		if (to.domain === 'land' && from.domain === 'land' && to.river && from.river) {
-			return distance * MovementCosts.river
-		}
+	if (to.domain === 'land' && from.domain === 'land' && to.river && from.river) {
+		return distance * MovementCosts.river
 	}
 	if (from.road && to.road) {
 		return distance * MovementCosts.road
@@ -410,6 +408,8 @@ const add = {
 
 const update = {
 	colony: (tile, colony) => Binding.update(tile, 'colony', colony),
+	road: (tile, value) => Binding.update(tile, 'road', value),
+	forest: (tile, value) => Binding.update(tile, 'forest', value),
 	harvestedBy: (tile, harvestedBy) => Binding.update(tile, 'harvestedBy', harvestedBy),
 	settlement: (tile, settlement) => Binding.update(tile, 'settlement', settlement),
 	tile: tile => Binding.update(tile),
@@ -421,6 +421,8 @@ const listen = {
 	tile: (tile, fn) => Binding.listen(tile, null, fn),
 	settlement: (tile, fn) => Binding.listen(tile, 'settlement', fn),
 	colony: (tile, fn) => Binding.listen(tile, 'colony', fn),
+	road: (tile, fn) => Binding.listen(tile, 'road', fn),
+	forest: (tile, fn) => Binding.listen(tile, 'forest', fn),
 	harvestedBy: (tile, fn) => Binding.listen(tile, 'harvestedBy', fn),
 	units: (tile, fn) => Binding.listen(tile, 'units', fn),
 	discovered: (tile, fn) => Binding.listen(tile, 'currentlyDiscovered', fn)
@@ -428,7 +430,7 @@ const listen = {
 
 
 const clearForest = tile => {
-	tile.forest = false
+	update.forest(tile, false)
 	tile.bonus = Math.random() < 0.07
 	tile.terrainName = terrainName(tile)
 
@@ -442,14 +444,12 @@ const plow = tile => {
 }
 
 const constructRoad = tile => {
-	tile.road = true
-
+	update.road(tile, true)
 	updateTile(tile)
 }
 
 const removeRoad = tile => {
-	tile.road = false
-
+	update.road(tile, false)
 	updateTile(tile)
 }
 

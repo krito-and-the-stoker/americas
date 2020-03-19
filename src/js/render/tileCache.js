@@ -19,16 +19,8 @@ const tiles = {
 const textureSize = tiles.x * tiles.y
 
 const addRenderTexture = () => {
-	// if (baseTextures.length > 0) {
-	// 	const renderer = Background.get().layer.app.renderer
-	// 	const bt = baseTextures[baseTextures.length - 1]
-	// 	renderer.bindTexture(bt)
-	// 	const glTex = bt._glTextures[renderer.CONTEXT_UID]
-	// 	glTex.enableMipmap()
-	// }
 	const baseRenderTexture = new PIXI.BaseRenderTexture(renderTextureSize.x, renderTextureSize.y, PIXI.SCALE_MODES.LINEAR, 1)
 	const renderTexture = new PIXI.RenderTexture(baseRenderTexture)
-	// baseTextures.push(baseRenderTexture)
 	renderTextures.push(renderTexture)
 }
 
