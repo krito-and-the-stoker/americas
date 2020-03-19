@@ -38,7 +38,7 @@ const currentFrame = () => numFrames % textureSize
 const hasStencil = indices => (typeof getStencil(indices) !== 'undefined')
 const stencilReady = indices => (typeof getStencil(indices).texture !== 'undefined')
 const getStencil = indices => textures[hash(indices)]
-const hash = indices => indices.reduce((s, n) => `${s}${n}.`, '')
+const hash = indices => indices.reduce((s, n) => `${s}${n}x`, '')
 const getXYFromFrame = frame => ({
 	x : (frame % tiles.x) * (TILE_SIZE + 2*MARGIN) + MARGIN,
 	y : Math.floor(frame / tiles.y) * (TILE_SIZE + 2*MARGIN) + MARGIN

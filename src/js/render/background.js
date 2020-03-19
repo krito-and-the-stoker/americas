@@ -125,12 +125,12 @@ const createTiles = tileStacks => tileStacks.map((stack, index) => ({
 			}
 		} else {
 			tile.stack.frames = MapView.instance.assembleTileXY(coords)
-			tile.initialized = false					
+			tile.initialized = false
 		}
 	},
 	initialize: tile => {
 		tile.sprites = tile.createCachedSprites()
-		tile.containers = tile.stack.frames.map(getContainer)
+		tile.container = getContainer(TileCache.getTextureIndex(tile.stack.frames))
 		tile.initialized = true
 		tile.dirty = false
 	}
@@ -230,10 +230,7 @@ const doRenderWork = () => {
 					tiles[index].initialize(tiles[index])
 				}
 				tiles[index].sprites.forEach((sprite, i) => {
-					if (!tiles[index].containers[i]) {
-						Message.warn('no containers', index, tiles[index])
-					}
-					tiles[index].containers[i].addChild(sprite)
+					tiles[index].container.addChild(sprite)
 				})
 			})
 		})
