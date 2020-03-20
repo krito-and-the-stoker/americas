@@ -26,10 +26,11 @@
     font-size: 32px;
     margin-bottom: 5px;
     > * {
+      color: #2e382d;
+      color: #324d44;
       cursor: pointer;
       &:hover {
-        box-shadow: 0 0 15px 15px rgba(255, 255, 255, 0.3);
-        border-radius: 5px;
+        color: black;
       }
     }
   }
