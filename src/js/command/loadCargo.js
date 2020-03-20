@@ -5,6 +5,7 @@ import Time from 'timeline/time'
 
 import Storage from 'entity/storage'
 import Forecast from 'entity/forecast'
+import Unit from 'entity/unit'
 
 import Factory from 'command/factory'
 
@@ -35,33 +36,44 @@ export default Factory.create('LoadCargo', {
 	pack: {
 		type: 'raw',
 		required: true
-	},
-	eta: {
-		type: 'raw'
 	}
 }, {
 	id: 'loadCargo',
 	display: 'Loading cargo'
-}, ({ colony, unit, pack, eta }) => {
+}, ({ colony, unit, pack }) => {
 	Forecast.add(colony, pack)
+	const loadingSpeed = 1.0 / (Time.CARGO_BASE_LOAD_TIME
+			* (unit.domain === 'sea' ? 4 - colony.buildings.harbour.level : 1))
 
-	const init = currentTime => {
+	const init = () => {
 		if (unit.colony !== colony) {
 			Message.warn('unit loads cargo but is not inside colony', colony.name, Unit.name(unit), pack)
 		}
+	}
 
-		eta = currentTime + Time.CARGO_LOAD_TIME
-		return {
-			eta
+	const update = (currentTime, deltaTime) => {
+		if (pack.amount > 0) {		
+			const amount = Math.min(
+				pack.amount * deltaTime * loadingSpeed,
+				colony.storage[pack.good],
+				pack.amount - unit.storage[pack.good])
+			Storage.transfer(colony.storage, unit.storage, { good: pack.good, amount })
+			
+			return unit.storage[pack.good] < pack.amount && colony.storage[pack.good] > 0
+		}
+
+		if (pack.amount < 0) {
+			const amount = Math.min(-pack.amount * deltaTime * loadingSpeed, unit.storage[pack.good])
+			Storage.transfer(unit.storage, colony.storage, { good: pack.good, amount })
+
+			return unit.storage[pack.good] > 0
 		}
 	}
 
-	const update = currentTime => eta && currentTime < eta
 	const finished = () => {
 		Forecast.remove(colony, pack)
-		if (eta) {
-			loadCargo(colony, unit, pack)
-		}
+		const eventName = pack.amount > 0 ? 'unloadGood' : 'loadGood'
+		Events.trigger(eventName, { colony, good: pack.good })
 	}
 
 	const canceled = () => {

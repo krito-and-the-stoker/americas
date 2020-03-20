@@ -82,24 +82,25 @@ const possibleColonists = [
 	{ unit: 'settler', 'name': 'Elder Statesman', expert: 'statesman' },
 ]
 
+const TRAINING_PRICE_FACTOR = 3
 const possibleTrainees = [
-	{ unit: 'settler', 'name': 'Expert Oreminer', expert: 'oreminer', price: 600 },
-	{ unit: 'settler', 'name': 'Expert Lumberjack', expert: 'lumberjack', price: 700 },
-	{ unit: 'settler', 'name': 'Expert Gunsmith', expert: 'gunsmith', price: 850 },
-	{ unit: 'settler', 'name': 'Expert Silverminer', expert: 'silverminer', price: 900 },
-	{ unit: 'settler', 'name': 'Master Furtrader', expert: 'furtrader', price: 950 },
-	{ unit: 'settler', 'name': 'Expert Carpenter', expert: 'carpenter', price: 1000 },
-	{ unit: 'settler', 'name': 'Expert Fisher', expert: 'fisher', price: 1000 },
-	{ unit: 'settler', 'name': 'Expert Blacksmith', expert: 'blacksmith', price: 1050 },
-	{ unit: 'settler', 'name': 'Expert Farmer', expert: 'farmer', price: 1100 },
-	{ unit: 'settler', 'name': 'Master Distiller', expert: 'distiller', price: 1100 },
-	{ unit: 'pioneer', name: 'Hardened Pioneer', expert: 'pioneer', price: 1200 },
-	{ unit: 'settler', 'name': 'Master Tobacconist', expert: 'tobacconist', price: 1200 },
-	{ unit: 'settler', 'name': 'Master Weaver', expert: 'weaver', price: 1300 },
-	{ unit: 'missionary', name: 'Jesuit Missionary', expert: 'missionary', price: 1400 },
-	{ unit: 'settler', 'name': 'Firebrand Preacher', expert: 'preacher', price: 1500 },
-	{ unit: 'settler', 'name': 'Elder Statesman', expert: 'statesman', price: 1900 },
-	{ unit: 'soldier', name: 'Veteran Soldiers', expert: 'soldier', price: 2000 },
+	{ unit: 'settler', 'name': 'Expert Oreminer', expert: 'oreminer', price: TRAINING_PRICE_FACTOR * 600 },
+	{ unit: 'settler', 'name': 'Expert Lumberjack', expert: 'lumberjack', price: TRAINING_PRICE_FACTOR * 700 },
+	{ unit: 'settler', 'name': 'Expert Gunsmith', expert: 'gunsmith', price: TRAINING_PRICE_FACTOR * 850 },
+	{ unit: 'settler', 'name': 'Expert Silverminer', expert: 'silverminer', price: TRAINING_PRICE_FACTOR * 900 },
+	{ unit: 'settler', 'name': 'Master Furtrader', expert: 'furtrader', price: TRAINING_PRICE_FACTOR * 950 },
+	{ unit: 'settler', 'name': 'Expert Carpenter', expert: 'carpenter', price: TRAINING_PRICE_FACTOR * 1000 },
+	{ unit: 'settler', 'name': 'Expert Fisher', expert: 'fisher', price: TRAINING_PRICE_FACTOR * 1000 },
+	{ unit: 'settler', 'name': 'Expert Blacksmith', expert: 'blacksmith', price: TRAINING_PRICE_FACTOR * 1050 },
+	{ unit: 'settler', 'name': 'Expert Farmer', expert: 'farmer', price: TRAINING_PRICE_FACTOR * 1100 },
+	{ unit: 'settler', 'name': 'Master Distiller', expert: 'distiller', price: TRAINING_PRICE_FACTOR * 1100 },
+	{ unit: 'pioneer', name: 'Hardened Pioneer', expert: 'pioneer', price: TRAINING_PRICE_FACTOR * 1200 },
+	{ unit: 'settler', 'name': 'Master Tobacconist', expert: 'tobacconist', price: TRAINING_PRICE_FACTOR * 1200 },
+	{ unit: 'settler', 'name': 'Master Weaver', expert: 'weaver', price: TRAINING_PRICE_FACTOR * 1300 },
+	{ unit: 'missionary', name: 'Jesuit Missionary', expert: 'missionary', price: TRAINING_PRICE_FACTOR * 1400 },
+	{ unit: 'settler', 'name': 'Firebrand Preacher', expert: 'preacher', price: TRAINING_PRICE_FACTOR * 1500 },
+	{ unit: 'settler', 'name': 'Elder Statesman', expert: 'statesman', price: TRAINING_PRICE_FACTOR * 1900 },
+	{ unit: 'soldier', name: 'Veteran Soldiers', expert: 'soldier', price: TRAINING_PRICE_FACTOR * 2000 },
 ]
 
 const europe = {
@@ -183,15 +184,16 @@ const recruit = (option, index) => {
 }
 
 const purchaseOptions = () => [
-	{ text: 'Artillery (500)', unit: 'artillery', price: 500 },
-	{ text: 'Caravel (1000)', unit: 'caravel', price: 1000 },
-	{ text: 'Privateer (2000)', unit: 'privateer', price: 2000 },
-	{ text: 'Merchantman (2000)', unit: 'merchantman', price: 2000 },
-	{ text: 'Galleon (3000)', unit: 'galleon', price: 3000 },
-	{ text: 'Frigate (5000)', unit: 'frigate', price: 5000 },
+	{ text: 'Artillery ({price})', unit: 'artillery', price: 2000 },
+	{ text: 'Caravel ({price})', unit: 'caravel', price: 3000 },
+	{ text: 'Privateer ({price})', unit: 'privateer', price: 6000 },
+	{ text: 'Merchantman ({price})', unit: 'merchantman', price: 6000 },
+	{ text: 'Galleon ({price})', unit: 'galleon', price: 15000 },
+	{ text: 'Frigate ({price})', unit: 'frigate', price: 25000 },
 	{ text: 'Nothing at the moment.', margin: true, price: 0 }
 ].map(option => ({
 	...option,
+	text: option.text.replace(/\{price\}/g, option.price),
 	disabled: Treasure.amount() < option.price,
 	action: () => purchase(option)
 }))
