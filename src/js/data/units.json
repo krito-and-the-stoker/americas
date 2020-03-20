@@ -12,7 +12,7 @@
 		"cargo": 2,
 		"combat": 1,
 		"radius": 1,
-		"cost": 20,
+		"cost": 50,
 		"canExplore": true
 	},
 	"privateer": {
@@ -25,11 +25,11 @@
 		"domain": "sea",
 		"canFound": false,
 		"speed": 18,
-		"cargo": 2,
+		"cargo": 3,
 		"combat": 4,
 		"support": 0.5,
 		"radius": 2,
-		"cost": 40,
+		"cost": 100,
 		"canExplore": true
 	},
 	"frigate": {
@@ -42,11 +42,11 @@
 		"domain": "sea",
 		"canFound": false,
 		"speed": 15,
-		"cargo": 4,
-		"combat": 8,
+		"cargo": 5,
+		"combat": 10,
 		"support": 1,
 		"radius": 3,
-		"cost": 60,
+		"cost": 300,
 		"canExplore": true
 	},
 	"galleon": {
@@ -59,12 +59,12 @@
 		"domain": "sea",
 		"canFound": false,
 		"canTransportTreasure": true,
-		"speed": 14,
-		"cargo": 6,
+		"speed": 10,
+		"cargo": 15,
 		"combat": 5,
 		"support": 0.5,
 		"radius": 1,
-		"cost": 40,
+		"cost": 200,
 		"canExplore": true
 	},
 	"merchantman": {
@@ -77,10 +77,10 @@
 		"domain": "sea",
 		"canFound": false,
 		"speed": 14,
-		"cargo": 4,
+		"cargo": 6,
 		"combat": 3,
 		"radius": 1,
-		"cost": 30,
+		"cost": 100,
 		"canExplore": true
 	},
 	"wagontrain": {
@@ -95,7 +95,7 @@
 		"canFound": false,
 		"speed": 1,
 		"radius": 0.5,
-		"cost": 10
+		"cost": 20
 	},
 	"artillery": {
 		"frame": {
@@ -112,7 +112,7 @@
 		"speed": 1,
 		"combat": 1,
 		"radius": 2,
-		"cost": 20,
+		"cost": 50,
 		"needsFood": true,
 		"canExplore": true
 	},
@@ -225,7 +225,7 @@
 		"speed": 1,
 		"combat": 2,
 		"radius": 1.25,
-		"cost": 20,
+		"cost": 30,
 		"needsFood": true,
 		"canExplore": true
 	},
@@ -244,7 +244,7 @@
 		"combat": 3,
 		"radius": 2,
 		"colonyDefense": -1,
-		"cost": 30,
+		"cost": 50,
 		"needsFood": true,
 		"canExplore": true
 	},

@@ -1,5 +1,6 @@
 import { FibonacciHeap } from '@tyriar/fibonacci-heap'
 
+import Util from 'util/util'
 import Message from 'util/message'
 import LA from 'util/la'
 import Cache from 'util/cache'
@@ -34,21 +35,59 @@ const caching = {
 	},
 }
 
-const allNeighbors = coords => tile(coords)
-	? Tile.diagonalNeighbors(tile(coords))
-	: [tile({
-		x: Math.floor(coords.x),
-		y: Math.floor(coords.y)
-	}), tile({
-		x: Math.floor(coords.x),
-		y: Math.ceil(coords.y)
-	}), tile({
-		x: Math.ceil(coords.x),
-		y: Math.floor(coords.y)
-	}), tile({
-		x: Math.ceil(coords.x),
-		y: Math.ceil(coords.y)
-	})]
+
+const allNeighbors = ({ x, y }) => tile({ x, y })
+	? Tile.diagonalNeighbors(tile({ x, y }))
+	: [
+		tile({
+			x: Math.ceil(x - 1),
+			y: Math.ceil(y - 1)
+		}),
+		tile({
+			x: Math.round(x),
+			y: Math.ceil(y - 1),
+		}),
+		tile({
+			x: Math.floor(x + 1),
+			y: Math.ceil(y - 1)
+		}),
+		tile({
+			x: Math.ceil(x - 1),
+			y: Math.round(y)
+		}),
+		tile({
+			x: Math.floor(x + 1),
+			y: Math.round(y)
+		}),
+		tile({
+			x: Math.ceil(x - 1),
+			y: Math.floor(y + 1)
+		}),
+		tile({
+			x: Math.round(x),
+			y: Math.floor(y + 1)
+		}),
+		tile({
+			x: Math.floor(x + 1),
+			y: Math.floor(y + 1)
+		})
+	].filter(Util.unique)
+
+// const allNeighbors = coords => tile(coords)
+// 	? Tile.diagonalNeighbors(tile(coords))
+// 	: [tile({
+// 		x: Math.floor(coords.x),
+// 		y: Math.floor(coords.y)
+// 	}), tile({
+// 		x: Math.floor(coords.x),
+// 		y: Math.ceil(coords.y)
+// 	}), tile({
+// 		x: Math.ceil(coords.x),
+// 		y: Math.floor(coords.y)
+// 	}), tile({
+// 		x: Math.ceil(coords.x),
+// 		y: Math.ceil(coords.y)
+// 	})]
 
 const getNeighborsForUnit = unit => node => allNeighbors(node.coords)
 	.filter(tile => tile.area === Unit.area(unit) || tile.colony)

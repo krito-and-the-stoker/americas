@@ -431,7 +431,6 @@ const disband = unit => {
 
 const save = unit => ({
 	name: unit.name,
-	properties: unit.properties,
 	treasure: unit.treasure,
 	domain: unit.domain,
 	mapCoordinates: unit.mapCoordinates,
@@ -454,6 +453,7 @@ const save = unit => ({
 })
 
 const load = unit => {
+	unit.properties = Units[unit.name]
 	unit.storage = Storage.load(unit.storage)
 	unit.equipment = Storage.load(unit.equipment)
 	unit.passengers = unit.passengers.map(Record.dereference)

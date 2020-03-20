@@ -30,22 +30,28 @@ const TRADE_ROUTE_DISTANCE_CAP = 50 // really high distance cap, abount 2 years 
 const TRADE_ROUTE_MIN_GOODS = 10 // transport at least that many goods
 const BUY_GOODS_RELATIVE_BUDGET = 0.3 // do not spend more than 30% of the current treasure for automatic trade
 
-const canExport = (colony, good) => [EXPORT, BALANCE].includes(colony.trade[good]) && canExportAmount(colony, good) > 0
-const canImport = (colony, good) => [IMPORT, BALANCE].includes(colony.trade[good]) && canImportAmount(colony, good) > 0
+const canExport = (colony, good) => [EXPORT, BALANCE].includes(colony.trade[good])
+const canImport = (colony, good) => [IMPORT, BALANCE].includes(colony.trade[good])
 const canTrade = (colony, good) => [IMPORT, EXPORT, BALANCE, BUY, SELL].includes(colony.trade[good])
 const canBuy = (europe, good) => europe.trade[good] === BUY
 const canSell = (europe, good) => europe.trade[good] === SELL
 
-const targetAmount = (colony, good) => ({
+const targetAmount = (colony, other, good) => ({
 	[IMPORT]: colony.capacity,
 	[EXPORT]: 0,
-	[BALANCE]: 0.5 * colony.capacity
+	[BALANCE]: {
+		[IMPORT]: 0.25,
+		[SELL]: 0.25,
+		[EXPORT]: 0.75,
+		[BUY]: 0.75,
+		[BALANCE]: 0.5
+	}[other.trade[good]] * colony.capacity
 }[colony.trade[good]])
 
 
 const estimatedAmount = (colony, good) => colony.storage[good] + Forecast.get(colony, good)
-const canExportAmount = (colony, good) => Util.clamp(estimatedAmount(colony, good) - targetAmount(colony, good), 0, colony.capacity)
-const canImportAmount = (colony, good) => Util.clamp(targetAmount(colony, good) - estimatedAmount(colony, good), 0, colony.capacity)
+const canExportAmount = (colony, other, good) => Math.max(estimatedAmount(colony, good) - targetAmount(colony, other, good), 0)
+const canImportAmount = (colony, other, good) => Util.clamp(targetAmount(colony, other, good) - estimatedAmount(colony, good), 0, colony.capacity)
 
 // how much can we buy depends on treasure
 const canBuyAmount = (europe, good) => Math.floor(BUY_GOODS_RELATIVE_BUDGET * Treasure.amount() / Market.ask(good))
@@ -110,8 +116,8 @@ const match = transport => {
 				.filter(good => (canExport(route.src, good) || canBuy(route.src, good)) && (canImport(route.dest, good) || canSell(route.dest, good)))
 				.map(good => {
 					// calculate amount and importance
-					const exportAmount = route.src.isEurope ? canBuyAmount(route.src, good) : canExportAmount(route.src, good)
-					const importAmount = route.dest.isEurope ? canSellAmount(route.dest, good) : canImportAmount(route.dest, good)
+					const exportAmount = route.src.isEurope ? canBuyAmount(route.src, good) : canExportAmount(route.src, route.dest, good)
+					const importAmount = route.dest.isEurope ? canSellAmount(route.dest, good) : canImportAmount(route.dest, route.src, good)
 					const amount = Math.floor(Math.min(exportAmount, importAmount, capacity))
 					const exPrio = route.src.isEurope ? buyPriority() : exportPriority(route.src, good)
 					const imPrio = (good === 'food' ? 2 : 1) * (route.dest.isEurope ? sellPriority() : importPriority(route.dest, good))
