@@ -51,7 +51,16 @@ export default Factory.create('LoadCargo', {
 		}
 	}
 
+	let keepLoading = true
+	const cancel = () => {
+		keepLoading = false
+	}
+
 	const update = (currentTime, deltaTime) => {
+		if (!keepLoading) {
+			return false
+		}
+
 		if (pack.amount > 0) {		
 			const amount = Math.min(
 				pack.amount * deltaTime * loadingSpeed,
@@ -83,6 +92,7 @@ export default Factory.create('LoadCargo', {
 	return {
 		init,
 		update,
+		cancel,
 		finished,
 		canceled
 	}

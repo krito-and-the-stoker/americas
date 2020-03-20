@@ -75,11 +75,11 @@ const render = () => {
 					h('div.text', [
 						h('div.name', Unit.name(unit)),
 						h('div.command', unit.command && unit.command.display),
-						h('div.place', place(unit)),
+						h('div.place', place(unit))
 					]),
 					h('div.cargo', [
-						h('div.goods', goods(unit)),
-						h('div.passengers', passengers(unit))
+						h('div.passengers', passengers(unit)),
+						h('div.goods', goods(unit))
 					])
 				]))
 

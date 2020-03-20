@@ -186,8 +186,8 @@ const recruit = (option, index) => {
 const purchaseOptions = () => [
 	{ text: 'Artillery ({price})', unit: 'artillery', price: 2000 },
 	{ text: 'Caravel ({price})', unit: 'caravel', price: 3000 },
-	{ text: 'Privateer ({price})', unit: 'privateer', price: 6000 },
-	{ text: 'Merchantman ({price})', unit: 'merchantman', price: 6000 },
+	{ text: 'Merchantman ({price})', unit: 'merchantman', price: 6500 },
+	{ text: 'Privateer ({price})', unit: 'privateer', price: 8000 },
 	{ text: 'Galleon ({price})', unit: 'galleon', price: 15000 },
 	{ text: 'Frigate ({price})', unit: 'frigate', price: 25000 },
 	{ text: 'Nothing at the moment.', margin: true, price: 0 }

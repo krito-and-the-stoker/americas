@@ -44,6 +44,7 @@
       }
       .cargo {
         grid-area: cargo;
+        display: flex;
         .icon {
           margin: -16px;  
         }
