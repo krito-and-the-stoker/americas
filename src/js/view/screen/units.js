@@ -3,10 +3,13 @@ import Record from 'util/record'
 
 import Unit from 'entity/unit'
 import Europe from 'entity/europe'
+import Storage from 'entity/storage'
 
 import Dom from 'render/dom'
 
 import UnitView from 'view/unit'
+import UnitMapView from 'view/map/unit'
+import GoodsView from 'view/goods'
 
 let el
 let destroy
@@ -44,15 +47,40 @@ const render = () => {
 		return 'Americas'
 	}
 
+	const CARGO_SCALE = 0.5
+	const PASSENGER_SCALE = 0.7
+	const goods = unit => Storage.goods(unit.storage)
+		.filter(pack => pack.amount > 0)
+		.map(pack => GoodsView.html(pack.good, CARGO_SCALE))
+	const passengers = unit => unit.passengers.map(passenger => UnitView.html(passenger, PASSENGER_SCALE))
+
+	const select = unit => {
+		close()
+		UnitMapView.select(unit)
+	}
+
 	if (isNowOpen) {
 		const units = Record.getAll('unit')
+			// exclude colonists (they technically are still attached to a unit)
 			.filter(unit => !(unit.colonist && unit.colonist.colony))
+			// exclude passengers
+			.filter(unit => !unit.vehicle)
 			.map(unit =>
-				h('div', [
-					UnitView.html(unit),
-					h('span.name', Unit.name(unit)),
-					h('span.command', unit.command && unit.command.display),
-					h('span.place', place(unit))
+				h('div.unit', [
+					UnitView.html(unit, 1, {
+						on: {
+							click: () => select(unit)
+						}
+					}),
+					h('div.text', [
+						h('div.name', Unit.name(unit)),
+						h('div.command', unit.command && unit.command.display),
+						h('div.place', place(unit)),
+					]),
+					h('div.cargo', [
+						h('div.goods', goods(unit)),
+						h('div.passengers', passengers(unit))
+					])
 				]))
 
 
@@ -74,7 +102,6 @@ const create = () => {
 }
 
 const open = () => {
-	console.log('opening')
 	if (!isNowOpen) {	
 		isNowOpen = true
 		destroy = create()
@@ -82,7 +109,6 @@ const open = () => {
 }
 
 const close = () => {
-	console.log('closing')
 	if (isNowOpen) {	
 		isNowOpen = false
 		Util.execute(destroy)

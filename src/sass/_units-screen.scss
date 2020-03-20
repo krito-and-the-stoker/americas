@@ -23,20 +23,41 @@
     display: grid;
     grid-gap: 20px;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: repeat(auto-fit, 120px);
-    > div {
+    grid-template-rows: repeat(auto-fill, 130px);
+    .unit {
       @include panel
+
+      display: grid;
+      grid-gap: 5px;
+      grid-template:
+        "icon text" auto
+        "cargo cargo" auto /
+        min-content 1fr;
+
       padding: 10px;
       .icon {
-        float: left;
+        grid-area: icon;
+        cursor: pointer;
       }
-      > span {
-        display: block;
-        &.name {
+      .text {
+        grid-area: text;
+      }
+      .cargo {
+        grid-area: cargo;
+        .icon {
+          margin: -16px;  
         }
-        &.command, &.place {
-          font-size: 14px;
+        .passengers {
+          .icon {
+            margin: -16px -24px -16px -16px;
+          }
         }
+      }
+      .command, .place {
+        font-size: 14px;
+      }
+      .place {
+        display: none;
       }
     }
   }

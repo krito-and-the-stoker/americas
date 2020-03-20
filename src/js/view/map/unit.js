@@ -45,7 +45,7 @@ const select = unit => {
 	if (view.destroyed) {
 		return
 	}
-	if (view != state.selectedView) {
+	if (view !== state.selectedView) {
 		if (state.selectedView) {
 			unselect()
 		}

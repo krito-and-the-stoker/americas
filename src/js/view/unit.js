@@ -26,7 +26,7 @@ const create = unit => {
 	}
 }
 
-const html = (unit, scale) => Dom.sprite('map', getFrame(unit), scale)
+const html = (unit, scale, options) => Dom.sprite('map', getFrame(unit), scale, options)
 
 export default {
 	getFrame,

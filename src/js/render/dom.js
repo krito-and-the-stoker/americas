@@ -9,7 +9,7 @@ import Resources from 'render/resources'
 const patch = init([ Class, Style, EventListeners ])
 const h = Render
 
-const sprite = (image, frame = 0, scale = 1) => {
+const sprite = (image, frame = 0, scale = 1, options = {}) => {
 	const rect = Resources.rectangle(frame)
 	const url = Resources.paths[image]
 
@@ -23,7 +23,8 @@ const sprite = (image, frame = 0, scale = 1) => {
 			width: `${rect.width}px`,
 			height: `${rect.width}px`,
 			transform: `scale(${scale})`
-		}
+		},
+		...options
 	})
 }
 export default {
