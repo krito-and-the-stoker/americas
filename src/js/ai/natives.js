@@ -267,14 +267,14 @@ const makePlansAndRunThem = ai => {
 				// visit new colonies
 				Object.entries(ai.state.relations)
 					.map(([referenceId, relation]) => State.all(relation, 'colonies')
-						.filter(colony => !ai.state.relations[referenceId].colonies[colony.referenceId].visited)
+						.filter(colony => colony && !ai.state.relations[referenceId].colonies[colony.referenceId].visited)
 						.map(colony => VisitColony.create({ tribe: ai.tribe, state: ai.state, colony }))
 						.map(executeAction)),
 
 				// raid colonies
 				Object.entries(ai.state.relations)
 					.map(([referenceId, relation]) => State.all(relation, 'colonies')
-						.filter(colony => ai.state.relations[referenceId].colonies[colony.referenceId].raidPlanned > 0)
+						.filter(colony => colony && ai.state.relations[referenceId].colonies[colony.referenceId].raidPlanned > 0)
 						.map(colony => ({
 							action: RaidColony.create({ tribe: ai.tribe, state: ai.state, colony }),
 							colony
