@@ -35,7 +35,7 @@
 		},
 		"production": {
 			"good": "tools",
-			"amount": [3, 6, 9]
+			"amount": [3, 5, 7]
 		}
 	},
 	"tobacconists": {
@@ -58,7 +58,7 @@
 		},
 		"production": {
 			"good": "cigars",
-			"amount": [3, 6, 9]
+			"amount": [3, 5, 7]
 		}
 	},
 	"furTraders": {
@@ -81,7 +81,7 @@
 		},
 		"production": {
 			"good": "coats",
-			"amount": [3, 6, 9]
+			"amount": [3, 5, 7]
 		}
 	},
 	"carpenters": {
@@ -120,7 +120,7 @@
 		"workspace": 3,
 		"production": {
 			"good": "bells",
-			"amount": [3, 6, 9]
+			"amount": [7, 12, 16]
 		}
 	},
 	"warehouse": {
@@ -161,7 +161,7 @@
 		},
 		"production": {
 			"good": "cloth",
-			"amount": [3, 6, 9]
+			"amount": [3, 5, 7]
 		}
 	},
 	"rumDistillers": {
@@ -184,7 +184,7 @@
 		},
 		"production": {
 			"good": "rum",
-			"amount": [3, 6, 9]
+			"amount": [3, 5, 7]
 		}
 	},
 	"harbour": {
@@ -239,7 +239,7 @@
 		}],
 		"production": {
 			"good": "crosses",
-			"amount": [0, 3, 6]
+			"amount": [0, 7, 15]
 		}		
 	},
 	"gunsmiths": {
@@ -264,7 +264,7 @@
 		},
 		"production": {
 			"good": "guns",
-			"amount": [0, 3, 6, 9]
+			"amount": [0, 3, 5, 7]
 		}
 	},
 	"customhouse": {
