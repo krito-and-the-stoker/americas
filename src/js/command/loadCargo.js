@@ -42,8 +42,8 @@ export default Factory.create('LoadCargo', {
 	display: 'Loading cargo'
 }, ({ colony, unit, pack }) => {
 	Forecast.add(colony, pack)
-	const loadingSpeed = 1.0 / (Time.CARGO_BASE_LOAD_TIME
-			* (unit.domain === 'sea' ? 4 - colony.buildings.harbour.level : 1))
+	const loadingSpeed = 100.0 / (Time.CARGO_BASE_LOAD_TIME
+			* (unit.domain === 'sea' ? 3 / (colony.buildings.harbour.level + 1) : 1))
 
 	const init = () => {
 		if (unit.colony !== colony) {
@@ -63,7 +63,7 @@ export default Factory.create('LoadCargo', {
 
 		if (pack.amount > 0) {		
 			const amount = Math.min(
-				pack.amount * deltaTime * loadingSpeed,
+				deltaTime * loadingSpeed,
 				colony.storage[pack.good],
 				pack.amount - unit.storage[pack.good])
 			Storage.transfer(colony.storage, unit.storage, { good: pack.good, amount })
@@ -72,7 +72,7 @@ export default Factory.create('LoadCargo', {
 		}
 
 		if (pack.amount < 0) {
-			const amount = Math.min(-pack.amount * deltaTime * loadingSpeed, unit.storage[pack.good])
+			const amount = Math.min(deltaTime * loadingSpeed, unit.storage[pack.good])
 			Storage.transfer(unit.storage, colony.storage, { good: pack.good, amount })
 
 			return unit.storage[pack.good] > 0

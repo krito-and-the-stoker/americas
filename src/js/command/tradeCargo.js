@@ -50,7 +50,7 @@ export default Factory.create('TradeCargo', {
 			Message.warn('unit wants to trade without being in europe', Unit.name(unit), pack)
 		}
 
-		eta = currentTime + Time.CARGO_BASE_LOAD_TIME
+		eta = currentTime + Time.CARGO_BASE_TRADE_TIME
 		return {
 			eta
 		}
