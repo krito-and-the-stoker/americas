@@ -130,7 +130,7 @@ const create = () => {
 				sprite.y = position.y
 				sprite.scale.set(2)
 				container.units.addChild(sprite)
-				Drag.makeDraggable(sprite, { unit })
+				Drag.makeDraggable(sprite, { unit }, 'Sell to European market')
 
 				Tween.fadeIn(sprite, 350)
 

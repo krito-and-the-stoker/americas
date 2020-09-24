@@ -145,7 +145,7 @@ const create = (colony, originalDimensions) => {
 									}
 								}, 'Select goods for production'),
 
-								Drag.makeDraggable(sprite, { colonist }),
+								Drag.makeDraggable(sprite, { colonist }, 'Move to other field or building to change production'),
 								destroySprite,
 								removeProductionSprites,
 								unsubscribeEducation

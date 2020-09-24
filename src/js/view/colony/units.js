@@ -106,7 +106,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 			Tween.fadeIn(sprite, 350)
 		}
 
-		Drag.makeDraggable(sprite, { unit })
+		Drag.makeDraggable(sprite, { unit }, 'Move into colony to start working or move onto ship')
 
 		const unsubscribeClick = Click.on(sprite, () => {
 			closeScreen()

@@ -32,10 +32,14 @@ const initialize = () => {
 	let bottomPanel = document.createElement('div')
 	document.body.appendChild(bottomPanel)
 
+	const formatHint = hint => ({
+			drag: 'Drag: ',
+			click: 'Click: '
+		}[hint.action] + hint.text)
 	Foreground.listen.screen(screen => 
 		Hints.listen(hints => {
 			const view = h('div.bottom-panel', screen && screen.params.name === 'colony'
-				? hints.map(hint => h('div', hint.text))
+				? hints.map(hint => h('div', formatHint(hint)))
 				: [])
 
 			bottomPanel = patch(bottomPanel, view)

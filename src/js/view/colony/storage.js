@@ -36,7 +36,7 @@ const create = (colony, originalDimensions) => {
 			amount: Math.min(100, colony.storage[good]),
 			colony
 		}
-		Drag.makeDraggable(sprite, args)
+		Drag.makeDraggable(sprite, args, 'Load onto transport vehicle or equip colonist')
 		Click.on(sprite, () => {
 			const options = [Trade.NOTHING, Trade.IMPORT, Trade.EXPORT, Trade.BALANCE]
 			colony.trade[good] = options[(colony.trade[good] + 1) % options.length]

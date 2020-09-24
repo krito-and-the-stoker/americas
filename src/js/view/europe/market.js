@@ -53,7 +53,7 @@ const create = (originalDimensions) => {
 			buyFromEurope: true
 		}
 
-		Drag.makeDraggable(sprite, args)
+		Drag.makeDraggable(sprite, args, 'Buy and load onto ship')
 		Click.on(sprite, () => {
 			const options = [Trade.NOTHING, Trade.SELL, Trade.BUY]
 			const trade = Europe.trade()

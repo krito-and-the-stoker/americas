@@ -52,8 +52,8 @@ const on = (target, fn, helpText) => {
 		target
 			.off('mousedown', handleDown)
 			.off('mouseup', handleUp)
-			.on('mouseover', addHint)
-			.on('mouseout', removeHint)
+			.off('mouseover', addHint)
+			.off('mouseout', removeHint)
 	}
 
 	return unsubscribe

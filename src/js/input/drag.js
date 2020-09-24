@@ -4,6 +4,7 @@ import Util from 'util/util'
 import Binding from 'util/binding'
 
 import Input from 'input'
+import Hints from 'input/hints'
 
 import Foreground from 'render/foreground'
 
@@ -70,6 +71,22 @@ const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = 
 		target.cursor = 'grab'
 	}
 
+	let addHint = () => {}
+	let removeHint = () => {}
+	if (options.helpText) {	
+		const hint = {
+			action: 'drag',
+			text: options.helpText
+		}
+
+		addHint = () => {
+			Hints.add(hint)
+		}
+		removeHint = () => {
+			Hints.remove(hint)
+		}
+	}
+
 	target.interactive = true
 	target
 		.on('mousedown', handleDown)
@@ -80,6 +97,8 @@ const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = 
 		.on('mouseupoutside', handleEnd)
 		.on('touchend', handleEnd)
 		.on('touchendoutside', handleEnd)
+		.on('mouseover', addHint)
+		.on('mouseout', removeHint)
 
 	const unsubscribe = () => {
 		draggables = draggables.filter(t => t !== target)
@@ -92,6 +111,8 @@ const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = 
 			.off('mouseupoutside', handleEnd)
 			.off('touchend', handleEnd)
 			.off('touchendoutside', handleEnd)
+			.off('mouseover', addHint)
+			.off('mouseout', removeHint)
 	}
 
 	return unsubscribe
@@ -119,7 +140,7 @@ const waitForDrag = () => new Promise(resolve => {
 })
 
 let dragTargets = []
-const makeDraggable = (sprite, entity) => {
+const makeDraggable = (sprite, entity, helpText) => {
 	let initialCoords = null
 	let initialSpriteCoords = null
 	const start = coords => {
@@ -185,7 +206,7 @@ const makeDraggable = (sprite, entity) => {
 		update(null)
 	}
 
-	return on(sprite, start, move, end, false)
+	return on(sprite, start, move, end, { helpText })
 }
 
 const makeDragTarget = (sprite, fn) => {

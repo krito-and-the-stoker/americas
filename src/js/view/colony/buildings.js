@@ -127,7 +127,7 @@ const createBuilding = (colony, building) => {
 						productionSprites.forEach(s => container.colonists.removeChild(s))
 						container.colonists.removeChild(colonistSprite)
 					},
-					Drag.makeDraggable(colonistSprite, { colonist })
+					Drag.makeDraggable(colonistSprite, { colonist }, 'Move to field or other building to change production')
 				]
 			}
 			
@@ -135,7 +135,7 @@ const createBuilding = (colony, building) => {
 				() => {
 					container.colonists.removeChild(colonistSprite)
 				},
-				Drag.makeDraggable(colonistSprite, { colonist }),
+				Drag.makeDraggable(colonistSprite, { colonist }, 'Move to field or other building to change production'),
 				unsubscribeEducation
 			]
 		}
