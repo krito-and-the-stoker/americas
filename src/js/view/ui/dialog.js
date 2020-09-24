@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 
+import Util from 'util/util'
 import Events from 'util/events'
 
 import Time from 'timeline/time'
@@ -170,9 +171,10 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap, im
 		MapView.centerAt(coords, 500, config.centerMap)
 	}
 
-	optionViews.forEach(option => {
-		if (!option.disabled) {		
-			Click.on(option.text, () => {
+	const unsubscribeOptionClicks = optionViews.map(option => {
+		plane9.addChild(option.text)
+		if (!option.disabled) {
+			const unsubscribeClick = Click.on(option.text, () => {
 				if (clickAllowed) {
 					if (option.action) {
 						option.action()
@@ -181,8 +183,8 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap, im
 				}
 			})
 			option.text.buttonMode = true
+			return unsubscribeClick
 		}
-		plane9.addChild(option.text)
 	})
 
 	const unsubscribeDimensions = RenderView.listen.dimensions(dimensions => {
@@ -239,8 +241,11 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap, im
 	})
 
 	const close = () => {
-		unsubscribeDimensions()
-		unsubscribeClick()
+		Util.execute([
+			unsubscribeDimensions,
+			unsubscribeOptionClicks,
+			unsubscribeCloseClick,
+		])
 		Foreground.remove.dialog(closePlane)
 		Foreground.remove.dialog(plane9)
 		if (imageView) {	
@@ -251,7 +256,7 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap, im
 		}
 	}
 
-	const unsubscribeClick = Click.on(closePlane, () => {
+	const unsubscribeCloseClick = Click.on(closePlane, () => {
 		if (clickAllowed) {
 			const defaultOption = options ? options.find(option => option.default) : null
 			if (defaultOption && defaultOption.action) {

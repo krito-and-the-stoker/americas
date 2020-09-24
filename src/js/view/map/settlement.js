@@ -29,7 +29,7 @@ const create = settlement => {
 			sprite.x = TILE_SIZE * settlement.mapCoordinates.x
 			sprite.y = TILE_SIZE * settlement.mapCoordinates.y
 
-			Click.on(sprite, () => {
+			const unsubscribeClick = Click.on(sprite, () => {
 				const player = Owner.player()
 				const relations = settlement.owner.ai.state.relations[player.referenceId]
 				const relation = relations ? Natives.describeRelations(relations) : null
@@ -59,7 +59,8 @@ const create = settlement => {
 
 			return [
 				() => Foreground.removeTerrain(sprite),
-				unsubscribeMission
+				unsubscribeMission,
+				unsubscribeClick
 			]
 		}
 	})

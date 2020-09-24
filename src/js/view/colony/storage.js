@@ -36,16 +36,20 @@ const create = (colony, originalDimensions) => {
 			amount: Math.min(100, colony.storage[good]),
 			colony
 		}
-		Drag.makeDraggable(sprite, args, 'Load onto transport vehicle or equip colonist')
-		Click.on(sprite, () => {
-			const options = [Trade.NOTHING, Trade.IMPORT, Trade.EXPORT, Trade.BALANCE]
-			colony.trade[good] = options[(colony.trade[good] + 1) % options.length]
-			Trade.update(colony.trade)
-		}, `Set trade options for ${good}`)
+
+		const unsubscribe = [
+			Drag.makeDraggable(sprite, args, 'Load onto transport vehicle or equip colonist'),
+			Click.on(sprite, () => {
+				const options = [Trade.NOTHING, Trade.IMPORT, Trade.EXPORT, Trade.BALANCE]
+				colony.trade[good] = options[(colony.trade[good] + 1) % options.length]
+				Trade.update(colony.trade)
+			}, `Set trade options for ${good}`)
+		]
 
 		return {
 			update,
-			args
+			args,
+			unsubscribe
 		}
 	})
 
@@ -69,8 +73,8 @@ const create = (colony, originalDimensions) => {
 			}
 		}))
 
-	const unsubscribeStorage = Storage.listen(colony.storage, storage => {
-		Storage.goods(storage).forEach(({ amount }, i) => {
+	const unsubscribeStorage = Storage.listen(colony.storage, storage =>
+		Storage.goods(storage).map(({ amount }, i) => {
 			let color = 0xffffff
 			if (amount > colony.capacity) {
 				color = 0xff8800
@@ -82,8 +86,9 @@ const create = (colony, originalDimensions) => {
 				fill: color
 			})
 			updateAndArgs[i].args.amount = Math.min(100, Math.floor(amount))
-		})
-	})
+
+			return updateAndArgs[i].unsubscribe
+		}))
 
 	const dragTarget = new PIXI.Container()
 	container.addChild(dragTarget)

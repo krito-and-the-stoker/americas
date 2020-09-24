@@ -94,7 +94,7 @@ const create = () => {
 			if (position) {
 				const view = Transport.create(unit)
 
-				Click.on(view.sprite, () =>
+				const unsubscribeClick = Click.on(view.sprite, () =>
 					selectTarget(unit), `Send ${Unit.name(unit)} to the Americas`)
 
 				position.taken = unit
@@ -110,7 +110,10 @@ const create = () => {
 
 				return () => {
 					position.taken = false
-					Util.execute(view.unsubscribe)
+					Util.execute([
+						view.unsubscribe,
+						unsubscribeClick
+					])
 					Tween.moveTo(view.container, { x: - 1000, y: -300 }, 5000).then(() => {
 						container.ships.removeChild(view.container)
 					})
@@ -130,13 +133,16 @@ const create = () => {
 				sprite.y = position.y
 				sprite.scale.set(2)
 				container.units.addChild(sprite)
-				Drag.makeDraggable(sprite, { unit }, 'Sell to European market')
+				const unsubscribeDrag = Drag.makeDraggable(sprite, { unit }, 'Sell to European market')
 
 				Tween.fadeIn(sprite, 350)
 
 				return () => {
 					position.taken = false
-					Util.execute(view.unsubscribe)
+					Util.execute([
+						view.unsubscribe,
+						unsubscribeDrag
+					])
 					container.units.removeChild(sprite)
 				}
 			}

@@ -47,25 +47,23 @@ const create = (originalDimensions) => {
 		price.position.y = -width / 4
 		container.goods.addChild(price)
 
-		let args = {
-			good: good,
-			amount: 100,
-			buyFromEurope: true
-		}
-
-		Drag.makeDraggable(sprite, args, 'Buy and load onto ship')
-		Click.on(sprite, () => {
-			const options = [Trade.NOTHING, Trade.SELL, Trade.BUY]
-			const trade = Europe.trade()
-			trade[good] = options[(options.indexOf(trade[good]) + 1) % options.length]
-			Europe.update.trade()
-		}, `Set trade options for ${good}`)
-
-
-		const unsubscribe = () => {
-			container.goods.removeChild(sprite)
-			container.goods.removeChild(price)
-		}
+		const unsubscribe = [
+			Drag.makeDraggable(sprite, {
+					good: good,
+					amount: 100,
+					buyFromEurope: true
+				}, 'Buy and load onto ship'),
+			Click.on(sprite, () => {
+				const options = [Trade.NOTHING, Trade.SELL, Trade.BUY]
+				const trade = Europe.trade()
+				trade[good] = options[(options.indexOf(trade[good]) + 1) % options.length]
+				Europe.update.trade()
+			}, `Set trade options for ${good}`),
+			() => {
+				container.goods.removeChild(sprite)
+				container.goods.removeChild(price)
+			}
+		]
 
 		return {
 			good,

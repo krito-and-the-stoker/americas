@@ -102,6 +102,7 @@ const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = 
 
 	const unsubscribe = () => {
 		draggables = draggables.filter(t => t !== target)
+		removeHint()
 		target
 			.off('mousedown', handleDown)
 			.off('touchstart', handleDown)

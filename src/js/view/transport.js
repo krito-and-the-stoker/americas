@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js'
 
+import Util from 'util/util'
+
 import UnitView from 'view/unit'
 import Unit from 'entity/unit'
 import Drag from 'input/drag'
@@ -65,7 +67,7 @@ const create = unit => {
 			sprite.y = index.y * 1.2 * 32 + 80
 			sprite.scale.set(1.4)
 			container.addChild(sprite)
-			Drag.makeDraggable(sprite, { passenger }, 'Unload passanger')
+			const unsubscribeDrag = Drag.makeDraggable(sprite, { passenger }, 'Unload passanger')
 
 			index.x += 1
 			if (index.x >= 2) {
@@ -75,6 +77,7 @@ const create = unit => {
 
 			return [
 				view.unsubscribe,
+				unsubscribeDrag,
 				() => container.removeChild(sprite),
 			]
 		})
@@ -98,10 +101,11 @@ const create = unit => {
 					storageIndex.x = 0
 					storageIndex.y += 1
 				}
-				Drag.makeDraggable(view.sprite, { good: pack.good, amount: pack.amount, unit }, 'Unload cargo')
+				const unsubscribeDrag = Drag.makeDraggable(view.sprite, { good: pack.good, amount: pack.amount, unit }, 'Unload cargo')
 				container.addChild(view.sprite)
 
 				return () => {
+					Util.execute(unsubscribeDrag)
 					container.removeChild(view.sprite)
 				}
 			})

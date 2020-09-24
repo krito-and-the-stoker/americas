@@ -106,7 +106,10 @@ const create = (colony, closeScreen, originalDimensions) => {
 			Tween.fadeIn(sprite, 350)
 		}
 
-		Drag.makeDraggable(sprite, { unit }, 'Move into colony to start working or move onto ship')
+		const unsubscribeDrag = Drag.makeDraggable(
+			sprite,
+			{ unit },
+			'Move into colony to start working or move onto ship')
 
 		const unsubscribeClick = Click.on(sprite, () => {
 			closeScreen()
@@ -118,7 +121,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 			sprite.filters = pioneering ? [greyScaleFilter] : []
 		})
 
-		const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {
+		const unsubscribeDragTarget = Drag.makeDragTarget(sprite, args => {
 			const { good, amount, colony } = args
 			const fromUnit = args.unit
 			if (fromUnit) {
@@ -132,12 +135,13 @@ const create = (colony, closeScreen, originalDimensions) => {
 		})
 
 		return () => {
-			unsubscribeClick()
 			position.taken = false
 			container.removeChild(sprite)
 			Util.execute([
-				unsubscribePioneering,
+				unsubscribeClick,
 				unsubscribeDrag,
+				unsubscribeDragTarget,
+				unsubscribePioneering,
 				view.unsubscribe,
 			])
 		}
