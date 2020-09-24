@@ -134,26 +134,27 @@ const initialize = colony => {
 	colony.productionSummary = Storage.createWithProduction()
 	colony.productionRecord = Storage.createWithProduction()
 	const tile = MapEntity.tile(colony.mapCoordinates)
-	const destroy = []
-	destroy.push(Tile.listen.tile(tile, () =>
-		Tile.colonyProductionGoods(tile).map(good =>
-			Time.schedule(Harvest.create(colony, tile, good)))))
-	destroy.push(listen.colonists(colony, colonists => [
-		Time.schedule(Consume.create(colony, 'bells', 1 * colonists.length))
-	]))
-	destroy.push(listenEach.units(colony, (unit, added) => {
-		if (added && unit.treasure) {
-			Events.trigger('notification', { type: 'treasure', colony, unit })
-		}
-	}))
-	destroy.push(Time.schedule(TeachingSummary.create(colony)))
-	destroy.push(listen.growth(colony, growth => {
-		if (growth > 1000) {
-			const unit = Unit.create('settler', colony.mapCoordinates, colony.owner)
-			Events.trigger('notification', { type: 'born', colony, unit })
-			colony.growth = 0
-		}
-	}))
+	const destroy = [
+		Tile.listen.tile(tile, () =>
+			Tile.colonyProductionGoods(tile).map(good =>
+				Time.schedule(Harvest.create(colony, tile, good)))),
+		listen.colonists(colony, colonists =>
+			listen.bells(colony, Binding.map(() => rebels(colony).number,
+				rebelColonists => Time.schedule(Consume.create(colony, 'bells', rebelColonists))))),
+		listenEach.units(colony, (unit, added) => {
+			if (added && unit.treasure) {
+				Events.trigger('notification', { type: 'treasure', colony, unit })
+			}
+		}),
+		Time.schedule(TeachingSummary.create(colony)),
+		listen.growth(colony, growth => {
+			if (growth > 1000) {
+				const unit = Unit.create('settler', colony.mapCoordinates, colony.owner)
+				Events.trigger('notification', { type: 'born', colony, unit })
+				colony.growth = 0
+			}
+		})
+	]
 	colony.construction = {
 		amount: colony.construction.amount,
 		tools: colony.construction.tools,

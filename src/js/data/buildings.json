@@ -120,7 +120,7 @@
 		"workspace": 3,
 		"production": {
 			"good": "bells",
-			"amount": [7, 12, 16]
+			"amount": [3, 5, 9]
 		}
 	},
 	"warehouse": {
