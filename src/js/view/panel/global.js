@@ -22,8 +22,9 @@ const initialize = () => {
 			isMap && h('div', { on: { click: scale.click }, class: { click: true } }, scale.text),
 			h('div', time.text),
 			isMap && h('div', { on: { click: help.click }, class: { click: true } }, help.text),
-			isMap && h('div.hints', hints.map(hint =>
-				h('div', hint.text)))
+			isMap && h('div.hints', hints
+				.filter(hint => hint.action === 'click')
+				.map(hint => h('div', hint.text)))
 		].filter(x => x))
 
 		globalPanel = patch(globalPanel, view)

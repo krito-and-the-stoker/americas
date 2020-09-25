@@ -21,35 +21,36 @@ const create = unit => {
 	sprite.scale.set(2)
 	container.addChild(sprite)
 
-	const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {
-		const { good, amount, buyFromEurope, colony, passenger } = args
-		const fromUnit = args.unit
-		if (good) {
-			const pack = { good, amount }
-			if (buyFromEurope) {
-				BuyFromEurope(unit, pack)
+	const unsubscribeDrag = unit.command.id !== 'tradeRoute' &&
+		Drag.makeDragTarget(sprite, args => {
+			const { good, amount, buyFromEurope, colony, passenger } = args
+			const fromUnit = args.unit
+			if (good) {
+				const pack = { good, amount }
+				if (buyFromEurope) {
+					BuyFromEurope(unit, pack)
+					return false
+				}
+				if (colony) {
+					LoadFromColonyToShip(colony, unit, pack)
+					return false
+				}
+				if (args.unit && args.unit !== unit) {
+					LoadBetweenShips(fromUnit, unit, pack)
+					return false
+				}
+			}
+			if (fromUnit && fromUnit !== unit) {
+				LoadUnitToShip(unit, fromUnit)
 				return false
 			}
-			if (colony) {
-				LoadFromColonyToShip(colony, unit, pack)
-				return false
+
+			if (passenger) {
+				LoadUnitFromShipToShip(unit, passenger)
 			}
-			if (args.unit && args.unit !== unit) {
-				LoadBetweenShips(fromUnit, unit, pack)
-				return false
-			}
-		}
-		if (fromUnit && fromUnit !== unit) {
-			LoadUnitToShip(unit, fromUnit)
+
 			return false
-		}
-
-		if (passenger) {
-			LoadUnitFromShipToShip(unit, passenger)
-		}
-
-		return false
-	})
+		})
 
 	const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
 	greyScaleFilter.blackAndWhite()
@@ -101,7 +102,8 @@ const create = unit => {
 					storageIndex.x = 0
 					storageIndex.y += 1
 				}
-				const unsubscribeDrag = Drag.makeDraggable(view.sprite, { good: pack.good, amount: pack.amount, unit }, 'Unload cargo')
+				const unsubscribeDrag = unit.command.id !== 'tradeRoute'
+					&& Drag.makeDraggable(view.sprite, { good: pack.good, amount: pack.amount, unit }, 'Unload cargo')
 				container.addChild(view.sprite)
 
 				return () => {
