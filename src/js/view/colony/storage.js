@@ -37,14 +37,15 @@ const create = (colony, originalDimensions) => {
 			colony
 		}
 
-		const unsubscribe = args.amount > 0 ? [
-			Drag.makeDraggable(sprite, args, 'Load onto transport vehicle or equip colonist'),
+		const unsubscribe = [
+			args.amount > 0 &&
+				Drag.makeDraggable(sprite, args, 'Load onto transport vehicle or equip colonist'),
 			Click.on(sprite, () => {
 				const options = [Trade.NOTHING, Trade.IMPORT, Trade.EXPORT, Trade.BALANCE]
 				colony.trade[good] = options[(colony.trade[good] + 1) % options.length]
 				Trade.update(colony.trade)
 			}, `Set trade options for ${good}`)
-		] : null
+		]
 
 		return {
 			update,
