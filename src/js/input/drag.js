@@ -140,7 +140,54 @@ const waitForDrag = () => new Promise(resolve => {
 	}
 })
 
+
+let dragTargetsInteractivity = []
+const activateDragTargets = () => {
+	// mark all possible drag targets interactive
+	dragTargetsInteractivity = dragTargets.map(({ sprite }) => {
+		const original = sprite.interactive
+		sprite.interactive = true
+		return {
+			original,
+			sprite
+		}
+	})	
+}
+
+const restoreDragTargets = () => {
+	// restore their interactivity
+	dragTargetsInteractivity.forEach(({ sprite, original }) => sprite.interactive = original)
+	dragTargetsInteractivity = []
+}
+
+
+const findDragTargets = (coords, excludeSprite) => {
+	activateDragTargets()
+
+	// recursively find target by hit testing through the tree
+	let targetSprite = null
+	const findTarget = next => {
+		if (next) {
+			if (next !== excludeSprite && validDragTargets.map(({ sprite }) => sprite).includes(next)) {
+				// found
+				targetSprite = next
+			} else {
+				// temporarily disable interactivity to look further into the tree
+				let originalInteractive = next.interactive
+				next.interactive = false
+				findTarget(Foreground.hitTest(coords))
+				next.interactive = originalInteractive
+			}
+		}
+	}
+	findTarget(excludeSprite)
+
+	restoreDragTargets()
+	return targetSprite
+}
+
 let dragTargets = []
+let validDragTargets = []
 const makeDraggable = (sprite, entity, helpText) => {
 	let initialCoords = null
 	let initialSpriteCoords = null
@@ -155,6 +202,7 @@ const makeDraggable = (sprite, entity, helpText) => {
 			y: sprite.y - coords.y / scale
 		}
 		update(entity)
+		validDragTargets = dragTargets.filter(target => target.isValid(entity))
 	}
 
 	const move = coords => {
@@ -164,37 +212,10 @@ const makeDraggable = (sprite, entity, helpText) => {
 	}
 
 	const end = async coords => {
-		// mark all possible drag targets interactive
-		const dragTargetsInteractivity = dragTargets.map(({ sprite }) => {
-			const original = sprite.interactive
-			sprite.interactive = true
-			return {
-				original,
-				sprite
-			}
-		})
-
-		// recursively find target by hit testing through the tree
-		let targetSprite = null
-		const findTarget = next => {
-			if (next) {
-				if (next !== sprite && dragTargets.map(({ sprite }) => sprite).includes(next)) {
-					targetSprite = next
-				} else {
-					let originalInteractive = next.interactive
-					next.interactive = false
-					findTarget(Foreground.hitTest(coords))
-					next.interactive = originalInteractive
-				}
-			}
-		}
-		findTarget(sprite)
-
-		// restore their interactivity
-		dragTargetsInteractivity.forEach(({ sprite, original }) => sprite.interactive = original)
+		const targetSprite = findDragTargets(coords, sprite)
 
 		if (targetSprite) {
-			const result = await dragTargets.find(target => targetSprite === target.sprite).fn(entity, sprite.getGlobalPosition())
+			const result = await validDragTargets.find(target => targetSprite === target.sprite).fn(entity, sprite.getGlobalPosition())
 			sprite.interactive = true
 			if (result) {
 				update(null)
@@ -205,14 +226,16 @@ const makeDraggable = (sprite, entity, helpText) => {
 		sprite.x = initialSpriteCoords.x
 		sprite.y = initialSpriteCoords.y
 		update(null)
+		validDragTargets = []
 	}
 
 	return on(sprite, start, move, end, { helpText })
 }
 
-const makeDragTarget = (sprite, fn) => {
+const makeDragTarget = (sprite, isValid, fn) => {
 	const target = {
 		sprite,
+		isValid,
 		fn
 	}
 	dragTargets.push(target)

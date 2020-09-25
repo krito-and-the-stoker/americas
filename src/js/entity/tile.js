@@ -85,6 +85,9 @@ const terrainName = tile =>
 		(tile.mountains ? 'mountains' :
 			(tile.hills ? 'hills' : tile.name))
 
+// TODO: Have proper names for terrain
+const displayName = tile => terrainName(tile)
+
 const keys = ['id', 'forest', 'treeVariation', 'hills', 'hillVariation', 'mountains', 'mountainVariation', 'riverSmall', 'riverLarge', 'bonus', 'plowed', 'road', 'coast', 'discoveredBy', 'rumors', 'harvestedBy', 'currentlyVisible']
 const type = ['int','bool',   'int',           'bool',  'bool',          'bool',      'bool',              'bool',       'bool',       'bool',  'bool',   'bool', 'bool',  'references',   'bool',   'reference',   'bool']
 const save = tile => compress([
@@ -219,11 +222,6 @@ const load = (data, index) => {
 	})
 
 	return tile	
-}
-
-const temperature = (tile, season) => {
-	// 1 is summer, -1 is winter
-	return tile.temperature + season * tile.seasonStrength
 }
 
 
@@ -497,5 +495,5 @@ export default {
 	closest,
 	get,
 	serializableCopy,
-	temperature
+	displayName
 }

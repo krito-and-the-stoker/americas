@@ -55,38 +55,32 @@ const createBuilding = (colony, building) => {
 	container.building.addChild(sprite)
 
 	const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {
-		const { unit } = args
-		if (!args.colonist && !unit) {
-			return false
-		}
-
+		const { unit, colonist } = args
 		if (colony.disbanded) {
-			return false
+			return
 		}
 
-		if (unit && !unit.properties.canFound) {
-			return false
+		if (colonist) {
+			Colony.canEmploy(colony, name, colonist.expert)
+			return `Let colonist work in ${name}`
 		}
 
-
-		let colonist = args.colonist
-		if (!Colony.canEmploy(colony, name, unit ? unit.expert : colonist.expert)) {
-			return false
+		if (unit && unit.properties.canFound) {
+			return `Join colony and start working in ${name}`
 		}
-		if (unit) {
+	}, ({ colonist, unit }) => {
+		if (unit) {		
 			if (unit.colonist) {
 				JoinColony(colony, unit.colonist)
 			} else {
 				BecomeColonist(colony, unit)
 			}
-			colonist = unit.colonist
+			Colonist.beginColonyWork(unit.colonist, name)
 		}
 
 		if (colonist) {
 			Colonist.beginColonyWork(colonist, name)
-			return true
 		}
-		return false
 	})
 
 	const createColonistView = (productionBonus, colonist, work) => {

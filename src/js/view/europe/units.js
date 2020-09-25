@@ -158,10 +158,12 @@ const create = () => {
 		rect.height)
 	container.units.addChild(leaveShipZone)
 
-	const unsubscribeDrag = Drag.makeDragTarget(leaveShipZone, args => {
-		if (args.passenger) {
-			LoadUnitFromShipToEurope(args.passenger)
+	const unsubscribeDrag = Drag.makeDragTarget(leaveShipZone, ({ passenger }) => {
+		if (passenger) {
+			return `Unload ${Unit.name(passenger)} to docks`
 		}
+	}, ({ passenger }) => {
+		LoadUnitFromShipToEurope(passenger)
 	})
 
 	const unsubscribe = [

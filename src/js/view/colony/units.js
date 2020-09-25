@@ -123,6 +123,16 @@ const create = (colony, closeScreen, originalDimensions) => {
 
 		const unsubscribeDragTarget = Drag.makeDragTarget(sprite, args => {
 			const { good, amount, colony } = args
+
+			if (args.unit && amount && good) {
+				return `Equip ${Unit.name(unit)} with ${amount} ${good} from ${Unit.name(args.unit)}`
+			}
+
+			if (colony) {
+				return `Equip ${Unit.name(unit)} with ${amount} ${good} from ${colony.name}`
+			}
+		}, args => {
+			const { good, amount, colony } = args
 			const fromUnit = args.unit
 			if (fromUnit) {
 				EquipUnitFromShip(fromUnit, unit, { good, amount })

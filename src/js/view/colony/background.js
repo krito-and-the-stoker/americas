@@ -34,16 +34,19 @@ const create = colony => {
 		0.25 * originalDimensions.y)		
 	container.addChild(leaveColonyZone)
 
-	const unsubscribeDragTarget = Drag.makeDragTarget(leaveColonyZone, args => {
-		if (args.colonist && args.colonist.colony) {
-			if (args.colonist.colony && args.colonist.colony.colonists.length > 1) {
-				UnjoinColony(args.colonist)
-			} else {
-				return false
-			}
+	const unsubscribeDragTarget = Drag.makeDragTarget(leaveColonyZone, ({ colonist, passenger }) => {
+		if (colonist && colonist.colony && colonist.colony.colonists.length > 1) {
+			return 'Leave colony'
 		}
-		if (args.passenger) {
-			LoadUnitFromShipToColony(colony, args.passenger)
+		if (passenger) {
+			return 'Unload passenger'
+		}
+	}, ({ colonist, passenger }) => {
+		if (colonist) {
+			UnjoinColony(colonist)
+		}
+		if (passenger) {
+			LoadUnitFromShipToColony(colony, passenger)
 		}
 	})
 

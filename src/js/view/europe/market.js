@@ -109,14 +109,16 @@ const create = (originalDimensions) => {
 	dragTarget.hitArea = new PIXI.Rectangle(0, -119, originalDimensions.x, 119)
 	const unsubscribeDragTarget = Drag.makeDragTarget(dragTarget, args => {
 		const { good, unit, amount } = args
-		if (good && unit) {
-			SellInEurope(unit, { good, amount })
-			const rate = Market.bid(good)
-			const price = rate * amount
-			text.text = `Sold ${amount} ${good} at ${rate}\nTotal: ${price}`
-			text.x = originalDimensions.x / 2 - text.width / 2
-			return false
+		if (good && unit && amount) {
+			return `Sell ${amount} ${good} in Europe`
 		}
+	}, args => {
+		const { good, unit, amount } = args
+		SellInEurope(unit, { good, amount })
+		const rate = Market.bid(good)
+		const price = rate * amount
+		text.text = `Sold ${amount} ${good} at ${rate}\nTotal: ${price}`
+		text.x = originalDimensions.x / 2 - text.width / 2
 
 		return false
 	})

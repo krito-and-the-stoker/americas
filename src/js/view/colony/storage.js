@@ -4,6 +4,7 @@ import Goods from 'data/goods'
 
 import Storage from 'entity/storage'
 import Trade from 'entity/trade'
+import Unit from 'entity/unit'
 
 import Click from 'input/click'
 import Drag from 'input/drag'
@@ -93,7 +94,14 @@ const create = (colony, originalDimensions) => {
 	const dragTarget = new PIXI.Container()
 	container.addChild(dragTarget)
 	dragTarget.hitArea = new PIXI.Rectangle(0, originalDimensions.y - 121, originalDimensions.x, 121)
-	const unsubscribeDrag = Drag.makeDragTarget(dragTarget, args => {
+	const unsubscribeDrag = Drag.makeDragTarget(dragTarget, ({ good, amount, unit }) => {
+		if (good && amount && unit) {
+			return `Unload ${amount} ${good} from ${Unit.name(unit)}`
+		}
+		if (!good && unit && !unit.properties.cargo) {
+			return `Unequip ${Unit.name(unit)}`
+		}
+	}, args => {
 		const { good, unit, amount } = args
 		if (good && unit) {
 			LoadFromShipToColony(colony, unit, { good, amount })

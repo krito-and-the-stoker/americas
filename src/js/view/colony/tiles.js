@@ -182,47 +182,40 @@ const create = (colony, originalDimensions) => {
 				}
 			})
 
-			const destroyDrag = Drag.makeDragTarget(sprites[sprites.length - 1], async args => {
-				const { unit } = args
+			const destroyDrag = Drag.makeDragTarget(sprites[sprites.length - 1], ({ unit, colonist }) => {
 				if (colony.disbanded) {
-					return false
-				}
-				if (unit && !unit.properties.canFound) {
-					return false
-				}
-				if (tile.harvestedBy && tile.harvestedBy.type === 'settlement' && !tile.settlement) {
-					await buyLandDialog(tile, colony, tile.harvestedBy)
-				}
-				if (!tile.harvestedBy) {
-					if (!unit && !args.colonist) {
-						return false
-					}
-
-					let colonist = args.colonist
-					if (unit) {
-						if (unit.colonist) {
-							JoinColony(colony, unit.colonist)
-						} else {
-							BecomeColonist(colony, unit)
-						}
-						colonist = unit.colonist
-					}
-					if (colonist) {					
-						const options = Tile.fieldProductionOptions(tile, colonist)
-						if (options.length === 0) {
-							if (!colonist.colony) {
-								UnjoinColony(colonist)
-							}
-							return false
-						}
-						const decision = options.reduce((best, pack) => pack.amount >= best.amount ? pack : best, options[0])
-						Colonist.beginFieldWork(colonist, tile, decision.good)
-
-						return true
-					}
+					return
 				}
 
-				return false
+				if (tile.harvestedBy) {
+					return
+				}
+
+				if (unit && unit.properties.canFound) {
+					return `Join Colony and start working on ${Tile.displayName(tile)}`
+				}
+
+				if (colonist) {
+					return `Work on ${Tile.displayName(tile)}`
+				}
+			}, args => {
+				const { unit } = args
+
+				let colonist = args.colonist
+				if (unit) {
+					if (unit.colonist) {
+						JoinColony(colony, unit.colonist)
+					} else {
+						BecomeColonist(colony, unit)
+					}
+					colonist = unit.colonist
+				}
+
+				const options = Tile.fieldProductionOptions(tile, colonist)
+				const decision = options.reduce((best, pack) => pack.amount > best.amount ? pack : best, { amount: 0, good: 'food' })
+				Colonist.beginFieldWork(colonist, tile, decision.good)
+
+				return true
 			})
 
 			return [

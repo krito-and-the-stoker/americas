@@ -23,6 +23,26 @@ const create = unit => {
 
 	const unsubscribeDrag = unit.command.id !== 'tradeRoute' &&
 		Drag.makeDragTarget(sprite, args => {
+			if (args.good) {
+				if (args.buyFromEurope) {
+					return `Buy 100 ${args.good}`
+				}
+				if (args.colony) {
+					return `Load ${args.good} onto ${Unit.name(unit)}`
+				}
+				if (args.unit && args.unit !== unit) {
+					return `Load ${args.good} from ${Unit.name(args.unit)} to ${Unit.name(unit)}`
+				}
+			}
+
+			if (args.unit && args.unit !== unit) {
+				return `Embark ${Unit.name(args.unit)} on ${Unit.name(unit)}`
+			}
+
+			if (args.passenger) {
+				return `Move ${Unit.name(args.passenger)} to ${Unit.name(unit)}`
+			}
+		}, args => {
 			const { good, amount, buyFromEurope, colony, passenger } = args
 			const fromUnit = args.unit
 			if (good) {
