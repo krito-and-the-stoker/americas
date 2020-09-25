@@ -60,21 +60,23 @@ const createBuilding = (colony, building) => {
 			return
 		}
 
-		if (colonist) {
-			Colony.canEmploy(colony, name, colonist.expert)
+		if (colonist && Colony.canEmploy(colony, name, colonist.expert)) {
 			return `Let colonist work in ${name}`
 		}
 
 		if (unit && unit.properties.canFound) {
-			return `Join colony and start working in ${name}`
+			if (!unit.colonist) {
+				const colonist = Colonist.create(unit)
+				Unit.update.colonist(unit, colonist)				
+			}
+
+			if (Colony.canEmploy(colony, name, unit.colonist.expert)) {
+				return `Join colony and start working in ${name}`
+			}
 		}
 	}, ({ colonist, unit }) => {
 		if (unit) {		
-			if (unit.colonist) {
-				JoinColony(colony, unit.colonist)
-			} else {
-				BecomeColonist(colony, unit)
-			}
+			JoinColony(colony, unit.colonist)
 			Colonist.beginColonyWork(unit.colonist, name)
 		}
 

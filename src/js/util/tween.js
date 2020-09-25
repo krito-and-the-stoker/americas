@@ -9,17 +9,16 @@ const initialize = () => {
 	requestAnimationFrame(updateTween)
 }
 
-const fadeIn = (sprite, time) => {
-	sprite.alpha = 0
+const fadeTo = (target, alpha, time) => {
 	return new Promise(resolve => {
-		new TWEEN.Tween({ alpha: 0 })
-			.to({ alpha: 1 }, time)
+		new TWEEN.Tween({ alpha: target.alpha })
+			.to({ alpha }, time)
 			.easing(TWEEN.Easing.Quadratic.In)
 			.onUpdate(({ alpha }) => {
-				sprite.alpha = alpha
+				target.alpha = alpha
 			})
 			.onStop(() => {
-				sprite.alpha = 1
+				sprite.alpha = alpha
 				resolve()
 			})
 			.onComplete(resolve)
@@ -27,19 +26,15 @@ const fadeIn = (sprite, time) => {
 	})
 }
 
-const fadeOut = (sprite, time) => new Promise(resolve => {	
+const fadeIn = (sprite, time) => {
+	sprite.alpha = 0
+	return fadeTo(sprite, 1, time)
+}
+
+const fadeOut = (sprite, time) => {
 	sprite.alpha = 1
-	new TWEEN.Tween({ alpha: 1 })
-		.to({ alpha: 0 }, time)
-		.easing(TWEEN.Easing.Quadratic.Out)
-		.onUpdate(({ alpha }) => sprite.alpha = alpha)
-		.onStop(() => {
-			sprite.alpha = 0
-			resolve()
-		})
-		.onComplete(resolve)
-		.start()
-})
+	return fadeTo(sprite, 0, time)
+}
 
 const moveTo = (sprite, to, time) => new Promise(resolve => {	
 	const from = {
@@ -99,11 +94,17 @@ const scaleTo = (sprite, scale, time) => new Promise(resolve => {
 		.start()
 })
 
+const wait = (time) => new Promise(resolve => {
+	setTimeout(resolve, time)
+})
+
 export default {
 	initialize,
 	fadeIn,
 	fadeOut,
+	fadeTo,
 	moveTo,
 	moveFrom,
-	scaleTo
+	scaleTo,
+	wait
 }

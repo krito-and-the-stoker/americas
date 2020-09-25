@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 
 import Util from 'util/util'
 import Binding from 'util/binding'
+import Tween from 'util/tween'
 
 import Input from 'input'
 import Hints from 'input/hints'
@@ -203,6 +204,7 @@ const makeDraggable = (sprite, entity, helpText) => {
 		}
 		update(entity)
 		validDragTargets = dragTargets.filter(target => target.isValid(entity))
+		Foreground.dimScreen(validDragTargets.map(target => target.sprite))
 	}
 
 	const move = coords => {
@@ -214,19 +216,19 @@ const makeDraggable = (sprite, entity, helpText) => {
 	const end = async coords => {
 		const targetSprite = findDragTargets(coords, sprite)
 
+		let result = false
 		if (targetSprite) {
-			const result = await validDragTargets.find(target => targetSprite === target.sprite).fn(entity, sprite.getGlobalPosition())
-			sprite.interactive = true
-			if (result) {
-				update(null)
-				return
-			}
+			result = await validDragTargets.find(target => targetSprite === target.sprite).fn(entity, sprite.getGlobalPosition())
 		}
+
+		if (!result) {
+			Tween.moveTo(sprite, initialSpriteCoords, 100)
+		}
+
 		sprite.interactive = true
-		sprite.x = initialSpriteCoords.x
-		sprite.y = initialSpriteCoords.y
 		update(null)
 		validDragTargets = []
+		Foreground.undimScreen()
 	}
 
 	return on(sprite, start, move, end, { helpText })
