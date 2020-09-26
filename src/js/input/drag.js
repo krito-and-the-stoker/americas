@@ -204,7 +204,7 @@ const makeDraggable = (sprite, entity, helpText) => {
 		}
 		update(entity)
 		validDragTargets = dragTargets.filter(target => target.isValid(entity))
-		Foreground.dimScreen(validDragTargets.map(target => target.sprite))
+		Foreground.dimScreen(Util.flatten(validDragTargets.map(target => target.sprites)))
 	}
 
 	const move = coords => {
@@ -234,9 +234,17 @@ const makeDraggable = (sprite, entity, helpText) => {
 	return on(sprite, start, move, end, { helpText })
 }
 
-const makeDragTarget = (sprite, isValid, fn) => {
+const makeDragTarget = (spriteArgument, isValid, fn) => {
+	let sprite = spriteArgument
+	let sprites = [spriteArgument]
+	if (Util.isArray(spriteArgument)) {
+		sprite = spriteArgument[spriteArgument.length - 1]
+		sprites = spriteArgument
+	}
+
 	const target = {
 		sprite,
+		sprites,
 		isValid,
 		fn
 	}

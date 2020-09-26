@@ -182,7 +182,7 @@ const create = (colony, originalDimensions) => {
 				}
 			})
 
-			const destroyDrag = Drag.makeDragTarget(sprites[sprites.length - 1], ({ unit, colonist }) => {
+			const destroyDrag = Drag.makeDragTarget(sprites, ({ unit, colonist }) => {
 				if (colony.disbanded) {
 					return
 				}
