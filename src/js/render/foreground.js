@@ -211,6 +211,8 @@ const dimScreen = (exceptions = []) => {
 	})
 
 	currentExceptions = exceptions
+
+	return screenForeground
 }
 
 const undimScreen = () => {

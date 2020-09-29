@@ -192,25 +192,35 @@ let validDragTargets = []
 const makeDraggable = (sprite, entity, helpText) => {
 	let initialCoords = null
 	let initialSpriteCoords = null
+	const clone = new PIXI.Sprite(sprite.texture)
+
 	const start = coords => {
-		const scale = Util.globalScale(sprite) / sprite.scale.x
-		initialSpriteCoords = {
-			x: sprite.x,
-			y: sprite.y
-		}
-		initialCoords = {
-			x: sprite.x - coords.x / scale,
-			y: sprite.y - coords.y / scale
-		}
 		update(entity)
 		validDragTargets = dragTargets.filter(target => target.isValid(entity))
-		Foreground.dimScreen(Util.flatten(validDragTargets.map(target => target.sprites)))
+		const screenForeground = Foreground.dimScreen(
+			Util.flatten(validDragTargets.map(target => target.sprites))
+		)
+
+		sprite.alpha = 0
+		clone.position = sprite.getGlobalPosition()
+		const cloneScale = Util.globalScale(sprite)
+		clone.scale.x = cloneScale
+		clone.scale.y = cloneScale
+		screenForeground.addChild(clone)
+
+		initialSpriteCoords = {
+			x: clone.x,
+			y: clone.y
+		}
+		initialCoords = {
+			x: clone.x - coords.x,
+			y: clone.y - coords.y
+		}
 	}
 
 	const move = coords => {
-		const scale = Util.globalScale(sprite) / sprite.scale.x
-		sprite.x = initialCoords.x + coords.x / scale
-		sprite.y = initialCoords.y + coords.y / scale
+		clone.x = initialCoords.x + coords.x
+		clone.y = initialCoords.y + coords.y
 	}
 
 	const end = async coords => {
@@ -222,10 +232,11 @@ const makeDraggable = (sprite, entity, helpText) => {
 		}
 
 		if (!result) {
-			Tween.moveTo(sprite, initialSpriteCoords, 100)
+			Tween.moveTo(clone, initialSpriteCoords, 100)
 		}
 
 		sprite.interactive = true
+		sprite.alpha = 1
 		update(null)
 		validDragTargets = []
 		Foreground.undimScreen()
