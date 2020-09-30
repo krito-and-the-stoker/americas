@@ -54,7 +54,9 @@ const createBuilding = (colony, building) => {
 	const sprite = Resources.sprite('buildings', { rectangle })
 	container.building.addChild(sprite)
 
-	const unsubscribeDrag = Drag.makeDragTarget(sprite, args => {
+	const unsubscribeDrag = Drag.makeDragTarget(() => {
+		return [sprite].concat(container.colonists.children)
+	}, args => {
 		const { unit, colonist } = args
 		if (colony.disbanded) {
 			return

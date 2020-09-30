@@ -145,7 +145,7 @@ const waitForDrag = () => new Promise(resolve => {
 let dragTargetsInteractivity = []
 const activateDragTargets = () => {
 	// mark all possible drag targets interactive
-	dragTargetsInteractivity = dragTargets.map(({ sprite }) => {
+	dragTargetsInteractivity = validDragTargets.map(({ sprite }) => {
 		const original = sprite.interactive
 		sprite.interactive = true
 		return {
@@ -197,6 +197,11 @@ const makeDraggable = (sprite, entity, helpText) => {
 	const start = coords => {
 		update(entity)
 		validDragTargets = dragTargets.filter(target => target.isValid(entity))
+			.map(target => ({
+				sprite: target.getSprite(),
+				sprites: target.getSprites(),
+				fn: target.fn
+			}))
 		const screenForeground = Foreground.dimScreen(
 			Util.flatten(validDragTargets.map(target => target.sprites))
 		)
@@ -247,16 +252,21 @@ const makeDraggable = (sprite, entity, helpText) => {
 }
 
 const makeDragTarget = (spriteArgument, isValid, fn) => {
-	let sprite = spriteArgument
-	let sprites = [spriteArgument]
+	let getSprite = () => spriteArgument
+	let getSprites = () => [spriteArgument]
 	if (Util.isArray(spriteArgument)) {
-		sprite = spriteArgument[spriteArgument.length - 1]
-		sprites = spriteArgument
+		getSprite = () => spriteArgument[0]
+		getSprites = () => spriteArgument
+	}
+
+	if (Util.isFunction(spriteArgument)) {
+		getSprite = () => spriteArgument()[0]
+		getSprites = spriteArgument
 	}
 
 	const target = {
-		sprite,
-		sprites,
+		getSprite,
+		getSprites,
 		isValid,
 		fn
 	}
