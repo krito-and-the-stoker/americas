@@ -232,6 +232,7 @@ const makeDraggable = (sprite, entity, helpText) => {
 		}
 
 		if (!result) {
+			// TODO: doesn't work, because clone is in foreground which is being cleared on undim
 			Tween.moveTo(clone, initialSpriteCoords, 100)
 		}
 
