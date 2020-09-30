@@ -196,12 +196,12 @@ const makeDraggable = (sprite, entity, helpText) => {
 
 	const start = coords => {
 		update(entity)
-		validDragTargets = dragTargets.filter(target => target.isValid(entity))
-			.map(target => ({
+		validDragTargets = dragTargets.map(target => ({
+				hint: target.isValid(entity),
 				sprite: target.getSprite(),
 				sprites: target.getSprites(),
 				fn: target.fn
-			}))
+			})).filter(target => !!target.hint)
 		const screenForeground = Foreground.dimScreen(
 			Util.flatten(validDragTargets.map(target => target.sprites))
 		)
@@ -223,9 +223,20 @@ const makeDraggable = (sprite, entity, helpText) => {
 		}
 	}
 
+	let releaseHint = null
 	const move = coords => {
 		clone.x = initialCoords.x + coords.x
 		clone.y = initialCoords.y + coords.y
+
+		const targetSprite = findDragTargets(coords, sprite)
+		if (targetSprite) {		
+			releaseHint = Hints.add({
+				action: 'release',
+				text: validDragTargets.find(target => target.sprite === targetSprite).hint
+			})
+		} else {
+			Util.execute(releaseHint)
+		}
 	}
 
 	const end = async coords => {
@@ -246,6 +257,7 @@ const makeDraggable = (sprite, entity, helpText) => {
 		update(null)
 		validDragTargets = []
 		Foreground.undimScreen()
+		Util.execute(releaseHint)
 	}
 
 	return on(sprite, start, move, end, { helpText })

@@ -6,6 +6,7 @@ import Foreground from 'render/foreground'
 import Dom from 'render/dom'
 
 import Hints from 'input/hints'
+import Drag from 'input/drag'
 
 import Help from 'view/help'
 import Europe from 'view/europe'
@@ -35,16 +36,25 @@ const initialize = () => {
 
 	const formatHint = hint => ({
 			drag: 'Drag: ',
+			release: '',
 			click: 'Click: '
 		}[hint.action] + hint.text)
 	Foreground.listen.screen(screen => 
-		Hints.listen(hints => {
-			const view = h('div.bottom-panel', screen && screen.params.name === 'colony'
-				? hints.map(hint => h('div', formatHint(hint)))
-				: [])
+		screen && screen.params.name === 'colony' && Drag.listen(current => current
+			? Hints.listen(hints => {				
+				const view = h('div.bottom-panel', hints
+					.filter(hint => hint.action === 'release')
+					.map(hint => h('div', formatHint(hint))))
 
-			bottomPanel = patch(bottomPanel, view)
-		}))
+				bottomPanel = patch(bottomPanel, view)
+			})
+			:	Hints.listen(hints => {
+				const view = h('div.bottom-panel', hints
+					.filter(hint => hint.action !== 'release')
+					.map(hint => h('div', formatHint(hint))))
+
+				bottomPanel = patch(bottomPanel, view)
+			})))
 
 	// let centeredMessage = document.createElement('div')
 	// document.body.appendChild(centeredMessage)
