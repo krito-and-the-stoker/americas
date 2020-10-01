@@ -63,8 +63,8 @@ const openScreen = (view, params) => {
 		params
 	})
 	if (!view.priority) {
-		layer.app.stage.addChild(screenBackground)
 		layer.app.stage.addChild(view.container)
+		layer.app.stage.addChild(dimmingContainer)
 		layer.app.stage.addChild(screenForeground)
 		// layer.app.stage.removeChild(notifications)
 	}
@@ -72,8 +72,8 @@ const openScreen = (view, params) => {
 	layer.app.stage.addChild(context)
 	layer.app.stage.addChild(dialog)
 	if (view.priority) {
-		layer.app.stage.addChild(screenBackground)
 		layer.app.stage.addChild(view.container)
+		layer.app.stage.addChild(dimmingContainer)
 		layer.app.stage.addChild(screenForeground)
 	} else {
 		Background.hide()
@@ -88,7 +88,7 @@ const closeScreen = () => {
 		}
 		Events.trigger('closeScreen', state.screen.params)
 		Context.cancelAll()
-		layer.app.stage.removeChild(screenBackground)
+		layer.app.stage.removeChild(dimmingContainer)
 		layer.app.stage.removeChild(state.screen.container)
 		layer.app.stage.removeChild(screenForeground)
 		layer.app.stage.addChild(container)
@@ -140,15 +140,15 @@ const updateScale = (newScale) => {
 	container.scale.set(newScale, newScale)	
 }
 
-let screenBackground, screenForeground
+let dimmingContainer, screenForeground
 const initialize = () => {
 	layer = new Layer({
 		transparent: true
 	})
 
-	screenBackground = new PIXI.Container()
+	dimmingContainer = new PIXI.Container()
 	const black = Resources.sprite('white')
-	screenBackground.addChild(black)
+	dimmingContainer.addChild(black)
 	
 	screenForeground = new PIXI.Container()
 
@@ -187,21 +187,19 @@ const doRenderWork = () => layer.app.render()
 let currentExceptions = []
 const dimScreen = (exceptions = []) => {
 	if (hasOpenScreen()) {
-		Tween.fadeTo(state.screen.container, 0.6, 200)
+		const black = dimmingContainer.children[0]
+		black.tint = 0x000000
+		black.alpha = 0
+		black.x = 0
+		black.y = 0
+		const dimensions = View.getDimensions()
+		black.width = dimensions.x
+		black.height = dimensions.y
+		Tween.fadeTo(black, 0.4, 200)
 	}
 
-	const black = screenBackground.children[0]
-	black.tint = 0x000000
-	black.x = 0
-	black.y = 0
-	const dimensions = View.getDimensions()
-	black.width = dimensions.x
-	black.height = dimensions.y
-	Tween.fadeIn(black, 200)
-
-
 	exceptions.forEach(sprite => {
-		sprite.alpha = 0
+		// sprite.alpha = 0
 		const clone = new PIXI.Sprite(sprite.texture)
 		clone.position = sprite.getGlobalPosition()
 		const scale = Util.globalScale(sprite)
@@ -216,15 +214,14 @@ const dimScreen = (exceptions = []) => {
 }
 
 const undimScreen = () => {
+	const black = dimmingContainer.children[0]
 	if (hasOpenScreen()) {
-		Tween.fadeTo(state.screen.container, 1.0, 200)
+		Tween.fadeTo(black, 0.0, 200)
 	}
 
-	const black = screenBackground.children[0]
-	Tween.fadeOut(black, 200)
 
 	currentExceptions.forEach(sprite => {
-		sprite.alpha = 1
+		// sprite.alpha = 1
 	})
 	currentExceptions = []
 	screenForeground.removeChildren()
