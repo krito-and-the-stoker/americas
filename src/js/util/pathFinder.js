@@ -1,4 +1,6 @@
 import { FibonacciHeap } from '@tyriar/fibonacci-heap'
+import MovementCosts from 'data/movementCosts'
+import Units from 'data/units'
 
 import Util from 'util/util'
 import Message from 'util/message'
@@ -13,8 +15,6 @@ import Unit from 'entity/unit'
 
 
 const CANNOT_MOVE_COST = 500
-const MIN_TERRAIN_COST = 0.33
-const MIN_SEA_COST = 1
 
 const tile = MapEntity.tile
 
@@ -92,11 +92,12 @@ const allNeighbors = ({ x, y }) => tile({ x, y })
 const getNeighborsForUnit = unit => node => allNeighbors(node.coords)
 	.filter(tile => tile.area === Unit.area(unit) || tile.colony)
 	.filter(tile => unit.properties.canExplore || tile.discoveredBy.includes(unit.owner))
+	.filter(tile => unit.properties.travelType !== 'supply' || tile.road)
 	.map(tile => tile.mapCoordinates)
 const getAllNeighbors = () => node => allNeighbors(node.coords)
 	.map(tile => tile.mapCoordinates)
 
-const getCostForUnit = unit => (n1, n2) => Tile.movementCost(n1.coords, n2.coords)
+const getCostForUnit = unit => (n1, n2) => Tile.movementCost(n1.coords, n2.coords, unit)
 const mapToCoords = path => path.map(node => node.coords)
 const reduceToDistance = path => path[path.length - 1].cost
 
@@ -105,10 +106,14 @@ const findNextToArea = (toCoords, unit) => {
 	const unitArea = Unit.area(unit)
 	const isTarget = node => tile(node.coords) && tile(node.coords).area === unitArea
 
+	const measuringUnit = {
+		properties: Units.airline
+	}
+
 	const path = runDijksrta(toCoords,
 		isTarget,
 		getAllNeighbors(),
-		getCostForUnit(unit),
+		getCostForUnit(measuringUnit),
 		relativeEstimate())
 
 	return path && path.length > 0 && path[path.length - 1].coords
@@ -151,7 +156,7 @@ const findPath = Cache.create({
 			isTarget,
 			getNeighborsForUnit(unit),
 			getCostForUnit(unit),
-			relativeEstimate(fromCoords, toCoords, unit.domain))
+			relativeEstimate(fromCoords, toCoords, unit))
 
 		return mapToCoords(path)
 	}
@@ -179,7 +184,7 @@ const distance = Cache.create({
 			isTarget,
 			getNeighborsForUnit(unit),
 			getCostForUnit(unit),
-			relativeEstimate(fromCoords, toCoords, unit.domain)))
+			relativeEstimate(fromCoords, toCoords, unit)))
 	}
 })
 
@@ -192,16 +197,17 @@ const distanceToEurope = (coords, unit) => {
 }
 
 
-const relativeEstimate = (startCoords, targetCoords, domain) => coords =>
-	(startCoords && targetCoords
-		? estimate(coords, targetCoords, domain) - estimate(startCoords, targetCoords, domain)
+const relativeEstimate = (startCoords, targetCoords, unit) => coords =>
+	(startCoords && targetCoords && unit
+		? estimate(coords, targetCoords, unit.properties.travelType) - estimate(startCoords, targetCoords, unit.properties.travelType)
 		: 0)
-const estimate = (v, w, domain) => {
-	if (domain === 'sea') {
-		return MIN_SEA_COST * LA.distanceManhatten(v, w)
-	}
 
-	return MIN_TERRAIN_COST * LA.distanceManhatten(v, w)
+const MIN_COST_TABLE = Object.entries(MovementCosts).reduce((obj, [type, costs]) => ({
+	...obj,
+	[type]: Util.min(Object.values(costs))
+}), {})
+const estimate = (v, w, travelType) => {
+	return MIN_COST_TABLE[travelType] * LA.distanceManhatten(v, w)
 }
 
 

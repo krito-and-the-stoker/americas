@@ -27,7 +27,7 @@ const create = (unit, colony) => {
 			desiredAmount = -unit.equipment.food
 		} else if (unit.colony === colony) {
 			// as unit in colony replenish quickly towards maximum
-			desiredAmount = IN_COLONY_FACTOR * foodCost* deltaTime * PRODUCTION_BASE_FACTOR
+			desiredAmount = IN_COLONY_FACTOR * foodCost * deltaTime * PRODUCTION_BASE_FACTOR
 		} else {
 			// as unit in the field next to colony, replenish only what is eaten
 			desiredAmount = foodCost * deltaTime * PRODUCTION_BASE_FACTOR

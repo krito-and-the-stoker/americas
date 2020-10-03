@@ -276,31 +276,39 @@ const down = tile => MapEntity.tile({
 
 const isNextTo = (tile, other) => neighbors(tile).includes(other)
 
-const movementCost = (fromCoords, toCoords) => {
+const movementCost = (fromCoords, toCoords, unit) => {
 	const direction = LA.subtract(toCoords, fromCoords)
 	const distance = LA.distanceManhatten(fromCoords, toCoords)
 	const normDirection = LA.normalizeManhatten(direction)
 	const fromRoundCoords = LA.round(LA.subtract(toCoords, normDirection))
 	const from = MapEntity.tile(fromRoundCoords)
 	const to = MapEntity.tile(toCoords)
+	const costTable = MovementCosts[unit.properties.travelType]
 
-	if (to.domain === 'land' && from.domain === 'land' && to.river && from.river) {
-		return distance * MovementCosts.river
+	if (to.domain === 'land' && from.domain === 'land' && to.river && from.river && isNextTo(from, to) && costTable.river) {
+		return distance * costTable.river
 	}
-	if (from.road && to.road) {
-		return distance * MovementCosts.road
+	if (from.road && to.road && costTable.road) {
+		return distance * costTable.road
 	}
 	if (to.colony) {
-		if (from.domain === 'sea') {
-			return distance * MovementCosts.harbour
-		} else {
-			return distance * MovementCosts.colony
+		if (from.domain === 'sea' && costTable.harbour) {
+			return distance * costTable.harbour
+		} 
+		if (from.domain === 'land' && costTable.colony) {
+			return distance * costTable.colony
 		}
 	}
-	if (from.domain === 'sea' || to.domain === 'sea') {
-		return distance * MovementCosts.ocean
+	if (to.domain === 'sea' && costTable.ocean) {
+		return distance * costTable.ocean
 	}
-	return distance * MovementCosts[to.terrainName]
+
+	if (costTable[to.terrainName]) {
+		return distance * costTable[to.terrainName]
+	}
+
+	Message.warn(`No valid movement cost found for ${unit.properties.travelType} to ${to.terrainName}`)
+	return distance * 100
 }
 
 const decideCoastTerrain = tile => {

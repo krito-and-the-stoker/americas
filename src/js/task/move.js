@@ -72,7 +72,7 @@ const create = unit => {
 		const direction = LA.subtract(target.mapCoordinates, unit.mapCoordinates)
 		const normDirection =LA.normalizeManhatten(direction)
 		const fromCoords = LA.round(LA.subtract(target.mapCoordinates, normDirection))
-		const movementCost = Tile.movementCost(fromCoords, target.mapCoordinates)
+		const movementCost = Tile.movementCost(fromCoords, target.mapCoordinates, unit)
 		const speed = Unit.speed(unit)
 		const progress = deltaTime * speed / (movementCost * Time.MOVE_BASE_TIME)
 
@@ -113,7 +113,7 @@ const create = unit => {
 				const nextDirection = LA.subtract(nextTarget.mapCoordinates, unit.mapCoordinates)
 				const nextNormDirection =LA.normalizeManhatten(nextDirection)
 				const nextFromCoords = LA.round(LA.subtract(nextTarget.mapCoordinates, nextNormDirection))
-				const nextMovementCost = Tile.movementCost(nextFromCoords, nextTarget.mapCoordinates)
+				const nextMovementCost = Tile.movementCost(nextFromCoords, nextTarget.mapCoordinates, unit)
 				const nextProgress = (progress - distance) * deltaTime * speed / (nextMovementCost * Time.MOVE_BASE_TIME)
 
 				// move again
