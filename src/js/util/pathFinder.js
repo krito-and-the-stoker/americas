@@ -90,11 +90,13 @@ const allNeighbors = ({ x, y }) => tile({ x, y })
 // 	})]
 
 const getNeighborsForUnit = unit => node => allNeighbors(node.coords)
-	.filter(tile => tile.area === Unit.area(unit) || tile.colony)
+	.filter(tile => tile.area === Unit.area(unit) || tile.colony || unit.properties.travelType === 'airline')
 	.filter(tile => unit.properties.canExplore || tile.discoveredBy.includes(unit.owner))
-	.filter(tile => unit.properties.travelType !== 'supply' || tile.road)
 	.map(tile => tile.mapCoordinates)
 const getAllNeighbors = () => node => allNeighbors(node.coords)
+	.map(tile => tile.mapCoordinates)
+const getNeighborsForSupply = () => node => allNeighbors(node.coords)
+	.filter(tile => tile.road || tile.colony)
 	.map(tile => tile.mapCoordinates)
 
 const getCostForUnit = unit => (n1, n2) => Tile.movementCost(n1.coords, n2.coords, unit)
@@ -106,6 +108,7 @@ const findNextToArea = (toCoords, unit) => {
 	const unitArea = Unit.area(unit)
 	const isTarget = node => tile(node.coords) && tile(node.coords).area === unitArea
 
+	// use airline travel to find the shortest way
 	const measuringUnit = {
 		properties: Units.airline
 	}
@@ -163,11 +166,14 @@ const findPath = Cache.create({
 })
 
 const NEAR_COLONY_COST = 6
-const findNearColony = unit => {
-	const isTarget = node => node.cost > NEAR_COLONY_COST || (tile(node.coords) && tile(node.coords).colony)
+const findNearColony = (unit, maxCost = NEAR_COLONY_COST) => {
+	const isTarget = node => node.cost > maxCost || (tile(node.coords) && tile(node.coords).colony)
+
 	const result = runDijksrta(unit.mapCoordinates,
 		isTarget,
-		getNeighborsForUnit(unit),
+		unit.properties.travelType === 'supply'
+			? getNeighborsForSupply()
+			: getNeighborsForUnit(unit),
 		getCostForUnit(unit),
 		relativeEstimate()).pop()
 

@@ -7,6 +7,7 @@
 			"default": "Caravel"
 		},
 		"domain": "sea",
+		"travelType": "water",
 		"canFound": false,
 		"speed": 12,
 		"cargo": 2,
@@ -23,6 +24,7 @@
 			"default": "Privateer"
 		},
 		"domain": "sea",
+		"travelType": "sea",
 		"canFound": false,
 		"speed": 18,
 		"cargo": 3,
@@ -40,6 +42,7 @@
 			"default": "Frigate"
 		},
 		"domain": "sea",
+		"travelType": "sea",
 		"canFound": false,
 		"speed": 15,
 		"cargo": 5,
@@ -57,6 +60,7 @@
 			"default": "Galleon"
 		},
 		"domain": "sea",
+		"travelType": "sea",
 		"canFound": false,
 		"canTransportTreasure": true,
 		"speed": 10,
@@ -75,6 +79,7 @@
 			"default": "Merchantman"
 		},
 		"domain": "sea",
+		"travelType": "sea",
 		"canFound": false,
 		"speed": 14,
 		"cargo": 4,
@@ -92,6 +97,7 @@
 		},
 		"cargo": 1,
 		"domain": "land",
+		"travelType": "wagon",
 		"canFound": false,
 		"speed": 1,
 		"radius": 0.5,
@@ -107,6 +113,7 @@
 			"damaged": "Damaged Artillery"
 		},
 		"domain": "land",
+		"travelType": "wagon",
 		"canFound": false,
 		"support": 1,
 		"speed": 1,
@@ -126,6 +133,7 @@
 			"pioneer": "Hardened Pioneer"
 		},
 		"domain": "land",
+		"travelType": "foot",
 		"canFound": true,
 		"canTerraform": true,
 		"speed": 1,
@@ -187,6 +195,7 @@
 			"scout": "Seasoned Scout"
 		},
 		"domain": "land",
+		"travelType": "foot",
 		"canFound": true,
 		"speed": 1,
 		"radius": 0.5,
@@ -203,6 +212,7 @@
 			"scout": "Seasoned Scout"
 		},
 		"domain": "land",
+		"travelType": "horse",
 		"canFound": true,
 		"speed": 4,
 		"combat": 1,
@@ -220,6 +230,7 @@
 			"soldier": "Veteran Soldier"
 		},
 		"domain": "land",
+		"travelType": "foot",
 		"canFound": true,
 		"equipment": 50,
 		"speed": 1,
@@ -239,6 +250,7 @@
 			"soldier": "Veteran Dragoon"
 		},
 		"domain": "land",
+		"travelType": "horse",
 		"canFound": true,
 		"speed": 4,
 		"combat": 3,
@@ -256,6 +268,7 @@
 			"default": "Treasure"
 		},
 		"domain": "land",
+		"travelType": "wagon",
 		"canFound": false,
 		"speed": 1,
 		"radius": 0.5
@@ -270,6 +283,7 @@
 			"missionary": "Jesuit Missionary"
 		},
 		"domain": "land",
+		"travelType": "foot",
 		"canFound": true,
 		"canMission": true,
 		"speed": 2,
@@ -285,6 +299,7 @@
 			"default": "Native Warrior"
 		},
 		"domain": "land",
+		"travelType": "nativeFoot",
 		"speed": 2,
 		"combat": 1,
 		"radius": 1.5,
@@ -298,6 +313,7 @@
 			"default": "Armed Native Warrior"
 		},
 		"domain": "land",
+		"travelType": "nativeFoot",
 		"speed": 2,
 		"combat": 2,
 		"radius": 1.5,
@@ -311,6 +327,7 @@
 			"default": "Mounted Native Warrior"
 		},
 		"domain": "land",
+		"travelType": "nativeHorse",
 		"speed": 5,
 		"combat": 2,
 		"radius": 2.5,
@@ -324,9 +341,17 @@
 			"default": "Mounted Armed Native Warrior"
 		},
 		"domain": "land",
+		"travelType": "nativeHorse",
 		"speed": 5,
 		"combat": 3,
 		"radius": 2.5,
 		"canExplore": true
+	},
+	"supplytrack": {
+		"travelType": "supply",
+		"range": 20
+	},
+	"airline": {
+		"travelType": "airline"
 	}
 }

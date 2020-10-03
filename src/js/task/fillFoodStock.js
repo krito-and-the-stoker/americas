@@ -9,10 +9,15 @@ import Unit from 'entity/unit'
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const IN_COLONY_FACTOR = 10
 
-const create = (unit, colony) => {
-	const isColonistInColony = () => unit.colonist && unit.colonist.colony === colony
+const create = (unit, tile) => {
+	const isColonistInColony = () => unit.colonist && tile.colony && unit.colonist.colony === tile.colony
 
 	const update = (currentTime, deltaTime) => {
+		const colony = Tile.supportingColony(tile)
+		if (!colony) {
+			return true
+		}
+
 		if (unit.equipment.food > Unit.UNIT_FOOD_CAPACITY) {
 			const pack = { good: 'food', amount: unit.equipment.food - Unit.UNIT_FOOD_CAPACITY }
 			Storage.transfer(unit.equipment, colony.storage, pack)

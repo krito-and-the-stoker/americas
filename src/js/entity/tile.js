@@ -2,12 +2,14 @@ import Terrain from 'data/terrain.json'
 import MovementCosts from 'data/movementCosts'
 import Yield from 'data/yield'
 import Goods from 'data/goods'
+import Units from 'data/units'
 
 import Member from 'util/member'
 import Record from 'util/record'
 import Binding from 'util/binding'
 import LA from 'util/la'
 import Message from 'util/message'
+import PathFinder from 'util/pathFinder'
 
 import Owner from 'entity/owner'
 import MapEntity from 'entity/map'
@@ -291,6 +293,9 @@ const movementCost = (fromCoords, toCoords, unit) => {
 	if (from.road && to.road && costTable.road) {
 		return distance * costTable.road
 	}
+	if (to.road && costTable.halfRoad) {
+		return distance * costTable.halfRoad
+	}
 	if (to.colony) {
 		if (from.domain === 'sea' && costTable.harbour) {
 			return distance * costTable.harbour
@@ -406,6 +411,23 @@ const neighborString = (tile, other) => {
 	return result(tile.mapCoordinates, other.mapCoordinates)
 }
 
+const supportingColony = tile => {
+	if (tile.colony) {
+		return tile.colony
+	}
+
+	const supplyUnit = {
+		mapCoordinates: tile.mapCoordinates,
+		properties: Units.supplytrack,
+		domain: tile.domain,
+		movement: {
+			target: tile
+		}
+	}
+
+	return PathFinder.findNearColony(supplyUnit, supplyUnit.properties.range)
+}
+
 const closest = coords => MapEntity.tile({ x: Math.round(coords.x), y: Math.round(coords.y) })
 
 const add = {
@@ -503,5 +525,6 @@ export default {
 	closest,
 	get,
 	serializableCopy,
-	displayName
+	displayName,
+	supportingColony
 }

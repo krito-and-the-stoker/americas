@@ -224,17 +224,7 @@ const initialize = unit => {
 							!vehicle && Time.schedule(ConsumeFood.create(unit))),
 
 						listen.mapCoordinates(unit, Binding.map(coords => Tile.closest(coords),
-							tile => tile && Tile.radius(tile).map(other => [
-								Tile.listen.colony(other, colony =>
-									// supply from colony
-									colony && Time.schedule(FillFoodStock.create(unit, colony))),
-								!unit.colony && Tile.listen.units(other, units =>
-									units
-										.filter(u => u.owner === unit.owner && u.properties.cargo > 0 && !u.colony)
-										.map(transport =>
-											// supply from transports
-											Time.schedule(SupplyFromTransport.create(transport, unit))))
-							])))
+							tile => tile && Time.schedule(FillFoodStock.create(unit, tile))))
 					]))
 	]
 }
