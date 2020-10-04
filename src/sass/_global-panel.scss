@@ -32,6 +32,19 @@
     }
   }
 
+  .map {
+    margin-top: 10px;
+    div {
+      padding-left: 15px;
+    }
+    .map-title {
+      padding-left: 0;
+    }
+    .click {
+      cursor: pointer;
+    }
+  }
+
   &.isMap {
     bottom: 0;
     flex-direction: column;

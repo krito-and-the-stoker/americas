@@ -1,6 +1,7 @@
 import TWEEN from '@tweenjs/tween.js'
 
 import Tween from 'util/tween'
+import Binding from 'util/binding'
 
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
@@ -80,31 +81,79 @@ const tileAt = ({ x, y }) => {
 	return MapEntity.tile(tileCoords)	
 }
 
+const state = {
+	forestVisibility: true,
+	supportOverlayColoring: false
+}
 
-let forestVisibility = true
+const listen = {
+	forestVisibility: fn => Binding.listen(state, 'forestVisibility', fn),
+	supportOverlayColoring: fn => Binding.listen(state, 'supportOverlayColoring', fn)
+}
+
+const update = {
+	forestVisibility: value => Binding.update(state, 'forestVisibility', value),
+	supportOverlayColoring: value => Binding.update(state, 'supportOverlayColoring', value)
+}
+
+
 const hideForest = () => {
-	forestVisibility = false
+	update.forestVisibility(false)
 	MapEntity.get().tiles
 		.filter(tile => tile.forest)
 		.forEach(tile => Tile.update.tile(tile))
 	Background.render()
 }
 const showForest = () => {
-	forestVisibility = true
+	update.forestVisibility(true)
 	MapEntity.get().tiles
 		.filter(tile => tile.forest)
 		.forEach(tile => Tile.update.tile(tile))
 	Background.render()
 }
 const toggleForestVisibility = () => {
-	forestVisibility = !forestVisibility
+	update.forestVisibility(!state.forestVisibility)
 	MapEntity.get().tiles
 		.filter(tile => tile.forest)
 		.forEach(tile => Tile.update.tile(tile))
 	Background.render()
 }
-const isForestVisible = () => forestVisibility
+const isForestVisible = () => state.forestVisibility
 
+const showSupportOverlay = () => {
+	update.supportOverlayColoring(true)
+	Background.render()
+}
+const hideSupportOverlay = () => {
+	update.supportOverlayColoring(false)
+	Background.render()
+}
+
+const toggleSupportOverlay = () => {
+	if (state.supportOverlayColoring) {
+		hideSupportOverlay()
+	} else {
+		showSupportOverlay()
+	}
+}
+
+const tileTint = (tile) => {
+	if (state.supportOverlayColoring) {
+		if (tile.colony) {
+			return 0x00FF00
+		}
+		if (tile.domain === 'sea') {
+			return 0xFFFFFF
+		}
+		if (Tile.supportingColony(tile)) {
+			return 0xFFFF00
+		}
+
+		return 0xFFCCCC
+	}
+
+	return 0xFFFFFF
+}
 
 
 const sanitizeScale = scale => (scale < MIN_SCALE ? MIN_SCALE : (scale > MAX_SCALE ? MAX_SCALE : scale))
@@ -257,13 +306,16 @@ const initialize = () => {
 
 export default {
 	zoom,
+	listen,
 	zoomBy,
 	sanitizeScale,
 	moveMap,
+	tileTint,
 	centerAt,
 	initialize,
 	hideForest,
 	showForest,
 	isForestVisible,
-	toggleForestVisibility
+	toggleForestVisibility,
+	toggleSupportOverlay
 }
