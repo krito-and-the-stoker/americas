@@ -203,11 +203,7 @@ const create = (colony, originalDimensions) => {
 
 				let colonist = args.colonist
 				if (unit) {
-					if (unit.colonist) {
-						JoinColony(colony, unit.colonist)
-					} else {
-						BecomeColonist(colony, unit)
-					}
+					JoinColony(colony, unit.colonist)
 					colonist = unit.colonist
 				}
 

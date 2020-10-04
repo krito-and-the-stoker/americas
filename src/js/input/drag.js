@@ -192,7 +192,7 @@ let validDragTargets = []
 const makeDraggable = (sprite, entity, helpText) => {
 	let initialCoords = null
 	let initialSpriteCoords = null
-	const clone = new PIXI.Sprite(sprite.texture)
+	let clone = new PIXI.Sprite(sprite.texture)
 
 	const start = coords => {
 		update(entity)
@@ -207,6 +207,7 @@ const makeDraggable = (sprite, entity, helpText) => {
 		)
 
 		sprite.alpha = 0
+		clone = new PIXI.Sprite(sprite.texture)
 		clone.position = sprite.getGlobalPosition()
 		const cloneScale = Util.globalScale(sprite)
 		clone.scale.x = cloneScale

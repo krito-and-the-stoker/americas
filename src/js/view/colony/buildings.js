@@ -67,11 +67,6 @@ const createBuilding = (colony, building) => {
 		}
 
 		if (unit && unit.properties.canFound) {
-			if (!unit.colonist) {
-				const colonist = Colonist.create(unit)
-				Unit.update.colonist(unit, colonist)				
-			}
-
 			if (Colony.canEmploy(colony, name, unit.colonist.expert)) {
 				return `Join colony and start working in ${name}`
 			}
