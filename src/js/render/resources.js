@@ -5,7 +5,7 @@ import Message from 'util/message'
 let counter = 2
 const logDownloadProgress = () => {
 	counter += 1
-	Message.log(`Downloading files (${counter}/${numberOfAssets()})...`)		
+	Message.log(`Downloading assets (${counter}/${numberOfAssets()})...`)		
 }
 
 const queueTextureVerbose = async path => new Promise(resolve => {

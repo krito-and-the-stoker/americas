@@ -166,19 +166,32 @@ const findPath = Cache.create({
 })
 
 const NEAR_COLONY_COST = 6
-const findNearColony = (unit, maxCost = NEAR_COLONY_COST) => {
-	const isTarget = node => node.cost > maxCost || (tile(node.coords) && tile(node.coords).colony)
+const findNearColony = Cache.create({
+	name: 'nearest colony cache',
+	keyFn: (unit) => `${unit.mapCoordinates.x}x${unit.mapCoordinates.y}x${unit.properties.travelType}`,
+	initFn:	(wipeCache) => {
+		MapEntity.get().tiles
+			.filter(tile => tile.domain === 'land')
+			.forEach(tile => {
+				Tile.listen.road(tile, () => wipeCache())
+				Tile.listen.forest(tile, () => wipeCache())
+				Tile.listen.colony(tile, () => wipeCache())
+			})
+	},
+	valueFn: (unit, maxCost = NEAR_COLONY_COST) => {
+		const isTarget = node => node.cost > maxCost || (tile(node.coords) && tile(node.coords).colony)
 
-	const result = runDijksrta(unit.mapCoordinates,
-		isTarget,
-		unit.properties.travelType === 'supply'
-			? getNeighborsForSupply()
-			: getNeighborsForUnit(unit),
-		getCostForUnit(unit),
-		relativeEstimate()).pop()
+		const result = runDijksrta(unit.mapCoordinates,
+			isTarget,
+			unit.properties.travelType === 'supply'
+				? getNeighborsForSupply()
+				: getNeighborsForUnit(unit),
+			getCostForUnit(unit),
+			relativeEstimate()).pop()
 
-	return tile(result.coords) && tile(result.coords).colony
-}
+		return tile(result.coords) && tile(result.coords).colony
+	}
+})
 
 const distance = Cache.create({
 	...caching,

@@ -44,6 +44,24 @@ class MapView{
 		return tile ? this.assembleTile(tile) : []
 	}
 
+	tintXY(coords) {
+		const tile = MapEntity.tile(coords)
+		if (tile) {
+			if (tile.colony) {
+				return 0x00FF00
+			}
+			if (tile.domain === 'sea') {
+				return 0xFFFFFF
+			}
+			if (Tile.supportingColony(tile)) {
+				return 0xFFFF00
+			}
+
+			return 0xFFCCCC
+		}
+		return 0x000000
+	}
+
 	renderBaseBlock(center){
 		let indices = []
 

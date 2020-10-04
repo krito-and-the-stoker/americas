@@ -20,7 +20,6 @@ let tiles = null
 let scale = 1
 let renderRequested = false
 let visible = true
-let visibleTiles = []
 
 const get = () => ({
 	numTiles,
@@ -205,7 +204,6 @@ const doRenderWork = () => {
 	containers.forEach(container => {
 		container.removeChildren()
 	})
-	visibleTiles = []
 
 	if (visible) {
 		const numTilesX = Math.ceil(layer.width / 64 / scale) + 1
@@ -223,13 +221,14 @@ const doRenderWork = () => {
 		xIndices.forEach(x => {
 			yIndices.forEach(y => {
 				const index = y * numTiles.x + x
+				const coords = { x, y }
 
-				visibleTiles.push(tiles[index])
-				tiles[index].update(tiles[index], { x, y })
+				tiles[index].update(tiles[index], coords)
 				if (!tiles[index].initialized) {
 					tiles[index].initialize(tiles[index])
 				}
-				tiles[index].sprites.forEach((sprite, i) => {
+				tiles[index].sprites.forEach((sprite) => {
+					sprite.tint = MapView.instance.tintXY(coords)
 					tiles[index].container.addChild(sprite)
 				})
 			})

@@ -416,6 +416,10 @@ const supportingColony = tile => {
 		return tile.colony
 	}
 
+	if (tile.domain === 'sea') {
+		return null
+	}
+
 	const supplyUnit = {
 		mapCoordinates: tile.mapCoordinates,
 		properties: Units.supplytrack,
