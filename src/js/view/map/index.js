@@ -146,10 +146,10 @@ const tileTint = (tile) => {
 			return 0xFFFFFF
 		}
 		if (Tile.supportingColony(tile)) {
-			return 0xFFFF00
+			return 0xCCFF77
 		}
 
-		return 0xFFCCCC
+		return 0xFFDDDD
 	}
 
 	return 0xFFFFFF
