@@ -45,6 +45,7 @@ test('scheduleInstead', () => {
 
 test('clearSchedule and reschedule', () => {
 	const target = { x: 5, y: 1 }
+	const secondTarget = { x: 2, y: 1 }
 	const otherTarget = { x: 1, y: 4}
 	const unit = Unit.create('settler', { x: 1, y: 1 })
 	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: target }))
@@ -52,8 +53,9 @@ test('clearSchedule and reschedule', () => {
 	Util.range(9).forEach(() => Time.advance(1000))
 	Commander.clearSchedule(unit.commander)
 
+	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: secondTarget }))
 	Util.range(30).forEach(() => Time.advance(1000))
-	expect(unit.mapCoordinates).toEqual({ x: 2, y: 1})
+	expect(unit.mapCoordinates).toEqual(secondTarget)
 
 	Commander.scheduleInstead(unit.commander, MoveTo.create({ unit, coords: otherTarget }))
 

@@ -4,6 +4,7 @@ import Time from 'timeline/time'
 
 import Storage from 'entity/storage'
 import Unit from 'entity/unit'
+import Tile from 'entity/tile'
 
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
