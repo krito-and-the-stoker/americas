@@ -75,6 +75,9 @@ const create = unit => {
 		const movementCost = Tile.movementCost(fromCoords, target.mapCoordinates, unit)
 		const speed = Unit.speed(unit)
 		const progress = deltaTime * speed / (movementCost * Time.MOVE_BASE_TIME)
+		if (isNaN(movementCost)) {
+			console.warn('movementcost is nan, hell will break lose!', unit, fromCoords, target)
+		}
 
 		// move
 		Unit.update.mapCoordinates(unit, LA.madd(unit.mapCoordinates, progress, normDirection))

@@ -1,3 +1,5 @@
+import Units from 'data/units'
+
 import LA from 'util/la'
 import PathFinder from 'util/pathFinder'
 import Message from 'util/message'
@@ -69,7 +71,15 @@ export default Factory.commander('MoveTo', {
 					} else {
 						displayName += ' to planes'
 					}
-					const closeColony = PathFinder.findNearColony(unit)
+					const measuringUnit = {
+						mapCoordinates: targetTile.mapCoordinates,
+						properties: Units.airline,
+						domain: targetTile.domain,
+						movement: {
+							target: targetTile
+						}
+					}
+					const closeColony = PathFinder.findNearColony(measuringUnit)
 					if (closeColony) {
 						displayName += ` near ${closeColony.name}`
 					}

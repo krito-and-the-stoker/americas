@@ -149,7 +149,7 @@ const tileTint = (tile) => {
 			return 0xCCFF77
 		}
 
-		return 0xFFCCCC
+		return 0xFFAAAA
 	}
 
 	return 0xFFFFFF
