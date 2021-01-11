@@ -70,7 +70,7 @@ const create = (colony, building, colonist) => {
 			Storage.update(colony.productionRecord, { good: production.good, amount: productionAmount / scale })
 		}
 		if (production.type === 'crosses') {
-			Europe.update.crosses(productionAmount)
+			Colony.update.crosses(colony, productionAmount)
 			Storage.update(colony.productionRecord, { good: production.good, amount: productionAmount / scale })
 		}
 

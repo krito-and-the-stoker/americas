@@ -18,6 +18,7 @@ import Owner from 'entity/owner'
 
 import Harvest from 'task/harvest'
 import Consume from 'task/consume'
+import ColonistConsumption from 'task/colonistConsumption'
 import Deteriorate from 'task/deteriorate'
 import GrowHorses from 'task/growHorses'
 import FeedHorses from 'task/feedHorses'
@@ -75,6 +76,7 @@ const update = {
 	construction: (colony, value) => Binding.update(colony, 'construction', value),
 	buildings: (colony, value) => Binding.update(colony, 'buildings', value),
 	bells: (colony, value) => Binding.update(colony, 'bells', colony.bells + value),
+	crosses: (colony, value) => Binding.update(colony, 'crosses', colony.crosses + value),
 	growth: (colony, value) => Binding.update(colony, 'growth', colony.growth + value),
 	productionBonus: (colony, value) => Binding.update(colony, 'productionBonus', value),
 }
@@ -138,6 +140,7 @@ const initialize = colony => {
 		Tile.listen.tile(tile, () =>
 			Tile.colonyProductionGoods(tile).map(good =>
 				Time.schedule(Harvest.create(colony, tile, good)))),
+		Time.schedule(ColonistConsumption.create(colony)),
 		listen.colonists(colony, colonists =>
 			listen.bells(colony, Binding.map(() => rebels(colony).number,
 				rebelColonists => Time.schedule(Consume.create(colony, 'bells', rebelColonists))))),
@@ -208,6 +211,7 @@ const create = (coords, owner) => {
 			target: 'harbour',
 		},
 		bells: 0,
+		crosses: 0,
 		growth: 0
 	}
 	colony.storage = Storage.create()
@@ -255,6 +259,7 @@ const save = colony => ({
 		target: colony.construction.target
 	},
 	bells: colony.bells,
+	crosses: colony.crosses,
 	growth: colony.growth,
 	owner: Record.reference(colony.owner)
 })
@@ -271,6 +276,9 @@ const load = colony => {
 	// legacy games load
 	if (!colony.growth) {
 		colony.growth = 0
+	}
+	if (!colony.crosses) {
+		colony.crosses = 0
 	}
 
 	colony.colonists.forEach((colonist, index) => Record.dereferenceLazy(colonist, entity => colony.colonists[index] = entity))

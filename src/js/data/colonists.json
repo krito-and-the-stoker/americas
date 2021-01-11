@@ -1,0 +1,186 @@
+{
+  "default": {
+    "consumption": {
+      "wood": 1,
+      "furs": 1,
+      "crosses": 1
+    }
+  },
+  "servant": {
+    "consumption": {
+      "wood": 1
+    }
+  },
+  "criminal": {
+    "consumption": {
+      "bells": 1
+    }
+  },
+  "farmer": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cotton": 1,
+      "crosses": 1
+    }
+  },
+  "sugarplanter": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cotton": 1,
+      "tobacco": 1,
+      "crosses": 1
+    }
+  },
+  "tobaccoplanter": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cotton": 1,
+      "tobacco": 1,
+      "crosses": 1
+    }
+  },
+  "cottonplanter": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cotton": 1,
+      "tobacco": 1,
+      "crosses": 1
+    }
+  },
+  "furtrapper": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cotton": 1,
+      "tobacco": 1,
+      "crosses": 1
+    }
+  },
+  "lumberjack": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cotton": 1,
+      "crosses": 1
+    }
+  },
+  "oreminer": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cotton": 1,
+      "crosses": 1
+    }
+  },
+  "silverminer": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cotton": 1,
+      "crosses": 1
+    }
+  },
+  "fisher": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cotton": 1,
+      "crosses": 1
+    }
+  },
+  "distiller": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cloth": 1,
+      "tobacco": 1,
+      "sugar": 1,
+      "tools": 1,
+      "crosses": 1
+    }
+  },
+  "tobacconist": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cloth": 1,
+      "cigars": 1,
+      "sugar": 1,
+      "crosses": 1
+    }
+  },
+  "weaver": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cloth": 1,
+      "cigars": 1,
+      "sugar": 1,
+      "crosses": 1
+    }
+  },
+  "furtrader": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cloth": 1,
+      "cigars": 1,
+      "sugar": 1,
+      "crosses": 1
+    }
+  },
+  "carpenter": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cloth": 1,
+      "tobacco": 1,
+      "sugar": 1,
+      "crosses": 1
+    }
+  },
+  "blacksmith": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cloth": 1,
+      "tobacco": 1,
+      "sugar": 1,
+      "crosses": 1
+    }
+  },
+  "gunsmith": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cloth": 1,
+      "tobacco": 1,
+      "sugar": 1,
+      "crosses": 1
+    }
+  },
+  "preacher": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cloth": 1,
+      "cigars": 1,
+      "rum": 1,
+      "crosses": 1
+    }
+  },
+  "statesman": {
+    "consumption": {
+      "wood": 1,
+      "coats": 1,
+      "cloth": 1,
+      "cigars": 1,
+      "rum": 1,
+      "crosses": 1
+    }
+  }
+}

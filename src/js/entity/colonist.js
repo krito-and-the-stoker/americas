@@ -95,6 +95,8 @@ const create = unit => {
 			profession: null,
 			progress: 0
 		},
+		power: Math.random(),
+		mood: 0,
 		work: null,
 		beingEducated: false
 	}
@@ -103,6 +105,10 @@ const create = unit => {
 
 	Record.add('colonist', colonist)
 	return colonist
+}
+
+const power = colonist => {
+	return colonist.mood + colonist.power
 }
 
 const disband = colonist => {
@@ -122,6 +128,8 @@ const save = colonist => ({
 	unit: Record.reference(colonist.unit),
 	expert: colonist.expert,
 	education: colonist.education,
+	power: colonist.power,
+	mood: colonist.mood,
 	work: colonist.work ? {
 		type: colonist.work.type,
 		good: colonist.work.good,
@@ -136,6 +144,8 @@ const load = colonist => {
 
 	colonist.colony = Record.dereference(colonist.colony)
 	colonist.unit = Record.dereference(colonist.unit)
+	colonist.power = colonist.power || Math.random()
+	colonist.mood = colonist.mood || 0
 
 	Record.entitiesLoaded(() => {	
 		initialize(colonist)
@@ -166,6 +176,7 @@ export default {
 	beginFieldWork,
 	beginColonyWork,
 	stopWorking,
+	power,
 	listen,
 	update,
 }
