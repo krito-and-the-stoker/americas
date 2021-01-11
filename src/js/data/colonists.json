@@ -5,6 +5,9 @@
       "base": {
         "wood": 1
       },
+      "bonus": {
+        "crosses": 1
+      },
       "promote": {
         "farmer": {     
           "cotton": 1,

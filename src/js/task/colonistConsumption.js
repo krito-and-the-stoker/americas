@@ -1,4 +1,5 @@
 import Colonists from 'data/colonists'
+import Units from 'data/units'
 
 import Time from 'timeline/time'
 
@@ -10,13 +11,13 @@ import Colonist from 'entity/colonist'
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
 const sortByPower = (one, other) => Colonist.power(other) - Colonist.power(one)
-const consumeGoods = (colony, deltaTime, consumptionObject) => Object.entries(consumptionObject).reduce((result, [good, amount]) => {
+const consumeGoods = (colony, deltaTime, consumptionObject) => Object.entries(consumptionObject).reduce((obj, [good, amount]) => {
   const scale = PRODUCTION_BASE_FACTOR * deltaTime
   const scaledAmount = Math.min(scale * amount, colony.storage[good] || {
     'bells': colony.bells,
     'crosses': colony.crosses
   }[good] || 0)
-  if (scaledAmount > 0) {        
+  if (scaledAmount > 0) {
     if (good === 'bells') {
       Colony.update.bells(colony, -scaledAmount)
     }
@@ -27,10 +28,18 @@ const consumeGoods = (colony, deltaTime, consumptionObject) => Object.entries(co
       Storage.update(colony.storage, { good, amount: -scaledAmount })
     }
     Storage.update(colony.productionRecord, { good, amount: -scaledAmount / scale })
-    return true
+    return {
+      ...obj,
+      [good]: scaledAmount / scale,
+      result: obj.result
+    }
   }
-  return false
-}, true)
+  return {
+    ...obj,
+    [good]: -amount,
+    result: false
+  }
+}, { result: true })
 
 
 const create = (colony, good, amount) => {
@@ -41,29 +50,60 @@ const create = (colony, good, amount) => {
       const consumption = (Colonists[colonist.expert] || Colonists.default).consumption
       const currentProfession = Colonist.profession(colonist)
 
-      const satisfied = consumeGoods(colony, deltaTime, consumption.base)
+      colonist.satisfied = consumeGoods(colony, deltaTime, consumption.base)
 
-      const promoting = satisfied
-        && (consumption.promote[currentProfession] || false)
-        && consumeGoods(colony, deltaTime, consumption.promote[currentProfession])
+      if (!colonist.satisfied.result) {
+        colonist.promoting = {
+          result: false,
+          reason: 'Colonist is not satisfied'
+        }
+      } else if (!consumption.promote[currentProfession]) {
+        colonist.promoting = {
+          result: false,
+          reason: `A ${Units.settler.name[colonist.expert]} cannot be promoted to a ${Units.settler.name[currentProfession]}.`
+        }
+      } else {
+        colonist.promoting = consumeGoods(colony, deltaTime, consumption.promote[currentProfession])
+      }
 
-      const bonus = satisfied
-        && !promoting
-        && (consumption.bonus || false)
-        && consumeGoods(colony, deltaTime, consumption.bonus)
+      if (!colonist.satisfied.result) {
+        colonist.bonus = {
+          result: false,
+          reason: 'Colonist is not satisfied'
+        }
+      } else if (!consumption.bonus) {
+        colonist.bonus = {
+          result: false,
+          reason: `A ${Units.settler.name[colonist.expert] || 'Settler'} cannot receive a bonus.`
+        } 
+      } else if (colonist.promoting.result) {
+        colonist.bonus = {
+          result: false,
+          reason: 'Colonist is already promoting'
+        }
+      } else {
+        colonist.bonus = consumeGoods(colony, deltaTime, consumption.bonus)
+      }
 
       colonist.mood = 0
-      if (!satisfied) {
+      if (!colonist.satisfied.result) {
         colonist.mood = -1
       }
-      if (promoting) {
+      if (colonist.promoting.result) {
         colonist.mood = 1
       }
-      if (bonus) {
+      if (colonist.bonus.result) {
         colonist.mood = 1
       }
 
-      console.log(colony.name, colonist.expert, Colonist.power(colonist), { currentProfession, satisfied, promoting, bonus })
+      console.log(colony.name, {
+        profession: currentProfession,
+        expert: colonist.expert,
+        power: Colonist.power(colonist),
+        satisfied: colonist.satisfied,
+        promoting: colonist.promoting,
+        bonus: colonist.bonus
+      })
     })
 
     return true
