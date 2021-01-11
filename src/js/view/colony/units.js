@@ -159,7 +159,7 @@ const create = (colony, closeScreen, originalDimensions) => {
 
 	const unsubscribeLandUnits = Colony.listenEach.units(colony, (unit, added) =>
 		unit.domain === 'land' && !unit.properties.cargo && Unit.listen.colonist(unit, colonist =>
-				colonist && Colonist.listen.colony(colonist, colony => 
+				(!colonist && drawLandUnit(unit, added)) || Colonist.listen.colony(colonist, colony => 
 					!colony && drawLandUnit(unit, added))))
 
 	const unsubscribe = [
