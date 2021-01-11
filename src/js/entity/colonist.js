@@ -1,3 +1,7 @@
+import Colonists from 'data/colonists'
+import Goods from 'data/goods'
+import Buildings from 'data/buildings'
+
 import Record from 'util/record'
 import Binding from 'util/binding'
 import Util from 'util/util'
@@ -95,6 +99,7 @@ const create = unit => {
 			profession: null,
 			progress: 0
 		},
+		promotion: {},
 		power: Math.random(),
 		mood: 0,
 		work: null,
@@ -108,7 +113,22 @@ const create = unit => {
 }
 
 const power = colonist => {
-	return colonist.mood + colonist.power
+	return colonist.mood + colonist.power + Colonists[profession(colonist)].power
+}
+
+const profession = colonist => {
+	if (!colonist.work) {
+		return 'settler'
+	}
+
+  let currentProfession = colonist.work.type === 'Field'
+    ? Goods[colonist.work.good].expert
+    : Goods[Buildings[colonist.work.building].production.good].expert
+  if (currentProfession === 'farmer' && colonist.work.tile.domain === 'sea') {
+    currentProfession = 'fisher'
+  }	
+
+  return currentProfession
 }
 
 const disband = colonist => {
@@ -177,6 +197,7 @@ export default {
 	beginColonyWork,
 	stopWorking,
 	power,
+	profession,
 	listen,
 	update,
 }

@@ -1,186 +1,484 @@
 {
   "default": {
+    "power": 1,
     "consumption": {
-      "wood": 1,
-      "furs": 1,
-      "crosses": 1
+      "base": {
+        "wood": 1
+      },
+      "promote": {
+        "farmer": {     
+          "cotton": 1,
+          "crosses": 1
+        },
+        "sugarplaner": {     
+          "cotton": 1,
+          "crosses": 1
+        },
+        "tobaccoplanter": {     
+          "cotton": 1,
+          "crosses": 1
+        },
+        "cottonplanter": {     
+          "furs": 1,
+          "crosses": 1
+        },
+        "furtrapper": {     
+          "furs": 1,
+          "crosses": 1
+        },
+        "lumberjack": {     
+          "furs": 1,
+          "crosses": 1
+        },
+        "oreminer": {
+          "crosses": 1
+        },
+        "silverminer": {     
+          "crosses": 1
+        },
+        "fisher": {     
+          "furs": 1,
+          "crosses": 1
+        }
+      },
+      "demote": "servant"
     }
   },
   "servant": {
+    "power": 0,
     "consumption": {
-      "wood": 1
+      "base": {},
+      "promote": {
+        "settler": {
+          "wood": 1
+        }
+      },
+      "demote": "criminal"
     }
   },
   "criminal": {
+    "power": 0,
     "consumption": {
-      "bells": 1
+      "base": {},
+      "promote": {
+        "servant": {
+          "bells": 1
+        }
+      }
     }
   },
   "farmer": {
+    "power": 2,
     "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cotton": 1,
-      "crosses": 1
-    }
-  },
-  "sugarplanter": {
-    "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cotton": 1,
-      "tobacco": 1,
-      "crosses": 1
-    }
-  },
-  "tobaccoplanter": {
-    "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cotton": 1,
-      "tobacco": 1,
-      "crosses": 1
-    }
-  },
-  "cottonplanter": {
-    "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cotton": 1,
-      "tobacco": 1,
-      "crosses": 1
-    }
-  },
-  "furtrapper": {
-    "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cotton": 1,
-      "tobacco": 1,
-      "crosses": 1
-    }
-  },
-  "lumberjack": {
-    "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cotton": 1,
-      "crosses": 1
-    }
-  },
-  "oreminer": {
-    "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cotton": 1,
-      "crosses": 1
-    }
-  },
-  "silverminer": {
-    "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cotton": 1,
-      "crosses": 1
-    }
+      "base": {
+        "wood": 1,
+        "cotton": 1,
+        "crosses": 1
+      },
+      "bonus": {
+        "furs": 1
+      },
+      "promote": {
+        "carpenter": {
+          "tools": 1,
+          "coats": 1
+        },
+        "preacher": {
+          "coats": 1,
+          "sugar": 1,
+          "tobacco": 1,
+          "cloth": 1
+        }
+      }
+    },
+    "demote": "settler"
   },
   "fisher": {
+    "power": 2,
     "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cotton": 1,
-      "crosses": 1
-    }
+      "base": {
+        "wood": 1,
+        "furs": 1,
+        "crosses": 1
+      },
+      "bonus": {
+        "cotton": 1
+      },
+      "promote": {
+        "carpenter": {
+          "tools": 1,
+          "coats": 1,
+          "cotton": 1
+        },
+        "preacher": {
+          "coats": 1,
+          "sugar": 1,
+          "tobacco": 1,
+          "cloth": 1
+        }
+      }
+    },
+    "demote": "settler"
+  },
+  "sugarplanter": {
+    "power": 3,
+    "consumption": {
+      "base": {
+        "wood": 1,
+        "crosses": 1,
+        "cotton": 1
+      },
+      "bonus": {
+        "furs": 1
+      },
+      "promote": {
+        "distiller": {
+          "cloth": 1,
+          "tobacco": 1
+        }
+      }
+    },
+    "demote": "settler"
   },
   "distiller": {
+    "power": 5,
     "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cloth": 1,
-      "tobacco": 1,
-      "sugar": 1,
-      "tools": 1,
-      "crosses": 1
-    }
+      "base": {
+        "wood": 1,
+        "cloth": 1,
+        "tobacco": 1
+      },
+      "bonus": {
+        "coats": 1
+      },
+      "promote": {
+        "preacher": {
+          "sugar": 1,
+          "coats": 1
+        },
+        "statesman": {
+          "rum": 1,
+          "cigars": 1,
+          "cloth": 1
+        }
+      }
+    },
+    "demote": "sugarplanter"
+  },
+  "tobaccoplanter": {
+    "power": 3,
+    "consumption": {
+      "base": {
+        "wood": 1,
+        "crosses": 1,
+        "cotton": 1
+      },
+      "bonus": {
+        "furs": 1
+      },
+      "promote": {
+        "tobacconist": {
+          "coats": 1,
+          "sugar": 1
+        }
+      }
+    },
+    "demote": "settler"
   },
   "tobacconist": {
+    "power": 5,
     "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cloth": 1,
-      "cigars": 1,
-      "sugar": 1,
-      "crosses": 1
-    }
+      "base": {
+        "wood": 1,
+        "coats": 1,
+        "sugar": 1
+      },
+      "bonus": {
+        "cloth": 1
+      },
+      "promote": {
+        "preacher": {
+          "tobacco": 1,
+          "cloth": 1
+        },
+        "statesman": {
+          "rum": 1,
+          "cigars": 1,
+          "cloth": 1
+        }
+      }
+    },
+    "demote": "tobaccoplanter"
+  },
+  "cottonplanter": {
+    "power": 3,
+    "consumption": {
+      "base": {
+        "wood": 1,
+        "crosses": 1,
+        "furs": 1
+      },
+      "bonus": {
+        "tobacco": 1
+      },
+      "promote": {
+        "weaver": {
+          "rum": 1
+        }
+      }
+    },
+    "demote": "settler"
   },
   "weaver": {
+    "power": 5,
     "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cloth": 1,
-      "cigars": 1,
-      "sugar": 1,
-      "crosses": 1
-    }
+      "base": {
+        "wood": 1,
+        "furs": 1,
+        "rum": 1
+      },
+      "bonus": {
+        "cigars": 1
+      },
+      "promote": {
+        "preacher": {
+          "tobacco": 1,
+          "sugar": 1,
+          "coats": 1,
+          "cloth": 1
+        },
+        "statesman": {
+          "coats": 1,
+          "cigars": 1,
+          "cloth": 1
+        }
+      }
+    },
+    "demote": "cottonplanter"
+  },
+  "furtrapper": {
+    "power": 3,
+    "consumption": {
+      "base": {
+        "wood": 1,
+        "crosses": 1
+      },
+      "bonus": {
+        "cotton": 1
+      },
+      "promote": {
+        "furtrader": {
+          "cigars": 1,
+          "cotton": 1
+        }
+      }
+    },
+    "demote": "settler"
   },
   "furtrader": {
+    "power": 5,
     "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cloth": 1,
-      "cigars": 1,
-      "sugar": 1,
-      "crosses": 1
-    }
+      "base": {
+        "wood": 1,
+        "cigars": 1,
+        "cotton": 1
+      },
+      "bonus": {
+        "cloth": 1
+      },
+      "promote": {
+        "preacher": {
+          "tobacco": 1,
+          "sugar": 1,
+          "coats": 1,
+          "cloth": 1
+        },
+        "statesman": {
+          "coats": 1,
+          "rum": 1,
+          "cloth": 1
+        }
+      }
+    },
+    "demote": "furtrapper"
+  },
+  "lumberjack": {
+    "power": 2,
+    "consumption": {
+      "base": {
+        "wood": 1,
+        "furs": 1,
+        "crosses": 1
+      },
+      "bonus": {
+        "cotton": 1
+      },
+      "promote": {
+        "carpenter": {
+          "tools": 1,
+          "coats": 1,
+          "cotton": 1
+        },
+        "blacksmith": {
+          "tools": 1,
+          "cloth": 1
+        },
+        "gunsmith": {
+          "tools": 1,
+          "coats": 1,
+          "cotton": 1
+        }
+      }
+    },
+    "demote": "settler"
+  },
+  "oreminer": {
+    "power": 2,
+    "consumption": {
+      "base": {
+        "wood": 1,
+        "crosses": 1
+      },
+      "bonus": {
+        "furs": 1
+      },
+      "promote": {
+        "carpenter": {
+          "tools": 1,
+          "coats": 1,
+          "cotton": 1
+        },
+        "blacksmith": {
+          "tools": 1,
+          "cloth": 1,
+          "furs": 1
+        },
+        "gunsmith": {
+          "tools": 1,
+          "coats": 1,
+          "cotton": 1
+        }
+      }
+    },
+    "demote": "settler"
+  },
+  "silverminer": {
+    "power": 2,
+    "consumption": {
+      "base": {
+        "wood": 1,
+        "crosses": 1
+      },
+      "bonus": {
+        "furs": 1
+      },
+      "promote": {
+        "carpenter": {
+          "tools": 1,
+          "coats": 1,
+          "cotton": 1
+        },
+        "blacksmith": {
+          "tools": 1,
+          "cloth": 1,
+          "furs": 1
+        },
+        "gunsmith": {
+          "tools": 1,
+          "coats": 1,
+          "cotton": 1
+        }
+      }
+    },
+    "demote": "settler"
   },
   "carpenter": {
+    "power": 4,
     "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cloth": 1,
-      "tobacco": 1,
-      "sugar": 1,
-      "crosses": 1
-    }
+      "base": {
+        "wood": 1,
+        "tools": 1,
+        "cotton": 1,
+        "coats": 1
+      },
+      "bonus": {
+        "cloth": 1
+      },
+      "promote": {}
+    },
+    "demote": "lumberjack"
   },
   "blacksmith": {
+    "power": 4,
     "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cloth": 1,
-      "tobacco": 1,
-      "sugar": 1,
-      "crosses": 1
-    }
+      "base": {
+        "wood": 1,
+        "tools": 1,
+        "cloth": 1,
+        "furs": 1
+      },
+      "bonus": {
+        "coats": 1
+      },
+      "promote": {}
+    },
+    "demote": "oreminer"
   },
   "gunsmith": {
+    "power": 4,
     "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cloth": 1,
-      "tobacco": 1,
-      "sugar": 1,
-      "crosses": 1
-    }
+      "base": {
+        "wood": 1,
+        "tools": 1,
+        "cotton": 1,
+        "coats": 1
+      },
+      "bonus": {
+        "cloth": 1
+      },
+      "promote": {}
+    },
+    "demote": "oreminer"
   },
   "preacher": {
+    "power": 6,
     "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cloth": 1,
-      "cigars": 1,
-      "rum": 1,
-      "crosses": 1
-    }
+      "base": {
+        "wood": 1,
+        "coats": 1,
+        "cloth": 1,
+        "tobacco": 1,
+        "sugar": 1
+      },
+      "bonus": {
+        "rum": 1,
+        "cigars": 1
+      },
+      "promote": {
+        "statesman": {
+          "cigars": 1,
+          "rum": 1,
+          "crosses": 1
+        }
+      }
+    },
+    "demote": "farmer"
   },
   "statesman": {
+    "power": 7,
     "consumption": {
-      "wood": 1,
-      "coats": 1,
-      "cloth": 1,
-      "cigars": 1,
-      "rum": 1,
-      "crosses": 1
-    }
+      "base": {
+        "wood": 1,
+        "coats": 1,
+        "cloth": 1,
+        "cigars": 1,
+        "rum": 1
+      },
+      "bonus": {
+        "crosses": 1
+      },
+      "promote": {}
+    },
+    "demote": "preacher"
   }
 }
