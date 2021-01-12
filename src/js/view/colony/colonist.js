@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 
+import Colonists from 'data/colonists'
 import Units from 'data/units'
 import Goods from 'data/goods'
 
@@ -58,12 +59,7 @@ const createDetailView = colonist => {
   }[status])
 
   const render = () => {
-    const production = colonist.work.type === 'Building'
-      ? Production.production(colonist.colony, colonist.work.building, colonist)
-      : {
-        good: colonist.work.good,
-        amount: Tile.production(colonist.work.tile, colonist.work.good, colonist)
-      }
+    const production = Colonist.production(colonist)
 
     let consumption = null
     if (colonist.work.type === 'Building') {
@@ -74,6 +70,57 @@ const createDetailView = colonist => {
       }
     }
 
+    const renderPromotions = () => {
+      const promotionData = Object.entries(colonist.promotion.promote || {})
+        // only show possible promotion targets
+        .filter(([target]) => (Colonists[colonist.expert] || Colonists.default).consumption.promote[target])
+        // show largest progress first
+        .sort(([, progressA], [, progressB]) => progressB - progressA)
+
+      if (promotionData.length === 0) {
+        return h('div.promoting')
+      }
+
+      const isPromotionTarget = target => colonist.promotionStatus === 'promoting'
+        && ((colonist.expert === 'criminal' && target === 'servant')
+          || (colonist.expert === 'servant' && target === 'settler')
+          || Colonist.profession(colonist) === target)
+
+      return h('div.promoting', [
+        h('h2', 'Promotions'),
+        h('div.targets',
+          promotionData.map(([target, progress]) => h('div.target', [
+            h('span.progress', ` ${Math.round(100 * progress)}%`.slice(-3)),
+            UnitView.html(colonist.unit, 0.75, { class: { icon: true } }),
+            h('span.arrow', '→'),
+            Dom.sprite('map', Units.settler.frame[target] || Units.settler.frame.default, 0.75, { class: { icon: true } }),
+            h('span.name', { class: { active: isPromotionTarget(target) } }, Colonist.professionName(target)),
+            (isPromotionTarget(target) && h('span.speed', `${colonist.promotion.speed}x`)) || undefined
+          ])))
+      ])
+    }
+
+    const renderDemotions = () => {
+      const demotionData = Object.entries(colonist.promotion.demote || {})
+        .sort(([, progressA], [, progressB]) => progressB - progressA)
+
+      if (demotionData.length === 0) {
+        return h('div.demoting')
+      }
+
+      return h('div.demoting', [
+        h('h2', 'Demotions'),
+        h('div.targets', 
+          demotionData.map(([target, progress]) => h('div.target', [
+            h('span.progress', ` ${Math.round(100 * progress)}%`.slice(-3)),
+            UnitView.html(colonist.unit, 0.75, { class: { icon: true } }),
+            h('span.arrow', '→'),
+            Dom.sprite('map', Units.settler.frame[target] || Units.settler.frame.default, 0.75, { class: { icon: true } }),
+            h('span.name', { class: { active: colonist.promotionStatus === 'demoting' } }, Colonist.professionName(target))
+          ])))
+      ])
+    }
+
     const view = h('div.colonist-popup',
       h('div.backdrop', { on: { click: close } },
         h('div.container', [
@@ -81,7 +128,14 @@ const createDetailView = colonist => {
           h('h1', Unit.name(colonist.unit)),
           h('div.status',
             h('div.badge', { class: { [colonist.promotionStatus]: true } }, statusText(colonist.promotionStatus))),
+
+          h('div.power', [
+            h('span.description', 'Power:'),
+            h('span.amount', Math.round(Colonist.power(colonist) * 10))
+          ]),
+
           h('div.usage', [
+            // production
             h('h2', 'Production'),
             h('div.production', production && [
               h('div.amount', `${production.amount}`),
@@ -91,6 +145,8 @@ const createDetailView = colonist => {
               h('div.produce', Array(production.amount).fill(production.good)
                 .map(good => GoodsView.html(good, 0.5, { class: { good: true } })))
               ]),
+
+            // consumption
             h('h2', 'Consumption'),
             h('div.base.col', [
               h('h2.category', { class: { active: colonist.promotion.satisfied.result } }, 'Basic'),
@@ -130,31 +186,8 @@ const createDetailView = colonist => {
               h('div.reason', colonist.promotion.promoting.reason)
             ])
           ]),
-          h('div.promoting', [
-            h('h2', 'Promotions'),
-            h('div.targets', Object.entries(colonist.promotion.promote || {})
-              .map(([target, progress]) => h('div.target', [
-                h('span.progress', ` ${Math.round(100 * progress)}%`.slice(-3)),
-                UnitView.html(colonist.unit, 0.75, { class: { icon: true } }),
-                h('span.arrow', '→'),
-                Dom.sprite('map', Units.settler.frame[target] || Units.settler.frame.default, 0.75, { class: { icon: true } }),
-                h('span.name', { class: { active: colonist.promotionStatus === 'promoting'
-                  && ((colonist.expert === 'criminal' && target === 'servant')
-                    || (colonist.expert === 'servant' && target === 'settler')
-                    || Colonist.profession(colonist) === target) } }, Colonist.professionName(target))
-              ])))
-          ]),
-          h('div.demoting', [
-            h('h2', 'Demotions'),
-            h('div.targets', Object.entries(colonist.promotion.demote || {})
-              .map(([target, progress]) => h('div.target', [
-                h('span.progress', ` ${Math.round(100 * progress)}%`.slice(-3)),
-                UnitView.html(colonist.unit, 0.75, { class: { icon: true } }),
-                h('span.arrow', '→'),
-                Dom.sprite('map', Units.settler.frame[target] || Units.settler.frame.default, 0.75, { class: { icon: true } }),
-                h('span.name', { class: { active: colonist.promotionStatus === 'demoting' } }, Colonist.professionName(target))
-              ])))
-          ])
+          renderPromotions(),
+          renderDemotions()
         ])))
 
     detailView = patch(detailView, view)

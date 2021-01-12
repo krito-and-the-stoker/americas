@@ -8,6 +8,7 @@ import Binding from 'util/binding'
 import Util from 'util/util'
 
 import Tile from 'entity/tile'
+import Production from 'entity/production'
 import Unit from 'entity/unit'
 import Building from 'entity/building'
 
@@ -148,6 +149,15 @@ const profession = colonist => {
   return currentProfession
 }
 
+const production = colonist => {
+  return colonist.work.type === 'Building'
+    ? Production.production(colonist.colony, colonist.work.building, colonist)
+    : {
+      good: colonist.work.good,
+      amount: Tile.production(colonist.work.tile, colonist.work.good, colonist)
+    }	
+}
+
 const disband = colonist => {
 	if (colonist.colony) {
 		UnjoinColony(colonist)
@@ -219,6 +229,7 @@ export default {
 	profession,
 	expertName,
 	professionName,
+	production,
 	listen,
 	update,
 }

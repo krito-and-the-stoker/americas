@@ -18,7 +18,7 @@ import Owner from 'entity/owner'
 
 import Harvest from 'task/harvest'
 import Consume from 'task/consume'
-import ColonistConsumption from 'task/colonistConsumption'
+import ColonistPromotion from 'task/colonistPromotion'
 import Deteriorate from 'task/deteriorate'
 import GrowHorses from 'task/growHorses'
 import FeedHorses from 'task/feedHorses'
@@ -141,7 +141,7 @@ const initialize = colony => {
 		Tile.listen.tile(tile, () =>
 			Tile.colonyProductionGoods(tile).map(good =>
 				Time.schedule(Harvest.create(colony, tile, good)))),
-		Time.schedule(ColonistConsumption.create(colony)),
+		Time.schedule(ColonistPromotion.create(colony)),
 		listen.colonists(colony, colonists =>
 			listen.bells(colony, Binding.map(() => rebels(colony).number,
 				rebelColonists => Time.schedule(Consume.create(colony, 'bells', rebelColonists))))),

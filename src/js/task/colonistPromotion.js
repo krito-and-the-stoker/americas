@@ -15,12 +15,19 @@ const PROMOTION_BASE_FACTOR = 1.0 / Time.PROMOTION_BASE_TIME
 const DEMOTION_BASE_FACTOR = 1.0 / Time.DEMOTION_BASE_TIME
 
 const sortByPower = (one, other) => Colonist.power(other) - Colonist.power(one)
-const consumeGoods = (colony, deltaTime, consumptionObject) => Object.entries(consumptionObject).reduce((obj, [good, amount]) => {
+const consumeGoods = (colonist, deltaTime, consumptionObject) => Object.entries(consumptionObject).reduce((obj, [good, amount]) => {
+  const colony = colonist.colony
+  const production = Colonist.production(colonist)
   const scale = PRODUCTION_BASE_FACTOR * deltaTime
-  const scaledAmount = Math.min(scale * amount, colony.storage[good] || {
-    'bells': colony.bells,
-    'crosses': colony.crosses
-  }[good] || 0)
+  let scaledAmount = scale * amount
+  if (production && production.good !== good) {
+    scaledAmount = Math.min(scaledAmount,
+    colony.storage[good] || {
+      'bells': colony.bells,
+      'crosses': colony.crosses
+    }[good] || 0)
+  }
+
   if (Math.round(scaledAmount / scale) > 0) {
     if (good === 'bells') {
       Colony.update.bells(colony, -scaledAmount)
@@ -55,22 +62,22 @@ const advancePromotion = (colonist, target, delta) => {
   }
 
   // normal speed is 1
-  let speed = 1
+  colonist.promotion.speed = 1
   // if we have a specialist in town we are faster
   if (target === 'settler' || target === 'servant' || colonist.colony.colonists.some(col => col.expert === target)) {
-    speed += 2
+    colonist.promotion.speed += 2
   }
   // if we have a school in town we are faster
   if (colonist.colony.buildings.school.level > 0) {
-    speed += colonist.colony.buildings.school.level
+    colonist.promotion.speed += colonist.colony.buildings.school.level
   }
   // if we have a teacher in town we are faster
   if (colonist.colony.colonists.some(col => col.expert === target && col.work.building === 'school')) {
-    speed += colonist.colony.buildings.school.level
+    colonist.promotion.speed *= 3
   }
 
   // promote
-  colonist.promotion.promote[target] += delta * PROMOTION_BASE_FACTOR * speed
+  colonist.promotion.promote[target] += delta * PROMOTION_BASE_FACTOR * colonist.promotion.speed
   if (colonist.promotion.promote[target] >= 1) {
     Colonist.update.expert(colonist, target)
     Unit.update.expert(colonist.unit, target)
@@ -92,7 +99,19 @@ const advanceDemotion = (colonist, target, delta) => {
     colonist.promotion.demote[target] = 0
   }
 
-  colonist.promotion.demote[target] += delta * DEMOTION_BASE_FACTOR
+  // the less goods the faster the demotion goes
+  const satisfactionLevel = Object.values(colonist.promotion.satisfied)
+    .filter(value => typeof value === 'number')
+    .reduce((all, value) => ({
+      sum: all.sum + (value > 0 ? value : 0),
+      possible: all.possible + Math.abs(value)
+    }), {
+      sum: 0,
+      possible: 0
+    })
+  const demotionStrength = 1 - satisfactionLevel.sum / satisfactionLevel.possible
+
+  colonist.promotion.demote[target] += delta * DEMOTION_BASE_FACTOR * demotionStrength
   if (colonist.promotion.demote[target] >= 1) {
     console.log('demoted', colonist.expert, 'to', target)
     const demotionTarget = target === 'settler'
@@ -120,7 +139,7 @@ const rollbackDemotion = (colonist, delta) => {
     colonist.promotion.demote = {}
   }
   Object.keys(colonist.promotion.demote).forEach(demotionTarget => {
-    colonist.promotion.demote[demotionTarget] -= delta * PROMOTION_BASE_FACTOR
+    colonist.promotion.demote[demotionTarget] -= delta * DEMOTION_BASE_FACTOR
     if (colonist.promotion.demote[demotionTarget] <= 0) {
       delete colonist.promotion.demote[demotionTarget]
     }
@@ -139,7 +158,7 @@ const create = (colony, good, amount) => {
       const consumption = colonistObject.consumption
       const currentProfession = Colonist.profession(colonist)
 
-      colonist.promotion.satisfied = consumeGoods(colony, deltaTime, consumption.base)
+      colonist.promotion.satisfied = consumeGoods(colonist, deltaTime, consumption.base)
 
       const promotionObject = consumption.promote[currentProfession]
         || consumption.promote.settler
@@ -147,23 +166,23 @@ const create = (colony, good, amount) => {
       if (!colonist.promotion.satisfied.result) {
         colonist.promotion.promoting = {
           result: false,
-          reason: 'Colonist is not satisfied'
+          reason: 'Basic goods are not fully supplied'
         }
       } else if (!promotionObject) {
         colonist.promotion.promoting = {
           result: false,
           reason: colonist.expert === currentProfession
             ? `${Colonist.expertName(colonist)} has already mastered his profession.`
-            : `A ${Colonist.expertName(colonist)} will never be promoted to ${Colonist.professionName(currentProfession)}.`
+            : `A ${Colonist.expertName(colonist)} cannot be promoted to ${Colonist.professionName(currentProfession)} directly.`
         }
       } else {
-        colonist.promotion.promoting = consumeGoods(colony, deltaTime, promotionObject)
+        colonist.promotion.promoting = consumeGoods(colonist, deltaTime, promotionObject)
       }
 
       if (!colonist.promotion.satisfied.result) {
         colonist.promotion.bonus = {
           result: false,
-          reason: 'Colonist is not satisfied'
+          reason: 'Basic goods are not fully supplied'
         }
       } else if (!consumption.bonus) {
         colonist.promotion.bonus = {
@@ -173,10 +192,10 @@ const create = (colony, good, amount) => {
       } else if (colonist.promotion.promoting.result) {
         colonist.promotion.bonus = {
           result: false,
-          reason: 'Colonist is already promoting'
+          reason: 'Colonist is promoting'
         }
       } else {
-        colonist.promotion.bonus = consumeGoods(colony, deltaTime, consumption.bonus)
+        colonist.promotion.bonus = consumeGoods(colonist, deltaTime, consumption.bonus)
       }
 
       colonist.mood = 0
@@ -201,6 +220,10 @@ const create = (colony, good, amount) => {
       if (colonist.promotion.bonus.result) {
         colonist.mood = 1
         newStatus = 'bonus'
+        rollbackDemotion(colonist, 2 * deltaTime)
+      }
+
+      if (newStatus === 'normal') {
         rollbackDemotion(colonist, deltaTime)
       }
 

@@ -36,7 +36,16 @@
   h2 {
     font-size: 32px;
     text-align: left;
-    margin: 20px 0 0 0;      
+    margin: 40px 0 0 0;      
+  }
+
+  .power {
+    margin-top: 10px;
+
+    .description {
+      font-size: 16px;
+      margin-right: 8px;
+    }
   }
 
   .unit {
@@ -132,6 +141,10 @@
     .target {
       display: flex;
       align-items: center;
+    }
+
+    .speed {
+      margin-left: 10px;
     }
   }
 
