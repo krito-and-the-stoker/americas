@@ -3,6 +3,7 @@
     "power": 1,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1
       },
       "bonus": {
@@ -51,6 +52,7 @@
     "power": 0,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1
       },
       "promote": {
@@ -64,7 +66,9 @@
   "criminal": {
     "power": 0,
     "consumption": {
-      "base": {},
+      "base": {
+        "food": 2        
+      },
       "promote": {
         "servant": {
           "bells": 1
@@ -77,6 +81,7 @@
     "power": 2,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "cotton": 1,
         "crosses": 1
@@ -103,6 +108,7 @@
     "power": 2,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "furs": 1,
         "crosses": 1
@@ -130,6 +136,7 @@
     "power": 2,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "crosses": 1,
         "cotton": 1
@@ -150,6 +157,7 @@
     "power": 3,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "cloth": 1,
         "tobacco": 1
@@ -175,6 +183,7 @@
     "power": 2,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "crosses": 1,
         "cotton": 1
@@ -195,6 +204,7 @@
     "power": 3,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "coats": 1,
         "sugar": 1
@@ -220,6 +230,7 @@
     "power": 2,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "crosses": 1,
         "furs": 1
@@ -239,6 +250,7 @@
     "power": 3,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "furs": 1,
         "rum": 1
@@ -266,6 +278,7 @@
     "power": 2,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "crosses": 1
       },
@@ -285,6 +298,7 @@
     "power": 3,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "cigars": 1,
         "cotton": 1
@@ -312,6 +326,7 @@
     "power": 2,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "furs": 1,
         "crosses": 1
@@ -342,6 +357,7 @@
     "power": 2,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "crosses": 1
       },
@@ -372,6 +388,7 @@
     "power": 2,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "crosses": 1
       },
@@ -402,6 +419,7 @@
     "power": 3,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "tools": 1,
         "cotton": 1,
@@ -418,6 +436,7 @@
     "power": 3,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "tools": 1,
         "cloth": 1,
@@ -434,6 +453,7 @@
     "power": 3,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "tools": 1,
         "cotton": 1,
@@ -450,6 +470,7 @@
     "power": 4,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "coats": 1,
         "cloth": 1,
@@ -474,6 +495,7 @@
     "power": 4,
     "consumption": {
       "base": {
+        "food": 2,
         "wood": 1,
         "coats": 1,
         "cloth": 1,

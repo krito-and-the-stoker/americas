@@ -121,6 +121,19 @@ const createDetailView = colonist => {
       ])
     }
 
+    const drawResources = (resourceData) =>
+      h('div.resources',
+        Util.flatten(Object.entries(resourceData)
+          .filter(([good]) => Goods[good])
+          .map(([good, amount]) =>
+            Array(Math.abs(amount)).fill(0).map(() =>
+              GoodsView.html(good, 0.5, {
+                class: {
+                  negative: amount < 0,
+                  icon: true
+                }
+          })))))
+
     const view = h('div.colonist-popup',
       h('div.backdrop', { on: { click: close } },
         h('div.container', [
@@ -150,39 +163,17 @@ const createDetailView = colonist => {
             h('h2', 'Consumption'),
             h('div.base.col', [
               h('h2.category', { class: { active: colonist.promotion.satisfied.result } }, 'Basic'),
-              h('div.resources',
-                Object.entries(colonist.promotion.satisfied)
-                  .filter(([good]) => Goods[good])
-                  .map(([good, amount]) => GoodsView.html(good, 0.5, {
-                    class: {
-                      negative: amount < 0,
-                      icon: true
-                    }
-                  }))),
+              drawResources(colonist.promotion.satisfied),
               h('div.reason', colonist.promotion.satisfied.reason)
             ]),
             h('div.bonus.col', [
               h('h2.category', { class: { active: colonist.promotion.bonus.result } }, 'Bonus'),
-              h('div.resources', Object.entries(colonist.promotion.bonus)
-                .filter(([good]) => Goods[good])
-                .map(([good, amount]) => GoodsView.html(good, 0.5, {
-                  class: {
-                    negative: amount < 0,
-                    icon: true
-                  }
-                }))),
+              drawResources(colonist.promotion.bonus),
               h('div.reason', colonist.promotion.bonus.reason)
             ]),
             h('div.promote.col', [
               h('h2.category', { class: { active: colonist.promotion.promoting.result } }, 'Promotion'),
-              h('div.resources', Object.entries(colonist.promotion.promoting)
-                .filter(([good]) => Goods[good])
-                .map(([good, amount]) => GoodsView.html(good, 0.5, {
-                  class: {
-                    negative: amount < 0,
-                    icon: true
-                  }
-                }))),
+              drawResources(colonist.promotion.promoting),
               h('div.reason', colonist.promotion.promoting.reason)
             ])
           ]),

@@ -19,6 +19,10 @@ const create = (unit, tile) => {
 			return true
 		}
 
+		if (isColonistInColony()) {
+			return true
+		}
+
 		if (unit.equipment.food > Unit.UNIT_FOOD_CAPACITY) {
 			const pack = { good: 'food', amount: unit.equipment.food - Unit.UNIT_FOOD_CAPACITY }
 			Storage.transfer(unit.equipment, colony.storage, pack)
@@ -27,11 +31,9 @@ const create = (unit, tile) => {
 		// unscale only communicates lost food instead of all food that is moved towards another storage
 		const unscale = amount => Math.min(foodCost, amount / (deltaTime * PRODUCTION_BASE_FACTOR))
 		const foodCost = Unit.FOOD_COST + (unit.equipment.horses + unit.storage.horses) * Unit.FOOD_COST_PER_HORSE
+
 		let desiredAmount
-		if (isColonistInColony()) {
-			// as colonist balance towards 0
-			desiredAmount = -unit.equipment.food
-		} else if (unit.colony === colony) {
+		if (unit.colony === colony) {
 			// as unit in colony replenish quickly towards maximum
 			desiredAmount = IN_COLONY_FACTOR * foodCost * deltaTime * PRODUCTION_BASE_FACTOR
 		} else {
@@ -41,22 +43,13 @@ const create = (unit, tile) => {
 
 		// in any case dont take more than the unit food capacity
 		desiredAmount = Math.min(desiredAmount, Unit.UNIT_FOOD_CAPACITY - unit.equipment.food)
-
-		const scaledAmount = Math.min(desiredAmount, colony.storage.food + Unit.FOOD_GAIN_PER_HORSE * colony.storage.horses)
+		const scaledAmount = Math.min(desiredAmount, colony.storage.food)
 		if (colony.storage.food + colony.storage.horses > 0) {		
 			// take the food you want
 			let foodAmount = Util.clamp(scaledAmount, 0, colony.storage.food)
-			// colonists use horses for the rest
-			let horsesAmount = isColonistInColony()
-				? Util.clamp(scaledAmount - foodAmount, 0, Unit.FOOD_GAIN_PER_HORSE * colony.storage.horses)
-				: 0
-			// if needed take more food
-			foodAmount = Util.clamp(scaledAmount - horsesAmount, 0, colony.storage.food)
 
 			Storage.update(unit.equipment, { good: 'food', amount: scaledAmount })
-			Storage.update(colony.storage, { good: 'horses', amount: -horsesAmount })
 			Storage.update(colony.storage, { good: 'food', amount: -foodAmount })
-			Storage.update(colony.productionRecord, { good: 'horses', amount: -unscale(horsesAmount) })
 			Storage.update(colony.productionRecord, { good: 'food', amount: -unscale(foodAmount) })
 		}
 		

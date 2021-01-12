@@ -41,7 +41,7 @@ const consumeGoods = (colonist, deltaTime, consumptionObject) => Object.entries(
     Storage.update(colony.productionRecord, { good, amount: -scaledAmount / scale })
     return {
       ...obj,
-      [good]: scaledAmount / scale,
+      [good]: amount,
       result: obj.result
     }
   }
@@ -172,7 +172,7 @@ const create = (colony, good, amount) => {
         colonist.promotion.promoting = {
           result: false,
           reason: colonist.expert === currentProfession
-            ? `${Colonist.expertName(colonist)} has already mastered his profession.`
+            ? `This ${Colonist.expertName(colonist)} has mastered his profession.`
             : `A ${Colonist.expertName(colonist)} cannot be promoted to ${Colonist.professionName(currentProfession)} directly.`
         }
       } else {

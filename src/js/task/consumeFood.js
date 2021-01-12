@@ -10,7 +10,13 @@ const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const CHANCE_OF_DEATH = 0.01
 
 const create = unit => {
+	const isColonistInColony = () => unit.colonist && unit.colonist.colony
+
 	const update = (currentTime, deltaTime) => {
+		if (isColonistInColony()) {
+			return true
+		}
+
 		if (unit.equipment.food < -0.1) {
 			if (Math.random() < CHANCE_OF_DEATH) {
 				Unit.disband(unit)
