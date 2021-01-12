@@ -14,8 +14,6 @@ import Time from 'timeline/time'
 
 import Harvest from 'task/harvest'
 import Produce from 'task/produce'
-import Teach from 'task/teach'
-import Learn from 'task/learn'
 
 import UnjoinColony from 'interaction/unjoinColony'
 
@@ -44,7 +42,7 @@ const beginColonyWork = (colonist, building) => {
 		.find(() => true)
 
 	const stop = building === 'school' ? 
-		Time.schedule(Teach.create(colonist)) :
+		null :
 		Time.schedule(Produce.create(colonist.colony, building, colonist))
 	update.work(colonist, {
 		type: 'Building',
@@ -91,8 +89,7 @@ const initialize = colonist => {
 			if (!unit) {
 				disband(colonist)
 			}
-		}),
-		Time.schedule(Learn.create(colonist))
+		})
 	]
 }
 
@@ -120,7 +117,7 @@ const create = unit => {
 }
 
 const power = colonist => {
-	return colonist.mood + colonist.power + Colonists[profession(colonist)].power
+	return colonist.mood + colonist.power + Colonists[profession(colonist)].power + (Colonists[colonist.expert] || Colonists.default).power
 }
 
 const profession = colonist => {
@@ -187,9 +184,7 @@ const load = colonist => {
 				colonist.work.stop = Time.schedule(Harvest.create(colonist.colony, colonist.work.tile, colonist.work.good, colonist))
 			} 
 			if (colonist.work.type === 'Building') {
-				if (colonist.work.building === 'school') {
-					colonist.work.stop = Time.schedule(Teach.create(colonist))
-				} else {
+				if (colonist.work.building !== 'school') {
 					colonist.work.stop = Time.schedule(Produce.create(colonist.colony, colonist.work.building, colonist))
 				}
 			}

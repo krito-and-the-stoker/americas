@@ -69,7 +69,7 @@ const create = (colony, originalDimensions) => {
 	})
 
 	const drawColonist = (position, tile, colonist) => {
-		const drawProductionSprites = () => {		
+		const drawProductionSprites = (sprite) => {		
 			const good = colonist.work.good
 			const productionSprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
 			productionSprites.forEach(s => {
@@ -124,38 +124,40 @@ const create = (colony, originalDimensions) => {
 		}
 
 
-		const greyOutColonist = () => {
+		const greyOutColonist = (sprite) => {
 			const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
 			greyScaleFilter.blackAndWhite()
 			sprite.filters = [greyScaleFilter]
 		}
 
-		const sprite = ColonistView.create(colonist)
-		sprite.x = position.x
-		sprite.y = position.y
-		sprite.scale.set(0.75)
-		container.colonists.addChild(sprite)
-		const destroySprite = () => {
-			container.colonists.removeChild(sprite)
-		}
+		return Colonist.listen.expert(colonist, () => {		
+			const sprite = ColonistView.create(colonist)
+			sprite.x = position.x
+			sprite.y = position.y
+			sprite.scale.set(0.75)
+			container.colonists.addChild(sprite)
+			const destroySprite = () => {
+				container.colonists.removeChild(sprite)
+			}
 
-		if (colonist.colony === colony) {
-			return [
-				Colonist.listen.promotionStatus(colonist, () => {
-					sprite.tint = ColonistView.tint(colonist)
-				}),
-				Colonist.listen.productionModifier(colonist, () =>
-					Colony.listen.productionBonus(colony, drawProductionSprites)),
-				drawEducation(),
-				Drag.makeDraggable(sprite, { colonist }, 'Move to other field or building to change production'),
-				destroySprite
-			]
-		} else {
-			greyOutColonist()
+			if (colonist.colony === colony) {
+				return [
+					Colonist.listen.promotionStatus(colonist, () => {
+						sprite.tint = ColonistView.tint(colonist)
+					}),
+					Colonist.listen.productionModifier(colonist, () =>
+						Colony.listen.productionBonus(colony, () => drawProductionSprites(sprite))),
+					drawEducation(),
+					Drag.makeDraggable(sprite, { colonist }, 'Move to other field or building to change production'),
+					destroySprite
+				]
+			} else {
+				greyOutColonist(sprite)
+				return destroySprite
+			}
+
 			return destroySprite
-		}
-
-		return destroySprite
+		})
 	}
 
 	const drawSettlement = (position, tile, harvester) => {

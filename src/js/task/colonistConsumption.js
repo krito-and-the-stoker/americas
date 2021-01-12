@@ -6,9 +6,14 @@ import Time from 'timeline/time'
 import Storage from 'entity/storage'
 import Colony from 'entity/colony'
 import Colonist from 'entity/colonist'
+import Unit from 'entity/unit'
+
+import Events from 'util/events'
 
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
+const PROMOTION_BASE_FACTOR = 1.0 / Time.PROMOTION_BASE_TIME
+const DEMOTION_BASE_FACTOR = 1.0 / Time.DEMOTION_BASE_TIME
 
 const sortByPower = (one, other) => Colonist.power(other) - Colonist.power(one)
 const consumeGoods = (colony, deltaTime, consumptionObject) => Object.entries(consumptionObject).reduce((obj, [good, amount]) => {
@@ -41,13 +46,80 @@ const consumeGoods = (colony, deltaTime, consumptionObject) => Object.entries(co
   }
 }, { result: true })
 
+const advancePromotion = (colonist, target, delta) => {
+  if (!colonist.promotion.promote) {
+    colonist.promotion.promote = {}
+  }
+
+  if (!colonist.promotion.promote[target]) {
+    colonist.promotion.promote[target] = 0
+  }
+
+  // normal speed is 1
+  let speed = 1
+  // if we have a specialist in town we are faster
+  if (target === 'settler' || target === 'servant' || colonist.colony.colonists.some(col => col.expert === target)) {
+    speed += 1
+  }
+  // if we have a school in town we are faster
+  if (colonist.colony.buildings.school.level > 0) {
+    speed += 1
+  }
+  // if we have a teacher in town we are faster
+  if (colonist.colony.colonists.some(col => col.expert === target && col.work.building === 'school')) {
+    speed += 1
+  }
+
+  // promote
+  colonist.promotion.promote[target] += delta * PROMOTION_BASE_FACTOR * speed
+  if (colonist.promotion.promote[target] >= 1) {
+    Colonist.update.expert(colonist, target)
+    Unit.update.expert(colonist.unit, target)
+    Events.trigger('notification', { type: 'learned', colonist, colony: colonist.colony })
+    colonist.promotion.promote[target] = 0.5
+  }
+
+  // remove demotion slowly
+  if (!colonist.promotion.demote) {
+    colonist.promotion.demote = {}
+  }
+  Object.keys(colonist.promotion.demote).forEach(demotionTarget => {
+    colonist.promotion.demote[demotionTarget] -= delta * PROMOTION_BASE_FACTOR
+    if (colonist.promotion.demote[demotionTarget] <= 0) {
+      delete colonist.promotion.demote[demotionTarget]
+    }
+  })
+}
+
+const advanceDemotion = (colonist, target, delta) => {
+  if (!colonist.promotion.demote) {
+    colonist.promotion.demote = {}
+  }
+
+  if (!colonist.promotion.demote[target]) {
+    colonist.promotion.demote[target] = 0
+  }
+
+  colonist.promotion.demote[target] += delta * DEMOTION_BASE_FACTOR
+  if (colonist.promotion.demote[target] >= 1) {
+    console.log('demoted', colonist.expert, 'to', target)
+    const demotionTarget = target === 'settler'
+      ? null
+      : target
+    Colonist.update.expert(colonist, demotionTarget)
+    Unit.update.expert(colonist.unit, demotionTarget)
+    colonist.promotion.demote[target] = 0
+  }
+}
+
 
 const create = (colony, good, amount) => {
   const update = (currentTime, deltaTime) => {
     colony.colonists.sort(sortByPower)
 
     colony.colonists.forEach(colonist => {
-      const consumption = (Colonists[colonist.expert] || Colonists.default).consumption
+      const colonistObject = (Colonists[colonist.expert] || Colonists.default)
+      const consumption = colonistObject.consumption
       const currentProfession = Colonist.profession(colonist)
 
       colonist.promotion.satisfied = consumeGoods(colony, deltaTime, consumption.base)
@@ -93,10 +165,20 @@ const create = (colony, good, amount) => {
       if (!colonist.promotion.satisfied.result) {
         colonist.mood = -1
         newStatus = 'demoting'
+        console.log('status', newStatus)
+        advanceDemotion(colonist, colonistObject.demote, deltaTime)
       }
       if (colonist.promotion.promoting.result) {
         colonist.mood = 1
         newStatus = 'promoting'
+        const promotionTarget = promotionObject === consumption.promote[currentProfession]
+          ? currentProfession
+          : promotionObject === consumption.promote.settler
+            ? 'settler'
+            : 'servant'
+
+        console.log('status', newStatus)
+        advancePromotion(colonist, promotionTarget, deltaTime)
       }
       if (colonist.promotion.bonus.result) {
         colonist.mood = 1
@@ -115,12 +197,7 @@ const create = (colony, good, amount) => {
       // console.log(colony.name, {
       //   profession: currentProfession,
       //   expert: colonist.expert,
-      //   power: Colonist.power(colonist),
-      //   satisfied: colonist.promotion.satisfied,
-      //   promoting: colonist.promotion.promoting,
-      //   bonus: colonist.promotion.bonus,
-      //   newProductionModifier,
-      //   newStatus
+      //   ...colonist.promotion
       // })
     })
 
