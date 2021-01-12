@@ -69,7 +69,7 @@ const create = (colony, originalDimensions) => {
 	})
 
 	const drawColonist = (position, tile, colonist) => {
-		const drawProductionSprites = (sprite) => {		
+		const drawProductionSprites = (colonistSprite) => {		
 			const good = colonist.work.good
 			const productionSprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
 			productionSprites.forEach(s => {
@@ -86,25 +86,25 @@ const create = (colony, originalDimensions) => {
 					})
 				},
 
-				Click.on(sprite, async () => {
+				productionSprites.map(sprite => Click.on(sprite, async () => {
 					if (colonist.work && colonist.work.type === 'Field') {
 						const tile = colonist.work.tile
 						const options = Tile.fieldProductionOptions(tile, colonist)
 						if (options.length > 1) {			
-							const coords = sprite.getGlobalPosition()
-							const scale = Util.globalScale(sprite)
-							coords.y += 0.5 * sprite.height / 2 - 7
+							const coords = colonistSprite.getGlobalPosition()
+							const scale = Util.globalScale(colonistSprite)
+							coords.y += 0.5 * colonistSprite.height / 2 - 7
 
 							const optionsView = options.map(Context.productionOption)
-							sprite.visible = false
+							colonistSprite.visible = false
 							productionSprites.forEach(s => { s.visible = false })
 							const decision = await Context.create(optionsView, coords, 64, 0.5 * scale)
-							sprite.visible = true
+							colonistSprite.visible = true
 							productionSprites.forEach(s => { s.visible = true })
 							Colonist.beginFieldWork(colonist, tile, decision.good)
 						}
 					}
-				}, 'Select goods for production')
+				}, 'Select goods for production'))
 			]
 		}
 
@@ -148,6 +148,7 @@ const create = (colony, originalDimensions) => {
 					Colonist.listen.productionModifier(colonist, () =>
 						Colony.listen.productionBonus(colony, () => drawProductionSprites(sprite))),
 					drawEducation(),
+					Click.on(sprite, () => ColonistView.createDetailView(colonist), 'View colonist details'),
 					Drag.makeDraggable(sprite, { colonist }, 'Move to other field or building to change production'),
 					destroySprite
 				]
