@@ -99,6 +99,10 @@ const advanceDemotion = (colonist, target, delta) => {
       ? null
       : target
 
+    if (!colonist.promotion.promote) {
+      colonist.promotion.promote = {}
+    }
+
     // keep 80% so promotion back again goes much more quickly
     colonist.promotion.promote[colonist.expert || 'settler'] = 0.8
 

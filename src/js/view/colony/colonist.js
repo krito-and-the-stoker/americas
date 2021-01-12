@@ -138,7 +138,10 @@ const createDetailView = colonist => {
                 UnitView.html(colonist.unit, 0.75, { class: { icon: true } }),
                 h('span.arrow', '→'),
                 Dom.sprite('map', Units.settler.frame[target] || Units.settler.frame.default, 0.75, { class: { icon: true } }),
-                h('span.name', { class: { active: colonist.promotionStatus === 'promoting' && Colonist.profession(colonist) === target } }, Colonist.professionName(target))
+                h('span.name', { class: { active: colonist.promotionStatus === 'promoting'
+                  && ((colonist.expert === 'criminal' && target === 'servant')
+                    || (colonist.expert === 'servant' && target === 'settler')
+                    || Colonist.profession(colonist) === target) } }, Colonist.professionName(target))
               ])))
           ]),
           h('div.demoting', [
