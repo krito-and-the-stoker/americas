@@ -160,8 +160,8 @@ const createDetailView = colonist => {
   unsubscribe = Colonist.listen.expert(colonist, () =>
     Colonist.listen.promotionStatus(colonist, () =>
       Colonist.listen.promotion(colonist, Binding.map(promotion =>
-        Object.values(promotion.promote).map(value => Math.floor(100 * value)).join('-')
-        + Object.values(promotion.demote).map(value => Math.floor(100 * value)).join('-'), render))))
+        Object.values(promotion.promote || {}).map(value => Math.floor(100 * value)).join('-')
+        + Object.values(promotion.demote || {}).map(value => Math.floor(100 * value)).join('-'), render))))
 
   return close
 }
