@@ -5,6 +5,8 @@ import Goods from 'data/goods'
 
 import Unit from 'entity/unit'
 import Colonist from 'entity/colonist'
+import Production from 'entity/production'
+import Tile from 'entity/tile'
 
 import Dom from 'render/dom'
 import Resources from 'render/resources'
@@ -51,6 +53,22 @@ const createDetailView = colonist => {
   }[status])
 
   const render = () => {
+    const production = colonist.work.type === 'Building'
+      ? Production.production(colonist.colony, colonist.work.building, colonist)
+      : {
+        good: colonist.work.good,
+        amount: Tile.production(colonist.work.tile, colonist.work.good, colonist)
+      }
+
+    let consumption = null
+    if (colonist.work.type === 'Building') {
+      if (production && production.good === 'bells') {
+        consumption = 'gold'
+      } else {
+        consumption = Production.consumption(colonist.work.building).good
+      }
+    }
+
     const view = h('div.colonist-popup',
       h('div.backdrop', { on: { click: close } },
         h('div.container', [
@@ -60,7 +78,14 @@ const createDetailView = colonist => {
             h('div.badge', { class: { [colonist.promotionStatus]: true } }, statusText(colonist.promotionStatus))),
           h('div.usage', [
             h('h2', 'Production'),
-            h('div.production', 'Not implemented yet'),
+            h('div.production', production && [
+              h('div.amount', `${production.amount}`),
+              h('div.consume', Array(production.amount).fill(consumption).filter(x => !!x)
+                .map(good => GoodsView.html(good, 0.5, { class: { good: true } }))),
+              h('div.arrow', { class: { active: !!consumption } }, '→'),
+              h('div.produce', Array(production.amount).fill(production.good)
+                .map(good => GoodsView.html(good, 0.5, { class: { good: true } })))
+              ]),
             h('h2', 'Consumption'),
             h('div.base.col', [
               h('h2.category', { class: { active: colonist.promotion.satisfied.result } }, 'Basic'),

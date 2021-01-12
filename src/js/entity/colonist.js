@@ -55,7 +55,7 @@ const beginColonyWork = (colonist, building) => {
 
 const stopWorking = colonist => {
 	if (colonist.work) {
-		colonist.work.stop()
+		Util.execute(colonist.work.stop)
 		if (colonist.work.tile) {
 			Tile.update.harvestedBy(colonist.work.tile, null)
 		}

@@ -89,4 +89,4 @@ const create = (colony, building, colonist) => {
 	}
 }
 
-export default { create }
+export default { create, BELLS_TO_GOLD_FACTOR }

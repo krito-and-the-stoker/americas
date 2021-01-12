@@ -44,6 +44,28 @@
     float: left;
   }
 
+  .production {
+    display: flex;
+
+    .amount {
+      margin: 4px 10px 0 0;
+      font-weight: bold;      
+    }
+
+    .arrow {
+      margin: 0 20px;
+
+      display: none;
+      &.active {
+        display: block;
+      }
+    }
+
+    .good {
+      margin: -16px -24px;
+    }
+  }
+
   .status {
     margin-top: 40px;
     clear: both;
