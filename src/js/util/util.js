@@ -47,7 +47,7 @@ const execute = (something, ...arg) => {
 	}
 
 	Message.warn('unable to execute', something)
-	throw new Error('unable to execute')
+	// throw new Error('unable to execute')
 }
 
 const makeObject = arr => arr.reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})

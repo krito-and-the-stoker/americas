@@ -54,6 +54,8 @@ const buyLandDialog = (tile, colony, settlement) => Dialog.create({
 	}]
 })
 
+
+
 const create = (colony, originalDimensions) => {
 	const container = {
 		tiles: new PIXI.Container(),
@@ -65,6 +67,119 @@ const create = (colony, originalDimensions) => {
 		x: TILE_SIZE * (1 + tile.mapCoordinates.x - center.mapCoordinates.x),
 		y: TILE_SIZE * (1 + tile.mapCoordinates.y - center.mapCoordinates.y)
 	})
+
+	const drawColonist = (position, tile, colonist) => {
+		const drawProductionSprites = () => {		
+			const good = colonist.work.good
+			const productionSprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
+			productionSprites.forEach(s => {
+				s.position.x += position.x
+				s.position.y += position.y + 0.5 * TILE_SIZE
+				s.scale.set(0.5)
+				container.colonists.addChild(s)
+			})
+
+			return [
+				() => {
+					productionSprites.forEach(s => {
+						container.colonists.removeChild(s)
+					})
+				},
+
+				Click.on(sprite, async () => {
+					if (colonist.work && colonist.work.type === 'Field') {
+						const tile = colonist.work.tile
+						const options = Tile.fieldProductionOptions(tile, colonist)
+						if (options.length > 1) {			
+							const coords = sprite.getGlobalPosition()
+							const scale = Util.globalScale(sprite)
+							coords.y += 0.5 * sprite.height / 2 - 7
+
+							const optionsView = options.map(Context.productionOption)
+							sprite.visible = false
+							productionSprites.forEach(s => { s.visible = false })
+							const decision = await Context.create(optionsView, coords, 64, 0.5 * scale)
+							sprite.visible = true
+							productionSprites.forEach(s => { s.visible = true })
+							Colonist.beginFieldWork(colonist, tile, decision.good)
+						}
+					}
+				}, 'Select goods for production')
+			]
+		}
+
+		const drawEducation = () => {		
+			return Colonist.listen.beingEducated(colonist, beingEducated => {
+				if (beingEducated) {
+					const bookSprite = Resources.sprite('map', { frame: Goods.books.id })
+					bookSprite.scale.set(0.5)
+					bookSprite.x = position.x + 0.25 * TILE_SIZE
+					bookSprite.y = position.y
+					container.colonists.addChild(bookSprite)
+					return () => {
+						container.colonists.removeChild(bookSprite)
+					}
+				}
+			})
+		}
+
+
+		const greyOutColonist = () => {
+			const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
+			greyScaleFilter.blackAndWhite()
+			sprite.filters = [greyScaleFilter]
+		}
+
+		const sprite = ColonistView.create(colonist)
+		sprite.x = position.x
+		sprite.y = position.y
+		sprite.scale.set(0.75)
+		container.colonists.addChild(sprite)
+		const destroySprite = () => {
+			container.colonists.removeChild(sprite)
+		}
+
+		if (colonist.colony === colony) {
+			return [
+				Colonist.listen.promotionStatus(colonist, () => {
+					sprite.tint = ColonistView.tint(colonist)
+				}),
+				Colonist.listen.productionModifier(colonist, () =>
+					Colony.listen.productionBonus(colony, drawProductionSprites)),
+				drawEducation(),
+				Drag.makeDraggable(sprite, { colonist }, 'Move to other field or building to change production'),
+				destroySprite
+			]
+		} else {
+			greyOutColonist()
+			return destroySprite
+		}
+
+		return destroySprite
+	}
+
+	const drawSettlement = (position, tile, harvester) => {
+		if (tile.settlement) {
+			const sprite = Resources.sprite('map', { frame: tile.settlement.tribe.id - 1 })
+			sprite.x = position.x
+			sprite.y = position.y
+			container.colonists.addChild(sprite)
+			return () => {
+				container.colonists.removeChild(sprite)
+			}
+		} else {
+			const icon = Icon.create('natives')
+			icon.x = position.x + 16
+			icon.y = position.y + 16
+			icon.scale.set(0.5)
+			container.colonists.addChild(icon)
+			return [
+				() => container.colonists.removeChild(icon),
+				Click.on(icon, () => buyLandDialog(tile, colony, harvester), 'Buy land')
+			]
+		}
+	}
+
 
 	const unsubscribeTiles = tiles.map(tile => {
 		return Tile.listen.tile(tile, tile => {
@@ -80,107 +195,11 @@ const create = (colony, originalDimensions) => {
 				sprites.forEach(s => container.tiles.removeChild(s))
 			}
 
-			const destroyHarvester = Tile.listen.harvestedBy(tile, harvester => {
-				if (harvester) {
-					if (harvester.type === 'colonist') {
-						const colonist = harvester
+			const destroyHarvester = Tile.listen.harvestedBy(tile, harvester =>
+				harvester && (harvester.type === 'colonist'
+					? drawColonist(position, tile, harvester)
+					: drawSettlement(position, tile, harvester)))
 
-						const sprite = ColonistView.create(colonist)
-						sprite.x = position.x
-						sprite.y = position.y
-						sprite.scale.set(0.75)
-						container.colonists.addChild(sprite)
-
-						const destroySprite = () => {
-							container.colonists.removeChild(sprite)
-						}
-
-						if (colonist.colony === colony) {
-							const good = colonist.work.good
-							const productionSprites = ProductionView.create(good, Tile.production(tile, good, colonist), TILE_SIZE / 2)
-							productionSprites.forEach(s => {
-								s.position.x += position.x
-								s.position.y += position.y + 0.5 * TILE_SIZE
-								s.scale.set(0.5)
-								container.colonists.addChild(s)
-							})
-
-							const removeProductionSprites = () => {
-								productionSprites.forEach(s => {
-									container.colonists.removeChild(s)
-								})
-							}
-
-							const unsubscribeEducation = Colonist.listen.beingEducated(colonist, beingEducated => {
-								if (beingEducated) {
-									const bookSprite = Resources.sprite('map', { frame: Goods.books.id })
-									bookSprite.scale.set(0.5)
-									bookSprite.x = position.x + 0.25 * TILE_SIZE
-									bookSprite.y = position.y
-									container.colonists.addChild(bookSprite)
-									return () => {
-										container.colonists.removeChild(bookSprite)
-									}
-								}
-							})
-
-							return [
-								Click.on(sprite, async () => {
-									if (colonist.work && colonist.work.type === 'Field') {
-										const tile = colonist.work.tile
-										const options = Tile.fieldProductionOptions(tile, colonist)
-										if (options.length > 1) {			
-											const coords = sprite.getGlobalPosition()
-											const scale = Util.globalScale(sprite)
-											coords.y += 0.5 * sprite.height / 2 - 7
-
-											const optionsView = options.map(Context.productionOption)
-											sprite.visible = false
-											productionSprites.forEach(s => { s.visible = false })
-											const decision = await Context.create(optionsView, coords, 64, 0.5 * scale)
-											sprite.visible = true
-											productionSprites.forEach(s => { s.visible = true })
-											Colonist.beginFieldWork(colonist, tile, decision.good)
-										}
-									}
-								}, 'Select goods for production'),
-
-								Drag.makeDraggable(sprite, { colonist }, 'Move to other field or building to change production'),
-								destroySprite,
-								removeProductionSprites,
-								unsubscribeEducation
-							]
-						} else {
-							const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
-							greyScaleFilter.blackAndWhite()
-							sprite.filters = [greyScaleFilter]
-							return destroySprite
-						}
-					}
-
-					if (harvester.type === 'settlement') {
-						if (tile.settlement) {
-							const sprite = Resources.sprite('map', { frame: tile.settlement.tribe.id - 1 })
-							sprite.x = position.x
-							sprite.y = position.y
-							container.colonists.addChild(sprite)
-							return () => {
-								container.colonists.removeChild(sprite)
-							}
-						} else {
-							const icon = Icon.create('natives')
-							icon.x = position.x + 16
-							icon.y = position.y + 16
-							icon.scale.set(0.5)
-							container.colonists.addChild(icon)
-							return [
-								() => container.colonists.removeChild(icon),
-								Click.on(icon, () => buyLandDialog(tile, colony, harvester), 'Buy land')
-							]
-						}
-					}
-				}
-			})
 
 			const destroyDrag = Drag.makeDragTarget(sprites, ({ unit, colonist }) => {
 				if (colony.disbanded) {

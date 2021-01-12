@@ -50,60 +50,75 @@ const create = (colony, good, amount) => {
       const consumption = (Colonists[colonist.expert] || Colonists.default).consumption
       const currentProfession = Colonist.profession(colonist)
 
-      colonist.satisfied = consumeGoods(colony, deltaTime, consumption.base)
+      colonist.promotion.satisfied = consumeGoods(colony, deltaTime, consumption.base)
 
-      if (!colonist.satisfied.result) {
-        colonist.promoting = {
+      if (!colonist.promotion.satisfied.result) {
+        colonist.promotion.promoting = {
           result: false,
           reason: 'Colonist is not satisfied'
         }
       } else if (!consumption.promote[currentProfession]) {
-        colonist.promoting = {
+        colonist.promotion.promoting = {
           result: false,
           reason: `A ${Units.settler.name[colonist.expert]} cannot be promoted to a ${Units.settler.name[currentProfession]}.`
         }
       } else {
-        colonist.promoting = consumeGoods(colony, deltaTime, consumption.promote[currentProfession])
+        colonist.promotion.promoting = consumeGoods(colony, deltaTime, consumption.promote[currentProfession])
       }
 
-      if (!colonist.satisfied.result) {
-        colonist.bonus = {
+      if (!colonist.promotion.satisfied.result) {
+        colonist.promotion.bonus = {
           result: false,
           reason: 'Colonist is not satisfied'
         }
       } else if (!consumption.bonus) {
-        colonist.bonus = {
+        colonist.promotion.bonus = {
           result: false,
-          reason: `A ${Units.settler.name[colonist.expert] || 'Settler'} cannot receive a bonus.`
+          reason: `A ${Units.settler.name[colonist.expert] || 'Settler'} cannot receive bonusses.`
         } 
-      } else if (colonist.promoting.result) {
-        colonist.bonus = {
+      } else if (colonist.promotion.promoting.result) {
+        colonist.promotion.bonus = {
           result: false,
           reason: 'Colonist is already promoting'
         }
       } else {
-        colonist.bonus = consumeGoods(colony, deltaTime, consumption.bonus)
+        colonist.promotion.bonus = consumeGoods(colony, deltaTime, consumption.bonus)
       }
 
       colonist.mood = 0
-      if (!colonist.satisfied.result) {
+      let newStatus = 'normal'
+      if (!colonist.promotion.satisfied.result) {
         colonist.mood = -1
+        newStatus = 'demoting'
       }
-      if (colonist.promoting.result) {
+      if (colonist.promotion.promoting.result) {
         colonist.mood = 1
+        newStatus = 'promoting'
       }
-      if (colonist.bonus.result) {
+      if (colonist.promotion.bonus.result) {
         colonist.mood = 1
+        newStatus = 'bonus'
       }
 
-      console.log(colony.name, {
-        profession: currentProfession,
-        expert: colonist.expert,
-        power: Colonist.power(colonist),
-        satisfied: colonist.satisfied,
-        promoting: colonist.promoting,
-        bonus: colonist.bonus
-      })
+      if (newStatus !== colonist.promotionStatus) {
+        Colonist.update.promotionStatus(colonist, newStatus)
+      }
+
+      const newProductionModifier = (colonist.promotion.bonus.result ? 2 : 0) + (colonist.promotion.satisfied.result ? 0 : -1)
+      if (newProductionModifier !== colonist.productionModifier) {
+        Colonist.update.productionModifier(colonist, newProductionModifier)
+      }
+
+      // console.log(colony.name, {
+      //   profession: currentProfession,
+      //   expert: colonist.expert,
+      //   power: Colonist.power(colonist),
+      //   satisfied: colonist.promotion.satisfied,
+      //   promoting: colonist.promotion.promoting,
+      //   bonus: colonist.promotion.bonus,
+      //   newProductionModifier,
+      //   newStatus
+      // })
     })
 
     return true

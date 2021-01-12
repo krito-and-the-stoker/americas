@@ -116,6 +116,9 @@ const createBuilding = (colony, building) => {
 					container.colonists.addChild(s)
 				})
 				return [
+					Colonist.listen.promotionStatus(colonist, () => {
+						colonistSprite.tint = ColonistView.tint(colonist)
+					}),
 					() => {
 						productionSprites.forEach(s => container.colonists.removeChild(s))
 						container.colonists.removeChild(colonistSprite)
@@ -138,7 +141,9 @@ const createBuilding = (colony, building) => {
 		Colony.listen.colonists(colony, colonists =>
 			colonists.map(colonist =>
 				Colonist.listen.work(colonist, work =>
-					Colonist.listen.expert(colonist, () => createColonistView(productionBonus, colonist, work))))))
+					Colonist.listen.expert(colonist, () =>
+						Colonist.listen.productionModifier(colonist, () =>
+							createColonistView(productionBonus, colonist, work)))))))
 
 
 	const unsubscribe = () => {
