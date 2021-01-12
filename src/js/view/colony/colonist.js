@@ -3,6 +3,9 @@ import * as PIXI from 'pixi.js'
 import Units from 'data/units'
 import Goods from 'data/goods'
 
+import Binding from 'util/binding'
+import Util from 'util/util'
+
 import Unit from 'entity/unit'
 import Colonist from 'entity/colonist'
 import Production from 'entity/production'
@@ -41,7 +44,9 @@ const createDetailView = colonist => {
   const { h, patch } = Dom
   createBaseElement()
 
+  let unsubscribe = null
   const close = () => {
+    Util.execute(unsubscribe)
     detailView = patch(detailView, h('div.colonist-popup'))
   }
 
@@ -152,7 +157,11 @@ const createDetailView = colonist => {
     detailView = patch(detailView, view)
   }
 
-  render()
+  unsubscribe = Colonist.listen.expert(colonist, () =>
+    Colonist.listen.promotionStatus(colonist, () =>
+      Colonist.listen.promotion(colonist, Binding.map(promotion =>
+        Object.values(promotion.promote).map(value => Math.floor(100 * value)).join('-')
+        + Object.values(promotion.demote).map(value => Math.floor(100 * value)).join('-'), render))))
 
   return close
 }

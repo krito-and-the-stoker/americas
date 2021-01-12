@@ -79,6 +79,8 @@ const advancePromotion = (colonist, target, delta) => {
     //keep 80% of the promotion progress to go back more easily
     colonist.promotion.promote[target] = 0.8
   }
+
+  Colonist.update.promotion(colonist)
 }
 
 const advanceDemotion = (colonist, target, delta) => {
@@ -104,6 +106,8 @@ const advanceDemotion = (colonist, target, delta) => {
     Unit.update.expert(colonist.unit, demotionTarget)
     delete colonist.promotion.demote[target]
   }
+
+  Colonist.update.promotion(colonist)
 }
 
 const rollbackDemotion = (colonist, delta) => {
@@ -116,7 +120,9 @@ const rollbackDemotion = (colonist, delta) => {
     if (colonist.promotion.demote[demotionTarget] <= 0) {
       delete colonist.promotion.demote[demotionTarget]
     }
-  })  
+  })
+
+  Colonist.update.promotion(colonist)
 }
 
 
