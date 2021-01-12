@@ -220,7 +220,7 @@ const create = (colony, good, amount) => {
       if (colonist.promotion.bonus.result) {
         colonist.mood = 1
         newStatus = 'bonus'
-        rollbackDemotion(colonist, 2 * deltaTime)
+        rollbackDemotion(colonist, deltaTime)
       }
 
       if (newStatus === 'normal') {
@@ -235,12 +235,6 @@ const create = (colony, good, amount) => {
       if (newProductionModifier !== colonist.productionModifier) {
         Colonist.update.productionModifier(colonist, newProductionModifier)
       }
-
-      // console.log(colony.name, {
-      //   profession: currentProfession,
-      //   expert: colonist.expert,
-      //   ...colonist.promotion
-      // })
     })
 
     return true
