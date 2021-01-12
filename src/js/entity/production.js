@@ -20,6 +20,9 @@ const production = (colony, building, colonist) => {
 		amount *= 0.666
 	}
 
+	if (amount > 0) {
+		amount += colonist.productionModifier
+	}
 	amount = Math.ceil(amount)
 
 	return {

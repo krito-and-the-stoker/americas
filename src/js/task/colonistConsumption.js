@@ -17,7 +17,7 @@ const consumeGoods = (colony, deltaTime, consumptionObject) => Object.entries(co
     'bells': colony.bells,
     'crosses': colony.crosses
   }[good] || 0)
-  if (scaledAmount > 0) {
+  if (Math.round(scaledAmount / scale) > 0) {
     if (good === 'bells') {
       Colony.update.bells(colony, -scaledAmount)
     }
@@ -52,18 +52,21 @@ const create = (colony, good, amount) => {
 
       colonist.promotion.satisfied = consumeGoods(colony, deltaTime, consumption.base)
 
+      const promotionObject = consumption.promote[currentProfession]
+        || consumption.promote.settler
+        || consumption.promote.servant
       if (!colonist.promotion.satisfied.result) {
         colonist.promotion.promoting = {
           result: false,
           reason: 'Colonist is not satisfied'
         }
-      } else if (!consumption.promote[currentProfession]) {
+      } else if (!promotionObject) {
         colonist.promotion.promoting = {
           result: false,
           reason: `A ${Units.settler.name[colonist.expert]} cannot be promoted to a ${Units.settler.name[currentProfession]}.`
         }
       } else {
-        colonist.promotion.promoting = consumeGoods(colony, deltaTime, consumption.promote[currentProfession])
+        colonist.promotion.promoting = consumeGoods(colony, deltaTime, promotionObject)
       }
 
       if (!colonist.promotion.satisfied.result) {
@@ -104,7 +107,7 @@ const create = (colony, good, amount) => {
         Colonist.update.promotionStatus(colonist, newStatus)
       }
 
-      const newProductionModifier = (colonist.promotion.bonus.result ? 2 : 0) + (colonist.promotion.satisfied.result ? 0 : -1)
+      const newProductionModifier = (colonist.promotion.bonus.result ? 1 : 0) + (colonist.promotion.satisfied.result ? 0 : -1)
       if (newProductionModifier !== colonist.productionModifier) {
         Colonist.update.productionModifier(colonist, newProductionModifier)
       }

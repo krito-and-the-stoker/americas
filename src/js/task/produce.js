@@ -17,10 +17,11 @@ const create = (colony, building, colonist) => {
 	let consumption
 	const unsubscribe = Colonist.listen.expert(colonist, () =>
 		Colony.listen.productionBonus(colony, () =>
-			Colony.listen.buildings(colony, () => {
-				production = Production.production(colony, building, colonist)
-				consumption = Production.consumption(building)
-			})))
+			Colony.listen.buildings(colony, () => 
+				Colonist.listen.productionModifier(colonist, productionModifier => {
+					production = Production.production(colony, building, colonist)
+					consumption = Production.consumption(building)
+				}))))
 
 	const update = (currentTime, deltaTime) => {
 		const scale = deltaTime * PRODUCTION_BASE_FACTOR

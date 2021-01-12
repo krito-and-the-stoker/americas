@@ -53,7 +53,8 @@
       "base": {},
       "promote": {
         "settler": {
-          "wood": 1
+          "wood": 1,
+          "crosses": 1
         }
       },
       "demote": "criminal"

@@ -375,6 +375,9 @@ const production = (tile, resource, colonist = null) => {
 		result = applyModifier(tile, result, 'expert', resource, where)
 	}
 
+	if (colonist && result > 0) {
+		result += colonist.productionModifier
+	}
 
 	return result
 }

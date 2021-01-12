@@ -17,8 +17,14 @@ const create = (colony, tile, good, colonist = null) => {
 	let unscaledProduction = 0
 	const calculate = () => Tile.listen.tile(tile, () => 
 		Colony.listen.productionBonus(colony, () => {
-			unscaledProduction = Tile.production(tile, good, colonist)
-			production = unscaledProduction * PRODUCTION_BASE_FACTOR
+			if (colonist) {
+				return Colonist.listen.productionModifier(colonist, productionModifier => {
+					unscaledProduction = Tile.production(tile, good, colonist)
+					production = unscaledProduction * PRODUCTION_BASE_FACTOR
+				})
+			} else {
+				production = PRODUCTION_BASE_FACTOR * Tile.production(tile, good, colonist)
+			}
 		}))
 
 	const unsubscribe = colonist ? Colonist.listen.expert(colonist, calculate) : calculate()

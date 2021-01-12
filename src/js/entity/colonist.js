@@ -69,6 +69,8 @@ const listen = {
 	colony: (colonist, fn) => Binding.listen(colonist, 'colony', fn),
 	expert: (colonist, fn) => Binding.listen(colonist, 'expert', fn),
 	unit: (colonist, fn) => Binding.listen(colonist, 'unit', fn),
+	productionModifier: (colonist, fn) => Binding.listen(colonist, 'productionModifier', fn),
+	promotionStatus: (colonist, fn) => Binding.listen(colonist, 'promotionStatus', fn),
 	beingEducated: (colonist, fn) => Binding.listen(colonist, 'beingEducated', fn),
 }
 const update = {
@@ -76,10 +78,14 @@ const update = {
 	colony: (colonist, value) => Binding.update(colonist, 'colony', value),
 	expert: (colonist, value) => Binding.update(colonist, 'expert', value),
 	unit: (colonist, value) => Binding.update(colonist, 'unit', value),
+	productionModifier: (colonist, value) => Binding.update(colonist, 'productionModifier', value),
+	promotionStatus: (colonist, value) => Binding.update(colonist, 'promotionStatus', value),
 	beingEducated: (colonist, value) => Binding.update(colonist, 'beingEducated', value),
 }
 
 const initialize = colonist => {
+	colonist.productionModifier = 0
+
 	return [
 		listen.unit(colonist, unit => {
 			if (!unit) {
@@ -100,6 +106,7 @@ const create = unit => {
 			progress: 0
 		},
 		promotion: {},
+		productionModifier: 0,
 		power: Math.random(),
 		mood: 0,
 		work: null,
@@ -150,6 +157,7 @@ const save = colonist => ({
 	education: colonist.education,
 	power: colonist.power,
 	mood: colonist.mood,
+	promotion: colonist.promotion,
 	work: colonist.work ? {
 		type: colonist.work.type,
 		good: colonist.work.good,
@@ -164,8 +172,11 @@ const load = colonist => {
 
 	colonist.colony = Record.dereference(colonist.colony)
 	colonist.unit = Record.dereference(colonist.unit)
+
+	// load legacy savegames
 	colonist.power = colonist.power || Math.random()
 	colonist.mood = colonist.mood || 0
+	colonist.promotion = colonist.promotion || {}
 
 	Record.entitiesLoaded(() => {	
 		initialize(colonist)

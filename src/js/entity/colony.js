@@ -25,6 +25,7 @@ import FeedHorses from 'task/feedHorses'
 import ColonyProduction from 'task/colonyProduction'
 import ProductionSummary from 'task/productionSummary'
 import TeachingSummary from 'task/teachingSummary'
+import TransferCrosses from 'task/transferCrosses'
 
 import UnjoinColony from 'interaction/unjoinColony'
 import LeaveColony from 'interaction/leaveColony'
@@ -46,7 +47,7 @@ const isCoastal = colony => {
 	return Tile.radius(center).some(tile => tile.domain === 'sea')
 }
 
-const defender = colony => Util.choose(colony.units.filter(unit => unit.domain === 'land'))
+const defender = colony => colony.colonists[colony.colonists.length - 1].unit
 
 const add = {
 	unit: (colony, unit) => Member.add(colony, 'units', unit),
@@ -150,6 +151,7 @@ const initialize = colony => {
 			}
 		}),
 		Time.schedule(TeachingSummary.create(colony)),
+		Time.schedule(TransferCrosses.create(colony)),
 		listen.growth(colony, growth => {
 			if (growth > 1000) {
 				const unit = Unit.create('settler', colony.mapCoordinates, colony.owner)
