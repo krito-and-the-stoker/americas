@@ -6,6 +6,7 @@ import Goods from 'data/goods'
 import Util from 'util/util'
 
 import Drag from 'input/drag'
+import Click from 'input/click'
 
 import Production from 'entity/production'
 import Colonist from 'entity/colonist'
@@ -123,6 +124,7 @@ const createBuilding = (colony, building) => {
 						productionSprites.forEach(s => container.colonists.removeChild(s))
 						container.colonists.removeChild(colonistSprite)
 					},
+					Click.on(colonistSprite, () => ColonistView.createDetailView(colonist), 'View details'),
 					Drag.makeDraggable(colonistSprite, { colonist }, 'Move to field or other building to change production')
 				]
 			}
@@ -131,6 +133,7 @@ const createBuilding = (colony, building) => {
 				() => {
 					container.colonists.removeChild(colonistSprite)
 				},
+				Click.on(colonistSprite, () => ColonistView.createDetailView(colonist), 'View details'),
 				Drag.makeDraggable(colonistSprite, { colonist }, 'Move to field or other building to change production'),
 				unsubscribeEducation
 			]
@@ -142,7 +145,7 @@ const createBuilding = (colony, building) => {
 			colonists.map(colonist =>
 				Colonist.listen.work(colonist, work =>
 					Colonist.listen.expert(colonist, () =>
-						Colonist.listen.productionModifier(colonist, () =>
+						Colonist.listen.promotionStatus(colonist, () =>
 							createColonistView(productionBonus, colonist, work)))))))
 
 

@@ -44,7 +44,7 @@ const targetAmount = (colony, other, good) => ({
 		[SELL]: 0.25,
 		[EXPORT]: 0.75,
 		[BUY]: 0.75,
-		[BALANCE]: 0.5
+		[BALANCE]: 0.5 * colony.storage[good] / colony.capacity + 0.5 * other.storage[good] / other.capacity
 	}[other.trade[good]] * colony.capacity
 }[colony.trade[good]])
 

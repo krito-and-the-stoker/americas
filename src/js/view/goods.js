@@ -31,7 +31,7 @@ const create = ({ good, amount }) => {
 	}
 }
 
-const html = (name, scale = 1) => Dom.sprite('map', Goods[name].id, scale)
+const html = (name, scale = 1, options) => Dom.sprite('map', Goods[name].id, scale, options)
 
 export default {
 	create,

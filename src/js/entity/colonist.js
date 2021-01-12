@@ -117,12 +117,19 @@ const create = unit => {
 }
 
 const power = colonist => {
-	return colonist.mood + colonist.power + Colonists[profession(colonist)].power + (Colonists[colonist.expert] || Colonists.default).power
+	return colonist.mood
+		+ colonist.power
+		+ (Colonists[profession(colonist)] || Colonists.default).power
+		+ (Colonists[colonist.expert] || Colonists.default).power
 }
 
 const profession = colonist => {
 	if (!colonist.work) {
 		return 'settler'
+	}
+
+	if (colonist.work.building === 'school') {
+		return 'teacher'
 	}
 
   let currentProfession = colonist.work.type === 'Field'

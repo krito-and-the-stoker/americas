@@ -43,9 +43,9 @@
           "furs": 1,
           "crosses": 1
         }
-      },
-      "demote": "servant"
-    }
+      }
+    },
+    "demote": "servant"
   },
   "servant": {
     "power": 0,
@@ -57,9 +57,9 @@
         "settler": {
           "crosses": 1
         }
-      },
-      "demote": "criminal"
-    }
+      }
+    },
+    "demote": "criminal"
   },
   "criminal": {
     "power": 0,
@@ -70,7 +70,8 @@
           "bells": 1
         }
       }
-    }
+    },
+    "demote": "criminal"
   },
   "farmer": {
     "power": 2,

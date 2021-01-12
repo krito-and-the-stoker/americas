@@ -1,0 +1,87 @@
+
+
+.colonist-popup {
+  .backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .container {
+    min-width: 50vw;
+    max-width: 80vw;
+    min-height: 30vw;
+    max-height: 60vw;
+
+    padding: 20px;
+
+    overflow-y: auto;
+
+    background-color: rgba(240, 233, 201, 0.6);
+    box-shadow: 0 0 5px 5px rgba(240, 233, 201, 0.6);
+    color: black;
+    font-size: 24px;
+  }
+
+  h1 {
+    margin: 0;
+  }
+
+  .status {
+    display: inline-block;
+    border-radius: 6px;
+    padding: 4px;
+
+    &.normal {      
+      background-color: rgba(150, 150, 150, 0.4);
+    }
+
+    &.bonus {
+      background-color: rgba(150, 150, 255, 0.4);
+    }
+
+    &.promoting {
+      background-color: rgba(150, 255, 150, 0.4);
+    }
+
+    &.demoting {
+      background-color: rgba(255, 150, 150, 0.4);
+    }
+  }
+
+  .usage {
+    .col {
+      display: flex;
+    }
+
+    h2 {
+      margin: 0 10px 0 0;
+      font-size: 24px;
+
+      opacity: 0.5;
+      &.active {
+        opacity: 1;
+        font-weight: bold;
+      }
+    }
+
+    .resources {
+      height: 32px;
+    }
+
+    .icon {
+      margin: -16px;
+    }
+
+    .icon.negative {
+      opacity: 0.6;
+      filter: grayscale(100%);
+    }
+  }
+}
