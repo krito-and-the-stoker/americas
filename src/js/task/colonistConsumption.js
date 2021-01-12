@@ -1,5 +1,4 @@
 import Colonists from 'data/colonists'
-import Units from 'data/units'
 
 import Time from 'timeline/time'
 
@@ -76,7 +75,9 @@ const advancePromotion = (colonist, target, delta) => {
     Colonist.update.expert(colonist, target)
     Unit.update.expert(colonist.unit, target)
     Events.trigger('notification', { type: 'learned', colonist, colony: colonist.colony })
-    colonist.promotion.promote[target] = 0.5
+
+    //keep 80% of the promotion progress to go back more easily
+    colonist.promotion.promote[target] = 0.8
   }
 }
 
@@ -142,8 +143,8 @@ const create = (colony, good, amount) => {
         colonist.promotion.promoting = {
           result: false,
           reason: colonist.expert === currentProfession
-            ? `${Units.settler.name[colonist.expert] || 'Settler'} has already mastered his profession.`
-            : `A ${Units.settler.name[colonist.expert] || 'Settler'} will never be promoted to a ${Units.settler.name[currentProfession] || 'Settler'}.`
+            ? `${Colonist.expertName(colonist)} has already mastered his profession.`
+            : `A ${Colonist.expertName(colonist)} will never be promoted to ${Colonist.professionName(currentProfession)}.`
         }
       } else {
         colonist.promotion.promoting = consumeGoods(colony, deltaTime, promotionObject)
@@ -157,7 +158,7 @@ const create = (colony, good, amount) => {
       } else if (!consumption.bonus) {
         colonist.promotion.bonus = {
           result: false,
-          reason: `A ${Units.settler.name[colonist.expert] || 'Settler'} will never receive a bonus.`
+          reason: `A ${Colonist.expertName(colonist)} will never receive a bonus.`
         } 
       } else if (colonist.promotion.promoting.result) {
         colonist.promotion.bonus = {

@@ -1,4 +1,5 @@
 import Colonists from 'data/colonists'
+import Units from 'data/units'
 import Goods from 'data/goods'
 import Buildings from 'data/buildings'
 
@@ -116,6 +117,9 @@ const create = unit => {
 	return colonist
 }
 
+const expertName = colonist => Units.settler.name[colonist.expert] || 'Settler'
+const professionName = profession => Units.settler.name[profession] || 'Settler'
+
 const power = colonist => {
 	return colonist.mood
 		+ colonist.power
@@ -211,6 +215,8 @@ export default {
 	stopWorking,
 	power,
 	profession,
+	expertName,
+	professionName,
 	listen,
 	update,
 }
