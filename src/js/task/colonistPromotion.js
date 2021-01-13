@@ -101,16 +101,16 @@ const advanceDemotion = (colonist, target, delta) => {
   }
 
   // the less goods the faster the demotion goes
-  const satisfactionLevel = Object.values(colonist.promotion.satisfied)
+  colonist.promotion.satisfactionLevel = Object.values(colonist.promotion.satisfied)
     .filter(value => typeof value === 'number')
     .reduce((all, value) => ({
-      sum: all.sum + (value > 0 ? value : 0),
-      possible: all.possible + Math.abs(value)
+      supplied: all.supplied + (value > 0 ? value : 0),
+      demanded: all.demanded + Math.abs(value)
     }), {
-      sum: 0,
-      possible: 0
+      supplied: 0,
+      demanded: 0
     })
-  const demotionStrength = 1 - satisfactionLevel.sum / satisfactionLevel.possible
+  const demotionStrength = 1 - colonist.promotion.satisfactionLevel.supplied / colonist.promotion.satisfactionLevel.demanded
 
   colonist.promotion.demote[target] += delta * DEMOTION_BASE_FACTOR * demotionStrength
   if (colonist.promotion.demote[target] >= 1) {
@@ -237,7 +237,7 @@ const create = (colony, good, amount) => {
         Colonist.update.promotionStatus(colonist, newStatus)
       }
 
-      const newProductionModifier = (colonist.promotion.bonus.result ? 1 : 0) + (colonist.promotion.satisfied.result ? 0 : -1)
+      const newProductionModifier = (colonist.promotion.bonus.result ? 2 : 0) + (colonist.promotion.satisfied.result ? 0 : -1)
       if (newProductionModifier !== colonist.productionModifier) {
         Colonist.update.productionModifier(colonist, newProductionModifier)
       }

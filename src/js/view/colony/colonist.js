@@ -110,6 +110,21 @@ const createDetailView = colonist => {
         return h('div.demoting')
       }
 
+      const demotionSpeed = () =>
+        `${colonist.promotion.satisfactionLevel.demanded - colonist.promotion.satisfactionLevel.supplied}/${colonist.promotion.satisfactionLevel.demanded}`
+
+      const etaDate = target => {
+        const satLevel = colonist.promotion.satisfactionLevel
+        const demotionSpeedFactor = (satLevel.demanded - satLevel.supplied) / satLevel.demanded
+
+        const promotionTime = Time.get().currentTime + (1.0 - colonist.promotion.demote[target]) * Time.DEMOTION_BASE_TIME / demotionSpeedFactor
+        const eta = Time.yearAndMonth(promotionTime)
+
+        return `${eta.month} ${eta.year}`
+      }
+
+
+
       return h('div.demoting', [
         h('h2', 'Demotions'),
         h('div.targets', 
@@ -118,7 +133,11 @@ const createDetailView = colonist => {
             UnitView.html(colonist.unit, 0.75, { class: { icon: true } }),
             h('span.arrow', '→'),
             Dom.sprite('map', Units.settler.frame[target] || Units.settler.frame.default, 0.75, { class: { icon: true } }),
-            h('span.name', { class: { active: colonist.promotionStatus === 'demoting' } }, Colonist.professionName(target))
+            h('span.name', { class: { active: colonist.promotionStatus === 'demoting' } }, Colonist.professionName(target)),
+            ...(colonist.promotionStatus === 'demoting' && [
+              h('span.speed', `${demotionSpeed()}x`),
+              h('span.eta', `done in ${etaDate(target)}`)
+            ]) || []
           ])))
       ])
     }

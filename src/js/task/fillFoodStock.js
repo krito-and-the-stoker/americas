@@ -58,7 +58,7 @@ const create = (unit, tile) => {
 
 	return {
 		update,
-		sort: 3
+		sort: 6
 	} 
 }
 
