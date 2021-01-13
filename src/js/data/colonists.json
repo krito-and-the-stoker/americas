@@ -74,6 +74,7 @@
       },
       "promote": {
         "servant": {
+          "wood": 1,
           "bells": 1
         }
       }

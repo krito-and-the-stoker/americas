@@ -125,12 +125,16 @@
 
     .icon {
       margin: -16px;
+
+      &.negative {
+        filter: url(/color-filter.svg#redTint);
+      }
+      &.inactive {
+        opacity: 0.6;
+        filter: grayscale(100%);
+      }
     }
 
-    .icon.negative {
-      opacity: 0.6;
-      filter: grayscale(100%);
-    }
   }
 
   .promoting, .demoting {

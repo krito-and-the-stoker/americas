@@ -147,10 +147,11 @@ const createDetailView = colonist => {
         Util.flatten(Object.entries(resourceData)
           .filter(([good]) => Goods[good])
           .map(([good, amount]) =>
-            Array(Math.abs(amount)).fill(0).map(() =>
+            Array(Math.abs(amount) || 1).fill(0).map(() =>
               GoodsView.html(good, 0.5, {
                 class: {
                   negative: amount < 0,
+                  inactive: amount === 0,
                   icon: true
                 }
           })))))

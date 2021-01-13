@@ -1,4 +1,7 @@
 import Colonists from 'data/colonists'
+import Goods from 'data/goods'
+
+import Util from 'util/util'
 
 import Time from 'timeline/time'
 
@@ -16,6 +19,20 @@ const DEMOTION_BASE_FACTOR = 1.0 / Time.DEMOTION_BASE_TIME
 const POWER_TRANSFER_BASE_FACTOR = 1.0 / Time.POWER_TRANSFER_BASE_TIME
 
 const sortByPower = (one, other) => Colonist.power(other) - Colonist.power(one)
+
+const addScaledAmountToColony = (colony, good, scaledAmount, scale) => {
+  if (good === 'bells') {
+    Colony.update.bells(colony, scaledAmount)
+  }
+  else if (good === 'crosses') {
+    Colony.update.crosses(colony, scaledAmount)
+  }
+  else {
+    Storage.update(colony.storage, { good, amount: scaledAmount })
+  }
+  Storage.update(colony.productionRecord, { good, amount: scaledAmount / scale })  
+}
+
 const consumeGoods = (colonist, deltaTime, consumptionObject) => Object.entries(consumptionObject).reduce((obj, [good, amount]) => {
   const colony = colonist.colony
   const production = Colonist.production(colonist)
@@ -29,20 +46,12 @@ const consumeGoods = (colonist, deltaTime, consumptionObject) => Object.entries(
     }[good] || 0)
   }
 
-  if (Math.round(scaledAmount / scale) > 0) {
-    if (good === 'bells') {
-      Colony.update.bells(colony, -scaledAmount)
-    }
-    else if (good === 'crosses') {
-      Colony.update.crosses(colony, -scaledAmount)
-    }
-    else {
-      Storage.update(colony.storage, { good, amount: -scaledAmount })
-    }
-    Storage.update(colony.productionRecord, { good, amount: -scaledAmount / scale })
+  if (Math.round(scaledAmount / scale) >= amount) {
+    addScaledAmountToColony(colony, good, -scaledAmount, scale)
+
     return {
       ...obj,
-      [good]: amount,
+      [good]: scaledAmount / scale,
       result: obj.result
     }
   }
@@ -52,6 +61,33 @@ const consumeGoods = (colonist, deltaTime, consumptionObject) => Object.entries(
     result: false
   }
 }, { result: true })
+
+const roundGoodAmounts = statusObject => Util.makeObject(Object.entries(statusObject)
+  .map(([good, value]) => ([good, Goods[good] ? Math.round(value) : value])))
+
+const returnUnusedGoods = (statusObject, colony, deltaTime) => {
+  if (statusObject.result) {
+    return roundGoodAmounts(statusObject)
+  }
+
+  const scale = PRODUCTION_BASE_FACTOR * deltaTime
+
+  return {
+    ...Util.makeObject(Object.entries(statusObject)
+      .filter(([good]) => Goods[good])
+      .map(([good, value]) => {
+        if (value > 0) {
+          addScaledAmountToColony(colony, good, value * scale, scale)
+
+          return [good, 0]
+        }
+
+        return [good, Math.round(value)]
+      })),
+    result: false,
+    reason: statusObject.reason
+  }
+}
 
 const advancePromotion = (colonist, target, delta) => {
   if (!colonist.promotion.promote) {
@@ -70,7 +106,7 @@ const advancePromotion = (colonist, target, delta) => {
   }
   // if we have a school in town we are faster
   if (colonist.colony.buildings.school.level > 0) {
-    colonist.promotion.speed += colonist.colony.buildings.school.level
+    colonist.promotion.speed += 2*colonist.colony.buildings.school.level
   }
   // if we have a teacher in town we are faster
   if (colonist.colony.colonists.some(col => col.expert === target && col.work.building === 'school')) {
@@ -164,7 +200,7 @@ const create = (colony, good, amount) => {
       const consumption = colonistObject.consumption
       const currentProfession = Colonist.profession(colonist)
 
-      colonist.promotion.satisfied = consumeGoods(colonist, deltaTime, consumption.base)
+      colonist.promotion.satisfied = roundGoodAmounts(consumeGoods(colonist, deltaTime, consumption.base))
 
       const promotionObject = consumption.promote[currentProfession]
         || consumption.promote.settler
@@ -182,7 +218,7 @@ const create = (colony, good, amount) => {
             : `A ${Colonist.expertName(colonist)} cannot be promoted to ${Colonist.professionName(currentProfession)} directly.`
         }
       } else {
-        colonist.promotion.promoting = consumeGoods(colonist, deltaTime, promotionObject)
+        colonist.promotion.promoting = returnUnusedGoods(consumeGoods(colonist, deltaTime, promotionObject), colonist.colony, deltaTime)
       }
 
       if (!colonist.promotion.satisfied.result) {
@@ -201,7 +237,7 @@ const create = (colony, good, amount) => {
           reason: 'Colonist is promoting'
         }
       } else {
-        colonist.promotion.bonus = consumeGoods(colonist, deltaTime, consumption.bonus)
+        colonist.promotion.bonus = returnUnusedGoods(consumeGoods(colonist, deltaTime, consumption.bonus), colonist.colony, deltaTime)
       }
 
       colonist.mood = 0
