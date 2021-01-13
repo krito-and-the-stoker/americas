@@ -224,11 +224,11 @@ const tint = colonist => {
   }
 
   if (colonist.promotionStatus === 'promoting') {
-    return 0x66FF66
+    return 0xBBFF99
   }
 
   if (colonist.promotionStatus === 'bonus') {
-    return 0x6666FF
+    return 0x99BBFF
   }
 
   return 0xFFFFFF

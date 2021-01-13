@@ -13,6 +13,7 @@ import Events from 'util/events'
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const PROMOTION_BASE_FACTOR = 1.0 / Time.PROMOTION_BASE_TIME
 const DEMOTION_BASE_FACTOR = 1.0 / Time.DEMOTION_BASE_TIME
+const POWER_TRANSFER_BASE_FACTOR = 1.0 / Time.POWER_TRANSFER_BASE_TIME
 
 const sortByPower = (one, other) => Colonist.power(other) - Colonist.power(one)
 const consumeGoods = (colonist, deltaTime, consumptionObject) => Object.entries(consumptionObject).reduce((obj, [good, amount]) => {
@@ -152,6 +153,11 @@ const rollbackDemotion = (colonist, delta) => {
 const create = (colony, good, amount) => {
   const update = (currentTime, deltaTime) => {
     colony.colonists.sort(sortByPower)
+
+    // transfer power to those who have
+    colony.colonists.forEach((colonist, index) => {
+      colonist.power += (colony.colonists.length + colonist.mood - 2 * index) * POWER_TRANSFER_BASE_FACTOR * deltaTime
+    })
 
     colony.colonists.forEach(colonist => {
       const colonistObject = (Colonists[colonist.expert] || Colonists.default)

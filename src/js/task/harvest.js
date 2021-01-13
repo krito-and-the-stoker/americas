@@ -23,7 +23,8 @@ const create = (colony, tile, good, colonist = null) => {
 					production = unscaledProduction * PRODUCTION_BASE_FACTOR
 				})
 			} else {
-				production = PRODUCTION_BASE_FACTOR * Tile.production(tile, good, colonist)
+				unscaledProduction = Tile.production(tile, good, colonist)
+				production = PRODUCTION_BASE_FACTOR * unscaledProduction
 			}
 		}))
 
