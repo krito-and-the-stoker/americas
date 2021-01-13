@@ -192,7 +192,8 @@
 			"statesman": "Elder Statesman",
 			"pioneer": "Hardened Pioneer",
 			"soldier": "Veteran Soldier",
-			"scout": "Seasoned Scout"
+			"scout": "Seasoned Scout",
+			"teacher": "Teacher"
 		},
 		"domain": "land",
 		"travelType": "foot",

@@ -53,6 +53,14 @@ const pause = () => update.paused(time.paused + 1)
 const resume = () => update.paused(Math.max(time.paused - 1, 0))
 const togglePause = () => update.paused(time.paused ? 0 : 1)
 
+const yearAndMonth = someTime => {
+	const timeOfYear = (someTime % YEAR) / YEAR
+	const month = months[Math.floor(12 * timeOfYear)]
+	return {
+		month,
+		year: Math.floor(startYear + someTime / YEAR)
+	}
+}
 
 let lowPrioDeltaTime = 0
 const advance = deltaTime => {
@@ -192,6 +200,7 @@ export default {
 	listen,
 	schedule,
 	togglePause,
+	yearAndMonth,
 	save,
 	load,
 	pause,

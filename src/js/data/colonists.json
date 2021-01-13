@@ -48,6 +48,9 @@
     },
     "demote": "servant"
   },
+  "teacher": {
+    "power": 3
+  },
   "servant": {
     "power": 0,
     "consumption": {

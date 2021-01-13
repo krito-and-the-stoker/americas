@@ -7,6 +7,8 @@ import Goods from 'data/goods'
 import Binding from 'util/binding'
 import Util from 'util/util'
 
+import Time from 'timeline/time'
+
 import Unit from 'entity/unit'
 import Colonist from 'entity/colonist'
 import Production from 'entity/production'
@@ -59,16 +61,6 @@ const createDetailView = colonist => {
   }[status])
 
   const render = () => {
-    const production = Colonist.production(colonist)
-
-    let consumption = null
-    if (colonist.work.type === 'Building') {
-      if (production && production.good === 'bells') {
-        consumption = 'gold'
-      } else {
-        consumption = Production.consumption(colonist.work.building).good
-      }
-    }
 
     const renderPromotions = () => {
       const promotionData = Object.entries(colonist.promotion.promote || {})
@@ -86,6 +78,13 @@ const createDetailView = colonist => {
           || (colonist.expert === 'servant' && target === 'settler')
           || Colonist.profession(colonist) === target)
 
+      const etaDate = target => {      
+        const promotionTime = Time.get().currentTime + (1.0 - colonist.promotion.promote[target]) * Time.PROMOTION_BASE_TIME / colonist.promotion.speed
+        const eta = Time.yearAndMonth(promotionTime)
+
+        return `${eta.month} ${eta.year}`
+      }
+
       return h('div.promoting', [
         h('h2', 'Promotions'),
         h('div.targets',
@@ -95,7 +94,10 @@ const createDetailView = colonist => {
             h('span.arrow', '→'),
             Dom.sprite('map', Units.settler.frame[target] || Units.settler.frame.default, 0.75, { class: { icon: true } }),
             h('span.name', { class: { active: isPromotionTarget(target) } }, Colonist.professionName(target)),
-            (isPromotionTarget(target) && h('span.speed', `${colonist.promotion.speed}x`)) || undefined
+            ...(isPromotionTarget(target) && [
+              h('span.speed', `${colonist.promotion.speed}x`),
+              h('span.eta', `done in ${etaDate(target)}`)
+            ]) || []
           ])))
       ])
     }
@@ -121,7 +123,7 @@ const createDetailView = colonist => {
       ])
     }
 
-    const drawResources = (resourceData) =>
+    const renderResources = (resourceData) =>
       h('div.resources',
         Util.flatten(Object.entries(resourceData)
           .filter(([good]) => Goods[good])
@@ -133,6 +135,55 @@ const createDetailView = colonist => {
                   icon: true
                 }
           })))))
+
+    const renderProduction = () => {
+      const production = Colonist.production(colonist)
+      let consumption = null
+      if (colonist.work.type === 'Building') {
+        if (production && production.good === 'bells') {
+          consumption = 'gold'
+        } else {
+          consumption = Production.consumption(colonist.work.building).good
+        }
+      }
+
+      if (!production || !production.amount > 0) {
+        return h('div.production')
+      }
+
+      return h('div.production-section', [
+        h('h2', 'Production'),
+        h('div.production', [
+          h('div.amount', `${production.amount}`),
+          h('div.consume', Array(production.amount).fill(consumption).filter(x => !!x)
+            .map(good => GoodsView.html(good, 0.5, { class: { good: true } }))),
+          h('div.arrow', { class: { active: !!consumption } }, '→'),
+          h('div.produce', Array(production.amount).fill(production.good)
+            .map(good => GoodsView.html(good, 0.5, { class: { good: true } })))
+        ])
+      ])
+    }
+
+    const renderConsumption = () => {
+      return h('div.consumption', [
+        h('h2', 'Consumption'),
+        h('div.base.col', [
+          h('h2.category', { class: { active: colonist.promotion.satisfied.result } }, 'Basic'),
+          renderResources(colonist.promotion.satisfied),
+          h('div.reason', colonist.promotion.satisfied.reason)
+        ]),
+        h('div.bonus.col', [
+          h('h2.category', { class: { active: colonist.promotion.bonus.result } }, 'Bonus'),
+          renderResources(colonist.promotion.bonus),
+          h('div.reason', colonist.promotion.bonus.reason)
+        ]),
+        h('div.promote.col', [
+          h('h2.category', { class: { active: colonist.promotion.promoting.result } }, 'Promotion'),
+          renderResources(colonist.promotion.promoting),
+          h('div.reason', colonist.promotion.promoting.reason)
+        ])
+      ])
+    }
 
     const view = h('div.colonist-popup',
       h('div.backdrop', { on: { click: close } },
@@ -148,34 +199,8 @@ const createDetailView = colonist => {
           ]),
 
           h('div.usage', [
-            // production
-            h('h2', 'Production'),
-            h('div.production', production && [
-              h('div.amount', `${production.amount}`),
-              h('div.consume', Array(production.amount).fill(consumption).filter(x => !!x)
-                .map(good => GoodsView.html(good, 0.5, { class: { good: true } }))),
-              h('div.arrow', { class: { active: !!consumption } }, '→'),
-              h('div.produce', Array(production.amount).fill(production.good)
-                .map(good => GoodsView.html(good, 0.5, { class: { good: true } })))
-              ]),
-
-            // consumption
-            h('h2', 'Consumption'),
-            h('div.base.col', [
-              h('h2.category', { class: { active: colonist.promotion.satisfied.result } }, 'Basic'),
-              drawResources(colonist.promotion.satisfied),
-              h('div.reason', colonist.promotion.satisfied.reason)
-            ]),
-            h('div.bonus.col', [
-              h('h2.category', { class: { active: colonist.promotion.bonus.result } }, 'Bonus'),
-              drawResources(colonist.promotion.bonus),
-              h('div.reason', colonist.promotion.bonus.reason)
-            ]),
-            h('div.promote.col', [
-              h('h2.category', { class: { active: colonist.promotion.promoting.result } }, 'Promotion'),
-              drawResources(colonist.promotion.promoting),
-              h('div.reason', colonist.promotion.promoting.reason)
-            ])
+            renderProduction(),
+            renderConsumption(),
           ]),
           renderPromotions(),
           renderDemotions()
