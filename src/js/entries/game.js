@@ -247,7 +247,6 @@ const load = async () => {
 		Europe.initialize()
 		Treasure.initialize()
 		await nextFrame()
-		GlobalPanel.initialize(Foreground.get().permanent)
 		Message.log('Restoring game state...')
 		await nextFrame()
 		Record.load()
@@ -255,20 +254,18 @@ const load = async () => {
 		AutosaveView.initialize()
 		Dialog.initialize()
 
-		MapView.zoomBy(1/0.35, null, 0)
-		setTimeout(() => {
-			Message.log('Starting game...')
-			MapView.zoomBy(0.35, null, 3000)
-		}, 100)
+		MapView.zoomBy(0.7, null, 100)
+		Message.log('Starting game...')
 
 		setTimeout(() => {
 			Background.get().layer.show()
-			Foreground.get().layer.show()		
+			Foreground.get().layer.show()
+			GlobalPanel.initialize(Foreground.get().permanent)
 		}, 750)
 
 		setTimeout(() => {
 			Input.initialize()
-		}, 3000)
+		}, 750)
 
 		FullscreenEvents.initialize()
 
