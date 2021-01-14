@@ -9,8 +9,9 @@ import RealMapView from 'view/map'
 
 
 class MapView{
+	instance = new MapView()
+
 	constructor() {
-		MapView.instance = this
 		this.numTiles = MapEntity.get().numTiles
 		this.spriteSheetWidth = 1024 / 64
 		this.tileStacks = MapEntity.get().tiles.map((tile, index) => {
