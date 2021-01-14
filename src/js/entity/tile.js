@@ -14,6 +14,7 @@ import PathFinder from 'util/pathFinder'
 import Owner from 'entity/owner'
 import MapEntity from 'entity/map'
 
+const BONUS_CHANCE = 0.3
 
 const create = ({ id, layers, index }) => {
 	const [name, terrain] = Object.entries(Terrain).find(([, terrain]) => terrain.id === id)
@@ -55,7 +56,8 @@ const create = ({ id, layers, index }) => {
 	tile.hillVariation = Math.random() > (tile.river ? 0.2 : 0.75) && !tile.bonus
 
 	tile.terrainName = terrainName(tile)
-	tile.bonus = (tile.terrainName !== 'sea lane') && (Math.random() < (tile.domain === 'land' ? 0.07 : 0.04))
+	tile.bonus = (tile.terrainName !== 'sea lane') &&
+		(Math.random() < (tile.domain === 'land' || tile.terrainName === 'coastal sea' ? BONUS_CHANCE : 0.04))
 
 	tile.left = () => left(tile)
 	tile.up = () => up(tile)
@@ -375,7 +377,11 @@ const production = (tile, resource, colonist = null) => {
 		result = applyModifier(tile, result, 'expert', resource, where)
 	}
 
-	if (colonist && result > 0) {
+	if (result > 0 && colonist && colonist.expert === 'slave') {
+		result -= 1
+	}
+
+	if (result > 0 && colonist) {
 		result += colonist.productionModifier
 	}
 
@@ -466,7 +472,7 @@ const listen = {
 
 const clearForest = tile => {
 	update.forest(tile, false)
-	tile.bonus = Math.random() < 0.07
+	tile.bonus = Math.random() < BONUS_CHANCE
 	tile.terrainName = terrainName(tile)
 
 	updateTile(tile)

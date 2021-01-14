@@ -63,8 +63,7 @@
           "crosses": 1
         }
       }
-    },
-    "demote": "criminal"
+    }
   },
   "criminal": {
     "power": 0,
@@ -78,8 +77,16 @@
           "bells": 1
         }
       }
-    },
-    "demote": "criminal"
+    }
+  },
+  "slave": {
+    "power": 0,
+    "consumption": {
+      "base": {
+        "food": 2
+      },
+      "promote": {}
+    }
   },
   "farmer": {
     "power": 2,

@@ -57,7 +57,8 @@ const createDetailView = colonist => {
     'bonus': 'Production Bonus',
     'normal': 'Normal Production',
     'promoting': 'Promoting',
-    'demoting': 'Demoting'
+    'demoting': 'Demoting',
+    'malus': 'Production Malus'
   }[status])
 
   const render = () => {
@@ -239,7 +240,7 @@ const createDetailView = colonist => {
 }
 
 const tint = colonist => {
-  if (colonist.promotionStatus === 'demoting') {
+  if (colonist.promotionStatus === 'demoting' || colonist.promotionStatus === 'malus') {
     return 0xFF6666
   }
 

@@ -104,7 +104,7 @@
 				"base": 2,
 				"plowed": "+2",
 				"river": "+1",
-				"resource":"*2",
+				"resource":"+3",
 				"expert": "*2"
 			}
 		},
@@ -140,10 +140,10 @@
 				"expert": "*2"
 			},
 			"wood":{
-				"base": 4,
+				"base": 3,
 				"road": "+2",
 				"river": "+2",
-				"resource": "+3",
+				"resource": "*2",
 				"expert": "+4"
 			}
 		},
@@ -167,10 +167,10 @@
 				"expert": "+3"
 			},
 			"ore":{
-				"base": 3,
+				"base": 2,
 				"road": "+1",
 				"river": "+1",
-				"resource": "+2",
+				"resource": "+3",
 				"expert": "*2"
 			}
 		},
@@ -260,7 +260,6 @@
 			"silver":{
 				"base": 0,
 				"road": "+1",
-				"resource": "+1",
 				"river": "+1",
 				"expert": "+1"
 			}
@@ -278,8 +277,8 @@
 	"mountains":{
 		"field":{
 			"ore":{
-				"base": 3,
-				"road": "+1",
+				"base": 2,
+				"road": "+2",
 				"river": "+1",
 				"expert": "*2"
 			},
@@ -396,7 +395,7 @@
 				"base": 2,
 				"plowed": "+2",
 				"river": "+1",
-				"resource": "*2",
+				"resource": "+3",
 				"expert": "*2"
 			}
 		},
@@ -428,7 +427,7 @@
 				"expert": "*2"
 			},
 			"furs":{
-				"base": 1,
+				"base": 2,
 				"road": "+2",
 				"river": "+2",	
 				"resource": "+2",
@@ -463,7 +462,7 @@
 				"base": 2,
 				"plowed": "+2",
 				"river": "+1",
-				"resource": "*2",
+				"resource": "+3",
 				"expert": "*2"
 			}
 		},
@@ -502,7 +501,7 @@
 			"wood":{
 				"base": 2,
 				"road": "+2",
-				"river": "+2",
+				"river": "+1",
 				"resource": "+3",			
 				"expert": "+4"
 			}

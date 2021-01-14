@@ -6,6 +6,10 @@ const production = (colony, building, colonist) => {
 	if (!Buildings[building].production) {
 		return null
 	}
+	if (colonist.expert === 'slave') {
+		return 0
+	}
+
 	const level = colony.buildings[building].level
 	const good = Buildings[building].production.good
 	const type = ['crosses', 'bells', 'construction'].includes(good) ? good : 'good'

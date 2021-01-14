@@ -35,7 +35,14 @@ const FOOD_GAIN_PER_HORSE = 0.5 // food gain when eating horse
 
 
 const RADIUS_GROWTH = 1.0 / (2* Time.WEEK)
-const create = (name, coords, owner) => {
+const create = (unitName, coords, owner) => {
+	const expert = Units[unitName]
+		? null
+		: unitName
+	const name = Units[unitName]
+		? unitName
+		: 'settler'
+
 	if (Units[name]) {
 		const unit = {
 			name,
@@ -48,7 +55,7 @@ const create = (name, coords, owner) => {
 			treasure: null,
 			vehicle: null,
 			colony: null,
-			expert: null,
+			expert,
 			offTheMap: false,
 			colonist: null,
 			pioneering: false,

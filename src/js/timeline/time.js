@@ -6,7 +6,7 @@ const MONTH = 30 * DAY
 const YEAR = 365 * DAY
 
 const MOVE_BASE_TIME = 2 * WEEK
-const UNLOAD_TIME = 2 * WEEK
+const UNLOAD_TIME = 3 * DAY
 const LOAD_TIME = 2 * WEEK
 const EUROPE_SAIL_TIME = 3 * MONTH
 const PRODUCTION_BASE_TIME = MONTH

@@ -60,14 +60,14 @@ const create = () => {
 	nameHeadline.position.y = 80
 	normalContainer.addChild(nameHeadline)
 
-	const recruitButton = Button.create('recruit', () => Dialog.create({
-		type: 'menu',
-		text: 'Who would you like to recruit?',
-		options: Europe.recruitmentOptions()
-	}))
-	recruitButton.x = originalDimensions.x - recruitButton.width - 20
-	recruitButton.y = originalDimensions.y / 2
-	normalContainer.addChild(recruitButton)
+	// const recruitButton = Button.create('recruit', () => Dialog.create({
+	// 	type: 'menu',
+	// 	text: 'Who would you like to recruit?',
+	// 	options: Europe.recruitmentOptions()
+	// }))
+	// recruitButton.x = originalDimensions.x - recruitButton.width - 20
+	// recruitButton.y = originalDimensions.y / 2
+	// normalContainer.addChild(recruitButton)
 
 	const purchaseButton = Button.create('purchase', () => Dialog.create({
 		type: 'menu',
@@ -109,7 +109,7 @@ const create = () => {
 		units.container.ships.y = dimensions.y / coverScale - (123 * scale.x + 148 + 32 + 64) / coverScale
 
 		nameHeadline.x = dimensions.x / (2 *coverScale)
-		recruitButton.x = dimensions.x / coverScale - recruitButton.width - 20
+		// recruitButton.x = dimensions.x / coverScale - recruitButton.width - 20
 		purchaseButton.x = dimensions.x / coverScale - purchaseButton.width - 20
 		trainButton.x = dimensions.x / coverScale - trainButton.width - 20
 	})

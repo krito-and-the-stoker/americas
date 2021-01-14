@@ -5,6 +5,10 @@ import Util from 'util/util'
 import Message from 'util/message'
 import Events from 'util/events'
 
+import Time from 'timeline/time'
+
+import TransferCrosses from 'task/transferCrosses'
+
 import Unit from 'entity/unit'
 import Treasure from 'entity/treasure'
 import Owner from 'entity/owner'
@@ -108,7 +112,8 @@ const europe = {
 	crosses: 0,
 	crossesNeeded: 2,
 	pool: [Util.choose(possibleColonists), Util.choose(possibleColonists), Util.choose(possibleColonists)],
-	trade: Trade.create()
+	trade: Trade.create(),
+	destroy: null
 }
 
 const add = {
@@ -154,6 +159,8 @@ const load = data => {
 	europe.crossesNeeded = data.crossesNeeded
 	europe.pool = data.pool
 	europe.trade = Trade.load(data.trade)
+
+	initialize()
 }
 
 const trade = () => europe.trade
@@ -184,6 +191,7 @@ const recruit = (option, index) => {
 }
 
 const purchaseOptions = () => [
+	{ text: 'Slave ({price})', unit: 'slave', price: 500 },
 	{ text: 'Artillery ({price})', unit: 'artillery', price: 1000 },
 	{ text: 'Caravel ({price})', unit: 'caravel', price: 2000 },
 	{ text: 'Merchantman ({price})', unit: 'merchantman', price: 5000 },
@@ -227,22 +235,27 @@ const train = option => {
 }
 
 const initialize = () => {
-	listen.crosses(crosses => {
-		if (crosses >= europe.crossesNeeded) {
-			const index = Math.floor(Math.random() * europe.pool.length)
-			const chosen = europe.pool[index]
-			europe.pool[index] = Util.choose(possibleColonists)
-			const unit = Unit.create(chosen.unit, Record.getGlobal('defaultShipArrival'), Owner.player())
-			Unit.update.expert(unit, chosen.expert)
-			Unit.update.offTheMap(unit, true)
-			add.unit(unit)
-			update.crosses(-europe.crossesNeeded)
-			europe.crossesNeeded += 10
-			Events.trigger('notification', { type: 'immigration', unit })
-			Events.trigger('immigration')
-			Message.send(`Religious unrest in Europe has caused a ${chosen.name} to line up for migration to the new world.`)
-		}
-	})
+	Util.execute(europe.destroy)
+	europe.destroy = [
+		Time.schedule(TransferCrosses.create()),
+		listen.crosses(crosses => {
+			console.log('current crosses', crosses)
+			if (crosses >= europe.crossesNeeded) {
+				const index = Math.floor(Math.random() * europe.pool.length)
+				const chosen = europe.pool[index]
+				europe.pool[index] = Util.choose(possibleColonists)
+				const unit = Unit.create(chosen.unit, Record.getGlobal('defaultShipArrival'), Owner.player())
+				Unit.update.expert(unit, chosen.expert)
+				Unit.update.offTheMap(unit, true)
+				add.unit(unit)
+				update.crosses(-europe.crossesNeeded)
+				europe.crossesNeeded += 10
+				Events.trigger('notification', { type: 'immigration', unit })
+				Events.trigger('immigration')
+				Message.send(`Religious unrest in Europe has caused a ${chosen.name} to line up for migration to the new world.`)
+			}
+		})
+	]
 	Message.log('Europe initialized')
 }
 

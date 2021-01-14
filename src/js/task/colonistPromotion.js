@@ -38,7 +38,8 @@ const consumeGoods = (colonist, deltaTime, consumptionObject) => Object.entries(
   const production = Colonist.production(colonist)
   const scale = PRODUCTION_BASE_FACTOR * deltaTime
   let scaledAmount = scale * amount
-  if (production && production.good !== good) {
+  if (colonist.expert === 'slave'
+    ||( production && production.good !== good)) {
     scaledAmount = Math.min(scaledAmount,
     colony.storage[good] || {
       'bells': colony.bells,
@@ -215,7 +216,9 @@ const create = (colony, good, amount) => {
           result: false,
           reason: colonist.expert === currentProfession
             ? `This ${Colonist.expertName(colonist)} has mastered his profession.`
-            : `A ${Colonist.expertName(colonist)} cannot be promoted to ${Colonist.professionName(currentProfession)} directly.`
+            : colonist.expert === 'slave'
+              ? 'Slaves do not promote'
+              : `A ${Colonist.expertName(colonist)} cannot be promoted to ${Colonist.professionName(currentProfession)} directly.`
         }
       } else {
         colonist.promotion.promoting = returnUnusedGoods(consumeGoods(colonist, deltaTime, promotionObject), colonist.colony, deltaTime)
@@ -244,8 +247,12 @@ const create = (colony, good, amount) => {
       let newStatus = 'normal'
       if (!colonist.promotion.satisfied.result) {
         colonist.mood = -1
-        newStatus = 'demoting'
-        advanceDemotion(colonist, colonistObject.demote, deltaTime)
+        if (colonistObject.demote) {        
+          newStatus = 'demoting'
+          advanceDemotion(colonist, colonistObject.demote, deltaTime)
+        } else {
+          newStatus = 'malus'
+        }
       }
       if (colonist.promotion.promoting.result) {
         colonist.mood = 1

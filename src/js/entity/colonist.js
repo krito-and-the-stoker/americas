@@ -124,6 +124,10 @@ const expertName = colonist => Units.settler.name[colonist.expert] || 'Settler'
 const professionName = profession => Units.settler.name[profession] || 'Settler'
 
 const power = colonist => {
+	if (colonist.expert === 'slave') {
+		return 0
+	}
+
 	const currentProfession = profession(colonist)
 	return colonist.mood
 		+ colonist.power
