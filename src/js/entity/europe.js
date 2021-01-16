@@ -15,6 +15,11 @@ import Owner from 'entity/owner'
 import Trade from 'entity/trade'
 
 
+// for immigration at the docks of europe
+const INITIAL_CROSSES_NEEDED = 5
+const CROSSES_COST_IMPROVE = 2
+
+
 const possibleColonists = [
 	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
 	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
@@ -110,7 +115,7 @@ const possibleTrainees = [
 const europe = {
 	units: [],
 	crosses: 0,
-	crossesNeeded: 2,
+	crossesNeeded: INITIAL_CROSSES_NEEDED,
 	pool: [Util.choose(possibleColonists), Util.choose(possibleColonists), Util.choose(possibleColonists)],
 	trade: Trade.create(),
 	destroy: null
@@ -239,17 +244,18 @@ const initialize = () => {
 	europe.destroy = [
 		Time.schedule(TransferCrosses.create()),
 		listen.crosses(crosses => {
-			console.log('current crosses', crosses)
 			if (crosses >= europe.crossesNeeded) {
 				const index = Math.floor(Math.random() * europe.pool.length)
-				const chosen = europe.pool[index]
+				const chosen = europe.crossesNeeded === INITIAL_CROSSES_NEEDED
+					? { unit: 'pioneer', name: 'Pioneer', expert: null }
+					: europe.pool[index]
 				europe.pool[index] = Util.choose(possibleColonists)
 				const unit = Unit.create(chosen.unit, Record.getGlobal('defaultShipArrival'), Owner.player())
 				Unit.update.expert(unit, chosen.expert)
 				Unit.update.offTheMap(unit, true)
 				add.unit(unit)
 				update.crosses(-europe.crossesNeeded)
-				europe.crossesNeeded += 10
+				europe.crossesNeeded += CROSSES_COST_IMPROVE
 				Events.trigger('notification', { type: 'immigration', unit })
 				Events.trigger('immigration')
 				Message.send(`Religious unrest in Europe has caused a ${chosen.name} to line up for migration to the new world.`)

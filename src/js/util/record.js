@@ -10,6 +10,8 @@ import Events from 'util/events'
 
 import Time from 'timeline/time'
 
+import RenderMap from 'render/map'
+
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
 import MapEntity from 'entity/map'
@@ -434,6 +436,7 @@ const unserialize = content => {
 	MapEntity.prepare()
 	snapshot.tiles.map(resolveLookup).forEach(reviveTile)
 	MapEntity.load()
+	new RenderMap()
 	snapshot.entities.forEach(revive)
 	Time.load(snapshot.time)
 	Treasure.load(snapshot.treasure)

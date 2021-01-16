@@ -121,8 +121,8 @@ const americaLarge = () => {
 		MapEntity.get().tiles.filter(tile =>
 			tile.zone === Terrain.start.id)).mapCoordinates
 
-	const pioneer = Unit.create('pioneer', startCoordinates, Owner.player())
-	const soldier = Unit.create('soldier', startCoordinates, Owner.player())
+	const pioneer = Unit.create('scout', startCoordinates, Owner.player())
+	const soldier = Unit.create('settler', startCoordinates, Owner.player())
 	const caravel = Unit.create('caravel', startCoordinates, Owner.player())
 	Unit.loadUnit(caravel, pioneer)
 	Unit.loadUnit(caravel, soldier)

@@ -8,7 +8,7 @@ import Tile from 'entity/tile'
 import RealMapView from 'view/map'
 
 
-class MapView{
+class MapView {
 	constructor() {
 		MapView.instance = this
 		this.numTiles = MapEntity.get().numTiles

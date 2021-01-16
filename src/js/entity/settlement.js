@@ -199,6 +199,8 @@ const dialog = (settlement, unit, answer) => {
 		}
 		if (settlement.presentGiven || choice < 0.3) {
 			settlement.presentGiven = true
+			unit.equipment.food = Unit.UNIT_FOOD_CAPACITY
+			Storage.update(unit.equipment)
 			return {
 				text: `${welcomeText} We are always pleased to welcome English travelers.`,
 				type: 'natives',
@@ -206,6 +208,8 @@ const dialog = (settlement, unit, answer) => {
 			}
 		}
 		if ( choice < 0.8) {
+			unit.equipment.food = Unit.UNIT_FOOD_CAPACITY
+			Storage.update(unit.equipment)
 			return {
 				text: `${welcomeText} Come sit by the fire and we tell you about nearby lands.`,
 				type: 'natives',
@@ -225,6 +229,9 @@ const dialog = (settlement, unit, answer) => {
 				}]
 			}
 		}
+
+		unit.equipment.food = Unit.UNIT_FOOD_CAPACITY
+		Storage.update(unit.equipment)
 		const worth = Math.round(settlement.tribe.civilizationLevel * settlement.population * (1 + 3*Math.random()))
 		return {
 			text: `${welcomeText} Have these valuable beads (${worth}) as our gift.`,

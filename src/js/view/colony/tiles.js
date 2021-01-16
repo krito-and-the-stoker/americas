@@ -12,7 +12,6 @@ import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Treasure from 'entity/treasure'
 
-import BecomeColonist from 'interaction/becomeColonist'
 import JoinColony from 'interaction/joinColony'
 import UnjoinColony from 'interaction/unjoinColony'
 
@@ -213,7 +212,7 @@ const create = (colony, originalDimensions) => {
 					return
 				}
 
-				if (unit && unit.properties.canFound) {
+				if (unit && unit.properties.canJoin) {
 					return `Join Colony and start working on ${Tile.displayName(tile)}`
 				}
 

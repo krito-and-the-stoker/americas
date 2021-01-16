@@ -17,7 +17,7 @@ export default (colony, unit) => {
 		})
 	}
 
-	if (!unit.colonist && unit.properties.canFound && unit.owner === colony.owner) {
+	if (!unit.colonist && unit.properties.canJoin && unit.owner === colony.owner) {
 		const colonist = Colonist.create(unit)
 		Unit.update.colonist(unit, colonist)
 	}

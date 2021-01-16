@@ -11,6 +11,9 @@ import LeaveColony from 'interaction/leaveColony'
 
 const getPath = unit => {
 	if (!unit.movement.path || unit.movement.path.length === 0) {
+		if (!unit.movement.target) {
+			unit.movement.target = unit.tile
+		}
 		unit.movement.path = PathFinder.findPath(unit.mapCoordinates, unit.movement.target.mapCoordinates, unit)
 			.map(coords => Tile.get(coords))
 			.filter(tile => !!tile)

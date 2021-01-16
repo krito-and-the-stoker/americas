@@ -67,7 +67,7 @@ const createBuilding = (colony, building) => {
 			return `Let colonist work in ${name}`
 		}
 
-		if (unit && unit.properties.canFound) {
+		if (unit && unit.properties.canJoin) {
 			if (Colony.canEmploy(colony, name, unit.colonist.expert)) {
 				return `Join colony and start working in ${name}`
 			}

@@ -35,14 +35,7 @@ const FOOD_GAIN_PER_HORSE = 0.5 // food gain when eating horse
 
 
 const RADIUS_GROWTH = 1.0 / (2* Time.WEEK)
-const create = (unitName, coords, owner) => {
-	const expert = Units[unitName]
-		? null
-		: unitName
-	const name = Units[unitName]
-		? unitName
-		: 'settler'
-
+const create = (name, coords, owner) => {
 	if (Units[name]) {
 		const unit = {
 			name,
@@ -55,7 +48,7 @@ const create = (unitName, coords, owner) => {
 			treasure: null,
 			vehicle: null,
 			colony: null,
-			expert,
+			expert: null,
 			offTheMap: false,
 			colonist: null,
 			pioneering: false,
@@ -84,6 +77,9 @@ const create = (unitName, coords, owner) => {
 			unit.equipment.horses = 50
 			unit.equipment.guns = 50
 		}
+		if (name === 'slave') {
+			unit.expert = 'slave'
+		}
 
 		unit.destroy = initialize(unit)
 
@@ -110,9 +106,11 @@ const goTo = (unit, target) => {
 	const path = PathFinder.findPath(unit.mapCoordinates, target.mapCoordinates, unit)
 		.map(Tile.get)
 
-	unit.movement = {
-		target: path[path.length - 1],
-		path
+	if (path.length > 0) {
+		unit.movement = {
+			target: path[path.length - 1],
+			path
+		}
 	}
 }
 
