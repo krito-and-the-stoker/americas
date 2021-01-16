@@ -105,6 +105,7 @@ const goTo = (unit, target) => {
 	// set the target to a place we can actually go to
 	const path = PathFinder.findPath(unit.mapCoordinates, target.mapCoordinates, unit)
 		.map(Tile.get)
+		.filter(tile => !!tile)
 
 	if (path.length > 0) {
 		unit.movement = {
