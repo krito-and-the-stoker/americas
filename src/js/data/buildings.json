@@ -16,11 +16,13 @@
 		"church"
 	],
 	"blacksmiths": {
-		"frame": [1, 2, 3],
-		"population": [0, 2, 8],
-		"name": ["Blacksmith's House", "Blacksmith's Shop", "Iron Works"],
+		"frame": [139, 1, 2, 3],
+		"population": [0, 1, 1, 8],
+		"name": ["House", "Blacksmith's House", "Blacksmith's Shop", "Iron Works"],
 		"cost": [{
 			"construction": 0
+		}, {
+			"construction": 50
 		}, {
 			"construction": 120,
 			"tools": 40
@@ -35,15 +37,17 @@
 		},
 		"production": {
 			"good": "tools",
-			"amount": [3, 5, 7]
+			"amount": [0, 3, 5, 7]
 		}
 	},
 	"tobacconists": {
-		"frame": [4, 5, 6],
-		"population": [0, 1, 8],
-		"name": ["Tobacconist's House", "Tobacconist's Shop", "Cigar Factory"],
+		"frame": [139, 4, 5, 6],
+		"population": [0, 1, 1, 8],
+		"name": ["House", "Tobacconist's House", "Tobacconist's Shop", "Cigar Factory"],
 		"cost": [{
 			"construction": 0
+		}, {
+			"construction": 50
 		}, {
 			"construction": 120,
 			"tools": 40
@@ -58,15 +62,17 @@
 		},
 		"production": {
 			"good": "cigars",
-			"amount": [3, 5, 7]
+			"amount": [0, 3, 5, 7]
 		}
 	},
 	"furTraders": {
-		"frame": [7, 8, 9],
-		"population": [0, 1, 6],
-		"name": ["Fur Traders House", "Fur Trading Post", "Coat Factory"],
+		"frame": [139, 7, 8, 9],
+		"population": [0, 1, 1, 8],
+		"name": ["House", "Fur Traders House", "Fur Trading Post", "Coat Factory"],
 		"cost": [{
 			"construction": 0
+		}, {
+			"construction": 50
 		}, {
 			"construction": 110,
 			"tools": 40
@@ -81,7 +87,7 @@
 		},
 		"production": {
 			"good": "coats",
-			"amount": [3, 5, 7]
+			"amount": [0, 3, 5, 7]
 		}
 	},
 	"carpenters": {
@@ -104,11 +110,13 @@
 		}
 	},
 	"townhall": {
-		"frame": [12, 14, 16],
-		"population": [0, 1, 4],
-		"name": ["Colonial Office", "Townhall", "Cityhall"],
+		"frame": [139, 12, 14, 16],
+		"population": [0, 1, 1, 4],
+		"name": ["House", "Colonial Office", "Townhall", "Cityhall"],
 		"cost": [{
 			"construction": 0
+		}, {
+			"construction": 80
 		}, {
 			"construction": 100,
 			"tools": 40
@@ -120,7 +128,8 @@
 		"workspace": 3,
 		"production": {
 			"good": "bells",
-			"amount": [3, 5, 9]
+			"amount": [0, 3, 5, 9],
+			"passive": [0, 2, 4, 8]
 		}
 	},
 	"warehouse": {
@@ -142,11 +151,13 @@
 		"workspace": 0
 	},
 	"weavers": {
-		"frame": [22, 23, 24],
-		"population": [0, 1, 8],
-		"name": ["Weaver's House", "Weaver's Shop", "Texture Mill"],
+		"frame": [0, 22, 23, 24],
+		"population": [0, 1, 1, 8],
+		"name": ["House", "Weaver's House", "Weaver's Shop", "Texture Mill"],
 		"cost": [{
 			"construction": 0
+		}, {
+			"construction": 50
 		}, {
 			"construction": 120,
 			"tools": 40
@@ -161,15 +172,17 @@
 		},
 		"production": {
 			"good": "cloth",
-			"amount": [3, 5, 7]
+			"amount": [0, 3, 5, 7]
 		}
 	},
 	"rumDistillers": {
-		"frame": [26, 26, 27],
-		"population": [0, 1, 8],
-		"name": ["Rum Distiller's House", "Rum Distillery", "Rum Factory"],
+		"frame": [139, 26, 26, 27],
+		"population": [0, 1, 1, 8],
+		"name": ["House", "Rum Distiller's House", "Rum Distillery", "Rum Factory"],
 		"cost": [{
 			"construction": 0
+		}, {
+			"construction": 50
 		}, {
 			"construction": 120,
 			"tools": 40
@@ -184,7 +197,7 @@
 		},
 		"production": {
 			"good": "rum",
-			"amount": [3, 5, 7]
+			"amount": [0, 3, 5, 7]
 		}
 	},
 	"harbour": {
@@ -224,22 +237,26 @@
 		}]
 	},
 	"church": {
-		"frame": [138, 124, 126],
+		"frame": [138, 125, 124, 126],
 		"population": [0, 3, 8],
 		"width": 2,
 		"workspace": 3,
-		"name": ["House", "Church", "Cathedral"],
+		"name": ["House", "Chapel", "Church", "Cathedral"],
 		"cost": [{
 			"construction": 0
 		}, {
-			"construction": 90
+			"construction": 50
+		}, {
+			"construction": 120,
+			"tools": 20
 		}, {
 			"construction": 350,
 			"tools": 200
 		}],
 		"production": {
 			"good": "crosses",
-			"amount": [0, 7, 15]
+			"amount": [0, 4, 7, 15],
+			"passive": [0, 2, 4, 8]
 		}		
 	},
 	"gunsmiths": {
