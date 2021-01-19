@@ -237,7 +237,7 @@
 		}]
 	},
 	"church": {
-		"frame": [138, 125, 124, 126],
+		"frame": [138, 141, 124, 126],
 		"population": [0, 1, 3, 8],
 		"width": 2,
 		"workspace": 3,
@@ -327,5 +327,24 @@
 		}, {
 			"construction": 120
 		}]
+	},
+	"house": {
+		"frame": [137, 140, 140],
+		"population": [0, 1, 1],
+		"width": 1,
+		"name": ["House", "House"],
+		"wodkrpace": 0,
+		"cost": [{
+			"construction": 0
+		}, {
+			"construction": 30
+		}, {
+			"construction": 30
+		}],
+		"production": {
+			"good": "housing",
+			"amount": 0,
+			"passive": [0, 1, 2]
+		}
 	}
 }
