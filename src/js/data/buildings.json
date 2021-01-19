@@ -13,7 +13,8 @@
 		"harbour",
 		"stables",
 		"school",
-		"church"
+		"church",
+		"house"
 	],
 	"blacksmiths": {
 		"frame": [139, 1, 2, 3],
@@ -37,7 +38,7 @@
 		},
 		"production": {
 			"good": "tools",
-			"amount": [0, 3, 5, 7]
+			"amount": [0, 2, 4, 7]
 		}
 	},
 	"tobacconists": {
@@ -62,7 +63,7 @@
 		},
 		"production": {
 			"good": "cigars",
-			"amount": [0, 3, 5, 7]
+			"amount": [0, 2, 4, 7]
 		}
 	},
 	"furTraders": {
@@ -87,7 +88,7 @@
 		},
 		"production": {
 			"good": "coats",
-			"amount": [0, 3, 5, 7]
+			"amount": [0, 2, 4, 7]
 		}
 	},
 	"carpenters": {
@@ -128,7 +129,7 @@
 		"workspace": 3,
 		"production": {
 			"good": "bells",
-			"amount": [0, 3, 5, 9],
+			"amount": [0, 3, 6, 10],
 			"passive": [0, 2, 4, 8]
 		}
 	},
@@ -172,7 +173,7 @@
 		},
 		"production": {
 			"good": "cloth",
-			"amount": [0, 3, 5, 7]
+			"amount": [0, 2, 4, 7]
 		}
 	},
 	"rumDistillers": {
@@ -197,7 +198,7 @@
 		},
 		"production": {
 			"good": "rum",
-			"amount": [0, 3, 5, 7]
+			"amount": [0, 2, 4, 7]
 		}
 	},
 	"harbour": {
@@ -255,7 +256,7 @@
 		}],
 		"production": {
 			"good": "crosses",
-			"amount": [0, 4, 7, 15],
+			"amount": [0, 3, 6, 10],
 			"passive": [0, 2, 4, 8]
 		}		
 	},
@@ -281,7 +282,7 @@
 		},
 		"production": {
 			"good": "guns",
-			"amount": [0, 3, 5, 7]
+			"amount": [0, 2, 4, 7]
 		}
 	},
 	"customhouse": {
@@ -333,7 +334,7 @@
 		"population": [0, 1, 1],
 		"width": 1,
 		"name": ["House", "House"],
-		"wodkrpace": 0,
+		"workspace": 0,
 		"cost": [{
 			"construction": 0
 		}, {

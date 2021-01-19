@@ -169,7 +169,7 @@ const create = colony => {
 	const unsubscribe = Colony.listen.buildings(colony, buildings =>
 		Object.values(buildings).map(building => {
 			const buildingView = createBuilding(colony, building)
-			if (buildingView) {			
+			if (buildingView) {
 				buildingView.container.building.x = building.position.x * 128
 				buildingView.container.building.y = building.position.y * 128
 				buildingView.container.colonists.x = building.position.x * 128

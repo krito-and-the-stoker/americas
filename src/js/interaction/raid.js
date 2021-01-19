@@ -4,6 +4,7 @@ import Events from 'util/events'
 
 import Unit from 'entity/unit'
 import Storage from 'entity/storage'
+import Colony from 'entity/colony'
 
 const relativeRaidAmont = () => 0.25 + 0.5 * Math.random()
 
@@ -22,7 +23,10 @@ export default (colony, raider) => {
 	const possibleDefenders = colony.units
 		.filter(unit => unit.owner === colony.owner)
 		.filter(unit => unit.domain === 'land')
-	const defender = Util.max(possibleDefenders, unit => Unit.strength(unit))
+	const possibleDefender = Util.max(possibleDefenders, unit => Unit.strength(unit))
+	const defender = Unit.strength(possibleDefender) > Unit.strength(Colony.defender(colony))
+		? possibleDefender
+		: Colony.defender(colony)
 
 	Unit.update.radius(raider, 0)
 	Unit.update.radius(defender, 0)
