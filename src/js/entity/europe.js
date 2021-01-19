@@ -16,8 +16,8 @@ import Trade from 'entity/trade'
 
 
 // for immigration at the docks of europe
-const INITIAL_CROSSES_NEEDED = 5
-const CROSSES_COST_IMPROVE = 2
+const INITIAL_CROSSES_NEEDED = 8
+const CROSSES_COST_IMPROVE = 3
 
 
 const possibleColonists = [

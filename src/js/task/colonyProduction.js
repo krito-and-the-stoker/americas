@@ -11,14 +11,9 @@ import Colony from 'entity/colony'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
-const COLONY_BASE_CROSSES = 1
-const COLONY_BASE_BELLS = 1
-
 
 const PassiveBuildings = Util.makeObject(Object.entries(Buildings)
 	.filter(([, building]) => building.production && building.production.passive))
-
-console.log(PassiveBuildings)
 
 const create = colony => {
 	const update = (currentTime, deltaTime) => {
