@@ -83,6 +83,10 @@ const createBuilding = (colony, building) => {
 		}
 	})
 
+	const unsubscribeClick = Click.on(sprite, () => {
+		console.log(building)
+	}, `Inspect ${Building.getName(colony, building)}`)
+
 	const createColonistView = (productionBonus, colonist, work) => {
 		if (work && work.building === name) {
 			const position = {
@@ -152,6 +156,7 @@ const createBuilding = (colony, building) => {
 	const unsubscribe = () => {
 		unsubscribeColonists()
 		unsubscribeDrag()
+		unsubscribeClick()
 	}
 
 	return {

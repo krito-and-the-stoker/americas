@@ -145,7 +145,9 @@ const create = (colony, originalDimensions) => {
 						sprite.tint = ColonistView.tint(colonist)
 					}),
 					Colonist.listen.productionModifier(colonist, () =>
-						Colony.listen.productionBonus(colony, () => drawProductionSprites(sprite))),
+						Colony.listen.productionBonus(colony, () => 
+							Colony.listen.buildings(colony, () =>
+								drawProductionSprites(sprite)))),
 					drawEducation(),
 					Click.on(sprite, () => ColonistView.createDetailView(colonist), 'View colonist details'),
 					Drag.makeDraggable(sprite, { colonist }, 'Move to other field or building to change production'),
@@ -200,7 +202,9 @@ const create = (colony, originalDimensions) => {
 			const destroyHarvester = Tile.listen.harvestedBy(tile, harvester =>
 				harvester && (harvester.type === 'colonist'
 					? drawColonist(position, tile, harvester)
-					: drawSettlement(position, tile, harvester)))
+					: harvester.type === 'settlement'
+						? drawSettlement(position, tile, harvester)
+						: null))
 
 
 			const destroyDrag = Drag.makeDragTarget(sprites, ({ unit, colonist }) => {
