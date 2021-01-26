@@ -330,13 +330,21 @@
 		}]
 	},
 	"house": {
-		"frame": [137, 140, 140],
-		"population": [0, 1, 1],
+		"frame": [137, 140, 140, 140, 140, 140, 140],
+		"population": [0, 1, 1, 1, 1, 1, 1],
 		"width": 1,
-		"name": ["Houses", "Houses", "Houses"],
+		"name": ["Trees", "Houses", "Houses", "Houses", "Houses", "Houses", "Houses"],
 		"workspace": 0,
 		"cost": [{
 			"construction": 0
+		}, {
+			"construction": 30
+		}, {
+			"construction": 30
+		}, {
+			"construction": 30
+		}, {
+			"construction": 30
 		}, {
 			"construction": 30
 		}, {
@@ -345,7 +353,7 @@
 		"production": {
 			"good": "housing",
 			"amount": 0,
-			"passive": [0, 1, 2]
+			"passive": [0, 1, 2, 3, 4, 5, 6]
 		}
 	}
 }

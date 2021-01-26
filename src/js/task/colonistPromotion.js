@@ -26,8 +26,9 @@ const addScaledAmountToColony = (colony, good, scaledAmount, scale) => {
   }
   else if (good === 'crosses') {
     Colony.update.crosses(colony, scaledAmount)
-  }
-  else {
+  } else if (good === 'housing') {
+    Colony.update.housing(colony, scaledAmount)
+  } else {
     Storage.update(colony.storage, { good, amount: scaledAmount })
   }
   Storage.update(colony.productionRecord, { good, amount: scaledAmount / scale })  
@@ -43,7 +44,8 @@ const consumeGoods = (colonist, deltaTime, consumptionObject) => Object.entries(
     scaledAmount = Math.min(scaledAmount,
     colony.storage[good] || {
       'bells': colony.bells,
-      'crosses': colony.crosses
+      'crosses': colony.crosses,
+      'housing': colony.housing
     }[good] || 0)
   }
 

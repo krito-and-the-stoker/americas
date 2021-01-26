@@ -22,7 +22,8 @@
 		"bells",
 		"crosses",
 		"books",
-		"gold"
+		"gold",
+		"housing"
 	],
 	"food":{
 		"id": 64,
@@ -104,5 +105,8 @@
 	"gold":{
 		"id": 116,
 		"displayFactor": 10
+	},
+	"housing":{
+		"id": 117
 	}
 }

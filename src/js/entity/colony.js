@@ -78,6 +78,7 @@ const update = {
 	buildings: (colony, value) => Binding.update(colony, 'buildings', value),
 	bells: (colony, value) => Binding.update(colony, 'bells', colony.bells + value),
 	crosses: (colony, value) => Binding.update(colony, 'crosses', colony.crosses + value),
+	housing: (colony, value) => Binding.update(colony, 'housing', colony.housing + value),
 	growth: (colony, value) => Binding.update(colony, 'growth', colony.growth + value),
 	productionBonus: (colony, value) => Binding.update(colony, 'productionBonus', value),
 }
@@ -217,6 +218,7 @@ const create = (coords, owner) => {
 		},
 		bells: 0,
 		crosses: 0,
+		housing: 0,
 		growth: 0
 	}
 	colony.storage = Storage.create()
@@ -265,6 +267,7 @@ const save = colony => ({
 	},
 	bells: colony.bells,
 	crosses: colony.crosses,
+	housing: colony.housing,
 	growth: colony.growth,
 	owner: Record.reference(colony.owner)
 })
@@ -284,6 +287,9 @@ const load = colony => {
 	}
 	if (!colony.crosses) {
 		colony.crosses = 0
+	}
+	if (!colony.housing) {
+		colony.housing = 0
 	}
 
 	colony.colonists.forEach((colonist, index) => Record.dereferenceLazy(colonist, entity => colony.colonists[index] = entity))

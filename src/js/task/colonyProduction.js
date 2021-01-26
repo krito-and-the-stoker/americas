@@ -19,6 +19,10 @@ const create = colony => {
 	const update = (currentTime, deltaTime) => {
 		const scale = deltaTime * PRODUCTION_BASE_FACTOR
 
+		// cannot collect crosses or housing, so they are removed before production
+    Colony.update.crosses(colony, -colony.crosses)
+    Colony.update.housing(colony, -colony.housing)
+
 		Object.keys(PassiveBuildings)
 			.filter(name => colony.buildings[name])
 			.forEach(name => {
@@ -32,6 +36,9 @@ const create = colony => {
 					} else if (good === 'crosses') {
 						Colony.update.crosses(colony, amount * scale)
 						Storage.update(colony.productionRecord, { good: 'crosses', amount })
+					} else if (good === 'housing') {
+						Colony.update.housing(colony, amount * scale)
+						Storage.update(colony.productionRecord, { good: 'housing', amount })
 					} else {
 						Storage.update(colony.storage, { good, amount: amount * scale })
 						Storage.update(colony.productionRecord, { good, amount })

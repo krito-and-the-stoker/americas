@@ -198,7 +198,7 @@ const construct = (colony, construction) => {
 	}
 
 	Message.send(`${colony.name} has completed construction of ${construction.name}.`)
-	construction.action()
+	Util.execute(construction.action)
 
 
 	construction.amount -= construction.cost.construction
@@ -206,17 +206,19 @@ const construct = (colony, construction) => {
 		construction.tools -= construction.cost.tools
 	}
 
-	const newConstruction = {
-		target: 'none',
-		action: () => {},
-		name: `${construction.name} completed`,
-		cost: {
-			construction: 50,
-			tools: 0
-		},
-		tools: construction.tools,
-		amount: construction.amount
-	}
+	const newConstruction = constructionOptions(colony)
+		.find(option => option.target === construction.target)
+		|| {
+			target: 'none',
+			name: `${construction.name} completed`,
+			cost: {
+				construction: 50,
+				tools: 0
+			}
+		}
+
+	newConstruction.tools = 0
+	newConstruction.amount = 0
 
 	Colony.update.construction(colony, newConstruction)
 }

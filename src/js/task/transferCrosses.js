@@ -9,7 +9,6 @@ const create = (colony) => {
   const update = (currentTime, deltaTime) => {
     if (colony) {
       Europe.update.crosses(colony.crosses)
-      Colony.update.crosses(colony, -colony.crosses)
     } else {
       Europe.update.crosses(deltaTime * PRODUCTION_BASE_FACTOR)
     }
