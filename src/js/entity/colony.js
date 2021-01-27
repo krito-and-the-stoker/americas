@@ -63,6 +63,7 @@ const listen = {
 	units: (colony, fn) => Binding.listen(colony, 'units', fn),
 	colonists: (colony, fn) => Binding.listen(colony, 'colonists', fn),
 	construction: (colony, fn) => Binding.listen(colony, 'construction', fn),
+	constructionTarget: (colony, fn) => Binding.listen(colony, 'constructionTarget', fn),
 	bells: (colony, fn) => Binding.listen(colony, 'bells', fn),
 	growth: (colony, fn) => Binding.listen(colony, 'growth', fn),
 	buildings: (colony, fn) => Binding.listen(colony, 'buildings', fn),
@@ -75,6 +76,7 @@ const listenEach = {
 
 const update = {
 	construction: (colony, value) => Binding.update(colony, 'construction', value),
+	constructionTarget: (colony, value) => Binding.update(colony, 'constructionTarget', value),
 	buildings: (colony, value) => Binding.update(colony, 'buildings', value),
 	bells: (colony, value) => Binding.update(colony, 'bells', colony.bells + value),
 	crosses: (colony, value) => Binding.update(colony, 'crosses', colony.crosses + value),
@@ -133,12 +135,16 @@ const canEmploy = (colony, building, expert) => colony.colonists
 	.filter(colonist => colonist.work && colonist.work.building === building).length < Building.workspace(colony, building) &&
 	(building !== 'school' || canTeach(colony, expert))
 
+const construction = colony => constructionTarget
+	? colony.construction[constuctionTarget]
+	: Building.noConstruction()
 
 const initialize = colony => {
 	colony.productionSummary = Storage.createWithProduction()
 	colony.productionRecord = Storage.createWithProduction()
 	const tile = MapEntity.tile(colony.mapCoordinates)
-	const destroy = [
+
+	colony.destroy = [
 		Tile.listen.tile(tile, () =>
 			Tile.colonyProductionGoods(tile).map(good =>
 				Time.schedule(Harvest.create(colony, tile, good)))),
@@ -162,43 +168,31 @@ const initialize = colony => {
 				Events.trigger('notification', { type: 'born', colony, unit })
 				colony.growth = 0
 			}
-		})
+		}),
+		Time.schedule(ColonyProduction.create(colony)),
+		Time.schedule(Deteriorate.create(colony)),
+		Time.schedule(ProductionSummary.create(colony)),
+		Time.schedule(GrowHorses.create(colony)),
+		Time.schedule(FeedHorses.create(colony)),
+		listen.colonists(colony, () => listen.bells(colony, () => {
+			let bonus = 0
+			if (tories(colony).number > 14) {
+				bonus -= 1
+			}
+			if (tories(colony).number > 9) {
+				bonus -= 1
+			}
+			if (rebels(colony).percentage >= 50) {
+				bonus += 1
+			}
+			if (rebels(colony).percentage >= 100) {
+				bonus += 1
+			}
+			if (colony.productionBonus !== bonus) {
+				update.productionBonus(colony, bonus)
+			}
+		}))
 	]
-	colony.construction = {
-		amount: colony.construction.amount,
-		tools: colony.construction.tools,
-		...Building.constructionOptions(colony).find(option => option.target === colony.construction.target) || Building.noProductionOption()
-	}
-	destroy.push(listen.construction(colony, construction => {
-		if (construction.amount >= construction.cost.construction && (!construction.cost.tools || construction.tools >= construction.cost.tools)) {
-			Building.construct(colony, construction)
-		}
-	}))
-	destroy.push(Time.schedule(ColonyProduction.create(colony)))
-	destroy.push(Time.schedule(Deteriorate.create(colony)))
-	destroy.push(Time.schedule(ProductionSummary.create(colony)))
-	destroy.push(Time.schedule(GrowHorses.create(colony)))
-	destroy.push(Time.schedule(FeedHorses.create(colony)))
-	destroy.push(listen.colonists(colony, () => listen.bells(colony, () => {
-		let bonus = 0
-		if (tories(colony).number > 14) {
-			bonus -= 1
-		}
-		if (tories(colony).number > 9) {
-			bonus -= 1
-		}
-		if (rebels(colony).percentage >= 50) {
-			bonus += 1
-		}
-		if (rebels(colony).percentage >= 100) {
-			bonus += 1
-		}
-		if (colony.productionBonus !== bonus) {
-			update.productionBonus(colony, bonus)
-		}
-	})))
-
-	colony.destroy = destroy
 }
 
 const create = (coords, owner) => {
@@ -211,11 +205,8 @@ const create = (coords, owner) => {
 		buildings: Building.create(),
 		capacity: 100,
 		mapCoordinates: { ...coords },
-		construction: {
-			amount: 0,
-			tools: 0,
-			target: 'harbour',
-		},
+		construction: Construction.create(),
+		constructionTarget: null,
 		bells: 0,
 		crosses: 0,
 		housing: 0,
@@ -260,11 +251,8 @@ const save = colony => ({
 	storage: Storage.save(colony.storage),
 	trade: Trade.save(colony.trade),
 	buildings: colony.buildings,
-	construction: {
-		amount: colony.construction.amount,
-		tools: colony.construction.tools,
-		target: colony.construction.target
-	},
+	construction: Construction.save(colony.construction),
+	constructionTarget: colony.constructionTarget,
 	bells: colony.bells,
 	crosses: colony.crosses,
 	housing: colony.housing,
@@ -280,6 +268,7 @@ const load = colony => {
 	colony.storage = Storage.load(colony.storage)
 	colony.trade = Trade.load(colony.trade)
 	colony.owner = Record.dereference(colony.owner)
+	colony.construction = Construction.load(colony.construction)
 
 	// legacy games load
 	if (!colony.growth) {

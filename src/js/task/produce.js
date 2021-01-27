@@ -46,6 +46,9 @@ const create = (colony, building, colonist) => {
 			Storage.update(colony.storage, { good: production.good, amount: productionAmount })
 		}
 		if (production.type === 'construction') {
+			const construction = Colony.construction(colony)
+			const totalCost = Util.sum(Object.values(construction.cost))
+
 			const toolProduction = productionAmount *
 				(colony.construction.cost ? colony.construction.cost.tools || 0 : 0) / colony.construction.cost.construction
 			const toolsEfficiency = toolProduction > 0 ? Util.clamp(colony.storage.tools / toolProduction) : 1

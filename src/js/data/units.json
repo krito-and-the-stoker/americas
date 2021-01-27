@@ -13,7 +13,17 @@
 		"combat": 1,
 		"radius": 1,
 		"cost": 20,
-		"canExplore": true
+		"canExplore": true,
+		"construction": {
+			"buildings": {
+				"harbour": 2
+			},
+			"cost": {
+				"wood": 250,
+				"tools": 100,
+				"cloth": 100
+			}
+		}
 	},
 	"privateer": {
 		"frame": {
@@ -30,7 +40,18 @@
 		"support": 0.5,
 		"radius": 2,
 		"cost": 60,
-		"canExplore": true
+		"canExplore": true,
+		"construction": {
+			"buildings": {
+				"harbour": 3
+			},
+			"cost": {
+				"wood": 500,
+				"tools": 250,
+				"guns": 100,
+				"cloth": 100
+			}
+		}
 	},
 	"frigate": {
 		"frame": {
@@ -47,7 +68,18 @@
 		"support": 1,
 		"radius": 3,
 		"cost": 200,
-		"canExplore": true
+		"canExplore": true,
+		"construction": {
+			"buildings": {
+				"harbour": 3
+			},
+			"cost": {
+				"wood": 1000,
+				"tools": 500,
+				"guns": 250,
+				"cloth": 100
+			}
+		}
 	},
 	"galleon": {
 		"frame": {
@@ -65,7 +97,18 @@
 		"support": 0.5,
 		"radius": 1,
 		"cost": 100,
-		"canExplore": true
+		"canExplore": true,
+		"construction": {
+			"buildings": {
+				"harbour": 3
+			},
+			"cost": {
+				"wood": 1000,
+				"tools": 400,
+				"guns": 100,
+				"cloth": 200
+			}
+		}
 	},
 	"merchantman": {
 		"frame": {
@@ -81,7 +124,18 @@
 		"combat": 3,
 		"radius": 1,
 		"cost": 50,
-		"canExplore": true
+		"canExplore": true,
+		"construction": {
+			"buildings": {
+				"harbour": 3
+			},
+			"cost": {
+				"wood": 500,
+				"tools": 250,
+				"guns": 50,
+				"cloth": 100
+			}
+		}
 	},
 	"wagontrain": {
 		"frame": {
@@ -95,7 +149,13 @@
 		"travelType": "wagon",
 		"speed": 1,
 		"radius": 0.5,
-		"cost": 10
+		"cost": 10,
+		"construction": {
+			"buildings": {},
+			"cost": {
+				"wood": 30
+			}
+		}
 	},
 	"artillery": {
 		"frame": {
@@ -114,7 +174,17 @@
 		"radius": 2,
 		"cost": 30,
 		"needsFood": true,
-		"canExplore": true
+		"canExplore": true,
+		"construction": {
+			"buildings": {
+				"gunsmiths": 1
+			},
+			"cost": {
+				"wood": 200,
+				"tools": 200,
+				"guns": 200
+			}
+		}
 	},
 	"pioneer": {
 		"frame": {

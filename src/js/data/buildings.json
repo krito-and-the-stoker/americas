@@ -21,14 +21,14 @@
 		"population": [0, 1, 1, 8],
 		"name": ["Trees", "Blacksmith's House", "Blacksmith's Shop", "Iron Works"],
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 50
+			"wood": 50
 		}, {
-			"construction": 120,
+			"wood": 120,
 			"tools": 40
 		}, {
-			"construction": 480,
+			"wood": 480,
 			"tools": 200
 		}],
 		"width": 1,
@@ -46,14 +46,14 @@
 		"population": [0, 1, 1, 8],
 		"name": ["Trees", "Tobacconist's House", "Tobacconist's Shop", "Cigar Factory"],
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 50
+			"wood": 50
 		}, {
-			"construction": 120,
+			"wood": 120,
 			"tools": 40
 		}, {
-			"construction": 320,
+			"wood": 320,
 			"tools": 200
 		}],
 		"width": 1,
@@ -71,14 +71,14 @@
 		"population": [0, 1, 1, 8],
 		"name": ["Trees", "Fur Traders House", "Fur Trading Post", "Coat Factory"],
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 50
+			"wood": 50
 		}, {
-			"construction": 110,
+			"wood": 110,
 			"tools": 40
 		}, {
-			"construction": 320,
+			"wood": 320,
 			"tools": 200
 		}],
 		"width": 1,
@@ -96,9 +96,9 @@
 		"population": [0, 3],
 		"name": ["Carpenters Shop", "Lumber Mill"],
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 180
+			"wood": 180
 		}],
 		"width": 1,
 		"workspace": 3,
@@ -115,14 +115,14 @@
 		"population": [0, 1, 1, 4],
 		"name": ["Trees", "Colonial Office", "Townhall", "Cityhall"],
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 80
+			"wood": 80
 		}, {
-			"construction": 100,
+			"wood": 100,
 			"tools": 40
 		}, {
-			"construction": 240,
+			"wood": 240,
 			"tools": 100
 		}],
 		"width": 2,
@@ -134,36 +134,34 @@
 		}
 	},
 	"warehouse": {
-		"frame": [138, 18, 20, 20],
+		"frame": [138, 18, 20],
 		"population": [0, 1, 1, 1],
-		"name": ["Storage", "Warehouse", "Warehouse Expansion", "Warehouse Expansion"],
+		"name": ["Storage", "Warehouse", "Warehouse Expansion"],
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 80
+			"wood": 80
 		}, {
-			"construction": 160,
+			"wood": 160,
 			"tools": 40
-		}, {
-			"construction": 200,
-			"tools": 60
 		}],
 		"width": 2,
-		"workspace": 0
+		"workspace": 0,
+		"unlimitedLevels": true
 	},
 	"weavers": {
 		"frame": [138, 22, 23, 24],
 		"population": [0, 1, 1, 8],
 		"name": ["Trees", "Weaver's House", "Weaver's Shop", "Texture Mill"],
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 50
+			"wood": 50
 		}, {
-			"construction": 120,
+			"wood": 120,
 			"tools": 40
 		}, {
-			"construction": 320,
+			"wood": 320,
 			"tools": 200
 		}],
 		"width": 1,
@@ -181,14 +179,14 @@
 		"population": [0, 1, 1, 8],
 		"name": ["Trees", "Rum Distiller's House", "Rum Distillery", "Rum Factory"],
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 50
+			"wood": 50
 		}, {
-			"construction": 120,
+			"wood": 120,
 			"tools": 40
 		}, {
-			"construction": 320,
+			"wood": 320,
 			"tools": 200
 		}],
 		"width": 1,
@@ -208,14 +206,14 @@
 		"workspace": 0,
 		"name": ["Beach", "Docks", "Drydock", "Shipyard"],
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 50
+			"wood": 50
 		}, {
-			"construction": 160,
+			"wood": 160,
 			"tools": 50
 		}, {
-			"construction": 480,
+			"wood": 480,
 			"tools": 200
 		}]
 	},
@@ -226,14 +224,14 @@
 		"workspace": [0, 1, 2, 3],
 		"name": ["Trees", "School", "College", "University"],
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 90
+			"wood": 90
 		}, {
-			"construction": 320,
+			"wood": 320,
 			"tools": 100
 		}, {
-			"construction": 400,
+			"wood": 400,
 			"tools": 200
 		}]
 	},
@@ -244,14 +242,14 @@
 		"workspace": 3,
 		"name": ["Trees", "Chapel", "Church", "Cathedral"],
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 50
+			"wood": 50
 		}, {
-			"construction": 120,
+			"wood": 120,
 			"tools": 20
 		}, {
-			"construction": 350,
+			"wood": 350,
 			"tools": 200
 		}],
 		"production": {
@@ -267,14 +265,14 @@
 		"workspace": 3,
 		"name": ["Trees", "Armory", "Magazine", "Arsenal"],
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 100
+			"wood": 100
 		}, {
-			"construction": 240,
+			"wood": 240,
 			"tools": 100
 		}, {
-			"construction": 480,
+			"wood": 480,
 			"tools": 200
 		}],
 		"consumption": {
@@ -293,9 +291,9 @@
 		"width": 1,
 		"workspace": 0,
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 320,
+			"wood": 320,
 			"tools": 100
 		}]
 	},
@@ -306,14 +304,14 @@
 		"name": ["None", "Stockade", "Fort", "Fortress"],
 		"workspace": 0,
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 60
+			"wood": 60
 		}, {
-			"construction": 240,
+			"wood": 240,
 			"tools": 200
 		}, {
-			"construction": 640,
+			"wood": 640,
 			"tools": 400
 		}]
 	},
@@ -324,36 +322,27 @@
 		"name": ["Meadows", "Stables"],
 		"workspace": 0,
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 120
+			"wood": 120
 		}]
 	},
 	"house": {
-		"frame": [137, 140, 140, 140, 140, 140, 140],
-		"population": [0, 1, 1, 1, 1, 1, 1],
+		"frame": [137, 140],
+		"population": [0, 1],
 		"width": 1,
-		"name": ["Trees", "Houses", "Houses", "Houses", "Houses", "Houses", "Houses"],
+		"name": ["Trees", "Houses"],
 		"workspace": 0,
 		"cost": [{
-			"construction": 0
+			"wood": 0
 		}, {
-			"construction": 30
-		}, {
-			"construction": 30
-		}, {
-			"construction": 30
-		}, {
-			"construction": 30
-		}, {
-			"construction": 30
-		}, {
-			"construction": 30
+			"wood": 30
 		}],
 		"production": {
 			"good": "housing",
 			"amount": 0,
-			"passive": [0, 1, 2, 3, 4, 5, 6]
-		}
+			"passive": [0, 1]
+		},
+		"unlimitedLevels": true
 	}
 }

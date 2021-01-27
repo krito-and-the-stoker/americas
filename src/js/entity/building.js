@@ -35,8 +35,8 @@ const create = () => {
 	}
 	buildings.filter(building => building.width === 2).forEach(building => {
 		building.position = Util.choose(positions.filter(pos => !pos.taken && pos.width >= 2))
-		// TODO: This is super buggy and will sometimes not work and lead to bugs. just plz plz refactor it!
-		if (building.position) {		
+		// TODO: This works suprisingly well
+		if (building.position) {
 			building.position.taken = true
 			const left = positions.find(pos => pos.x === building.position.x - 1 && pos.y === building.position.y)
 			if (left) {
@@ -59,169 +59,34 @@ const create = () => {
 	return Util.makeObject(buildings.map(building => [building.name, building]))
 }
 
-const getName = (colony, building) => Buildings[building.name].name[building.level]
-const workspace = (colony, building) => Buildings[building].workspace.length ? Buildings[building].workspace[colony.buildings[building].level] : Buildings[building].workspace || 0
-
-const constructionOptions = colony => {
-	const buildings = Buildings.places
-		.filter(name => Buildings[name].name.length > colony.buildings[name].level + 1)
-		.map(name => ({
-			target: name,
-			name: Buildings[name].name[colony.buildings[name].level + 1],
-			cost: Buildings[name].cost[colony.buildings[name].level + 1],
-			population: Buildings[name].population[colony.buildings[name].level + 1],
-			action: () => {
-				const buildings = colony.buildings
-				buildings[name].level += 1
-				Colony.update.buildings(colony)
-				Events.trigger('notification', { type: 'construction', colony, building: colony.buildings[name] })
-			}
-		}))
-
-	buildings.find(b => b.target === 'warehouse').action = () => {
-		colony.capacity += 100
-		if (colony.buildings.warehouse.level < 2) {
-			const buildings = colony.buildings
-			if (!buildings.warehouse.level) {
-				buildings.warehouse.level = 0
-			}
-			buildings.warehouse.level += 1
-			Colony.update.buildings(colony)
-			Events.trigger('notification', { type: 'construction', colony, building: colony.buildings['warehouse'] })
-		}
-	}
-
-	const wagontrain = [{
-		target: 'wagontrain',
-		name: 'Wagon Train',
-		cost: { construction: 40 },
-		action: () => {
-			const unit = Unit.create('wagontrain', colony.mapCoordinates, colony.owner)
-			Events.trigger('notification', { type: 'construction', colony, unit })
-		}
-	}]
-
-	const artillery = [{
-		target: 'artillery',
-		name: 'Artillery',
-		cost: {
-			construction: 400,
-			tools: 80
-		},
-		action: () => {
-			const unit = Unit.create('artillery', colony.mapCoordinates, colony.owner)
-			Events.trigger('notification', { type: 'construction', colony, unit })
-		}
-	}]
-
-	const ships = [{
-		target: 'caravel',
-		name: 'Caravel',
-		cost: {
-			construction: 250,
-			tools: 80
-		},
-		action: () => {
-			const unit = Unit.create('caravel', colony.mapCoordinates, colony.owner)
-			Events.trigger('notification', { type: 'construction', colony, unit })
-		}
-	}, {
-		target: 'merchantman',
-		name: 'Merchantman',
-		cost: {
-			construction: 400,
-			tools: 160
-		},
-		action: () => {
-			const unit = Unit.create('merchantman', colony.mapCoordinates, colony.owner)
-			Events.trigger('notification', { type: 'construction', colony, unit })
-		}
-	}, {
-		target: 'galleon',
-		name: 'Galleon',
-		cost: {
-			construction: 640,
-			tools: 200
-		},
-		action: () => {
-			const unit = Unit.create('galleon', colony.mapCoordinates, colony.owner)
-			Events.trigger('notification', { type: 'construction', colony, unit })
-		}
-	}, {
-		target: 'privateer',
-		name: 'Privateer',
-		cost: {
-			construction: 500,
-			tools: 240
-		},
-		action: () => {
-			const unit = Unit.create('privateer', colony.mapCoordinates, colony.owner)
-			Events.trigger('notification', { type: 'construction', colony, unit })
-		}
-	}, {
-		target: 'frigate',
-		name: 'Frigate',
-		cost: {
-			construction: 1000,
-			tools: 400
-		},
-		action: () => {
-			const unit = Unit.create('frigate', colony.mapCoordinates, colony.owner)
-			Events.trigger('notification', { type: 'construction', colony, unit })
-		}
-	}]
-
-	let options = buildings
-		.filter(building => building.population <= colony.colonists.length)
-		.concat(wagontrain)
-	if (colony.buildings.gunsmiths.level) {
-		options = options.concat(artillery)
-	}
-	if (colony.buildings.harbour.level >= 3) {
-		options = options.concat(ships)
-	}
-
-	return options
+// TODO: remove getName function
+const getName = (colony, building) => {
+	console.warn('do not use this function anymore')
+	Buildings[building.name].name[building.level]
 }
+const level = (colony, name) => colony.buildings[name].level
+const name = (colony, name, level) => {
+	const buildingLevel = (!level && level !== 0)
+		? level(colony, name)
+		: level
 
-const noProductionOption = () => ({
-	target: 'none',
-	cost: {
-		construction: 50
-	},
-	name: 'No Production'
-})
-
-const construct = (colony, construction) => {
-	if (construction.target === 'none') {
-		return
-	}
-
-	Message.send(`${colony.name} has completed construction of ${construction.name}.`)
-	Util.execute(construction.action)
-
-
-	construction.amount -= construction.cost.construction
-	if (construction.cost.tools) {
-		construction.tools -= construction.cost.tools
-	}
-
-	const newConstruction = constructionOptions(colony)
-		.find(option => option.target === construction.target)
-		|| {
-			target: 'none',
-			name: `${construction.name} completed`,
-			cost: {
-				construction: 50,
-				tools: 0
-			}
-		}
-
-	newConstruction.tools = 0
-	newConstruction.amount = 0
-
-	Colony.update.construction(colony, newConstruction)
+	return Buildings[name].name[buildingLevel]
+		|| Buildings[name].name[Buildings[name].name.length - 1]
 }
+const cost = (colony, name, level) => {
+	const buildingLevel = (!level && level !== 0)
+		? level(colony, name)
+		: level
+
+	return Buildings[name].cost[buildingLevel]
+		|| Buildings[name].cost[Buildings[name].cost.length - 1]
+}
+const workspace = (colony, name) =>
+	(Buildings[name].workspace.length
+		? Buildings[name].workspace[level(colony, name)]
+		: Buildings[name].workspace)
+		 || 0
+
 
 
 
