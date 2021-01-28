@@ -23,16 +23,6 @@ const create = colony => {
 				}
 			})
 
-		if (colony.construction.amount > colony.construction.cost.construction) {
-			const amount = colony.construction.amount
-			const capacity = colony.construction.cost.construction
-			const unscaledLoss = LOSS_FACTOR * (amount - capacity)
-			const loss = deltaTime * PRODUCTION_BASE_FACTOR * unscaledLoss
-			colony.construction.amount -= loss
-			Colony.update.construction(colony)
-			Storage.update(colony.productionRecord, { good: 'construction', amount: -unscaledLoss })
-		}
-
 		return true
 	}
 

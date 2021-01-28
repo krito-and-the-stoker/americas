@@ -46,26 +46,7 @@ const create = (colony, building, colonist) => {
 			Storage.update(colony.storage, { good: production.good, amount: productionAmount })
 		}
 		if (production.type === 'construction') {
-			const construction = Colony.construction(colony)
-			const totalCost = Util.sum(Object.values(construction.cost))
-
-			const toolProduction = productionAmount *
-				(colony.construction.cost ? colony.construction.cost.tools || 0 : 0) / colony.construction.cost.construction
-			const toolsEfficiency = toolProduction > 0 ? Util.clamp(colony.storage.tools / toolProduction) : 1
-			colony.construction.amount += toolsEfficiency * productionAmount
-			colony.construction.tools += toolsEfficiency * toolProduction
-
-			// use wood
-			Storage.update(colony.storage, { good: consumption.good, amount: -toolsEfficiency * consumptionAmount })
-			Storage.update(colony.productionRecord, { good: consumption.good, amount: -toolsEfficiency * unscaledConsumptionAmount })
-
-			// use tools
-			Storage.update(colony.storage, { good: 'tools', amount: -toolsEfficiency * toolProduction })
-			Storage.update(colony.productionRecord, { good: 'tools', amount: -toolsEfficiency * toolProduction / scale })
-
-			// construct
-			Storage.update(colony.productionRecord, { good: production.good, amount: toolsEfficiency * unscaledProductionAmount })
-			Colony.update.construction(colony)
+			// TODO: do the construction
 		}
 		if (production.type === 'bells') {
 			Treasure.spend(productionAmount * BELLS_TO_GOLD_FACTOR)

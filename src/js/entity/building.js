@@ -93,8 +93,8 @@ const workspace = (colony, name) =>
 export default {
 	getName,
 	create,
-	constructionOptions,
-	noProductionOption,
-	construct,
+	level,
+	name,
+	cost,
 	workspace
 }

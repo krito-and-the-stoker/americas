@@ -15,6 +15,7 @@ import Storage from 'entity/storage'
 import Building from 'entity/building'
 import Trade from 'entity/trade'
 import Owner from 'entity/owner'
+import Construction from 'entity/construction'
 
 import Harvest from 'task/harvest'
 import Consume from 'task/consume'
@@ -48,6 +49,10 @@ const isCoastal = colony => {
 }
 
 const defender = colony => colony.colonists[colony.colonists.length - 1].unit
+
+const currentConstruction = colony => colony.constructionTarget
+	? colony.construction[colony.constructionTarget]
+	: colony.construction.none
 
 const add = {
 	unit: (colony, unit) => Member.add(colony, 'units', unit),
@@ -135,10 +140,6 @@ const canEmploy = (colony, building, expert) => colony.colonists
 	.filter(colonist => colonist.work && colonist.work.building === building).length < Building.workspace(colony, building) &&
 	(building !== 'school' || canTeach(colony, expert))
 
-const construction = colony => constructionTarget
-	? colony.construction[constuctionTarget]
-	: Building.noConstruction()
-
 const initialize = colony => {
 	colony.productionSummary = Storage.createWithProduction()
 	colony.productionRecord = Storage.createWithProduction()
@@ -203,10 +204,10 @@ const create = (coords, owner) => {
 		units: [],
 		colonists: [],
 		buildings: Building.create(),
-		capacity: 100,
-		mapCoordinates: { ...coords },
 		construction: Construction.create(),
 		constructionTarget: null,
+		capacity: 100,
+		mapCoordinates: { ...coords },
 		bells: 0,
 		crosses: 0,
 		housing: 0,
@@ -308,6 +309,7 @@ export default {
 	load,
 	area,
 	coastalDirection,
+	currentConstruction,
 	isCoastal,
 	canEmploy,
 	add,

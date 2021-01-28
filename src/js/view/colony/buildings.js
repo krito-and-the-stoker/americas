@@ -83,9 +83,10 @@ const createBuilding = (colony, building) => {
 		}
 	})
 
-	const unsubscribeClick = Click.on(sprite, () => {
-		console.log(building)
-	}, `Inspect ${Building.getName(colony, building)}`)
+	// TODO: Implement a nice detailed popup
+	// const unsubscribeClick = Click.on(sprite, () => {
+	// 	console.log(building)
+	// }, `Inspect ${Building.getName(colony, building)}`)
 
 	const createColonistView = (productionBonus, colonist, work) => {
 		if (work && work.building === name) {
@@ -152,12 +153,11 @@ const createBuilding = (colony, building) => {
 						Colonist.listen.promotionStatus(colonist, () =>
 							createColonistView(productionBonus, colonist, work)))))))
 
-
-	const unsubscribe = () => {
-		unsubscribeColonists()
-		unsubscribeDrag()
-		unsubscribeClick()
-	}
+	const unsubscribe = [
+		unsubscribeColonists,
+		unsubscribeDrag,
+		// unsubscribeClick
+	]
 
 	return {
 		container,

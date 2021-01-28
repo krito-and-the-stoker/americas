@@ -6,6 +6,7 @@ import Binding from 'util/binding'
 import Colony from 'entity/colony'
 import Building from 'entity/building'
 import Storage from 'entity/storage'
+import Construction from 'entity/construction'
 
 import Dialog from 'view/ui/dialog'
 import Button from 'view/ui/button'
@@ -20,17 +21,15 @@ const create = (colony, originalDimensions) => {
 	}
 
 	const optionDescription = option => {
-		const constructionCost = option.cost()
-		const cost = constructionCost.tools ? `${constructionCost.construction} / ${constructionCost.tools}` : `${constructionCost.construction}`
-		return `${option.name()} (${cost})`
+		return `${option.name()} (${Util.sum(Object.values(option.cost()))})`
 	}
 
 	const constructionButton = Button.create('change', () => {
-		const options = Building.constructionOptions(colony)
+		const options = Construction.options(colony)
 		const choices = options.map(option => ({
 			text: optionDescription(option),
 			action: () => {
-				Colony.update.constructionTarget(option.target)
+				Construction.start(colony, option.target)
 			}
 		}))
 
@@ -44,81 +43,26 @@ const create = (colony, originalDimensions) => {
 	constructionButton.y = 650
 	container.panel.addChild(constructionButton)
 
-	const buildingText = Text.create(colony.construction[colony.constructionTarget].name)
-	buildingText.x =  originalDimensions.x - 450 + 20
-	buildingText.y = originalDimensions.y / 2 - 75
-	container.panel.addChild(buildingText)
+	// const buildingText = Text.create(colony.construction[colony.constructionTarget].name)
+	// buildingText.x =  originalDimensions.x - 450 + 20
+	// buildingText.y = originalDimensions.y / 2 - 75
+	// container.panel.addChild(buildingText)
 
 	const updateConstructionPanel = () => {
-		const construction = Colony.construction(colony)
-		const totalCost = Util.sum(Object.values(construction.cost))
-		const percentage = totalCost > 0
-			? Math.min(100, Math.floor(100 * construction.progress / totalCost))
-			: 0
-		buildingText.text = `${construction.name} (${percentage}%)`
-		// const rows = 3
-		// const goodsPerRow = Math.ceil(construction.cost.construction / rows)
-		// const sprites = Util.range(rows).map(row => {
-		// 	const amount = Math.min(Math.floor(Math.max(0, construction.amount - row * goodsPerRow)), goodsPerRow)
-		// 	const view = ProductionView.create('construction', amount, 390)
-		// 	view.forEach(s => {
-		// 		s.y = originalDimensions.y / 2 - 35 + row * 30
-		// 		s.x += originalDimensions.x - 450 + 10
-		// 		container.panel.addChild(s)
-		// 	})
-		// 	return view
-		// }).flat()
-		// return () => {
-		// 	sprites.forEach(s => container.panel.removeChild(s))
-		// }
+		// const construction = Colony.construction(colony)
+		// const totalCost = Util.sum(Object.values(construction.cost))
+		// const percentage = totalCost > 0
+		// 	? Math.min(100, Math.floor(100 * construction.progress / totalCost))
+		// 	: 0
+		// buildingText.text = `${construction.name} (${percentage}%)`
 	}		
 
 
-	return [
+	const unsubscribe = [
 		Colony.listen.construction(colony, Binding.map(construction =>
-			Math.round(construction[colony.constructionTarget].progress), updateConstructionPanel)),
+			Math.round(Colony.currentConstruction(colony).progress), updateConstructionPanel)),
 		Colony.listen.constructionTarget(colony, updateConstructionPanel)
 	]
-
-	// const getToolsUsed = construction => Math.floor(construction.tools)
-	// const getToolsNeeded = construction => Math.floor(construction.cost.tools)
-	// const getToolsAvailable = storage => Math.floor(storage.tools)
-	// const updateToolsPanel = (used, have, needed) => {
-	// 	if (!needed) {
-	// 		return
-	// 	}
-
-	// 	const fraction = Math.min(used / needed, 1)
-	// 	const usedView = ProductionView.create('tools', Math.min(used, needed), fraction * 260)
-	// 	usedView.forEach(s => {
-	// 		s.y = originalDimensions.y / 2 - 5 + 3 * 30
-	// 		s.x += originalDimensions.x - 460
-	// 		container.panel.addChild(s)
-	// 	})
-	// 	const missingView = ProductionView.create('tools', Util.clamp(have + used - needed, -needed, 0), (1 - fraction) * 260)
-	// 	missingView.forEach(s => {
-	// 		s.y = originalDimensions.y / 2 - 5 + 3 * 30
-	// 		s.x += originalDimensions.x - 460 + fraction * 260
-	// 		container.panel.addChild(s)
-	// 	})
-
-	// 	return () => {
-	// 		usedView.forEach(s => container.panel.removeChild(s))
-	// 		missingView.forEach(s => container.panel.removeChild(s))
-	// 	}
-	// }
-
-	// const unsubscribeTools = Colony.listen.construction(colony, Binding.map(getToolsNeeded, needed =>
-	// 	Storage.listen(colony.storage, Binding.map(getToolsAvailable, have =>
-	// 		Colony.listen.construction(colony, Binding.map(getToolsUsed, used =>
-	// 			updateToolsPanel(used, have, needed)))))))
-
-
-	// const unsubscribe = () => {
-	// 	unsubscribeAmount()
-	// 	unsubscribeTarget()
-	// 	unsubscribeTools()
-	// }
 
 	return {
 		container,

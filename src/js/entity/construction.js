@@ -1,18 +1,29 @@
-import Buildings from '~/data/buildings'
-import Units from '~/data/units'
+import Buildings from 'data/buildings'
+import Units from 'data/units'
 
-import Building from '~/entity/building'
-import Unit from '~/entity/unit'
+import Building from 'entity/building'
+import Unit from 'entity/unit'
 
 const create = () => {
-
+  return {
+    none: {
+      target: 'none',
+      progress: 0
+    }
+  }
 }
 
+const start = (colony, target) => {
+  if (!colony.construction[target]) {
+    colony.construction[target] = {
+      target,
+      progress: 0
+    }
+  }
 
-const noConstruction = (name) => ({
-  name: name || 'No Construction',
-  cost: {}
-})
+  Colony.update.construction(colony)
+  Colony.update.constructionTarget(colony, target)
+}
 
 const options = colony => {
   const buildings = Buildings.places
@@ -37,8 +48,8 @@ const options = colony => {
       && Object.entries(unit.construction.buildings).every(([name, level]) => colony.buildings[name] >= level))
     .map(([name, unit]) => ({
       target: name,
-      name: () => Unit.name(unit),
-      cost: () => Units[name].construction.cost,
+      name: () => unit.name.default,
+      cost: () => unit.construction.cost,
       action: () => {
         const unit = Unit.create(name, colony.mapCoordinates, colony.owner)
         Events.trigger('notification', { type: 'construction', colony, unit })
@@ -72,17 +83,17 @@ const construct = (colony, target) => {
 }
 
 const save = (construction) => {
-
+  return construction
 }
 
 const load = (construction) => {
-
+  return construction
 }
 
-export {
+export default {
   create,
+  start,
   load,
   save,
-  options,
-  noConstruction
+  options
 }
