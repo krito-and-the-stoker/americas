@@ -25,7 +25,9 @@ import ColonistView from 'view/colony/colonist'
 
 const TILE_SIZE = 64
 
-const frame = (colony, building) => Buildings[building.name].frame[colony.buildings[building.name].level] ? Buildings[building.name].frame[colony.buildings[building.name].level] - 1 : null
+const frame = (colony, building) => Buildings[building.name].frame[colony.buildings[building.name].level]
+	? Buildings[building.name].frame[colony.buildings[building.name].level] - 1
+	: Buildings[building.name].frame[Buildings[building.name].frame.length - 1] - 1
 const buildingRectangle = (colony, building) => {
 	if (frame(colony, building) === null) {
 		return null

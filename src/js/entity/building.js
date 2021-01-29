@@ -65,22 +65,23 @@ const getName = (colony, building) => {
 	Buildings[building.name].name[building.level]
 }
 const level = (colony, name) => colony.buildings[name].level
-const name = (colony, name, level) => {
-	const buildingLevel = (!level && level !== 0)
+const name = (colony, name, requestedLevel) => {
+	const buildingLevel = (!requestedLevel && requestedLevel !== 0)
 		? level(colony, name)
-		: level
+		: requestedLevel
 
 	return Buildings[name].name[buildingLevel]
 		|| Buildings[name].name[Buildings[name].name.length - 1]
 }
-const cost = (colony, name, level) => {
-	const buildingLevel = (!level && level !== 0)
+const cost = (colony, name, requestedLevel) => {
+	const buildingLevel = (!requestedLevel && requestedLevel !== 0)
 		? level(colony, name)
-		: level
+		: requestedLevel
 
 	return Buildings[name].cost[buildingLevel]
 		|| Buildings[name].cost[Buildings[name].cost.length - 1]
 }
+
 const workspace = (colony, name) =>
 	(Buildings[name].workspace.length
 		? Buildings[name].workspace[level(colony, name)]

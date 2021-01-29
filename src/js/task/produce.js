@@ -46,7 +46,27 @@ const create = (colony, building, colonist) => {
 			Storage.update(colony.storage, { good: production.good, amount: productionAmount })
 		}
 		if (production.type === 'construction') {
-			// TODO: do the construction
+			const construction = Colony.currentConstruction(colony)
+			const totalCost = Util.sum(Object.values(construction.cost))
+			if (totalCost > 0) {
+				// the factor with which we can produce
+				const productionFactor = Util.clamp(Util.min(Object.entries(construction.cost)
+					.map(([good, amount]) =>
+						// the goods we have devided by the goods we need is the maximum production Factor
+						colony.storage[good] / (scale * production.amount * (amount / totalCost)))))
+
+				// construct
+				construction.progress += scale * productionFactor * production.amount
+				Colony.update.construction(colony)
+				Storage.update(colony.productionRecord, { good: 'construction', amount: productionFactor * production.amount })
+
+				// consume goods
+				Object.entries(construction.cost).forEach(([good, amount]) => {
+					const consumed = productionFactor * production.amount * (amount / totalCost)
+					Storage.update(colony.storage, { good, amount: -scale * consumed })
+					Storage.update(colony.productionRecord, { good, amount: -consumed })
+				})
+			}
 		}
 		if (production.type === 'bells') {
 			Treasure.spend(productionAmount * BELLS_TO_GOLD_FACTOR)

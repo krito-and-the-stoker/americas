@@ -21,7 +21,7 @@ const create = (colony, originalDimensions) => {
 	}
 
 	const optionDescription = option => {
-		return `${option.name()} (${Util.sum(Object.values(option.cost()))})`
+		return `${option.name()} (${Math.floor(option.progress())}/${Util.sum(Object.values(option.cost()))})`
 	}
 
 	const constructionButton = Button.create('change', () => {
@@ -29,7 +29,7 @@ const create = (colony, originalDimensions) => {
 		const choices = options.map(option => ({
 			text: optionDescription(option),
 			action: () => {
-				Construction.start(colony, option.target)
+				Construction.start(colony, option)
 			}
 		}))
 
@@ -43,18 +43,18 @@ const create = (colony, originalDimensions) => {
 	constructionButton.y = 650
 	container.panel.addChild(constructionButton)
 
-	// const buildingText = Text.create(colony.construction[colony.constructionTarget].name)
-	// buildingText.x =  originalDimensions.x - 450 + 20
-	// buildingText.y = originalDimensions.y / 2 - 75
-	// container.panel.addChild(buildingText)
+	const buildingText = Text.create(Colony.currentConstruction(colony).name)
+	buildingText.x =  originalDimensions.x - 450 + 20
+	buildingText.y = originalDimensions.y / 2 - 75
+	container.panel.addChild(buildingText)
 
 	const updateConstructionPanel = () => {
-		// const construction = Colony.construction(colony)
-		// const totalCost = Util.sum(Object.values(construction.cost))
-		// const percentage = totalCost > 0
-		// 	? Math.min(100, Math.floor(100 * construction.progress / totalCost))
-		// 	: 0
-		// buildingText.text = `${construction.name} (${percentage}%)`
+		const construction = Colony.currentConstruction(colony)
+		const totalCost = Util.sum(Object.values(construction.cost))
+		const percentage = totalCost > 0
+			? Math.min(100, Math.floor(100 * construction.progress / totalCost))
+			: 0
+		buildingText.text = `${construction.name} (${percentage}%)`
 	}		
 
 

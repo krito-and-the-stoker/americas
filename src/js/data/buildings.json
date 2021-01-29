@@ -98,7 +98,8 @@
 		"cost": [{
 			"wood": 0
 		}, {
-			"wood": 180
+			"wood": 100,
+			"tools": 100
 		}],
 		"width": 1,
 		"workspace": 3,
@@ -338,11 +339,6 @@
 		}, {
 			"wood": 30
 		}],
-		"production": {
-			"good": "housing",
-			"amount": 0,
-			"passive": [0, 1]
-		},
 		"unlimitedLevels": true
 	}
 }

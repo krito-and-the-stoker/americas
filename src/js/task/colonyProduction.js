@@ -7,6 +7,7 @@ import Time from 'timeline/time'
 import Europe from 'entity/europe'
 import Storage from 'entity/storage'
 import Colony from 'entity/colony'
+import Building from 'entity/building'
 
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
@@ -26,7 +27,7 @@ const create = colony => {
 		Object.keys(PassiveBuildings)
 			.filter(name => colony.buildings[name])
 			.forEach(name => {
-				const level = colony.buildings[name].level
+				const level = Building.level(colony, name)
 				const good = PassiveBuildings[name].production.good
 				const amount = PassiveBuildings[name].production.passive[level]
 				if (amount > 0) {
@@ -36,9 +37,6 @@ const create = colony => {
 					} else if (good === 'crosses') {
 						Colony.update.crosses(colony, amount * scale)
 						Storage.update(colony.productionRecord, { good: 'crosses', amount })
-					} else if (good === 'housing') {
-						Colony.update.housing(colony, amount * scale)
-						Storage.update(colony.productionRecord, { good: 'housing', amount })
 					} else {
 						Storage.update(colony.storage, { good, amount: amount * scale })
 						Storage.update(colony.productionRecord, { good, amount })
@@ -46,6 +44,12 @@ const create = colony => {
 				}
 			})
 
+		// handle housing
+		const housingAmount = Building.level(colony, 'house')
+		Colony.update.housing(colony, housingAmount * scale)
+		Storage.update(colony.productionRecord, { good: 'housing', amount: housingAmount })
+
+		// handle growth
 		if (colony.storage.food > 0) {
 			Colony.update.growth(colony, colony.colonists.length * scale)
 		}

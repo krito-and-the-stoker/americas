@@ -1,6 +1,10 @@
 import Buildings from 'data/buildings'
 import Units from 'data/units'
 
+import Util from 'util/util'
+import Events from 'util/events'
+import Message from 'util/message'
+
 import Building from 'entity/building'
 import Unit from 'entity/unit'
 
@@ -8,21 +12,29 @@ const create = () => {
   return {
     none: {
       target: 'none',
-      progress: 0
+      progress: 0,
+      cost: {},
+      name: 'No construction'
     }
   }
 }
 
-const start = (colony, target) => {
-  if (!colony.construction[target]) {
-    colony.construction[target] = {
-      target,
-      progress: 0
-    }
+const start = (colony, option) => {
+  if (!option) {
+    Colony.update.constructionTarget(colony, null)
+    return
+  }
+
+  colony.construction[option.target] = {
+    target: option.target,
+    cost: option.cost(),
+    name: option.name(),
+    construct: option.construct(),
+    progress: option.progress()
   }
 
   Colony.update.construction(colony)
-  Colony.update.constructionTarget(colony, target)
+  Colony.update.constructionTarget(colony, option.target)
 }
 
 const options = colony => {
@@ -31,15 +43,12 @@ const options = colony => {
       || Buildings[name].name.length > colony.buildings[name].level + 1)
     .map(name => ({
       target: name,
+      progress: () => colony.construction[name]
+        ? colony.construction[name].progress
+        : 0,
       name: () => Building.name(colony, name, Building.level(colony, name) + 1),
       cost: () => Building.cost(colony, name, Building.level(colony, name) + 1),
-      action: () => {
-        const buildings = colony.buildings
-        buildings[name].level += 1
-        Colony.update.buildings(colony)
-        Events.trigger('notification', { type: 'construction', colony, building: colony.buildings[name] })
-        Message.send(`${colony.name} has completed construction of ${name(colony, name, colony.buildings[name].level + 1)}.`)
-      }
+      construct: () => (['increaseLevel'])
     }))
 
 
@@ -48,13 +57,12 @@ const options = colony => {
       && Object.entries(unit.construction.buildings).every(([name, level]) => colony.buildings[name] >= level))
     .map(([name, unit]) => ({
       target: name,
+      progress: () => colony.construction[name]
+        ? colony.construction[name].progress
+        : 0,
       name: () => unit.name.default,
       cost: () => unit.construction.cost,
-      action: () => {
-        const unit = Unit.create(name, colony.mapCoordinates, colony.owner)
-        Events.trigger('notification', { type: 'construction', colony, unit })
-        Message.send(`${colony.name} has completed construction of ${Unit.name(unit)}.`)
-      }
+      construct: () => (['createUnit'])
     }))
 
   // TODO: find a more appropriate place for this special handling
@@ -71,15 +79,26 @@ const options = colony => {
   return [...buildings, ...units]
 }
 
-const construct = (colony, target) => {
-  Util.execute(colony.construction[target].action)
+const construct = (colony, construction) => {
+  const actions = {
+    increaseLevel: () => {
+      colony.buildings[construction.target].level += 1
+      Colony.update.buildings(colony)
+      Events.trigger('notification', { type: 'construction', colony, building: colony.buildings[construction.target] })
+      Message.send(`${colony.name} has completed construction of ${Building.name(colony, construction.target)}.`)
+    },
+    createUnit: () => {
+      const unit = Unit.create(construction.target, colony.mapCoordinates, colony.owner)
+      Events.trigger('notification', { type: 'construction', colony, unit })
+      Message.send(`${colony.name} has completed construction of ${Unit.name(unit)}.`)
+    }
+  }
+  Util.execute(construction.construct.map(actionName => actions[actionName]))
 
-  colony.construction[target].progress = 0
+  delete colony.construction[construction.target]
   Colony.update.construction(colony)
 
-  if (!constructionOptions().find(option => option.target === target)) {
-    Colony.update.constructionTarget(colony, null)
-  }
+  start(colony, options(colony).find(option => option.target === construction.target))
 }
 
 const save = (construction) => {
@@ -95,5 +114,6 @@ export default {
   start,
   load,
   save,
+  construct,
   options
 }

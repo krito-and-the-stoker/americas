@@ -160,6 +160,12 @@ const initialize = colony => {
 		}),
 		Time.schedule(TeachingSummary.create(colony)),
 		Time.schedule(TransferCrosses.create(colony)),
+		listen.construction(colony, () => {
+			const construction = currentConstruction(colony)
+			if (construction.progress > 0 && construction.progress >= Util.sum(Object.values(construction.cost))) {
+				Construction.construct(colony, construction)
+			}
+		}),
 		listen.growth(colony, growth => {
 			if (growth > 1000) {
 				const unit = Unit.create('settler', colony.mapCoordinates, colony.owner)
