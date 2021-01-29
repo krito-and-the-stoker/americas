@@ -109,7 +109,7 @@ const advancePromotion = (colonist, target, delta) => {
   }
   // if we have a school in town we are faster
   if (colonist.colony.buildings.school.level > 0) {
-    colonist.promotion.speed += 2*colonist.colony.buildings.school.level
+    colonist.promotion.speed += 2
   }
   // if we have a teacher in town we are faster
   if (colonist.colony.colonists.some(col => col.expert === target && col.work.building === 'school')) {
