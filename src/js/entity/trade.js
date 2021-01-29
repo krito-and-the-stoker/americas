@@ -37,7 +37,7 @@ const canBuy = (europe, good) => europe.trade[good] === BUY
 const canSell = (europe, good) => europe.trade[good] === SELL
 
 const targetAmount = (colony, other, good) => ({
-	[IMPORT]: colony.capacity,
+	[IMPORT]: Colony.capacity(colony),
 	[EXPORT]: 0,
 	[BALANCE]: {
 		[IMPORT]: 0.25,
@@ -46,25 +46,25 @@ const targetAmount = (colony, other, good) => ({
 		[BUY]: 0.75,
 		[BALANCE]:
 			0.5 * (colony.storage
-				? colony.storage[good] / colony.capacity
+				? colony.storage[good] / Colony.capacity(colony)
 				: 1)
 			+ 0.5 * (other.storage
-				? other.storage[good] / other.capacity
+				? other.storage[good] / Colony.capacity(other)
 				: 1)
-	}[other.trade[good]] * colony.capacity
+	}[other.trade[good]] * Colony.capacity(colony)
 }[colony.trade[good]])
 
 
 const estimatedAmount = (colony, good) => colony.storage[good] + Forecast.get(colony, good)
 const canExportAmount = (colony, other, good) => Math.max(estimatedAmount(colony, good) - targetAmount(colony, other, good), 0)
-const canImportAmount = (colony, other, good) => Util.clamp(targetAmount(colony, other, good) - estimatedAmount(colony, good), 0, colony.capacity)
+const canImportAmount = (colony, other, good) => Util.clamp(targetAmount(colony, other, good) - estimatedAmount(colony, good), 0, Colony.capacity(colony))
 
 // how much can we buy depends on treasure
 const canBuyAmount = (europe, good) => Math.floor(BUY_GOODS_RELATIVE_BUDGET * Treasure.amount() / Market.ask(good))
 const canSellAmount = () => 100000 // basically can sell as much as you want
 
-const exportPriority = (colony, good) => Math.max(colony.storage[good] / colony.capacity, 0)
-const importPriority = (colony, good) => Math.max(1 - (colony.storage[good] / colony.capacity), 0)
+const exportPriority = (colony, good) => Math.max(colony.storage[good] / Colony.capacity(colony), 0)
+const importPriority = (colony, good) => Math.max(1 - (colony.storage[good] / Colony.capacity(colony)), 0)
 
 // higher priority when have lots of money
 const buyPriority = () => Math.max(Treasure.amount() / Treasure.maximum(), 0)

@@ -5,6 +5,7 @@ import Goods from 'data/goods'
 import Storage from 'entity/storage'
 import Trade from 'entity/trade'
 import Unit from 'entity/unit'
+import Colony from 'entity/colony'
 
 import Click from 'input/click'
 import Drag from 'input/drag'
@@ -77,7 +78,7 @@ const create = (colony, originalDimensions) => {
 	const unsubscribeStorage = Storage.listen(colony.storage, storage => {		
 		Storage.goods(storage).forEach(({ amount }, i) => {
 			let color = 0xffffff
-			if (amount > colony.capacity) {
+			if (amount > Colony.capacity(colony)) {
 				color = 0xff8800
 			}
 			if (!Math.floor(amount)) {

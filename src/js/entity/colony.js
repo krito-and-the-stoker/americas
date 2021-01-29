@@ -212,7 +212,6 @@ const create = (coords, owner) => {
 		buildings: Building.create(),
 		construction: Construction.create(),
 		constructionTarget: null,
-		capacity: 100,
 		mapCoordinates: { ...coords },
 		bells: 0,
 		crosses: 0,
@@ -249,11 +248,12 @@ const disband = colony => {
 	Record.remove(colony)
 }
 
+const capacity = colony => 100 * (colony.buildings.warehouse.level + 1)
+
 const save = colony => ({
 	name: colony.name,
 	units: colony.units.map(unit => Record.reference(unit)),
 	colonists: colony.colonists.map(colonist => Record.reference(colonist)),
-	capacity: colony.capacity,
 	mapCoordinates: colony.mapCoordinates,
 	storage: Storage.save(colony.storage),
 	trade: Trade.save(colony.trade),
@@ -325,6 +325,7 @@ export default {
 	update,
 	tories,
 	rebels,
+	capacity,
 	disband,
 	expertLevel,
 	defender

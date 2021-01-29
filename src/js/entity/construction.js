@@ -65,17 +65,6 @@ const options = colony => {
       construct: () => (['createUnit'])
     }))
 
-  // TODO: find a more appropriate place for this special handling
-  const warehouse = buildings.find(building => building.target === 'warehouse')
-  if (warehouse) {
-    warehouse.action = [
-      warehouse.action,
-      () => {
-        colony.capacity += 100
-      }
-    ]
-  }
-
   return [...buildings, ...units]
 }
 
