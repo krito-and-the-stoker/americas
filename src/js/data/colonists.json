@@ -63,7 +63,8 @@
           "crosses": 1
         }
       }
-    }
+    },
+    "demote": "criminal"
   },
   "criminal": {
     "power": 0,
