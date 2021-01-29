@@ -159,12 +159,20 @@ const createDetailView = colonist => {
 
     const renderProduction = () => {
       const production = Colonist.production(colonist)
-      let consumption = null
+      let consumption = []
       if (colonist.work.type === 'Building') {
         if (production && production.good === 'bells') {
-          consumption = 'gold'
+          consumption = Array(production.amount).fill('gold')
+        } else if(production && production.good === 'construction') {
+          const construction = Colony.currentConstruction(colonist.colony)
+          consumption = Util.flatten(Object.entries(construction.cost)
+            .map(([good, amount]) =>
+              Array(Math.ceil(production.amount * amount / Util.sum(Object.values(construction.cost))))
+                .fill(good)))
         } else {
-          consumption = Production.consumption(colonist.work.building).good
+          consumption = Array(production.amount).fill(
+            Production.consumption(colonist.work.building).good
+          )
         }
       }
 
@@ -176,8 +184,8 @@ const createDetailView = colonist => {
         h('h2', 'Production'),
         h('div.production', [
           h('div.amount', `${production.amount}`),
-          h('div.consume', Array(production.amount).fill(consumption).filter(x => !!x)
-            .map(good => GoodsView.html(good, 0.5, { class: { good: true } }))),
+          h('div.consume',
+            consumption.map(good => GoodsView.html(good, 0.5, { class: { good: true } }))),
           h('div.arrow', { class: { active: !!consumption } }, '→'),
           h('div.produce', Array(production.amount).fill(production.good)
             .map(good => GoodsView.html(good, 0.5, { class: { good: true } })))
