@@ -186,7 +186,7 @@ const createDetailView = colonist => {
           h('div.amount', `${production.amount}`),
           h('div.consume',
             consumption.map(good => GoodsView.html(good, 0.5, { class: { good: true } }))),
-          h('div.arrow', { class: { active: !!consumption } }, '→'),
+          h('div.arrow', { class: { active: consumption.length > 0 } }, '→'),
           h('div.produce', Array(production.amount).fill(production.good)
             .map(good => GoodsView.html(good, 0.5, { class: { good: true } })))
         ])
