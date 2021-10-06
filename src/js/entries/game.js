@@ -249,7 +249,7 @@ const load = async () => {
 		await nextFrame()
 		Message.log('Restoring game state...')
 		await nextFrame()
-		Record.load()
+		Record.load(() => new RenderMap())
 		await nextFrame()
 		AutosaveView.initialize()
 		Dialog.initialize()

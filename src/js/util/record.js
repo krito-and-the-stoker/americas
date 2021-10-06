@@ -10,8 +10,6 @@ import Events from 'util/events'
 
 import Time from 'timeline/time'
 
-import RenderMap from 'render/map'
-
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
 import MapEntity from 'entity/map'
@@ -416,7 +414,7 @@ const entitiesLoaded = (fn, priority = 10) => loadedListeners.push({
 })
 const beforeEntitiesLoaded = fn => beforeLoadedListeners.push(fn)
 
-const unserialize = content => {
+const unserialize = (content, initRenderMapFn = null) => {
 	records.forEach(record => Util.execute(record.destroy))
 	loadedListeners = []
 	records = []
@@ -436,7 +434,7 @@ const unserialize = content => {
 	MapEntity.prepare()
 	snapshot.tiles.map(resolveLookup).forEach(reviveTile)
 	MapEntity.load()
-	new RenderMap()
+	Util.execute(initRenderMapFn)
 	snapshot.entities.forEach(revive)
 	Time.load(snapshot.time)
 	Treasure.load(snapshot.treasure)
@@ -446,7 +444,7 @@ const unserialize = content => {
 	loadedListeners.sort((a, b) => a.priority - b.priority).forEach(({ fn }) => fn())
 }
 
-const load = (src = null) => {
+const load = (initRenderMap, src = null) => {
 	Message.log('Loading...')
 
 	if (src) {
@@ -461,7 +459,7 @@ const load = (src = null) => {
 		}
 	}
 
-	unserialize(lastSave)
+	unserialize(lastSave, initRenderMap)
 	PathFinder.initialize()
 
 	Events.trigger('restart')
@@ -474,7 +472,7 @@ const download = () => {
 	FileSaver.saveAs(blob, 'americas-save-game.json')
 }
 
-const upload = () => {
+const upload = (initRenderMap) => {
 	const input = document.createElement('input')
 	input.setAttribute('type', 'file')
 	input.setAttribute('accept', 'application/json, .json')
@@ -484,7 +482,7 @@ const upload = () => {
 			var reader = new FileReader()
 			reader.readAsText(file, 'UTF-8')
 			reader.onload = evt => {
-				load(evt.target.result)
+				load(initRenderMap, evt.target.result)
 				document.body.removeChild(input)
 			}
 			reader.onerror = function (evt) {
