@@ -196,6 +196,9 @@ const create = (colony, good, amount) => {
     // transfer power to those who have
     colony.colonists.forEach((colonist, index) => {
       colonist.power += (colony.colonists.length + colonist.mood - 2 * index) * POWER_TRANSFER_BASE_FACTOR * deltaTime
+      if (Colonist.power(colonist) < 0) {
+        colonist.power -= Colonist.power(colonist)
+      }
     })
 
     colony.colonists.forEach(colonist => {

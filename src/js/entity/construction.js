@@ -54,7 +54,7 @@ const options = colony => {
 
   const units = Object.entries(Units)
     .filter(([name, unit]) => unit.construction
-      && Object.entries(unit.construction.buildings).every(([name, level]) => colony.buildings[name] >= level))
+      && Object.entries(unit.construction.buildings).every(([name, level]) => colony.buildings[name].level >= level))
     .map(([name, unit]) => ({
       target: name,
       progress: () => colony.construction[name]

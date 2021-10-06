@@ -1,5 +1,4 @@
 import Battle from 'interaction/battle'
-import BecomeColonist from 'interaction/becomeColonist'
 import BuyFromEurope from 'interaction/buyFromEurope'
 import EnterColony from 'interaction/enterColony'
 import EnterEurope from 'interaction/enterEurope'
@@ -23,7 +22,6 @@ import UnjoinColony from 'interaction/unjoinColony'
 
 export default {
 	Battle,
-	BecomeColonist,
 	BuyFromEurope,
 	EnterColony,
 	EnterEurope,
