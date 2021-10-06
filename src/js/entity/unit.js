@@ -61,7 +61,6 @@ const create = (name, coords, owner) => {
 		unit.storage = Storage.create()
 		unit.equipment = Storage.create()
 		unit.commander = Commander.create({ keep: true, unit })
-		unit.colonist = Colonist.create(unit)
 
 		unit.equipment.food = unit.properties.needsFood ? UNIT_FOOD_CAPACITY : 0
 
