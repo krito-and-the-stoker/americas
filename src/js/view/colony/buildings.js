@@ -14,6 +14,7 @@ import Colony from 'entity/colony'
 import Building from 'entity/building'
 
 import JoinColony from 'interaction/joinColony'
+import BecomeColonist from 'interaction/becomeColonist'
 
 import Resources from 'render/resources'
 

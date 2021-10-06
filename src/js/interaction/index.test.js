@@ -30,6 +30,10 @@ test('battle', () => {
 	Interaction.Battle(soldier(), settler())
 })
 
+test('become colonist', () => {
+	Interaction.BecomeColonist(jamestown(), pioneer())
+})
+
 test('buy from europe', () => {
 	Interaction.BuyFromEurope(ship(), tools())
 })
