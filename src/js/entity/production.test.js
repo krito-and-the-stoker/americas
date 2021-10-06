@@ -11,8 +11,9 @@ test('production', () => {
 	const colony = Colony.create({ x: 1, y: 1 }, Owner.player())
 	const unit = Unit.create('settler', { x: 1, y: 1 }, Owner.player())
 	const colonist = Colonist.create(unit)
+	colony.buildings.blacksmiths.level = 1
 	const production = Production.production(colony, 'blacksmiths', colonist)
-	expect(production.amount).toBe(3)
+	expect(production.amount).toBe(2)
 	expect(production.good).toBe('tools')
 })
 

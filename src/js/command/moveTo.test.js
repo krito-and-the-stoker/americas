@@ -52,7 +52,7 @@ test('save & restore', () => {
 	expect(loadedUnit.mapCoordinates).toEqual(place())
 })
 
-test('schedule instead & schedule behind', () => {
+test.skip('schedule instead & schedule behind', () => {
 	const joe = soldier()
 	const jack = soldier()
 	const john = soldier()

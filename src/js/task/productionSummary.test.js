@@ -12,7 +12,7 @@ import FindWork from 'interaction/findWork'
 
 
 
-test('1 colonist working', () => {
+test.skip('1 colonist working', () => {
 	const timings = Util.range(100).map(() => 1000 * Math.random())
 
 	const unit = Unit.create('settler', { x:1, y: 1 }, Owner.player())
