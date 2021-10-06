@@ -7,7 +7,6 @@ import Unit from 'entity/unit'
 import Factory from 'command/factory'
 
 
-import BecomeColonist from 'interaction/becomeColonist'
 import FindWork from 'interaction/findWork'
 import EnterColony from 'interaction/enterColony'
 
@@ -38,7 +37,6 @@ export default Factory.create('Found', {
 		Unit.at(unit.mapCoordinates).forEach(unit => {
 			EnterColony(colony, unit)
 		})
-		BecomeColonist(colony, unit)
 		FindWork(unit.colonist)
 
 		Events.trigger('found', { colony })
