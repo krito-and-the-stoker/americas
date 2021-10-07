@@ -55,7 +55,6 @@ export default Factory.create('LearnFromNatives', {
 
 	const finished = () => {
 		if (wantsToLearn) {		
-			Colonist.update.expert(student, student.education.profession)
 			Unit.update.expert(student.unit, student.education.profession)
 			Events.trigger('notification', { type: 'learned', unit })
 		}

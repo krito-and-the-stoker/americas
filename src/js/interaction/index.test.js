@@ -13,7 +13,6 @@ const soldier = () => Unit.create('soldier', {x: 1, y: 2 })
 const farmer = () => {
 	const unit = settler()
 	const colonist = Colonist.create(unit)
-	colonist.expert = 'farmer'
 	unit.expert = 'farmer'
 
 	return colonist

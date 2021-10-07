@@ -61,6 +61,9 @@ const create = (name, coords, owner) => {
 		unit.storage = Storage.create()
 		unit.equipment = Storage.create()
 		unit.commander = Commander.create({ keep: true, unit })
+		if (unit.properties.canJoin) {
+			unit.colonist = Colonist.create(unit)
+		}
 
 		unit.equipment.food = unit.properties.needsFood ? UNIT_FOOD_CAPACITY : 0
 
@@ -213,10 +216,6 @@ const initialize = unit => {
 				updateType(unit, 'mountedarmednative')
 			}
 		}),
-
-		listen.colonist(unit, colonist =>
-			colonist && Colonist.listen.expert(colonist, expert =>
-				update.expert(unit, expert))),
 
 		listen.properties(unit, () => Time.schedule(PayUnits.create(unit))),
 		listen.properties(unit, properties =>

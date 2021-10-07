@@ -9,6 +9,7 @@ import Factory from 'command/factory'
 
 import FindWork from 'interaction/findWork'
 import EnterColony from 'interaction/enterColony'
+import JoinColony from 'interaction/joinColony'
 
 export default Factory.create('Found', {
 	unit: {
@@ -37,6 +38,7 @@ export default Factory.create('Found', {
 		Unit.at(unit.mapCoordinates).forEach(unit => {
 			EnterColony(colony, unit)
 		})
+		JoinColony(colony, unit.colonist)
 		FindWork(unit.colonist)
 
 		Events.trigger('found', { colony })

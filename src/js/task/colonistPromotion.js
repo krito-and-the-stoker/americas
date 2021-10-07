@@ -39,7 +39,7 @@ const consumeGoods = (colonist, deltaTime, consumptionObject) => Object.entries(
   const production = Colonist.production(colonist)
   const scale = PRODUCTION_BASE_FACTOR * deltaTime
   let scaledAmount = scale * amount
-  if (colonist.expert === 'slave'
+  if (colonist.unit.expert === 'slave'
     ||( production && production.good !== good)) {
     scaledAmount = Math.min(scaledAmount,
     colony.storage[good] || {
@@ -112,14 +112,13 @@ const advancePromotion = (colonist, target, delta) => {
     colonist.promotion.speed += 2
   }
   // if we have a teacher in town we are faster
-  if (colonist.colony.colonists.some(col => col.expert === target && col.work.building === 'school')) {
+  if (colonist.colony.colonists.some(col => col.unit.expert === target && col.work.building === 'school')) {
     colonist.promotion.speed *= 3
   }
 
   // promote
   colonist.promotion.promote[target] += delta * PROMOTION_BASE_FACTOR * colonist.promotion.speed
   if (colonist.promotion.promote[target] >= 1) {
-    Colonist.update.expert(colonist, target)
     Unit.update.expert(colonist.unit, target)
     Events.trigger('notification', { type: 'learned', colonist, colony: colonist.colony })
 
@@ -153,7 +152,7 @@ const advanceDemotion = (colonist, target, delta) => {
 
   colonist.promotion.demote[target] += delta * DEMOTION_BASE_FACTOR * demotionStrength
   if (colonist.promotion.demote[target] >= 1) {
-    console.log('demoted', colonist.expert, 'to', target)
+    console.log('demoted', colonist.unit.expert, 'to', target)
     const demotionTarget = target === 'settler'
       ? null
       : target
@@ -163,9 +162,8 @@ const advanceDemotion = (colonist, target, delta) => {
     }
 
     // keep 80% so promotion back again goes much more quickly
-    colonist.promotion.promote[colonist.expert || 'settler'] = 0.8
+    colonist.promotion.promote[colonist.unit.expert || 'settler'] = 0.8
 
-    Colonist.update.expert(colonist, demotionTarget)
     Unit.update.expert(colonist.unit, demotionTarget)
     delete colonist.promotion.demote[target]
   }
@@ -202,7 +200,7 @@ const create = (colony, good, amount) => {
     })
 
     colony.colonists.forEach(colonist => {
-      const colonistObject = (Colonists[colonist.expert] || Colonists.default)
+      const colonistObject = (Colonists[colonist.unit.expert] || Colonists.default)
       const consumption = colonistObject.consumption
       const currentProfession = Colonist.profession(colonist)
 
@@ -219,9 +217,9 @@ const create = (colony, good, amount) => {
       } else if (!promotionObject) {
         colonist.promotion.promoting = {
           result: false,
-          reason: colonist.expert === currentProfession
+          reason: colonist.unit.expert === currentProfession
             ? `This ${Colonist.expertName(colonist)} has mastered his profession.`
-            : colonist.expert === 'slave'
+            : colonist.unit.expert === 'slave'
               ? 'Slaves do not promote'
               : `A ${Colonist.expertName(colonist)} cannot be promoted to ${Colonist.professionName(currentProfession)} directly.`
         }

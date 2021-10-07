@@ -24,7 +24,7 @@ import GoodsView from 'view/goods'
 const frames = Units.settler.frame
 
 const create = colonist => {
-	const frame = colonist.expert ? frames[colonist.expert] || frames.default : frames.default
+	const frame = colonist.unit.expert ? frames[colonist.unit.expert] || frames.default : frames.default
 	const sprite = Resources.sprite('map', { frame })
 	sprite.hitArea = new PIXI.Rectangle(16, 0, 32, 64)
 
@@ -66,7 +66,7 @@ const createDetailView = colonist => {
     const renderPromotions = () => {
       const promotionData = Object.entries(colonist.promotion.promote || {})
         // only show possible promotion targets
-        .filter(([target]) => (Colonists[colonist.expert] || Colonists.default).consumption.promote[target])
+        .filter(([target]) => (Colonists[colonist.unit.expert] || Colonists.default).consumption.promote[target])
         // show largest progress first
         .sort(([, progressA], [, progressB]) => progressB - progressA)
 
@@ -75,8 +75,8 @@ const createDetailView = colonist => {
       }
 
       const isPromotionTarget = target => colonist.promotionStatus === 'promoting'
-        && ((colonist.expert === 'criminal' && target === 'servant')
-          || (colonist.expert === 'servant' && target === 'settler')
+        && ((colonist.unit.expert === 'criminal' && target === 'servant')
+          || (colonist.unit.expert === 'servant' && target === 'settler')
           || Colonist.profession(colonist) === target)
 
       const etaDate = target => {      
@@ -239,7 +239,7 @@ const createDetailView = colonist => {
     detailView = patch(detailView, view)
   }
 
-  unsubscribe = Colonist.listen.expert(colonist, () =>
+  unsubscribe = Unit.listen.expert(colonist.unit, () =>
     Colonist.listen.promotionStatus(colonist, () =>
       Colonist.listen.promotion(colonist, Binding.map(promotion =>
         Object.values(promotion.promote || {}).map(value => Math.floor(100 * value)).join('-')

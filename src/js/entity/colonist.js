@@ -67,22 +67,22 @@ const stopWorking = colonist => {
 const listen = {
 	work: (colonist, fn) => Binding.listen(colonist, 'work', fn),
 	colony: (colonist, fn) => Binding.listen(colonist, 'colony', fn),
-	expert: (colonist, fn) => Binding.listen(colonist, 'expert', fn),
 	unit: (colonist, fn) => Binding.listen(colonist, 'unit', fn),
 	promotion: (colonist, fn) => Binding.listen(colonist, 'promotion', fn),
 	productionModifier: (colonist, fn) => Binding.listen(colonist, 'productionModifier', fn),
 	promotionStatus: (colonist, fn) => Binding.listen(colonist, 'promotionStatus', fn),
 	beingEducated: (colonist, fn) => Binding.listen(colonist, 'beingEducated', fn),
+	expert: (colonist, fn) => Unit.listen.expert(colonist.unit, fn), // legacy, will be removed
 }
 const update = {
 	work: (colonist, value) => Binding.update(colonist, 'work', value),
 	colony: (colonist, value) => Binding.update(colonist, 'colony', value),
-	expert: (colonist, value) => Binding.update(colonist, 'expert', value),
 	unit: (colonist, value) => Binding.update(colonist, 'unit', value),
 	promotion: (colonist, value) => Binding.update(colonist, 'promotion', value),
 	productionModifier: (colonist, value) => Binding.update(colonist, 'productionModifier', value),
 	promotionStatus: (colonist, value) => Binding.update(colonist, 'promotionStatus', value),
 	beingEducated: (colonist, value) => Binding.update(colonist, 'beingEducated', value),
+	expert: (colonist, value) => Unit.update.expert(colonist.unit, value), // legacy, will be removed
 }
 
 const initialize = colonist => {
@@ -101,7 +101,6 @@ const create = unit => {
 	const colonist = {
 		type: 'colonist',
 		unit,
-		expert: unit.expert,
 		education: {
 			profession: null,
 			progress: 0
@@ -120,20 +119,20 @@ const create = unit => {
 	return colonist
 }
 
-const expertName = colonist => Units.settler.name[colonist.expert] || 'Settler'
+const expertName = colonist => Units.settler.name[colonist.unit.expert] || 'Settler'
 const professionName = profession => Units.settler.name[profession] || 'Settler'
 
 const power = colonist => {
-	if (colonist.expert === 'slave') {
+	if (colonist.unit.expert === 'slave') {
 		return 0
 	}
 
 	const currentProfession = profession(colonist)
 	return colonist.mood
 		+ colonist.power
-		+ (colonist.expert === currentProfession ? 1 : 0)
+		+ (colonist.unit.expert === currentProfession ? 1 : 0)
 		+ (Colonists[currentProfession] || Colonists.default).power
-		+ (Colonists[colonist.expert] || Colonists.default).power
+		+ (Colonists[colonist.unit.expert] || Colonists.default).power
 }
 
 const profession = colonist => {
@@ -179,7 +178,6 @@ const disband = colonist => {
 const save = colonist => ({
 	colony: Record.reference(colonist.colony),
 	unit: Record.reference(colonist.unit),
-	expert: colonist.expert,
 	education: colonist.education,
 	power: colonist.power,
 	mood: colonist.mood,

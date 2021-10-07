@@ -4,6 +4,7 @@ import Tile from 'entity/tile'
 import Storage from 'entity/storage'
 import Colony from 'entity/colony'
 import Colonist from 'entity/colonist'
+import Unit from 'entity/unit'
 
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
@@ -28,7 +29,7 @@ const create = (colony, tile, good, colonist = null) => {
 			}
 		}))
 
-	const unsubscribe = colonist ? Colonist.listen.expert(colonist, calculate) : calculate()
+	const unsubscribe = colonist ? Unit.listen.expert(colonist.unit, calculate) : calculate()
 
 	Tile.update.harvestedBy(tile, colonist || colony)
 	const update = (currentTime, deltaTime) => {

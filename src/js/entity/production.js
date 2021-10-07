@@ -6,7 +6,7 @@ const production = (colony, building, colonist) => {
 	if (!Buildings[building].production) {
 		return null
 	}
-	if (colonist.expert === 'slave') {
+	if (colonist.unit.expert === 'slave') {
 		return 0
 	}
 
@@ -14,13 +14,13 @@ const production = (colony, building, colonist) => {
 	const good = Buildings[building].production.good
 	const type = ['crosses', 'bells', 'construction'].includes(good) ? good : 'good'
 	let amount = Buildings[building].production.amount[level] + colony.productionBonus
-	if (colonist.expert === Goods[good].expert) {
+	if (colonist.unit.expert === Goods[good].expert) {
 		amount *= 2
 	}
-	if (colonist.expert === 'criminal') {
+	if (colonist.unit.expert === 'criminal') {
 		amount *= 0.333
 	}
-	if (colonist.expert === 'servant') {
+	if (colonist.unit.expert === 'servant') {
 		amount *= 0.666
 	}
 

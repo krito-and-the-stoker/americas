@@ -129,7 +129,7 @@ const create = (colony, originalDimensions) => {
 			sprite.filters = [greyScaleFilter]
 		}
 
-		return Colonist.listen.expert(colonist, () => {		
+		return Unit.listen.expert(colonist.unit, () => {		
 			const sprite = ColonistView.create(colonist)
 			sprite.x = position.x
 			sprite.y = position.y

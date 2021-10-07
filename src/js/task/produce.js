@@ -7,6 +7,7 @@ import Storage from 'entity/storage'
 import Colony from 'entity/colony'
 import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
+import Unit from 'entity/unit'
 import Treasure from 'entity/treasure'
 
 const BELLS_TO_GOLD_FACTOR = 10
@@ -15,7 +16,7 @@ const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const create = (colony, building, colonist) => {
 	let production
 	let consumption
-	const unsubscribe = Colonist.listen.expert(colonist, () =>
+	const unsubscribe = Unit.listen.expert(colonist.unit, () =>
 		Colony.listen.productionBonus(colony, () =>
 			Colony.listen.buildings(colony, () => 
 				Colonist.listen.productionModifier(colonist, productionModifier => {

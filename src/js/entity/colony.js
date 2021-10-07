@@ -171,7 +171,6 @@ const initialize = colony => {
 				const unit = Unit.create('settler', colony.mapCoordinates, colony.owner)
 				const parents = Util.choose(colony.colonists)
 				Unit.update.expert(unit, parents.expert)
-				Colonist.update.expert(unit.colonist, parents.expert)
 				Events.trigger('notification', { type: 'born', colony, unit })
 				colony.growth = 0
 			}

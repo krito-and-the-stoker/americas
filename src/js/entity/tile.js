@@ -373,11 +373,11 @@ const production = (tile, resource, colonist = null) => {
 	if (tile.bonus) {
 		result = applyModifier(tile, result, 'resource', resource, where)
 	}
-	if (colonist && ((colonist.expert === Goods[resource].expert && tile.domain === 'land') || (colonist.expert === 'fisher' && tile.domain === 'sea'))) {
+	if (colonist && ((colonist.unit.expert === Goods[resource].expert && tile.domain === 'land') || (colonist.unit.expert === 'fisher' && tile.domain === 'sea'))) {
 		result = applyModifier(tile, result, 'expert', resource, where)
 	}
 
-	if (result > 0 && colonist && colonist.expert === 'slave') {
+	if (result > 0 && colonist && colonist.unit.expert === 'slave') {
 		result -= 1
 	}
 
