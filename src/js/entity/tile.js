@@ -15,20 +15,33 @@ import Owner from 'entity/owner'
 import MapEntity from 'entity/map'
 
 const BONUS_CHANCE = 0.3
+const FOREST_SWITCH_CHANCE = 0.1
+const LAND_SWITCH_CHANCE = 0.3
+const TERRAIN_NAMES = [
+  "arctic",
+  "tundra",
+  "plains",
+  "prairie",
+  "grassland",
+  "savannah",
+  "marsh",
+  "swamp"
+]
 
 const create = ({ id, layers, index }) => {
-	const [name, terrain] = Object.entries(Terrain).find(([, terrain]) => terrain.id === id)
-	if (!terrain) {
+	if (!Object.entries(Terrain).find(([, terrain]) => terrain.id === id)) {
 		Message.warn(`No terrain type found for id ${id}.`)
 		throw new Error(`No terrain type found for id ${id}.`)
 	}
 
+	const { name, terrain } = diversifyTerrain(id)
+
 	const tile = {
 		index,
-		id,
+		id: terrain.id,
 		name,
+		terrain,
 		domain: Terrain[name].domain,
-		terrain: terrain,
 		forest: layers.top === Terrain.forest.id,
 		mountains: layers.top === Terrain.mountains.id,
 		riverSmall: layers.riverSmall === Terrain.smallRiver.id,
@@ -54,6 +67,10 @@ const create = ({ id, layers, index }) => {
 	tile.treeVariation = tile.riverLarge || Math.random() > (tile.river ? 0.3 : 0.9) ? 1 : 0
 	tile.mountainVariation = Math.random() > (tile.river ? 0.2 : 0.75) && !tile.bonus || tile.mountains
 	tile.hillVariation = Math.random() > (tile.river ? 0.2 : 0.75) && !tile.bonus
+
+	if (tile.domain === 'land' && !tile.mountains && !tile.hills) {
+		tile.forest = diversifyTrees(tile.forest)
+	}
 
 	tile.terrainName = terrainName(tile)
 	tile.bonus = (tile.terrainName !== 'sea lane') &&
@@ -83,6 +100,38 @@ const initialize = tile => {
 	listen.settlement(tile, updateTreeVariation)
 	listen.colony(tile, updateTreeVariation)
 }
+
+const diversifyTerrain = originalId => {
+	let [name] = Object.entries(Terrain).find(([, terrain]) => terrain.id === originalId)
+
+	if (TERRAIN_NAMES.includes(name)) {
+		let terrainIndex = TERRAIN_NAMES.findIndex(x => x == name)
+		let chance = LAND_SWITCH_CHANCE
+		while(Math.random() < chance) {
+			let direction = Math.random() > 0.5 ? 1 : -1
+			if (terrainIndex == 0) {
+				direction = 1
+			}
+			if (terrainIndex == TERRAIN_NAMES.length - 1) {
+				direction = -1
+			}
+
+			terrainIndex += direction
+			chance *= 0.5
+		}
+
+		name = TERRAIN_NAMES[terrainIndex]
+	}
+
+	const terrain = Terrain[name]
+
+	return {
+		name,
+		terrain
+	}
+}
+
+const diversifyTrees = trees => Math.random() < FOREST_SWITCH_CHANCE ? !trees : trees
 
 const terrainName = tile =>
 	(tile.forest && tile.domain === 'land') ? `${tile.name}WithForest` :
