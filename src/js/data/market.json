@@ -1,113 +1,113 @@
 {
 	"food": {
-		"difference": 1,
-		"low": 6,
-		"high": 7,
+		"difference": 2,
+		"low": 4,
+		"high": 6,
 		"consumption": -1,
 		"capacity": 2000
 	},
 	"sugar": {
 		"difference": 2,
 		"low": 7,
-		"high": 9,
+		"high": 10,
 		"consumption": 1,
 		"capacity": 400
 	},
 	"tobacco": {
 		"difference": 2,
 		"low": 7,
-		"high": 9,
+		"high": 10,
 		"consumption": 1,
 		"capacity": 400
 	},
 	"cotton": {
 		"difference": 2,
 		"low": 7,
-		"high": 9,
+		"high": 10,
 		"consumption": 1,
 		"capacity": 400
 	},
 	"furs": {
 		"difference": 2,
 		"low": 7,
-		"high": 9,
+		"high": 10,
 		"consumption": 2,
 		"capacity": 400
 	},
 	"wood": {
 		"difference": 3,
 		"low": 4,
-		"high": 5,
+		"high": 6,
 		"consumption": 1,
 		"capacity": 1000
 	},
 	"ore": {
-		"difference": 2,
+		"difference": 3,
 		"low": 4,
-		"high": 5,
+		"high": 6,
 		"consumption": -1,
 		"capacity": 2000
 	},
 	"silver": {
 		"difference": 1,
-		"low": 29,
-		"high": 29,
+		"low": 80,
+		"high": 90,
 		"consumption": 0,
 		"capacity": 200
 	},
 	"horses": {
 		"difference": 1,
-		"low": 10,
-		"high": 15,
+		"low": 15,
+		"high": 20,
 		"consumption": 0,
 		"capacity": 200
 	},
 	"rum": {
 		"difference": 1,
-		"low": 12,
-		"high": 17,
+		"low": 35,
+		"high": 45,
 		"consumption": 3,
 		"capacity": 200
 	},
 	"cigars": {
 		"difference": 1,
-		"low": 12,
-		"high": 17,
+		"low": 35,
+		"high": 45,
 		"consumption": 3,
 		"capacity": 200
 	},
 	"cloth": {
 		"difference": 1,
-		"low": 12,
-		"high": 17,
+		"low": 35,
+		"high": 45,
 		"consumption": 3,
 		"capacity": 200
 	},
 	"coats": {
 		"difference": 1,
-		"low": 12,
-		"high": 17,
+		"low": 35,
+		"high": 45,
 		"consumption": 3,
 		"capacity": 200
 	},
 	"tradeGoods": {
 		"difference": 1,
-		"low": 1,
-		"high": 1,
+		"low": 2,
+		"high": 5,
 		"consumption": -10,
 		"capacity": 2000
 	},
 	"tools": {
 		"difference": 1,
-		"low": 3,
-		"high": 5,
+		"low": 5,
+		"high": 10,
 		"consumption": 1,
 		"capacity": 200
 	},
 	"guns": {
 		"difference": 1,
-		"low": 5,
-		"high": 10,
+		"low": 15,
+		"high": 20,
 		"consumption": 1,
 		"capacity": 200
 	}
