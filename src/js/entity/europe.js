@@ -196,13 +196,13 @@ const recruit = (option, index) => {
 }
 
 const purchaseOptions = () => [
-	{ text: 'Slave ({price})', unit: 'slave', price: 500 },
+	// { text: 'Slave ({price})', unit: 'slave', price: 500 },
 	{ text: 'Artillery ({price})', unit: 'artillery', price: 1000 },
-	{ text: 'Caravel ({price})', unit: 'caravel', price: 2000 },
-	{ text: 'Merchantman ({price})', unit: 'merchantman', price: 5000 },
-	{ text: 'Privateer ({price})', unit: 'privateer', price: 7000 },
-	{ text: 'Galleon ({price})', unit: 'galleon', price: 10000 },
-	{ text: 'Frigate ({price})', unit: 'frigate', price: 15000 },
+	{ text: 'Caravel ({price})', unit: 'caravel', price: 5000 },
+	{ text: 'Merchantman ({price})', unit: 'merchantman', price: 10000 },
+	{ text: 'Privateer ({price})', unit: 'privateer', price: 15000 },
+	{ text: 'Galleon ({price})', unit: 'galleon', price: 20000 },
+	{ text: 'Frigate ({price})', unit: 'frigate', price: 30000 },
 	{ text: 'Nothing at the moment.', margin: true, price: 0 }
 ].map(option => ({
 	...option,
