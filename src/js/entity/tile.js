@@ -367,6 +367,8 @@ const movementCost = (fromCoords, toCoords, unit) => {
 	return distance * 100
 }
 
+const isPossibleStartLocation = tile => tile.name === 'sea lane' && left(tile) && left(tile).name === 'ocean'
+
 const decideCoastTerrain = tile => {
 	if(tile.terrain && tile.terrain.domain === 'sea') {
 		const coastalNeighbor = neighbors(tile).find(other => other.terrain && other.terrain.domain === 'land')
@@ -563,6 +565,7 @@ export default {
 	isNextTo,
 	production,
 	update,
+	isPossibleStartLocation,
 	colonyProductionGoods,
 	fieldProductionOptions,
 	decideCoastTerrain,

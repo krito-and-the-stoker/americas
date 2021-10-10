@@ -20,6 +20,9 @@ import Market from 'entity/market'
 import Tribe from 'entity/tribe'
 import Owner from 'entity/owner'
 import Treasure from 'entity/treasure'
+import Colony from 'entity/colony'
+import Colonist from 'entity/colonist'
+import Tile from 'entity/tile'
 
 import Meet from 'task/meet'
 
@@ -39,9 +42,6 @@ import Dialog from 'view/ui/dialog'
 
 import GlobalPanel from 'view/panel/global'
 
-import Colony from 'entity/colony'
-import Colonist from 'entity/colonist'
-import Tile from 'entity/tile'
 if (true) {
 	window.Record = Record
 	window.Unit = Unit
@@ -118,8 +118,8 @@ const initialize = () => {
 
 const americaLarge = () => {
 	const startCoordinates = Util.choose(
-		MapEntity.get().tiles.filter(tile =>
-			tile.zone === Terrain.start.id)).mapCoordinates
+		MapEntity.get().tiles.filter(Tile.isPossibleStartLocation)
+	).mapCoordinates
 
 	const pioneer = Unit.create('scout', startCoordinates, Owner.player())
 	const soldier = Unit.create('settler', startCoordinates, Owner.player())
