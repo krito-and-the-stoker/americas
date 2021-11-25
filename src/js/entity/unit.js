@@ -308,8 +308,8 @@ const area = unit => {
 		return tile.area
 	}
 
-	return Tile.radius(tile)
-		.find(neighbor => neighbor.domain === unit.domain).area
+	return (Tile.radius(tile)
+		.find(neighbor => neighbor.domain === unit.domain) || { area: tile.area }).area
 }
 
 const additionalEquipment = unit => Storage.goods(unit.equipment)

@@ -338,6 +338,11 @@ const movementCost = (fromCoords, toCoords, unit) => {
 	const to = MapEntity.tile(toCoords)
 	const costTable = MovementCosts[unit.properties.travelType]
 
+	if (!from || !to) {
+		console.warn('movementcost not defined', from, to)
+		return distance
+	}
+
 	if (to.domain === 'land' && from.domain === 'land' && to.river && from.river && isNextTo(from, to) && costTable.river) {
 		return distance * costTable.river
 	}
