@@ -137,6 +137,7 @@ const toggleSupportOverlay = () => {
 	}
 }
 
+// TODO: Repaint map when food storage changes
 const tileTint = (tile) => {
 	if (state.supportOverlayColoring) {
 		if (tile.colony && tile.colony.storage.food > 1) {
