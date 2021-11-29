@@ -17,6 +17,7 @@ const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const PROMOTION_BASE_FACTOR = 1.0 / Time.PROMOTION_BASE_TIME
 const DEMOTION_BASE_FACTOR = 1.0 / Time.DEMOTION_BASE_TIME
 const POWER_TRANSFER_BASE_FACTOR = 1.0 / Time.POWER_TRANSFER_BASE_TIME
+const COLONIST_PROMOTION_AFTER_DEMOTION = 0.95
 
 const sortByPower = (one, other) => Colonist.power(other) - Colonist.power(one)
 
@@ -123,7 +124,7 @@ const advancePromotion = (colonist, target, delta) => {
     Events.trigger('notification', { type: 'learned', colonist, colony: colonist.colony })
 
     //keep 80% of the promotion progress to go back more easily
-    colonist.promotion.promote[target] = 0.8
+    colonist.promotion.promote[target] = COLONIST_PROMOTION_AFTER_DEMOTION
   }
 
   Colonist.update.promotion(colonist)
