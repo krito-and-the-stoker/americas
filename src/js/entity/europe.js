@@ -19,6 +19,11 @@ import Trade from 'entity/trade'
 const INITIAL_CROSSES_NEEDED = 8
 const CROSSES_COST_IMPROVE = 3
 
+const basePool = [
+	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
+	{ unit: 'settler', 'name': 'Servants', expert: 'servant' },
+	{ unit: 'settler', name: 'Settler', expert: null }
+]
 
 const possibleColonists = [
 	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
@@ -247,7 +252,7 @@ const initialize = () => {
 			if (crosses >= europe.crossesNeeded) {
 				const choices = europe.crossesNeeded === INITIAL_CROSSES_NEEDED
 					? [{ unit: 'pioneer', name: 'Pioneer', expert: null }]
-					: [{ unit: 'settler', name: 'Settler', expert: null }].concat(Record.getAll('colonist')
+					: basePool.concat(Record.getAll('colonist')
 						.filter(colonist => colonist.mood > 0 || ['criminal', 'servant'].includes(colonist.unit.expert))
 						.map(colonist => ({ unit: 'settler', name: Unit.name(colonist.unit), expert: colonist.unit.expert })))
 
