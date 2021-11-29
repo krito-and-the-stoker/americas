@@ -139,14 +139,17 @@ const toggleSupportOverlay = () => {
 
 const tileTint = (tile) => {
 	if (state.supportOverlayColoring) {
-		if (tile.colony) {
+		if (tile.colony && tile.colony.storage.food > 1) {
 			return 0x00FF00
 		}
 		if (tile.domain === 'sea') {
 			return 0xFFFFFF
 		}
 		if (Tile.supportingColony(tile)) {
-			return 0xCCFF77
+			const colony = Tile.supportingColony(tile)
+			if (colony.storage.food > 1) {
+				return 0xCCFF77
+			}
 		}
 
 		return 0xFFAAAA
