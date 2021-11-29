@@ -4,10 +4,13 @@ const path = require('path')
 
 
 const config = () => {
-	const plugins = []
-	if (yargs.argv.production) {
-		plugins.push(new webpack.EnvironmentPlugin(['KEEN_SECRET', 'ENABLE_TRACKING', 'SENTRY_DSN']))
-	}
+	const plugins = [
+		new webpack.EnvironmentPlugin({
+			KEEN_SECRET: null,
+			ENABLE_TRACKING: false,
+			SENTRY_DSN: null
+		})
+	]
 
 	const directories = ['ai', 'command', 'data', 'entity', 'input', 'interaction', 'intro', 'maps', 'render', 'task', 'timeline', 'util', 'view']
 	const aliases = directories.map(dir => ({
@@ -25,6 +28,10 @@ const config = () => {
 			path: path.resolve(__dirname, '../dist')
 		},
 		resolve: {
+			fallback: {
+				path: false,
+				url: false
+			},
 			alias: {
 				version: path.resolve(__dirname, '../src/version'),
 				src: path.resolve(__dirname, '../src'),
@@ -32,13 +39,8 @@ const config = () => {
 				test: path.resolve(__dirname, '../test')
 			}
 		},
-		devtool: (yargs.argv.production || yargs.argv.staging) ? 'eval' : 'cheap-module-eval-source-map',
 		context: path.resolve(__dirname, '../src/js/'),
 		plugins: plugins,
-		// rules: [{
-		// 	test: /\.pug$/,
-		// 	use: 'pug-loader'
-		// }]
 	}
 }
 
