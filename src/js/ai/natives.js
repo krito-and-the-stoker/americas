@@ -169,12 +169,6 @@ const initialize = ai => {
 							} 
 						}
 					}),
-
-					Tile.listen.colony(tile, colony => {
-						if (colony) {
-							return watch(ai, colony)
-						}
-					}),
 				])
 			}) : null),
 
