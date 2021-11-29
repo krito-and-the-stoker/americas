@@ -163,7 +163,7 @@ const advanceDemotion = (colonist, target, delta) => {
     }
 
     // keep 80% so promotion back again goes much more quickly
-    colonist.promotion.promote[colonist.unit.expert || 'settler'] = 0.8
+    colonist.promotion.promote[colonist.unit.expert || 'settler'] = COLONIST_PROMOTION_AFTER_DEMOTION
 
     Unit.update.expert(colonist.unit, demotionTarget)
     delete colonist.promotion.demote[target]
