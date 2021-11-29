@@ -245,11 +245,13 @@ const initialize = () => {
 		Time.schedule(TransferCrosses.create()),
 		listen.crosses(crosses => {
 			if (crosses >= europe.crossesNeeded) {
-				const index = Math.floor(Math.random() * europe.pool.length)
-				const chosen = europe.crossesNeeded === INITIAL_CROSSES_NEEDED
+				const choices = europe.crossesNeeded === INITIAL_CROSSES_NEEDED
 					? { unit: 'pioneer', name: 'Pioneer', expert: null }
-					: europe.pool[index]
-				europe.pool[index] = Util.choose(possibleColonists)
+					: [{ unit: 'settler', name: 'Settler', expert: null }].concat(Record.getAll('colonist')
+						.filter(colonist => colonist.mood > 0 || ['criminal', 'servant'].includes(colonist.unit.expert))
+						.map(colonist => ({ unit: 'settler', name: Unit.name(colonist.unit), expert: colonist.unit.expert })))
+
+				const chosen = Util.choose(choices)
 				const unit = Unit.create(chosen.unit, Record.getGlobal('defaultShipArrival'), Owner.player())
 				Unit.update.expert(unit, chosen.expert)
 				Unit.update.offTheMap(unit, true)
