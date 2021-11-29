@@ -246,7 +246,7 @@ const initialize = () => {
 		listen.crosses(crosses => {
 			if (crosses >= europe.crossesNeeded) {
 				const choices = europe.crossesNeeded === INITIAL_CROSSES_NEEDED
-					? { unit: 'pioneer', name: 'Pioneer', expert: null }
+					? [{ unit: 'pioneer', name: 'Pioneer', expert: null }]
 					: [{ unit: 'settler', name: 'Settler', expert: null }].concat(Record.getAll('colonist')
 						.filter(colonist => colonist.mood > 0 || ['criminal', 'servant'].includes(colonist.unit.expert))
 						.map(colonist => ({ unit: 'settler', name: Unit.name(colonist.unit), expert: colonist.unit.expert })))
