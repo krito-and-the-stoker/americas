@@ -217,6 +217,14 @@ const initialize = unit => {
 			}
 		}),
 
+		// discover
+		listen.properties(unit, properties =>
+			properties.canExplore && listen.mapCoordinates(unit,
+				Binding.map(coords => Tile.closest(coords), tile => {
+					Tile.discover(tile, unit.owner)
+					Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other, unit.owner))
+				}))),
+
 		listen.properties(unit, () => Time.schedule(PayUnits.create(unit))),
 		listen.properties(unit, properties =>
 			// only these units need food

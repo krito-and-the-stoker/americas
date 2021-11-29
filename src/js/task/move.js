@@ -98,12 +98,6 @@ const create = unit => {
 		if (distance < progress) {
 			Unit.update.mapCoordinates(unit, target.mapCoordinates)
 
-			// discover
-			if (unit.properties.canExplore) {			
-				Tile.discover(target, unit.owner)
-				Tile.diagonalNeighbors(target).forEach(other => Tile.discover(other, unit.owner))
-			}
-
 			unit.movement.nextTarget = null
 			const nextTarget = getNextTarget(unit)			
 
