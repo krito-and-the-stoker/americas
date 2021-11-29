@@ -18,7 +18,9 @@
 
   display: flex;
   justify-content: space-between;
+  pointer-events: none;
   > div {
+    pointer-events: auto;
     &:not(:last-child) {
       margin-right: 20px;
     }
