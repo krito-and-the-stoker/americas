@@ -4,6 +4,7 @@ import Yield from 'data/yield'
 import Goods from 'data/goods'
 import Units from 'data/units'
 
+import Util from 'util/util'
 import Member from 'util/member'
 import Record from 'util/record'
 import Binding from 'util/binding'
@@ -14,11 +15,9 @@ import PathFinder from 'util/pathFinder'
 import Owner from 'entity/owner'
 import MapEntity from 'entity/map'
 
-const BONUS_CHANCE = 0.3
 const FOREST_SWITCH_CHANCE = 0.1
-const LAND_SWITCH_CHANCE = 0.3
+const LAND_SWITCH_CHANCE = 0.95
 const TERRAIN_NAMES = [
-  "arctic",
   "tundra",
   "plains",
   "prairie",
@@ -28,7 +27,7 @@ const TERRAIN_NAMES = [
   "swamp"
 ]
 
-const create = ({ id, layers, index }) => {
+const prepare = ({ id, layers, index }) => {
 	if (!Object.entries(Terrain).find(([, terrain]) => terrain.id === id)) {
 		Message.warn(`No terrain type found for id ${id}.`)
 		throw new Error(`No terrain type found for id ${id}.`)
@@ -36,11 +35,21 @@ const create = ({ id, layers, index }) => {
 
 	const { name, terrain } = diversifyTerrain(id)
 
+	return {
+		index,
+		name,
+		terrain,
+		layers
+	}
+}
+
+const create = ({ index, name, terrain, layers, bonus }) => {
 	const tile = {
 		index,
 		id: terrain.id,
 		name,
 		terrain,
+		bonus,
 		domain: Terrain[name].domain,
 		forest: layers.top === Terrain.forest.id,
 		mountains: layers.top === Terrain.mountains.id,
@@ -73,8 +82,6 @@ const create = ({ id, layers, index }) => {
 	}
 
 	tile.terrainName = terrainName(tile)
-	tile.bonus = (tile.terrainName !== 'sea lane') &&
-		(Math.random() < (tile.domain === 'land' || tile.terrainName === 'coastal sea' ? BONUS_CHANCE : 0.04))
 
 	tile.left = () => left(tile)
 	tile.up = () => up(tile)
@@ -109,17 +116,12 @@ const diversifyTerrain = originalId => {
 		let chance = LAND_SWITCH_CHANCE
 		while(Math.random() < chance) {
 			let direction = Math.random() > 0.5 ? 1 : -1
-			if (terrainIndex == 0) {
-				direction = 1
-			}
-			if (terrainIndex == TERRAIN_NAMES.length - 1) {
-				direction = -1
-			}
 
 			terrainIndex += direction
-			chance *= 0.5
+			chance *= LAND_SWITCH_CHANCE
 		}
 
+		terrainIndex = Util.clamp(terrainIndex, 0, TERRAIN_NAMES.length - 1)
 		name = TERRAIN_NAMES[terrainIndex]
 	}
 
@@ -569,6 +571,7 @@ const get = coords => MapEntity.tile(coords)
 
 export default {
 	initialize,
+	prepare,
 	create,
 	discover,
 	isNextTo,
@@ -600,5 +603,6 @@ export default {
 	get,
 	serializableCopy,
 	displayName,
-	supportingColony
+	supportingColony,
+	TERRAIN_NAMES
 }

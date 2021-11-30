@@ -61,7 +61,7 @@ const create = ({ data }) => {
 	numTiles.total = numTiles.x * numTiles.y
 
 	Message.log('Creating tiles')
-	tiles = layer(data, 'terrain base').data.map((id, index) => Tile.create({
+	const preparedTiles = layer(data, 'terrain base').data.map((id, index) => Tile.prepare({
 		id,
 		index,
 		layers: {
@@ -71,6 +71,59 @@ const create = ({ data }) => {
 			zone: layer(data, 'zones').data[index]
 		}
 	}))
+
+	const BONUS_CHANCE = 0.15
+	const findRelevantTiles = (tilesScope, tile, range) => {
+		const index = (x, y) => Math.round(x + y * numTiles.x) % numTiles.total
+		const tileCoords = mapCoordinates(tile.index)
+
+		const outerProduct = list => list.map(item1 => list.map(item2 => [item1, item2]))
+
+		const baseList = [0].concat(
+				Util.range(range).map(x => x + 1)
+			).concat(
+				Util.range(range).map(x => - x - 1)
+			)
+		return outerProduct(baseList)
+			.flat()
+			.map(([dx, dy]) => tilesScope[index(tileCoords.x + dx, tileCoords.y + dy)])
+			.filter(other => !!other)
+	}
+
+
+	const medianTiles = preparedTiles.map(tile => {
+		const bonus = Math.random() < BONUS_CHANCE
+			&& tile.name !== 'sea lane' && tile.name !== 'ocean'
+		if (!Tile.TERRAIN_NAMES.includes(tile.name)) {
+			return {
+				...tile,
+				bonus
+			}
+		}
+
+		const relevantTiles = findRelevantTiles(preparedTiles, tile, 3)
+
+		const sorted = relevantTiles
+			.filter(someTile => Tile.TERRAIN_NAMES.includes(someTile.name))
+			.sort((tileA, tileB) => Tile.TERRAIN_NAMES.indexOf(tileA.name) - Tile.TERRAIN_NAMES.indexOf(tileB.name))
+
+		if (sorted.length > 0) {
+			return {
+				...sorted[Math.floor(sorted.length / 2)],
+				layers: tile.layers,
+				index: tile.index,
+				bonus
+			}
+		}
+
+		return {
+			...tile,
+			bonus
+		}
+	})
+
+	const bonusTiles = medianTiles
+	tiles = bonusTiles.map(Tile.create)
 	tiles.forEach(Tile.initialize)
 	Message.log('Creating coast line')
 	createCoastLine(tiles)
