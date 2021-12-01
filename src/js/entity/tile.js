@@ -15,6 +15,7 @@ import PathFinder from 'util/pathFinder'
 import Owner from 'entity/owner'
 import MapEntity from 'entity/map'
 
+const BONUS_CHANCE = 0.15
 const FOREST_SWITCH_CHANCE = 0.1
 const LAND_SWITCH_CHANCE = 0.95
 const TERRAIN_NAMES = [
@@ -604,5 +605,6 @@ export default {
 	serializableCopy,
 	displayName,
 	supportingColony,
-	TERRAIN_NAMES
+	TERRAIN_NAMES,
+	BONUS_CHANCE
 }

@@ -72,7 +72,6 @@ const create = ({ data }) => {
 		}
 	}))
 
-	const BONUS_CHANCE = 0.15
 	const findRelevantTiles = (tilesScope, tile, range) => {
 		const index = (x, y) => Math.round(x + y * numTiles.x) % numTiles.total
 		const tileCoords = mapCoordinates(tile.index)
@@ -92,7 +91,7 @@ const create = ({ data }) => {
 
 
 	const medianTiles = preparedTiles.map(tile => {
-		const bonus = Math.random() < BONUS_CHANCE
+		const bonus = Math.random() < Tile.BONUS_CHANCE
 			&& tile.name !== 'sea lane' && tile.name !== 'ocean'
 		if (!Tile.TERRAIN_NAMES.includes(tile.name)) {
 			return {
