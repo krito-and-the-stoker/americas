@@ -111,22 +111,20 @@ const match = transport => {
 
 	// colonies in area
 	const colonies = Record.getAll('colony').filter(colony => Colony.area(colony, transport.domain) === Unit.area(transport)).concat([europe])
-	const capacity = 100 * transport.properties.cargo
+	const capacity = transport.properties.cargo
 	const routes = Util.pairs(colonies, colonies)
 		.filter(pair => pair.one !== pair.other)
 		.map(pair => ({ src: pair.one, dest: pair.other }))
 		.map(route => {
-			let slots = transport.properties.cargo
-
 			// create orders
-			const orders = goods(route.src.trade)
+			let orders = goods(route.src.trade)
 				.map(pack => pack.good)
 				.filter(good => (canExport(route.src, good) || canBuy(route.src, good)) && (canImport(route.dest, good) || canSell(route.dest, good)))
 				.map(good => {
 					// calculate amount and importance
 					const exportAmount = route.src.isEurope ? canBuyAmount(route.src, good) : canExportAmount(route.src, route.dest, good)
 					const importAmount = route.dest.isEurope ? canSellAmount(route.dest, good) : canImportAmount(route.dest, route.src, good)
-					const amount = Math.floor(Math.min(exportAmount, importAmount, capacity))
+					const amount = Math.min(exportAmount, importAmount)
 					const exPrio = route.src.isEurope ? buyPriority() : exportPriority(route.src, good)
 					const imPrio = (good === 'food' ? 2 : 1) * (route.dest.isEurope ? sellPriority() : importPriority(route.dest, good))
 					const importance = amount * (1 + exPrio) * (0.5 + imPrio)
@@ -138,17 +136,13 @@ const match = transport => {
 					}
 				})
 				.filter(order => order.amount > 0 && order.importance > 0)
-				// sort by importance descending
-				.sort((a, b) => b.importance - a.importance)
-				// load as much as possible
-				.filter(order => {
-					const needed = Math.ceil(order.amount / 100)
-					if (slots >= needed) {
-						slots -= needed
-						return true
-					}
-					return false
-				})
+
+			const totalAmount = Util.sum(orders.map(order => order.amount))
+			const scale = 1.0 * capacity / totalAmount
+			orders = orders.map(order => ({
+				...order,
+				amount: Math.floor(scale * order.amount)
+			})).filter(order => order.amount > 0)
 
 			const importance = Util.sum(orders.map(order => order.importance))
 			const distance = routeDistance(route.src, route.dest, transport)

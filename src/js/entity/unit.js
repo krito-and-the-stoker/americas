@@ -32,6 +32,7 @@ const UNIT_FOOD_CAPACITY = 20
 const FOOD_COST = 2
 const FOOD_COST_PER_HORSE = 0.05 // food support per horses in stock
 const FOOD_GAIN_PER_HORSE = 0.5 // food gain when eating horse
+const PASSENGER_WEIGHT = 50
 
 
 const RADIUS_GROWTH = 1.0 / (2* Time.WEEK)
@@ -296,14 +297,12 @@ const updateType = (unit, name) => {
 
 const at = coords => Record.getAll('unit').filter(unit => unit.mapCoordinates.x === coords.x && unit.mapCoordinates.y === coords.y)
 const hasCapacity = (unit, pack) => {
-	if (!pack) {
-		return Storage.split(unit.storage).length + unit.passengers.length < unit.properties.cargo
-	}
-	const testStorage = Storage.copy(unit.storage)
-	Storage.update(testStorage, pack)
+	const amount = pack ? pack.amount : PASSENGER_WEIGHT
 
-	return Storage.split(testStorage).length + unit.passengers.length <= unit.properties.cargo
+	return amount <= capacity(unit)
 }
+const capacity = unit =>
+	unit.properties.cargo - (Storage.total(unit.storage) + unit.passengers.length * PASSENGER_WEIGHT)
 
 const area = unit => {
 	let tile = unit.movement.target
@@ -366,12 +365,10 @@ const speed = unit => (unit.properties.speed +
 	(unit.name === 'scout' && unit.expert === 'scout' ? 1 : 0)) / (1 + overWeight(unit))
 
 const loadGoods = (unit, pack) => {
-	if (!hasCapacity(unit, pack) && pack.amount > 0) {
-		return false
-	}
+	const amount = Math.min(pack.amount, capacity(unit))
 
-	Storage.update(unit.storage, pack)
-	return true
+	Storage.update(unit.storage, { good: pack.good, amount })
+	return amount
 }
 
 const loadUnit = (unit, passenger) => {

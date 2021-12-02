@@ -41,6 +41,12 @@ const buy = ({ good, amount }) => {
 	return actualAmount
 }
 
+const unbuy = ({ good, amount }) => {
+	const pricePerGood = ask(good)
+	Treasure.gain(amount * pricePerGood)
+	market.europe[good].storage += amount
+}
+
 const sell = ({ good, amount }) => {
 	const pricePerGood = bid(good)
 	Treasure.gain(amount * pricePerGood)
@@ -79,6 +85,7 @@ const initialize = () => {
 
 export default {
 	buy,
+	unbuy,
 	sell,
 	ask,
 	bid,
