@@ -20,7 +20,6 @@ import Construction from 'entity/construction'
 import Harvest from 'task/harvest'
 import Consume from 'task/consume'
 import ColonistPromotion from 'task/colonistPromotion'
-import Deteriorate from 'task/deteriorate'
 import ColonyProduction from 'task/colonyProduction'
 import ProductionSummary from 'task/productionSummary'
 import TeachingSummary from 'task/teachingSummary'
@@ -174,7 +173,6 @@ const initialize = colony => {
 			}
 		}),
 		Time.schedule(ColonyProduction.create(colony)),
-		Time.schedule(Deteriorate.create(colony)),
 		Time.schedule(ProductionSummary.create(colony)),
 		listen.colonists(colony, () => listen.bells(colony, () => {
 			let bonus = 0
@@ -243,7 +241,8 @@ const disband = colony => {
 	Record.remove(colony)
 }
 
-const capacity = colony => 100 * (colony.buildings.warehouse.level + 1)
+// TODO: remove capacity entirely
+const capacity = colony => 100000
 
 const save = colony => ({
 	name: colony.name,

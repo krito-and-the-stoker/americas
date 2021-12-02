@@ -30,6 +30,8 @@ const TRADE_ROUTE_DISTANCE_CAP = 15 // high distance cap, about 1 year of travel
 const TRADE_ROUTE_MIN_GOODS = 10 // transport at least that many goods
 const BUY_GOODS_RELATIVE_BUDGET = 0.3 // do not spend more than 30% of the current treasure for automatic trade
 
+const ASSUMED_CAPACITY = 500.0
+
 const canExport = (colony, good) => [EXPORT, BALANCE].includes(colony.trade[good])
 const canImport = (colony, good) => [IMPORT, BALANCE].includes(colony.trade[good])
 const canTrade = (colony, good) => [IMPORT, EXPORT, BALANCE, BUY, SELL].includes(colony.trade[good])
@@ -37,7 +39,7 @@ const canBuy = (europe, good) => europe.trade[good] === BUY
 const canSell = (europe, good) => europe.trade[good] === SELL
 
 const targetAmount = (colony, other, good) => ({
-	[IMPORT]: Colony.capacity(colony),
+	[IMPORT]: ASSUMED_CAPACITY,
 	[EXPORT]: 0,
 	[BALANCE]: {
 		[IMPORT]: 0.25,
@@ -46,25 +48,25 @@ const targetAmount = (colony, other, good) => ({
 		[BUY]: 0.75,
 		[BALANCE]:
 			0.5 * (colony.storage
-				? colony.storage[good] / Colony.capacity(colony)
+				? colony.storage[good] / ASSUMED_CAPACITY
 				: 1)
 			+ 0.5 * (other.storage
-				? other.storage[good] / Colony.capacity(other)
+				? other.storage[good] / ASSUMED_CAPACITY
 				: 1)
-	}[other.trade[good]] * Colony.capacity(colony)
+	}[other.trade[good]] * ASSUMED_CAPACITY
 }[colony.trade[good]])
 
 
 const estimatedAmount = (colony, good) => colony.storage[good] + Forecast.get(colony, good)
 const canExportAmount = (colony, other, good) => Math.max(estimatedAmount(colony, good) - targetAmount(colony, other, good), 0)
-const canImportAmount = (colony, other, good) => Util.clamp(targetAmount(colony, other, good) - estimatedAmount(colony, good), 0, Colony.capacity(colony))
+const canImportAmount = (colony, other, good) => Util.clamp(targetAmount(colony, other, good) - estimatedAmount(colony, good), 0, 500)
 
 // how much can we buy depends on treasure
 const canBuyAmount = (europe, good) => Math.floor(BUY_GOODS_RELATIVE_BUDGET * Treasure.amount() / Market.ask(good))
 const canSellAmount = () => 100000 // basically can sell as much as you want
 
-const exportPriority = (colony, good) => Math.max(colony.storage[good] / Colony.capacity(colony), 0)
-const importPriority = (colony, good) => Math.max(1 - (colony.storage[good] / Colony.capacity(colony)), 0)
+const exportPriority = (colony, good) => Math.max(colony.storage[good] / ASSUMED_CAPACITY, 0)
+const importPriority = (colony, good) => Math.max(1 - (colony.storage[good] / ASSUMED_CAPACITY), 0)
 
 // higher priority when have lots of money
 const buyPriority = () => Math.max(Treasure.amount() / Treasure.maximum(), 0)
