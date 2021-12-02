@@ -5,7 +5,7 @@ import Market from 'entity/market'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const MIN_PRICE = 1
-const MAX_PRICE = 29
+const MAX_PRICE = 200
 
 const consumptionFactor = () => 1.5 + 0.25*Math.random()
 const log2 = Math.log(2)
@@ -15,26 +15,26 @@ const create = market => {
 	const update = (currentTime, deltaTime) => {
 		const scale = PRODUCTION_BASE_FACTOR * deltaTime
 		
-		if (scale > 0) {
-			Object.keys(market).forEach(good => {
-				market[good].storage -= scale * consumption(market[good].consumption, Time.get().year)
-				if (market[good].storage < 0) {
-					if (market[good].price < MAX_PRICE) {
-						market[good].price += 1
-					}
-					market[good].storage += market[good].capacity
-					market[good].consumption /= consumptionFactor()
+		Object.keys(market).forEach(good => {
+			market[good].storage -= scale * consumption(market[good].consumption, Time.get().year)
+			if (market[good].storage < 0) {
+				if (market[good].price < MAX_PRICE) {
+					market[good].price += 1
+					market[good].capacity /= market[good].stability
 				}
-				if (market[good].storage > market[good].capacity) {
-					if (market[good].price > MIN_PRICE) {
-						market[good].price -= 1
-					}
-					market[good].storage -= market[good].capacity
-					market[good].consumption *= consumptionFactor()
+				market[good].storage += market[good].capacity
+				market[good].consumption /= consumptionFactor()
+			}
+			if (market[good].storage > market[good].capacity) {
+				if (market[good].price > MIN_PRICE) {
+					market[good].price -= 1
+					market[good].capacity *= market[good].stability
 				}
-			})
-			Market.update.europe()
-		}
+				market[good].storage -= market[good].capacity
+				market[good].consumption *= consumptionFactor()
+			}
+		})
+		Market.update.europe()
 
 		return true
 	}

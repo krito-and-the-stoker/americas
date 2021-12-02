@@ -51,6 +51,12 @@ const sell = ({ good, amount }) => {
 const save = () => market.europe
 const load = data => {
 	market.europe = data
+	// ensure backward compatibility
+	Object.entries(market.europe).forEach(([good, price]) => {
+		if (!price.stability) {
+			price.stability = Properties[good.stability]
+		}
+	})
 	unsubscribeMarketPrices()
 	unsubscribeMarketPrices = Time.schedule(MarketPrice.create(market.europe))
 }
@@ -63,7 +69,8 @@ const initialize = () => {
 			price,
 			storage: Properties[good].capacity * Math.random(),
 			consumption: Properties[good].consumption,
-			capacity: Properties[good].capacity
+			capacity: Properties[good].capacity,
+			stability: Properties[good].stability
 		}])))
 
 	unsubscribeMarketPrices()
