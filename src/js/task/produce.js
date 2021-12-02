@@ -29,12 +29,12 @@ const create = (colony, building, colonist) => {
 
 		let productionAmount = scale * production.amount
 		if (consumption.good) {
-			productionAmount = Math.min(colony.storage[consumption.good], productionAmount)
+			productionAmount = Math.min(colony.storage[consumption.good], consumption.factor * productionAmount) / (1.0 * consumption.factor)
 		}
 		if (production.good === 'bells') {
 			productionAmount = Util.clamp(Treasure.amount() / BELLS_TO_GOLD_FACTOR, 0, productionAmount)	
 		}
-		const consumptionAmount = productionAmount
+		const consumptionAmount = productionAmount * consumption.factor
 		const unscaledProductionAmount = productionAmount / scale
 		const unscaledConsumptionAmount = consumptionAmount / scale
 		if (consumption.good && production.type !== 'construction') {

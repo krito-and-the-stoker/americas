@@ -170,9 +170,9 @@ const createDetailView = colonist => {
               Array(Math.ceil(production.amount * amount / Util.sum(Object.values(construction.cost))))
                 .fill(good)))
         } else {
-          const good = Production.consumption(colonist.work.building).good
+          const { good, factor } = Production.consumption(colonist.work.building)
           consumption = good ?
-            Array(production.amount).fill(good)
+            Array(production.amount * factor).fill(good)
             : []
         }
       }

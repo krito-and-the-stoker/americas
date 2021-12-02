@@ -34,11 +34,12 @@
 		"width": 1,
 		"workspace": 3,
 		"consumption": {
-			"good": "ore"
+			"good": "ore",
+			"factor": 3
 		},
 		"production": {
 			"good": "tools",
-			"amount": [0, 2, 4, 7]
+			"amount": [0, 1, 2, 4]
 		}
 	},
 	"tobacconists": {
@@ -59,11 +60,12 @@
 		"width": 1,
 		"workspace": 3,
 		"consumption": {
-			"good": "tobacco"
+			"good": "tobacco",
+			"factor": 2
 		},
 		"production": {
 			"good": "cigars",
-			"amount": [0, 2, 4, 7]
+			"amount": [0, 1, 2, 4]
 		}
 	},
 	"furTraders": {
@@ -84,11 +86,12 @@
 		"width": 1,
 		"workspace": 3,
 		"consumption": {
-			"good": "furs"
+			"good": "furs",
+			"factor": 2
 		},
 		"production": {
 			"good": "coats",
-			"amount": [0, 2, 4, 7]
+			"amount": [0, 1, 2, 4]
 		}
 	},
 	"carpenters": {
@@ -103,12 +106,9 @@
 		}],
 		"width": 1,
 		"workspace": 3,
-		"consumption": {
-			"good": "wood"
-		},
 		"production": {
 			"good": "construction",
-			"amount": [3, 6]
+			"amount": [4, 8]
 		}
 	},
 	"townhall": {
@@ -168,11 +168,12 @@
 		"width": 1,
 		"workspace": 3,
 		"consumption": {
-			"good": "cotton"
+			"good": "cotton",
+			"factor": 2
 		},
 		"production": {
 			"good": "cloth",
-			"amount": [0, 2, 4, 7]
+			"amount": [0, 1, 2, 4]
 		}
 	},
 	"rumDistillers": {
@@ -193,11 +194,12 @@
 		"width": 1,
 		"workspace": 3,
 		"consumption": {
-			"good": "sugar"
+			"good": "sugar",
+			"factor": 2
 		},
 		"production": {
 			"good": "rum",
-			"amount": [0, 2, 4, 7]
+			"amount": [0, 1, 2, 4]
 		}
 	},
 	"harbour": {
@@ -277,11 +279,12 @@
 			"tools": 200
 		}],
 		"consumption": {
-			"good": "tools"
+			"good": "tools",
+			"factor": 2
 		},
 		"production": {
 			"good": "guns",
-			"amount": [0, 2, 4, 7]
+			"amount": [0, 1, 2, 4]
 		}
 	},
 	"customhouse": {

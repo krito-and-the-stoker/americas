@@ -13,21 +13,23 @@ const production = (colony, building, colonist) => {
 	const level = colony.buildings[building].level
 	const good = Buildings[building].production.good
 	const type = ['crosses', 'bells', 'construction'].includes(good) ? good : 'good'
-	let amount = Buildings[building].production.amount[level] + colony.productionBonus
+	let amount = Buildings[building].production.amount[level]
 	if (colonist.unit.expert === Goods[good].expert) {
 		amount *= 2
 	}
+	amount += colony.productionBonus
 	if (colonist.unit.expert === 'criminal') {
-		amount *= 0.333
+		amount -= 2
 	}
 	if (colonist.unit.expert === 'servant') {
-		amount *= 0.666
+		amount -= 1
 	}
 
-	if (amount > 0) {
-		amount += colonist.productionModifier
-	}
+	amount += colonist.productionModifier
 	amount = Math.ceil(amount)
+	if (amount < 0) {
+		amount = 0
+	}
 
 	return {
 		amount,
@@ -37,7 +39,8 @@ const production = (colony, building, colonist) => {
 }
 
 const consumption = building => ({
-	good: Buildings[building].consumption ? Buildings[building].consumption.good : null
+	good: Buildings[building].consumption ? Buildings[building].consumption.good : null,
+	factor: Buildings[building]?.consumption?.factor ?? 1,
 })
 
 
