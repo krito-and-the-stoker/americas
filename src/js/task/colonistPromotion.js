@@ -17,7 +17,11 @@ const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const PROMOTION_BASE_FACTOR = 1.0 / Time.PROMOTION_BASE_TIME
 const DEMOTION_BASE_FACTOR = 1.0 / Time.DEMOTION_BASE_TIME
 const POWER_TRANSFER_BASE_FACTOR = 1.0 / Time.POWER_TRANSFER_BASE_TIME
+
 const COLONIST_PROMOTION_AFTER_DEMOTION = 0.95
+const PRODUCTION_BONUS_AMOUNT = 1
+const PRODUCTION_MALUS_AMOUNT = 1
+
 
 const sortByPower = (one, other) => Colonist.power(other) - Colonist.power(one)
 
@@ -284,7 +288,7 @@ const create = (colony, good, amount) => {
         Colonist.update.promotionStatus(colonist, newStatus)
       }
 
-      const newProductionModifier = (colonist.promotion.bonus.result ? 2 : 0) + (colonist.promotion.satisfied.result ? 0 : -1)
+      const newProductionModifier = (colonist.promotion.bonus.result ? PRODUCTION_BONUS_AMOUNT : 0) + (colonist.promotion.satisfied.result ? 0 : PRODUCTION_MALUS_AMOUNT)
       if (newProductionModifier !== colonist.productionModifier) {
         Colonist.update.productionModifier(colonist, newProductionModifier)
       }
