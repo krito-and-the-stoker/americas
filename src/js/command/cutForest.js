@@ -7,6 +7,7 @@ import Time from 'timeline/time'
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Storage from 'entity/storage'
+import Unit from 'entity/unit'
 
 import Factory from 'command/factory'
 
@@ -44,7 +45,7 @@ export default Factory.create('CutForest', {
 	const update = currentTime => state.eta && currentTime < state.eta
 	const finished = () => {
 		if (state.eta) {
-			Storage.update(unit.equipment, { good: 'tools', amount: -20 })	
+			Storage.update(unit.equipment, { good: 'tools', amount: -Unit.TERRAFORM_TOOLS_CONSUMPTION })	
 			const tile = unit.tile
 			Tile.clearForest(tile)
 			const colony = Util.choose(Tile.radius(tile).filter(tile => tile.colony).map(tile => tile.colony))

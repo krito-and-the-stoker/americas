@@ -20,7 +20,6 @@ const create = market => {
 			if (market[good].storage < 0) {
 				if (market[good].price < MAX_PRICE) {
 					market[good].price += 1
-					market[good].capacity /= market[good].stability
 				}
 				market[good].storage += market[good].capacity
 				market[good].consumption /= consumptionFactor()
@@ -28,7 +27,6 @@ const create = market => {
 			if (market[good].storage > market[good].capacity) {
 				if (market[good].price > MIN_PRICE) {
 					market[good].price -= 1
-					market[good].capacity *= market[good].stability
 				}
 				market[good].storage -= market[good].capacity
 				market[good].consumption *= consumptionFactor()

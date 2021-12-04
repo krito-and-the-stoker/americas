@@ -119,6 +119,10 @@ const uid = () => {
 
 const clamp = (value, lower = 0, upper = 1) => Math.min(Math.max(value, lower), upper)
 
+const quantize = (value, resolution) => resolution * Math.round(1.0 * value / resolution)
+const quantizeDown = (value, resolution) => resolution * Math.floor(1.0 * value / resolution)
+const quantizeUp = (value, resolution) => resolution * Math.ceil(1.0 * value / resolution)
+
 const numberToColor = number => ({
 	r: (number & 0xFF0000) / 0xFF0000,
 	g: (number & 0x00FF00) / 0x00FF00,
@@ -148,6 +152,9 @@ export default {
 	isArray,
 	flatten,
 	clamp,
+	quantize,
+	quantizeDown,
+	quantizeUp,
 	removeDuplicates,
 	unique,
 	distance,

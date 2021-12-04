@@ -18,7 +18,7 @@ const	create = (resource, amount, width = 100) => {
 			distance = MIN_DISTANCE
 			numberOfSprites = Math.round(width / distance)
 		}
-		const result = Util.range(Math.floor(numberOfSprites)).map(i => {
+		const result = Util.range(Math.max(0, Math.floor(numberOfSprites))).map(i => {
 			const sprite = Resources.sprite('map', { frame: Goods[resource].id })
 			sprite.x = distance * numberOfSprites - Math.round((i + 1)*distance)
 			sprite.y = 0

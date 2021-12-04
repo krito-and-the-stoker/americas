@@ -4,127 +4,111 @@
 		"low": 4,
 		"high": 6,
 		"consumption": -1,
-		"capacity": 2000,
-		"stability": 1.0
+		"capacity": 1000
 	},
 	"sugar": {
 		"difference": 2,
 		"low": 3,
 		"high": 15,
 		"consumption": 1,
-		"capacity": 400,
-		"stability": 1.0
+		"capacity": 200
 	},
 	"tobacco": {
 		"difference": 2,
 		"low": 3,
 		"high": 15,
 		"consumption": 1,
-		"capacity": 400,
-		"stability": 1.0
+		"capacity": 200
 	},
 	"cotton": {
 		"difference": 2,
 		"low": 3,
 		"high": 15,
 		"consumption": 1,
-		"capacity": 400,
-		"stability": 1.0
+		"capacity": 200
 	},
 	"furs": {
 		"difference": 2,
 		"low": 3,
 		"high": 15,
 		"consumption": 2,
-		"capacity": 400,
-		"stability": 1.0
+		"capacity": 200
 	},
 	"wood": {
 		"difference": 3,
 		"low": 4,
 		"high": 8,
 		"consumption": 1,
-		"capacity": 1000,
-		"stability": 1.0
+		"capacity": 500
 	},
 	"ore": {
 		"difference": 3,
 		"low": 2,
 		"high": 4,
 		"consumption": -1,
-		"capacity": 2000,
-		"stability": 2.0
+		"capacity": 1000
 	},
 	"silver": {
 		"difference": 1,
 		"low": 150,
 		"high": 150,
 		"consumption": 0,
-		"capacity": 200,
-		"stability": 0.5
+		"capacity": 100
 	},
 	"horses": {
 		"difference": 1,
 		"low": 15,
 		"high": 20,
 		"consumption": 0,
-		"capacity": 200,
-		"stability": 1.0
+		"capacity": 100
 	},
 	"rum": {
 		"difference": 1,
 		"low": 40,
 		"high": 70,
 		"consumption": 3,
-		"capacity": 200,
-		"stability": 1.0
+		"capacity": 100
 	},
 	"cigars": {
 		"difference": 1,
 		"low": 40,
 		"high": 70,
 		"consumption": 3,
-		"capacity": 200,
-		"stability": 1.0
+		"capacity": 100
 	},
 	"cloth": {
 		"difference": 1,
 		"low": 40,
 		"high": 70,
 		"consumption": 3,
-		"capacity": 200,
-		"stability": 1.0
+		"capacity": 100
 	},
 	"coats": {
 		"difference": 1,
 		"low": 40,
 		"high": 70,
 		"consumption": 3,
-		"capacity": 200,
-		"stability": 1.0
+		"capacity": 100
 	},
 	"tradeGoods": {
 		"difference": 1,
 		"low": 3,
 		"high": 5,
 		"consumption": -10,
-		"capacity": 2000,
-		"stability": 1.0
+		"capacity": 1000
 	},
 	"tools": {
 		"difference": 1,
-		"low": 5,
-		"high": 10,
+		"low": 30,
+		"high": 40,
 		"consumption": 1,
-		"capacity": 200,
-		"stability": 0.8
+		"capacity": 100
 	},
 	"guns": {
 		"difference": 1,
 		"low": 15,
 		"high": 20,
 		"consumption": 1,
-		"capacity": 200,
-		"stability": 1.0
+		"capacity": 100
 	}
 }

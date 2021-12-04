@@ -167,7 +167,7 @@
 				"expert": "+3"
 			},
 			"ore":{
-				"base": 2,
+				"base": 3,
 				"road": "+1",
 				"river": "+1",
 				"resource": "+3",
@@ -181,7 +181,7 @@
 				"river": "+1"
 			},
 			"ore":{
-				"base": 2,
+				"base": 3,
 				"resource": "+2"
 			}
 		}
@@ -277,16 +277,16 @@
 	"mountains":{
 		"field":{
 			"ore":{
-				"base": 2,
+				"base": 3,
 				"road": "+2",
 				"river": "+1",
 				"expert": "*2"
 			},
 			"silver":{
-				"base": 0,
-				"road": "+2",
+				"base": -1,
+				"road": "+1",
 				"river": "+1",
-				"resource": "+2",
+				"resource": "+3",
 				"expert": "*2"
 			}
 		},

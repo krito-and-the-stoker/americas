@@ -31,6 +31,8 @@ import EnterEurope from 'interaction/enterEurope'
 const UNIT_FOOD_CAPACITY = 20
 const FOOD_COST = 2
 const PASSENGER_WEIGHT = 50
+const TERRAFORM_TOOLS_CONSUMPTION = 5
+const PIONEER_MAX_TOOLS = 5 * TERRAFORM_TOOLS_CONSUMPTION
 
 
 const RADIUS_GROWTH = 1.0 / (2* Time.WEEK)
@@ -67,7 +69,7 @@ const create = (name, coords, owner) => {
 		unit.equipment.food = unit.properties.needsFood ? UNIT_FOOD_CAPACITY : 0
 
 		if (name === 'pioneer') {
-			unit.equipment.tools = 100
+			unit.equipment.tools = PIONEER_MAX_TOOLS
 		}
 		if (name === 'soldier') {
 			unit.equipment.guns = 50
@@ -150,7 +152,7 @@ const initialize = unit => {
 
 		Storage.listen(unit.equipment, equipment => {
 			// lose status
-			if (unit.name === 'pioneer' && equipment.tools < 20) {
+			if (unit.name === 'pioneer' && equipment.tools < TERRAFORM_TOOLS_CONSUMPTION) {
 				updateType(unit, 'settler')
 			}
 			if (unit.name === 'scout' && equipment.horses < 50) {
@@ -177,7 +179,7 @@ const initialize = unit => {
 
 			// gain status
 			if (unit.name === 'settler') {
-				if (equipment.tools >= 20) {
+				if (equipment.tools >= TERRAFORM_TOOLS_CONSUMPTION) {
 					updateType(unit, 'pioneer')
 				}
 				if (equipment.guns >= 50) {
@@ -499,4 +501,6 @@ export default {
 	name,
 	UNIT_FOOD_CAPACITY,
 	FOOD_COST,
+	TERRAFORM_TOOLS_CONSUMPTION,
+	PIONEER_MAX_TOOLS,
 }
