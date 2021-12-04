@@ -156,7 +156,7 @@ const match = transport => {
 				priority: distance / Math.pow(importance, Math.sqrt(transport.properties.speed))
 			}
 		})
-		.filter(route => route.distance < Math.max(0.5, 0.01 * route.amount) * TRADE_ROUTE_DISTANCE_CAP * transport.properties.speed)
+		.filter(route => route.distance < Math.max(1.0, 0.05 * route.amount) * TRADE_ROUTE_DISTANCE_CAP * transport.properties.speed)
 		.filter(route => route.amount >= TRADE_ROUTE_MIN_GOODS)
 
 	if (routes.length === 0) {
