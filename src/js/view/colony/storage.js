@@ -20,7 +20,7 @@ const create = (colony, originalDimensions) => {
 	const container = new PIXI.Container()
 	const numberOfGoods = Object.keys(Goods.types).length
 	const width = originalDimensions.x / numberOfGoods
-	const updateAndArgs = Storage.goods(colony.storage).map(({ good }, index) => {
+	const goodViews = Storage.goods(colony.storage).map(({ good }, index) => {
 		const { sprite, number, update } = GoodsView.create({ good, amount: colony.storage[good] })
 		sprite.x = Math.round(index * (originalDimensions.x + 11) / numberOfGoods)
 		sprite.y = originalDimensions.y - 121
@@ -78,16 +78,13 @@ const create = (colony, originalDimensions) => {
 	const unsubscribeStorage = Storage.listen(colony.storage, storage => {		
 		Storage.goods(storage).forEach(({ amount }, i) => {
 			let color = 0xffffff
-			if (amount > Colony.capacity(colony)) {
-				color = 0xff8800
-			}
-			if (!Math.floor(amount)) {
+			if (amount < 1) {
 				color = 0x777777
 			}
-			updateAndArgs[i].update(Math.floor(amount), {
+			goodViews[i].update(Math.floor(amount), {
 				fill: color
 			})
-			updateAndArgs[i].args.amount = Math.min(100, Math.floor(amount))
+			goodViews[i].args.amount = Math.min(100, Math.floor(amount))
 		})
 	})
 
@@ -114,7 +111,7 @@ const create = (colony, originalDimensions) => {
 	})
 
 	const unsubscribe = [
-		updateAndArgs.map(arg => arg.unsubscribe),
+		goodViews.map(arg => arg.unsubscribe),
 		unsubscribeTrade,
 		unsubscribeStorage,
 		unsubscribeDrag,

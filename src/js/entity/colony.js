@@ -241,9 +241,6 @@ const disband = colony => {
 	Record.remove(colony)
 }
 
-// TODO: remove capacity entirely
-const capacity = colony => 100000
-
 const save = colony => ({
 	name: colony.name,
 	units: colony.units.map(unit => Record.reference(unit)),
@@ -303,24 +300,23 @@ const coastalDirection = colony => {
 }
 
 export default {
-	create,
-	protection,
-	save,
-	load,
-	area,
-	coastalDirection,
-	currentConstruction,
-	isCoastal,
-	canEmploy,
 	add,
-	remove,
-	listen,
-	listenEach,
-	update,
-	tories,
-	rebels,
-	capacity,
+	area,
+	canEmploy,
+	coastalDirection,
+	create,
+	currentConstruction,
+	defender,
 	disband,
 	expertLevel,
-	defender
+	isCoastal,
+	listen,
+	listenEach,
+	load,
+	protection,
+	rebels,
+	remove,
+	save,
+	tories,
+	update,
 }

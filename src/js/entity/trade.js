@@ -26,7 +26,7 @@ const update = (trade, pack) => Storage.update(trade, pack)
 const goods = trade => Storage.goods(trade)
 
 
-const TRADE_ROUTE_DISTANCE_CAP = 15 // high distance cap, about 1 year of travel
+const TRADE_ROUTE_DISTANCE_CAP = 15
 const TRADE_ROUTE_MIN_GOODS = 10 // transport at least that many goods
 const BUY_GOODS_RELATIVE_BUDGET = 0.3 // do not spend more than 30% of the current treasure for automatic trade
 
