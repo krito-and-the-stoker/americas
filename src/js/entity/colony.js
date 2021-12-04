@@ -95,8 +95,11 @@ const area = (colony, domain) =>
 
 const tories = colony => {
 	const colonists = colony.colonists.length
+	const administrators = colony.colonists.filter(colonist =>
+		colonist.work.type === 'Building' && colonist.work.building === 'townhall').length
+
 	const percentage = 100 - Math.min(100, Math.round(colony.bells / (colonists + 1)))
-	const number = Math.round(colonists * percentage / 100)
+	const number = Math.round(colonists * percentage / 100) - administrators
 
 	return {
 		percentage,
@@ -174,24 +177,17 @@ const initialize = colony => {
 		}),
 		Time.schedule(ColonyProduction.create(colony)),
 		Time.schedule(ProductionSummary.create(colony)),
-		listen.colonists(colony, () => listen.bells(colony, () => {
-			let bonus = 0
-			if (tories(colony).number > 14) {
-				bonus -= 1
-			}
-			if (tories(colony).number > 9) {
-				bonus -= 1
-			}
-			if (rebels(colony).percentage >= 50) {
-				bonus += 1
-			}
-			if (rebels(colony).percentage >= 100) {
-				bonus += 1
-			}
-			if (colony.productionBonus !== bonus) {
-				update.productionBonus(colony, bonus)
-			}
-		}))
+		listen.colonists(colony, colonists => 
+			colonists.map(colonist =>
+				Colonist.listen.work(colonist, () =>
+					listen.bells(colony, () => {
+						const bonus = Math.floor(rebels(colony).percentage / 50.0)
+							- Math.floor(tories(colony).number / 10.0)
+
+						if (colony.productionBonus !== bonus) {
+							update.productionBonus(colony, bonus)
+						}
+					}))))
 	]
 }
 

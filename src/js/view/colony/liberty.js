@@ -41,15 +41,12 @@ const create = colony => {
 		toriesText.style.fill = color
 	}
 
-	const unsubscribeBells = Colony.listen.bells(colony, Binding.map(freedomPercentage, updateRebelsAndTories))
-	const unsubscribeColonistsPercentage = Colony.listen.colonists(colony, Binding.map(freedomPercentage, updateRebelsAndTories))
-	const unsubscribeColonistsAmount = Colony.listen.colonists(colony, Binding.map(colonySize, updateRebelsAndTories))
-
-	const unsubscribe = () => {
-		unsubscribeColonistsPercentage()
-		unsubscribeColonistsAmount()
-		unsubscribeBells()
-	}
+	const unsubscribe = [
+		Colony.listen.productionBonus(colony, updateRebelsAndTories),
+		Colony.listen.bells(colony, Binding.map(freedomPercentage, updateRebelsAndTories)),
+		Colony.listen.colonists(colony, Binding.map(freedomPercentage, updateRebelsAndTories)),
+		Colony.listen.colonists(colony, Binding.map(colonySize, updateRebelsAndTories)),
+	]
 
 	return {
 		unsubscribe,
