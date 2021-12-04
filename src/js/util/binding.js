@@ -90,26 +90,6 @@ const hasListener = (instance, key) => {
 
 const listenerKey = key => key ? `${key}Listeners` : 'listeners'
 
-const shared = fn => {
-	let destroyScheduled = 0
-	let destroyExecuted = 0
-	let destroy = null
-	return arg => {
-		if (destroy) {
-			Util.execute(destroy)
-			destroyExecuted += 1
-		}
-		destroy = fn(arg)
-		return () => {
-			destroyScheduled += 1
-			if (destroyScheduled > destroyExecuted) {
-				Util.execute(destroy)
-				destroyExecuted += 1
-			}
-		}
-	}
-}
-
 const map = (mapping, fn, equals = (a, b) => a === b) => {
 	let oldValue = null
 	let oldCleanup = null
@@ -137,7 +117,6 @@ export default {
 	listen,
 	hasListener,
 	listenerKey,
-	shared,
 	map,
 	applyUpdate,
 	applyAllUpdates,
