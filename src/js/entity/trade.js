@@ -30,7 +30,7 @@ const TRADE_ROUTE_DISTANCE_CAP = 10
 const TRADE_ROUTE_MIN_GOODS = 10 // transport at least that many goods
 const BUY_GOODS_RELATIVE_BUDGET = 0.3 // do not spend more than 30% of the current treasure for automatic trade
 
-const ASSUMED_CAPACITY = 500.0
+const STORAGE_PER_POPULATION = 33
 
 const canExport = (colony, good) => [EXPORT, BALANCE].includes(colony.trade[good])
 const canImport = (colony, good) => [IMPORT, BALANCE].includes(colony.trade[good])
@@ -38,8 +38,10 @@ const canTrade = (colony, good) => [IMPORT, EXPORT, BALANCE, BUY, SELL].includes
 const canBuy = (europe, good) => europe.trade[good] === BUY
 const canSell = (europe, good) => europe.trade[good] === SELL
 
+const capacity = colony => STORAGE_PER_POPULATION * colony.colonists.length
+
 const targetAmount = (colony, other, good) => ({
-	[IMPORT]: ASSUMED_CAPACITY,
+	[IMPORT]: capacity(colony),
 	[EXPORT]: 0,
 	[BALANCE]: {
 		[IMPORT]: 0.25,
@@ -48,12 +50,12 @@ const targetAmount = (colony, other, good) => ({
 		[BUY]: 0.75,
 		[BALANCE]:
 			0.5 * (colony.storage
-				? colony.storage[good] / ASSUMED_CAPACITY
+				? colony.storage[good] / capacity(colony)
 				: 1)
 			+ 0.5 * (other.storage
-				? other.storage[good] / ASSUMED_CAPACITY
+				? other.storage[good] / capacity(other)
 				: 1)
-	}[other.trade[good]] * ASSUMED_CAPACITY
+	}[other.trade[good]] * capacity(colony)
 }[colony.trade[good]])
 
 
@@ -65,8 +67,8 @@ const canImportAmount = (colony, other, good) => Util.clamp(targetAmount(colony,
 const canBuyAmount = (europe, good) => Math.floor(BUY_GOODS_RELATIVE_BUDGET * Treasure.amount() / Market.ask(good))
 const canSellAmount = () => 100000 // basically can sell as much as you want
 
-const exportPriority = (colony, good) => Math.max(colony.storage[good] / ASSUMED_CAPACITY, 0)
-const importPriority = (colony, good) => Math.max(1 - (colony.storage[good] / ASSUMED_CAPACITY), 0)
+const exportPriority = (colony, good) => Math.max(colony.storage[good] / capacity(colony), 0)
+const importPriority = (colony, good) => Math.max(1 - (colony.storage[good] / capacity(colony)), 0)
 
 // higher priority when have lots of money
 const buyPriority = () => Math.max(Treasure.amount() / Treasure.maximum(), 0)

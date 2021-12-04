@@ -10,17 +10,23 @@ import Events from 'util/events'
 
 import Time from 'timeline/time'
 
+import Building from 'entity/building'
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
-import MapEntity from 'entity/map'
-import Tile from 'entity/tile'
-import Unit from 'entity/unit'
+import Construction from 'entity/construction'
 import Europe from 'entity/europe'
-import Treasure from 'entity/treasure'
+import Forecast from 'entity/forecast'
+import MapEntity from 'entity/map'
 import Market from 'entity/market'
-import Tribe from 'entity/tribe'
-import Settlement from 'entity/settlement'
 import Owner from 'entity/owner'
+import Production from 'entity/production'
+import Settlement from 'entity/settlement'
+import Storage from 'entity/storage'
+import Tile from 'entity/tile'
+import Trade from 'entity/trade'
+import Treasure from 'entity/treasure'
+import Tribe from 'entity/tribe'
+import Unit from 'entity/unit'
 
 
 const REFERENCE_KEY = 'referenceId'
@@ -169,17 +175,23 @@ const dump = () => {
 		REFERENCE_KEY
 	}
 
+	window.Building = Building
 	window.Colonist = Colonist
 	window.Colony = Colony
-	window.MapEntity = MapEntity
-	window.Tile = Tile
-	window.Unit = Unit
+	window.Construction = Construction
 	window.Europe = Europe
-	window.Treasure = Treasure
+	window.Forecast = Forecast
+	window.MapEntity = MapEntity
 	window.Market = Market
-	window.Tribe = Tribe
-	window.Settlement = Settlement
 	window.Owner = Owner
+	window.Production = Production
+	window.Settlement = Settlement
+	window.Storage = Storage
+	window.Tile = Tile
+	window.Trade = Trade
+	window.Treasure = Treasure
+	window.Tribe = Tribe
+	window.Unit = Unit
 }
 
 const state = () => ({

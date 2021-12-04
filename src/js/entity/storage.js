@@ -61,6 +61,7 @@ const transfer = (src, dest, pack = {}) => {
 }
 
 const total = storage => Util.sum(goods(storage).map(pack => pack.amount))
+const maximum = storage => Util.max(goods(storage).map(pack => pack.amount))
 
 const transferWithProduction = (src, dest) => {
 	const move = pack => {
@@ -92,6 +93,7 @@ export default {
 	load,
 	save,
 	total,
+	maximum,
 	goods,
 	productions,
 	equals,
