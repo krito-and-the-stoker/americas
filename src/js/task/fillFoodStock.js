@@ -30,7 +30,7 @@ const create = (unit, tile) => {
 
 		// unscale only communicates lost food instead of all food that is moved towards another storage
 		const unscale = amount => Math.min(foodCost, amount / (deltaTime * PRODUCTION_BASE_FACTOR))
-		const foodCost = Unit.FOOD_COST + (unit.equipment.horses + unit.storage.horses) * Unit.FOOD_COST_PER_HORSE
+		const foodCost = Unit.FOOD_COST
 
 		let desiredAmount
 		if (unit.colony === colony) {

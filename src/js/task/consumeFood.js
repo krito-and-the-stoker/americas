@@ -17,6 +17,10 @@ const create = unit => {
 			return true
 		}
 
+		if (unit.name === 'scout' && !Unit.isMoving(unit)) {
+			return true
+		}
+
 		if (unit.equipment.food < -0.1) {
 			if (Math.random() < CHANCE_OF_DEATH) {
 				Unit.disband(unit)
@@ -25,7 +29,7 @@ const create = unit => {
 			return true
 		}
 
-		const unscaledAmount = Unit.FOOD_COST + (unit.equipment.horses + unit.storage.horses) * Unit.FOOD_COST_PER_HORSE
+		const unscaledAmount = Unit.FOOD_COST
 		const scaledAmount = deltaTime * PRODUCTION_BASE_FACTOR * unscaledAmount
 
 		Storage.update(unit.equipment, { good: 'food', amount: -scaledAmount })

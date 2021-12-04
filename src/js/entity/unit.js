@@ -30,8 +30,6 @@ import EnterEurope from 'interaction/enterEurope'
 
 const UNIT_FOOD_CAPACITY = 20
 const FOOD_COST = 2
-const FOOD_COST_PER_HORSE = 0.05 // food support per horses in stock
-const FOOD_GAIN_PER_HORSE = 0.5 // food gain when eating horse
 const PASSENGER_WEIGHT = 50
 
 
@@ -501,6 +499,4 @@ export default {
 	name,
 	UNIT_FOOD_CAPACITY,
 	FOOD_COST,
-	FOOD_COST_PER_HORSE,
-	FOOD_GAIN_PER_HORSE
 }
