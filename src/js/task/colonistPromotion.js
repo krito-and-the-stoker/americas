@@ -109,7 +109,7 @@ const advancePromotion = (colonist, target, delta) => {
   // normal speed is 1
   colonist.promotion.speed = 1
   // if we have a specialist in town we are faster
-  if (target === 'settler' || target === 'servant' || colonist.colony.colonists.some(col => col.expert === target)) {
+  if (target === 'settler' || target === 'servant' || colonist.colony.colonists.some(col => col.unit.expert === target)) {
     colonist.promotion.speed += 2
   }
   // if we have a school in town we are faster
