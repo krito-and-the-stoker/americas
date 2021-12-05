@@ -19,9 +19,9 @@
 				"harbour": 2
 			},
 			"cost": {
-				"wood": 250,
-				"tools": 100,
-				"cloth": 100
+				"wood": 150,
+				"tools": 50,
+				"cloth": 50
 			}
 		}
 	},
@@ -46,10 +46,10 @@
 				"harbour": 3
 			},
 			"cost": {
-				"wood": 500,
-				"tools": 250,
-				"guns": 100,
-				"cloth": 100
+				"wood": 250,
+				"tools": 100,
+				"guns": 50,
+				"cloth": 50
 			}
 		}
 	},
@@ -74,10 +74,10 @@
 				"harbour": 3
 			},
 			"cost": {
-				"wood": 1000,
-				"tools": 500,
-				"guns": 250,
-				"cloth": 100
+				"wood": 500,
+				"tools": 250,
+				"guns": 100,
+				"cloth": 50
 			}
 		}
 	},
@@ -103,10 +103,10 @@
 				"harbour": 3
 			},
 			"cost": {
-				"wood": 1000,
-				"tools": 400,
-				"guns": 100,
-				"cloth": 200
+				"wood": 500,
+				"tools": 200,
+				"guns": 50,
+				"cloth": 100
 			}
 		}
 	},
@@ -130,10 +130,10 @@
 				"harbour": 3
 			},
 			"cost": {
-				"wood": 500,
-				"tools": 250,
-				"guns": 50,
-				"cloth": 100
+				"wood": 250,
+				"tools": 100,
+				"guns": 25,
+				"cloth": 50
 			}
 		}
 	},
@@ -153,7 +153,7 @@
 		"construction": {
 			"buildings": {},
 			"cost": {
-				"wood": 30
+				"wood": 40
 			}
 		}
 	},
@@ -180,9 +180,9 @@
 				"gunsmiths": 1
 			},
 			"cost": {
-				"wood": 200,
-				"tools": 200,
-				"guns": 200
+				"wood": 100,
+				"tools": 100,
+				"guns": 100
 			}
 		}
 	},
