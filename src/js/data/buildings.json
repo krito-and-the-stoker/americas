@@ -94,11 +94,14 @@
 		}
 	},
 	"carpenters": {
-		"frame": [10, 11],
-		"population": [0, 3],
-		"name": ["Carpenters Shop", "Lumber Mill"],
+		"frame": [10, 10, 11],
+		"population": [0, 3, 6],
+		"name": ["Carpenters House", "Carpenters Shop", "Lumber Mill"],
 		"cost": [{
 			"wood": 0
+		}, {
+			"wood": 50,
+			"tools": 50
 		}, {
 			"wood": 100,
 			"tools": 100
@@ -107,7 +110,7 @@
 		"workspace": 3,
 		"production": {
 			"good": "construction",
-			"amount": [4, 8]
+			"amount": [4, 8, 16]
 		}
 	},
 	"townhall": {
