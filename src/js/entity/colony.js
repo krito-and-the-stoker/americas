@@ -202,6 +202,7 @@ const create = (coords, owner) => {
 		construction: Construction.create(),
 		constructionTarget: null,
 		mapCoordinates: { ...coords },
+		productionBonus: 0,
 		bells: 0,
 		crosses: 0,
 		housing: 0,
