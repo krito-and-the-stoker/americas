@@ -73,7 +73,7 @@ const removeDuplicates = array => array
 	}, [])
 
 
-const range = n => [...Array(n).keys()]
+const range = n => n > 0 ? [...Array(n).keys()] : []
 
 const quantizedRadius = (coords, radius) => range(2 * radius)
 	.map(x => Math.round(x + coords.x - radius))
