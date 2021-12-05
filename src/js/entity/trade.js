@@ -67,11 +67,8 @@ const canImportAmount = (colony, other, good) => Util.clamp(targetAmount(colony,
 const canBuyAmount = (europe, good) => Math.floor(BUY_GOODS_RELATIVE_BUDGET * Treasure.amount() / Market.ask(good))
 const canSellAmount = () => 100000 // basically can sell as much as you want
 
-const exportPriority = (colony, good) => Math.max(colony.storage[good] / capacity(colony), 0)
 const importPriority = (colony, good) => Math.max(1 - (colony.storage[good] / capacity(colony)), 0)
 
-// higher priority when have lots of money
-const buyPriority = () => Math.max(Treasure.amount() / Treasure.maximum(), 0)
 // higher priority when low on money
 const sellPriority = () => Math.max(1 - (Treasure.amount() / Treasure.maximum()), 0)
 
@@ -127,9 +124,8 @@ const match = transport => {
 					const exportAmount = route.src.isEurope ? canBuyAmount(route.src, good) : canExportAmount(route.src, route.dest, good)
 					const importAmount = route.dest.isEurope ? canSellAmount(route.dest, good) : canImportAmount(route.dest, route.src, good)
 					const amount = Math.min(exportAmount, importAmount)
-					const exPrio = route.src.isEurope ? buyPriority() : exportPriority(route.src, good)
-					const imPrio = (good === 'food' ? 2 : 1) * (route.dest.isEurope ? sellPriority() : importPriority(route.dest, good))
-					const importance = amount * (1 + exPrio) * (0.5 + imPrio)
+					const priority = (good === 'food' ? 2 : 1) * (route.dest.isEurope ? sellPriority() : importPriority(route.dest, good))
+					const importance = amount * priority
 
 					return {
 						good,
