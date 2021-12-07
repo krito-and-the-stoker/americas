@@ -99,7 +99,7 @@ const tories = colony => {
 		colonist.work.type === 'Building' && colonist.work.building === 'townhall').length
 
 	const percentage = 100 - Math.min(100, Math.round(colony.bells / (colonists + 1)))
-	const number = Math.round(colonists * percentage / 100) - administrators
+	const number = Math.max(0, Math.round(colonists * percentage / 100) - administrators)
 
 	return {
 		percentage,
