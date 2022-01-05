@@ -9,7 +9,7 @@ export default (ship, unit, pack) => {
 	if (unit.name === 'settler') {
 		if (good === 'tools') {
 			const maximumAmount = Math.min(amount, Unit.PIONEER_MAX_TOOLS - unit.equipment.tools)
-			const roundedAmount = Util.quantizeDown(maximumAmount, TERRAFORM_TOOLS_CONSUMPTION)
+			const roundedAmount = Util.quantizeDown(maximumAmount, Unit.TERRAFORM_TOOLS_CONSUMPTION)
 			if (roundedAmount > 0) {
 				Storage.transfer(ship.storage, unit.equipment, { good: 'tools', amount: roundedAmount })
 			}

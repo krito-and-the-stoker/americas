@@ -50,7 +50,7 @@ const execute = (something, ...arg) => {
 	// throw new Error('unable to execute')
 }
 
-const makeObject = arr => arr.reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
+const makeObject = Object.fromEntries
 const clone = something => Clone(something)
 
 const globalScale = sprite => {

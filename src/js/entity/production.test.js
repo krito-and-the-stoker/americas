@@ -13,7 +13,7 @@ test('production', () => {
 	const colonist = Colonist.create(unit)
 	colony.buildings.blacksmiths.level = 1
 	const production = Production.production(colony, 'blacksmiths', colonist)
-	expect(production.amount).toBe(2)
+	expect(production.amount).toBe(1)
 	expect(production.good).toBe('tools')
 })
 
