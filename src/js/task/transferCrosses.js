@@ -18,7 +18,7 @@ const create = (colony) => {
 
   return {
     update,
-    sort: 6
+    sort: 1
   }
 }
 

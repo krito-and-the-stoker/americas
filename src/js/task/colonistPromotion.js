@@ -18,7 +18,7 @@ const PROMOTION_BASE_FACTOR = 1.0 / Time.PROMOTION_BASE_TIME
 const DEMOTION_BASE_FACTOR = 1.0 / Time.DEMOTION_BASE_TIME
 const POWER_TRANSFER_BASE_FACTOR = 1.0 / Time.POWER_TRANSFER_BASE_TIME
 
-const COLONIST_PROMOTION_AFTER_DEMOTION = 0.95
+const COLONIST_PROMOTION_AFTER_DEMOTION = 0.9
 const PRODUCTION_BONUS_AMOUNT = 1
 const PRODUCTION_MALUS_AMOUNT = 1
 
@@ -45,7 +45,7 @@ const consumeGoods = (colonist, deltaTime, consumptionObject) => Object.entries(
   const scale = PRODUCTION_BASE_FACTOR * deltaTime
   let scaledAmount = scale * amount
   if (colonist.unit.expert === 'slave'
-    ||( production && production.good !== good)) {
+    || (production && production.good !== good)) {
     scaledAmount = Math.min(scaledAmount,
     colony.storage[good] || {
       'bells': colony.bells,
@@ -127,7 +127,7 @@ const advancePromotion = (colonist, target, delta) => {
     Unit.update.expert(colonist.unit, target)
     Events.trigger('notification', { type: 'learned', colonist, colony: colonist.colony })
 
-    //keep 80% of the promotion progress to go back more easily
+    //keep some percentage of the promotion progress to go back more easily
     colonist.promotion.promote[target] = COLONIST_PROMOTION_AFTER_DEMOTION
   }
 
@@ -166,7 +166,7 @@ const advanceDemotion = (colonist, target, delta) => {
       colonist.promotion.promote = {}
     }
 
-    // keep 80% so promotion back again goes much more quickly
+    // keep some percentage so promotion back again goes much more quickly
     colonist.promotion.promote[colonist.unit.expert || 'settler'] = COLONIST_PROMOTION_AFTER_DEMOTION
 
     Unit.update.expert(colonist.unit, demotionTarget)
@@ -299,7 +299,7 @@ const create = (colony, good, amount) => {
 
   return {
     update,
-    sort: 5
+    sort: 2
   } 
 }
 

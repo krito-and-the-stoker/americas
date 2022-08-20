@@ -60,7 +60,7 @@ const create = colony => {
 
 	return {
 		update,
-		sort: 1,
+		sort: 4,
 	}	
 }
 

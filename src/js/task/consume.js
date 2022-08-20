@@ -32,7 +32,7 @@ const create = (colony, good, amount) => {
 
 	return {
 		update,
-		sort: 2
+		sort: 3
 	}	
 }
 

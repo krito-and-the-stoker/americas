@@ -39,7 +39,7 @@ const create = unit => {
 
 	return {
 		update,
-		sort: 2
+		sort: 3
 	} 
 }
 
