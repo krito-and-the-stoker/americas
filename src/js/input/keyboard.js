@@ -21,6 +21,7 @@ import RenderMap from 'render/map.js'
 import MapView from 'view/map'
 import UnitView from 'view/map/unit'
 import UnitScreen from 'view/screen/units'
+import ColonyScreen from 'view/screen/colonies'
 
 import Europe from 'view/europe'
 import Help from 'view/help'
@@ -83,10 +84,26 @@ const handleKeydown = e => {
 	}
 
 	if (e.key === 'u') {
+		if (ColonyScreen.isOpen()) {
+			ColonyScreen.close()
+		}
+
 		if (UnitScreen.isOpen()) {
 			UnitScreen.close()
 		} else {
 			UnitScreen.open()
+		}
+	}
+
+	if (e.key === 'q') {
+		if (UnitScreen.isOpen()) {
+			UnitScreen.close()
+		}
+
+		if (ColonyScreen.isOpen()) {
+			ColonyScreen.close()
+		} else {
+			ColonyScreen.open()
 		}
 	}
 

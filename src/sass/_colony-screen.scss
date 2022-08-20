@@ -1,0 +1,77 @@
+.screen {
+  .colony {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+
+    overflow-y: auto;
+
+    background: url(/images/help.jpg);
+    background-size: cover;
+
+    font-size: 18px;
+
+    display: flex;
+    justify-content: center;
+
+    .inner {
+      position: relative;
+    }
+
+    .goods {
+      margin-top: 25px;
+      margin-left: 250px;
+      display: flex;
+    }
+
+    .mode {
+      background-color: rgba(240, 233, 201, 0.6);
+      box-shadow: 0 0 5px 5px rgba(240, 233, 201, 0.6);
+      color: black;
+      outline: none;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      font-size: 24px;
+      margin-top: 35px;
+      width: 200px;
+      text-transform: uppercase;
+    }
+
+    .name {
+      display: inline-block;
+      padding: 5px;
+
+      width: 240px;
+     
+      background-color: rgba(240, 233, 201, 0.6);
+      box-shadow: 0 0 5px 5px rgba(240, 233, 201, 0.6);
+      color: black;      
+    }
+
+    .storage {
+      display: inline-block;
+      margin-left: 5px;
+      padding: 5px;
+
+      width: 49px;
+      text-align: right;
+
+      background-color: rgba(240, 233, 201, 0.6);
+      box-shadow: 0 0 5px 5px rgba(240, 233, 201, 0.6);
+      color: black;
+
+      &.hide {
+        color: transparent;
+      }
+    }
+
+    .total {
+      margin-top: 20px;
+      margin-bottom: 100px;
+    }
+  }
+}
