@@ -31,8 +31,6 @@ const create = ({ tribe, state, colony }) => {
 						state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned -= 1
 
 						if (!move.unit.disbanded) {
-							state.relations[colony.owner.referenceId].militancy += 0.05
-							state.relations[colony.owner.referenceId].trust += 0.05
 							Units.unassign(move.unit)
 	
 							const disbandAction = Disband.create(move.unit)
@@ -53,8 +51,6 @@ const create = ({ tribe, state, colony }) => {
 					// die trying..
 					const unsubscribeBattle = Events.listen('battle', params => {
 						if (params.loser === move.unit) {
-							state.relations[colony.owner.referenceId].militancy -= 0.05
-							state.relations[colony.owner.referenceId].trust -= 0.05
 							cleanup()
 						}
 					})

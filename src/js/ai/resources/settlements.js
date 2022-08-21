@@ -32,11 +32,12 @@ const cheapest = (owner, coords) => {
 		.filter(settlement => settlement.population + reserved(settlement) > 1)
 		.filter(settlement => !lastReserved[settlement.referenceId] || lastReserved[settlement.referenceId] < Time.get().currentTime)
 	return Util.min(settlements, settlement =>
-		Util.distance(settlement.mapCoordinates, coords) + cost(settlement))	
+		2 * Util.distance(settlement.mapCoordinates, coords) + cost(settlement))	
 }
 
 const recruit = settlement => {
 	const unit = Units.create('native', settlement)
+	settlement.population -= 1
 	if (settlement.tribe.storage.guns >= 20) {
 		Storage.transfer(settlement.tribe.storage, unit.equipment, { good: 'guns', amount: 20 })
 	}

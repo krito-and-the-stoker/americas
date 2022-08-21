@@ -155,7 +155,7 @@ const dialog = (settlement, unit, answer) => {
 		}
 	}
 	if (answer === 'mission') {
-		if (Math.random() * relations.militancy > 0.2 && relations.trust < 0) {
+		if (relations.militancy > 0.6 && relations.trust < 0) {
 			return {
 				text: 'Your missionary was unable to establish friendly contact with the natives and has *vanished*.',
 				type: 'religion',
@@ -168,7 +168,11 @@ const dialog = (settlement, unit, answer) => {
 			}
 		}
 
-		const description = relations.trust > 0 ? 'with curiousity' : 'cautiously'
+		const description = relations.trust > 0
+			? 'with curiousity'
+			: relation.militancy > 0.2
+				? 'with hostility'
+				: 'cautiously'
 		return {
 			text: `The natives join your mission *${description}*.`,
 			type: 'religion',
@@ -184,7 +188,7 @@ const dialog = (settlement, unit, answer) => {
 	if (answer === 'chief') {
 		const welcomeText = `Welcome stranger! We are well known for our **${experts[settlement.expert]}**.`
 		const choice = Math.random()
-		if (Math.random() * relations.militancy > 0.5 && relations.trust < 0) {
+		if (relations.militancy > 0.4 && relations.trust < 0) {
 			return {
 				text: 'Your people have been untrustworthy and reckless against us. We will use you for target practice.',
 				type: 'natives',
@@ -247,7 +251,7 @@ const dialog = (settlement, unit, answer) => {
 		}
 	}
 	if (answer === 'live') {
-		if (Math.random() > relations.militancy && relations.trust < -0.5) {
+		if (relations.militancy > 0.2 && relations.trust < -0.5) {
 			return {
 				text: 'How dare you asking for our help when you brought so much misery to our people. *Prepare to die* for your foolishness.',
 				type: 'natives',
@@ -379,7 +383,7 @@ const dialog = (settlement, unit, answer) => {
 					text: 'Demand food supplies',
 					answer: 'food'
 				}, {
-					text: 'Demand tribute',
+					text: 'Demand taxation',
 					answer: 'tribute'
 				}, {
 					text: 'Leave'

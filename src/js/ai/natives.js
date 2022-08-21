@@ -34,56 +34,6 @@ const MILITANCY_UPDATE_FACTOR = 1.0 / (1*Time.YEAR)
 const MILITANCY_DECAY_FACTOR = 0.999
 const TRUST_DECAY_FACTOR = 0.999
 
-const offensiveCapability = ai => {
-	let offense = 1
-	if (ai.tribe.storage.guns >= 20 && ai.tribe.storage.horses >= 20) {
-		offense = UnitProperties.mountedarmednative.combat
-	}
-	if (ai.tribe.storage.guns >= 20 && ai.tribe.storage.horses < 20) {
-		offense = UnitProperties.armednative.combat
-	}
-	if (ai.tribe.storage.guns < 20 && ai.tribe.storage.horses >= 20) {
-		offense = UnitProperties.mountednative.combat
-	}
-	if (ai.tribe.storage.guns < 20 && ai.tribe.storage.horses < 20) {
-		offense = UnitProperties.native.combat
-	}
-
-	return offense
-}
-
-const colonyRaidProbability = (t, colony, ai) => {
-	const offset = 10
-	if (t < offset) {
-		return 0
-	}
-
-	const relations = ai.state.relations[colony.owner.referenceId]
-	if (relations.trust > 0.8 || relations.militancy <= 0) {
-		return 0
-	}
-
-	const attraction = Util.clamp(1 - relations.trust) * relations.militancy * Goods.value(colony.storage)
-	const protection = Colony.protection(colony)
-	const offense = offensiveCapability(ai)
-	const defense = 100 * protection * protection / Util.clamp(offense*offense + relations.militancy, 0.1, 100 * protection * protection)
-
-	if (defense > attraction) {
-		return 0
-	}
-
-	const time = 1000 * defense / (attraction - defense)
-
-	return 1 / time
-}
-
-const watch = (ai, colony) => {
-	return Time.schedule(ProbabilisticTrigger.create(t => colonyRaidProbability(t, colony, ai), () => {
-		ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = Math.ceil(1.25*Colony.protection(colony))
-		update.state(ai)
-	}))
-}
-
 const describeRelations = relations => {
 	if (relations.militancy > 0.5) {	
 		if (relations.trust >= 0.5) {
@@ -94,7 +44,7 @@ const describeRelations = relations => {
 			return `hostile (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 		}
 
-		return `desperate (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+		return `hateful (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 	}
 
 	if (relations.militancy > 0) {
@@ -106,7 +56,7 @@ const describeRelations = relations => {
 			return `neutral (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 		}
 
-		return `offended (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+		return `tense (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
 	}
 
 	if (relations.trust >= 0.5) {
@@ -127,15 +77,17 @@ const initialize = ai => {
 
 	return [
 		listen.tribe(ai, tribe => 
-			tribe ? Tribe.listen.settlements(tribe, settlements => {
+			tribe && Tribe.listen.settlements(tribe, settlements => {
 				const tiles = settlements
-					.map(settlement => Util.quantizedRadius(settlement.mapCoordinates, 6))
+					.map(settlement => Util.quantizedRadius(settlement.mapCoordinates, 4))
 					.flat()
 					.map(coords => MapEntity.tile(coords))
 					.filter(Util.unique)
 					.filter(tile => tile.domain === 'land')
 					.filter(tile => settlements.map(settlement => MapEntity.tile(settlement.mapCoordinates).area).includes(tile.area))
+				// for all tiles near settlements:
 				return tiles.map(tile => [
+					// greet unknowns
 					Tile.listen.units(tile, units => {
 						units
 							.filter(unit => unit.domain !== 'sea' && !unit.vehicle)
@@ -145,9 +97,10 @@ const initialize = ai => {
 								if (!ai.state.relations[owner.referenceId]) {
 									ai.state.relations[owner.referenceId] = {
 										established: false,
+										war: false,
 										colonies: {},
 										militancy: 0,
-										trust: 0.1,
+										trust: 0,
 									}
 
 									update.state(ai)
@@ -155,13 +108,13 @@ const initialize = ai => {
 							})
 					}),
 
+					// register foreign colony
 					Tile.listen.colony(tile, colony => {
 						if (colony && !ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId]) {
 							ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId] = {
 								visited: false,
 								raidPlanned: false
 							}
-							ai.state.relations[colony.owner.referenceId].trust -= 0.07
 							update.state(ai)
 
 							return () => {
@@ -170,7 +123,7 @@ const initialize = ai => {
 						}
 					}),
 				])
-			}) : null),
+			})),
 
 		listen.state(ai, () => {
 			makePlansAndRunThem(ai)
@@ -189,10 +142,12 @@ const initialize = ai => {
 			if (unit && other) {			
 				const relations = ai.state.relations[other.owner.referenceId]
 				if (relations) {
+					// establish relations
 					if (unit.owner === ai.owner && other.domain === 'land' && !relations.established) {
 						establishRelations(ai, other.owner)
 					}
-					if (relations.trust < 0 && relations.militancy > 1.5) {
+					// battle when in war
+					if (relations.war) {
 						if (unit.domain === other.domain) {
 							if (unit.owner === ai.owner && !other.colony) {
 								Message.log('attacking hostile', unit, other)
@@ -206,7 +161,7 @@ const initialize = ai => {
 					// auto attack natives when in state of war
 					if (other.owner === ai.owner) {
 						const relations = ai.state.relations[unit.owner.referenceId]
-						if (relations.trust < 0 && relations.militancy > 1.5) {
+						if (relations.war) {
 							if (unit.domain === other.domain && !unit.properties.support && Unit.strength(unit) > 2 && Unit.strength(unit) > 2 * Unit.strength(other)) {
 								Message.log('defending hostile', unit, other)
 								Battle(unit, other)
@@ -230,7 +185,13 @@ const establishRelations = (ai, owner) => {
 			text: `Hello strange men from the sea. We are the **${ai.tribe.name}** and live here in *${numSettlements} settlements*. We welcome you in **peace**.<options/>`,
 			pause: true,
 			options: [{
-				text: 'Let there be peace.',
+				text: 'Let us live together in peace.',
+			}, {
+				text: 'You are heathens and deserve to die! (**Declare War**)',
+				action: () => {
+					ai.state.relations[owner.referenceId].trust -= 1.0
+					ai.state.relations[owner.referenceId].war = true
+				}
 			}]
 		})
 	}
@@ -276,7 +237,6 @@ const makePlansAndRunThem = ai => {
 						.map(({ action, colony }) => {
 							if (action) {
 								action.commit()
-									.then(() => watch(ai, colony))
 									.then(() => makePlansAndRunThem(ai))
 								return action.cancel
 							}
