@@ -32,7 +32,12 @@ const create = (colony, originalDimensions) => {
 			action: () => {
 				Construction.start(colony, option)
 			}
-		}))
+		})).concat([{
+			text: '**Stop construction**',
+			action: () => {
+				Construction.start(colony, null)
+			}
+		}])
 
 		return Dialog.create({
 			type: 'menu',
