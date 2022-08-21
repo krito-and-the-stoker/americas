@@ -604,7 +604,7 @@ const createLearned = ({ colony, colonist, unit }) => {
 	}
 
 	const dialog = {
-		text: `A colonist has learned a new profession and is now considered a ${Unit.name(unit)}.`,
+		text: `A colonist has learned a new profession and is now considered a **${Unit.name(unit)}**.`,
 		coords: unit.mapCoordinates,
 		type: 'govenor'
 	}
@@ -634,7 +634,7 @@ const createTreasure = (colony, unit) => {
 		if (!hasGalleon) {
 			Dialog.create({
 				type: 'king',
-				text: 'You do not seem to have a galleon ready for transport. Would you like us to take care of the transport? The crown would, of course, take a fair share for its efforts.',
+				text: 'You do not seem to have **a galleon** ready for transport. Would you like us to *take care of the transport*? The crown would, of course, take a **fair share** for its efforts.<options/>',
 				coords: unit.mapCoordinates,
 				options: [{
 					text: 'Yes, please transport the treasure for us and take your share.',
@@ -653,7 +653,7 @@ const createTreasure = (colony, unit) => {
 	const dismiss = {}
 
 	const dialog = {
-		text: `We have secured the treasure in ${colony.name}. However, we need a galleon to transport it to Europe.`,
+		text: `We have secured the treasure in *${colony.name}*. However, we need **a galleon** to transport it to Europe.`,
 		type: 'govenor',
 		coords: unit.mapCoordinates
 	}
@@ -682,7 +682,7 @@ const createDestroyed = (settlement, treasure) => {
 
 	const tribeName = settlement.tribe.name
 	const dialog = {
-		text: `A settlement of the ${tribeName} has been destroyed. The ${tribeName} swear to take revenge. We have found ${treasure.treasure} gold in the ruins.`,
+		text: `A settlement of the *${tribeName}* has been destroyed. The ${tribeName} swear to take revenge. We have found **${treasure.treasure}**<good>gold</good> in the ruins.`,
 		type: 'marshal',
 		coords: settlement.mapCoordinates
 	}
@@ -711,7 +711,7 @@ const createDecimated = settlement => {
 
 	const tribeName = settlement.tribe.name
 	const dialog = {
-		text: `A settlement of the ${tribeName} has been decimated tremendously.`,
+		text: `A settlement of the *${tribeName}* has been decimated tremendously.`,
 		type: 'marshal',
 		coords: settlement.mapCoordinates
 	}
@@ -736,7 +736,7 @@ const createRaid = (colony, unit, pack) => {
 		MapView.centerAt(colony.mapCoordinates, 350)
 		Dialog.create({
 			type: 'govenor',
-			text: `The storage of ${colony.name} has been plundered. ${Math.round(pack.amount)} ${pack.good} are missing.`,
+			text: `The storage of *${colony.name}* has been *plundered*. **${Math.round(pack.amount)}**<good>${pack.good}</good> are missing.`,
 			coords: colony.mapCoordinates
 		})
 	}
@@ -744,7 +744,7 @@ const createRaid = (colony, unit, pack) => {
 	const dismiss = {}
 
 	const dialog = {
-		text: `There has benn a raid in ${colony.name}. The storage has been plundered and lots of goods are missing. Try protect your cities with armed forces. Stockades and forts are greatly effective to prevent such events.`,
+		text: `There has been *a raid* in *${colony.name}*. The storage has been plundered and lots of goods are missing. Try protect your cities with *armed forces*. *Stockades and forts* are greatly effective to prevent such events.`,
 		type: 'govenor',
 		coords: colony.mapCoordinates
 	}
@@ -808,7 +808,7 @@ const createCombat = (attacker, defender, loser, strength) => {
 		MapView.centerAt(coords, 350)
 		Dialog.create({
 			type: 'marshal',
-			text: `A ${Unit.name(winner)} (${winnerStrength}) has defeated a ${Unit.name(loser)} (${loserStrength}) in battle.`,
+			text: `A **${Unit.name(winner)}** (${winnerStrength}) has defeated a **${Unit.name(loser)}** (${loserStrength}) in battle.`,
 		})
 	}
 
@@ -881,7 +881,6 @@ const create = params => {
 			...notification.dialog,
 			options: [{
 				default: true,
-				text: 'Ok, thank you.',
 				action: () => {
 					unsubscribePositioning()
 					notification.container.cacheAsBitmap = true

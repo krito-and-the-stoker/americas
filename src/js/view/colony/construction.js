@@ -21,7 +21,8 @@ const create = (colony, originalDimensions) => {
 	}
 
 	const optionDescription = option => {
-		return `${option.name()} (${Math.floor(option.progress())}/${Util.sum(Object.values(option.cost()))})`
+		const cost = Object.entries(option.cost()).map(([good, amount]) => `${amount}<good>${good}</good>`).join(' ')
+		return `<|**${option.name()}**<-> ${cost} (${Math.floor(100 * option.progress() / Util.sum(Object.values(option.cost())))}%)|>`
 	}
 
 	const constructionButton = Button.create('change', () => {
@@ -35,7 +36,7 @@ const create = (colony, originalDimensions) => {
 
 		return Dialog.create({
 			type: 'menu',
-			text: 'What would you like to construct?',
+			text: 'What would you like to *construct*? <options/>',
 			options: choices,
 		})
 	})

@@ -1,5 +1,3 @@
-import * as PIXI from 'pixi.js'
-
 import Util from 'util/util'
 import Events from 'util/events'
 
@@ -8,11 +6,10 @@ import Time from 'timeline/time'
 import Click from 'input/click'
 import Drag from 'input/drag'
 
+import Dom from 'render/dom'
 import Foreground from 'render/foreground'
-import RenderView from 'render/view'
-import Text from 'render/text'
-import Resources from 'render/resources'
 
+import GoodsView from 'view/goods'
 import MapView from 'view/map'
 
 
@@ -134,14 +131,59 @@ const align = {
 	}
 }
 
+const { h, patch } = Dom
+const tags = {
+	spacer: {
+		begin: '<\\|',
+		end: '\\|>',
+		replace: (content, parse) => h('div.spacer', content.split('<->').map(chunk =>
+			h('div', parse(chunk))))
+	},
+	options: {
+		begin: '<options',
+		end: '/>',
+		replace: (content, parse, context) => h('div.options', context.options.map(({ text, action, disabled, margin }) =>
+			h('div.option', {
+				class: { disabled, margin, option: true },
+				on: {
+					click: () => {
+						if (!disabled) {
+							context.actionTaken = true
+							Util.execute(action)
+						}
+					}
+				}
+			}, parse(text))
+		))
+	},
+	bold: {
+		begin: '\\*\\*',
+		end:'\\*\\*',
+		replace: (content, parse) => h('b', parse(content))
+	},
+	italic: {
+		begin: '\\*',
+		end:'\\*',
+		replace: (content, parse) => h('i', parse(content))
+	},
+	underlined: {
+		begin: '_',
+		end: '_',
+		replace: (content, parse) => h('span.underlined', parse(content))
+	},
+	good: {
+		begin: '<good>',
+		end: '</good>',
+		replace: content => h('span.good', GoodsView.html(content, 0.4))
+	},
+}
 
+const tagExpOuter = tag => `(${tag.begin}.*?${tag.end})`
+const tagExpInner = tag => `${tag.begin}(.*?)${tag.end}`
+const splitRegex = new RegExp(Object.values(tags).map(tagExpOuter).join('|'))
 
-const create = ({ type, text, options, coords, pause, closeScreen, centerMap, image }) => {
-	let clickAllowed = false
-	setTimeout(() => { clickAllowed = true }, clickBlockTime)
-
-	const closePlane = new PIXI.Container()
-	const plane9 = new PIXI.mesh.NineSlicePlane(Resources.texture('status'), 100, 100, 100, 100)
+const create = context => {
+	const { type, text, options, coords, pause, closeScreen, centerMap, image } = context
 	const config = {
 		...types[type],
 	}
@@ -156,115 +198,71 @@ const create = ({ type, text, options, coords, pause, closeScreen, centerMap, im
 		config.image = image
 	}
 
-	const textView = Text.create(text)
-	textView.y = padding
-	plane9.addChild(textView)
-
-	const imageView = config.image ? Resources.sprite(config.image) : null
-
-	const optionViews = (options ? options.filter(option => option.text) : []).map(option => ({
-		...option,
-		text: Text.create(option.text)
-	}))
-
 	if (coords && config.centerMap) {
 		MapView.centerAt(coords, 500, config.centerMap)
 	}
 
-	const unsubscribeOptionClicks = optionViews.map(option => {
-		plane9.addChild(option.text)
-		if (!option.disabled) {
-			const unsubscribeClick = Click.on(option.text, () => {
-				if (clickAllowed) {
-					if (option.action) {
-						option.action()
-					}
-					close()
-				}
-			})
-			option.text.buttonMode = true
-			return unsubscribeClick
-		}
-	})
+	if (pause) {
+		Time.pause()
+	}
 
-	const unsubscribeDimensions = RenderView.listen.dimensions(dimensions => {
-		closePlane.hitArea = new PIXI.Rectangle(0, 0, dimensions.x, dimensions.y)
+	if (config.closeScreen) {
+		Foreground.closeScreen()
+	}
 
-		let currentHeight = padding
-		textView.style = {
-			...textView.style,
-			wordWrap: true,
-			wordWrapWidth: config.width * dimensions.x
-		}
-		textView.x = padding + (config.width * dimensions.x - textView.width) / 2
-		currentHeight += textView.height + emptyLine
-
-		optionViews.forEach(option => {
-			if (option.disabled) {
-				option.text.style = {
-					...textView.style,
-					fill: 0xDDCCBB
-				}
-			} else {
-				option.text.style = textView.style
-			}
-			option.text.x = padding + (config.width * dimensions.x - option.text.width) / 2
-			if (option.margin) {
-				currentHeight += emptyLine
-			}
-			option.text.y = currentHeight
-			currentHeight += option.text.height
-		})
-
-		plane9.width = config.width * dimensions.x + 2*padding
-		plane9.height = currentHeight + padding
-		align[config.align](plane9, imageView, dimensions)
-	})
-
-	Drag.waitForDrag().then(() => {
-		if (config.closeScreen) {
-			Foreground.closeScreen()
+	const tagReplace = chunk => {
+		const tag = Object.values(tags).find(t => chunk.match(new RegExp(tagExpInner(t))))
+		if (tag) {
+			const match = chunk.match(new RegExp(tagExpInner(tag)))[1]
+			return tag.replace(match, parse, context)
 		}
 
-		Foreground.add.dialog(closePlane)
-		if (imageView && config.imageBehindText) {
-			Foreground.add.dialog(imageView)
-		}
-		Foreground.add.dialog(plane9)
-		if (imageView && !config.imageBehindText) {
-			Foreground.add.dialog(imageView)
-		}
+		return chunk
+	}
+	const parse = text => text.split(splitRegex).filter(x => !!x).map(tagReplace)
+	context.parse = parse
 
-		if (pause) {
-			Time.pause()
-		}
-	})
+
+	let el = document.createElement('div.dialog')
+	document.body.appendChild(el)
+	let isOpen = true
 
 	const close = () => {
-		Util.execute([
-			unsubscribeDimensions,
-			unsubscribeOptionClicks,
-			unsubscribeCloseClick,
-		])
-		Foreground.remove.dialog(closePlane)
-		Foreground.remove.dialog(plane9)
-		if (imageView) {	
-			Foreground.remove.dialog(imageView)
+		isOpen = false
+		render()
+
+		if (options && !context.actionTaken) {
+			const defaultAction = options.find(option => option.default)?.action
+			Util.execute(defaultAction)
 		}
+
 		if (pause) {
 			Time.resume()
 		}
 	}
 
-	const unsubscribeCloseClick = Click.on(closePlane, () => {
-		if (clickAllowed) {
-			const defaultOption = options ? options.find(option => option.default) : null
-			if (defaultOption && defaultOption.action) {
-				defaultOption.action()
-			}
-			close()
+	const render = () => {
+		if (isOpen) {
+			el = patch(el, h('div', {
+				class: {
+					dialog: true
+				},
+				on: {
+					click: close
+				}
+			}, [
+				h('div.background', [
+					h('div.content', [
+						h('div', parse(text))
+					])
+				])
+			]))
+		} else {
+			patch(el, h('!'))
 		}
-	})
+	}
+
+	render()
 
 	return close
 }

@@ -37,7 +37,7 @@ const selectTarget = unit => {
 	}).sort((a, b) => b.colonists.length - a.colonists.length)
 
 	const options = [{
-		text: 'Where you came from',
+		text: 'Open waters in the Americas',
 		action: () => {
 			Commander.scheduleInstead(unit.commander, America.create({ unit }))
 			Commander.scheduleBehind(unit.commander, TriggerEvent.create({ name: 'notification', type: 'america', unit }))
@@ -45,21 +45,17 @@ const selectTarget = unit => {
 		}
 	}].concat(colonies.map((colony, index) => ({
 		margin: !index && colonies.length > 1,
-		text: `${colony.name} (${colony.colonists.length})`,
+		text: `**${colony.name}** (${colony.colonists.length})`,
 		action: () => {
 			Commander.scheduleBehind(unit.commander, GoTo.create({ unit, colony }))
 			Commander.scheduleBehind(unit.commander, TriggerEvent.create({ name: 'notification', type: 'arrive', unit, colony }))
 			closeIfNoShips()
 		}
-	}))).concat([{
-		text: 'Stay here',
-		default: true,
-		margin: true
-	}])
+	})))
 
 	Dialog.create({
 		type: 'naval',
-		text: 'Where do you wish us to go?',
+		text: 'Where shall we *sail* to?<options/>',
 		closeScreen: false,
 		options,
 	})

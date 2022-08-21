@@ -39,14 +39,18 @@ const create = (unit, coords) => {
 	const init = () => {	
 		Events.trigger('dialog', {
 			type: 'naval',
-			text: 'Would you like to disembark here?',
+			text: 'Would you like to **disembark** here?<options/>',
 			coords: unit.mapCoordinates,
 			options: [{
 				text: 'Make landfall',
-				action: () => decision = 0
+				action: () => {
+					decision = 2
+				}
 			}, {
 				text: 'Stay with the ships',
-				action: () => decision = 1,
+				action: () => {
+					decision = 1
+				},
 				default: true
 			}]
 		})
@@ -67,7 +71,7 @@ const create = (unit, coords) => {
 			return false
 		}
 
-		if (decision === 0) {
+		if (decision === 2) {
 			Events.trigger('disembark')
 			landingUnit = Unit.unloadUnit(unit)
 			Commander.scheduleInstead(landingUnit.commander, Move.create({ unit: landingUnit, coords }))
@@ -106,7 +110,7 @@ const load = data => {
 	if (data.decision === 1) {
 		return Commander.cancel()
 	}
-	if (data.decision === 0 && data.unloadingStartedAt) {
+	if (data.decision === 2 && data.unloadingStartedAt) {
 		return createUnloadingOnly(data.unloadingStartedAt)
 	}
 }

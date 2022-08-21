@@ -19,9 +19,9 @@
 				"harbour": 2
 			},
 			"cost": {
-				"wood": 150,
-				"tools": 50,
-				"cloth": 50
+				"wood": 100,
+				"tools": 20,
+				"cloth": 20
 			}
 		}
 	},
@@ -34,7 +34,7 @@
 		},
 		"domain": "sea",
 		"travelType": "sea",
-		"speed": 18,
+		"speed": 20,
 		"cargo": 150,
 		"combat": 4,
 		"support": 0.5,
@@ -46,8 +46,8 @@
 				"harbour": 3
 			},
 			"cost": {
-				"wood": 250,
-				"tools": 100,
+				"wood": 100,
+				"tools": 50,
 				"guns": 50,
 				"cloth": 50
 			}
@@ -74,8 +74,8 @@
 				"harbour": 3
 			},
 			"cost": {
-				"wood": 500,
-				"tools": 250,
+				"wood": 200,
+				"tools": 150,
 				"guns": 100,
 				"cloth": 50
 			}
@@ -103,10 +103,10 @@
 				"harbour": 3
 			},
 			"cost": {
-				"wood": 500,
-				"tools": 200,
+				"wood": 400,
+				"tools": 150,
 				"guns": 50,
-				"cloth": 100
+				"cloth": 50
 			}
 		}
 	},
@@ -130,8 +130,8 @@
 				"harbour": 3
 			},
 			"cost": {
-				"wood": 250,
-				"tools": 100,
+				"wood": 150,
+				"tools": 25,
 				"guns": 25,
 				"cloth": 50
 			}
@@ -181,8 +181,8 @@
 			},
 			"cost": {
 				"wood": 100,
-				"tools": 100,
-				"guns": 100
+				"tools": 50,
+				"guns": 50
 			}
 		}
 	},

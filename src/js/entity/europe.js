@@ -201,20 +201,22 @@ const recruit = (option, index) => {
 }
 
 const purchaseOptions = () => [
-	// { text: 'Slave ({price})', unit: 'slave', price: 500 },
-	{ text: 'Artillery ({price})', unit: 'artillery', price: 1000 },
-	{ text: 'Caravel ({price})', unit: 'caravel', price: 5000 },
-	{ text: 'Merchantman ({price})', unit: 'merchantman', price: 10000 },
-	{ text: 'Privateer ({price})', unit: 'privateer', price: 15000 },
-	{ text: 'Galleon ({price})', unit: 'galleon', price: 20000 },
-	{ text: 'Frigate ({price})', unit: 'frigate', price: 30000 },
-	{ text: 'Nothing at the moment.', margin: true, price: 0 }
-].map(option => ({
-	...option,
-	text: option.text.replace(/\{price\}/g, option.price),
-	disabled: Treasure.amount() < option.price,
-	action: () => purchase(option)
-}))
+		// { name: 'Slave', unit: 'slave', price: 500 },
+		{ name: 'Artillery', unit: 'artillery', price: 1000 },
+		{ name: 'Caravel', unit: 'caravel', price: 2000 },
+		{ name: 'Merchantman', unit: 'merchantman', price: 5000 },
+		{ name: 'Privateer', unit: 'privateer', price: 5000 },
+		{ name: 'Galleon', unit: 'galleon', price: 10000 },
+		{ name: 'Frigate', unit: 'frigate', price: 15000 },
+	].map(option => ({
+		...option,
+		text: `<|**${option.name}**<->${option.price}<good>gold</good>|>`,
+		disabled: Treasure.amount() < option.price,
+		action: () => purchase(option)
+	})).concat({
+		text: 'Nothing at the moment.',
+		margin: true
+	})
 
 const purchase = option => {
 	if (Treasure.spend(option.price) && option.unit) {
@@ -226,7 +228,7 @@ const purchase = option => {
 
 const trainOptions = () => possibleTrainees
 	.map(({ unit, name, expert, price }) => ({
-		text: `${name} (${price})`,
+		text: `<|**${name}**<->${price}<good>gold</good>|>`,
 		disabled: Treasure.amount() < price,
 		action: () => train({ unit, expert, price })
 	}))

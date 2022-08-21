@@ -41,14 +41,14 @@ const handleGoTo = unit => {
 			.sort((a, b) => b.colonists.length - a.colonists.length)
 		Dialog.create({
 			type: 'naval',
-			text: 'Where shall we go?',
+			text: 'Where shall we go?<options/>',
 			options: colonies.map(colony => ({
-				text: `${colony.name} (${colony.colonists.length})`,
+				text: `**${colony.name}** (${colony.colonists.length})`,
 				action: () => {
 					Commander.scheduleInstead(unit.commander, GoTo.create({ unit, colony }))
 				}
 			})).concat([{
-				text: 'London',
+				text: '**London**',
 				margin: true,
 				action: () => {
 					Commander.scheduleInstead(unit.commander, GoTo.create({ unit, europe: true }))
@@ -61,9 +61,9 @@ const handleGoTo = unit => {
 			.filter(colony => Colony.area(colony, 'land') === Unit.area(unit))
 		Dialog.create({
 			type: 'scout',
-			text: 'Where shall we go?',
+			text: 'Where shall we go?<options/>',
 			options: colonies.map(colony => ({
-				text: `${colony.name} (${colony.colonists.length})`,
+				text: `**${colony.name}** (${colony.colonists.length})`,
 				action: () => {
 					Commander.scheduleInstead(unit.commander, GoTo.create({ unit, colony }))
 				}

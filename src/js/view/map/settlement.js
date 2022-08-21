@@ -36,7 +36,7 @@ const create = settlement => {
 				const tribe = settlement.tribe.name
 				const expertName = Units.settler.name[settlement.expert]
 				const knowledge = settlement.presentGiven ?
-					`This settlement has the knowledge to train a ${expertName}.` : 'We have not visited this village yet.'
+					`This settlement has the knowledge to train a **${expertName}**.` : 'We have *not visited* this village yet.'
 				const text = relation ? `The ${tribe} seem ${relation} at the moment.\n\n${knowledge}` : knowledge
 				Dialog.create({
 					type: 'scout',

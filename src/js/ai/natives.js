@@ -227,7 +227,7 @@ const establishRelations = (ai, owner) => {
 		Events.trigger('dialog', {
 			type: 'natives',
 			image: ai.tribe.image,
-			text: `Hello strange men from the sea. We are the ${ai.tribe.name} and live here in ${numSettlements} settlements. We welcome you in peace.`,
+			text: `Hello strange men from the sea. We are the **${ai.tribe.name}** and live here in *${numSettlements} settlements*. We welcome you in **peace**.<options/>`,
 			pause: true,
 			options: [{
 				text: 'Let there be peace.',

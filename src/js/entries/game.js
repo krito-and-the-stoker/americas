@@ -207,7 +207,7 @@ const start = async () => {
 			Input.initialize()
 			Dialog.create({
 				type: 'naval',
-				text: 'Sir,\nWe crossed the atlantic ocean. The new world called America lies ahead. Let us sail west and claim Englands fair share of this land!',
+				text: 'Sir,\nWe crossed the atlantic ocean. The new world called America lies ahead. Let us sail *west* and claim Englands fair share of this land!',
 				coords: caravel.mapCoordinates,
 				pause: true
 			})
@@ -221,7 +221,7 @@ const start = async () => {
 		captureException(err)
 		Dialog.create({
 			type: 'menu',
-			text: 'There has been an error initializing the game. A report has been sent and we will investigate and fix it shortly.'
+			text: 'There has been an error initializing the game. A report has been sent and we will investigate.'
 		})
 	}
 }

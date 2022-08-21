@@ -71,7 +71,7 @@ const create = () => {
 
 	const purchaseButton = Button.create('purchase', () => Dialog.create({
 		type: 'menu',
-		text: 'What would you like to purchase?',
+		text: 'What would you like to *purchase*? <options/>',
 		options: Europe.purchaseOptions()
 	}))
 	purchaseButton.x = originalDimensions.x - purchaseButton.width - 20
@@ -80,7 +80,7 @@ const create = () => {
 
 	const trainButton = Button.create('train', () => Dialog.create({
 		type: 'menu',
-		text: 'Who would you like to train?',
+		text: 'Who would you like to *train*? <options/>',
 		options: Europe.trainOptions()
 	}))
 	trainButton.x = originalDimensions.x - trainButton.width - 20

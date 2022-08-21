@@ -20,7 +20,7 @@ const POWER_TRANSFER_BASE_FACTOR = 1.0 / Time.POWER_TRANSFER_BASE_TIME
 
 const COLONIST_PROMOTION_AFTER_DEMOTION = 0.9
 const PRODUCTION_BONUS_AMOUNT = 1
-const PRODUCTION_MALUS_AMOUNT = 1
+const PRODUCTION_MALUS_AMOUNT = -1
 
 
 const sortByPower = (one, other) => Colonist.power(other) - Colonist.power(one)
