@@ -4,10 +4,16 @@ import Events from 'util/events'
 
 import Colony from 'entity/colony'
 import Unit from 'entity/unit'
+import Settlement from 'entity/settlement'
 
 import Units from 'ai/resources/units'
 
 export default (settlement, attacker) => {
+	const state = settlement.owner.ai.state
+	state.relations[attacker.owner.referenceId].trust -= 0.1
+	state.relations[attacker.owner.referenceId].militancy += 0.2
+	state.relations[attacker.owner.referenceId].militancy *= 0.9
+
 	const defender = Units.create('native', settlement)
 
 	Unit.update.radius(attacker, 0)

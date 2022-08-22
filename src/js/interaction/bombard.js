@@ -5,8 +5,7 @@ import Unit from 'entity/unit'
 
 export default (settlement, unit) => {
 	const state = settlement.owner.ai.state
-	state.relations[unit.owner.referenceId].trust -= 0.2
-	state.relations[unit.owner.referenceId].trust *= 0.5
+	state.relations[unit.owner.referenceId].trust -= 0.1
 	state.relations[unit.owner.referenceId].militancy += 0.2
 	state.relations[unit.owner.referenceId].militancy *= 0.9
 

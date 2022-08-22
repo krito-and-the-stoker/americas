@@ -64,7 +64,7 @@ const createBuilding = (colony, building) => {
 			return
 		}
 
-		if (colonist && Colony.canEmploy(colony, name, colonist.unit.expert)) {
+		if (colonist?.unit && Colony.canEmploy(colony, name, colonist.unit.expert)) {
 			return `Let colonist work in ${name}`
 		}
 
@@ -150,7 +150,7 @@ const createBuilding = (colony, building) => {
 		Colony.listen.colonists(colony, colonists =>
 			colonists.map(colonist =>
 				Colonist.listen.work(colonist, work =>
-					Unit.listen.expert(colonist.unit, () =>
+					colonist?.unit && Unit.listen.expert(colonist.unit, () =>
 						Colonist.listen.promotionStatus(colonist, () =>
 							createColonistView(productionBonus, colonist, work)))))))
 

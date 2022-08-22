@@ -167,11 +167,13 @@ const disband = colonist => {
 	if (colonist.colony) {
 		UnjoinColony(colonist)
 	}
+
+	Util.execute(colonist.destroy)
+
 	if (colonist.unit) {
 		Unit.update.colonist(colonist.unit, null)
 	}
 
-	Util.execute(colonist.destroy)
 	Record.remove(colonist)
 }
 

@@ -1,13 +1,31 @@
+import Time from 'timeline/time'
+
+import Wait from 'task/wait'
+
 import Settlements from 'ai/resources/settlements'
+
 
 const create = ({ owner, coords }) => {
 	const settlement = Settlements.cheapest(owner, coords)
+	let canceled = false
 
 	return settlement && {
 		cost: Settlements.reserve(settlement),
 		coords: settlement.mapCoordinates,
-		commit: () => commit(settlement),
-		dismiss: () => Settlements.unreserve(settlement)
+		commit: () => new Promise(resolve => {
+			Time.schedule(Wait.create(Math.random() * Time.MONTH, () => {
+				if (!canceled) {
+					resolve(commit(settlement))
+				} else {
+					resolve()
+				}
+			}))
+		}),
+		dismiss: () => Settlements.unreserve(settlement),
+		cancel: () => {
+			Settlements.unreserve(settlement)
+			canceled = true
+		}
 	}
 }
 

@@ -440,7 +440,7 @@ const production = (tile, resource, colonist = null) => {
 		result = applyModifier(tile, result, 'expert', resource, where)
 	}
 
-	if (result > 0 && colonist && colonist.unit.expert === 'slave') {
+	if (result > 0 && colonist?.unit && colonist.unit.expert === 'slave') {
 		result -= 1
 	}
 

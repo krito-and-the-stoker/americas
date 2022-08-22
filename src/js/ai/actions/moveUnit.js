@@ -21,20 +21,22 @@ const create = ({ owner, unit, coords }) => {
 			return action
 		}))
 
-		let cancel = null
+		let cancel = [prev.cancel]
 
 		if (prev) {
 			const move = {
 				cost: prev.cost,
-				commit: () => new Promise(resolve => {
-					const unit = prev.commit()
+				commit: async () => {
+					const unit = await prev.commit()
 					move.unit = unit
 					if (Util.distance(unit.mapCoordinates, coords) > 0) {
-						cancel = commit(unit, coords, () => resolve(unit))
+						return await new Promise(resolve => {
+							cancel.push(commit(unit, coords, () => resolve(unit)))
+						})
 					} else {
-						resolve(unit)
+						return unit
 					}
-				}),
+				},
 				dismiss: () => Util.execute(prev.dismiss),
 				cancel: () => Util.execute(cancel)
 			}

@@ -217,7 +217,10 @@ const makePlansAndRunThem = ai => {
 							makePlansAndRunThem(ai)
 						}
 					})
-					return action.cancel
+					return () => {
+						plansActive -= 1
+						Util.execute(action.cancel)
+					}
 				}
 			}
 
@@ -232,7 +235,7 @@ const makePlansAndRunThem = ai => {
 
 					while(raiders > 0) {
 						const colony = Util.choose(colonies)
-						let amount = Math.ceil(Math.random() * raiders)
+						let amount = Math.ceil(0.5 * Math.random() * raiders)
 						if (!relation.colonies[colony.referenceId].raidPlanned) {
 							relation.colonies[colony.referenceId].raidPlanned = amount
 						} else {

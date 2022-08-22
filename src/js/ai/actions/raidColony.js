@@ -49,7 +49,7 @@ const create = ({ tribe, state, colony }) => {
 					})
 
 					// die trying..
-					const unsubscribeBattle = Events.listen('battle', params => {
+					const unsubscribeBattle = Events.listen('combat', params => {
 						if (params.loser === move.unit) {
 							cleanup()
 						}
