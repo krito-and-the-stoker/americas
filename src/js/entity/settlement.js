@@ -17,6 +17,7 @@ import LearnFromNatives from 'command/learnFromNatives'
 import ConvertNatives from 'task/convertNatives'
 
 import Bombard from 'interaction/bombard'
+import Attack from 'interaction/attack'
 
 import Natives from 'ai/natives'
 
@@ -100,7 +101,7 @@ const dialog = (settlement, unit, answer) => {
 		}
 
 		relations.trust -= .05
-		relations.militancy += .1
+		relations.militancy += .05
 		settlement.lastTaxation = Time.get().currentTime
 		const amount = Math.round(settlement.population * (1 + 2 * Math.random()))
 		return {
@@ -116,6 +117,24 @@ const dialog = (settlement, unit, answer) => {
 		}
 	}
 	if (answer === 'tribute') {
+		if (relations.trust < -0.3 && relations.militancy > 0.7) {
+			return {
+				text: 'We would rather die than feed your greed!<options/>',
+				type: 'natives',
+				image: settlement.tribe.image,
+				options: [{
+					text: 'Then you will die! (Declare war)',
+					action: () => {
+						relations.war = true
+						relations.militancy += .2
+						Natives.update.state(settlement.owner.ai)
+					}
+				}, {
+					text: 'Never mind...'
+				}]
+			}
+		}
+
 		if (settlement.lastTaxation > Time.get().currentTime - Time.YEAR) {
 			return {
 				text: 'We have already given you and will *not submit* to these demands. <options/>',
@@ -284,13 +303,59 @@ const dialog = (settlement, unit, answer) => {
 			}]
 		}
 	}
-	if (answer === 'enter') {	
+	if (answer === 'enter') {
 		const description = Natives.describeRelations(relations)
 		const settlementDescription = settlement.population < 4
 			? 'small'
 			: settlement.population > 8
 				? 'large'
 				: 'medium-sized'
+
+		if (unit.name === 'artillery') {
+			return {
+				text: `Do you want to **bombard** the ${settlementDescription} settlement (${settlement.population})?<options/>`,
+				type: 'marshal',
+				options: [{
+					text: 'Fire!',
+					action: () => {
+						Bombard(settlement, unit)
+					}
+				}, {
+					text: 'No, spare these people.'
+				}]
+			}
+		}
+
+		if (unit.name === 'soldier' || unit.name === 'dragoon') {
+			return {
+				text: `Our soldiers are ready for orders close to the ${settlementDescription} native settlement (${settlement.population}).<options/>`,
+				type: 'marshal',
+				options: [{
+						text: 'Attack settlement',
+						action: () => {
+							Attack(settlement, unit)
+						}
+					}].concat(!relations.war ? [{
+							text: 'Demand food supplies',
+							answer: 'food'
+						}, {
+							text: 'Demand taxation',
+							answer: 'tribute'
+						}] : []).concat([{
+							text: 'Leave'
+						}])
+			}
+		}
+
+		if (relations.war) {
+			return {
+				text: `We are **at war** with the *${settlement.tribe.name}* and our civilians refuse to enter the settlement.<options/>`,
+				type: 'marshal',
+				options: [{
+					text: 'Of course... We will send the military then!'
+				}]
+			}
+		}
 
 		if (unit.name === 'scout') {
 			return {
@@ -386,35 +451,6 @@ const dialog = (settlement, unit, answer) => {
 				text: 'It is *not yet possible* to trade with the indians.<options/>',
 				type: 'govenor',
 				options: [{
-					text: 'Leave'
-				}]
-			}
-		}
-		if (unit.name === 'artillery') {
-			return {
-				text: `Do you want to **bombard** the ${settlementDescription} settlement (${settlement.population})?<options/>`,
-				type: 'marshal',
-				options: [{
-					text: 'Fire!',
-					action: () => {
-						Bombard(settlement, unit)
-					}
-				}, {
-					text: 'No, spare these people.'
-				}]
-			}
-		}
-		if (unit.name === 'soldier' || unit.name === 'dragoon') {
-			return {
-				text: `Our soldiers are ready for orders close to the ${settlementDescription} native settlement (${settlement.population}).<options/>`,
-				type: 'marshal',
-				options: [{
-					text: 'Demand food supplies',
-					answer: 'food'
-				}, {
-					text: 'Demand taxation',
-					answer: 'tribute'
-				}, {
 					text: 'Leave'
 				}]
 			}

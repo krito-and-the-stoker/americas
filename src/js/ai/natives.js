@@ -30,44 +30,45 @@ import Units from 'ai/resources/units'
 import Goods from 'ai/resources/goods'
 
 
-const MILITANCY_UPDATE_FACTOR = 1.0 / (1*Time.YEAR)
-const MILITANCY_DECAY_FACTOR = 0.999
-const TRUST_DECAY_FACTOR = 0.999
+const MILITANCY_UPDATE_FACTOR = 1.0 / (Time.YEAR)
+const MILITANCY_DECAY_FACTOR = 1.0
+const TRUST_DECAY_FACTOR = 1.0
 
 const describeRelations = relations => {
+	const debugInfo = `(trust: ${relations.trust.toFixed(2)}, mil: ${relations.militancy.toFixed(2)})`
 	if (relations.militancy > 0.5) {	
 		if (relations.trust >= 0.5) {
-			return `warmongering (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+			return `warmongering ${debugInfo}`
 		}
 
 		if (relations.trust >= 0) {
-			return `hostile (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+			return `hostile ${debugInfo}`
 		}
 
-		return `hateful (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+		return `hateful ${debugInfo}`
 	}
 
 	if (relations.militancy > 0) {
 		if (relations.trust >= 0.5) {
-			return `friendly (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+			return `friendly ${debugInfo}`
 		}
 
 		if (relations.trust >= 0) {
-			return `neutral (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+			return `neutral ${debugInfo}`
 		}
 
-		return `tense (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+		return `tense ${debugInfo}`
 	}
 
 	if (relations.trust >= 0.5) {
-		return `happy (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+		return `happy ${debugInfo}`
 	}
 
 	if (relations.trust >= 0) {
-		return `cordial (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+		return `cordial ${debugInfo}`
 	}
 
-	return `submissive (${Math.round(10 * relations.trust) / 10}, ${Math.round(10 * relations.militancy) / 10})`
+	return `submissive ${debugInfo}`
 }
 
 
@@ -152,7 +153,6 @@ const initialize = ai => {
 							if (unit.owner === ai.owner && !other.colony) {
 								Message.log('attacking hostile', unit, other)
 								Battle(unit, other)
-								makePlansAndRunThem(ai)
 							}
 						}
 					}
@@ -165,7 +165,6 @@ const initialize = ai => {
 							if (unit.domain === other.domain && !unit.properties.support && Unit.strength(unit) > 2 && Unit.strength(unit) > 2 * Unit.strength(other)) {
 								Message.log('defending hostile', unit, other)
 								Battle(unit, other)
-								makePlansAndRunThem(ai)
 							}
 						}
 					}
@@ -191,6 +190,7 @@ const establishRelations = (ai, owner) => {
 				action: () => {
 					ai.state.relations[owner.referenceId].trust -= 1.0
 					ai.state.relations[owner.referenceId].war = true
+					update.state(ai)
 				}
 			}]
 		})
@@ -200,17 +200,48 @@ const establishRelations = (ai, owner) => {
 
 
 const makePlansAndRunThem = ai => {
+	console.log('make new plans')
 	Util.execute(ai.stopAllPlans)
+	let plansActive = 0
+
 	Time.schedule({
 		init: () => {
 			Units.unassignAll(ai.owner)
 
 			const executeAction = action => {
 				if (action) {
-					action.commit().then(() => makePlansAndRunThem(ai))
+					plansActive += 1
+					action.commit().then(() => {
+						plansActive -= 1
+						if (!plansActive) {
+							makePlansAndRunThem(ai)
+						}
+					})
 					return action.cancel
 				}
 			}
+
+			Object.values(ai.state.relations)
+				.filter(relation => relation.war && relation.militancy > 0.5)
+				.forEach(relation => {
+					const colonies = State.all(relation, 'colonies')
+						// .filter(colony => !relation.colonies[colony.referenceId].raidPlanned)
+
+					let raiders = Math.round(relation.militancy * 20)
+					relation.militancy = 0.0
+
+					while(raiders > 0) {
+						const colony = Util.choose(colonies)
+						let amount = Math.ceil(Math.random() * raiders)
+						if (!relation.colonies[colony.referenceId].raidPlanned) {
+							relation.colonies[colony.referenceId].raidPlanned = amount
+						} else {
+							relation.colonies[colony.referenceId].raidPlanned += amount
+						}
+
+						raiders -= amount
+					}
+				})
 
 			ai.stopAllPlans = [
 				// establish contact with all strangers
@@ -230,23 +261,18 @@ const makePlansAndRunThem = ai => {
 				Object.entries(ai.state.relations)
 					.map(([referenceId, relation]) => State.all(relation, 'colonies')
 						.filter(colony => colony && ai.state.relations[referenceId].colonies[colony.referenceId].raidPlanned > 0)
-						.map(colony => ({
-							action: RaidColony.create({ tribe: ai.tribe, state: ai.state, colony }),
-							colony
-						}))
-						.map(({ action, colony }) => {
-							if (action) {
-								action.commit()
-									.then(() => makePlansAndRunThem(ai))
-								return action.cancel
-							}
-						})),
+						.map(colony => RaidColony.create({ tribe: ai.tribe, state: ai.state, colony }))
+						.map(executeAction)),
 
 				// collect free and unused units
 				Units.free(ai.owner)
 					.map(unit => Disband.create(unit))
 					.map(executeAction),
 			]
+
+			if (!plansActive) {
+				makePlansAndRunThem(ai)
+			}
 		}
 	})
 }

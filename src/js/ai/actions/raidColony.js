@@ -27,7 +27,7 @@ const create = ({ tribe, state, colony }) => {
 						// only do this once
 						cleanup = () => {}
 
-						Util.execute[unsubscribeBattle, unsubscribeRaid]
+						Util.execute([unsubscribeBattle, unsubscribeRaid])
 						state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned -= 1
 
 						if (!move.unit.disbanded) {

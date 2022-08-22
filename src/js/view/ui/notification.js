@@ -682,7 +682,7 @@ const createDestroyed = (settlement, treasure) => {
 
 	const tribeName = settlement.tribe.name
 	const dialog = {
-		text: `A settlement of the *${tribeName}* has been destroyed. The ${tribeName} swear to take revenge. We have found **${treasure.treasure}**<good>gold</good> in the ruins.`,
+		text: `A settlement of the *${tribeName}* has been **destroyed**. Natives flee in panic. The *${tribeName}* swear to take revenge. We have found **${treasure.treasure}**<good>gold</good> in the ruins.`,
 		type: 'marshal',
 		coords: settlement.mapCoordinates
 	}

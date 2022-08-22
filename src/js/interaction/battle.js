@@ -42,12 +42,12 @@ export default (attacker, other) => {
 		Unit.disband(defender)
 		if (attacker.owner.type === 'natives') {
 			const relation = attacker.owner.ai.state.relations[defender.owner.referenceId]
-			relation.militancy += 0.1
+			// relation.militancy += 0.1
 			Storage.transfer(defender.equipment, attacker.owner.ai.tribe.storage)
 		}
 		if (defender.owner.type === 'natives') {
 			const relation = defender.owner.ai.state.relations[attacker.owner.referenceId]
-			relation.militancy -= 0.1
+			// relation.militancy -= 0.1
 		}
 	} else {
 		loser = attacker
@@ -56,11 +56,11 @@ export default (attacker, other) => {
 		Unit.disband(attacker)
 		if (attacker.owner.type === 'natives') {
 			const relation = attacker.owner.ai.state.relations[defender.owner.referenceId]
-			relation.militancy -= 0.1
+			// relation.militancy -= 0.1
 		}
 		if (defender.owner.type === 'natives') {
 			const relation = defender.owner.ai.state.relations[attacker.owner.referenceId]
-			relation.militancy += 0.1
+			// relation.militancy += 0.1
 			Storage.transfer(attacker.equipment, defender.owner.ai.tribe.storage)
 		}
 	}
