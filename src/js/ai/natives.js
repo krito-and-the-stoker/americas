@@ -151,19 +151,7 @@ const initialize = ai => {
 					if (relations.war) {
 						if (unit.domain === other.domain) {
 							if (unit.owner === ai.owner && !other.colony) {
-								Message.log('attacking hostile', unit, other)
-								Battle(unit, other)
-							}
-						}
-					}
-
-					// TODO: move this to a more appropriate place
-					// auto attack natives when in state of war
-					if (other.owner === ai.owner) {
-						const relations = ai.state.relations[unit.owner.referenceId]
-						if (relations.war) {
-							if (unit.domain === other.domain && !unit.properties.support && Unit.strength(unit) > 2 && Unit.strength(unit) > 2 * Unit.strength(other)) {
-								Message.log('defending hostile', unit, other)
+								Message.log('ai attacking hostile', unit, other)
 								Battle(unit, other)
 							}
 						}
@@ -200,7 +188,6 @@ const establishRelations = (ai, owner) => {
 
 
 const makePlansAndRunThem = ai => {
-	console.log('make new plans')
 	Util.execute(ai.stopAllPlans)
 	let plansActive = 0
 

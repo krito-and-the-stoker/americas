@@ -1,6 +1,7 @@
 import Units from 'data/units.json'
 
 import Util from 'util/util'
+import Events from 'util/events'
 import Record from 'util/record'
 import Binding from 'util/binding'
 import Member from 'util/member'
@@ -27,6 +28,7 @@ import Commander from 'command/commander'
 import EnterColony from 'interaction/enterColony'
 import LeaveColony from 'interaction/leaveColony'
 import EnterEurope from 'interaction/enterEurope'
+import Battle from 'interaction/battle'
 
 const UNIT_FOOD_CAPACITY = 20
 const FOOD_COST = 2
@@ -122,6 +124,8 @@ const goTo = (unit, target) => {
 const isMoving = unit => unit.tile !== unit.movement.target
 
 const initialize = unit => {
+	Util.execute(unit.destroy)
+
 	if (unit.tile) {
 		Tile.discover(unit.tile, unit.owner)
 		Tile.diagonalNeighbors(unit.tile).forEach(other => Tile.discover(other, unit.owner))
@@ -239,7 +243,19 @@ const initialize = unit => {
 
 						listen.mapCoordinates(unit, Binding.map(coords => Tile.closest(coords),
 							tile => tile && Time.schedule(FillFoodStock.create(unit, tile))))
-					]))
+					])),
+		Events.listen('meet', ({ unit, other }) => {
+			if (unit.owner.input
+					&& unit.properties.canAttack
+					&& other?.owner.ai.state.relations[unit.owner.referenceId]?.war
+					&& unit.domain === other.domain
+					// TODO: this should not be necessary, but leaving this out fires the event a lot..
+					&& Util.inBattleDistance(unit, other)
+				) {
+				Message.log('player attacking hostile', unit.name, other.name)
+				Battle(unit, other)
+			}
+		})
 	]
 }
 

@@ -191,6 +191,12 @@ const initialize = () => {
 		const view = create(unit)
 		const updateBoundVisibility = () => { updateVisibility(view) }
 
+		if (!unit.owner.visible) {
+			// hotifx: Otherwise those units will be invisible after reload:
+			// their tile has not full visibility information yet..
+			Events.listen('restart', updateBoundVisibility)
+		}
+
 		view.unsubscribe = [
 			Unit.listen.vehicle(unit, updateBoundVisibility),
 			Unit.listen.offTheMap(unit, updateBoundVisibility),

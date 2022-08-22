@@ -22,11 +22,12 @@ const create = () => {
 
 	const update = () => {
 		units.forEach(unit => 
-			units.filter(other => other.owner !== unit.owner)
+			units.filter(other => other.owner !== unit.owner
+					&& !unit.disbanded
+					&& !other.disbanded
+					&& Util.inDistance(unit, other))
 				.forEach(other => {
-					if (Util.inDistance(unit, other)) {
-						Events.trigger('meet', { unit, other })
-					}
+					Events.trigger('meet', { unit, other })
 				}))
 		units.forEach(unit =>
 			colonies.filter(colony => unit.owner !== colony.owner)

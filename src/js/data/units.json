@@ -321,6 +321,7 @@
 		"travelType": "foot",
 		"canFound": true,
 		"canJoin": true,
+		"canAttack": true,
 		"equipment": 50,
 		"speed": 1,
 		"combat": 2,
@@ -342,6 +343,7 @@
 		"travelType": "horse",
 		"canFound": true,
 		"canJoin": true,
+		"canAttack": true,
 		"speed": 4,
 		"combat": 3,
 		"radius": 2,
@@ -395,7 +397,8 @@
 		"speed": 2,
 		"combat": 1,
 		"radius": 1.5,
-		"canExplore": true
+		"canExplore": true,
+		"canAttack": true
 	},
 	"armednative": {
 		"frame": {
@@ -409,7 +412,8 @@
 		"speed": 2,
 		"combat": 2,
 		"radius": 1.5,
-		"canExplore": true
+		"canExplore": true,
+		"canAttack": true
 	},
 	"mountednative": {
 		"frame": {
@@ -423,7 +427,8 @@
 		"speed": 5,
 		"combat": 2,
 		"radius": 2.5,
-		"canExplore": true
+		"canExplore": true,
+		"canAttack": true
 	},
 	"mountedarmednative": {
 		"frame": {
@@ -437,7 +442,8 @@
 		"speed": 5,
 		"combat": 3,
 		"radius": 2.5,
-		"canExplore": true
+		"canExplore": true,
+		"canAttack": true
 	},
 	"supplytrack": {
 		"travelType": "supply",
