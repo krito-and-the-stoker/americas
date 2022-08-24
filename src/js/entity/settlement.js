@@ -89,6 +89,24 @@ const initialize = settlement => {
 const dialog = (settlement, unit, answer) => {
 	const relations = settlement.owner.ai.state.relations[unit.owner.referenceId]
 	if (answer === 'food') {
+		if (relations.trust < -0.3 && relations.militancy > 0.7) {
+			return {
+				text: 'We would rather die than feed your greed!<options/>',
+				type: 'natives',
+				image: settlement.tribe.image,
+				options: [{
+					text: 'Then you will die! (*threaten them*)',
+					action: () => {
+						relations.trust -= 0.5
+						relations.militancy += 0.2
+						Natives.update.state(settlement.owner.ai)
+					}
+				}, {
+					text: 'Never mind...'
+				}]
+			}
+		}
+
 		if (settlement.lastTaxation > Time.get().currentTime - Time.YEAR) {
 			return {
 				text: 'We have already given you all we have. We cannot give you anything more this year. <options/>',
@@ -123,10 +141,10 @@ const dialog = (settlement, unit, answer) => {
 				type: 'natives',
 				image: settlement.tribe.image,
 				options: [{
-					text: 'Then you will die! (Declare war)',
+					text: 'Then you will die! (*threaten them*)',
 					action: () => {
-						relations.war = true
-						relations.militancy += .2
+						relations.trust -= 0.5
+						relations.militancy += 0.2
 						Natives.update.state(settlement.owner.ai)
 					}
 				}, {
@@ -189,7 +207,7 @@ const dialog = (settlement, unit, answer) => {
 
 		const description = relations.trust > 0
 			? 'with curiousity'
-			: relation.militancy > 0.2
+			: relations.militancy > 0.2
 				? 'with hostility'
 				: 'cautiously'
 		return {
@@ -335,25 +353,22 @@ const dialog = (settlement, unit, answer) => {
 						action: () => {
 							Attack(settlement, unit)
 						}
-					}].concat(!relations.war ? [{
-							text: 'Demand food supplies',
-							answer: 'food'
-						}, {
-							text: 'Demand taxation',
-							answer: 'tribute'
-						}] : []).concat([{
-							text: 'Leave'
-						}])
+					}, {
+						text: 'Demand food supplies',
+						answer: 'food'
+					}, {
+						text: 'Demand taxation',
+						answer: 'tribute'
+					}, {
+						text: 'Leave'
+					}]
 			}
 		}
 
-		if (relations.war) {
+		if (relations.trust < 0.1 && relations.militancy > 0.5) {
 			return {
-				text: `We are **at war** with the *${settlement.tribe.name}* and our civilians refuse to enter the settlement.<options/>`,
+				text: `The *${settlement.tribe.name}* seem ${description} and our civilians refuse to enter the settlement.`,
 				type: 'marshal',
-				options: [{
-					text: 'Of course... We will send the military then!'
-				}]
 			}
 		}
 

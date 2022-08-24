@@ -38,14 +38,14 @@ const describeRelations = relations => {
 	const debugInfo = `(trust: ${relations.trust.toFixed(2)}, mil: ${relations.militancy.toFixed(2)})`
 	if (relations.militancy > 0.5) {	
 		if (relations.trust >= 0.5) {
-			return `warmongering ${debugInfo}`
+			return `respectful ${debugInfo}`
 		}
 
 		if (relations.trust >= 0) {
-			return `hostile ${debugInfo}`
+			return `proud ${debugInfo}`
 		}
 
-		return `hateful ${debugInfo}`
+		return `hostile ${debugInfo}`
 	}
 
 	if (relations.militancy > 0) {
@@ -148,7 +148,7 @@ const initialize = ai => {
 						establishRelations(ai, other.owner)
 					}
 					// battle when in war
-					if (relations.war) {
+					if (relations.trust < 0 && relations.militancy > 0.5) {
 						if (unit.domain === other.domain) {
 							if (unit.owner === ai.owner && !other.colony) {
 								Message.log('ai attacking hostile', unit, other)
@@ -174,10 +174,10 @@ const establishRelations = (ai, owner) => {
 			options: [{
 				text: 'Let us live together in peace.',
 			}, {
-				text: 'You are heathens and deserve to die! (**Declare War**)',
+				text: 'You are heathens and deserve to die! (**threaten them**)',
 				action: () => {
-					ai.state.relations[owner.referenceId].trust -= 1.0
-					ai.state.relations[owner.referenceId].war = true
+					ai.state.relations[owner.referenceId].trust -= 0.5
+					ai.state.relations[owner.referenceId].militancy += 0.2
 					update.state(ai)
 				}
 			}]
@@ -212,7 +212,7 @@ const makePlansAndRunThem = ai => {
 			}
 
 			Object.values(ai.state.relations)
-				.filter(relation => relation.war && relation.militancy > 0.5)
+				.filter(relation => relation.trust < 0 && relation.militancy > 0.5)
 				.forEach(relation => {
 					const colonies = State.all(relation, 'colonies')
 						// .filter(colony => !relation.colonies[colony.referenceId].raidPlanned)

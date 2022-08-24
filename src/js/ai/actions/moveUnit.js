@@ -74,12 +74,23 @@ const commit = (unit, coords, resolve) => {
 		Util.execute(unsubscribe)
 	}
 
-	const unsubscribe = Events.listen('ai-move-unit-complete', params => {
-		if (params.id === unit.referenceId) {
-			Util.execute(unsubscribe)
-			Util.execute(resolve)
-		}
-	})
+	const done = () => {
+		Util.execute(unsubscribe)
+		Util.execute(resolve)
+	}
+
+	const unsubscribe = [
+		Events.listen('ai-move-unit-complete', params => {
+			if (params.id === unit.referenceId) {
+				done()
+			}
+		}),
+		Events.listen('disband', params => {
+			if (params.unit.referenceId === unit.referenceId) {
+				done()
+			}
+		})
+	]
 
 	// bind cancel to current scope so we can update it when the move is complete
 	return cancel

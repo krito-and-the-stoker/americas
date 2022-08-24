@@ -441,6 +441,9 @@ const disband = unit => {
 	unit.disbanded = true
 
 	Util.execute(unit.destroy)
+
+	Events.trigger('disband', { unit })
+
 	Record.remove(unit)
 }
 

@@ -27,7 +27,7 @@ const create = ({ tribe, state, colony }) => {
 						// only do this once
 						cleanup = () => {}
 
-						Util.execute([unsubscribeBattle, unsubscribeRaid])
+						Util.execute(unsubscribe)
 						state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned -= 1
 
 						if (!move.unit.disbanded) {
@@ -40,17 +40,10 @@ const create = ({ tribe, state, colony }) => {
 					}
 
 					// raid when in range
-					const unsubscribeRaid = Events.listen('meet', params => {
+					const unsubscribe = Events.listen('meet', params => {
 						if (params.colony === colony && params.unit === move.unit) {
 							Raid(colony, params.unit)
 
-							cleanup()
-						}
-					})
-
-					// die trying..
-					const unsubscribeBattle = Events.listen('combat', params => {
-						if (params.loser === move.unit) {
 							cleanup()
 						}
 					})
