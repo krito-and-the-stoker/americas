@@ -12,7 +12,6 @@
 		"cargo": 100,
 		"combat": 1,
 		"radius": 1,
-		"cost": 20,
 		"canExplore": true,
 		"construction": {
 			"buildings": {
@@ -39,7 +38,6 @@
 		"combat": 4,
 		"support": 0.5,
 		"radius": 2,
-		"cost": 60,
 		"canExplore": true,
 		"construction": {
 			"buildings": {
@@ -67,7 +65,7 @@
 		"combat": 10,
 		"support": 1,
 		"radius": 3,
-		"cost": 200,
+		"cost": 50,
 		"canExplore": true,
 		"construction": {
 			"buildings": {
@@ -96,7 +94,7 @@
 		"combat": 5,
 		"support": 0.5,
 		"radius": 1,
-		"cost": 100,
+		"cost": 10,
 		"canExplore": true,
 		"construction": {
 			"buildings": {
@@ -123,7 +121,6 @@
 		"cargo": 300,
 		"combat": 3,
 		"radius": 1,
-		"cost": 50,
 		"canExplore": true,
 		"construction": {
 			"buildings": {
@@ -149,7 +146,6 @@
 		"travelType": "wagon",
 		"speed": 1,
 		"radius": 0.5,
-		"cost": 10,
 		"construction": {
 			"buildings": {},
 			"cost": {

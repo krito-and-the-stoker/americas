@@ -282,7 +282,7 @@
 		}],
 		"consumption": {
 			"good": "tools",
-			"factor": 2
+			"factor": 1
 		},
 		"production": {
 			"good": "guns",

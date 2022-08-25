@@ -27,78 +27,8 @@ const basePool = [
 	{ unit: 'settler', name: 'Settler', expert: null }
 ]
 
-const possibleColonists = [
-	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
-	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
-	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
-	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
-	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
-	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
-	{ unit: 'settler', 'name': 'Servants', expert: 'servant' },
-	{ unit: 'settler', 'name': 'Servants', expert: 'servant' },
-	{ unit: 'settler', 'name': 'Servants', expert: 'servant' },
-	{ unit: 'settler', 'name': 'Servants', expert: 'servant' },
-	{ unit: 'settler', 'name': 'Servants', expert: 'servant' },
-	{ unit: 'settler', 'name': 'Servants', expert: 'servant' },
-	{ unit: 'settler', name: 'Free Colonist', expert: null },
-	{ unit: 'settler', name: 'Free Colonist', expert: null },
-	{ unit: 'settler', name: 'Free Colonist', expert: null },
-	{ unit: 'settler', name: 'Free Colonist', expert: null },	
-	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
-	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
-	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
-	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
-	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
-	{ unit: 'settler', 'name': 'Petty Criminals', expert: 'criminal' },
-	{ unit: 'settler', 'name': 'Servants', expert: 'servant' },
-	{ unit: 'settler', 'name': 'Servants', expert: 'servant' },
-	{ unit: 'settler', 'name': 'Servants', expert: 'servant' },
-	{ unit: 'settler', 'name': 'Servants', expert: 'servant' },
-	{ unit: 'settler', 'name': 'Servants', expert: 'servant' },
-	{ unit: 'settler', 'name': 'Servants', expert: 'servant' },
-	{ unit: 'settler', name: 'Free Colonist', expert: null },
-	{ unit: 'settler', name: 'Free Colonist', expert: null },
-	{ unit: 'settler', name: 'Free Colonist', expert: null },
-	{ unit: 'settler', name: 'Free Colonist', expert: null },
-	{ unit: 'settler', 'name': 'Expert Farmer', expert: 'farmer' },
-	{ unit: 'settler', 'name': 'Expert Lumberjack', expert: 'lumberjack' },
-	{ unit: 'settler', 'name': 'Expert Oreminer', expert: 'oreminer' },
-	{ unit: 'settler', 'name': 'Expert Silverminer', expert: 'silverminer' },
-	{ unit: 'settler', 'name': 'Expert Fisher', expert: 'fisher' },
-	{ unit: 'settler', 'name': 'Expert Farmer', expert: 'farmer' },
-	{ unit: 'settler', 'name': 'Expert Lumberjack', expert: 'lumberjack' },
-	{ unit: 'settler', 'name': 'Expert Oreminer', expert: 'oreminer' },
-	{ unit: 'settler', 'name': 'Expert Silverminer', expert: 'silverminer' },
-	{ unit: 'settler', 'name': 'Expert Fisher', expert: 'fisher' },
-	{ unit: 'settler', 'name': 'Expert Farmer', expert: 'farmer' },
-	{ unit: 'settler', 'name': 'Expert Lumberjack', expert: 'lumberjack' },
-	{ unit: 'settler', 'name': 'Expert Oreminer', expert: 'oreminer' },
-	{ unit: 'settler', 'name': 'Expert Silverminer', expert: 'silverminer' },
-	{ unit: 'settler', 'name': 'Expert Fisher', expert: 'fisher' },
-	{ unit: 'settler', 'name': 'Expert Farmer', expert: 'farmer' },
-	{ unit: 'settler', 'name': 'Expert Lumberjack', expert: 'lumberjack' },
-	{ unit: 'settler', 'name': 'Expert Oreminer', expert: 'oreminer' },
-	{ unit: 'settler', 'name': 'Expert Silverminer', expert: 'silverminer' },
-	{ unit: 'settler', 'name': 'Expert Fisher', expert: 'fisher' },
-	{ unit: 'pioneer', name: 'Hardened Pioneer', expert: 'pioneer' },
-	{ unit: 'scout', name: 'Seasoned Scout', expert: 'scout' },
-	{ unit: 'soldier', name: 'Veteran Soldier', expert: 'soldier' },
-	{ unit: 'pioneer', name: 'Hardened Pioneer', expert: 'pioneer' },
-	{ unit: 'scout', name: 'Seasoned Scout', expert: 'scout' },
-	{ unit: 'soldier', name: 'Veteran Soldier', expert: 'soldier' },
-	{ unit: 'settler', 'name': 'Master Distiller', expert: 'distiller' },
-	{ unit: 'settler', 'name': 'Master Tobacconist', expert: 'tobacconist' },
-	{ unit: 'settler', 'name': 'Master Weaver', expert: 'weaver' },
-	{ unit: 'settler', 'name': 'Master Furtrader', expert: 'furtrader' },
-	{ unit: 'settler', 'name': 'Expert Carpenter', expert: 'carpenter' },
-	{ unit: 'settler', 'name': 'Expert Blacksmith', expert: 'blacksmith' },
-	{ unit: 'settler', 'name': 'Expert Gunsmith', expert: 'gunsmith' },
-	{ unit: 'missionary', name: 'Jesuit Missionary', expert: 'missionary' },
-	{ unit: 'settler', 'name': 'Firebrand Preacher', expert: 'preacher' },
-	{ unit: 'settler', 'name': 'Elder Statesman', expert: 'statesman' },
-]
 
-const TRAINING_PRICE_FACTOR = 3
+const TRAINING_PRICE_FACTOR = 2
 const possibleTrainees = [
 	{ unit: 'settler', 'name': 'Expert Oreminer', expert: 'oreminer', price: TRAINING_PRICE_FACTOR * 600 },
 	{ unit: 'settler', 'name': 'Expert Lumberjack', expert: 'lumberjack', price: TRAINING_PRICE_FACTOR * 700 },
@@ -123,7 +53,6 @@ const europe = {
 	units: [],
 	crosses: 0,
 	crossesNeeded: INITIAL_CROSSES_NEEDED,
-	pool: [Util.choose(possibleColonists), Util.choose(possibleColonists), Util.choose(possibleColonists)],
 	trade: Trade.create(),
 	destroy: null
 }
@@ -161,7 +90,6 @@ const save = () => ({
 	units: europe.units.map(Record.reference),
 	crosses: europe.crosses,
 	crossesNeeded: europe.crossesNeeded,
-	pool: europe.pool,
 	trade: Trade.save(europe.trade)
 })
 
@@ -169,7 +97,6 @@ const load = data => {
 	europe.units = data.units.map(Record.dereference)
 	europe.crosses = data.crosses
 	europe.crossesNeeded = data.crossesNeeded
-	europe.pool = data.pool
 	europe.trade = Trade.load(data.trade)
 
 	initialize()
@@ -177,35 +104,10 @@ const load = data => {
 
 const trade = () => europe.trade
 
-const recruitmentCost = () => Math.round(100 + 500 * Math.max(1 - Math.floor(europe.crosses) / europe.crossesNeeded, 0))
-
-const recruitmentOptions = () => europe.pool.map(({ unit, name, expert }, index) => ({
-	text: `${name} (${recruitmentCost()})`,
-	disabled: recruitmentCost() > Treasure.amount(),
-	action: () => recruit({ unit, expert }, index)
-})).concat([{
-	text: 'No one at the moment.',
-	margin: true
-}])
-
-const recruit = (option, index) => {
-	if (option.unit && Treasure.spend(recruitmentCost())) {
-		const unit = Unit.create(option.unit, Record.getGlobal('defaultShipArrival'), Owner.player())
-		Unit.update.offTheMap(unit, true)
-		Unit.update.expert(unit, option.expert)
-		add.unit(unit)
-		europe.crossesNeeded += 1
-		europe.crosses = 0
-		update.crosses(0)
-		europe.pool[index] = Util.choose(possibleColonists)
-		Events.trigger('immigration')
-	}
-}
-
 const purchaseOptions = () => [
 		// { name: 'Slave', unit: 'slave', price: 500 },
 		{ name: 'Artillery', unit: 'artillery', price: 1000 },
-		{ name: 'Caravel', unit: 'caravel', price: 2000 },
+		{ name: 'Caravel', unit: 'caravel', price: 2500 },
 		{ name: 'Merchantman', unit: 'merchantman', price: 5000 },
 		{ name: 'Privateer', unit: 'privateer', price: 5000 },
 		{ name: 'Galleon', unit: 'galleon', price: 10000 },
@@ -288,8 +190,6 @@ export default {
 	save,
 	load,
 	trade,
-	recruitmentOptions,
-	recruit,
 	purchaseOptions,
 	purchase,
 	trainOptions,

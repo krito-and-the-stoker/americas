@@ -70,9 +70,9 @@ const create = (colony, building, colonist) => {
 			}
 		}
 		if (production.type === 'bells') {
-			Treasure.spend(productionAmount * BELLS_TO_GOLD_FACTOR)
+			// Treasure.spend(productionAmount * BELLS_TO_GOLD_FACTOR)
+			// Storage.update(colony.productionRecord, { good: 'gold', amount: -BELLS_TO_GOLD_FACTOR * unscaledProductionAmount })
 			Colony.update.bells(colony, productionAmount)
-			Storage.update(colony.productionRecord, { good: 'gold', amount: -BELLS_TO_GOLD_FACTOR * unscaledProductionAmount })
 			Storage.update(colony.productionRecord, { good: production.good, amount: productionAmount / scale })
 		}
 		if (production.type === 'crosses') {
