@@ -223,6 +223,10 @@ const dialog = (settlement, unit, answer) => {
 		}
 	}
 	if (answer === 'chief') {
+		if (relations.militancy <= 0) {
+			relations.trust += 0.01
+		}
+
 		const welcomeText = `Welcome stranger! We are well known for our **${experts[settlement.expert]}**.`
 		const choice = Math.random()
 		if (relations.militancy > 0.4 && relations.trust < 0) {
@@ -248,7 +252,7 @@ const dialog = (settlement, unit, answer) => {
 				image: settlement.tribe.image,
 			}
 		}
-		if ( choice < 0.8) {
+		if (choice < 0.8) {
 			unit.equipment.food = Unit.UNIT_FOOD_CAPACITY
 			Storage.update(unit.equipment)
 			return {

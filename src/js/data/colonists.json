@@ -2,6 +2,7 @@
   "default": {
     "power": 1,
     "school": 1,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -55,6 +56,7 @@
   "servant": {
     "power": 0,
     "school": 1,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -71,6 +73,7 @@
   "criminal": {
     "power": 0,
     "school": 1,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2        
@@ -96,6 +99,7 @@
   "farmer": {
     "power": 2,
     "school": 2,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -127,6 +131,7 @@
   "fisher": {
     "power": 2,
     "school": 2,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -183,6 +188,7 @@
   "distiller": {
     "power": 3,
     "school": 3,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -236,6 +242,7 @@
   "tobacconist": {
     "power": 3,
     "school": 3,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -288,6 +295,7 @@
   "weaver": {
     "power": 3,
     "school": 3,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -319,6 +327,7 @@
   "furtrapper": {
     "power": 2,
     "school": 2,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -342,6 +351,7 @@
   "furtrader": {
     "power": 3,
     "school": 3,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -373,6 +383,7 @@
   "lumberjack": {
     "power": 2,
     "school": 2,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -409,6 +420,7 @@
   "oreminer": {
     "power": 2,
     "school": 2,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -445,6 +457,7 @@
   "silverminer": {
     "power": 2,
     "school": 2,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -481,6 +494,7 @@
   "carpenter": {
     "power": 3,
     "school": 3,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -501,6 +515,7 @@
   "blacksmith": {
     "power": 3,
     "school": 3,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -521,6 +536,7 @@
   "gunsmith": {
     "power": 3,
     "school": 3,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -541,6 +557,7 @@
   "preacher": {
     "power": 4,
     "school": 3,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,
@@ -568,6 +585,7 @@
   "statesman": {
     "power": 4,
     "school": 3,
+    "europe": true,
     "consumption": {
       "base": {
         "food": 2,

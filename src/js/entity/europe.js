@@ -1,3 +1,5 @@
+import Colonists from 'data/colonists'
+
 import Record from 'util/record'
 import Member from 'util/member'
 import Binding from 'util/binding'
@@ -256,6 +258,7 @@ const initialize = () => {
 					? [{ unit: 'pioneer', name: 'Pioneer', expert: null }]
 					: basePool.concat(Record.getAll('colonist')
 						.filter(colonist => colonist.mood > 0 || ['criminal', 'servant'].includes(colonist.unit.expert))
+						.filter(colonist => (Colonists[colonist.unit.expert] || Colonists.default).europe)
 						.map(colonist => ({ unit: 'settler', name: Unit.name(colonist.unit), expert: colonist.unit.expert })))
 
 				const chosen = Util.choose(choices)
