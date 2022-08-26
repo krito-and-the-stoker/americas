@@ -344,8 +344,6 @@ const strength = unit => {
 		}
 	}
 
-	result /= (1 + overWeight(unit))
-
 	return result
 }
 

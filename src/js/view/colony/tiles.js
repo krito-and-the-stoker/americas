@@ -47,7 +47,8 @@ const buyLandDialog = (tile, colony, settlement) => Dialog.create({
 	}, {
 		text: 'We have *rightfully claimed* this land for the crown of England and will use it.',
 		action: () => {
-			settlement.owner.ai.state.relations[colony.owner.referenceId].trust -= 0.1
+			settlement.owner.ai.state.relations[colony.owner.referenceId].trust -= 0.2
+			settlement.owner.ai.state.relations[colony.owner.referenceId].militancy += 0.1
 			Tile.update.harvestedBy(tile, null)
 		}
 	}]

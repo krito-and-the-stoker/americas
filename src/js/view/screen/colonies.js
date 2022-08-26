@@ -60,7 +60,7 @@ const render = () => {
 			])
 	})
 	const sum = h('div.total', [
-		h('span.name', 'Colonial Empire'),
+		h('span.name', `Colonial Empire (${Util.sum(allColonies.map(colony => colony.colonists.length))})`),
 		...Goods.types.map(good => h(
 			'span.storage',
 			{

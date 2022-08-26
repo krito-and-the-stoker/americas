@@ -30,9 +30,10 @@ import Units from 'ai/resources/units'
 import Goods from 'ai/resources/goods'
 
 
-const MILITANCY_UPDATE_FACTOR = 1.0 / (Time.YEAR)
-const MILITANCY_DECAY_FACTOR = 1.0
-const TRUST_DECAY_FACTOR = 1.0
+
+const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
+const MILITANCY_UPDATE_FACTOR = 0.02 * PRODUCTION_BASE_FACTOR
+const OVERPOPULATION_FACTOR = 0.01 * PRODUCTION_BASE_FACTOR
 
 const describeRelations = relations => {
 	const debugInfo = `(trust: ${relations.trust.toFixed(2)}, mil: ${relations.militancy.toFixed(2)})`
@@ -173,9 +174,10 @@ const initialize = ai => {
 		}),
 
 		Time.schedule(({ update: (currentTime, deltaTime) => {
-			Object.values(ai.state.relations).forEach(relations => {
-				relations.militancy = Util.clamp(MILITANCY_DECAY_FACTOR * relations.militancy - deltaTime * MILITANCY_UPDATE_FACTOR * relations.trust, 0, 3)
-				relations.trust = Util.clamp(relations.trust * TRUST_DECAY_FACTOR, -1, 1)
+			Object.values(ai.state.relations).forEach(relation => {
+				const overPopulation = Util.sum(State.all(relation, 'colonies').map(colony => Math.floor(colony.colonists.length / 4)))
+				relation.militancy = Util.clamp(relation.militancy - deltaTime * MILITANCY_UPDATE_FACTOR * relation.trust, -1, 5)
+				relation.trust = Util.clamp(relation.trust- OVERPOPULATION_FACTOR * deltaTime * overPopulation, -1, 1)
 			})
 
 			return true
@@ -267,8 +269,14 @@ const makePlansAndRunThem = ai => {
 					const colonies = State.all(relation, 'colonies')
 					const colonists = Util.sum(colonies.map(colony => colony.colonists.length))
 
-					let raiders = Math.ceil(Math.random() * (relation.militancy - relation.trust) * colonists)
+					let raiders = Util.clamp(
+						Math.ceil(colonies.length + (relation.militancy - relation.trust) * Math.pow(colonists, 0.5) - 1),
+						1,
+						10
+					)
+
 					relation.militancy = 0.0
+					relation.trust *= 0.5
 
 					while(raiders > 0) {
 						const colony = Util.choose(colonies)

@@ -13,7 +13,7 @@ const create = ({ owner, coords }) => {
 		cost: Settlements.reserve(settlement),
 		coords: settlement.mapCoordinates,
 		commit: () => new Promise(resolve => {
-			Time.schedule(Wait.create(Math.random() * Time.MONTH, () => {
+			Time.schedule(Wait.create(Math.random() * 3 * Time.MONTH, () => {
 				if (!canceled) {
 					resolve(commit(settlement))
 				} else {

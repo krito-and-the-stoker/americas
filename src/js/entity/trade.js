@@ -136,7 +136,7 @@ const match = transport => {
 				.filter(order => order.amount > 0 && order.importance > 0)
 
 			const totalAmount = Util.sum(orders.map(order => order.amount))
-			const scale = 1.0 * capacity / totalAmount
+			const scale = Math.min(1, 1.0 * capacity / totalAmount)
 			orders = orders.map(order => ({
 				...order,
 				amount: Math.floor(scale * order.amount)
@@ -154,7 +154,7 @@ const match = transport => {
 				priority: distance / Math.pow(importance, Math.sqrt(transport.properties.speed))
 			}
 		})
-		// distance cap: 20 weeks of travel per every 20 goods transported (example: tranport 100 goods, maximum travel is 100 weeks ie 2 years)
+		// distance cap: 20 weeks of travel per every 20 goods transported (example: transport 100 goods, maximum travel is 100 weeks ie 2 years)
 		.filter(route => route.distance < Math.max(1.0, 0.05 * route.amount) * TRADE_ROUTE_DISTANCE_CAP * transport.properties.speed)
 		.filter(route => route.amount >= TRADE_ROUTE_MIN_GOODS)
 

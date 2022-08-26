@@ -207,7 +207,7 @@ const dialog = (settlement, unit, answer) => {
 
 		const description = relations.trust > 0
 			? 'with curiousity'
-			: relations.militancy > 0.2
+			: relations.militancy > 0.3
 				? 'with hostility'
 				: 'cautiously'
 		return {
@@ -218,6 +218,7 @@ const dialog = (settlement, unit, answer) => {
 				action: () => {
 					update.mission(settlement, unit.owner)
 					Unit.disband(unit)
+					relations.trust += 0.1
 				}
 			}]
 		}

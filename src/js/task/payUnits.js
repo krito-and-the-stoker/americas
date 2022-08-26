@@ -12,7 +12,7 @@ const create = unit => {
 			return false
 		}
 
-		if (!Europe.has.unit(unit) && !unit.colony) {
+		if (!Europe.has.unit(unit)) {
 			const amount = deltaTime * PRODUCTION_BASE_FACTOR * unit.properties.cost
 			Treasure.gain(-amount)
 		}

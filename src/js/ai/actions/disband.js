@@ -11,7 +11,9 @@ import Units from 'ai/resources/units'
 
 const create = unit => {
 	Message.log('disbanding', unit.name, unit.referenceId)
-	const settlement = Util.choose(Record.getAll('settlement').filter(settlement => settlement.owner === unit.owner))
+	const settlement = Util.choose(Record.getAll('settlement')
+		.filter(settlement => settlement.owner === unit.owner && Util.distance(settlement.mapCoordinates, unit.mapCoordinates) < 50)) ||
+			Util.choose(Record.getAll('settlement').filter(settlement => settlement.owner === unit.owner))
 	const prev = MoveUnit.create({ unit, coords: settlement.mapCoordinates })
 
 	return {

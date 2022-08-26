@@ -153,6 +153,25 @@
 			}
 		}
 	},
+	"largetrain": {
+		"frame": {
+			"default": 51
+		},
+		"name": {
+			"default": "Large Wagontrain"
+		},
+		"cargo": 250,
+		"domain": "land",
+		"travelType": "supply",
+		"speed": 2,
+		"radius": 0.5,
+		"construction": {
+			"buildings": {},
+			"cost": {
+				"wood": 150
+			}
+		}
+	},
 	"artillery": {
 		"frame": {
 			"default": 0,

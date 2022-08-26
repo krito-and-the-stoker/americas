@@ -105,7 +105,8 @@
 		"swampWithForest": 1,
 		"tundra": 1,
 		"tundraWithForest": 1,
-		"river": 0.5
+		"river": 0.5,
+		"road": 2
 	},
 	"nativeHorse": {
 		"arctic": 1,
@@ -128,7 +129,8 @@
 		"swampWithForest": 1.5,
 		"tundra": 1,
 		"tundraWithForest": 1.5,
-		"river": 0.5
+		"river": 0.5,
+		"road": 2
 	},
 	"supply": {
 		"road": 1,
