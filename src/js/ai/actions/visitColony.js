@@ -2,6 +2,8 @@ import Util from 'util/util'
 import Events from 'util/events'
 import Message from 'util/message'
 
+import Time from 'timeline/time'
+
 import Storage from 'entity/storage'
 
 import MoveUnit from 'ai/actions/moveUnit'
@@ -24,10 +26,11 @@ const create = ({ tribe, state, colony }) => {
 
 
 const commit = (tribe, state, colony) => {
+	const relation = state.relations[colony.owner.referenceId]
 	const good = Util.choose(['food', 'cotton', 'furs', 'tobacco', 'sugar', 'coats', 'cloth'])
-	const amount = Math.round(4 + 16 * Math.random())
-	// error: cannot set property visited of undefined
-	state.relations[colony.owner.referenceId].colonies[colony.referenceId].visited = true
+	const amount = Math.ceil(5 + 15 * Math.random() + 20 * relation.trust)
+
+	relation.colonies[colony.referenceId].visited = Time.now()
 	Events.trigger('dialog', {
 		type: 'natives',
 		image: tribe.image,

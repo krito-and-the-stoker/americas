@@ -17,7 +17,7 @@ const create = ({ owner, contact }) => {
 
 	return prev && {
 		cost: prev.cost,
-		commit: () => prev.commit().then(unit => Units.unassign(unit)),
+		commit: () => prev.commit().then(unit => unit && Units.unassign(unit)),
 		cancel: prev.cancel,
 	}
 }

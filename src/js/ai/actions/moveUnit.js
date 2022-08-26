@@ -12,7 +12,7 @@ import CreateUnit from 'ai/actions/createUnit'
 
 
 const create = ({ owner, unit, coords }) => {
-	if (owner) {
+	if (owner && !unit) {
 		const prev = Plan.cheapest([
 			AssignUnit.create({ owner, coords }),
 			CreateUnit.create({ owner, coords })
@@ -29,7 +29,7 @@ const create = ({ owner, unit, coords }) => {
 				commit: async () => {
 					const unit = await prev.commit()
 					move.unit = unit
-					if (Util.distance(unit.mapCoordinates, coords) > 0) {
+					if (unit && Util.distance(unit.mapCoordinates, coords) > 0) {
 						return await new Promise(resolve => {
 							cancel.push(commit(unit, coords, () => resolve(unit)))
 						})

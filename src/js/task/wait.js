@@ -11,7 +11,6 @@ const create = (waitTime, fn) => {
 
 	const update = currentTime => {
 		if (currentTime >= finishedTime) {
-			console.log('wating done')
 			Util.execute(fn)
 			return false
 		}

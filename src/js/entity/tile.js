@@ -514,6 +514,7 @@ const update = {
 	colony: (tile, colony) => Binding.update(tile, 'colony', colony),
 	road: (tile, value) => Binding.update(tile, 'road', value),
 	forest: (tile, value) => Binding.update(tile, 'forest', value),
+	plowed: (tile, value) => Binding.update(tile, 'plowed', value),
 	harvestedBy: (tile, harvestedBy) => Binding.update(tile, 'harvestedBy', harvestedBy),
 	settlement: (tile, settlement) => Binding.update(tile, 'settlement', settlement),
 	tile: tile => Binding.update(tile),
@@ -529,7 +530,8 @@ const listen = {
 	forest: (tile, fn) => Binding.listen(tile, 'forest', fn),
 	harvestedBy: (tile, fn) => Binding.listen(tile, 'harvestedBy', fn),
 	units: (tile, fn) => Binding.listen(tile, 'units', fn),
-	discovered: (tile, fn) => Binding.listen(tile, 'currentlyDiscovered', fn)
+	discovered: (tile, fn) => Binding.listen(tile, 'currentlyDiscovered', fn),
+	plowed: (tile, fn) => Binding.listen(tile, 'plowed', fn)
 }
 
 
@@ -542,7 +544,7 @@ const clearForest = tile => {
 }
 
 const plow = tile => {
-	tile.plowed = true
+	update.plowed(tile, true)
 
 	updateTile(tile)
 }

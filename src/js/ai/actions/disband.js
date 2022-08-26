@@ -10,11 +10,9 @@ import Units from 'ai/resources/units'
 
 
 const create = unit => {
-	Message.log('disbanding', unit.referenceId)
-	const settlements = Record.getAll('settlement').filter(settlement => settlement.owner === unit.owner)
-	const closest = Util.min(settlements, settlement =>
-		Util.distance(settlement.mapCoordinates, unit.mapCoordinates))
-	const prev = MoveUnit.create({ unit, coords: closest.mapCoordinates })
+	Message.log('disbanding', unit.name, unit.referenceId)
+	const settlement = Util.choose(Record.getAll('settlement').filter(settlement => settlement.owner === unit.owner))
+	const prev = MoveUnit.create({ unit, coords: settlement.mapCoordinates })
 
 	return {
 		commit: () => {
@@ -22,9 +20,9 @@ const create = unit => {
 			return prev.commit().then(() => {
 				Units.unassign(unit)
 				if (!unit.disbanded) {				
-					Storage.transfer(unit.equipment, closest.tribe.storage)
+					Storage.transfer(unit.equipment, settlement.tribe.storage)
 					Unit.disband(unit)
-					closest.population += 1
+					settlement.population += 1
 				}
 			})
 		},

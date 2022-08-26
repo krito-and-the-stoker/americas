@@ -30,6 +30,9 @@ import LeaveColony from 'interaction/leaveColony'
 import EnterEurope from 'interaction/enterEurope'
 import Battle from 'interaction/battle'
 
+import Natives from 'ai/natives'
+
+
 const UNIT_FOOD_CAPACITY = 20
 const FOOD_COST = 2
 const PASSENGER_WEIGHT = 50
@@ -154,73 +157,33 @@ const initialize = unit => {
 		listen.tile(unit, tile =>
 			tile && Tile.add.unit(tile, unit)),
 
-		Storage.listen(unit.equipment, equipment => {
-			// lose status
-			if (unit.name === 'pioneer' && equipment.tools < TERRAFORM_TOOLS_CONSUMPTION) {
-				updateType(unit, 'settler')
-			}
-			if (unit.name === 'scout' && equipment.horses < 50) {
-				updateType(unit, 'settler')
-			}
-			if (unit.name === 'dragoon' && equipment.horses < 50) {
-				updateType(unit, 'soldier')
-			}
-			if (unit.name === 'soldier' && equipment.guns < 50) {
-				updateType(unit, 'settler')
-			}
-			if (unit.name === 'mountedarmednative' && equipment.guns < 20) {
-				updateType(unit, 'mountednative')
-			}
-			if (unit.name === 'mountedarmednative' && equipment.horses < 20) {
-				updateType(unit, 'armednative')
-			}
-			if (unit.name === 'armednative' && equipment.guns < 20) {
-				updateType(unit, 'native')
-			}
-			if (unit.name === 'mountednative' && equipment.horses < 20) {
-				updateType(unit, 'native')
-			}
+		// lose status
+		listen.properties(unit, properties =>
+			Storage.listen(unit.equipment, equipment => {
+				if (properties.demote) {
+					const demoteUnitTo = Object.entries(properties.demote)
+						.find(([name, packs]) => Object.entries(packs)
+							.some(([good, amount]) => equipment[good] < amount))
 
-			// gain status
-			if (unit.name === 'settler') {
-				if (equipment.tools >= TERRAFORM_TOOLS_CONSUMPTION) {
-					updateType(unit, 'pioneer')
-				}
-				if (equipment.guns >= 50) {
-					if (equipment.horses >= 50) {
-						updateType(unit, 'dragoon')
-					} else {
-						updateType(unit, 'soldier')
+					if (demoteUnitTo) {
+						updateType(unit, demoteUnitTo[0])
 					}
 				}
-				if (equipment.horses >= 50) {
-					updateType(unit, 'scout')
-				}
-			}
-			if (unit.name === 'scout') {
-				if (equipment.guns >= 50) {
-					updateType(unit, 'dragoon')
-				}
-			}
-			if (unit.name === 'soldier') {
-				if (equipment.horses >= 50 && equipment.guns >= 50) {
-					updateType(unit, 'dragoon')
-				}
-			}
+			})),
 
-			if (unit.name === 'native' && equipment.horses >= 20) {
-				updateType(unit, 'mountednative')
-			}
-			if (unit.name === 'native' && equipment.guns >= 20) {
-				updateType(unit, 'armednative')
-			}
-			if (unit.name === 'mountednative' && equipment.guns >= 20) {
-				updateType(unit, 'mountedarmednative')
-			}
-			if (unit.name === 'armednative' && equipment.horses >= 20) {
-				updateType(unit, 'mountedarmednative')
-			}
-		}),
+		// gain status
+		listen.properties(unit, properties =>
+			Storage.listen(unit.equipment, equipment => {
+				if (unit.properties.promote) {			
+					const promoteUnitTo = Object.entries(unit.properties.promote)
+						.find(([name, packs]) => Object.entries(packs)
+							.every(([good, amount]) => equipment[good] >= amount))
+
+					if (promoteUnitTo) {
+						updateType(unit, promoteUnitTo[0])
+					}
+				}
+			})),
 
 		// discover
 		listen.properties(unit, properties =>
@@ -247,8 +210,10 @@ const initialize = unit => {
 		Events.listen('meet', ({ unit, other }) => {
 			if (unit.owner.input
 					&& unit.properties.canAttack
-					&& other?.owner.ai.state.relations[unit.owner.referenceId]?.war
+					&& other
+					&& (!other.owner.ai || Natives.isHostile(other.owner.ai.state.relations[unit.owner.referenceId]))
 					&& unit.domain === other.domain
+					&& strength(unit) >= strength(other)
 					// TODO: this should not be necessary, but leaving this out fires the event a lot..
 					&& Util.inBattleDistance(unit, other)
 				) {
@@ -371,7 +336,14 @@ const strength = unit => {
 		}
 	}
 
-	result += (unit.expert === 'soldier' ? 1 : 0)
+	if (unit.expert === 'soldier') {
+		if (unit.name === 'soldier' || unit.name === 'dragoon') {
+			result += 1
+		} else {
+			result += 0.5
+		}
+	}
+
 	result /= (1 + overWeight(unit))
 
 	return result

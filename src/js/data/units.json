@@ -169,8 +169,6 @@
 		"combat": 1,
 		"radius": 2.1,
 		"cost": 30,
-		"needsFood": true,
-		"canExplore": true,
 		"construction": {
 			"buildings": {
 				"gunsmiths": 1
@@ -190,6 +188,11 @@
 		"name": {
 			"default": "Pioneer",
 			"pioneer": "Hardened Pioneer"
+		},
+		"demote": {
+			"settler": {
+				"tools": 10
+			}
 		},
 		"domain": "land",
 		"travelType": "foot",
@@ -276,6 +279,17 @@
 			"scout": "Seasoned Scout",
 			"teacher": "Teacher"
 		},
+		"promote": {
+			"pioneer": {
+				"tools": 10
+			},
+			"soldier": {
+				"guns": 50
+			},
+			"scout": {
+				"horses": 50
+			}
+		},
 		"domain": "land",
 		"travelType": "foot",
 		"canFound": true,
@@ -293,6 +307,19 @@
 		"name": {
 			"default": "Scout",
 			"scout": "Seasoned Scout"
+		},
+		"demote": {
+			"settler": {
+				"horses": 5
+			}
+		},
+		"promote": {
+			"dragoon": {
+				"guns": 50
+			}
+		},
+		"defeated": {
+			"transfer": ["horses"]
 		},
 		"domain": "land",
 		"travelType": "horse",
@@ -313,11 +340,24 @@
 			"default": "Soldier",
 			"soldier": "Veteran Soldier"
 		},
+		"demote": {
+			"settler": {
+				"guns": 5
+			}
+		},
+		"promote": {
+			"dragoon": {
+				"horses": 50
+			}
+		},
 		"domain": "land",
 		"travelType": "foot",
 		"canFound": true,
 		"canJoin": true,
 		"canAttack": true,
+		"defeated": {
+			"transfer": ["guns"]
+		},
 		"equipment": 50,
 		"speed": 1,
 		"combat": 2,
@@ -335,11 +375,22 @@
 			"default": "Dragoon",
 			"soldier": "Veteran Dragoon"
 		},
+		"demote": {
+			"scout": {
+				"guns": 5
+			},
+			"soldier": {
+				"horses": 5
+			}
+		},
 		"domain": "land",
 		"travelType": "horse",
 		"canFound": true,
 		"canJoin": true,
 		"canAttack": true,
+		"defeated": {
+			"transfer": ["horses"]
+		},
 		"speed": 4,
 		"combat": 3,
 		"radius": 2,
@@ -388,6 +439,14 @@
 		"name": {
 			"default": "Native Warrior"
 		},
+		"promote": {
+			"armednative": {
+				"guns": 20
+			},
+			"mountednative": {
+				"horses": 20
+			}
+		},
 		"domain": "land",
 		"travelType": "nativeFoot",
 		"speed": 2,
@@ -402,6 +461,16 @@
 		},
 		"name": {
 			"default": "Armed Native Warrior"
+		},
+		"promote": {
+			"mountedarmednative": {
+				"horses": 20
+			}
+		},
+		"demote": {
+			"native": {
+				"guns": 2
+			}
 		},
 		"domain": "land",
 		"travelType": "nativeFoot",
@@ -418,6 +487,16 @@
 		"name": {
 			"default": "Mounted Native Warrior"
 		},
+		"promote": {
+			"mountedarmednative": {
+				"guns": 20
+			}
+		},
+		"demote": {
+			"native": {
+				"horses": 2
+			}
+		},
 		"domain": "land",
 		"travelType": "nativeHorse",
 		"speed": 5,
@@ -432,6 +511,14 @@
 		},
 		"name": {
 			"default": "Mounted Armed Native Warrior"
+		},
+		"demote": {
+			"armednative": {
+				"horses": 2
+			},
+			"mountednative": {
+				"guns": 2
+			}
 		},
 		"domain": "land",
 		"travelType": "nativeHorse",

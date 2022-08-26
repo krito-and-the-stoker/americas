@@ -34,8 +34,11 @@ export default (settlement, attacker) => {
 	const attackerName = Unit.name(attacker)
 	const defenderName = Unit.name(defender)
 
+	let winner, loser
 	if (chance < probability.attacker) {
-		Unit.disband(defender)
+		winner = attacker
+		loser = defender
+
 
 		if (Math.random() * (settlement.population + 1) < 1) {
 			Settlement.disband(settlement)
@@ -47,8 +50,22 @@ export default (settlement, attacker) => {
 			Events.trigger('notification', { type: 'decimated', settlement })
 		}
 	} else {
+		winner = defender
+		loser = attacker
+
 		Events.trigger('notification', { type: 'combat', attacker, defender, loser: attacker, strength })
-		Unit.disband(attacker)
-		Units.unassign(defender)
+
 	}
+
+	if (loser.properties.defeated) {
+		if (loser.properties.defeated.transfer) {
+			loser.properties.defeated.transfer.forEach(good => {
+				Storage.transfer(loser.equipment, winner.equipment, { good })
+			})
+		}
+	}
+	if (!loser.properties.defeated) {
+		Unit.disband(loser)
+	}
+	Units.unassign(defender)
 }

@@ -46,6 +46,8 @@ const get = () => ({
 	timeOfYear: time.timeOfYear
 })
 
+const now = () => currentTime
+
 const speedUp = () => update.scale(time.scale * 1.5)
 const slowDown = () => update.scale(time.scale / 1.5)
 const normalize = () => update.scale(1)
@@ -207,6 +209,7 @@ export default {
 	pause,
 	resume,
 	get,
+	now,
 	speedUp,
 	slowDown,
 	normalize,

@@ -1,5 +1,6 @@
 import Util from 'util/util'
 import Events from 'util/events'
+import Message from 'util/message'
 
 import Time from 'timeline/time'
 
@@ -207,7 +208,8 @@ const create = context => {
 	}
 
 	if (config.closeScreen) {
-		Foreground.closeScreen()
+		Message.warn('The close screen function has been deprecated for dialogs')
+		// Foreground.closeScreen()
 	}
 
 	const tagReplace = chunk => {

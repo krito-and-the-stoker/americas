@@ -53,7 +53,17 @@ export default (colony, raider) => {
 		} else {
 			Message.send(`A ${raiderName} overcame the defenders of ${colony.name}. The storage has been plundered. A ${defenderName} has died in an attempt to defend. The colonists seek revenge.`)
 			Events.trigger('notification', { type: 'combat', attacker: raider, defender, loser: defender, strength })
-			Unit.disband(defender)
+
+			if (defender.properties.defeated) {
+				if (defender.properties.defeated.transfer) {
+					defender.properties.defeated.transfer.forEach(good => {
+						Storage.transfer(defender.equipment, raider.equipment, { good })
+					})
+				}
+			}
+			if (!defender.properties.defeated) {
+				Unit.disband(defender)
+			}
 		}
 
 		const pack = Util.choose(Storage.goods(colony.storage).filter(p => p.amount >= 1))

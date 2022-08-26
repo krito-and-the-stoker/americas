@@ -191,25 +191,18 @@ const initialize = () => {
 		const view = create(unit)
 		const updateBoundVisibility = () => { updateVisibility(view) }
 
-		if (!unit.owner.visible) {
-			// hotifx: Otherwise those units will be invisible after reload:
-			// their tile has not full visibility information yet..
-			Events.listen('restart', updateBoundVisibility)
-		}
-
 		view.unsubscribe = [
 			Unit.listen.vehicle(unit, updateBoundVisibility),
 			Unit.listen.offTheMap(unit, updateBoundVisibility),
 			Unit.listen.colony(unit, updateBoundVisibility),
 			Owner.listen.visible(unit.owner, updateBoundVisibility),
 
-			Unit.listen.tile(unit, tile =>
-				tile ? Tile.listen.discovered(tile, updateBoundVisibility) : null),
-
 			Unit.listen.colonist(unit, colonist =>
 				colonist ? Colonist.listen.colony(colonist, updateBoundVisibility) : updateBoundVisibility()),
 
 			Unit.listen.mapCoordinates(unit, () => { updatePosition(view) }),
+			Unit.listen.mapCoordinates(unit, Binding.map(coords => Tile.closest(coords), tile =>
+				tile && Tile.listen.discovered(tile, updateBoundVisibility))),
 			Unit.listen.properties(unit, () => { updateTexture(view) }),
 			Unit.listen.expert(unit, () => { updateTexture(view) }),
 			Unit.listen.radius(unit, () => { updateRadius(view)} ),

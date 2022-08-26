@@ -223,7 +223,7 @@ const dialog = (settlement, unit, answer) => {
 		}
 	}
 	if (answer === 'chief') {
-		if (relations.militancy <= 0) {
+		if (relations.militancy < 0.5) {
 			relations.trust += 0.01
 		}
 

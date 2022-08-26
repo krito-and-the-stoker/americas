@@ -71,6 +71,10 @@ const describeRelations = relations => {
 	return `submissive ${debugInfo}`
 }
 
+const hasRaidPlanned = relation => State.all(relation, 'colonies').some(colony => relation.colonies[colony.referenceId].raidPlanned > 0)
+const isHostile = relation => 
+	(relation.trust < 0 && relation.militancy > 0.5) ||
+	hasRaidPlanned(relation)
 
 
 const initialize = ai => {
@@ -80,7 +84,7 @@ const initialize = ai => {
 		listen.tribe(ai, tribe => 
 			tribe && Tribe.listen.settlements(tribe, settlements => {
 				const tiles = settlements
-					.map(settlement => Util.quantizedRadius(settlement.mapCoordinates, 4))
+					.map(settlement => Util.quantizedRadius(settlement.mapCoordinates, 6))
 					.flat()
 					.map(coords => MapEntity.tile(coords))
 					.filter(Util.unique)
@@ -98,7 +102,6 @@ const initialize = ai => {
 								if (!ai.state.relations[owner.referenceId]) {
 									ai.state.relations[owner.referenceId] = {
 										established: false,
-										war: false,
 										colonies: {},
 										militancy: 0,
 										trust: 0,
@@ -123,6 +126,45 @@ const initialize = ai => {
 							} 
 						}
 					}),
+
+					// register pioneers work
+					!tile.road && Tile.listen.road(tile, road => {
+						if (road && !tile.colony) {
+							const pioneer = tile.units.find(unit => unit.name === 'pioneer' || unit.name === 'settler')
+							if (pioneer) {							
+								const relation = ai.state.relations[pioneer.owner.referenceId]
+								if (relation) {
+									relation.trust -= 0.05
+								}
+								Message.log(`road built registered by ${tribe.name}`)
+							}
+						}
+					}),
+					!tile.plowed && Tile.listen.plowed(tile, plowed => {
+						if (plowed && !tile.colony) {
+							const pioneer = tile.units.find(unit => unit.name === 'pioneer' || unit.name === 'settler')
+							if (pioneer) {							
+								const relation = ai.state.relations[pioneer.owner.referenceId]
+								if (relation) {
+									relation.trust -= 0.05
+								}
+								Message.log(`plowed registered by ${tribe.name}`)
+							}
+						}
+					}),
+					tile.forest && Tile.listen.forest(tile, forest => {
+						if (!forest && !tile.colony) {
+							const pioneer = tile.units.find(unit => unit.name === 'pioneer' || unit.name === 'settler')
+							if (pioneer) {							
+								const relation = ai.state.relations[pioneer.owner.referenceId]
+								if (relation) {
+									relation.trust -= 0.05
+								}
+								Message.log(`cut forest registered by ${tribe.name}`)
+							}
+						}
+					}),
+
 				])
 			})),
 
@@ -141,14 +183,14 @@ const initialize = ai => {
 
 		Events.listen('meet', ({ unit, other }) => {
 			if (unit && other) {			
-				const relations = ai.state.relations[other.owner.referenceId]
-				if (relations) {
+				const relation = ai.state.relations[other.owner.referenceId]
+				if (relation) {
 					// establish relations
-					if (unit.owner === ai.owner && other.domain === 'land' && !relations.established) {
+					if (unit.owner === ai.owner && other.domain === 'land' && !relation.established) {
 						establishRelations(ai, other.owner)
 					}
 					// battle when in war
-					if (relations.trust < 0 && relations.militancy > 0.5) {
+					if (isHostile(relation) && Unit.strength(unit) >= Unit.strength(other)) {
 						if (unit.domain === other.domain) {
 							if (unit.owner === ai.owner && !other.colony) {
 								Message.log('ai attacking hostile', unit, other)
@@ -169,12 +211,16 @@ const establishRelations = (ai, owner) => {
 		Events.trigger('dialog', {
 			type: 'natives',
 			image: ai.tribe.image,
-			text: `Hello strange men from the sea. We are the **${ai.tribe.name}** and live here in *${numSettlements} settlements*. We welcome you in **peace**.<options/>`,
+			text: `Hello strange men from the sea. We are the **${ai.tribe.name}** and live here in *${numSettlements} settlements*. We welcome you on our land. Would you like to join our *peace* ceremony?<options/>`,
 			pause: true,
 			options: [{
-				text: 'Let us live together in peace.',
+				text: 'Yes',
+				action: () => {
+					ai.state.relations[owner.referenceId].trust += 0.15
+					update.state(ai)
+				}
 			}, {
-				text: 'You are heathens and deserve to die! (**threaten them**)',
+				text: 'No',
 				action: () => {
 					ai.state.relations[owner.referenceId].trust -= 0.5
 					ai.state.relations[owner.referenceId].militancy += 0.2
@@ -212,12 +258,16 @@ const makePlansAndRunThem = ai => {
 			}
 
 			Object.values(ai.state.relations)
-				.filter(relation => relation.trust < 0 && relation.militancy > 0.5)
+				.filter(relation => relation.trust < 0 && relation.militancy > 0.5
+					// only if we have established relations yet
+					&& State.all(relation, 'colonies').some(colony => true)
+					// wait until currently planned raids are over
+					&& !hasRaidPlanned(relation))
 				.forEach(relation => {
 					const colonies = State.all(relation, 'colonies')
-						// .filter(colony => !relation.colonies[colony.referenceId].raidPlanned)
+					const colonists = Util.sum(colonies.map(colony => colony.colonists.length))
 
-					let raiders = Math.round(relation.militancy * 20)
+					let raiders = Math.ceil(Math.random() * (relation.militancy - relation.trust) * colonists)
 					relation.militancy = 0.0
 
 					while(raiders > 0) {
@@ -242,8 +292,10 @@ const makePlansAndRunThem = ai => {
 
 				// visit new colonies
 				Object.entries(ai.state.relations)
+					.filter(([, relation]) => relation.trust > 0)
 					.map(([referenceId, relation]) => State.all(relation, 'colonies')
-						.filter(colony => colony && !ai.state.relations[referenceId].colonies[colony.referenceId].visited)
+						.filter(colony => colony && (!ai.state.relations[referenceId].colonies[colony.referenceId].visited
+							|| ai.state.relations[referenceId].colonies[colony.referenceId].visited < Time.now() - (1.5 - relation.trust) * Time.YEAR))
 						.map(colony => VisitColony.create({ tribe: ai.tribe, state: ai.state, colony }))
 						.map(executeAction)),
 
@@ -315,5 +367,6 @@ export default {
 	listen,
 	load,
 	save,
+	isHostile,
 	describeRelations
 }
