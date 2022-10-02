@@ -21,7 +21,7 @@ const create = ({ owner, unit, coords }) => {
 			return action
 		}))
 
-		let cancel = [prev.cancel]
+		let cancel = [prev?.cancel]
 
 		if (prev) {
 			const move = {
