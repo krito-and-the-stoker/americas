@@ -98,8 +98,8 @@ const tories = colony => {
 	const administrators = colony.colonists.filter(colonist =>
 		colonist.work.type === 'Building' && colonist.work.building === 'townhall').length
 
-	const percentage = 100 - Math.min(100, Math.round(colony.bells / (colonists + 1)))
-	const number = Math.max(0, Math.round(colonists * percentage / 100) - administrators)
+	const percentage = Math.round((100 - (100.0 * administrators / colonists)) - Math.min(100, colony.bells / (colonists + 1)))
+	const number = Math.max(0, Math.round(colonists * percentage / 100))
 
 	return {
 		percentage,
