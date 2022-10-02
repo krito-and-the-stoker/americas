@@ -51,9 +51,9 @@ const create = ({ tribe, state, colony }) => {
 						// raid when in range
 						Events.listen('meet', params => {
 							if (params.colony === colony && params.unit === move.unit) {
-								Raid(colony, params.unit)
-
-								cleanup()
+								if(Raid(colony, params.unit)) {
+									cleanup()
+								}
 							}
 						}),
 						// if we had a battle, we are satisfied and can go home

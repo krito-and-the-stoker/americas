@@ -12,7 +12,7 @@ import Time from 'timeline/time'
 
 import ProbabilisticTrigger from 'task/probabilisticTrigger'
 
-import Battle from 'interaction/battle'
+import Fight from 'interaction/fight'
 
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
@@ -34,6 +34,8 @@ import Goods from 'ai/resources/goods'
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const MILITANCY_UPDATE_FACTOR = 0.02 * PRODUCTION_BASE_FACTOR
 const OVERPOPULATION_FACTOR = 0.01 * PRODUCTION_BASE_FACTOR
+const TRUST_DAMPING_FACTOR = 0.995
+const MILITANCY_DAMPING_FACTOR = 1.0
 
 const describeRelations = relations => {
 	const debugInfo = `(trust: ${relations.trust.toFixed(2)}, mil: ${relations.militancy.toFixed(2)})`
@@ -176,8 +178,8 @@ const initialize = ai => {
 		Time.schedule(({ update: (currentTime, deltaTime) => {
 			Object.values(ai.state.relations).forEach(relation => {
 				const overPopulation = Util.sum(State.all(relation, 'colonies').map(colony => Math.floor(colony.colonists.length / 4)))
-				relation.militancy = Util.clamp(relation.militancy - deltaTime * MILITANCY_UPDATE_FACTOR * relation.trust, -1, 5)
-				relation.trust = Util.clamp(relation.trust- OVERPOPULATION_FACTOR * deltaTime * overPopulation, -1, 1)
+				relation.militancy = Util.clamp(MILITANCY_DAMPING_FACTOR * relation.militancy - deltaTime * MILITANCY_UPDATE_FACTOR * relation.trust, -1, 5)
+				relation.trust = Util.clamp(TRUST_DAMPING_FACTOR * relation.trust - OVERPOPULATION_FACTOR * deltaTime * overPopulation, -1, 1)
 			})
 
 			return true
@@ -196,7 +198,7 @@ const initialize = ai => {
 						if (unit.domain === other.domain) {
 							if (unit.owner === ai.owner && !other.colony) {
 								Message.log('ai attacking hostile', unit, other)
-								Battle(unit, other)
+								Fight(unit, other)
 							}
 						}
 					}

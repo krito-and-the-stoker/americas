@@ -28,7 +28,7 @@ import Commander from 'command/commander'
 import EnterColony from 'interaction/enterColony'
 import LeaveColony from 'interaction/leaveColony'
 import EnterEurope from 'interaction/enterEurope'
-import Battle from 'interaction/battle'
+import Fight from 'interaction/fight'
 
 import Natives from 'ai/natives'
 
@@ -189,6 +189,10 @@ const initialize = unit => {
 		listen.properties(unit, properties =>
 			properties.canExplore && listen.mapCoordinates(unit,
 				Binding.map(coords => Tile.closest(coords), tile => {
+					if (!tile) {
+						Message.warn('tile is null, this should not be', unit)
+						return
+					}
 					Tile.discover(tile, unit.owner)
 					Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other, unit.owner))
 				}))),
@@ -218,7 +222,7 @@ const initialize = unit => {
 					&& Util.inBattleDistance(unit, other)
 				) {
 				Message.log('player attacking hostile', unit.name, other.name)
-				Battle(unit, other)
+				Fight(unit, other)
 			}
 		})
 	]
@@ -342,6 +346,10 @@ const strength = unit => {
 		} else {
 			result += 0.5
 		}
+	}
+
+	if (result > 1 && unit.properties.equipment) {
+		result = 1 + (result - 1) * ((Storage.total(unit.equipment) - unit.equipment.food) / unit.properties.equipment)
 	}
 
 	return result

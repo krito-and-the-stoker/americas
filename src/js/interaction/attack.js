@@ -8,6 +8,7 @@ import Settlement from 'entity/settlement'
 
 import Units from 'ai/resources/units'
 
+// attack settlement
 export default (settlement, attacker) => {
 	const state = settlement.owner.ai.state
 	state.relations[attacker.owner.referenceId].trust -= 0.1

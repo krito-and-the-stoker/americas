@@ -61,7 +61,7 @@ const create = unit => {
 		}
 
 		let target = getNextTarget(unit)
-		if (unit.tile === target) {
+		if (unit.tile === target && LA.distanceManhatten(unit.mapCoordinates,target.mapCoordinates) === 0) {
 			return true
 		}
 

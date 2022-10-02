@@ -377,9 +377,9 @@
 		"defeated": {
 			"transfer": ["guns"]
 		},
-		"equipment": 50,
 		"speed": 1,
 		"combat": 2,
+		"equipment": 50,
 		"radius": 1.25,
 		"cost": 10,
 		"needsFood": true,
@@ -412,6 +412,7 @@
 		},
 		"speed": 4,
 		"combat": 3,
+		"equipment": 100,
 		"radius": 2,
 		"colonyDefense": -1,
 		"cost": 20,
@@ -495,6 +496,7 @@
 		"travelType": "nativeFoot",
 		"speed": 2,
 		"combat": 2,
+		"equipment": 20,
 		"radius": 1.5,
 		"canExplore": true,
 		"canAttack": true
@@ -520,6 +522,7 @@
 		"travelType": "nativeHorse",
 		"speed": 5,
 		"combat": 2,
+		"equipment": 20,
 		"radius": 2.5,
 		"canExplore": true,
 		"canAttack": true
@@ -543,6 +546,7 @@
 		"travelType": "nativeHorse",
 		"speed": 5,
 		"combat": 3,
+		"equipment": 40,
 		"radius": 2.5,
 		"canExplore": true,
 		"canAttack": true

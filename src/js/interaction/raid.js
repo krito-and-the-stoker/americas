@@ -28,6 +28,10 @@ export default (colony, raider) => {
 		? possibleDefender
 		: Colony.defender(colony)
 
+	if(0.5 * raider.radius < defender.radius) {
+		return false
+	}
+
 	Unit.update.radius(raider, 0)
 	Unit.update.radius(defender, 0)
 
