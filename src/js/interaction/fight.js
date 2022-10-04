@@ -42,19 +42,21 @@ export default (attacker, other) => {
 
 	// if loser is still ok
 	if (loser.radius > 0) {
-		console.log('loser ok', loser.radius)
 		Storage.goods(loser.equipment).forEach(({ good }) => {
 			if (good !== 'food') {
 				loser.equipment[good] *= EQUIPMENT_LOSS_FACTOR
 			}
 		})
 
-		const pushDirection = LA.normalize(LA.subtract(loser.mapCoordinates, winner.mapCoordinates))
-		const newPlace = LA.madd(loser.mapCoordinates, DISPLACEMENT_FACTOR, pushDirection)
-		Unit.update.mapCoordinates(loser, newPlace)
+		// push if not in colony
+		const tile = Tile.closest(loser.mapCoordinates)
+		if (!(tile.colony && tile.colony.units.includes(loser))) {		
+			const pushDirection = LA.normalize(LA.subtract(loser.mapCoordinates, winner.mapCoordinates))
+			const newPlace = LA.madd(loser.mapCoordinates, DISPLACEMENT_FACTOR, pushDirection)
+			Unit.update.mapCoordinates(loser, newPlace)
+		}
 	// if loser is not ok anymore...
 	} else {
-		console.log('loser not ok', loser.radius)
 		Message.send(`A ${Unit.name(winner)} defeated a ${Unit.name(loser)} on the battle field`)
 
 		if (loser.properties.defeated) {

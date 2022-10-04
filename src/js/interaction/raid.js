@@ -6,7 +6,7 @@ import Unit from 'entity/unit'
 import Storage from 'entity/storage'
 import Colony from 'entity/colony'
 
-const relativeRaidAmont = () => 0.25 + 0.5 * Math.random()
+const relativeRaidAmont = () => 0.25 + 0.6 * Math.random()
 
 export default (colony, raider) => {
 	// TODO: find a more reasonable solution
@@ -28,32 +28,21 @@ export default (colony, raider) => {
 		? possibleDefender
 		: Colony.defender(colony)
 
-	if(0.5 * raider.radius < defender.radius) {
+	if (0.5 * raider.radius < defender.radius) {
 		return false
 	}
 
-	Unit.update.radius(raider, 0)
-	Unit.update.radius(defender, 0)
-
-	const strength = {
-		attacker: Unit.strength(raider),
-		defender: Unit.strength(defender),
-	}
-
-	const probability = {
-		raider: Math.pow(strength.attacker, 2),
-		defender: Math.pow(strength.defender, 2),
-	}
-
-	const chance = Math.random() * (probability.raider + probability.defender)
-
-	const raiderName = Unit.name(raider)
-	const defenderName = Unit.name(defender)
-
-	if (chance < probability.raider) {
+	// sometimes a defender dies
+	if (!defender.properties.combat) {	
+		const raiderName = Unit.name(raider)
+		const defenderName = Unit.name(defender)
+		const strength = {
+			attacker: Unit.strength(raider),
+			defender: Unit.strength(defender),
+		}
 		const survivalChance = (1 - (1 / (colony.buildings.fortifications.level + 1))) + (1 / colony.colonists.length)
 		if (Math.random() < survivalChance) {
-			Message.send(`A ${raiderName} overcame the defenders of ${colony.name}. The storage has been plundered. A ${defenderName} has barely survvived the attack. The colonists in fear.`)
+			Message.send(`A ${raiderName} overcame the defenders of ${colony.name}. The storage has been plundered. A ${defenderName} has barely survived the attack. The colonists in fear.`)
 		} else {
 			Message.send(`A ${raiderName} overcame the defenders of ${colony.name}. The storage has been plundered. A ${defenderName} has died in an attempt to defend. The colonists seek revenge.`)
 			Events.trigger('notification', { type: 'combat', attacker: raider, defender, loser: defender, strength })
@@ -69,24 +58,13 @@ export default (colony, raider) => {
 				Unit.disband(defender)
 			}
 		}
-
-		const pack = Util.choose(Storage.goods(colony.storage).filter(p => p.amount >= 1))
-		pack.amount = Util.clamp(relativeRaidAmont() * pack.amount, 1, 50)
-		Storage.transfer(colony.storage, raider.equipment, pack)
-		Events.trigger('notification', { type: 'raid', colony, unit: raider, pack })
-	} else {
-		const plunderChance = 0.5 / (colony.buildings.fortifications.level + 1)
-		if (Math.random() < plunderChance) {
-			Message.send(`A ${raiderName} could not overcome the defenders of ${colony.name}. However, massive amounts of goods are missing after the attack. The colonists are outraged.`)
-
-			const pack = Util.choose(Storage.goods(colony.storage).filter(p => p.amount >= 1))
-			pack.amount = Util.clamp(relativeRaidAmont() * pack.amount, 1, 50)
-			Storage.transfer(colony.storage, raider.equipment, pack)
-			Events.trigger('notification', { type: 'raid', colony, unit: raider, pack })
-		} else {
-			Message.send(`A ${raiderName} has been killed in the attempt to attack ${colony.name}.`)
-			Events.trigger('notification', { type: 'combat', attacker: raider, defender, loser: raider, strength })
-			Unit.disband(raider)
-		}
 	}
+
+	// the raiding happens here
+	console.log(colony)
+	const fortificationLevel = colony.buildings.fortifications?.level || 0
+	const pack = Util.choose(Storage.goods(colony.storage).filter(p => p.amount >= 1))
+	pack.amount = Util.clamp(relativeRaidAmont() * pack.amount, 1, (4 - fortificationLevel) * 100)
+	Storage.transfer(colony.storage, raider.equipment, pack)
+	Events.trigger('notification', { type: 'raid', colony, unit: raider, pack })
 }

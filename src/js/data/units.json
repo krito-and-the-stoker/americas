@@ -160,15 +160,16 @@
 		"name": {
 			"default": "Large Wagontrain"
 		},
-		"cargo": 250,
+		"cargo": 300,
 		"domain": "land",
-		"travelType": "supply",
+		"travelType": "wagon",
 		"speed": 2,
 		"radius": 0.5,
 		"construction": {
 			"buildings": {},
 			"cost": {
-				"wood": 150
+				"wood": 250,
+				"tools": 50
 			}
 		}
 	},
