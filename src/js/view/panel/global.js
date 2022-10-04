@@ -11,6 +11,9 @@ import Drag from 'input/drag'
 import Help from 'view/help'
 import Europe from 'view/europe'
 import MapView from 'view/map'
+import UnitScreen from 'view/screen/units'
+import ColonyScreen from 'view/screen/colonies'
+
 
 const initialize = () => {
 	const { h, patch } = Dom
@@ -28,6 +31,10 @@ const initialize = () => {
 				h('div.map-title', 'Map Options'),
 				h('div.support', { on: { click: map.support.click }, class: { click: true } }, map.support.text),
 				h('div.forest', { on: { click: map.forest.click }, class: { click: true } }, map.forest.text),
+			]),
+			isMap && h('div.screens', [
+				h('div.units', { on: { click: UnitScreen.open }, class: { click: true } }, 'Open Unit Screen'),
+				h('div.colonies', { on: { click: ColonyScreen.open }, class: { click: true } }, 'Open Colony Screen')
 			]),
 			isMap && h('div.hints', hints
 				.filter(hint => hint.action === 'click')
