@@ -74,7 +74,8 @@ const render = () => {
 
 	if (isNowOpen) {	
 		el = patch(el, h('div.screen', [
-			h('div.colony',
+			h('div.colony', [
+				h('div.close', { on: { click: close } }, 'Close'),
 				h('div.inner', [
 					h('button.mode', {
 						on: {
@@ -92,7 +93,7 @@ const render = () => {
 					h('div.colonies', colonies),
 					h('div.sum', sum)
 				])
-			)
+			])
 		]))
 	} else {
 		el = patch(el, h('div.screen'))
