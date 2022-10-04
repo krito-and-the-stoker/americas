@@ -6,10 +6,10 @@ import Events from 'util/events'
 import Unit from 'entity/unit'
 import Storage from 'entity/storage'
 
-const RADIUS_FIGHT_COST = 0.95
-const RADIUS_HIT_FRACTION = 0.1
-const EQUIPMENT_LOSS_FACTOR = 0.9
-const DISPLACEMENT_FACTOR = 0.2
+const RADIUS_FIGHT_COST = 0.995
+const RADIUS_HIT_FRACTION = 0.01
+const EQUIPMENT_LOSS_FACTOR = 0.99
+const DISPLACEMENT_FACTOR = 0.025
 
 export default (attacker, other) => {
 	if (!Util.inBattleDistance(attacker, other)) {
@@ -44,7 +44,9 @@ export default (attacker, other) => {
 	if (loser.radius > 0) {
 		console.log('loser ok', loser.radius)
 		Storage.goods(loser.equipment).forEach(({ good }) => {
-			loser.equipment[good] *= EQUIPMENT_LOSS_FACTOR
+			if (good !== 'food') {
+				loser.equipment[good] *= EQUIPMENT_LOSS_FACTOR
+			}
 		})
 
 		const pushDirection = LA.normalize(LA.subtract(loser.mapCoordinates, winner.mapCoordinates))

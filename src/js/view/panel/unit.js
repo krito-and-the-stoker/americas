@@ -135,6 +135,11 @@ const initialize = () => {
 			const passengers = unit.passengers.map(passenger => UnitView.html(passenger, PASSENGER_SCALE))
 			const treasure = (unit.treasure && `${Math.floor(unit.treasure)}`) || ''
 
+			const supplyColony = Tile.supportingColony(Tile.closest(unit.mapCoordinates))
+			const supplyColonyText = supplyColony
+				? `Supplies from ${supplyColony.name}`
+				: 'No supplies'
+
 			const view = h('div.unit-panel.visible', [
 				h('div.commands', commands),
 				h('div.name', { on: { click: () => MapView.centerAt(unit.mapCoordinates, 350) } }, name),
@@ -146,7 +151,8 @@ const initialize = () => {
 				].filter(x => x)),
 				h('div.cargo', goods),
 				h('div.passengers', passengers),
-				h('div.treasure', treasure)
+				h('div.treasure', treasure),
+				h('div.supply', supplyColonyText),
 			])
 
 			unitPanel = patch(unitPanel, view)
@@ -159,6 +165,7 @@ const initialize = () => {
 		selectedView && selectedView.unit, unit => unit && [
 		Unit.listen.properties(unit, () => render(unit)),
 		Unit.listen.mapCoordinates(Binding.map(() => Unit.strength(unit)), () => render(unit)),
+		Unit.listen.mapCoordinates(Binding.map(coords => Tile.closest(coords)), () => render(unit)),
 		Unit.listen.name(unit, () => render(unit)),
 		Storage.listen(displayStorage(unit), () => render(unit)),
 		Unit.listen.passengers(unit, () => render(unit)),

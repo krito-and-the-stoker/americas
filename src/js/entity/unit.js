@@ -21,7 +21,6 @@ import Move from 'task/move'
 import PayUnits from 'task/payUnits'
 import ConsumeFood from 'task/consumeFood'
 import FillFoodStock from 'task/fillFoodStock'
-import SupplyFromTransport from 'task/supplyFromTransport'
 
 import Commander from 'command/commander'
 
