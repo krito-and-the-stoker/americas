@@ -35,7 +35,7 @@ const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const MILITANCY_UPDATE_FACTOR = 0.02 * PRODUCTION_BASE_FACTOR
 const OVERPOPULATION_FACTOR = 0.01 * PRODUCTION_BASE_FACTOR
 const TRUST_DAMPING_FACTOR = 0.995
-const MILITANCY_DAMPING_FACTOR = 1.0
+const MILITANCY_DAMPING_FACTOR = 0.9995
 
 const describeRelations = relations => {
 	const debugInfo = `(trust: ${relations.trust.toFixed(2)}, mil: ${relations.militancy.toFixed(2)})`
