@@ -61,7 +61,6 @@ export default (colony, raider) => {
 	}
 
 	// the raiding happens here
-	console.log(colony)
 	const fortificationLevel = colony.buildings.fortifications?.level || 0
 	const pack = Util.choose(Storage.goods(colony.storage).filter(p => p.amount >= 1))
 	pack.amount = Util.clamp(relativeRaidAmont() * pack.amount, 1, (4 - fortificationLevel) * 100)

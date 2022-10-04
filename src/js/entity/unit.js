@@ -21,6 +21,7 @@ import Move from 'task/move'
 import PayUnits from 'task/payUnits'
 import ConsumeFood from 'task/consumeFood'
 import FillFoodStock from 'task/fillFoodStock'
+import FillEquipment from 'task/fillEquipment'
 
 import Commander from 'command/commander'
 
@@ -208,7 +209,10 @@ const initialize = unit => {
 							!vehicle && Time.schedule(ConsumeFood.create(unit))),
 
 						listen.mapCoordinates(unit, Binding.map(coords => Tile.closest(coords),
-							tile => tile && Time.schedule(FillFoodStock.create(unit, tile))))
+							tile => tile && [
+								Time.schedule(FillFoodStock.create(unit, tile)),
+								Time.schedule(FillEquipment.create(unit, tile)),
+							]))
 					])),
 		Events.listen('meet', ({ unit, other }) => {
 			if (unit.owner.input

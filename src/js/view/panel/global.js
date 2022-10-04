@@ -102,7 +102,7 @@ const initialize = () => {
 				map: {
 					support: {
 						click: MapView.toggleSupportOverlay,
-						text: supportOverlayColoring ? 'Hide food support' : 'Show food support'
+						text: supportOverlayColoring ? 'Hide supply' : 'Show supply'
 					},
 					forest: {
 						click: MapView.toggleForestVisibility,
