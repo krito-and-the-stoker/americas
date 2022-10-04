@@ -84,8 +84,12 @@ const render = () => {
 				]))
 
 
-		el = patch(el, h('div.screen', [
-			h('div.units', units)
+		el = patch(el, h('div.screen.units', [
+			h('div.topbar', [
+				h('div.heading', 'Unit Overview'),
+				h('div.close', { on: { click: close } }, 'Close')
+			]),			
+			h('div.list', units)
 		]))
 	} else {
 		el = patch(el, h('div.screen'))

@@ -7,7 +7,7 @@
 
 
 .screen {
-  .units {
+  &.units {
     position: fixed;
     top: 0;
     bottom: 0;
@@ -20,45 +20,67 @@
     background: url(/images/help.jpg);
     background-size: cover;
 
-    display: grid;
-    grid-gap: 20px;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: repeat(auto-fill, 130px);
-    .unit {
-      @include panel;
+    .topbar {
+      margin: 15px;
+      display: flex;
+      justify-content: space-between;
 
-      display: grid;
-      grid-gap: 5px;
-      grid-template:
-        "icon text" auto
-        "cargo cargo" auto /
-        min-content 1fr;
+      .heading {
+        font-size: 40px;
+      }
 
-      padding: 10px;
-      .icon {
-        grid-area: icon;
+      .close {
+        font-size: 30px;
+        color: rgba(240, 233, 201);
         cursor: pointer;
-      }
-      .text {
-        grid-area: text;
-      }
-      .cargo {
-        grid-area: cargo;
-        display: flex;
-        .icon {
-          margin: -16px;  
+        &:hover {
+          text-decoration: underline;
         }
-        .passengers {
+      }
+    }
+
+    .list {
+      margin-top: 20px;
+      display: grid;
+      grid-gap: 20px;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-template-rows: repeat(auto-fill, 130px);
+      .unit {
+        @include panel;
+
+        display: grid;
+        grid-gap: 5px;
+        grid-template:
+          "icon text" auto
+          "cargo cargo" auto /
+          min-content 1fr;
+
+        padding: 10px;
+        .icon {
+          grid-area: icon;
+          cursor: pointer;
+        }
+        .text {
+          grid-area: text;
+        }
+        .cargo {
+          grid-area: cargo;
+          display: flex;
           .icon {
-            margin: -16px -24px -16px -16px;
+            margin: -16px;  
+          }
+          .passengers {
+            .icon {
+              margin: -16px -24px -16px -16px;
+            }
           }
         }
-      }
-      .command, .place {
-        font-size: 14px;
-      }
-      .place {
-        display: none;
+        .command, .place {
+          font-size: 14px;
+        }
+        .place {
+          display: none;
+        }
       }
     }
   }
