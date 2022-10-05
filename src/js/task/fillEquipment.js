@@ -31,10 +31,6 @@ const create = (unit, tile) => {
 		const target = unit.properties.equipment
 		const current = Storage.total(unit.equipment) - unit.equipment.food
 
-		if (current >= target) {
-			return true
-		}
-
 		const unscale = amount => amount / (deltaTime * PRODUCTION_BASE_FACTOR)
 
 
@@ -48,12 +44,12 @@ const create = (unit, tile) => {
 		const capacity = target / packs.length
 		packs.forEach(pack => {
 			if (pack.amount > capacity) {
-				const giveback = { good: pack.good, amount: capacity - pack.amount }
+				const giveback = { good: pack.good, amount: pack.amount - capacity }
 				Storage.transfer(unit.equipment, colony.storage, giveback)
 			}
 
 			const amount = Math.min(
-				capacity,
+				capacity - pack.amount,
 				colony.storage[pack.good],
 				REFILL_BASE * deltaTime * PRODUCTION_BASE_FACTOR
 					* (unit.colony === colony ? IN_COLONY_FACTOR : 1)
