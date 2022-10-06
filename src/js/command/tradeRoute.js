@@ -119,7 +119,11 @@ export default Factory.commander('TradeRoute', {
 		if (state.needsOrders) {
 			state.needsOrders = false
 			if (Storage.split(unit.storage).length > 0) {
-				return false
+				if (unit.colony) {
+					Storage.transfer(unit.storage, unit.colony.storage)
+				} else {
+					return false
+				}
 			}
 
 			if (!unit.properties.cargo) {

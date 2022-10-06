@@ -56,9 +56,17 @@ const create = ({ tribe, state, colony }) => {
 								}
 							}
 						}),
+
 						// if we had a battle, we are satisfied and can go home
 						Events.listen('combat', params => {
 							if (params.attacker === move.unit || params.defender === move.unit) {
+								cleanup()
+							}
+						}),
+
+						// if unit gets too scared it just retreats
+						Events.listen('retreat', params => {
+							if (params.unit === move.unit) {
 								cleanup()
 							}
 						})

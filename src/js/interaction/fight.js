@@ -49,11 +49,14 @@ export default (attacker, other) => {
 		})
 
 		// push if not in colony
-		const tile = Tile.closest(loser.mapCoordinates)
-		if (!(tile.colony && tile.colony.units.includes(loser))) {
+		if (!loser.colony) {
 			const pushDirection = LA.normalize(LA.subtract(loser.mapCoordinates, winner.mapCoordinates))
 			const newPlace = LA.madd(loser.mapCoordinates, DISPLACEMENT_FACTOR, pushDirection)
 			Unit.update.mapCoordinates(loser, newPlace)
+		}
+
+		if (loser.radius < 0.1 * loser.properties.radius) {
+			Events.trigger('retreat', { unit: loser })
 		}
 	// if loser is not ok anymore...
 	} else {

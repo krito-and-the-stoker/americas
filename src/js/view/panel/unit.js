@@ -164,8 +164,8 @@ const initialize = () => {
 	UnitMapView.listen.selectedView(Binding.map(selectedView =>
 		selectedView && selectedView.unit, unit => unit && [
 		Unit.listen.properties(unit, () => render(unit)),
-		Unit.listen.mapCoordinates(Binding.map(() => Unit.strength(unit)), () => render(unit)),
-		Unit.listen.mapCoordinates(Binding.map(coords => Tile.closest(coords)), () => render(unit)),
+		Unit.listen.mapCoordinates(unit, Binding.map(() => Unit.strength(unit), () => render(unit))),
+		Unit.listen.mapCoordinates(unit, Binding.map(coords => Tile.closest(coords), () => render(unit))),
 		Unit.listen.name(unit, () => render(unit)),
 		Storage.listen(displayStorage(unit), () => render(unit)),
 		Unit.listen.passengers(unit, () => render(unit)),

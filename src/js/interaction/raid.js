@@ -28,7 +28,7 @@ export default (colony, raider) => {
 		? possibleDefender
 		: Colony.defender(colony)
 
-	if (0.5 * raider.radius < defender.radius) {
+	if (defender.radius < 0.5 * defender.properties.radius) {
 		return false
 	}
 
@@ -66,4 +66,7 @@ export default (colony, raider) => {
 	pack.amount = Util.clamp(relativeRaidAmont() * pack.amount, 1, (4 - fortificationLevel) * 100)
 	Storage.transfer(colony.storage, raider.equipment, pack)
 	Events.trigger('notification', { type: 'raid', colony, unit: raider, pack })
+	Events.trigger('retreat', { unit: raider })
+
+	return true
 }
