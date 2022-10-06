@@ -218,11 +218,9 @@ const initialize = unit => {
 			if (unit.owner.input
 					&& unit.properties.canAttack
 					&& other
-					&& (!other.owner.ai || Natives.isHostile(other.owner.ai.state.relations[unit.owner.referenceId]))
+					&& (!other.owner.ai || Natives.seemsHostile(other.owner.ai.state.relations[unit.owner.referenceId]))
 					&& unit.domain === other.domain
-					&& strength(unit) >= strength(other)
-					// TODO: this should not be necessary, but leaving this out fires the event a lot..
-					&& Util.inBattleDistance(unit, other)
+					&& unit.radius > 0.1 * unit.properties.radius
 				) {
 				Message.log('player attacking hostile', unit.name, other.name)
 				Fight(unit, other)
@@ -408,6 +406,9 @@ const unloadAllUnits = unit => {
 
 const disband = unit => {
 	if (unit.colony) {
+		Storage.goods(unit.equipment).forEach(pack => {
+			Storage.transfer(unit.equipment, unit.colony.storage, { good: pack.good, amount: pack.amount / 2 })
+		})
 		LeaveColony(unit)
 	}
 	if (Europe.has.unit(unit)) {

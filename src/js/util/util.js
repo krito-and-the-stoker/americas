@@ -10,6 +10,7 @@ import Message from 'util/message'
 const distance = LA.distance
 const inBattleDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
 const inDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
+const inRaidDistance = (unit, other) => distance(unit.mapCoordinates, other.mapCoordinates) < 0.25 * unit.properties.radius
 
 const isArray = something => something && something.constructor === Array
 const flatten = array => {
@@ -163,6 +164,7 @@ export default {
 	quantizedRadius,
 	inBattleDistance,
 	inDistance,
+	inRaidDistance,
 	min,
 	max,
 	minPair,

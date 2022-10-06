@@ -2,6 +2,8 @@ import Util from 'util/util'
 import Events from 'util/events'
 import Message from 'util/message'
 
+import Unit from 'entity/unit'
+
 import MoveUnit from 'ai/actions/moveUnit'
 import Disband from 'ai/actions/disband'
 
@@ -58,11 +60,11 @@ const create = ({ tribe, state, colony }) => {
 						}),
 
 						// if we had a battle, we are satisfied and can go home
-						Events.listen('combat', params => {
-							if (params.attacker === move.unit || params.defender === move.unit) {
-								cleanup()
-							}
-						}),
+						// Events.listen('combat', params => {
+						// 	if (params.attacker === move.unit || params.defender === move.unit) {
+						// 		cleanup()
+						// 	}
+						// }),
 
 						// if unit gets too scared it just retreats
 						Events.listen('retreat', params => {

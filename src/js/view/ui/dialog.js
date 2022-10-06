@@ -229,6 +229,16 @@ const create = context => {
 	document.body.appendChild(el)
 	let isOpen = true
 
+	let canClickClose = false
+	setTimeout(() => {
+		canClickClose = true
+	}, 300)
+	const closeClick = () => {
+		if (canClickClose) {
+			close()
+		}
+	}
+
 	const close = () => {
 		isOpen = false
 		render()
@@ -250,7 +260,7 @@ const create = context => {
 					dialog: true
 				},
 				on: {
-					click: close
+					click: closeClick
 				}
 			}, [
 				h('div.background', [

@@ -52,42 +52,10 @@ export default Factory.commander('MoveTo', {
 	const init = () => {
 		const targetTile = MapEntity.tile(coords)
 
-		let displayName = unit.domain === 'land' ? 'Travelling' : 'Navigating'
-		if (targetTile.discoveredBy.includes(unit.owner)) {		
-			if (targetTile.colony) {
-				displayName += ` to ${targetTile.colony.name}`
-			} else if (targetTile.settlement) {
-				displayName += ` to ${targetTile.settlement.tribe.name} village`
-			} else {
-				if (targetTile.domain === 'sea') {
-					displayName += ' to the sea'
-				} else {
-					if (targetTile.forest) {
-						displayName += ' to forest'
-					} else if (targetTile.mountains) {
-						displayName += ' to mountains'
-					} else if (targetTile.hills) {
-						displayName += ' to hills'
-					} else {
-						displayName += ' to planes'
-					}
-					const measuringUnit = {
-						mapCoordinates: targetTile.mapCoordinates,
-						properties: Units.airline,
-						domain: targetTile.domain,
-						movement: {
-							target: targetTile
-						}
-					}
-					const closeColony = PathFinder.findNearColony(measuringUnit)
-					if (closeColony) {
-						displayName += ` near ${closeColony.name}`
-					}
-				}
-			}
-		} else {
-			displayName += ' to undiscovered ' + (unit.domain === 'sea' ? 'waters' : 'lands')
-		}
+		let displayName = (unit.domain === 'land'
+			? 'Travelling to '
+			: 'Navigating to ') + Tile.description(targetTile, unit.owner)
+
 		Factory.update.display(state, displayName)
 
 		Commander.scheduleInstead(commander, Move.create({ unit, coords }))

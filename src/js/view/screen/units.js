@@ -1,6 +1,7 @@
 import Util from 'util/util'
 import Record from 'util/record'
 
+import Tile from 'entity/tile'
 import Unit from 'entity/unit'
 import Europe from 'entity/europe'
 import Storage from 'entity/storage'
@@ -14,53 +15,41 @@ import GoodsView from 'view/goods'
 let el
 let destroy
 let isNowOpen = false
+
+
+const place = unit => {
+	if (Europe.has.unit(unit)) {
+		return 'London'
+	}
+
+	const tile = Tile.closest(unit.mapCoordinates)
+	if (tile) {
+		return Tile.description(tile, unit.owner)
+	}
+
+	return 'Americas'
+}
+
+
+const goods = unit => Storage.goods(unit.storage)
+	.filter(pack => pack.amount > 0)
+	.map(pack => GoodsView.html(pack.good, CARGO_SCALE))
+const passengers = unit => unit.passengers.map(passenger => UnitView.html(passenger, PASSENGER_SCALE))
+
+const select = unit => {
+	close()
+	UnitMapView.select(unit)
+}
+
+const CARGO_SCALE = 0.5
+const PASSENGER_SCALE = 0.7
 const render = () => {
 	const { h, patch } = Dom
 	el = el || document.querySelector('.screen')
 
-	const place = unit => {
-		if (Europe.has.unit(unit)) {
-			return 'London'
-		}
-
-		if (unit.colony) {
-			return unit.colony.name
-		}
-
-		if (unit.tile) {
-			if (unit.tile.settlement) {
-				const tribe = unit.tile.settlement
-				return `${tribe.name} settlement`
-			}
-
-			if (unit.tile.forest) {
-				return 'forest'
-			} else if (unit.tile.mountains) {
-				return 'mountains'
-			} else if (unit.tile.hills) {
-				return 'hills'
-			} else {
-				return 'planes'
-			}
-		}
-
-		return 'Americas'
-	}
-
-	const CARGO_SCALE = 0.5
-	const PASSENGER_SCALE = 0.7
-	const goods = unit => Storage.goods(unit.storage)
-		.filter(pack => pack.amount > 0)
-		.map(pack => GoodsView.html(pack.good, CARGO_SCALE))
-	const passengers = unit => unit.passengers.map(passenger => UnitView.html(passenger, PASSENGER_SCALE))
-
-	const select = unit => {
-		close()
-		UnitMapView.select(unit)
-	}
-
 	if (isNowOpen) {
 		const units = Record.getAll('unit')
+			.filter(unit => unit.owner.visible)
 			// exclude colonists (they technically are still attached to a unit)
 			.filter(unit => !(unit.colonist && unit.colonist.colony))
 			// exclude passengers
@@ -98,9 +87,11 @@ const render = () => {
 
 const create = () => {
 	return Record.listen('unit', unit => {
-		if (!(unit.colonist && unit.colonist.colony)) {
-			render()
-			return render
+		if (unit.owner.visible && !(unit.colonist && unit.colonist.colony)) {
+			return [
+				Unit.listen.tile(unit, render),
+				render
+			]
 		}
 	})
 }

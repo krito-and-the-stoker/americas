@@ -10,27 +10,21 @@ const relativeRaidAmont = () => 0.25 + 0.6 * Math.random()
 
 export default (colony, raider) => {
 	// TODO: find a more reasonable solution
-	if (Util.sum(Storage.goods(raider.equipment)
-		.filter(pack => pack.good !== 'guns' && pack.good !== 'horses')
-		.map(pack => pack.amount)) > 0) {
-		return false
-	}
+	// if (Util.sum(Storage.goods(raider.equipment)
+	// 	.filter(pack => pack.good !== 'guns' && pack.good !== 'horses')
+	// 	.map(pack => pack.amount)) > 0) {
+	// 	return false
+	// }
 
-	if (!Util.inBattleDistance(raider, colony)) {
+	if (!Util.inRaidDistance(raider, colony)) {
 		return false
 	}
 
 	const possibleDefenders = colony.units
+		.filter(unit => !unit.colonist || !unit.colonist.colony)
 		.filter(unit => unit.owner === colony.owner)
 		.filter(unit => unit.domain === 'land')
-	const possibleDefender = Util.max(possibleDefenders, unit => Unit.strength(unit))
-	const defender = Unit.strength(possibleDefender) > Unit.strength(Colony.defender(colony))
-		? possibleDefender
-		: Colony.defender(colony)
-
-	if (defender.radius < 0.5 * defender.properties.radius) {
-		return false
-	}
+	const defender = Util.max(possibleDefenders, unit => Unit.strength(unit)) || Colony.defender(colony)
 
 	// sometimes a defender dies
 	if (!defender.properties.combat) {	

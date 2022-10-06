@@ -78,7 +78,9 @@ const hasRaidPlanned = relation => State.all(relation, 'colonies').some(colony =
 const isHostile = relation => 
 	(relation.trust < 0 && relation.militancy > 0.5) ||
 	hasRaidPlanned(relation)
-
+const seemsHostile = relation => 
+	(relation.trust < 0 && relation.militancy > 0) ||
+	hasRaidPlanned(relation)
 
 const initialize = ai => {
 	Util.execute(ai.destroy)
@@ -197,7 +199,6 @@ const initialize = ai => {
 					if (isHostile(relation) && Unit.strength(unit) >= Unit.strength(other)) {
 						if (unit.domain === other.domain) {
 							if (unit.owner === ai.owner && !other.colony) {
-								Message.log('ai attacking hostile', unit, other)
 								Fight(unit, other)
 							}
 						}
@@ -378,5 +379,6 @@ export default {
 	load,
 	save,
 	isHostile,
+	seemsHostile,
 	describeRelations
 }

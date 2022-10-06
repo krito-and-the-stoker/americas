@@ -506,6 +506,49 @@ const supportingColony = tile => {
 
 const closest = coords => MapEntity.tile({ x: Math.round(coords.x), y: Math.round(coords.y) })
 
+const description = (tile, owner) => {
+	let displayName
+
+	if (tile.discoveredBy.includes(owner)) {		
+		if (tile.colony) {
+			return `${tile.colony.name}`
+		} else if (tile.settlement) {
+			displayName = `${tile.settlement.tribe.name} village`
+		} else {
+			if (tile.domain === 'sea') {
+				displayName = 'the sea'
+			} else {
+				if (tile.forest) {
+					displayName = 'forest'
+				} else if (tile.mountains) {
+					displayName = 'mountains'
+				} else if (tile.hills) {
+					displayName = 'hills'
+				} else {
+					displayName = 'planes'
+				}
+			}
+		}
+	} else {
+		displayName = 'undiscovered terrain'
+	}	
+
+	const measuringUnit = {
+		mapCoordinates: tile.mapCoordinates,
+		properties: Units.airline,
+		domain: tile.domain,
+		movement: {
+			target: tile
+		}
+	}
+	const closeColony = PathFinder.findNearColony(measuringUnit)
+	if (closeColony) {
+		displayName += ` near ${closeColony.name}`
+	}
+
+	return displayName
+}
+
 const add = {
 	unit: (tile, unit) => Member.add(tile, 'units', unit)
 }
@@ -579,6 +622,7 @@ export default {
 	discover,
 	isNextTo,
 	production,
+	description,
 	update,
 	isPossibleStartLocation,
 	colonyProductionGoods,
