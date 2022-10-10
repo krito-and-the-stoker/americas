@@ -1,23 +1,31 @@
 import * as PIXI from 'pixi.js'
 import Tween from 'util/tween'
 
-import UnitView from 'view/unit'
+import Util from 'util/util'
+import Record from 'util/record'
+
 import Click from 'input/click'
 import Drag from 'input/drag'
+
 import Unit from 'entity/unit'
 import Europe from 'entity/europe'
+import MapEntity from 'entity/map'
+import Tile from 'entity/tile'
+import Treasure from 'entity/treasure'
+
+import LoadUnitFromShipToEurope from 'interaction/loadUnitFromShipToEurope'
+
 import Commander from 'command/commander'
 import America from 'command/america'
-import Transport from 'view/transport'
-import Util from 'util/util'
-import LoadUnitFromShipToEurope from 'interaction/loadUnitFromShipToEurope'
-import Dialog from 'view/ui/dialog'
-import Record from 'util/record'
-import MapEntity from 'entity/map'
 import GoTo from 'command/goTo'
 import TriggerEvent from 'command/triggerEvent'
-import Tile from 'entity/tile'
+
 import Foreground from 'render/foreground'
+
+import UnitView from 'view/unit'
+import Transport from 'view/transport'
+import Dialog from 'view/ui/dialog'
+
 
 const closeIfNoShips = () => {
 	setTimeout(() => {
@@ -36,8 +44,9 @@ const selectTarget = unit => {
 		return Tile.diagonalNeighbors(tile).some(tile => tile.domain === 'sea')
 	})
 
+	const repairCost = Europe.repairShipCost(unit)
 	const options = [{
-		text: 'Open waters in the Americas',
+		text: '*Open waters* in the Americas',
 		action: () => {
 			Commander.scheduleInstead(unit.commander, America.create({ unit }))
 			Commander.scheduleBehind(unit.commander, TriggerEvent.create({ name: 'notification', type: 'america', unit }))
@@ -51,7 +60,14 @@ const selectTarget = unit => {
 			Commander.scheduleBehind(unit.commander, TriggerEvent.create({ name: 'notification', type: 'arrive', unit, colony }))
 			closeIfNoShips()
 		}
-	})))
+	}))).concat([{
+		margin: true,
+		disabled: repairCost < 1 || repairCost > Treasure.amount(),
+		text: `repair ship (**${repairCost}<good>gold</good>**)`,
+		action: () => {
+			Europe.repairShip(unit)
+		}
+	}])
 
 	Dialog.create({
 		type: 'naval',

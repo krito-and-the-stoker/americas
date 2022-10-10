@@ -15,6 +15,8 @@ import Unit from 'entity/unit'
 import Treasure from 'entity/treasure'
 import Owner from 'entity/owner'
 import Trade from 'entity/trade'
+import Storage from 'entity/storage'
+import Market from 'entity/market'
 
 
 // for immigration at the docks of europe
@@ -150,6 +152,26 @@ const train = option => {
 	}
 }
 
+const repairShipCost = unit => {
+	const goodsNeeded = Storage.goods(unit.equipment)
+		.filter(pack => unit.properties.equipment[pack.good])
+		.map(pack => ({
+			good: pack.good,
+			amount: Math.max(unit.properties.equipment[pack.good] - pack.amount, 0)
+		}))
+
+	return Math.round(goodsNeeded.reduce((sum, { good, amount }) => Market.ask(good) * amount + sum, 0))
+}
+
+const repairShip = unit => {
+	const cost = repairShipCost(unit)
+	Treasure.spend(cost)
+	Object.entries(unit.properties.equipment).forEach(([good, amount]) => {
+		unit.equipment[good] = amount
+	})
+	Storage.update(unit.equipment)
+}
+
 const initialize = () => {
 	Util.execute(europe.destroy)
 	europe.destroy = [
@@ -194,5 +216,7 @@ export default {
 	purchase,
 	trainOptions,
 	train,
+	repairShip,
+	repairShipCost,
 	initialize
 }

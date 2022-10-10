@@ -4,10 +4,11 @@ import Time from 'timeline/time'
 
 import Europe from 'entity/europe'
 import Unit from 'entity/unit'
+import Storage from 'entity/storage'
 
 import Factory from 'command/factory'
 
-
+const TRAVEL_EQUIPMENT_FACTOR = 1
 export default Factory.create('America', {
 	unit: {
 		type: 'entity',
@@ -41,6 +42,13 @@ export default Factory.create('America', {
 
 	const update = (currentTime, deltaTime) => {
 		state.progress += state.direction * (deltaTime / Time.EUROPE_SAIL_TIME)
+		if (Unit.TRAVEL_EQUIPMENT[unit.properties.travelType]) {
+			Unit.TRAVEL_EQUIPMENT[unit.properties.travelType].forEach(good => {
+				unit.equipment[good] = Math.max(unit.equipment[good] - TRAVEL_EQUIPMENT_FACTOR * deltaTime / Time.EUROPE_SAIL_TIME, 0)
+			})
+			Storage.update(unit.equipment)
+		}
+
 		return state.progress >= 0 && state.progress <= 1
 	}
 

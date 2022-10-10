@@ -72,20 +72,12 @@ const create = (name, coords, owner) => {
 		}
 
 		unit.equipment.food = unit.properties.needsFood ? UNIT_FOOD_CAPACITY : 0
+		if (unit.properties.equipment) {
+			Object.entries(unit.properties.equipment).forEach(([good, amount]) => {
+				unit.equipment[good] = amount
+			})
+		}
 
-		if (name === 'pioneer') {
-			unit.equipment.tools = PIONEER_MAX_TOOLS
-		}
-		if (name === 'soldier') {
-			unit.equipment.guns = 50
-		}
-		if (name === 'scout') {
-			unit.equipment.horses = 50
-		}
-		if (name === 'dragoon') {
-			unit.equipment.horses = 50
-			unit.equipment.guns = 50
-		}
 		if (name === 'slave') {
 			unit.expert = 'slave'
 		}
@@ -199,21 +191,19 @@ const initialize = unit => {
 
 		listen.properties(unit, () => Time.schedule(PayUnits.create(unit))),
 		listen.properties(unit, properties =>
-			// only these units need food
-			properties.needsFood &&
-				// in europe nobody needs to eat
-				listen.offTheMap(unit, offTheMap =>
-					!offTheMap && [
-						// do not eat when on a ship
-						listen.vehicle(unit, vehicle =>
-							!vehicle && Time.schedule(ConsumeFood.create(unit))),
+			// in europe nobody needs to eat
+			listen.offTheMap(unit, offTheMap =>
+				!offTheMap && [
+					// do not eat when on a ship
+					listen.vehicle(unit, vehicle =>
+						!vehicle && properties.needsFood && Time.schedule(ConsumeFood.create(unit))),
 
-						listen.mapCoordinates(unit, Binding.map(coords => Tile.closest(coords),
-							tile => tile && [
-								Time.schedule(FillFoodStock.create(unit, tile)),
-								Time.schedule(FillEquipment.create(unit, tile)),
-							]))
-					])),
+					listen.mapCoordinates(unit, Binding.map(coords => Tile.closest(coords),
+						tile => tile && [
+							properties.needsFood && Time.schedule(FillFoodStock.create(unit, tile)),
+							properties.equipment && Time.schedule(FillEquipment.create(unit, tile)),
+						]))
+				])),
 		Events.listen('meet', ({ unit, other }) => {
 			if (unit.owner.input
 					&& unit.properties.canAttack
@@ -306,10 +296,8 @@ const area = unit => {
 }
 
 const additionalEquipment = unit => Storage.goods(unit.equipment)
-	.filter(pack => pack.good !== 'food')
-	.filter(pack => !((unit.name === 'soldier' || unit.name === 'dragoon') && pack.good === 'guns'))
-	.filter(pack => !((unit.name === 'scout' || unit.name === 'dragoon') && pack.good === 'horses'))
-	.filter(pack => !(unit.name === 'pioneer' && pack.good === 'tools'))
+	.filter(pack => !unit.properties.needsFood || pack.good !== 'food')
+	.filter(pack => !unit.properties.equipment || !unit.properties.equipment[pack.good])
 
 const overWeight = unit => {
 	const equipmentCapacity = 50 + unit.equipment.horses + UNIT_FOOD_CAPACITY
@@ -349,15 +337,53 @@ const strength = unit => {
 		}
 	}
 
-	if (result > 1 && unit.properties.equipment) {
-		result = 1 + (result - 1) * ((Storage.total(unit.equipment) - unit.equipment.food) / unit.properties.equipment)
+	const equipment = unit.properties.equipment && Storage.total(unit.properties.equipment)
+	if (result > 1 && equipment > 0 && unit.name !== 'pioneer') {
+		result = 1 + (result - 1) * ((Storage.total(unit.equipment) - unit.equipment.food) / equipment)
 	}
 
 	return result
 }
 
-const speed = unit => (unit.properties.speed +
-	(unit.name === 'scout' && unit.expert === 'scout' ? 1 : 0)) / (1 + overWeight(unit))
+const TRAVEL_EQUIPMENT = {
+	water: ['wood', 'tools', 'cloth'],
+	sea: ['wood', 'tools', 'cloth'],
+	wagon: ['wood', 'tools'],
+	horse: ['horses'],
+	nativeHorse: ['horses'],
+}
+const speed = unit => {
+	let result = unit.properties.speed
+
+	if (unit.name === 'scout' && unit.expert === 'scout') {
+		result += 1
+	}
+
+	const equipment = TRAVEL_EQUIPMENT[unit.properties.travelType]
+	if (equipment) {
+		// const minimalRelation = Util.min(
+		// 	Storage.goods(unit.equipment),
+		// 	pack => (unit.properties.equipment[pack.good] > 0
+		// 		? unit.equipment[pack.good] / unit.properties.equipment[pack.good]
+		// 		: 1)
+		// )
+
+		// result *= minimalRelation
+
+		const necessary = Storage.total(unit.properties.equipment)
+		if (necessary > 0) {
+			const current = Util.sum(Storage.goods(unit.equipment)
+				.filter(({ good }) => equipment.includes(good))
+				.map(pack => pack.amount))
+
+			result *= current / necessary
+		}
+
+	}
+
+	return result
+}
+
 
 const loadGoods = (unit, pack) => {
 	const amount = Math.min(pack.amount, capacity(unit))
@@ -504,4 +530,5 @@ export default {
 	FOOD_COST,
 	TERRAFORM_TOOLS_CONSUMPTION,
 	PIONEER_MAX_TOOLS,
+	TRAVEL_EQUIPMENT,
 }

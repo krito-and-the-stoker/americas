@@ -261,7 +261,31 @@
 			"good": "crosses",
 			"amount": [0, 3, 6, 10],
 			"passive": [0, 2, 4, 8]
-		}		
+		}
+	},
+	"stables": {
+		"frame": [null, null],
+		"population": [0, 1],
+		"width": 0,
+		"name": ["Meadows", "Stables"],
+		"workspace": 3,
+		"cost": [{
+			"wood": 0
+		}, {
+			"wood": 120
+		}],
+		"consumption": {
+			"good": "food",
+			"factor": 1
+		},
+		"production": {
+			"good": "horses",
+			"amount": [0, 4],
+			"goodNeeded": {
+				"good": "horses",
+				"amount": 100
+			}
+		}
 	},
 	"gunsmiths": {
 		"frame": [139, 128, 129, 130],
@@ -319,18 +343,6 @@
 		}, {
 			"wood": 640,
 			"tools": 400
-		}]
-	},
-	"stables": {
-		"frame": [null, null],
-		"population": [0, 1],
-		"width": 0,
-		"name": ["Meadows", "Stables"],
-		"workspace": 0,
-		"cost": [{
-			"wood": 0
-		}, {
-			"wood": 120
 		}]
 	},
 	"house": {

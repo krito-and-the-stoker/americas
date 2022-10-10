@@ -41,7 +41,7 @@ const canSell = (europe, good) => europe.trade[good] === SELL
 const capacity = colony => STORAGE_PER_POPULATION * colony.colonists.length
 
 const targetAmount = (colony, other, good) => ({
-	[IMPORT]: capacity(colony),
+	[IMPORT]: Infinity,
 	[EXPORT]: 0,
 	[BALANCE]: {
 		[IMPORT]: 0.25,

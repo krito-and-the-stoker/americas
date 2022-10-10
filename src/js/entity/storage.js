@@ -75,8 +75,8 @@ const transferWithProduction = (src, dest) => {
 	update(dest)
 }
 
-const goods = storage => Object.values(Goods.types).map(good => ({ good, amount: storage[good] }))
-const productions = storage => Object.values(Goods.productions).map(good => ({ good, amount: storage[good] }))
+const goods = storage => Object.values(Goods.types).map(good => ({ good, amount: storage[good] || 0 }))
+const productions = storage => Object.values(Goods.productions).map(good => ({ good, amount: storage[good] || 0 }))
 
 const save = storage => Object.values(Goods.types).map(good => [good, storage[good]])
 const load = data => Util.makeObject(data)

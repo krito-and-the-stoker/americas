@@ -28,36 +28,35 @@ const create = (unit, tile) => {
 			return true
 		}
 
-		const target = unit.properties.equipment
-		const current = Storage.total(unit.equipment) - unit.equipment.food
-
 		const unscale = amount => amount / (deltaTime * PRODUCTION_BASE_FACTOR)
 
 
 		const packs = Storage.goods(unit.equipment)
-			.filter(pack => pack.good !== 'food' && pack.amount > 0)
+			.filter(pack => unit.properties.equipment[pack.good] > 0)
 
 		if (packs.length === 0) {
 			return
 		}
 
-		const capacity = target / packs.length
 		packs.forEach(pack => {
+			const capacity = unit.properties.equipment[pack.good]
 			if (pack.amount > capacity) {
 				const giveback = { good: pack.good, amount: pack.amount - capacity }
 				Storage.transfer(unit.equipment, colony.storage, giveback)
 			}
 
-			const amount = Math.min(
-				capacity - pack.amount,
-				colony.storage[pack.good],
-				REFILL_BASE * deltaTime * PRODUCTION_BASE_FACTOR
-					* (unit.colony === colony ? IN_COLONY_FACTOR : 1)
-			)
+			if (Colony.canFillEquipment(colony, unit, pack.good)) {
+				const amount = Math.min(
+					capacity - pack.amount,
+					colony.storage[pack.good],
+					REFILL_BASE * deltaTime * PRODUCTION_BASE_FACTOR
+						* (unit.colony === colony ? IN_COLONY_FACTOR : 1)
+				)
 
-			if (amount > 0) {
-				Storage.transfer(colony.storage, unit.equipment, { good: pack.good, amount })
-				Storage.update(colony.productionRecord, { good: pack.good, amount: -unscale(amount) })
+				if (amount > 0) {
+					Storage.transfer(colony.storage, unit.equipment, { good: pack.good, amount })
+					Storage.update(colony.productionRecord, { good: pack.good, amount: -unscale(amount) })
+				}
 			}
 		})
 

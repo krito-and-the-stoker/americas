@@ -191,6 +191,14 @@ const initialize = colony => {
 	]
 }
 
+const canFillEquipment = (colony, unit) => {
+	if (unit.properties.repair) {
+		return Object.entries(unit.properties.repair).every(([building, level]) => colony.buildings[building]?.level >= level)
+	}
+
+	return true
+}
+
 const create = (coords, owner) => {
 	const colony = {
 		name: getColonyName(),
@@ -299,6 +307,7 @@ const coastalDirection = colony => {
 export default {
 	add,
 	area,
+	canFillEquipment,
 	canEmploy,
 	coastalDirection,
 	create,

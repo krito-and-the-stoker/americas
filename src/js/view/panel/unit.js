@@ -29,10 +29,9 @@ import Dialog from 'view/ui/dialog'
 
 
 const CARGO_SCALE = .6
+const EQUIPMENT_SCALE = 0.5
 const PASSENGER_SCALE = 1
 const ICON_SCALE = .5
-
-const displayStorage = unit => unit.properties.cargo > 0 ? unit.storage : unit.equipment
 
 const handleGoTo = unit => {
 	if (unit.domain === 'sea') {
@@ -127,10 +126,15 @@ const initialize = () => {
 
 			const commands = renderCommands(unit)
 
-			const goods = Util.flatten(Storage.goods(displayStorage(unit)).filter(pack => pack.amount > 0)
+			const cargo =  Util.flatten(Storage.goods(unit.storage).filter(pack => pack.amount > 0)
 				.map(pack => [
-					h('span', `${Math.floor(pack.amount)}`),
+					h('span', `${Math.round(pack.amount)}`),
 					GoodsView.html(pack.good, CARGO_SCALE)
+				]))
+			const equipment =  Util.flatten(Storage.goods(unit.equipment).filter(pack => pack.amount > 0)
+				.map(pack => [
+					h('span', `${Math.round(pack.amount)}`),
+					GoodsView.html(pack.good, EQUIPMENT_SCALE)
 				]))
 			const passengers = unit.passengers.map(passenger => UnitView.html(passenger, PASSENGER_SCALE))
 			const treasure = (unit.treasure && `${Math.floor(unit.treasure)}`) || ''
@@ -149,10 +153,11 @@ const initialize = () => {
 					h('div.strength', [Icon.html('combat', ICON_SCALE), h('span', strength)]),
 					cost && h('div.cost', [Icon.html('gold', ICON_SCALE), h('span', cost)])
 				].filter(x => x)),
-				h('div.cargo', goods),
+				h('div.cargo', cargo),
 				h('div.passengers', passengers),
 				h('div.treasure', treasure),
 				h('div.supply', supplyColonyText),
+				h('div.equipment', equipment),
 			])
 
 			unitPanel = patch(unitPanel, view)
@@ -167,7 +172,8 @@ const initialize = () => {
 		Unit.listen.mapCoordinates(unit, Binding.map(() => Unit.strength(unit), () => render(unit))),
 		Unit.listen.mapCoordinates(unit, Binding.map(coords => Tile.closest(coords), () => render(unit))),
 		Unit.listen.name(unit, () => render(unit)),
-		Storage.listen(displayStorage(unit), () => render(unit)),
+		Storage.listen(unit.equipment, () => render(unit)),
+		Storage.listen(unit.storage, () => render(unit)),
 		Unit.listen.passengers(unit, () => render(unit)),
 		Unit.listen.command(unit, () => render(unit)),
 		Unit.listen.tile(unit, () => render(unit)),

@@ -22,6 +22,14 @@
 				"tools": 20,
 				"cloth": 20
 			}
+		},
+		"equipment": {
+			"wood": 50,
+			"tools": 10,
+			"cloth": 10
+		},
+		"repair": {
+			"harbour": 1
 		}
 	},
 	"privateer": {
@@ -49,6 +57,15 @@
 				"guns": 50,
 				"cloth": 50
 			}
+		},
+		"equipment": {
+			"wood": 50,
+			"tools": 25,
+			"guns": 25,
+			"cloth": 25
+		},
+		"repair": {
+			"harbour": 1
 		}
 	},
 	"frigate": {
@@ -77,6 +94,15 @@
 				"guns": 100,
 				"cloth": 50
 			}
+		},
+		"equipment": {
+			"wood": 100,
+			"tools": 75,
+			"guns": 50,
+			"cloth": 25
+		},
+		"repair": {
+			"harbour": 3
 		}
 	},
 	"galleon": {
@@ -104,8 +130,17 @@
 				"wood": 400,
 				"tools": 150,
 				"guns": 50,
-				"cloth": 50
+				"cloth": 100
 			}
+		},
+		"equipment": {
+			"wood": 200,
+			"tools": 75,
+			"guns": 25,
+			"cloth": 50			
+		},
+		"repair": {
+			"harbour": 2
 		}
 	},
 	"merchantman": {
@@ -128,10 +163,19 @@
 			},
 			"cost": {
 				"wood": 150,
-				"tools": 25,
-				"guns": 25,
+				"tools": 30,
+				"guns": 30,
 				"cloth": 50
 			}
+		},
+		"equipment": {
+			"wood": 75,
+			"tools": 15,
+			"guns": 15,
+			"cloth": 25
+		},
+		"repair": {
+			"harbour": 2
 		}
 	},
 	"wagontrain": {
@@ -151,6 +195,9 @@
 			"cost": {
 				"wood": 40
 			}
+		},
+		"equipment": {
+			"wood": 20
 		}
 	},
 	"largetrain": {
@@ -166,11 +213,17 @@
 		"speed": 2,
 		"radius": 0.5,
 		"construction": {
-			"buildings": {},
+			"buildings": {
+				"carpenters": 2
+			},
 			"cost": {
 				"wood": 250,
 				"tools": 50
 			}
+		},
+		"equipment": {
+			"wood": 125,
+			"tools": 25
 		}
 	},
 	"artillery": {
@@ -197,8 +250,16 @@
 			"cost": {
 				"wood": 100,
 				"tools": 50,
-				"guns": 50
+				"guns": 100
 			}
+		},
+		"equipement": {
+			"wood": 50,
+			"tools": 25,
+			"guns": 50
+		},
+		"repair": {
+			"gunsmiths": 1
 		}
 	},
 	"pioneer": {
@@ -223,7 +284,10 @@
 		"speed": 1,
 		"radius": 0.5,
 		"needsFood": true,
-		"canExplore": true
+		"canExplore": true,
+		"equipment": {
+			"tools": 50
+		}
 	},
 	"slave": {
 		"frame": {
@@ -350,7 +414,10 @@
 		"combat": 1,
 		"radius": 2,
 		"needsFood": true,
-		"canExplore": true
+		"canExplore": true,
+		"equipment": {
+			"horses": 50
+		}
 	},
 	"soldier": {
 		"frame": {
@@ -381,7 +448,9 @@
 		},
 		"speed": 1,
 		"combat": 2,
-		"equipment": 50,
+		"equipment": {
+			"guns": 50
+		},
 		"radius": 1.25,
 		"cost": 10,
 		"needsFood": true,
@@ -414,7 +483,10 @@
 		},
 		"speed": 4,
 		"combat": 3,
-		"equipment": 100,
+		"equipment": {
+			"guns": 50,
+			"horses": 50
+		},
 		"radius": 2,
 		"colonyDefense": -1,
 		"cost": 20,
@@ -498,7 +570,9 @@
 		"travelType": "nativeFoot",
 		"speed": 2,
 		"combat": 2,
-		"equipment": 20,
+		"equipment": {
+			"guns": 20
+		},
 		"radius": 1.5,
 		"canExplore": true,
 		"canAttack": true
@@ -524,7 +598,9 @@
 		"travelType": "nativeHorse",
 		"speed": 5,
 		"combat": 2.5,
-		"equipment": 20,
+		"equipment": {
+			"horses": 20
+		},
 		"radius": 2.5,
 		"canExplore": true,
 		"canAttack": true
@@ -548,7 +624,10 @@
 		"travelType": "nativeHorse",
 		"speed": 5,
 		"combat": 3.5,
-		"equipment": 40,
+		"equipment": {
+			"guns": 20,
+			"horses": 20
+		},
 		"radius": 2.5,
 		"canExplore": true,
 		"canAttack": true
