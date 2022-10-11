@@ -22,6 +22,7 @@ import PayUnits from 'task/payUnits'
 import ConsumeFood from 'task/consumeFood'
 import FillFoodStock from 'task/fillFoodStock'
 import FillEquipment from 'task/fillEquipment'
+import ConsumeEquipment from 'task/consumeEquipment'
 
 import Commander from 'command/commander'
 
@@ -129,6 +130,7 @@ const initialize = unit => {
 	return [
 		Time.schedule(unit.commander),
 		Time.schedule(Move.create(unit)),
+		Time.schedule(ConsumeEquipment.create(unit)),
 		Binding.listen(unit.commander.state, 'info', info => {
 			update.command(unit, info)
 		}),
