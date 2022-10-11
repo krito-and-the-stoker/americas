@@ -38,8 +38,7 @@ const create = (originalDimensions) => {
 		container.goods.addChild(sprite)
 
 		const bid = Market.bid(good)
-		const ask = Market.ask(good)
-		const price =	 Text.create(`${bid}/${ask}`)
+		const price = Text.create(`${bid}`)
 
 		const width = originalDimensions.x / Object.values(Goods.types).length
 		price.anchor.set(0.5)
@@ -77,7 +76,7 @@ const create = (originalDimensions) => {
 	const unsubscribeMarket = perGoodMapping.map(([good, mapping]) => 
 		Market.listen.europe(Binding.map(mapping, bid => {
 			const ask = Market.ask(good)
-			priceViews.find(view => view.good === good).price.text = `${bid}/${ask}`
+			priceViews.find(view => view.good === good).price.text = `${bid}`
 		})))
 
 	const text = Text.create('', {

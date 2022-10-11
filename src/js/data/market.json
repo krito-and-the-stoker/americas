@@ -8,15 +8,15 @@
 	},
 	"sugar": {
 		"difference": 0,
-		"low": 5,
-		"high": 15,
+		"low": 10,
+		"high": 20,
 		"consumption": 1,
 		"capacity": 200
 	},
 	"tobacco": {
 		"difference": 0,
-		"low": 5,
-		"high": 15,
+		"low": 10,
+		"high": 20,
 		"consumption": 1,
 		"capacity": 200
 	},
