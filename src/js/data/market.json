@@ -1,111 +1,111 @@
 {
 	"food": {
-		"difference": 2,
+		"difference": 0,
 		"low": 4,
 		"high": 6,
 		"consumption": -1,
 		"capacity": 1000
 	},
 	"sugar": {
-		"difference": 2,
+		"difference": 0,
 		"low": 5,
 		"high": 15,
 		"consumption": 1,
 		"capacity": 200
 	},
 	"tobacco": {
-		"difference": 2,
+		"difference": 0,
 		"low": 5,
 		"high": 15,
 		"consumption": 1,
 		"capacity": 200
 	},
 	"cotton": {
-		"difference": 2,
+		"difference": 0,
 		"low": 5,
 		"high": 15,
 		"consumption": 1,
 		"capacity": 200
 	},
 	"furs": {
-		"difference": 2,
+		"difference": 0,
 		"low": 5,
 		"high": 15,
 		"consumption": 2,
 		"capacity": 200
 	},
 	"wood": {
-		"difference": 3,
+		"difference": 0,
 		"low": 5,
 		"high": 10,
 		"consumption": 1,
 		"capacity": 500
 	},
 	"ore": {
-		"difference": 3,
+		"difference": 0,
 		"low": 2,
 		"high": 5,
 		"consumption": -1,
 		"capacity": 1000
 	},
 	"silver": {
-		"difference": 1,
+		"difference": 0,
 		"low": 100,
 		"high": 100,
 		"consumption": 0,
 		"capacity": 100
 	},
 	"horses": {
-		"difference": 1,
+		"difference": 0,
 		"low": 15,
 		"high": 20,
 		"consumption": 0,
 		"capacity": 100
 	},
 	"rum": {
-		"difference": 1,
+		"difference": 0,
 		"low": 30,
 		"high": 50,
 		"consumption": 3,
 		"capacity": 100
 	},
 	"cigars": {
-		"difference": 1,
+		"difference": 0,
 		"low": 30,
 		"high": 50,
 		"consumption": 3,
 		"capacity": 100
 	},
 	"cloth": {
-		"difference": 1,
+		"difference": 0,
 		"low": 30,
 		"high": 50,
 		"consumption": 3,
 		"capacity": 100
 	},
 	"coats": {
-		"difference": 1,
+		"difference": 0,
 		"low": 30,
 		"high": 50,
 		"consumption": 3,
 		"capacity": 100
 	},
 	"tradeGoods": {
-		"difference": 1,
+		"difference": 0,
 		"low": 3,
 		"high": 5,
 		"consumption": -10,
 		"capacity": 1000
 	},
 	"tools": {
-		"difference": 1,
+		"difference": 0,
 		"low": 10,
 		"high": 20,
 		"consumption": 1,
 		"capacity": 100
 	},
 	"guns": {
-		"difference": 1,
+		"difference": 0,
 		"low": 10,
 		"high": 20,
 		"consumption": 1,
