@@ -17,7 +17,9 @@ const production = (colony, building, colonist) => {
 	if (colonist.unit?.expert === Goods[good].expert) {
 		amount *= 3
 	}
-	amount += colony.productionBonus
+	if (amount > 0) {
+		amount += colony.productionBonus
+	}
 	if (colonist.unit?.expert === 'criminal') {
 		amount -= 2
 	}
