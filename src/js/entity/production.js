@@ -25,7 +25,10 @@ const production = (colony, building, colonist) => {
 		amount -= 1
 	}
 
-	amount += colonist.productionModifier
+	if ((amount > 0 && colonist.productionModifier > 0) || colonist.productionModifier < 0) {
+		amount += colonist.productionModifier
+	}
+
 	amount = Math.ceil(amount)
 	if (amount < 0) {
 		amount = 0
