@@ -214,7 +214,7 @@
 		"radius": 0.5,
 		"construction": {
 			"buildings": {
-				"carpenters": 2
+				"carpenters": 1
 			},
 			"cost": {
 				"wood": 250,
