@@ -1,6 +1,9 @@
+import MovementCosts from 'data/movementCosts'
+
 import Record from 'util/record'
 import Util from 'util/util'
 import Message from 'util/message'
+import PathFinder from 'util/pathFinder'
 
 import Tile from 'entity/tile.js'
 import Owner from 'entity/owner'
@@ -17,31 +20,41 @@ const	createCoastLine = tiles => {
 	tiles.forEach(Tile.decideCoastalSea)
 }
 
-const createAreas = tiles => {
+const TRAVEL_TYPES = Object.keys(MovementCosts).filter(type => !['airline', 'supply'].includes(type))
+const createAllAreas = tiles => {
+	TRAVEL_TYPES.forEach(travelType => createAreas(tiles, travelType))
+}
+const createAreas = (tiles, travelType) => {
 	let currentArea = 1
 	const markArea = tile => {
-		tile.area = currentArea
-		let neighbors = Tile.diagonalNeighbors(tile)
-			.filter(neighbor => !neighbor.area)
-			.filter(neighbor => neighbor.domain === tile.domain)
+		if (!tile.area) {
+			tile.area = {}
+		}
+		tile.area[travelType] = currentArea
+		let neighbors = PathFinder.getNeighborsForTravelType(tile, travelType)
+			.filter(neighbor => !neighbor.area || !neighbor.area[travelType])
 		while(neighbors.length > 0) {
-			neighbors.forEach(n => n.area = currentArea)
+			neighbors.forEach(n => {
+				if (!n.area) {
+					n.area = {}
+				}
+				n.area[travelType] = currentArea
+			})
 			neighbors = neighbors.map(n =>
-				Tile.diagonalNeighbors(n)
-					.filter(neighbor => !neighbor.area)
-					.filter(neighbor => neighbor.domain === tile.domain))
+				PathFinder.getNeighborsForTravelType(n, travelType)
+					.filter(neighbor => !neighbor.area || !neighbor.area[travelType]))
 				.flat()
 				.filter(Util.unique)
 		}
 	}
 	tiles.forEach(tile => {
-		if (!tile.area) {
+		if (!tile.area || !tile.area[travelType]) {
 			markArea(tile)
 			currentArea += 1
 		}
 	})
 
-	Message.log(`Found ${currentArea - 1} seperate areas`)
+	Message.log(`Found ${currentArea - 1} seperate areas for ${travelType}`)
 }
 
 const get = () => ({
@@ -126,7 +139,7 @@ const create = ({ data }) => {
 	tiles.forEach(Tile.initialize)
 	Message.log('Creating coast line')
 	createCoastLine(tiles)
-	createAreas(tiles)
+	createAllAreas(tiles)
 	Message.log('Map created')
 
 	Record.setGlobal('numTiles', numTiles)
@@ -158,7 +171,7 @@ const load = () => {
 		.map(Record.dereferenceTile)
 
 	createCoastLine(tiles)
-	createAreas(tiles)
+	createAllAreas(tiles)
 
 	return { numTiles, tiles }
 }

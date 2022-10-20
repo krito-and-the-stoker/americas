@@ -73,24 +73,9 @@ const allNeighbors = ({ x, y }) => tile({ x, y })
 		})
 	].filter(Util.unique)
 
-// const allNeighbors = coords => tile(coords)
-// 	? Tile.diagonalNeighbors(tile(coords))
-// 	: [tile({
-// 		x: Math.floor(coords.x),
-// 		y: Math.floor(coords.y)
-// 	}), tile({
-// 		x: Math.floor(coords.x),
-// 		y: Math.ceil(coords.y)
-// 	}), tile({
-// 		x: Math.ceil(coords.x),
-// 		y: Math.floor(coords.y)
-// 	}), tile({
-// 		x: Math.ceil(coords.x),
-// 		y: Math.ceil(coords.y)
-// 	})]
 
 const getNeighborsForUnit = unit => node => allNeighbors(node.coords)
-	.filter(tile => tile.area === Unit.area(unit) || tile.colony || unit.properties.travelType === 'airline')
+	.filter(tile => Tile.area(tile, unit.properties.travelType) === Unit.area(unit) || tile.colony || unit.properties.travelType === 'airline')
 	.filter(tile => unit.properties.canExplore || tile.discoveredBy.includes(unit.owner))
 	.map(tile => tile.mapCoordinates)
 const getAllNeighbors = () => node => allNeighbors(node.coords)
@@ -98,6 +83,8 @@ const getAllNeighbors = () => node => allNeighbors(node.coords)
 const getNeighborsForSupply = () => node => allNeighbors(node.coords)
 	.filter(tile => tile.road || tile.colony)
 	.map(tile => tile.mapCoordinates)
+const getNeighborsForTravelType = (tile, travelType) => allNeighbors(tile.mapCoordinates)
+	.filter(other => Tile.movementCost(tile.mapCoordinates, other.mapCoordinates, { properties: { travelType } }) !== Infinity)
 
 const getCostForUnit = unit => (n1, n2) => Tile.movementCost(n1.coords, n2.coords, unit)
 const mapToCoords = path => path.map(node => node.coords)
@@ -106,7 +93,7 @@ const reduceToDistance = path => path[path.length - 1].cost
 const findNextToArea = (toCoords, unit) => {
 	// searching backwards
 	const unitArea = Unit.area(unit)
-	const isTarget = node => tile(node.coords) && tile(node.coords).area === unitArea
+	const isTarget = node => tile(node.coords) && tile(node.coords).area[unit.properties.travelType] === unitArea
 
 	// use airline travel to find the shortest way
 	const measuringUnit = {
@@ -144,7 +131,7 @@ const findPath = Cache.create({
 			return null
 		}
 
-		if (target.area !== area && !target.colony) {
+		if (Tile.area(target, unit.properties.travelType) !== area) {
 			const newCoords = findNextToArea(toCoords, unit)
 			if (newCoords) {
 				return findPath(fromCoords, newCoords, unit)
@@ -331,5 +318,6 @@ export default {
 	findHighSeas,
 	findNearColony,
 	distance,
-	distanceToEurope
+	distanceToEurope,
+	getNeighborsForTravelType
 }

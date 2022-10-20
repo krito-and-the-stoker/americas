@@ -7,7 +7,8 @@
 	"water": {
 		"sea lane": 1,
 		"ocean": 1,
-		"harbour": 3
+		"harbour": 3,
+		"river": 3
 	},
 	"wagon": {
 		"arctic": 1,

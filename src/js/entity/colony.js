@@ -41,7 +41,7 @@ const getColonyName = () => {
 }
 
 const isCoastal = colony => {
-	const center = MapEntity.tile(colony.mapCoordinates)
+	const center = tile(colony)
 	return Tile.radius(center).some(tile => tile.domain === 'sea')
 }
 
@@ -87,12 +87,6 @@ const update = {
 	productionBonus: (colony, value) => Binding.update(colony, 'productionBonus', value),
 }
 
-const area = (colony, domain) =>
-	Tile.radius(MapEntity.tile(colony.mapCoordinates))
-		.filter(tile => tile.domain === domain)
-		.map(tile => tile.area)
-		.find(() => true)
-
 const tories = colony => {
 	const colonists = colony.colonists.length
 	const administrators = colony.colonists.filter(colonist =>
@@ -114,6 +108,8 @@ const rebels = colony => {
 		number: colony.colonists.length - tt.number
 	}
 }
+
+const tile = colony => MapEntity.tile(colony.mapCoordinates)
 
 const expertLevel = {	
 	farmer: 1,
@@ -306,7 +302,6 @@ const coastalDirection = colony => {
 
 export default {
 	add,
-	area,
 	canFillEquipment,
 	canEmploy,
 	coastalDirection,
@@ -319,6 +314,7 @@ export default {
 	listen,
 	listenEach,
 	load,
+	tile,
 	protection,
 	rebels,
 	remove,

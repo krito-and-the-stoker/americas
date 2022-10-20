@@ -284,16 +284,11 @@ const capacity = unit =>
 const area = unit => {
 	let tile = unit.movement.target
 	if (tile.domain === unit.domain) {
-		return tile.area
+		return Tile.area(tile, unit.properties.travelType)
 	}
 
 	tile = Tile.closest(unit.mapCoordinates)
-	if (tile.domain === unit.domain) {
-		return tile.area
-	}
-
-	return (Tile.radius(tile)
-		.find(neighbor => neighbor.domain === unit.domain) || { area: tile.area }).area
+	return Tile.area(tile, unit.properties.travelType)
 }
 
 const additionalEquipment = unit => Storage.goods(unit.equipment)
@@ -393,17 +388,17 @@ const loadUnit = (unit, passenger) => {
 	return true
 }
 
-const unloadUnit = (unit, desiredPassenger = null) => {
+const unloadUnit = (unit, tile, desiredPassenger = null) => {
 	if (unit.passengers.length > 0) {
 		const passenger = unit.passengers.find(p => p === desiredPassenger) || unit.passengers[0]
-		passenger.movement.target = unit.tile
+		passenger.movement.target = tile
 		remove.passenger(passenger)
-		update.mapCoordinates(passenger, { ...unit.mapCoordinates })
-		update.tile(passenger, unit.tile)
+		update.mapCoordinates(passenger, { ...tile.mapCoordinates })
+		update.tile(passenger, tile)
 		update.offTheMap(passenger, unit.offTheMap)
 		update.vehicle(passenger, null)
-		if (unit.colony) {
-			EnterColony(unit.colony, passenger)
+		if (tile.colony) {
+			EnterColony(tile.colony, passenger)
 		}
 		if (Europe.has.unit(unit)) {
 			EnterEurope(passenger)
@@ -416,9 +411,9 @@ const unloadUnit = (unit, desiredPassenger = null) => {
 	return null
 }
 
-const unloadAllUnits = unit => {
+const unloadAllUnits = (unit, tile = null) => {
 	// do not iterate over the cargo array directly because unloadUnit changes it
-	Util.range(unit.passengers.length).forEach(() => unloadUnit(unit))
+	Util.range(unit.passengers.length).forEach(() => unloadUnit(unit, tile || unit.tile))
 }
 
 const disband = unit => {

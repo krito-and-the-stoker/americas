@@ -94,7 +94,7 @@ const initialize = ai => {
 					.map(coords => MapEntity.tile(coords))
 					.filter(Util.unique)
 					.filter(tile => tile.domain === 'land')
-					.filter(tile => settlements.map(settlement => MapEntity.tile(settlement.mapCoordinates).area).includes(tile.area))
+					.filter(tile => settlements.map(settlement => MapEntity.tile(settlement.mapCoordinates).area.foot).includes(tile.area.foot))
 				// for all tiles near settlements:
 				return tiles.map(tile => [
 					// greet unknowns

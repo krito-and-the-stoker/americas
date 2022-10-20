@@ -73,10 +73,10 @@ const create = (unit, coords) => {
 
 		if (decision === 2) {
 			Events.trigger('disembark')
-			landingUnit = Unit.unloadUnit(unit)
-			Commander.scheduleInstead(landingUnit.commander, Move.create({ unit: landingUnit, coords }))
-			unloadingStartedAt = currentTime
-			return true
+			landingUnit = Unit.unloadUnit(unit, Tile.closest(coords))
+			// Commander.scheduleInstead(landingUnit.commander, Move.create({ unit: landingUnit, coords }))
+			// unloadingStartedAt = currentTime
+			return false
 		}
 	}
 

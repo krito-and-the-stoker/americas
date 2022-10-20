@@ -79,7 +79,8 @@ const create = unit => {
 		const speed = Unit.speed(unit)
 		const progress = deltaTime * speed / (movementCost * Time.MOVE_BASE_TIME)
 		if (isNaN(movementCost)) {
-			console.warn('movementcost is nan, hell will break lose!', unit, fromCoords, target)
+			console.warn('movementcost is NaN. This is an error, unit disbanded.', unit, fromCoords, target)
+			Unit.disband(unit)
 		}
 
 		// move

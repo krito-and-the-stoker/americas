@@ -26,7 +26,7 @@ const update = (trade, pack) => Storage.update(trade, pack)
 const goods = trade => Storage.goods(trade)
 
 
-const TRADE_ROUTE_DISTANCE_CAP = 10
+const TRADE_ROUTE_DISTANCE_CAP = 10 // transport at most at a distance of 10 per speed
 const TRADE_ROUTE_MIN_GOODS = 10 // transport at least that many goods
 const BUY_GOODS_RELATIVE_BUDGET = 0.3 // do not spend more than 30% of the current treasure for automatic trade
 
@@ -109,7 +109,7 @@ const match = transport => {
 	}
 
 	// colonies in area
-	const colonies = Record.getAll('colony').filter(colony => Colony.area(colony, transport.domain) === Unit.area(transport)).concat([europe])
+	const colonies = Record.getAll('colony').filter(colony => Tile.area(Colony.tile(colony), transport.properties.travelType) === Unit.area(transport)).concat([europe])
 	const capacity = transport.properties.cargo
 	const routes = Util.pairs(colonies, colonies)
 		.filter(pair => pair.one !== pair.other)
@@ -154,8 +154,7 @@ const match = transport => {
 				priority: distance / Math.pow(importance, Math.sqrt(transport.properties.speed))
 			}
 		})
-		// distance cap: 20 weeks of travel per every 20 goods transported (example: transport 100 goods, maximum travel is 100 weeks ie 2 years)
-		.filter(route => route.distance < Math.max(1.0, 0.05 * route.amount) * TRADE_ROUTE_DISTANCE_CAP * transport.properties.speed)
+		.filter(route => route.distance < TRADE_ROUTE_DISTANCE_CAP * transport.properties.speed)
 		.filter(route => route.amount >= TRADE_ROUTE_MIN_GOODS)
 
 	if (routes.length === 0) {

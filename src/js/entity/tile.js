@@ -340,13 +340,16 @@ const movementCost = (fromCoords, toCoords, unit) => {
 	const from = MapEntity.tile(fromRoundCoords)
 	const to = MapEntity.tile(toCoords)
 	const costTable = MovementCosts[unit.properties.travelType]
+	if (!costTable) {
+		console.warn(`No Movmentcosts for travelType ${unit.properties.travelType}`)
+	}
 
 	if (!from || !to) {
 		console.warn('movementcost not defined', from, to)
 		return distance
 	}
 
-	if (to.domain === 'land' && from.domain === 'land' && to.river && from.river && isNextTo(from, to) && costTable.river) {
+	if (to.river && from.river && isNextTo(from, to) && costTable.river) {
 		return distance * costTable.river
 	}
 	if (from.road && to.road && costTable.road) {
@@ -371,8 +374,8 @@ const movementCost = (fromCoords, toCoords, unit) => {
 		return distance * costTable[to.terrainName]
 	}
 
-	Message.warn(`No valid movement cost found for ${unit.properties.travelType} to ${to.terrainName}`)
-	return distance * 100
+	// Message.warn(`No valid movement cost found for ${unit.properties.travelType} to ${to.terrainName}`)
+	return Infinity
 }
 
 const isPossibleStartLocation = tile => tile.name === 'sea lane'
@@ -502,6 +505,17 @@ const supportingColony = tile => {
 	}
 
 	return PathFinder.findNearColony(supplyUnit, supplyUnit.properties.range)
+}
+
+const area = (tile, travelType) => {
+	if (tile.colony && MovementCosts[travelType].harbour) {
+		const newTile = Tile.diagonalNeighbors(tile).find(neighbor => neighbor.domain !== 'land')
+		if (newTile) {
+			return Tile.area(newTile, travelType)
+		}
+	}
+
+	return tile.area[travelType]
 }
 
 const closest = coords => MapEntity.tile({ x: Math.round(coords.x), y: Math.round(coords.y) })
@@ -648,6 +662,7 @@ export default {
 	add,
 	closest,
 	get,
+	area,
 	serializableCopy,
 	displayName,
 	supportingColony,

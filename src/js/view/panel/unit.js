@@ -56,7 +56,7 @@ const handleGoTo = unit => {
 		})
 	} else {
 		const colonies = Record.getAll('colony')
-			.filter(colony => Colony.area(colony, 'land') === Unit.area(unit))
+			.filter(colony => Tile.area(Colony.tile(colony), unit.properties.travelType) === Unit.area(unit))
 		Dialog.create({
 			type: 'scout',
 			text: 'Where shall we go?<options/>',
