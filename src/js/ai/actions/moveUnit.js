@@ -9,17 +9,12 @@ import TriggerEvent from 'command/triggerEvent'
 import Plan from 'ai/plan'
 import AssignUnit from 'ai/actions/assignUnit'
 import CreateUnit from 'ai/actions/createUnit'
+import GetUnit from 'ai/actions/getUnit'
 
 
 const create = ({ owner, unit, coords }) => {
 	if (owner && !unit) {
-		const prev = Plan.cheapest([
-			AssignUnit.create({ owner, coords }),
-			CreateUnit.create({ owner, coords })
-		].filter(a => !!a).map(action => {
-			action.cost += Util.distance(coords, action.coords)
-			return action
-		}))
+		const prev = GetUnit.create({ owner, coords })
 
 		let cancel = [prev?.cancel]
 

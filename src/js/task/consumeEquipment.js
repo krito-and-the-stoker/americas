@@ -7,7 +7,7 @@ import Unit from 'entity/unit'
 
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
-const MOVEMENT_EQUIPMENT_FACTOR = 0.01
+const MOVEMENT_EQUIPMENT_FACTOR = 0.005
 
 const create = unit => {
 	const isColonistInColony = () => unit.colonist && unit.colonist.colony
