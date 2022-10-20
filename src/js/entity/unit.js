@@ -362,24 +362,14 @@ const speed = unit => {
 
 	const equipment = TRAVEL_EQUIPMENT[unit.properties.travelType]
 	if (equipment) {
-		// const minimalRelation = Util.min(
-		// 	Storage.goods(unit.equipment),
-		// 	pack => (unit.properties.equipment[pack.good] > 0
-		// 		? unit.equipment[pack.good] / unit.properties.equipment[pack.good]
-		// 		: 1)
-		// )
+		const minimalRelation = Math.min(
+			...Storage.goods(unit.equipment).map(pack =>
+				(unit.properties.equipment[pack.good] > 0
+					? unit.equipment[pack.good] / unit.properties.equipment[pack.good]
+					: 1))
+		)
 
-		// result *= minimalRelation
-
-		const necessary = Storage.total(unit.properties.equipment)
-		if (necessary > 0) {
-			const current = Util.sum(Storage.goods(unit.equipment)
-				.filter(({ good }) => equipment.includes(good))
-				.map(pack => pack.amount))
-
-			result *= current / necessary
-		}
-
+		result *= minimalRelation
 	}
 
 	return result
