@@ -39,7 +39,7 @@ const FOOD_COST = 2
 const PASSENGER_WEIGHT = 50
 const TERRAFORM_TOOLS_CONSUMPTION = 10
 const PIONEER_MAX_TOOLS = 5 * TERRAFORM_TOOLS_CONSUMPTION
-
+const MINIMAL_EQUPIMENT = 0.1
 
 const RADIUS_GROWTH = 1.0 / (2* Time.WEEK)
 const create = (name, coords, owner) => {
@@ -155,12 +155,11 @@ const initialize = unit => {
 		listen.properties(unit, properties =>
 			Storage.listen(unit.equipment, equipment => {
 				if (properties.demote) {
-					const demoteUnitTo = Object.entries(properties.demote)
-						.find(([name, packs]) => Object.entries(packs)
-							.some(([good, amount]) => equipment[good] < amount))
+					const shouldDemote = Object.entries(properties.equipment)
+						.some(([good, amount]) => equipment[good] < MINIMAL_EQUPIMENT * amount)
 
-					if (demoteUnitTo) {
-						updateType(unit, demoteUnitTo[0])
+					if (shouldDemote) {
+						updateType(unit, properties.demote)
 					}
 				}
 			})),
@@ -168,13 +167,13 @@ const initialize = unit => {
 		// gain status
 		listen.properties(unit, properties =>
 			Storage.listen(unit.equipment, equipment => {
-				if (unit.properties.promote) {			
-					const promoteUnitTo = Object.entries(unit.properties.promote)
-						.find(([name, packs]) => Object.entries(packs)
-							.every(([good, amount]) => equipment[good] >= amount))
+				if (unit.properties.promote) {
+					const promoteUnitTo = unit.properties.promote
+						.find(name => Object.entries(Units[name].equipment || {})
+							.every(([good, amount]) => equipment[good] >= MINIMAL_EQUPIMENT * amount))
 
 					if (promoteUnitTo) {
-						updateType(unit, promoteUnitTo[0])
+						updateType(unit, promoteUnitTo)
 					}
 				}
 			})),
