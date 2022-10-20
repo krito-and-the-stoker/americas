@@ -210,7 +210,7 @@
 		"cargo": 300,
 		"domain": "land",
 		"travelType": "wagon",
-		"speed": 2,
+		"speed": 0.75,
 		"radius": 0.5,
 		"construction": {
 			"buildings": {
