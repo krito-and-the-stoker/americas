@@ -9,7 +9,7 @@ const create = ({ owner, coords }) => {
 		Units.assign(unit)
 
 		return {
-			commit: () => {
+			commit: async () => {
 				return unit
 			},
 			dismiss: () => Units.unassign(unit),

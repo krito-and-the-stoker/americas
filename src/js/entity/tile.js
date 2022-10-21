@@ -333,6 +333,11 @@ const down = tile => MapEntity.tile({
 const isNextTo = (tile, other) => neighbors(tile).includes(other)
 
 const tileMovementCost = (tile, travelType) => {
+	if (!tile) {
+		console.warn(`Tile is null`)
+		return Infinity
+	}
+
 	const costTable = MovementCosts[travelType]
 	if (!costTable) {
 		console.warn(`No Movmentcosts for travelType ${travelType}`)

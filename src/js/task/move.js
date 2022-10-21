@@ -139,4 +139,4 @@ const create = unit => {
 	}
 }
 
-export default { create }
+export default { create, moveUnit }

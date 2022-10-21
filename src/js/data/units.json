@@ -498,7 +498,7 @@
 		"domain": "land",
 		"travelType": "nativeFoot",
 		"speed": 2,
-		"combat": 1.5,
+		"combat": 1,
 		"radius": 1.5,
 		"canExplore": true,
 		"canAttack": true
@@ -537,7 +537,7 @@
 		"domain": "land",
 		"travelType": "nativeHorse",
 		"speed": 5,
-		"combat": 2.5,
+		"combat": 2,
 		"equipment": {
 			"horses": 20
 		},
@@ -556,7 +556,7 @@
 		"domain": "land",
 		"travelType": "nativeHorse",
 		"speed": 5,
-		"combat": 3.5,
+		"combat": 3,
 		"equipment": {
 			"guns": 20,
 			"horses": 20

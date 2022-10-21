@@ -100,7 +100,12 @@ const create = (name, coords, owner) => {
 
 const goTo = (unit, target) => {
 	if (!target) {
-		Message.warn('goto without target is not allowed', target)
+		Message.log('Turned off movement by target')
+		unit.movement = {
+			target: null,
+			path: []
+		}
+
 		return
 	}
 
@@ -282,7 +287,7 @@ const capacity = unit =>
 	unit.properties.cargo - (Storage.total(unit.storage) + unit.passengers.length * PASSENGER_WEIGHT)
 
 const area = unit => {
-	let tile = unit.movement.target
+	let tile = unit.movement.target || unit.tile || Tile.closest(unit.mapCoordinates)
 	if (tile.domain === unit.domain) {
 		return Tile.area(tile, unit.properties.travelType)
 	}
