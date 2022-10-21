@@ -332,6 +332,61 @@ const down = tile => MapEntity.tile({
 
 const isNextTo = (tile, other) => neighbors(tile).includes(other)
 
+const tileMovementCost = (tile, travelType) => {
+	const costTable = MovementCosts[travelType]
+	if (!costTable) {
+		console.warn(`No Movmentcosts for travelType ${travelType}`)
+		return Infinity
+	}
+
+	if (tile.river && costTable.river) {
+		return costTable.river
+	}
+	if (tile.road && costTable.road) {
+		return costTable.road
+	}
+	if (tile.colony) {
+		if (tile.domain === 'sea' && costTable.harbour) {
+			return costTable.harbour
+		} 
+		if (tile.domain === 'land' && costTable.colony) {
+			return costTable.colony
+		}
+	}
+	if (tile.domain === 'sea' && costTable.ocean) {
+		return costTable.ocean
+	}
+
+	if (costTable[tile.terrainName]) {
+		return costTable[tile.terrainName]
+	}
+
+	// Message.warn(`No valid movement cost found for ${unit.properties.travelType} to ${to.terrainName}`)
+	return Infinity	
+}
+
+const unitMovementCost = unit => {
+	const tiles = [{ x: 0, y: 0}, { x: 0, y: 1}, { x: 1, y: 0}, { x: 1, y: 1 }]
+		.map(offset => LA.piecewise(LA.add(unit.mapCoordinates, offset), Math.floor))
+		.map(coords => ({
+			weight: (1 - Math.abs(coords.x - unit.mapCoordinates.x)) * (1 - Math.abs(coords.y - unit.mapCoordinates.y)),
+			cost: tileMovementCost(MapEntity.tile(coords), unit.properties.travelType)
+		})).filter(({ cost }) => cost < Infinity)
+
+	return Util.sum(tiles.map(tile => tile.weight * tile.cost))
+		/ Util.sum(tiles.map(tile => tile.weight))
+
+	// 	.filter(coords => Tile.area(MapEntity.tile(coords), unit.properties.travelType) === Unit.area(unit))
+
+	// const result = Util.sum(tiles.map(coords => (1 - Math.abs(coords.x - unit.mapCoordinates.x))
+	// 	* (1 - Math.abs(coords.y - unit.mapCoordinates.y))
+	// 	* tileMovementCost(MapEntity.tile(coords), unit.properties.travelType)))
+
+	// console.log(unit, tiles, result)
+
+	// return result
+}
+
 const movementCost = (fromCoords, toCoords, unit) => {
 	const direction = LA.subtract(toCoords, fromCoords)
 	const distance = LA.distanceManhatten(fromCoords, toCoords)
@@ -646,6 +701,7 @@ export default {
 	diagonalNeighbors,
 	radius,
 	movementCost,
+	unitMovementCost,
 	save,
 	load,
 	neighborString,
