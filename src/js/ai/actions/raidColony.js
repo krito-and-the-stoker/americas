@@ -42,7 +42,7 @@ const create = ({ tribe, state, colony }) => {
 			commit: () => {
 				const findTarget = unit => {
 					const targets = findTargets(relations)
-					const weight = target => target.attractivity
+					const weight = (target) => target.attractivity / Math.pow(0.01 + LA.distance(unit.mapCoordinates, target.mapCoordinates), 2)
 
 					return LA.multiply(
 						1.0 / Util.sum(targets.map(weight)),
@@ -72,20 +72,26 @@ const create = ({ tribe, state, colony }) => {
 							// if unit gets too scared it just retreats
 							Events.listen('retreat', params => {
 								if (params.unit === unit) {
-									console.log('retreat!', params.unit)
 									isRaiderActive = false
 								}
 							})
 						]
 
-						Unit.goTo(unit, null)
+						
 						
 						Time.schedule({
 							// control unit
 							update: (_, deltaTime) => {
-								const coords = findTarget(unit)
-								const direction = LA.subtract(coords, unit.mapCoordinates)
-								if (LA.distanceManhatten(direction) > 0) {
+								const targetCoords = findTarget(unit)
+								const direction = LA.subtract(targetCoords, unit.mapCoordinates)
+								const distance = LA.distanceManhatten(direction)
+								if (distance > 1) {
+									const targetTile = Tile.closest(targetCoords)
+									if (unit.movement.target !== targetTile) {
+										Unit.goTo(unit, targetTile)
+									}
+								} else if (LA.distanceManhatten(direction) > 0) {
+									Unit.goTo(unit, null)
 									Move.moveUnit(unit, direction, deltaTime)
 								}
 
@@ -94,6 +100,7 @@ const create = ({ tribe, state, colony }) => {
 
 							// release unit control
 							finished: () => {
+								console.log('raid done', unit)
 								state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned -= 1
 								if (state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned < 0) {
 									state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = 0

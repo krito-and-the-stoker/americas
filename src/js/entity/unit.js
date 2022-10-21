@@ -100,7 +100,6 @@ const create = (name, coords, owner) => {
 
 const goTo = (unit, target) => {
 	if (!target) {
-		Message.log('Turned off movement by target')
 		unit.movement = {
 			target: null,
 			path: []
@@ -340,7 +339,7 @@ const strength = unit => {
 
 	const equipment = unit.properties.equipment && Storage.total(unit.properties.equipment)
 	if (result > 1 && equipment > 0 && unit.name !== 'pioneer') {
-		result = 1 + (result - 1) * ((Storage.total(unit.equipment) - unit.equipment.food) / equipment)
+		result = 1 + (result - 1) * Util.clamp((Storage.total(unit.equipment) - unit.equipment.food) / equipment)
 	}
 
 	return result
