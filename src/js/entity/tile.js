@@ -707,6 +707,7 @@ export default {
 	radius,
 	movementCost,
 	unitMovementCost,
+	tileMovementCost,
 	save,
 	load,
 	neighborString,

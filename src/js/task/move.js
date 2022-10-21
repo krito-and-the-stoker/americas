@@ -61,12 +61,12 @@ const moveUnit = (unit, direction, deltaTime) => {
 	const progress = deltaTime * speed / (movementCost * Time.MOVE_BASE_TIME)
 	const usedProgress = Math.min(LA.distanceManhatten(direction), progress)
 	if (isNaN(movementCost)) {
-		console.warn('movementcost is NaN. This is an error, unit disbanded.', unit)
-		Unit.disband(unit)
+		console.warn('movementcost is NaN. This is an error and must be investigated.', unit)
+		Unit.update.mapCoordinates(unit, LA.madd(unit.mapCoordinates, deltaTime * speed / Time.MOVE_BASE_TIME, normDirection))
+	} else {
+		// move
+		Unit.update.mapCoordinates(unit, LA.madd(unit.mapCoordinates, usedProgress, normDirection))
 	}
-
-	// move
-	Unit.update.mapCoordinates(unit, LA.madd(unit.mapCoordinates, usedProgress, normDirection))
 
 	// leave tile / colony
 	if (unit.tile && unit.tile.mapCoordinates !== unit.mapCoordinates) {

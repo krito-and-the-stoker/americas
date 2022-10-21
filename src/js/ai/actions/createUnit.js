@@ -4,7 +4,8 @@ import Wait from 'task/wait'
 
 import Settlements from 'ai/resources/settlements'
 
-
+// const CREATE_UNIT_TIME = 3 * Time.Month
+const CREATE_UNIT_TIME = 0
 const create = ({ owner, coords }) => {
 	const settlement = Settlements.cheapest(owner, coords)
 	let canceled = false
@@ -13,7 +14,7 @@ const create = ({ owner, coords }) => {
 		cost: Settlements.reserve(settlement),
 		coords: settlement.mapCoordinates,
 		commit: () => new Promise(resolve => {
-			Time.schedule(Wait.create(Math.random() * 3 * Time.MONTH, () => {
+			Time.schedule(Wait.create(Math.random() * CREATE_UNIT_TIME, () => {
 				if (!canceled) {
 					resolve(commit(settlement))
 				} else {
