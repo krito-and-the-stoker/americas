@@ -62,7 +62,7 @@ const moveUnit = (unit, direction, deltaTime) => {
 	const usedProgress = Math.min(LA.distanceManhatten(direction), progress)
 	if (isNaN(movementCost)) {
 		console.warn('movementcost is NaN. This is an error, unit disbanded.', unit)
-		// Unit.disband(unit)
+		Unit.disband(unit)
 	}
 
 	// move
