@@ -9,13 +9,6 @@ import Colony from 'entity/colony'
 const relativeRaidAmont = () => 0.25 + 0.6 * Math.random()
 
 export default (colony, raider) => {
-	// TODO: find a more reasonable solution
-	// if (Util.sum(Storage.goods(raider.equipment)
-	// 	.filter(pack => pack.good !== 'guns' && pack.good !== 'horses')
-	// 	.map(pack => pack.amount)) > 0) {
-	// 	return false
-	// }
-
 	if (!Util.inRaidDistance(raider, colony)) {
 		return false
 	}

@@ -360,7 +360,7 @@ const speed = unit => {
 	}
 
 	const equipment = TRAVEL_EQUIPMENT[unit.properties.travelType]
-	if (equipment) {
+	if (equipment && unit.properties.equipment) {
 		const minimalRelation = Math.min(
 			...Storage.goods(unit.equipment).map(pack =>
 				(unit.properties.equipment[pack.good] > 0

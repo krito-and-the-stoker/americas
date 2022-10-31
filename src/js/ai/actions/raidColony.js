@@ -22,15 +22,22 @@ const isColonistInColony = unit => unit.colonist && unit.colonist.colony
 const raiderTargets = relations => State.all(relations, 'colonies')
 	.map(colony => ({
 		mapCoordinates: colony.mapCoordinates,
-		attractivity: 10.0 * colony.colonists.length
-	}))
+		attractivity: 2.0 * colony.colonists.length
+	})).concat(Record.getAll('unit').filter(unit => !unit.owner.ai
+		&& !unit.colony
+		&& unit.domain === 'land'
+		&& !unit.combat
+		&& !unit.canAttack).map(unit => ({
+			mapCoordinates: unit.mapCoordinates,
+			attractivity: 1.0 + 0.01 * (unit.properties.cargo || 0)
+		})))
 
 const raiderThreads = () => Record.getAll('unit')
 	.filter(unit => !unit.owner.ai
 		&& !isColonistInColony(unit)
 		&& !unit.offTheMap
 		&& unit.domain === 'land'
-		&& Unit.strength(unit) >= 1)
+		&& unit.properties.canAttack)
 	.map(unit => ({
 		mapCoordinates: unit.mapCoordinates,
 		attractivity: Unit.strength(unit),
@@ -86,6 +93,15 @@ const createRaiderMap = (raiders, targets, threads) => {
 	return map
 }
 
+const raiderFriends = raider => Record.getAll('unit')
+	.filter(unit => raider !== unit
+		&& !!unit.owner.ai
+		&& LA.distance(raider.mapCoordinates, unit.mapCoordinates) < 2)
+	.map(unit => ({
+		mapCoordinates: unit.mapCoordinates,
+		attractivity: 1
+	}))
+
 const findTiles = raider => Tile.diagonalNeighbors(Tile.closest(raider.mapCoordinates)).map(tile => ({
 		mapCoordinates: tile.mapCoordinates,
 		canPass: Tile.area(tile, raider.properties.travelType) === Unit.area(raider)
@@ -106,7 +122,6 @@ const interpolateTargets = (targets, weight) => {
 
 const create = ({ tribe, state, colony }) => {
 	const relations = state.relations[colony.owner.referenceId]
-	Message.log('starting raid on', colony.name, state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned)
 	const unitPlans = Util.range(state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned)
 		.map(() => GetUnit.create({ owner: tribe.owner, coords: colony.mapCoordinates })).filter(a => !!a)
 
@@ -123,17 +138,21 @@ const create = ({ tribe, state, colony }) => {
 				let targetTable
 
 				Time.schedule({
+					init: () => {
+						Message.log('starting raid on', colony.name, state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned)
+						return true
+					},
 					update: (_, deltaTime) => {
 						const targets = raiderTargets(relations)
 						const threads = raiderThreads()
 						createRaiderMap(raiders, targets, threads).forEach(({ raider, targets, threads }) => {
 							const targetCoords = interpolateTargets(
 								targets,
-								target => target.attractivity // Math.pow(0.01 + LA.distance(raider.mapCoordinates, target.mapCoordinates), 2)
+								target => target.attractivity
 							)
 							const threadCoords = interpolateTargets(
 								threads,
-								thread => thread.attractivity // Math.max(0, thread.radius - LA.distance(raider.mapCoordinates, thread.mapCoordinates))
+								thread => thread.attractivity
 							)
 
 							const tiles = findTiles(raider)
@@ -142,6 +161,12 @@ const create = ({ tribe, state, colony }) => {
 								tile => !tile.canPass && LA.distance(raider.mapCoordinates, tile.mapCoordinates) < 1
 									? 1
 									: 0
+							)
+
+							const friends = raiderFriends(raider)
+							const friendsCoords = interpolateTargets(
+								friends,
+								friend => friend.attractivity
 							)
 
 							const targetDirection = targetCoords
@@ -153,14 +178,22 @@ const create = ({ tribe, state, colony }) => {
 							const terrainDirection = terrainCoords
 								&& LA.subtract(terrainCoords, raider.mapCoordinates)
 								|| LA.vector()
+							const friendsDirection = friendsCoords
+								&& LA.subtract(friendsCoords, raider.mapCoordinates)
+								|| LA.vector()
 
-							const direction = LA.subtract(LA.madd(
-								LA.normalize(targetDirection),
-								-1.0,
-								threadDirection
-							), terrainDirection)
+							const direction = LA.vectorProduct([
+								1,
+								-1,
+								-1,
+								-0.3
+							], LA.normalize(targetDirection),
+							threadDirection,
+							terrainDirection,
+							friendsDirection)
+
 							const distance = LA.distance(direction)
-							if (!threadCoords) {
+							if (!threadCoords && !friendsCoords) {
 								const targetTile = Tile.closest(targetCoords)
 								if (raider.movement.target !== targetTile) {
 									Unit.goTo(raider, targetTile)
@@ -173,6 +206,9 @@ const create = ({ tribe, state, colony }) => {
 
 						return state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned > 0
 					},
+					finished: () => {
+						Message.log('Raid is over', colony.name, state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned)
+					},
 					priority: true
 				})
 
@@ -180,7 +216,7 @@ const create = ({ tribe, state, colony }) => {
 					plan.commit().then(unit => {
 						let unsubscribe
 						const cleanup = () => {
-							console.log('raid done', unit)
+							console.log('going home', unit)
 							state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned -= 1
 							if (state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned < 0) {
 								state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = 0

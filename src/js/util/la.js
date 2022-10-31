@@ -1,3 +1,5 @@
+import Util from 'util/util'
+
 const add = (v, w) => ({
 	x: v.x + w.x,
 	y: v.y + w.y
@@ -96,6 +98,11 @@ const intersect = (line1, line2) => {
 		(product(line1.point1, normal2) - offset2) * (product(line1.point2, normal2) - offset2) < 0
 }
 
+const vectorProduct = (v, ...args) => ({
+	x: Util.sum(v.map((a, i) => a * args[i].x)),
+	y: Util.sum(v.map((a, i) => a * args[i].y))
+})
+
 export default {
 	add,
 	madd,
@@ -115,6 +122,7 @@ export default {
 	piecewise,
 	round,
 	random,
+	vectorProduct,
 	min,
 	max,
 	intersect,
