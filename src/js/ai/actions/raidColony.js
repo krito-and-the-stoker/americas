@@ -165,12 +165,12 @@ const create = ({ tribe, state, colony }) => {
 								threadDirection
 							), terrainDirection)
 							const distance = LA.distance(direction)
-							if (distance > 3) {
+							if (!threadCoords) {
 								const targetTile = Tile.closest(targetCoords)
 								if (raider.movement.target !== targetTile) {
 									Unit.goTo(raider, targetTile)
 								}
-							} else if (LA.distance(direction) > 0.1) {
+							} else if (LA.distance(direction) > 0.05) {
 								Unit.goTo(raider, null)
 								Move.moveUnit(raider, LA.normalize(direction), deltaTime)
 							}
