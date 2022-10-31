@@ -128,7 +128,7 @@ const initialize = ai => {
 
 							return () => {
 								delete ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId]
-							} 
+							}
 						}
 					}),
 
@@ -273,10 +273,10 @@ const makePlansAndRunThem = ai => {
 					const colonies = State.all(relation, 'colonies')
 					const colonists = Util.sum(colonies.map(colony => colony.colonists.length))
 
-					let raiders = 8
+					let raiders = 3
 
-					relation.militancy = 0.0
-					relation.trust *= 0.5
+					// relation.militancy = 0.0
+					// relation.trust *= 0.5
 
 					while(raiders > 0) {
 						const colony = Util.choose(colonies)

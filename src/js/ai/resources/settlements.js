@@ -19,7 +19,7 @@ const cost = settlement => {
 	const population = settlement.population - reserved(settlement)
 	// const deltaYear = Util.clamp((Time.get().currentTime - (lastReserved[settlement.referenceId] || 0)) / Time.YEAR)
 
-	return Util.clamp(10 - population, 1, 10)
+	return Util.clamp(100/(population+1), 1, 1)
 }
 
 const unreserve = settlement => {
@@ -37,7 +37,7 @@ const cheapest = (owner, coords) => {
 
 const recruit = settlement => {
 	const unit = Units.create('native', settlement)
-	settlement.population -= 1
+	// settlement.population -= 1
 	if (settlement.tribe.storage.guns >= 20) {
 		Storage.transfer(settlement.tribe.storage, unit.equipment, { good: 'guns', amount: 20 })
 	}

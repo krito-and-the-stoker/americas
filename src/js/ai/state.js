@@ -13,7 +13,14 @@ const satisfies = (state, goal) => goal.key
 const dereference = referenceId => Record.dereference({ referenceId: Number(referenceId) })
 
 const all = (state, key) => Object.keys(state[key])
-	.map(referenceId => dereference(referenceId))
+	.map(referenceId => {
+		if (!dereference(referenceId)) {
+			delete state[key][referenceId]
+		}
+
+		return dereference(referenceId)
+	})
+	.filter(x => !!x)
 const free = (state, key) => Object.entries(state[key])
 	.filter(([, entity]) => entity.goal === 'none')
 	.map(([referenceId]) => dereference(referenceId))

@@ -35,7 +35,7 @@ const create = colony => {
 	container.addChild(leaveColonyZone)
 
 	const unsubscribeDragTarget = Drag.makeDragTarget(leaveColonyZone, ({ colonist, passenger }) => {
-		if (colonist && colonist.colony && colonist.colony.colonists.length > 1) {
+		if (colonist && colonist.colony) {
 			return 'Leave colony'
 		}
 		if (passenger) {

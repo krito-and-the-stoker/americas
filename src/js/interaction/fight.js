@@ -9,7 +9,7 @@ import Storage from 'entity/storage'
 const RADIUS_FIGHT_COST = 0.995
 const RADIUS_HIT_FRACTION = 0.01
 const EQUIPMENT_LOSS_FACTOR = 0.9975
-const DISPLACEMENT_FACTOR = 0.0175
+const DISPLACEMENT_FACTOR = 0.0125
 
 export default (attacker, other) => {
 	if (!Util.inBattleDistance(attacker, other)) {
@@ -51,7 +51,7 @@ export default (attacker, other) => {
 		// push if not in colony
 		if (!loser.colony) {
 			const pushDirection = LA.normalize(LA.subtract(loser.mapCoordinates, winner.mapCoordinates))
-			const newPlace = LA.madd(loser.mapCoordinates, DISPLACEMENT_FACTOR, pushDirection)
+			const newPlace = LA.madd(loser.mapCoordinates, Unit.speed(loser) * DISPLACEMENT_FACTOR, pushDirection)
 			Unit.update.mapCoordinates(loser, newPlace)
 		}
 

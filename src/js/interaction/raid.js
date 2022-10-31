@@ -58,7 +58,7 @@ export default (colony, raider) => {
 	const fortificationLevel = colony.buildings.fortifications?.level || 0
 	const pack = Util.choose(Storage.goods(colony.storage).filter(p => p.amount >= 5))
 	if (pack) {	
-		pack.amount = Util.clamp(relativeRaidAmont() * pack.amount, 5, (4 - fortificationLevel) * 100)
+		pack.amount = Util.clamp(relativeRaidAmont() * pack.amount * (4 - fortificationLevel) / 4, 5, 100)
 		Storage.transfer(colony.storage, raider.equipment, pack)
 		Events.trigger('notification', { type: 'raid', colony, unit: raider, pack })
 	}
