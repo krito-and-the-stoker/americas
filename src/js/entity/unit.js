@@ -368,7 +368,7 @@ const speed = unit => {
 					: 1))
 		)
 
-		result *= minimalRelation
+		result *= Math.max(minimalRelation, 0)
 	}
 
 	return result

@@ -27,7 +27,7 @@ const findTargets = relations => State.all(relations, 'colonies')
 
 const findThreads = raider => Record.getAll('unit').filter(unit => !unit.owner.ai && !isColonistInColony(unit)).map(unit => ({
 		mapCoordinates: unit.mapCoordinates,
-		radius: 2.0 * unit.radius
+		radius: 3.0 * unit.radius
 	}))
 
 const findTiles = raider => Tile.diagonalNeighbors(Tile.closest(raider.mapCoordinates)).map(tile => ({
@@ -137,7 +137,7 @@ const create = ({ tribe, state, colony }) => {
 								const terrainCoords = findTerrain(unit)
 								const terrainDirection = LA.subtract(terrainCoords, unit.mapCoordinates)
 								const direction = LA.subtract(LA.madd(
-									LA.multiply(0.5 + 1.0 * aggression, LA.normalize(targetDirection)),
+									LA.normalize(targetDirection),
 									-1.0,
 									threadDirection
 								), terrainDirection)
