@@ -273,7 +273,7 @@ const makePlansAndRunThem = ai => {
 					const colonies = State.all(relation, 'colonies')
 					const colonists = Util.sum(colonies.map(colony => colony.colonists.length))
 
-					let raiders = 8
+					let raiders = 6
 
 					// relation.militancy = 0.0
 					// relation.trust *= 0.5

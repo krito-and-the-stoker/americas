@@ -84,11 +84,6 @@ const createRaiderMap = (raiders, targets, threads) => {
 	window.raiders = raiders
 
 	return map
-	// return raiders.map(raider => ({
-	// 	raider,
-	// 	targets: [Util.min(targets, target => LA.distance(raider.mapCoordinates, target.mapCoordinates))],
-	// 	threads: threads.filter(thread => LA.distance(thread.mapCoordinates, raider.mapCoordinates) <= 1.1 * thread.radius)
-	// }))
 }
 
 const findTiles = raider => Tile.diagonalNeighbors(Tile.closest(raider.mapCoordinates)).map(tile => ({
@@ -192,10 +187,9 @@ const create = ({ tribe, state, colony }) => {
 							}
 
 							raiders = raiders.filter(r => r !== unit)
+							Units.unassign(unit)
 
 							if (!unit.disbanded) {
-								Units.unassign(unit)
-		
 								const disbandAction = Disband.create(unit)
 								cancelDisband.push(disbandAction.commit())						
 							}
@@ -216,6 +210,7 @@ const create = ({ tribe, state, colony }) => {
 							Events.listen('meet', params => {
 								if (params.colony === colony && params.unit === unit) {
 									if(Raid(colony, params.unit)) {
+										console.log('raided', colony)
 										cleanup()
 									}
 								}
@@ -224,6 +219,14 @@ const create = ({ tribe, state, colony }) => {
 							// if unit gets too scared it just retreats
 							Events.listen('retreat', params => {
 								if (params.unit === unit) {
+									console.log('retreating', unit)
+									cleanup()
+								}
+							}),
+
+							Events.listen('combat', params => {
+								if (params.loser === unit) {
+									console.log('defeated', unit)
 									cleanup()
 								}
 							})
