@@ -344,7 +344,7 @@ const tileMovementCost = (tile, travelType) => {
 		return Infinity
 	}
 
-	if (tile.river && costTable.river) {
+	if (tile.domain === 'land' && tile.river && costTable.river) {
 		return costTable.river
 	}
 	if (tile.road && costTable.road) {
@@ -380,18 +380,9 @@ const unitMovementCost = unit => {
 
 	return Util.sum(tiles.map(tile => tile.weight * tile.cost))
 		/ Util.sum(tiles.map(tile => tile.weight))
-
-	// 	.filter(coords => Tile.area(MapEntity.tile(coords), unit.properties.travelType) === Unit.area(unit))
-
-	// const result = Util.sum(tiles.map(coords => (1 - Math.abs(coords.x - unit.mapCoordinates.x))
-	// 	* (1 - Math.abs(coords.y - unit.mapCoordinates.y))
-	// 	* tileMovementCost(MapEntity.tile(coords), unit.properties.travelType)))
-
-	// console.log(unit, tiles, result)
-
-	// return result
 }
 
+// TODO: this function is deprecated
 const movementCost = (fromCoords, toCoords, unit) => {
 	const direction = LA.subtract(toCoords, fromCoords)
 	const distance = LA.distanceManhatten(fromCoords, toCoords)

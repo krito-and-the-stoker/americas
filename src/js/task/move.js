@@ -1,10 +1,12 @@
 import LA from 'util/la'
+import Message from 'util/message'
 import PathFinder from 'util/pathFinder'
 
 import Time from 'timeline/time'
 
 import Tile from 'entity/tile'
 import Unit from 'entity/unit'
+import MapEntity from 'entity/map'
 
 import EnterColony from 'interaction/enterColony'
 import LeaveColony from 'interaction/leaveColony'
@@ -79,11 +81,33 @@ const moveUnit = (unit, direction, deltaTime) => {
 	return progress - usedProgress
 }
 
+const sanitizeUnitPosition = (unit, deltaTime) => {
+	if (MapEntity.tile(unit.mapCoordinates)) {
+		return
+	}
+
+	const allBadCoords = [{ x: 0, y: 0}, { x: 0, y: 1}, { x: 1, y: 0}, { x: 1, y: 1 }]
+		.map(offset => LA.piecewise(LA.add(unit.mapCoordinates, offset), Math.floor))
+		.filter(coords => Tile.tileMovementCost(MapEntity.tile(coords), unit.properties.travelType) === Infinity)
+
+	if (allBadCoords.length === 4) {
+		Message.warn('Unit is stuck and therefor removed', unit)
+		Unit.disband(unit)
+	}
+
+	allBadCoords.forEach(badCoords => {
+		const displacement = LA.subtract(badCoords, unit.mapCoordinates)
+		Unit.update.mapCoordinates(unit, LA.madd(unit.mapCoordinates, -deltaTime / Time.MOVE_BASE_TIME, displacement))
+	})
+}
+
 const create = unit => {
 	const update = (_, deltaTime) => {
 		if (unit.vehicle || unit.offTheMap) {
 			return true
 		}
+
+		sanitizeUnitPosition(unit, deltaTime)
 
 		let target = getNextTarget(unit)
 		if (!target) {

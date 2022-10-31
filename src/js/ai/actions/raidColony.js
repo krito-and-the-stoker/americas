@@ -53,19 +53,15 @@ const createRaiderMap = (raiders, targets, threads) => {
 		threads: []
 	}))
 
-	const totalAttraction = Util.sum(targets.map(target => target.attractivity))
-	const relativeAttraction = totalAttraction / raiders.length
 	targets.forEach(target => {
 		let attraction = target.attractivity
 		raiders.sort(distanceSort(target))
 			.forEach(unit => {
-				if (attraction > 0) {
-					map.find(({ raider }) => raider === unit).targets.push({
-						mapCoordinates: target.mapCoordinates,
-						attractivity: attraction
-					})
-					attraction -= relativeAttraction
-				}
+				map.find(({ raider }) => raider === unit).targets.push({
+					mapCoordinates: target.mapCoordinates,
+					attractivity: attraction
+				})
+				attraction *= 0.5
 			})
 	})
 
@@ -86,8 +82,6 @@ const createRaiderMap = (raiders, targets, threads) => {
 
 	window.raiderMap = map
 	window.threads = threads
-	window.totalAttraction = totalAttraction
-	window.relativeAttraction = relativeAttraction
 	window.raiders = raiders
 
 	return map
@@ -102,10 +96,10 @@ const raiderFriends = raider => Record.getAll('unit')
 		attractivity: 1
 	}))
 
-const findTiles = raider => Tile.diagonalNeighbors(Tile.closest(raider.mapCoordinates)).map(tile => ({
-		mapCoordinates: tile.mapCoordinates,
-		canPass: Tile.area(tile, raider.properties.travelType) === Unit.area(raider)
-	}))
+// const findTiles = raider => Tile.diagonalNeighbors(Tile.closest(raider.mapCoordinates)).map(tile => ({
+// 		mapCoordinates: tile.mapCoordinates,
+// 		canPass: Tile.area(tile, raider.properties.travelType) === Unit.area(raider)
+// 	}))
 
 const interpolateTargets = (targets, weight) => {
 	const weightSum = Util.sum(targets.map(weight))
@@ -155,14 +149,6 @@ const create = ({ tribe, state, colony }) => {
 								thread => thread.attractivity
 							)
 
-							const tiles = findTiles(raider)
-							const terrainCoords = interpolateTargets(
-								tiles,
-								tile => !tile.canPass && LA.distance(raider.mapCoordinates, tile.mapCoordinates) < 1
-									? 1
-									: 0
-							)
-
 							const friends = raiderFriends(raider)
 							const friendsCoords = interpolateTargets(
 								friends,
@@ -175,9 +161,6 @@ const create = ({ tribe, state, colony }) => {
 							const threadDirection =  threadCoords
 								&& LA.subtract(threadCoords, raider.mapCoordinates)
 								|| LA.vector()
-							const terrainDirection = terrainCoords
-								&& LA.subtract(terrainCoords, raider.mapCoordinates)
-								|| LA.vector()
 							const friendsDirection = friendsCoords
 								&& LA.subtract(friendsCoords, raider.mapCoordinates)
 								|| LA.vector()
@@ -185,11 +168,9 @@ const create = ({ tribe, state, colony }) => {
 							const direction = LA.vectorProduct([
 								1,
 								-1,
-								-1,
 								-0.3
 							], LA.normalize(targetDirection),
 							threadDirection,
-							terrainDirection,
 							friendsDirection)
 
 							const distance = LA.distance(direction)
@@ -216,16 +197,16 @@ const create = ({ tribe, state, colony }) => {
 					plan.commit().then(unit => {
 						let unsubscribe
 						const cleanup = () => {
-							console.log('going home', unit)
+							console.log('raid cleanup', unit)
 							state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned -= 1
 							if (state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned < 0) {
 								state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = 0
 							}
 
 							raiders = raiders.filter(r => r !== unit)
-							Units.unassign(unit)
 
 							if (!unit.disbanded) {
+								Units.unassign(unit)
 								const disbandAction = Disband.create(unit)
 								cancelDisband.push(disbandAction.commit())						
 							}
