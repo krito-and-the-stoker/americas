@@ -22,22 +22,73 @@ const isColonistInColony = unit => unit.colonist && unit.colonist.colony
 const raiderTargets = relations => State.all(relations, 'colonies')
 	.map(colony => ({
 		mapCoordinates: colony.mapCoordinates,
-		attractivity: colony.colonists.length
+		attractivity: 10.0 * colony.colonists.length
 	}))
 
-const raiderThreads = () => Record.getAll('unit').filter(unit => !unit.owner.ai && !isColonistInColony(unit)).map(unit => ({
+const raiderThreads = () => Record.getAll('unit')
+	.filter(unit => !unit.owner.ai
+		&& !isColonistInColony(unit)
+		&& !unit.offTheMap
+		&& unit.domain === 'land'
+		&& Unit.strength(unit) >= 1)
+	.map(unit => ({
 		mapCoordinates: unit.mapCoordinates,
 		attractivity: Unit.strength(unit),
-		radius: 0.5 * unit.radius
+		radius: 0.5 * unit.radius,
 	}))
 
-
+const distanceSort = base => (a, b) =>
+	LA.distance(base.mapCoordinates, a.mapCoordinates) - LA.distance(base.mapCoordinates, b.mapCoordinates)
 const createRaiderMap = (raiders, targets, threads) => {
-	return raiders.map(raider => ({
+	const map = raiders.map(raider => ({
 		raider,
-		targets: [Util.min(targets, target => LA.distance(raider.mapCoordinates, target.mapCoordinates))],
-		threads: threads.filter(thread => LA.distance(thread.mapCoordinates, raider.mapCoordinates) <= 1.1 * thread.radius)
+		targets: [],
+		threads: []
 	}))
+
+	const totalAttraction = Util.sum(targets.map(target => target.attractivity))
+	const relativeAttraction = totalAttraction / raiders.length
+	targets.forEach(target => {
+		let attraction = target.attractivity
+		raiders.sort(distanceSort(target))
+			.forEach(unit => {
+				if (attraction > 0) {
+					map.find(({ raider }) => raider === unit).targets.push({
+						mapCoordinates: target.mapCoordinates,
+						attractivity: attraction
+					})
+					attraction -= relativeAttraction
+				}
+			})
+	})
+
+	threads.forEach(thread => {
+		let attraction = thread.attractivity
+		raiders.filter(raider => LA.distance(thread.mapCoordinates, raider.mapCoordinates) <= 1.25 * thread.radius)
+			.sort(distanceSort(thread))
+			.forEach(unit => {
+				attraction -= Unit.strength(unit) * unit.radius / unit.properties.radius
+				if (attraction > 0) {
+					map.find(({ raider }) => raider === unit).threads.push({
+						mapCoordinates: thread.mapCoordinates,
+						attractivity: attraction
+					})
+				}
+			})
+	})
+
+	window.raiderMap = map
+	window.threads = threads
+	window.totalAttraction = totalAttraction
+	window.relativeAttraction = relativeAttraction
+	window.raiders = raiders
+
+	return map
+	// return raiders.map(raider => ({
+	// 	raider,
+	// 	targets: [Util.min(targets, target => LA.distance(raider.mapCoordinates, target.mapCoordinates))],
+	// 	threads: threads.filter(thread => LA.distance(thread.mapCoordinates, raider.mapCoordinates) <= 1.1 * thread.radius)
+	// }))
 }
 
 const findTiles = raider => Tile.diagonalNeighbors(Tile.closest(raider.mapCoordinates)).map(tile => ({
