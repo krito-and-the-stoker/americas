@@ -23,7 +23,7 @@ import Unit from 'entity/unit'
 import EstablishRelations from 'ai/actions/establishRelations'
 import Disband from 'ai/actions/disband'
 import VisitColony from 'ai/actions/visitColony'
-import RaidColony from 'ai/actions/raidColony'
+import RaidColonies from 'ai/actions/raidColonies'
 
 import State from 'ai/state'
 import Units from 'ai/resources/units'
@@ -74,7 +74,7 @@ const describeRelations = relations => {
 	return `submissive ${debugInfo}`
 }
 
-const hasRaidPlanned = relation => State.all(relation, 'colonies').some(colony => relation.colonies[colony.referenceId].raidPlanned > 0)
+const hasRaidPlanned = relation => State.all(relation, 'colonies').some(colony => relation.raidPlanned > 0)
 const isHostile = relation => 
 	(relation.trust < 0 && relation.militancy > 0.5) ||
 	hasRaidPlanned(relation)
@@ -270,25 +270,10 @@ const makePlansAndRunThem = ai => {
 					// wait until currently planned raids are over
 					&& !hasRaidPlanned(relation))
 				.forEach(relation => {
-					const colonies = State.all(relation, 'colonies')
-					const colonists = Util.sum(colonies.map(colony => colony.colonists.length))
-
-					let raiders = 6
+					relation.raidPlanned = 6
 
 					// relation.militancy = 0.0
 					// relation.trust *= 0.5
-
-					while(raiders > 0) {
-						const colony = Util.choose(colonies)
-						let amount = Math.ceil(0.5 * Math.random() * raiders)
-						if (!relation.colonies[colony.referenceId].raidPlanned) {
-							relation.colonies[colony.referenceId].raidPlanned = amount
-						} else {
-							relation.colonies[colony.referenceId].raidPlanned += amount
-						}
-
-						raiders -= amount
-					}
 				})
 
 			ai.stopAllPlans = [
@@ -308,11 +293,10 @@ const makePlansAndRunThem = ai => {
 						.map(executeAction)),
 
 				// raid colonies
-				Object.entries(ai.state.relations)
-					.map(([referenceId, relation]) => State.all(relation, 'colonies')
-						.filter(colony => colony && ai.state.relations[referenceId].colonies[colony.referenceId].raidPlanned > 0)
-						.map(colony => RaidColony.create({ tribe: ai.tribe, state: ai.state, colony }))
-						.map(executeAction)),
+				State.all(ai.state, 'relations')
+					.filter(owner => ai.state.relations[owner.referenceId].raidPlanned > 0)
+					.map(owner => RaidColonies.create({ tribe: ai.tribe, state: ai.state, owner }))
+					.map(executeAction),
 
 				// collect free and unused units
 				Units.free(ai.owner)

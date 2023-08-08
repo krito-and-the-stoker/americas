@@ -16,7 +16,7 @@ import Europe from 'entity/europe'
 const options = [{
 	text: () => 'Your find **nothing** but rumors',
 	action: () => {},
-	probability: 3,
+	probability: 2,
 }, {
 	text: () => 'Your expedition has **vanished** without a trace.',
 	action: ({ unit }) => Unit.disband(unit),
@@ -35,14 +35,14 @@ const options = [{
 		const treasure = Unit.create('treasure', unit.mapCoordinates, unit.owner)
 		treasure.treasure = Math.round(2000 + 5000*random)
 	},
-	probability: 0.15
+	probability: 0.2
 }, {
 	text: ({ random }) => `You have found one of the *Seven Cities of Cibola*! Treasure worth **${Math.round(10000 + 20000*random)}**<good>gold</good> unearthed in the ruins! It will take a *Galleon* to get this treasure back to Europe!`,
 	action: ({ random, unit }) => {
 		const treasure = Unit.create('treasure', unit.mapCoordinates, unit.owner)
 		treasure.treasure = Math.round(10000 + 20000*random)
 	},
-	probability: 0.025
+	probability: 0.05
 }, {
 	text: () => 'You have discovered a **Fountain of Youth**! Rumors fly in Europe! *Immigrants* line the docks to seek perpetual youth in the New World!',
 	action: () => Europe.update.crosses(200),

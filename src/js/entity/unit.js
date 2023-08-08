@@ -146,7 +146,10 @@ const initialize = unit => {
 				return true
 			}
 			if (unit.radius < unit.properties.radius) {
-				update.radius(unit, Math.min(unit.radius + RADIUS_GROWTH*deltaTime, unit.properties.radius))
+				const equipmentRatio = unit.properties.equipment
+					?	Storage.total(unit.equipment) / Util.sum(Object.values(unit.properties.equipment))
+					: 1
+				update.radius(unit, Math.min(unit.radius + equipmentRatio * RADIUS_GROWTH * deltaTime, unit.properties.radius))
 			}
 
 			return true
@@ -311,7 +314,7 @@ const support = unit => Util.max(Record.getAll('unit')
 	.filter(support => Util.inBattleDistance(support, unit)), support => support.properties.support)
 
 const strength = unit => {
-	let result = unit.properties.combat || 0.75
+	let result = unit.properties.combat || 0.5
 
 	if (!unit.properties.combat && unit.colony) {
 		result += Math.min(unit.colony.storage.guns / 50, 1)

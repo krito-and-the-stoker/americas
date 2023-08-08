@@ -26,6 +26,8 @@ const raiderTargets = relations => State.all(relations, 'colonies')
 	})).concat(Record.getAll('unit').filter(unit => !unit.owner.ai
 		&& !unit.colony
 		&& unit.domain === 'land'
+		&& !unit.offTheMap
+		&& !unit.vehicle
 		&& !unit.combat
 		&& !unit.canAttack).map(unit => ({
 			mapCoordinates: unit.mapCoordinates,
@@ -45,7 +47,7 @@ const raiderThreads = () => Record.getAll('unit')
 	}))
 
 const distanceSort = base => (a, b) =>
-	LA.distance(base.mapCoordinates, a.mapCoordinates) - LA.distance(base.mapCoordinates, b.mapCoordinates)
+	LA.distance(base.mapCoordinates, b.mapCoordinates) - LA.distance(base.mapCoordinates, a.mapCoordinates)
 const createRaiderMap = (raiders, targets, threads) => {
 	const map = raiders.map(raider => ({
 		raider,
@@ -89,7 +91,7 @@ const createRaiderMap = (raiders, targets, threads) => {
 
 const raiderFriends = raider => Record.getAll('unit')
 	.filter(unit => raider !== unit
-		&& !!unit.owner.ai
+		&& raider.owner === unit.owner
 		&& LA.distance(raider.mapCoordinates, unit.mapCoordinates) < 2)
 	.map(unit => ({
 		mapCoordinates: unit.mapCoordinates,
@@ -114,10 +116,11 @@ const interpolateTargets = (targets, weight) => {
 	)
 }
 
-const create = ({ tribe, state, colony }) => {
-	const relations = state.relations[colony.owner.referenceId]
-	const unitPlans = Util.range(state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned)
-		.map(() => GetUnit.create({ owner: tribe.owner, coords: colony.mapCoordinates })).filter(a => !!a)
+const create = ({ tribe, state, owner }) => {
+	const relations = state.relations[owner.referenceId]
+	const coords = Record.getAll('colony').find(colony => colony.owner === owner).mapCoordinates
+	const unitPlans = Util.range(state.relations[owner.referenceId].raidPlanned)
+		.map(() => GetUnit.create({ owner: tribe.owner, coords })).filter(a => !!a)
 
 	if (unitPlans.length > 0) {
 		let cancelDisband = []
@@ -133,17 +136,19 @@ const create = ({ tribe, state, colony }) => {
 
 				Time.schedule({
 					init: () => {
-						Message.log('starting raid on', colony.name, state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned)
+						Message.log('starting raid', state.relations[owner.referenceId].raidPlanned)
 						return true
 					},
 					update: (_, deltaTime) => {
 						const targets = raiderTargets(relations)
 						const threads = raiderThreads()
 						createRaiderMap(raiders, targets, threads).forEach(({ raider, targets, threads }) => {
-							const targetCoords = interpolateTargets(
-								targets,
-								target => target.attractivity
-							)
+							// const targetCoords = interpolateTargets(
+							// 	targets,
+							// 	target => target.attractivity / (1 + LA.distance(target.mapCoordinates, raider.mapCoordinates))
+							// )
+							const targetCoords = Util.max(targets, target => target.attractivity / LA.distance(target.mapCoordinates, raider.mapCoordinates))
+								.mapCoordinates
 							const threadCoords = interpolateTargets(
 								threads,
 								thread => thread.attractivity
@@ -185,10 +190,10 @@ const create = ({ tribe, state, colony }) => {
 							}
 						})
 
-						return state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned > 0
+						return state.relations[owner.referenceId].raidPlanned > 0
 					},
 					finished: () => {
-						Message.log('Raid is over', colony.name, state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned)
+						Message.log('Raid is over', state.relations[owner.referenceId].raidPlanned)
 					},
 					priority: true
 				})
@@ -198,9 +203,9 @@ const create = ({ tribe, state, colony }) => {
 						let unsubscribe
 						const cleanup = () => {
 							console.log('raid cleanup', unit)
-							state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned -= 1
-							if (state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned < 0) {
-								state.relations[colony.owner.referenceId].colonies[colony.referenceId].raidPlanned = 0
+							state.relations[owner.referenceId].raidPlanned -= 1
+							if (state.relations[owner.referenceId].raidPlanned < 0) {
+								state.relations[owner.referenceId].raidPlanned = 0
 							}
 
 							raiders = raiders.filter(r => r !== unit)
@@ -225,9 +230,9 @@ const create = ({ tribe, state, colony }) => {
 						unsubscribe = [
 							// raid when in range
 							Events.listen('meet', params => {
-								if (params.colony === colony && params.unit === unit) {
-									if(Raid(colony, params.unit)) {
-										console.log('raided', colony)
+								if (params.colony && params.unit === unit) {
+									if(Raid(params.colony, params.unit)) {
+										console.log('raided', params.colony)
 										cleanup()
 									}
 								}
