@@ -10,8 +10,6 @@ import Message from 'util/message'
 
 import Time from 'timeline/time'
 
-import ProbabilisticTrigger from 'task/probabilisticTrigger'
-
 import Fight from 'interaction/fight'
 
 import Tile from 'entity/tile'
@@ -240,31 +238,31 @@ const establishRelations = (ai, owner) => {
 
 const makePlansAndRunThem = ai => {
 	Util.execute(ai.stopAllPlans)
+
 	let plansActive = 0
+	const executeAction = action => {
+		if (action) {
+			plansActive += 1
+			action.commit().then(() => {
+				plansActive -= 1
+				if (!plansActive) {
+					makePlansAndRunThem(ai)
+				}
+			})
+			return () => {
+				plansActive -= 1
+				Util.execute(action.cancel)
+			}
+		}
+	}
 
 	Time.schedule({
 		init: () => {
 			Units.unassignAll(ai.owner)
 
-			const executeAction = action => {
-				if (action) {
-					plansActive += 1
-					action.commit().then(() => {
-						plansActive -= 1
-						if (!plansActive) {
-							makePlansAndRunThem(ai)
-						}
-					})
-					return () => {
-						plansActive -= 1
-						Util.execute(action.cancel)
-					}
-				}
-			}
-
 			Object.values(ai.state.relations)
 				// TODO: should be relation.militancy > 0.5
-				.filter(relation => relation.trust < 0 && relation.militancy > 0.0005
+				.filter(relation => relation.trust < 0 && relation.militancy > 0.5
 					// only if we have established relations yet
 					&& State.all(relation, 'colonies').some(colony => true)
 					// wait until currently planned raids are over
