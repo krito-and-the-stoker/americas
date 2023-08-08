@@ -40,7 +40,7 @@ const closeIfNoShips = () => {
 }
 
 const selectTarget = unit => {
-	const colonies = Record.getAll('colony').filter(colony => Colony.area(colony, unit.properties.travelType) === Unit.area(unit))
+	const colonies = Record.getAll('colony').filter(colony => Colony.isReachable(colony, unit))
 
 	const repairCost = Europe.repairShipCost(unit)
 	const options = [{

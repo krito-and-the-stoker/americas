@@ -36,7 +36,7 @@ const ICON_SCALE = .5
 const handleGoTo = unit => {
 	const area = Unit.area(unit)
 	const colonies = Record.getAll('colony')
-		.filter(colony => Colony.area(colony, unit.properties.travelType) === area)
+		.filter(colony => Colony.isReachable(colony, unit))
 
 	if (unit.domain === 'sea') {
 		Dialog.create({

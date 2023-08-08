@@ -109,7 +109,7 @@ const match = transport => {
 	}
 
 	// colonies in area
-	const colonies = Record.getAll('colony').filter(colony => Tile.area(Colony.tile(colony), transport.properties.travelType) === Unit.area(transport)).concat([europe])
+	const colonies = Record.getAll('colony').filter(colony => Colony.isReachable(colony, transport)).concat([europe])
 	const capacity = transport.properties.cargo
 	const routes = Util.pairs(colonies, colonies)
 		.filter(pair => pair.one !== pair.other)

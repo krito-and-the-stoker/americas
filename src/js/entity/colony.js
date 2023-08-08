@@ -300,7 +300,7 @@ const coastalDirection = colony => {
 	return winner.score > 0 ? Tile.neighborString(center, winner.tile) : null
 }
 
-const area = (colony, travelType) => Tile.closest(colony.mapCoordinates)?.area[travelType]
+const isReachable = (colony, unit) => Tile.closest(colony.mapCoordinates)?.area[unit.properties.travelType] === Unit.area(unit) || Tile.diagonalNeighbors(MapEntity.tile(colony.mapCoordinates)).some(other => Tile.movementCost(other.mapCoordinates, colony.mapCoordinates, unit) !== Infinity)
 
 export default {
 	add,
@@ -322,6 +322,6 @@ export default {
 	remove,
 	save,
 	tories,
-	area,
+	isReachable,
 	update,
 }
