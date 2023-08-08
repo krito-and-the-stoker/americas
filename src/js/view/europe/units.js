@@ -8,6 +8,7 @@ import Click from 'input/click'
 import Drag from 'input/drag'
 
 import Unit from 'entity/unit'
+import Colony from 'entity/colony'
 import Europe from 'entity/europe'
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
@@ -39,10 +40,7 @@ const closeIfNoShips = () => {
 }
 
 const selectTarget = unit => {
-	const colonies = Record.getAll('colony').filter(colony => {
-		const tile = MapEntity.tile(colony.mapCoordinates)
-		return Tile.diagonalNeighbors(tile).some(tile => tile.domain === 'sea')
-	})
+	const colonies = Record.getAll('colony').filter(colony => Colony.area(colony, unit.properties.travelType) === Unit.area(unit))
 
 	const repairCost = Europe.repairShipCost(unit)
 	const options = [{

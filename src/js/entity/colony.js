@@ -300,6 +300,8 @@ const coastalDirection = colony => {
 	return winner.score > 0 ? Tile.neighborString(center, winner.tile) : null
 }
 
+const area = (colony, travelType) => Tile.closest(colony.mapCoordinates)?.area[travelType]
+
 export default {
 	add,
 	canFillEquipment,
@@ -320,5 +322,6 @@ export default {
 	remove,
 	save,
 	tories,
+	area,
 	update,
 }

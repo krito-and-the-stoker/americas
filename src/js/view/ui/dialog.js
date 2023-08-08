@@ -177,6 +177,11 @@ const tags = {
 		end: '</good>',
 		replace: content => h('span.good', GoodsView.html(content, 0.4))
 	},
+	newline: {
+		begin: '<br',
+		end: '/>',
+		replace: () => h('br')
+	}
 }
 
 const tagExpOuter = tag => `(${tag.begin}.*?${tag.end})`

@@ -128,6 +128,8 @@ const getAll = type => records
 	.filter(record => record.type === type)
 	.map(record => record.entity)
 
+const get = id => records.find(record => record.id === id)
+
 const revive = (record) => {
 	if (record.entity) {
 		return record.entity
@@ -150,8 +152,8 @@ const revive = (record) => {
 }
 
 const dump = () => {
-	Message.log(records)
-	Message.log(globals)
+	Message.log('Records', records)
+	Message.log('Globals', globals)
 
 	window.Record = {
 		add,
@@ -170,6 +172,7 @@ const dump = () => {
 		load,
 		dump,
 		getAll,
+		get,
 		download,
 		upload,
 		REFERENCE_KEY

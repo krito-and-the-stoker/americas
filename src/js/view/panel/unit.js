@@ -34,9 +34,11 @@ const PASSENGER_SCALE = 1
 const ICON_SCALE = .5
 
 const handleGoTo = unit => {
+	const area = Unit.area(unit)
+	const colonies = Record.getAll('colony')
+		.filter(colony => Colony.area(colony, unit.properties.travelType) === area)
+
 	if (unit.domain === 'sea') {
-		const colonies = Record.getAll('colony')
-			.filter(Colony.isCoastal)
 		Dialog.create({
 			type: 'naval',
 			text: 'Where shall we go?<options/>',
@@ -55,8 +57,6 @@ const handleGoTo = unit => {
 			}])
 		})
 	} else {
-		const colonies = Record.getAll('colony')
-			.filter(colony => Tile.area(Colony.tile(colony), unit.properties.travelType) === Unit.area(unit))
 		Dialog.create({
 			type: 'scout',
 			text: 'Where shall we go?<options/>',

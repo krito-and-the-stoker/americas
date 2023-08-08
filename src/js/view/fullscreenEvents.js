@@ -154,15 +154,15 @@ const initialize = () => {
 		})
 	}
 
-	if (!hasHappend('firstFreight')) {
-		const unsubscribe = Europe.listen.units(units => {
-			if (units.some(unit => unit.domain === 'sea' && Storage.split(unit.storage).length > 0)) {
-				create('firstFreight', 'Cargo from the new world')
-				EuropeView.open()
-				unsubscribe()
-			}
-		})
-	}
+	// if (!hasHappend('firstFreight')) {
+	// 	const unsubscribe = Europe.listen.units(units => {
+	// 		if (units.some(unit => unit.domain === 'sea' && Storage.split(unit.storage).length > 0)) {
+	// 			create('firstFreight', 'Cargo from the new world')
+	// 			EuropeView.open()
+	// 			unsubscribe()
+	// 		}
+	// 	})
+	// }
 }
 
 export default { initialize }

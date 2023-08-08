@@ -38,9 +38,19 @@ const create = settlement => {
 				const knowledge = settlement.presentGiven ?
 					`This settlement has the knowledge to train a **${expertName}**.` : 'We have *not visited* this village yet.'
 				const text = relation ? `The ${tribe} seem ${relation} at the moment.\n\n${knowledge}` : knowledge
+				const debug = '<br />DebugOptions:<options />'
 				Dialog.create({
 					type: 'scout',
-					text
+					text: `${text}${debug}`,
+					options: [{
+						text: 'Start raid (5)',
+						action: () => {
+							const relations = settlement.tribe.owner.ai.state.relations[Owner.player().referenceId]
+							if (relations) {
+								relations.raidPlanned = 5
+							}
+						}
+					}]
 				})
 			}, `Inspect ${settlement.tribe.name} settlement`)
 			Foreground.addTerrain(sprite)
