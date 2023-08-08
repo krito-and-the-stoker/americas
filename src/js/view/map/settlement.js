@@ -42,15 +42,22 @@ const create = settlement => {
 				Dialog.create({
 					type: 'scout',
 					text: `${text}${debug}`,
-					options: [{
+					options: [].concat(relations ? [{
+						text: 'Start raid (1)',
+						action: () => {
+							relations.raidPlanned = 1
+						}
+					}, {
 						text: 'Start raid (5)',
 						action: () => {
-							const relations = settlement.tribe.owner.ai.state.relations[Owner.player().referenceId]
-							if (relations) {
-								relations.raidPlanned = 5
-							}
+							relations.raidPlanned = 5
 						}
-					}]
+					}, {
+						text: 'Start raid (10)',
+						action: () => {
+							relations.raidPlanned = 10
+						}
+					}] : [])
 				})
 			}, `Inspect ${settlement.tribe.name} settlement`)
 			Foreground.addTerrain(sprite)

@@ -400,13 +400,18 @@ const movementCost = (fromCoords, toCoords, unit) => {
 		return distance
 	}
 
-	if (to.river && from.river && isNextTo(from, to) && costTable.river) {
+	// stay in domain with river
+	if (to.domain === from.domain && to.river && from.river && isNextTo(from, to) && costTable.river) {
+		return distance * costTable.river
+	}
+	// change domain with river
+	if (to.river && from.river && isNextTo(from, to) && costTable.river && costTable.ocean) {
 		return distance * costTable.river
 	}
 	if (from.road && to.road && costTable.road) {
 		return distance * costTable.road
 	}
-	if (to.road && costTable.halfRoad) {
+	if ((to.road || from.road) && costTable.halfRoad) {
 		return distance * costTable.halfRoad
 	}
 	if (to.colony) {
@@ -417,11 +422,11 @@ const movementCost = (fromCoords, toCoords, unit) => {
 			return distance * costTable.colony
 		}
 	}
-	if (to.domain === 'sea' && costTable.ocean) {
+	if (to.domain === 'sea' && from.domain === 'sea' && costTable.ocean) {
 		return distance * costTable.ocean
 	}
 
-	if (costTable[to.terrainName]) {
+	if (to.domain === from.domain && costTable[to.terrainName]) {
 		return distance * costTable[to.terrainName]
 	}
 

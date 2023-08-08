@@ -32,7 +32,7 @@
 		"tundra": 1,
 		"tundraWithForest": 2,
 		"road": 0.33,
-		"river": 0.5,
+		"river": 0.45,
 		"colony": 1
 	},
 	"foot": {
@@ -56,8 +56,8 @@
 		"swampWithForest": 1.25,
 		"tundra": 1,
 		"tundraWithForest": 1.25,
-		"road": 0.5,
-		"river": 0.5,
+		"road": 0.45,
+		"river": 0.45,
 		"colony": 1
 	},
 	"horse": {
@@ -81,8 +81,8 @@
 		"swampWithForest": 2,
 		"tundra": 1,
 		"tundraWithForest": 2,
-		"road": 0.5,
-		"river": 0.5,
+		"road": 0.45,
+		"river": 0.45,
 		"colony": 1
 	},
 	"nativeFoot": {
@@ -106,7 +106,7 @@
 		"swampWithForest": 1,
 		"tundra": 1,
 		"tundraWithForest": 1,
-		"river": 0.5,
+		"river": 0.45,
 		"road": 2
 	},
 	"nativeHorse": {
@@ -130,7 +130,7 @@
 		"swampWithForest": 1.5,
 		"tundra": 1,
 		"tundraWithForest": 1.5,
-		"river": 0.5,
+		"river": 0.45,
 		"road": 2
 	},
 	"supply": {
