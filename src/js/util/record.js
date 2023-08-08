@@ -195,6 +195,8 @@ const dump = () => {
 	window.Treasure = Treasure
 	window.Tribe = Tribe
 	window.Unit = Unit
+
+	window.DEBUG = !window.DEBUG
 }
 
 const state = () => ({

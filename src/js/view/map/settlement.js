@@ -38,7 +38,7 @@ const create = settlement => {
 				const knowledge = settlement.presentGiven ?
 					`This settlement has the knowledge to train a **${expertName}**.` : 'We have *not visited* this village yet.'
 				const text = relation ? `The ${tribe} seem ${relation} at the moment.\n\n${knowledge}` : knowledge
-				const debug = '<br />DebugOptions:<options />'
+				const debug = window.DEBUG ? '<br />DebugOptions:<br /><options />' : ''
 				Dialog.create({
 					type: 'scout',
 					text: `${text}${debug}`,
