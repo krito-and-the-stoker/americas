@@ -72,7 +72,7 @@ const describeRelations = relations => {
 	return `submissive ${debugInfo}`
 }
 
-const hasRaidPlanned = relation => State.all(relation, 'colonies').some(colony => relation.raidPlanned > 0)
+const hasRaidPlanned = relation => relation.raidPlanned > 0
 const isHostile = relation => 
 	(relation.trust < 0 && relation.militancy > 0.5) ||
 	hasRaidPlanned(relation)
@@ -120,7 +120,6 @@ const initialize = ai => {
 						if (colony && !ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId]) {
 							ai.state.relations[colony.owner.referenceId].colonies[colony.referenceId] = {
 								visited: false,
-								raidPlanned: false
 							}
 							update.state(ai)
 
