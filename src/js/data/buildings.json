@@ -24,11 +24,12 @@
 		}, {
 			"wood": 50
 		}, {
-			"wood": 120,
-			"tools": 40
+			"wood": 150,
+			"tools": 50
 		}, {
-			"wood": 480,
-			"tools": 200
+			"wood": 400,
+			"tools": 200,
+			"ore": 50
 		}],
 		"width": 1,
 		"workspace": 3,
@@ -50,11 +51,12 @@
 		}, {
 			"wood": 50
 		}, {
-			"wood": 120,
-			"tools": 40
+			"wood": 150,
+			"tools": 50
 		}, {
-			"wood": 320,
-			"tools": 200
+			"wood": 350,
+			"tools": 200,
+			"tobacco": 50
 		}],
 		"width": 1,
 		"workspace": 3,
@@ -76,11 +78,12 @@
 		}, {
 			"wood": 50
 		}, {
-			"wood": 110,
-			"tools": 40
+			"wood": 150,
+			"tools": 50
 		}, {
-			"wood": 320,
-			"tools": 200
+			"wood": 350,
+			"tools": 200,
+			"fur": 50
 		}],
 		"width": 1,
 		"workspace": 3,
@@ -103,7 +106,7 @@
 			"wood": 50,
 			"tools": 50
 		}, {
-			"wood": 100,
+			"wood": 200,
 			"tools": 100
 		}],
 		"width": 1,
@@ -125,8 +128,9 @@
 			"wood": 100,
 			"tools": 40
 		}, {
-			"wood": 240,
-			"tools": 100
+			"wood": 250,
+			"tools": 100,
+			"cloth": 50
 		}],
 		"width": 2,
 		"workspace": 3,
@@ -161,11 +165,12 @@
 		}, {
 			"wood": 50
 		}, {
-			"wood": 120,
-			"tools": 40
+			"wood": 150,
+			"tools": 50
 		}, {
-			"wood": 320,
-			"tools": 200
+			"wood": 350,
+			"tools": 200,
+			"cotton": 50
 		}],
 		"width": 1,
 		"workspace": 3,
@@ -187,11 +192,12 @@
 		}, {
 			"wood": 50
 		}, {
-			"wood": 120,
-			"tools": 40
+			"wood": 150,
+			"tools": 50
 		}, {
-			"wood": 320,
-			"tools": 200
+			"wood": 350,
+			"tools": 200,
+			"sugar": 50
 		}],
 		"width": 1,
 		"workspace": 3,
@@ -215,11 +221,12 @@
 		}, {
 			"wood": 50
 		}, {
-			"wood": 160,
+			"wood": 150,
 			"tools": 50
 		}, {
-			"wood": 480,
-			"tools": 200
+			"wood": 500,
+			"tools": 200,
+			"cloth": 50
 		}]
 	},
 	"school": {
@@ -231,13 +238,14 @@
 		"cost": [{
 			"wood": 0
 		}, {
-			"wood": 90
+			"wood": 100
 		}, {
-			"wood": 320,
+			"wood": 200,
 			"tools": 100
 		}, {
 			"wood": 400,
-			"tools": 200
+			"tools": 200,
+			"cloth": 50
 		}]
 	},
 	"church": {
@@ -251,11 +259,12 @@
 		}, {
 			"wood": 50
 		}, {
-			"wood": 120,
-			"tools": 20
+			"wood": 150,
+			"tools": 50
 		}, {
 			"wood": 350,
-			"tools": 200
+			"tools": 200,
+			"silver": 50
 		}],
 		"production": {
 			"good": "crosses",
@@ -298,10 +307,10 @@
 		}, {
 			"wood": 100
 		}, {
-			"wood": 240,
+			"wood": 250,
 			"tools": 100
 		}, {
-			"wood": 480,
+			"wood": 450,
 			"tools": 200
 		}],
 		"consumption": {
@@ -338,11 +347,13 @@
 		}, {
 			"wood": 60
 		}, {
-			"wood": 240,
-			"tools": 200
+			"wood": 150,
+			"tools": 200,
+			"guns": 50
 		}, {
-			"wood": 640,
-			"tools": 400
+			"wood": 600,
+			"tools": 400,
+			"guns": 200
 		}]
 	},
 	"house": {
@@ -354,7 +365,8 @@
 		"cost": [{
 			"wood": 0
 		}, {
-			"wood": 30
+			"wood": 40,
+			"tools": 10
 		}],
 		"unlimitedLevels": true
 	}

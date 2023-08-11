@@ -261,7 +261,7 @@ const makePlansAndRunThem = ai => {
 
 			Object.values(ai.state.relations)
 				// TODO: should be relation.militancy > 0.5
-				.filter(relation => relation.trust < 0 && relation.militancy > 0.5
+				.filter(relation => relation.trust < 0 && relation.militancy > 1.5
 					// only if we have established relations yet
 					&& State.all(relation, 'colonies').some(colony => true)
 					// wait until currently planned raids are over

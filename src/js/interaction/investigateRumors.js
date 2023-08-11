@@ -16,7 +16,7 @@ import Europe from 'entity/europe'
 const options = [{
 	text: () => 'Your find **nothing** but rumors',
 	action: () => {},
-	probability: 2,
+	probability: 1,
 }, {
 	text: () => 'Your expedition has **vanished** without a trace.',
 	action: ({ unit }) => Unit.disband(unit),

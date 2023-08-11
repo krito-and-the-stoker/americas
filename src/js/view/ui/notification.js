@@ -637,7 +637,7 @@ const createTreasure = (colony, unit) => {
 				text: 'You do not seem to have **a galleon** ready for transport. Would you like us to *take care of the transport*? The crown would, of course, take a **fair share** for its efforts.<options/>',
 				coords: unit.mapCoordinates,
 				options: [{
-					text: 'Yes, please transport the treasure for us and take your share.',
+					text: `Yes, please transport the treasure for us and take your share of 50% (${Math.round(0.5 * unit.treasure)}<good>gold</good>).`,
 					action: () => {
 						const amount = Math.ceil(0.5 * unit.treasure)
 						Unit.disband(unit)
