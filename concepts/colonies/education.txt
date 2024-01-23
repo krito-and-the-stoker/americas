@@ -1,0 +1,31 @@
+Literacy
+- Settlers have a literacy level
+- Teachers at schools, collages and universities increase literacy
+- literacy levels provides production bonus for in-colony jobs
+- to become an expert at a job, a certain literacy level is required
+
+Buildings:
+School: 1 teacher, teaching field professions
+Collage: 1 teacher, teaching manufacturing professions
+University: 1 teacher, teaching higher education professions
+Although they theoretically are levels of an education building, a collage should not replace a school and a university should replace neither
+
+Baracks: 1 teacher, teaching soldiers
+Library: Increase literacy, faster promotion when high literacy
+
+Promotion:
+Promotion without being educated in school is only possible between certain jobs:
+settler -> farmer, fur hunter, tobacco planter, cotton planter, sugar planter, fisher, ore miner, lumberjack, hardened pioneer
+fur hunter -> fur maker
+tobacco planter -> tobacconist
+cotton planter -> weaver
+sugar planter -> rum destiller
+expert fisher -> master trader
+ore miner -> blacksmith
+lumberjack -> carpenter
+Some professions cannot be reached without education:
+gunsmith, statesman, priest, missionary, soldier
+
+With education it is possible to (education means: a colonist of this profession is currently a teacher)
+- become an expert at the current job from any profession
+

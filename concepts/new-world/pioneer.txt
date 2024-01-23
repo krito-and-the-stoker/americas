@@ -1,0 +1,11 @@
+New pioneer improvements:
+- Mine
+- (small) Fortifications
+ -> has a name
+ -> Gives defensive bonus for units
+ -> Has storage for military goods and can be used for automated transport
+ -> Can be upgraded to regular fort once built
+ -> Can be destroyed by military units, then becomes raided fort which must be repaired
+ -> Can be upgraded to a colony
+
+- Holy shrine (land mark for natives, not for pioneers)
