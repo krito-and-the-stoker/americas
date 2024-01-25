@@ -21,36 +21,3 @@ When a colonist is missing food
     more likely for low power colonists
 
 Whenever a colonists dies or leaves, it has an adverse effect on immigration, spreading the news of the colony's hardship.
-
-Because food is so critical to the survival of colonists, they will try to reserve food for them. This will be computed as follows:
-- Maximum of 10 food per colonist
-- Maximum of power percentage per colonist (maybe distorted by an exponential factor?)
-- Most powerful colonist reserves first
-This means:
-- As long as there is 10 food per colonist stored, nobody is going to starve
-- Colonists with 0 power will be cut off from food immediately when supplies get low
-- A colonist with high relative power will not starve for a long time
-- Assume 60 food and 6 colonists, 1 colonist has 50 power, 5 colonists have 10 power each
-	-> 60 food left, 10 for 1 colonist, 50 for 5 colonists, all eat 2
-  -> 48 food left, 10 for 1 colonist, 38 food for 5 colonists, all eat 2
-  -> 36 food left, 10 for 1 colonist, 26 food for 5 colonists, all eat 2
-  -> 24 food left, 10 for 1 colonist, 14 food for 5 colonists, all eat 2
-  -> 12 food left, 6 for 1 colonist, 6 food for 5 colonists, one eats 2, others eat 1
-  -> 5 food left, 2.5 for 1 colonist, 2.5 food for 5 colonists, one eats 2, others eat 0
-  -> 3 food left, 1.5 for 1 colonist, 1.5 food for 5 colonists, one eats 1, others eat 0
-  -> 2 food left, 1 for 1 colonist, 1 food for 5 colonists, one eats 1, others eat 0
-  -> 1 food left, 0.5 for 1 colonist, 0.5 food for 5 colonists, one eats 0, others eat 0
-  -> The powerful colonist has lacked 4 food, while the others lacked 9 food each
-- Assume 30 food and 3 colonists, 1 colonist has 90 power and 2 colonists have 5 each
-  -> 10 food per colonist, all eat 2
-  -> 24 food left, 10 for 1 colonist, 14 for 2 colonists, all eat 2
-  -> 18 food left, 10 for 1 colonist, 8 for 2 colonists, all eat 2
-  -> 12 food left, 10 for 1 colonist, 2 for 2 colonists, one eats 2, 2 eat 1
-  -> 8 food left, 7 for 1 colonist, 1 for 2 colonists, one eats 2, 2 eat 0
-  -> 6 food left, 5 for 1 colonist, 1 for 2 colonists, one eats 2, 2 eat 0
-  -> 4 food left, 3 for 1 colonist, 1 for 2 colonists, one eats 2, 2 eat 0
-  -> 2 food left, 1 for 1 colonist, 1 for 2 colonists, one eats 1, 2 eat 0
-  -> 1 food left, 0.5 for 1 colonist, 0.5 for 2 colonists, all eat 0
-  -> The powerful colonist has lacked 3 food, while the others have lacked 11 food
-
-

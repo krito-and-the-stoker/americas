@@ -1,11 +1,19 @@
-New pioneer improvements:
-- Mine
-- (small) Fortifications
- -> has a name
- -> Gives defensive bonus for units
- -> Has storage for military goods and can be used for automated transport
- -> Can be upgraded to regular fort once built
- -> Can be destroyed by military units, then becomes raided fort which must be repaired
- -> Can be upgraded to a colony
-
-- Holy shrine (land mark for natives, not for pioneers)
+Pioneer improvements:
+Forest:
+- Lodge: 2 people can work here
+- Camp (upgrade from Lodge): 3 people can work here
+Hills/Mountains:
+- Mine: 2 people can work here
+- Camp (upgrade from Mine): 3 people can work here
+Plains:
+- Farmhouse: 2 people can work here
+- Ranch: 3 people can work here
+- Plow: production bonus
+Everywhere:
+- Roads: Movement bonus and supply from nearest colony
+- Fort: 
+	-> has a name
+	-> Gives defensive bonus for units
+	-> Has storage for military goods and can be used for automated transport
+	-> Can be destroyed by military units, then becomes raided fort which must be repaired
+	-> Can be upgraded to a colony
