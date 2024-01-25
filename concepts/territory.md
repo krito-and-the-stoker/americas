@@ -1,4 +1,4 @@
-
+#new-world #map
 New concept: Territory
 The player and each tribe have a territory, which they consider their home land. These may overlap with each other, leading to territorial conflict. Territory is calculated as follows:
 - Natives

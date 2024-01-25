@@ -1,3 +1,4 @@
+#new-world 
 Other European powers
 
 They exist, and they shall develop a few colonies at the map. Depending on the starting scenario, they may already have a colonial empire (especially the Spanish later on).

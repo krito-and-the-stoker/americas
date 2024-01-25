@@ -1,3 +1,5 @@
+#units #map
+
 Ship types:
 - Barge (no high seas, can travel rivers, slow, cheap)
 - Ship of the Line (expensive war ship)

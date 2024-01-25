@@ -1,3 +1,4 @@
+#new-world #map #natives
 Tribes
 - 5 to 20 Settlements
 - have cultural modifiers:

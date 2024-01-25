@@ -1,4 +1,4 @@
-
+#old-world #laws-and-ownership
 
 New Mechanic: Venture
 This is a middle ground between a "borrow money" button and kind of a mission that gives the player a few ideas of what to do. The types of ventures could be:

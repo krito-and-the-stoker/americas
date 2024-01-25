@@ -9,3 +9,5 @@ yarn-error.log
 *.sublime-*
 
 .DS_Store
+
+concepts/.obsidian

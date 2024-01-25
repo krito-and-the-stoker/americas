@@ -1,3 +1,4 @@
+#colonies #colonists 
 Literacy
 - Settlers have a literacy level (0% - 100%)
 - Teachers at schools, collages and universities increase literacy for everyone in the colony

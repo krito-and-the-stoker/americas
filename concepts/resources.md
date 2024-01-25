@@ -1,4 +1,4 @@
-
+#colonies
 Potential new resources:
 - beads (trade goods)
 - salpeter (3 tools + 1 salpeter -> 2 guns)

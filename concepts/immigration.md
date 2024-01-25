@@ -1,3 +1,5 @@
+#old-world #immigration
+
 Immigration:
 - Self managed: Fishermen, trader, farmers (unlanded lords, second sons etc..)
 - Promise land:

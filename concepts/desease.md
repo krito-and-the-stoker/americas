@@ -1,4 +1,4 @@
-
+#colonies #colonists #new-world 
 Deseases:
 - Settlers can fall ill: severe production malus
 - When fallen ill, after some time a settler will either die or recover

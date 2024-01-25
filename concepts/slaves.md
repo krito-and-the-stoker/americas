@@ -1,3 +1,4 @@
+#new-world #colonists
 Slaves are such an important factor in the building of the north american colonies, that we cannot ignore them.
 
 Acquiring Slaves

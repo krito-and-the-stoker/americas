@@ -1,3 +1,5 @@
+#history
+
 Difficulty Levels
 - Easy (Merchant Ship with 1 settler, 1 pioneer and 1 scout, 20k)
 - Medium (Caravel with 1 pioneer and 1 scout, 5k)

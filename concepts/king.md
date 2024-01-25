@@ -1,4 +1,4 @@
-
+#old-world #king #laws-and-ownership 
 King
 
 The king looks at you like an investment. He is a little bit like an investor, but without any benefits for you.

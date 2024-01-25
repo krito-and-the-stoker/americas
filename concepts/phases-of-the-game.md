@@ -1,3 +1,5 @@
+#concepts
+
 1. Landing
 Goal: Stability
 The landing phase is where the player founds the first colony and tries to survive.
@@ -17,7 +19,9 @@ In this phase the player has quite some choices to direct his attention: He can 
 
 5. Politics
 Goal: Adjust power structures
-Now that the player is thriving in the new world and the game has become more and more systematic, structural changes matter more than building another colony here and there. This may be happening occasionally, but the automation level does not make this a challenging experience anymore. Instead, global politics start to influence the player more and more. The king will raise taxes, the church will want influence and may have demands, and the investers from the old world want their share. The political struggle will become about giving the colonies a structure that is independent from the old world and, eventually, deny the demands of the old world leading into the independence war.
+Now that the player is thriving in the new world and the game has become more and more systematic, structural changes matter more than building another colony here or there. The automation level has made direct changes a not challenging experience anymore. Instead, we want to force the player to look at structural changes:
+Internal structural changes...
+The king will raise taxes, the church will want influence and may have demands, and the investers from the old world want their share. The political struggle will become about giving the colonies a structure that is independent from the old world and, eventually, deny the demands of the old world leading into the independence war.
 
 6. Independence War
 Goal: Win the game

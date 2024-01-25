@@ -1,3 +1,4 @@
+#war #map #concepts
 Fog of war:
 - There should be fog of war, and it should be visible on the map. It may not be the highest priority, but it is part of the military game and should be treated as such.
 - Sneaking: Units (especially natives) should have the ability to sneak. They will move significantly slower, enter from fog of war into visibility, and have a chance not to be detected for a little bit. Some native strategies could rely on this.

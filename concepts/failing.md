@@ -1,3 +1,4 @@
+#colonies #new-world 
 When a colonist is missing luxury supplies:
 - colonist loses production bonus temporarily
 - colonist is unhappy and will be hindering immigration

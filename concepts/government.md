@@ -1,3 +1,5 @@
+#new-world #old-world #laws-and-ownership 
+
 Government and ownership
 - Company owned by shareholders
  -> Try to make a profit through trade

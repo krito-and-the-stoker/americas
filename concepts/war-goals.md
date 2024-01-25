@@ -1,3 +1,4 @@
+#war #laws-and-ownership #concepts
 
 Timeline of hostilities:
 Sometimes, but not always, wars are preceded by hostilities, raids or other incidents.

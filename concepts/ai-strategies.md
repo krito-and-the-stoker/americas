@@ -1,3 +1,5 @@
+#war #map #ai
+
 AI Strategies
 
 Economic attacks:

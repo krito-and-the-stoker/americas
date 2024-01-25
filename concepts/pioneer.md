@@ -1,3 +1,5 @@
+#new-world #map
+
 Pioneer improvements:
 Forest:
 - Lodge: 2 people can work here
