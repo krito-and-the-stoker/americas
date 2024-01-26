@@ -18,7 +18,7 @@ These buildings add efficiency to field work for a specific good.
 - high stands: food (forest)
 - mining shafts: ore, silver
 #### Effect
-+1 Production bonus for good if [main production](Fields#production) or [secondary production](Fields#production).
+Production bonus
 ### Level 2
 These buildings enhance efficiency greatly.
 - crystallisation house: sugar
@@ -29,7 +29,7 @@ These buildings enhance efficiency greatly.
 - mill: food (except forest)
 - miners barracks: ore, silver
 #### Effect
-+3 Production bonus for good if [main production](Fields#production), +1 if [secondary production](Fields#production).
+Production bonus
 
 ### Level 3
 These buildings enhance efficiency a little and allow to work with less skilled workers.
@@ -41,12 +41,12 @@ These buildings enhance efficiency a little and allow to work with less skilled 
 - bakery: food
 - machinery shop: ore, silver
 #### Effect
-+4 Production bonus for good if [main production](Fields#production), +1 if [secondary production](Fields#production).
+Production bonus
 Transfers [Profession] of the organiser to all field workers.
 #### Jobs
 1 Organiser:
 - Required for bonus
-- Uses 3 [horses](Goods) and 3 [tools](Goods)
+- Uses 3 [horses](Goods.md) and 3 [tools](Goods.md)
 - Transfers his [Profession] to field workers.
 
 ## Inside

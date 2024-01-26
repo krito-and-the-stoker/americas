@@ -1,5 +1,6 @@
 #new-world #production #map
 ## Basic field types
+- Ocean
 - Plains
 - Grassland
 - Prairie
@@ -30,12 +31,16 @@ Forests always have a base field and are on top of that. They can be cut down. T
 - Hills
 - Mountains
 - Arctic
+- Ocean
 ## Production
 Good production in fields is categorised into
 - main production
 - secondary production
 - possible production
 These help to build a mental model of the otherwise complicated and hard to learn rules of yields. Main production is what will always yield most and will scale best on a field with buildings and experts. Secondary production will scale somewhat, but never yield very good results. Possible production enables you to produce a tiny bit of a good, that otherwise may be hard to have access.
+
+### Ocean
+Main production: food
 ### Plains
 Main crop: food
 Secondary crop: cotton

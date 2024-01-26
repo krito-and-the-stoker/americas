@@ -1,5 +1,6 @@
-#concepts
+#concepts #scenario
 
+These describe the phases of an economic game with, say, the English.
 ## Landing
 Goal: Stability
 The landing phase is where the player founds the first colony and tries to survive.
@@ -9,7 +10,7 @@ The phase ends when the player successfully has established the first colony wit
 
 ## Infrastructure
 Goal: Surplus
-Now where the player has established a foothold in the new world, he will try to improve efficiency in order to produce a trade surplus and make the whole endeavor economically sustainable. This probably includes building some useful buildings in the main colony, forming the land around it and founding 1 or 2 nearby small support colonies.
+Now where the player has established a foothold in the new world, he will try to improve efficiency in order to produce a trade surplus and make the whole endeavour economically sustainable. This probably includes building some useful buildings in the main colony, forming the land around it and founding 1 or 2 nearby small support colonies.
 
 ## Expansion
 Goal: Growth and Automation
