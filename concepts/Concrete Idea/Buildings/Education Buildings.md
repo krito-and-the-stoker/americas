@@ -1,5 +1,6 @@
 #colonies #promotion #education
 
+Educational buildings help improve [[Literacy]] and increase the speed of [[Promotion]]. High Literacy leads to faster promotion, while schools, collages and universities allow to speed up promotion directly with teachers. Also note, that some promotions cannot be acquired without a teacher, such as the elder statesman.
 ## School
 ### Jobs
 1 teacher:
