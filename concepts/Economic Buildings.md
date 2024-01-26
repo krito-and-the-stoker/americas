@@ -9,26 +9,27 @@ These buildings enhance productivity and efficiency. Inside the colony, they cre
 TODO: Find better names for most of these buildings (all levels): The names currently focus on something that would better be built on a field instead. We want to tell the story of a better infrastructure for a certain good, so the names should instead reflect the immediate steps before or after harvest, i.e transport, durability etc.
 ### Level 1
 These buildings add efficiency to field work for a specific good.
-- sugar fields: savannah -> sugar
-- cotton fields: prairie -> cotton
-- tobacco fields: grassland -> tobacco
-- trappers lodge: forest -> furs
-- timber stand: forest -> wood
-- farm house: plains -> food
-- miners camp: mountains, hills -> ore, silver
+- sugar oven: sugar
+- cotton gin: cotton
+- drying yard: tobacco
+- skinning hut: furs
+- forest trails: wood
+- granary: food (except forest)
+- high stands: food (forest)
+- mining shafts: ore, silver
 #### Effect
-+1 Production bonus for primary and secondary.
++1 Production bonus for good if [main production](Fields#production) or [secondary production](Fields#production).
 ### Level 2
 These buildings enhance efficiency greatly.
-- sugar plantation: savannah -> sugar
-- cotton plantation: prairie -> cotton
-- tobacco plantation: grassland -> tobacco
-- trappers shop: forest -> furs
-- forest lodge: forest -> wood
-- wheat plantation: plains -> food
-- miners barracks: mountains, hills -> ore, silver
+- crystallisation house: sugar
+- spinning house: cotton
+- tobacco press: tobacco
+- tanning house: furs
+- transport sleds: wood
+- mill: food (except forest)
+- miners barracks: ore, silver
 #### Effect
-+3 Production bonus for primary, +1 for secondary.
++3 Production bonus for good if [main production](Fields#production), +1 if [secondary production](Fields#production).
 
 ### Level 3
 These buildings enhance efficiency a little and allow to work with less skilled workers.
@@ -36,17 +37,17 @@ These buildings enhance efficiency a little and allow to work with less skilled 
 - cotton mill: cotton
 - tobacco processing house: tobacco
 - fur workshop: fur
-- logging camp: wood
-- mill: food
-- slaughterhouse: food
+- wood lathes: wood
+- bakery: food
 - machinery shop: ore, silver
 #### Effect
-+4 Production bonus for primary, +1 for secondary
-Transfers skills of the master to all field workers.
++4 Production bonus for good if [main production](Fields#production), +1 if [secondary production](Fields#production).
+Transfers [Profession] of the organiser to all field workers.
 #### Jobs
-1 Organizer:
+1 Organiser:
 - Required for bonus
-- Transfers his expertise to field workers.
+- Uses 3 [horses](Goods) and 3 [tools](Goods)
+- Transfers his [Profession] to field workers.
 
 ## Inside
 ### Level 1
@@ -60,7 +61,7 @@ These buildings enable you to start basic manufacturing.
 #### Jobs
 2 Worker: Manufactures 2 input good into 1 output good (Expert 4 -> 2).
 #### Maximum production
-8 input -> 4 output
+2 experts: 8 input -> 4 output
 
 ### Level 2
 These buildings enable you to scale your manufacturing by having more workers and giving stronger bonus to experts.
@@ -73,7 +74,7 @@ These buildings enable you to scale your manufacturing by having more workers an
 #### Jobs
 4 Worker: Manufactures 2 input good into 1 output good (Expert 6 -> 3).
 #### Maximum production
-24 input -> 12 output
+4 experts: 24 input -> 12 output
 ### Level 3
 These building enables you to scale manufacturing into industrial levels by having more workers and transferring the expert bonus from the overseer to all his workers.
 - rum factory: sugar -> rum
@@ -83,10 +84,11 @@ These building enables you to scale manufacturing into industrial levels by havi
 - iron works: ore -> tools
 - gun factory: tools -> guns
 #### Jobs
-12 Workers: Manufactures 4 input goods into 2 output goods (Expert 6 - 3).
+10 Workers: Manufactures 4 input goods into 2 output goods (Expert 6 - 3).
 1 Overseer:
 - Required to generate output
+- Uses 5 wood and 5 tools
 - Transfers his expertise to all workers
 #### Maximum production
-72 input -> 36 output
+1 expert and 10 workers: 60 input -> 30 output
 
