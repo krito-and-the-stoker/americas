@@ -6,3 +6,4 @@ There are
 - [[Infrastructure Buildings]]
 - [[Military Buildings]]
 - [[Automation Buildings]]
+- [[Education Buildings]]

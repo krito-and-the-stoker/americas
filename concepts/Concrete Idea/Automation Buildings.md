@@ -1,4 +1,5 @@
-These are almost all late game buildings, and each of the creates some kind of automation:
+#buildings #automation #colonies
+These buildings are almost all late game buildings, and each of the creates some kind of automation:
 
 The earliest kind of automation will probably be good transport automation:
 - The **post office**, which allows to automate *import/export* for automated transportation.
