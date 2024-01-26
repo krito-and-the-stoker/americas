@@ -41,8 +41,39 @@ Produces 3 health care
 ### Hospital
 Produces 10 health care
 
+## Construction
+The input of the construction worker depends on the building and its associated construction cost. The construction cost may specify different materials, like wood, stone and tools.
+### Carpenters house
+#### Jobs
+3 workers:
+- 3 input -> 3 construction (5 -> 5 for expert)
+### Workshop
+3 workers:
+- 5 input -> 5 construction (10 -> 10 for expert)
+### Sawmill
+6 workers:
+- 7 input -> 7 construction (15 -> 15 for expert)
+## Food production with livestock
+### Barn
+#### Jobs
+3 herder:
+- 20 livestock -> 21 livestock, 4 food
+2 slaughterer:
+- 3 livestock -> 15 food
+
+For every 20 livestock, a herder can grow 1 additional livestock and support himself and another colonist with food. With one slaughterer, equilibrium is reached. A second slaughterer will deplete the livestock. This makes livestock into a survival guarantee in times of food shortage.
+### Pasture
+#### Jobs
+5 herder
+- 20 livestock -> 21 livestock, 4 food
+2 slaughterer:
+- 5 livestock -> 25 food
+### Ranch
+#### Jobs
+5 herder
+- 40 livestock -> 42 livestock, 8 food
+4 slaughterer:
+- 5 livestock -> 25 food
 
 
-- food production (animals)
-- carpenters house, workshop, sawmill
 - docks, smoke houses, fishing port

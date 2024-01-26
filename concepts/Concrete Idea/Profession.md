@@ -12,7 +12,7 @@ A colonist can have one profession. Colonists can learn this profession through 
 - Ore Miner
 - Silver Miner
 
-### Medium class professions
+### Middle class professions
 - Rum distiller
 - Tobacconist
 - Weaver
@@ -22,7 +22,7 @@ A colonist can have one profession. Colonists can learn this profession through 
 - Blacksmith
 - Gunsmith
 
-### High class professions
+### Upper class professions
 - Preacher
 - Missionary
 - Statesman

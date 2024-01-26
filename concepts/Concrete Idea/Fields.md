@@ -109,9 +109,10 @@ Secondary production: +1
 Main production: +2
 Secondary production: +2
 Possible production: +1
-### [[Experts]]
+### With [[Profession]]
 Main production: +4
 Secondary production: +3
+Possible production: +2
 ### [[Economic Buildings]] bonus
 #### Level 1
 Main production: +2
@@ -150,4 +151,4 @@ Plowed Plains (secondary) with cotton gin (level 1) yields:
 Plowed Prairie (main) with river and spinning house (level 2) yields:
 `main 2 + plowed 2 + river 3 + spinning house 4 = 11 (15 for expert)`
 Savannah (possible) with cotton gin (level 1 building)
-`possible 1 + gin 1 = 2`
+`possible 1 + gin 1 = 2 (4 for expert)`

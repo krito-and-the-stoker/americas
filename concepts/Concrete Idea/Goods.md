@@ -21,7 +21,7 @@ These are the physical goods. We also have [[Virtual Goods]]
 - rename trade goods -> beads (good idea)
 - stone (for high prestige buildings, church, fortress) (good idea)
 - coffee (cash crop) (good idea, introduce later with an event)
-- cows (could be an alternative food source) (good idea, more thoughts needed)
+- livestock (could be an alternative food source) (good idea, more thoughts needed)
 - tea, porcelain (import only goods) (why not)
 - sulfur (tools + sulfur -> guns) (not high priority for me)
 - dye (made from trees in Brazil) (probably not necessary)
