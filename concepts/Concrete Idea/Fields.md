@@ -109,7 +109,7 @@ Secondary production: +1
 Main production: +2
 Secondary production: +2
 Possible production: +1
-### With [[Profession]]
+### With [[Professions]]
 Main production: +4
 Secondary production: +3
 Possible production: +2
