@@ -102,7 +102,7 @@ Wood:
 - secondary: +1
 ### Bonus resource
 Main production: + 3
-### Plowed
+### Plowed ([[Tile improvements]])
 Main production: +2
 Secondary production: +1
 ### River
