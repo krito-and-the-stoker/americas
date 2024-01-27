@@ -1,0 +1,1 @@
+Natives can be divided into [[Tribes]]. Each tribe has some [[Settlements]].

@@ -8,3 +8,5 @@
 [[Ventures]]
 [[King]]
 [[Scenarios]]
+[[Units Overview]]
+[[Natives Overview]]

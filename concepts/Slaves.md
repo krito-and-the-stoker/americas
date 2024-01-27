@@ -1,10 +1,11 @@
 #new-world #colonists
-Slaves are such an important factor in the building of the north american colonies, that we cannot ignore them.
+Slaves are such an important factor in the building of the North American colonies, that we cannot ignore them.
 ### Acquiring Slaves
 - They cannot directly be bought int he home port
 - Instead, they will be offered at the international trade ports in the colonies
 - They can be forced from the natives
 - They can be bought from natives for goods or military alliance
+The slaves acquired will have the [[Colonist States]] enslaved.
 ### Legal situation
 Slavery has to be subject to some laws depending on the country:
 - Spanish colonies allow slavery of non-christians. This will change for natives in 1542 which makes enslaving natives illegal (harder) and shifts to African slaves instead.
