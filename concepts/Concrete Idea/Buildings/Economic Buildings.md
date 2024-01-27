@@ -46,7 +46,7 @@ Transfers [Profession] of the organiser to all field workers.
 #### Jobs
 1 Organiser:
 - Required for bonus
-- Uses 3 [horses](Goods.md) and 3 [tools](Goods.md)
+- Uses 3 [horses](Physical%20Goods.md) and 3 [tools](Physical%20Goods.md)
 - Transfers his [Profession] to field workers.
 
 ## Inside

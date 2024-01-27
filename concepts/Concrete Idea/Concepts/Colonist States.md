@@ -36,16 +36,16 @@ the speed of promotion depends on:
 		higher chance with international trading port, more likely for high power colonists
 	- Die from starvation:
 		more likely for low power colonists
-### sick
+### Sick
 - production penalty
 - power penalty
 - **events**:
 	- dies
 	- gets healthy (will make him more resistant in the future)
-### discriminated
+### Discriminated
 - cannot promote
 - power penalty
-### enslaved
+### Enslaved
 - cannot promote
 - no cultural assimilation
 - can only work on land
@@ -56,6 +56,12 @@ the speed of promotion depends on:
 	- escape
 	- rebellion
 	- freedom
+### Indebted
+- cannot promote
+- power is always 0
+- wears off after a few years (debt payed)
+- **events**
+	- escape and live with the natives
 ### Very powerful
 Once a colonist reaches very high power (maybe 100 or more), he becomes powerful and may resist a few of your actions:
 - they only accept to take a job, if it is their profession or higher than their current class
