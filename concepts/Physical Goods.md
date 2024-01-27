@@ -27,3 +27,12 @@ These are the physical goods. We also have [[Virtual Goods]]
 - dye (made from trees in Brazil) (probably not necessary)
 - salt (for meat and fish conservation, probably not necessary)
 
+## Idea
+We want to tell the story, that tools, guns and horses (or animals in general) make a huge technological difference for the settlers. early settlements rely on their availablility and often fail when they run out of stock.
+- tools will increase the efficiency of farming, mining, fishing, woodcutting
+- guns will increase the efficiency of hunting
+- horses/livestock will increase the efficiency of farming, mining, hunting and woodcutting
+- guns will arm the colonies militia, giving a significant edge in fights against natives
+The usage of tools, guns and horses in normal production should not be high, but constant. They will remind the dependency on the motherland and the home market before an industry for tools and guns has been built in the new world. Once, a colony is out of these goods, the production bonuses they yield will vanish, hurting the economy severely.
+
+At this point it is not clear how we would make this into a concrete concept.

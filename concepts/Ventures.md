@@ -39,4 +39,4 @@ This is a middle ground between a "borrow money" button and kind of a mission th
 - There is a way to buy out from the church for a large sum
 - The church may request you to build churches, schools and construct missions.
 
-The investors as described here should be kind of both: They help you at the start, but later you would like to get rid of them. The production of liberty bells could be somehow part of the political struggle to get rid of those investors. Maybe the bell production triggers the progress for buyout possibilities. In that sense, the play with the investors are a precursor to the revolution against the king.
+The investors as described here should be kind of both: They help you at the start, but later you would like to get rid of them. The production of liberty bells could be somehow part of the political struggle to get rid of those investors. Maybe the bell production triggers the progress for buyout possibilities. In that sense, the play with the investors are a precursor to the revolution against the [[King]].

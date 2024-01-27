@@ -52,6 +52,7 @@ the speed of promotion depends on:
 - power is always 0
 - health penalty
 - small production bonus
+- does not need wood
 - **events**:
 	- escape
 	- rebellion
@@ -59,10 +60,11 @@ the speed of promotion depends on:
 ### Indebted
 - cannot promote
 - power is always 0
+- does not need wood
 - wears off after a few years (debt payed)
 - **events**
 	- escape and live with the natives
-### Very powerful
+### Very powerful (maybe this is not a good idea)
 Once a colonist reaches very high power (maybe 100 or more), he becomes powerful and may resist a few of your actions:
 - they only accept to take a job, if it is their profession or higher than their current class
 - they refuse to take a gun, unless their profession is soldier

@@ -1,15 +1,15 @@
 #history
 
-Difficulty Levels
-- Easy (Merchant Ship with 1 settler, 1 pioneer and 1 scout, 20k)
-- Medium (Caravel with 1 pioneer and 1 scout, 5k)
-- Hard (Caravel with 1 settler and 1 soldier, no money)
+## Difficulty Levels
+- Easy/Novice (Merchant Ship with 1 settler, 1 pioneer and 1 scout, 20k)
+- Medium/Veteran (Caravel with 1 pioneer and 1 scout, 5k)
+- Hard/Viceroy (Caravel with 1 settler and 1 soldier, no money)
 
-Map size
+## Map size
 - Large
 - Enormous
 
-Historical events:
+## Historical events (This list is certainly not exhaustive):
 - 1492 Granada capitulates, completing the Reconquista
 - 1494 Treaty of Tordesillas, establishing the demarcation line between Spanish and Portugese
 - 1494 until 1559 Italian Wars
@@ -53,69 +53,69 @@ Historical events:
 - 1756 7 Years war breaks out
 
 
-Scenario
+## Scenario
 
-Early
-- Spain (1492) in the Carribean
- -> Character: Christopher Columbus
- -> Difficulty: Medium
+### Early
+#### Spain (1492) in the Carribean
+- Character: Christopher Columbus
+- Difficulty: Medium
  	Little is known about the new world, Columbus needs to come back with something to show and cannot complete his mission, because India and China cannot be found
- -> Map: Completely unknown
- -> Context: Reconquista is over, Spain militarized, looking for trade with Asia
- -> Mission: Find China and India, establish trade
-- Portugal (1500) in Brazil
- -> Character: Gaspar de Lemos
- -> Difficulty: Medium
+- Map: Completely unknown
+- Context: Reconquista is over, Spain militarized, looking for trade with Asia
+- Mission: Find China and India, establish trade
+#### Portugal (1500) in Brazil
+- Character: Gaspar de Lemos
+- Difficulty: Medium
   The home country is focussed on India. That means not so much support but also no pressure. The mission is to explore, at first there is no economic intentions.
- -> Map: The Carribean, Venzuela, New Foundland
- -> Context: Most powerful navy, Lisbon just became huge trade center, experienced explorers, already established trade posts in west coast of Africa
+- Map: The Carribean, Venzuela, New Foundland
+- Context: Most powerful navy, Lisbon just became huge trade center, experienced explorers, already established trade posts in west coast of Africa
     Brazil is discovered during Pedro Álvares Cabral's mission to India
     Gaspar de Lemos is a captain of one of the ships and is left in charge
- -> Mission:
+- Mission:
     Original mission: Sail to India, establish spice trade, ally Christians and expel all muslims. Pedro Álvares Cabral leads this mission (not the player)
     Upon discovery of Brazil: Establish a naval base and explore the coast line
 
-Mid
-- France (1534) in Canada
- -> Character: Jaques Cartier
- -> Difficulty: Hard
+### Mid
+#### France (1534) in Canada
+- Character: Jaques Cartier
+- Difficulty: Hard
   The original colony failed after two years. Support by the home country is small
- -> Map: Brazil, North American east coast
- -> Context: France is caught in its rivalry with the Habsburg and the Italian Wars
- -> Mission: Search for gold, find way to Asia (?)
-- English (1584)
- -> Character: Sir Walter Raleigh
- -> Difficulty: Hard
+- Map: Brazil, North American east coast
+- Context: France is caught in its rivalry with the Habsburg and the Italian Wars
+- Mission: Search for gold, find way to Asia (?)
+#### English (1584)
+- Character: Sir Walter Raleigh
+- Difficulty: Hard
   Poor choice of skills, little political support, underfunded
- -> Context: ??
- -> Mission: Establish pirate base
-- France (1604) in Canada
- -> Character: Samuel de Champlain
- -> Difficulty: Easy
+- Context: ??
+- Mission: Establish pirate base
+#### France (1604) in Canada
+- Character: Samuel de Champlain
+- Difficulty: Easy
   With France being ready to focus its efforts there will be more support by the king and home companies
- -> Map: St. Laurence river is explored
- -> Context: Strong military, European conflicts settled
- -> Mission: Establish trade post
-- England (1607) in Virginia
- -> Character: John Smith
- -> Difficulty: Easy
+- Map: St. Laurence river is explored
+- Context: Strong military, European conflicts settled
+- Mission: Establish trade post
+#### England (1607) in Virginia
+- Character: John Smith
+- Difficulty: Easy
   With the support of the virgina company, resources are ready to establish the colonies. The supreme English navy garanties access to trade.
- -> Context: Virgina Company
- -> Mission: Establish pirate base, grow cash crops like tobacco
-- Netherlands (1609) in New York
- -> Character: Henry Hudson
- -> Difficulty: Medium
- -> Context: Successful East India Company, big fleet, trade expansion
- -> Mission: Establish profitable fur trade with the natives
+- Context: Virgina Company
+- Mission: Establish pirate base, grow cash crops like tobacco
+#### Netherlands (1609) in New York
+- Character: Henry Hudson
+- Difficulty: Medium
+- Context: Successful East India Company, big fleet, trade expansion
+- Mission: Establish profitable fur trade with the natives
 
-Late
+### Late
 - Sweden (1630) in Delaware
 - France (1682) in Louisiana
 
 
 Those scenarios will need a configuration with colonies by other European nations
 
-European port
+### European port
 - Seville (Spain)
 - London (England)
 - Lisbon (Portugal)

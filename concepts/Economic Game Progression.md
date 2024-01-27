@@ -26,4 +26,4 @@ The king will raise taxes, the church will want influence and may have demands, 
 
 ## Independence War
 - Goal: Win the game
-Tensions have risen so high, that the king sends his expedition forces. The player needs to win the independence war and will win the game
+Tensions have risen so high, that the king sends his expedition forces. The player needs to win the independence war and will win the game. If possible it would be good to avoid the phase in the original Colonization I game, where first educate a small army of statesmen to get every colony to 100% and then build soldiers and artillery forever to finally declare independency. Instead it would be good to give the player reasons to develop these things automatically, so that he finds himself in a position where the independence war seems like a reasonable choice or kind of happens to him.

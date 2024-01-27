@@ -1,6 +1,4 @@
 #old-world #king #laws-and-ownership 
-King
-
 The king looks at you like an investment. He is a little bit like an investor, but without any benefits for you.
 
 - Relatively quick he will invent a tax for all goods you sell in Europe at 3%
@@ -14,6 +12,6 @@ The king looks at you like an investment. He is a little bit like an investor, b
 - He will eventually send his expedition force and fight the war for independence against you
 
 
-Audience
+## Audience
 
 The game starts with an audience at the royal court. The king will give the mission to the player. When the player returns for the first few times, the king will call in an audience, commenting on the progress of the player.
