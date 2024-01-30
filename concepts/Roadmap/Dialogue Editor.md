@@ -1,5 +1,9 @@
 We need some kind of Dialogue Editor system, that allows non-developers to edit dialogues. Because dialogs are statice, we can compile them into javascript function at compile time. This is good for performance and we can check for errors without navigating to the dialog in the game.
 
+Dialogs always should pause the game, and when closed resume it (if it was running before).
+If there is a default answer, the dialog can be clicked away by clicking anywhere on the screen.
+The action of the default answer will then be executed. It is also possible to have a default answer without content. This is, for example, to inform the player of something and let it happen once he has read the dialog and closes it.
+
 We will use a template language, that looks something like this:
 ### Syntax
 ```
@@ -46,8 +50,6 @@ These data types are allowed:
 [format: wide]
 {world: World}
 Hello {world}!
-
-[answer default] Ok
 ```
 #### Example with dialog flow
 ```
@@ -69,8 +71,6 @@ Hello {world}!
 {items: Food, Gold, Rum}
 
 [repeat {items}] I like {.} [not-last], [last] and [/last].
-
-[answer default] Great.
 ```
 #### Example with object
 ```
