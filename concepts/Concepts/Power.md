@@ -1,5 +1,5 @@
 #colonists #new-world #concepts
-Each colonist has a certain power. This is a number, that initially in Europe is assigned randomly. At the time of assignment, different kinds of immigration give bonuses or malusses for immigrants:
+Each colonist has a certain power. This is a number, that initially in Europe is assigned randomly. At the time of assignment, different kinds of immigration give bonuses or maluses for immigrants:
 - When they are promised land, they will get a power bonus
 - When they are criminals, they will get a severe power malus
 - When coming as indentured servants, they will get a power malus

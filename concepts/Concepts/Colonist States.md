@@ -21,7 +21,7 @@ the speed of promotion depends on:
 - production bonus for wood
 - increased chance of illness
 - **events**:
-	- Tear down building (results in partially restocking the wood)
+	- Tear down building (results in partially restocking the wood and a lost building)
 ### Starving
 - production malus, except for food
 - increased chance of illness
@@ -52,7 +52,7 @@ the speed of promotion depends on:
 - power is always 0
 - health penalty
 - small production bonus
-- does not need wood
+- needs 2 food
 - **events**:
 	- escape
 	- rebellion
@@ -60,11 +60,18 @@ the speed of promotion depends on:
 ### Indebted
 - cannot promote
 - power is always 0
-- does not need wood
+- needs 2 food
 - wears off after a few years (debt payed)
 - **events**
 	- escape and live with the natives
-### Very powerful (maybe this is not a good idea)
+### Poor
+- when a colonists power falls to 0, he becomes poor
+- power cannot get lower than 0
+- needs 2 food
+- cannot have state *bonus*
+- cannot have state *no luxury* (keeps expertise without receiving the goods!)
+- once the colonists power reaches 10, he will lose the poor state
+### Very powerful (idea, maybe not?)
 Once a colonist reaches very high power (maybe 100 or more), he becomes powerful and may resist a few of your actions:
 - they only accept to take a job, if it is their profession or higher than their current class
 - they refuse to take a gun, unless their profession is soldier

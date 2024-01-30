@@ -39,7 +39,4 @@ During movement, units will automatically make sure not to shadow each other. Si
  -> Will try to avoid other hostiles
 
 
-## New concept: Home Base
-Every unit needs a home base. When equipment / food runs low, it will go to its home base and refill. This is applied to ships and land units and allows for reasonable (partly)automation of units, because then there is a clear way of dealing with low equipement / food, and this gives an idea of the supply range for a unit
-
 
