@@ -2,6 +2,6 @@ We currently have a very low level framework, that allows us to do html overlays
 
 ### Frameworks
 - Solid: uses signals, probably very efficient, very promising
-- Vue: uses dependencies and shadow DOM, efficient, promising
-- Svelte: is similar to Vue, uses signals, but needs a compiler, not so promising
+- Vue: uses dependencies and shadow DOM, I know it well, promising
+- Svelte: is similar to Vue, uses signals, but needs a compiler, maybe
 - React: Nope.

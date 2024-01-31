@@ -5,7 +5,7 @@ Educational buildings help improve [[Literacy]] and increase the speed of [[Prom
 ### Jobs
 1 teacher:
 - Teaching his profession and increasing literacy
-- Requires a low class [Profession] or none
+- Requires a low class [[Professions]] or none
 ## Collage
 ### Jobs
 1 teacher

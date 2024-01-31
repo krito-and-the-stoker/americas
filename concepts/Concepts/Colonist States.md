@@ -75,5 +75,6 @@ the speed of promotion depends on:
 Once a colonist reaches very high power (maybe 100 or more), he becomes powerful and may resist a few of your actions:
 - they only accept to take a job, if it is their profession or higher than their current class
 - they refuse to take a gun, unless their profession is soldier
+- Can vote on laws or independence declaration
 
 

@@ -15,11 +15,13 @@ We will use a template language, that looks something like this:
 [setting: value]
 [fn singleArgument]
 [fn argument1:value1 argument2:value2] content
-[fn][argument1: value1][argument2] content
 [fn singlArgument]
 	[anotherArgument: value]
 	content
-[fn singleArgument] content [/fn]
+[fn singleArgument] content [/]
+[fn singleArgument]
+	content
+[/]
 ```
 ### Data Types
 These data types are allowed:
@@ -29,13 +31,15 @@ These data types are allowed:
 - Object
 - Function
 ### Functions
-- dialog: no parameters, starts the definition of a dialog
+- dialog: no parameters, starts the definition of a new dialog
 - template: defines a reusable template
 - repeat: will repeat a block of code for every item in a given list
 - if: will only show a block 
 - answer: renders an option to choose as an answer
 - icon: display an icon
 - table, space: creates a table with space in-between the items
+- same-line: Starting a line with a same-line function prevents creation of a line break
+- new-line: Creates a new line
 ### Settings
 - name: Every dialog needs a name so it is clear when to show it
 - format: choose from a list of pre-formatted options: default, wide, fullscreen
@@ -54,15 +58,15 @@ Hello {world}!
 #### Example with dialog flow
 ```
 [dialog]
-[name: Echo]
+[name: Answer Echo] // this can be triggered with action:dialog:answer-echo
 
 [if {answer}]
 	You said {answer}
 [else]
 	Say something
 [answer default] Exit please
-[answer action:dialog:Echo:{answer:Hello}] Hello
-[answer action:dialog:Echo:{answer:Goodbye}] Goodbye
+[answer action:dialog:answer-echo:{answer:Hello}] Hello
+[answer action:dialog:answer-echo:{answer:Goodbye}] Goodbye
 ```
 #### Example with repeat
 ```
@@ -70,12 +74,14 @@ Hello {world}!
 [name: Example with repeat]
 {items: Food, Gold, Rum}
 
-[repeat {items}] I like {.} [not-last], [last] and [/last].
+I like [repeat {items}]
+	[if {inner}], [/][if {last}] and [/]{.}
+[/] .
 ```
 #### Example with object
 ```
 [dialog]
-[Example with object]
+[name: Example with object]
 {goods:
 	food: 10
 	gold: 100
@@ -88,7 +94,9 @@ We have {goods.food}[icon food], {goods.gold}[icon gold] and {goods.rum}[icon ru
 ```
 #### Buying land from the natives when in the colony
 ```
-[template price] {price}[icon gold]
+[template price] {price}[icon gold] // transforms [price 500] -> 500[icon gold]
+// the parameter to template "price" defines the templates name,
+// and binds the argument to {price} so it can be used inside the template
 
 [dialog]
 [name: Buy Land from Natives]
@@ -110,9 +118,9 @@ We *already use* this land and will appreciate if *you stay clear* of it.
 [format: wide]
 What would you like to *construct*?
 
-[answer][default] **No construction**
 [repeat {choices}]
 	[answer action:{.action}] [table] {.label} [space] ([goods {.cost}])
+[answer default] **No construction**
 ```
 #### Purchase options in Europe
 ```
@@ -140,17 +148,19 @@ What would you like to purchase?
 ```
 #### Native enters a colony to trade
 ```
+[template good] **{good.amount}[icon {good.good}]**
 [dialog]
 [name: Native Trade Initial]
 
-We would like you to offer {offer.amount}[icon {offer.good}] in exchange for {demand.amount}[icon {demand.good}].
+We would like you to offer [good {offer}] in exchange for [good {demand}].
 
 [answer default] Thank you we don't need any [icon {offer.good}]
-[answer action:less] We can give you {less}[icon {demant.good}]
-[answer action:different] Will you instead take [icon {different.good}]
+[answer action:less] We can give you [good {less}]
+[repeat {different}]
+	[answer action:different:{.good}] Will you instead take [good {.}]?
 
 [dialog]
-[name: Native Trade less]
+[name: Native Trade Less]
 
 [if {accept}]
 	We accept your offer. Would you like to trade further under the same conditions?
@@ -158,13 +168,13 @@ We would like you to offer {offer.amount}[icon {offer.good}] in exchange for {de
 	[anwer default] No only this time
 	[answer action:establish-trade-route] Yes, please come back, we will take us much as you can bring (establish **trade route**)
 [else]
-	You ask too much for too little. We can give you {counter.amount}[icon {counter.good}] for your {less.amount} [good {less.good}]
+	You ask too much for too little. We can give you [good {counter}] for your [good {less}]
 	[answer default] No thank you.
 	[answer action:buy] Okay, that is good enough.
 	[answer action:establish-trade-route] Okay, please come back and give us more (establish **trade route**)
 
 [dialog]
-[name: Native Tade different]
+[name: Native Tade Different Good]
 ....
 
 ```

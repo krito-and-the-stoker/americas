@@ -94,11 +94,11 @@ Secondary production: 2
 Possible production: 1
 #### Goods modifier
 Food:
-- main: +2
+- main: +1
 - secondary: +1
 - possible: +1
 Wood:
-- main: +3
+- main: +1
 - secondary: +1
 ### Bonus resource
 Main production: + 3
@@ -131,18 +131,18 @@ Possible production: +1
 Prairie (secondary) without buildings will yield:
 `secondary 2 + food 1 = 3 (6 for expert)`
 Plowed plains (main) with a granary (level 1 building) will yield:
-`main 2 + food 2 + plowed 2 + granary 2 = 8 (12 for expert)`
+`main 2 + food 1 + plowed 2 + granary 2 = 7 (11 for expert)`
 Plowed grassland (secondary) with a granary (level 1 building) will yield:
 `secondary 2 + food 1 + plowed 1 + granary 1 = 5 (8 for expert)`
 Forest with high stands yields:
-`main 2 + food 2 + high stands 2 = 6 (no expert)`
+`main 2 + food 1 + high stands 2 = 5 (8 for expert)`
 ### Wood
 Mixed Forest without buildings will yield
-`main 2 + wood 3 = 5 (9 for expert)`
+`main 2 + wood 1 = 3 (7 for expert)`
 Mixed Forest with forest trails (level 1 building) will yield:
-`main 2 + wood 3 + trails 2 = 7 (11 for expert)`
+`main 2 + wood 1 + trails 2 = 5 (9 for expert)`
 Mixed Forest with river and wood lathes (level 3 building) will yield:
-`main 2 + wood 3 + river 2 + lathes 5 = 12 (16 for expert)`
+`main 2 + wood 1 + river 2 + lathes 5 = 10 (14 for expert)`
 ### Cotton
 Prairie (main) without buildings yields:
 `main 2 = 2 (6 for expert)`

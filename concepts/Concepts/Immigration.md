@@ -8,7 +8,7 @@ These are the default immigrants, they cannot be too poor, because the travel to
 - Farmers
 - Traders
 - Settlers (no [[Professions]])
-We will still need to find a system to model their immigration. The immigration speed can be increased by an option to promise land for every new immigrant. When promising land, unworked land in your colonies generates this type of immigration (and possibly others).
+We will still need to find a system to model their immigration. The immigration speed can be increased by an option to promise land for every new immigrant. When promising land, unworked land in your colonies generates this type of immigration (and possibly others). Colonists that are doing well (bonus resource) and that are promoting will add to the immigration speed, colonist that do poorly (no luxury, poor) will slow down immigration.
 ### Indentured Servants
 These immigrants cannot pay for the travel to come, so they find somebody to pay and are indebted, which means they need to work off their debt before they can live a free life. They will be usually unskilled and all will start with the [[Colonist States]] indebted.
 We need to think about what will trigger these kinds of immigration, could be vey similar to self-managed.

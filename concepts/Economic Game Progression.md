@@ -19,11 +19,11 @@ This is probably the longest phase and describes the mid game. Now that the colo
 In this phase the player has quite some choices to direct his attention: He can try to build up all industry necessary to survive and be self sufficient without trading with Europe. He can try to massively grow the raw good production in order to become rich. This can of course be combined. The high level buildings for automation help dealing with the vast number of colonists and trade routes, that are necessary to run the colonies. The handful of colonies have become a complicated system, that needs to be monitored and managed on a larger level.
 
 ## Politics
-- Goal: Adjust power structures
+- Goal: Politics and power structures
 Now that the player is thriving in the new world and the game has become more and more systematic, structural changes matter more than building another colony here or there. The automation level has made direct changes a not challenging experience anymore. Instead, we want to force the player to look at structural changes:
 Internal structural changes...
 The king will raise taxes, the church will want influence and may have demands, and the investors from the old world want their share. The political struggle will become about giving the colonies a structure that is independent from the old world and, eventually, deny the demands of the old world leading into the independence war.
 
 ## Independence War
 - Goal: Win the game
-Tensions have risen so high, that the king sends his expedition forces. The player needs to win the independence war and will win the game. If possible it would be good to avoid the phase in the original Colonization I game, where first educate a small army of statesmen to get every colony to 100% and then build soldiers and artillery forever to finally declare independency. Instead it would be good to give the player reasons to develop these things automatically, so that he finds himself in a position where the independence war seems like a reasonable choice or kind of happens to him.
+Tensions have risen so high, that the king sends his expedition forces. The player needs to win the independence war and will win the game. If possible it would be good to avoid the phase in the original Colonization I game, where first educate a small army of statesmen to get every colony to 100% freedom and then build soldiers and artillery forever to finally declare independency. Instead it would be good to give the player reasons to develop these things automatically, so that he finds himself in a position where the independence war seems like a reasonable choice or kind of happens to him.
