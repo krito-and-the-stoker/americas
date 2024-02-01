@@ -25,10 +25,6 @@ const jamestown = () => {
 const tools = () => ({ good: 'tools', amount: 79 })
 
 
-test('battle', () => {
-	Interaction.Battle(soldier(), settler())
-})
-
 test('buy from europe', () => {
 	Interaction.BuyFromEurope(ship(), tools())
 })
@@ -47,6 +43,10 @@ test('equip unit from colony', () => {
 
 test('equip unit from ship', () => {
 	Interaction.EquipUnitFromShip(ship(), settler(), tools())
+})
+
+test('fight', () => {
+	Interaction.Fight(soldier(), settler())
 })
 
 test('find work', () => {

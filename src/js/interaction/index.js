@@ -1,10 +1,10 @@
-import Battle from 'interaction/battle'
 import BuyFromEurope from 'interaction/buyFromEurope'
 import EnterColony from 'interaction/enterColony'
 import EnterEurope from 'interaction/enterEurope'
 import EnterSettlement from 'interaction/enterSettlement'
 import EquipUnitFromColony from 'interaction/equipUnitFromColony'
 import EquipUnitFromShip from 'interaction/equipUnitFromShip'
+import Fight from 'interaction/fight'
 import FindWork from 'interaction/findWork'
 import InvestigateRumors from 'interaction/investigateRumors'
 import JoinColony from 'interaction/joinColony'
@@ -21,13 +21,13 @@ import ShrinkFromStarvation from 'interaction/shrinkFromStarvation'
 import UnjoinColony from 'interaction/unjoinColony'
 
 export default {
-	Battle,
 	BuyFromEurope,
 	EnterColony,
 	EnterEurope,
 	EnterSettlement,
 	EquipUnitFromColony,
 	EquipUnitFromShip,
+	Fight,
 	FindWork,
 	InvestigateRumors,
 	JoinColony,

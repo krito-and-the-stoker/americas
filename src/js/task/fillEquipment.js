@@ -4,6 +4,7 @@ import Time from 'timeline/time'
 
 import Storage from 'entity/storage'
 import Unit from 'entity/unit'
+import Colony from 'entity/colony'
 import Tile from 'entity/tile'
 
 

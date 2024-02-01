@@ -3,7 +3,7 @@ import Record from 'util/record'
 
 import Unit from 'entity/unit'
 import Owner from 'entity/owner'
-
+import Tile from 'entity/tile'
 
 
 test('create/disband', () => {
@@ -26,8 +26,8 @@ test('load/unload', () => {
 	Unit.loadUnit(transport, passenger2)
 	expect(transport.passengers[0]).toBe(passenger1)
 	expect(transport.passengers[1]).toBe(passenger2)
-	Unit.unloadUnit(transport, passenger1)
+	Unit.unloadUnit(transport, passenger1.tile, passenger1)
 	expect(transport.passengers[0]).toBe(passenger2)
-	Unit.unloadUnit(transport)
+	Unit.unloadUnit(transport, passenger2.tile)
 	expect(transport.passengers.length).toBe(0)
 })
