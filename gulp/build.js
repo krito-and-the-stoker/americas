@@ -2,21 +2,11 @@ const gulp = require('gulp')
 const pug = require('gulp-pug')
 const sass = require('gulp-sass')(require('sass'))
 const browserSync = require('browser-sync').create()
-const md = require('markdown-it')({ html: true })
-const mila = require('markdown-it-link-attributes')
 const webpack = require('webpack')
 const path = require('path')
 const jimp = require('jimp')
 const fs = require('fs')
 const config = require('./webpack.config.js')
-
-md.use(mila, {
-	attrs: {
-		target: '_blank',
-		rel: 'noopener'
-	}
-})
-
 
 gulp.task('version', done => {
 	const revision = require('child_process')
@@ -55,13 +45,7 @@ gulp.task('static', () => {
 
 gulp.task('pug', () => {
 	return gulp.src('src/pages/**/*.pug')
-		.pipe(pug({
-			filters: {
-				markdown: (input) => {
-					return md.render(input)
-				}
-			}
-		})).on('error', swallowError)
+		.pipe(pug()).on('error', swallowError)
 		.pipe(gulp.dest('dist'))
 		.pipe(browserSync.reload({
 			stream: true
