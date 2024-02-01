@@ -7,3 +7,4 @@ There are
 - [[Military Buildings]]
 - [[Automation Buildings]]
 - [[Education Buildings]]
+- [[Political Buildings]]

@@ -18,6 +18,7 @@ With all these automations in place, the focus of the game scales up tremendousl
 ### Logistic
 1. Post office: Automatic import/export
 2. Logistic office: Automatic balance
+- Needs ships or land transports assigned
 ### Overseas harbour
 - Can dedicate goods for export to Europe
 - Can order specific amount of goods from Europe
@@ -29,6 +30,8 @@ With all these automations in place, the focus of the game scales up tremendousl
 will instead take immigrants to the immigration center
 - extra ships can be assigned, but do not have to
 - can make systematic choice who immigrates first
+### Colony planning office
+- Allows to create a default construction queue
 ### Frontier planning office
 - assign pioneers for automation
 - allows central scheduling of pioneering work (plow field, build road etc)
