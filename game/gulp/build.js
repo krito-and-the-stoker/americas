@@ -82,17 +82,22 @@ gulp.task('serve', done => {
             baseDir: 'dist',
             middleware: function (req, res, next) {
                 if (req.url.startsWith("/api")) {
-                    // Proxy options
-                    const options = {
-                        target: 'http://event-tracker:8080', // Replace with the target host of your /event route
-                        changeOrigin: true
-                    }
+                    try {
+	                    // Proxy options
+	                    const options = {
+	                        target: 'http://event-tracker:8080', // Replace with the target host of your /event route
+	                        changeOrigin: true
+	                    }
 
-                    // Create a proxy
-                    const proxy = require('http-proxy').createProxyServer(options)
-                    
-                    // Proxy the request
-                    proxy.web(req, res)
+	                    // Create a proxy
+	                    const proxy = require('http-proxy').createProxyServer(options)
+	                    
+	                    // Proxy the request
+	                    proxy.web(req, res)
+                    } catch(e) {
+                    	console.log(e)
+                    	next()
+                    }
                 } else {
                     next()
                 }
