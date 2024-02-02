@@ -17,8 +17,6 @@ const numberOfAssets = () => 2 + Object.entries(paths).length
 
 const paths = Object.freeze({
 	map: 'images/map.png',
-	mapWinter: 'images/map-winter.png',
-	mapSummer: 'images/map-summer.png',
 	colonyBackground: 'images/colony-screen/background.jpg',
 	europeBackground: 'images/europe.jpg',
 	undiscovered: 'images/undiscovered.jpg',
