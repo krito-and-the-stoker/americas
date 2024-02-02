@@ -20,6 +20,7 @@ const Dashboard = () => {
     }
   });
 
+  const numberOfUsers = () => Object.keys(data().countByUserID).length;
   const userActivityData = () => {
     const buckets: number[] = [];
     Object.values(data().countByUserID).forEach(count => {
@@ -33,7 +34,7 @@ const Dashboard = () => {
     return {
       labels: Object.keys(buckets).map(exp => Number(exp) ? `Users with ${Math.pow(2, Number(exp))} - ${Math.pow(2, Number(exp) + 1) - 1} Events` : '1 Event'),
       datasets: [{
-        label: 'User Activity',
+        label: 'Number of Users',
         data: Object.values(buckets),
         backgroundColor: 'rgba(54, 162, 235, 0.5)',
         borderColor: 'rgba(54, 162, 235, 1)',
@@ -44,11 +45,11 @@ const Dashboard = () => {
 
   const eventsAndUserData = () => {
     const events = data().totalCount;
-    const users = Object.keys(data().countByUserID).length;
+    const users = numberOfUsers();
     return {
       labels: [`${events} Events`, `${users} Users`],
       datasets: [{
-        label: 'Events and Users',
+        label: 'Count',
         data: [events, users],
         backgroundColor: 'rgba(54, 162, 235, 0.5)',
         borderColor: 'rgba(54, 162, 235, 1)',
@@ -76,7 +77,7 @@ const Dashboard = () => {
       labels: Object.keys(data().countByDay),
       datasets: [
         {
-          label: 'Events by Day',
+          label: 'Events per Day',
           data: Object.values(data().countByDay),
           fill: false,
           borderColor: 'rgb(75, 192, 192)',
@@ -127,7 +128,7 @@ const Dashboard = () => {
               <Bar data={eventsAndUserData()} />
             </div>
             <div class="chart">
-              <h3>User Activity</h3>
+              <h3>Total Users: {numberOfUsers()}</h3>
               <Bar data={userActivityData()} />
             </div>
             <div class="chart">
@@ -135,7 +136,7 @@ const Dashboard = () => {
               <Pie data={eventTypeData()} options={options} />
             </div>
             <div class="line-chart">
-              <h3>Events per Day</h3>
+              <h3>Timeline</h3>
               <Line data={eventsPerDay()} options={lineOptions} />
             </div>
           </div>
