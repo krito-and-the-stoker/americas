@@ -30,6 +30,6 @@ func (es *EventService) HandleEvent(w http.ResponseWriter, r *http.Request) {
         log.Fatal(err) // Or handle the error more gracefully
     }
 
-    log.Println("Inserted a single document: ", insertResult.InsertedID, event)
+    log.Println("Inserted a single document: ", insertResult.InsertedID)
     json.NewEncoder(w).Encode(event)
 }
