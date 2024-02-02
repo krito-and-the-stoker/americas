@@ -6,21 +6,7 @@ import (
     "net/http"
     "time"
     "log"
-
-    "go.mongodb.org/mongo-driver/mongo"
 )
-
-// Event represents the structure of our resource
-type Event struct {
-    Name      string `json:"name"`
-    UserId    string `json:"userId"`
-    Timestamp time.Time `json:"timestamp"`
-}
-
-// EventService provides an interface to handle events
-type EventService struct {
-    Collection *mongo.Collection
-}
 
 // HandleEvent is responsible for handling the /event route
 func (es *EventService) HandleEvent(w http.ResponseWriter, r *http.Request) {
@@ -44,6 +30,6 @@ func (es *EventService) HandleEvent(w http.ResponseWriter, r *http.Request) {
         log.Fatal(err) // Or handle the error more gracefully
     }
 
-    log.Println("Inserted a single document: ", insertResult.InsertedID)
+    log.Println("Inserted a single document: ", insertResult.InsertedID, event)
     json.NewEncoder(w).Encode(event)
 }

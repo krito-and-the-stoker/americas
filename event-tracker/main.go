@@ -36,9 +36,8 @@ func main() {
 
     collection := client.Database(databaseName).Collection("events")
 
-    eventService := &routes.EventService{Collection: collection}
-    http.HandleFunc("/api/event", eventService.HandleEvent)
-    http.HandleFunc("/api/summary", eventService.HandleSummary)
+    eventService := routes.NewEventService(collection, "/api")
+    http.HandleFunc(eventService.Prefix, eventService.Handle)
 
     log.Println("Server is starting...")
     log.Fatal(http.ListenAndServe(":8080", nil))

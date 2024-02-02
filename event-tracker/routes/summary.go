@@ -39,7 +39,14 @@ func (es *EventService) HandleSummary(w http.ResponseWriter, r *http.Request) {
     }
 
     // Count by UserID
-    groupByUserID := bson.D{{"$group", bson.D{{"_id", "$userId"}, {"count", bson.D{{"$sum", 1}}}}}}
+    groupByUserID := bson.D{
+        {"$group", bson.D{
+            {"_id", "$userId"},
+            {"count", bson.D{
+                {"$sum", 1},
+            }},
+        }},
+    }
     cursor, err := es.Collection.Aggregate(context.Background(), mongo.Pipeline{groupByUserID})
     if err != nil {
         log.Fatal(err) // Or handle the error more gracefully
@@ -58,7 +65,14 @@ func (es *EventService) HandleSummary(w http.ResponseWriter, r *http.Request) {
         result.CountByUserID[id] = int64(res["count"].(int32))
     }
     // Count by Name
-    groupByName := bson.D{{"$group", bson.D{{"_id", "$name"}, {"count", bson.D{{"$sum", 1}}}}}}
+    groupByName := bson.D{
+        {"$group", bson.D{
+            {"_id", "$name"},
+            {"count", bson.D{
+                {"$sum", 1},
+            }},
+        }},
+    }
     cursor, err = es.Collection.Aggregate(context.Background(), mongo.Pipeline{groupByName})
     if err != nil {
         log.Fatal(err) // Or handle the error more gracefully
