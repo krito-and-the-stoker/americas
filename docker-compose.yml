@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  database:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  event-tracker:
+    build: ./event-tracker
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    environment:
+      MONGO_URI: "mongodb://root:example@database:27017"
+    command: ./main
+
+  game:
+    build:
+      context: ./game
+    volumes:
+      - game-dist:/dist
+    command: >
+      sh -c "rm -rf /dist/* &&
+             cp -r /app/game/dist/* /dist &&
+             ls -l /dist &&
+             echo 'Copied files to /dist'"
+
+  webserver:
+    build:
+      context: ./nginx
+    volumes:
+      - game-dist:/usr/share/nginx/html:ro
+    ports:
+      - "3000:80"
+    depends_on:
+      - game
+      - event-tracker
+
+volumes:
+  mongo-data:
+  game-dist:

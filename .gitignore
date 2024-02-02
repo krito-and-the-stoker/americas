@@ -1,13 +1,13 @@
-dist/
-node_modules/
-coverage/
-stuff/
+game/dist/
+game/node_modules/
+game/coverage/
+game/stuff/
+game/concepts/.obsidian
 
-src/js/maps/*.climate.json
+game/src/js/maps/*.climate.json
 
-yarn-error.log
 *.sublime-*
 
 .DS_Store
 
-concepts/.obsidian
+Dokumentation/

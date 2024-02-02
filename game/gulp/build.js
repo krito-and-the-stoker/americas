@@ -9,15 +9,32 @@ const fs = require('fs')
 const config = require('./webpack.config.js')
 
 gulp.task('version', done => {
-	const revision = require('child_process')
-		.execSync('git rev-parse HEAD')
-		.toString().trim()
-	fs.writeFileSync(path.resolve(__dirname, '../src/version/version.json'), JSON.stringify({
-		revision,
-		date: new Date().toUTCString()
-	}))
-	done()
-})
+    const versionFilePath = path.resolve(__dirname, '../src/version/version.json');
+
+    // Read the existing version.json file
+    let versionData;
+    try {
+        versionData = JSON.parse(fs.readFileSync(versionFilePath, 'utf8'));
+    } catch (err) {
+        console.error(`Error reading version file: ${err.message}`);
+        done(err);
+        return;
+    }
+
+    // Update the date in the version data
+    versionData.date = new Date().toUTCString();
+
+    // Write the updated data back to the version.json file
+    try {
+        fs.writeFileSync(versionFilePath, JSON.stringify(versionData, null, 2));
+    } catch (err) {
+        console.error(`Error writing version file: ${err.message}`);
+        done(err);
+        return;
+    }
+
+    done();
+});
 
 gulp.task('compile', () => {
 	return new Promise(resolve => webpack(config, (err, stats) => {
