@@ -83,7 +83,7 @@
 		}, {
 			"wood": 350,
 			"tools": 200,
-			"fur": 50
+			"furs": 50
 		}],
 		"width": 1,
 		"workspace": 3,

@@ -1,9 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
 
-let userId = localStorage.getItem('userId');
-if (!userId) {
-    userId = uuidv4();
-    localStorage.setItem('userId', userId);
+const getUserId = () => {	
+	let userId = window.localStorage?.getItem('userId');
+	if (!userId) {
+	    userId = uuidv4();
+	    window.localStorage?.setItem('userId', userId);
+	}
+
+	return userId
 }
 
 const trackEvent = async (name) => {
@@ -12,7 +16,7 @@ const trackEvent = async (name) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ name, userId }),
+    body: JSON.stringify({ name, userId: getUserId() }),
 	})
 	.then(response => {
     if (!response.ok) {
