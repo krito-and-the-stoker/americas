@@ -8,6 +8,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+    command: mongod --quiet --logpath /dev/null
 
   event-tracker:
     build: ./event-tracker

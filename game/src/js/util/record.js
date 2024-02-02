@@ -7,6 +7,7 @@ import Util from 'util/util'
 import PathFinder from 'util/pathFinder'
 import Message from 'util/message'
 import Events from 'util/events'
+import Tracking from 'util/tracking'
 
 import Time from 'timeline/time'
 
@@ -354,6 +355,7 @@ const autosave = async () => {
 	Message.log('Saving...')
 	const content = await serializeAsync()
 	window.localStorage.setItem('lastSave', content)
+	Tracking.autosave();
 	Message.log(`Entities saved to local storage using ${Math.round(content.length / 1024)} kb.`)	
 }
 

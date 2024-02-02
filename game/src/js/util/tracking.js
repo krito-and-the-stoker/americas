@@ -27,9 +27,11 @@ const trackEvent = async (name) => {
 const pageView = () => trackEvent('PageView')
 const newGame = () => trackEvent('NewGame')
 const resumeGame = () => trackEvent('ResumeGame')
+const autosave = () => trackEvent('Autosave')
 
 export default {
 	pageView,
 	newGame,
-	resumeGame
+	resumeGame,
+	autosave
 }
