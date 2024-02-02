@@ -1,32 +1,16 @@
-import { createResource, createEffect, Switch, Match, For } from 'solid-js';
+import 'chart.js/auto';
+import { createResource, Switch, Match } from 'solid-js';
 import { Bar, Pie, Line } from 'solid-chartjs';
 
 const options = {
   aspectRatio: 1,
-  plugins: {
-    tooltip: {
-      callbacks: {
-        label: function(context) {
-          console.log('hi',context)
-          let label = context.label || '';
-          if (label) {
-            label += ': ';
-          }
-          if (context.parsed !== null) {
-            label += context.parsed;
-          }
-          return label;
-        }
-      }
-    }
-  }
 };
 
 const lineOptions = {
-  aspectRatio: 5
-}
+  aspectRatio: 5,
+};
 
-const Dashboard = (props) => {
+const Dashboard = () => {
   const [data] = createResource(async () => {
     try {      
       const res = await fetch('/api/summary');
@@ -37,9 +21,9 @@ const Dashboard = (props) => {
   });
 
   const userActivityData = () => {
-    const buckets = [];
+    const buckets: number[] = [];
     Object.values(data().countByUserID).forEach(count => {
-      const bucket = Math.floor(Math.log2(count));
+      const bucket = Math.floor(Math.log2(count as number));
       if (!buckets[bucket]) {
         buckets[bucket] = 0;
       }
@@ -47,7 +31,7 @@ const Dashboard = (props) => {
     });
 
     return {
-      labels: Object.keys(buckets).map(exp => exp ? `Users with ${Math.pow(2, exp)} - ${Math.pow(2, Number(exp) + 1) - 1} Events` : '1 Event'),
+      labels: Object.keys(buckets).map(exp => Number(exp) ? `Users with ${Math.pow(2, Number(exp))} - ${Math.pow(2, Number(exp) + 1) - 1} Events` : '1 Event'),
       datasets: [{
         label: 'User Activity',
         data: Object.values(buckets),

@@ -5,7 +5,10 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/community" >> /etc/apk/repo
 
 # Update apk and install Certbot
 RUN apk update && \
-    apk add --no-cache certbot certbot-nginx
+    apk add --no-cache certbot certbot-nginx apache2-utils
+
+# Create the .htpasswd file (Replace 'username' and 'password' with your desired credentials)
+RUN htpasswd -cb /etc/nginx/.htpasswd stoker krito
 
 RUN mkdir -p /var/www/certbot
 
