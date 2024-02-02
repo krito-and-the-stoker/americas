@@ -38,7 +38,7 @@ func main() {
 
     eventService := &routes.EventService{Collection: collection}
     http.HandleFunc("/api/event", eventService.HandleEvent)
-    http.HandleFunc("/api/report", eventService.HandleCountEvents)
+    http.HandleFunc("/api/summary", eventService.HandleSummary)
 
     log.Println("Server is starting...")
     log.Fatal(http.ListenAndServe(":8080", nil))

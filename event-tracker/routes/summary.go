@@ -18,8 +18,8 @@ type CountResult struct {
     CountByDay     map[string]int64 `json:"countByDay"`
 }
 
-// HandleCountEvents handles the route for counting events
-func (es *EventService) HandleCountEvents(w http.ResponseWriter, r *http.Request) {
+// HandleSummary handles the route for counting events
+func (es *EventService) HandleSummary(w http.ResponseWriter, r *http.Request) {
     if r.Method != "GET" {
         http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
         return
@@ -52,10 +52,10 @@ func (es *EventService) HandleCountEvents(w http.ResponseWriter, r *http.Request
         id, ok := res["_id"].(string)
         if !ok {
             // Handle the case where _id is not a string or is nil
-            log.Printf("Invalid type or nil id encountered in CountByUserID: %v", res["_id"])
+            result.CountByUserID["unknown"] = int64(res["count"].(int32))
             continue
         }
-        result.CountByUserID[id] = res["count"].(int64)
+        result.CountByUserID[id] = int64(res["count"].(int32))
     }
     // Count by Name
     groupByName := bson.D{{"$group", bson.D{{"_id", "$name"}, {"count", bson.D{{"$sum", 1}}}}}}
@@ -68,17 +68,7 @@ func (es *EventService) HandleCountEvents(w http.ResponseWriter, r *http.Request
         log.Fatal(err) // Or handle the error more gracefully
     }
     for _, res := range resultsName {
-        var count int64
-        switch c := res["count"].(type) {
-        case int32:
-            count = int64(c)
-        case int64:
-            count = c
-        default:
-            // Handle unexpected type
-        }
-
-        result.CountByName[res["_id"].(string)] = count
+        result.CountByName[res["_id"].(string)] = int64(res["count"].(int32))
     }
 
     // Count by Day
@@ -102,17 +92,7 @@ func (es *EventService) HandleCountEvents(w http.ResponseWriter, r *http.Request
         log.Fatal(err) // Or handle the error more gracefully
     }
     for _, res := range resultsDay {
-        var count int64
-        switch c := res["count"].(type) {
-        case int32:
-            count = int64(c)
-        case int64:
-            count = c
-        default:
-            // Handle unexpected type
-        }
-
-        result.CountByDay[res["_id"].(string)] = count
+        result.CountByDay[res["_id"].(string)] = int64(res["count"].(int32))
     }
 
     json.NewEncoder(w).Encode(result)
