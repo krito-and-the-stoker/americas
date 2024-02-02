@@ -13,6 +13,7 @@ import (
 // Event represents the structure of our resource
 type Event struct {
     Name      string `json:"name"`
+    UserId    string `json:"userId"`
     Timestamp time.Time `json:"timestamp"`
 }
 

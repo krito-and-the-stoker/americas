@@ -77,13 +77,31 @@ gulp.task('sass', () => {
 })
 
 gulp.task('serve', done => {
-	browserSync.init({
-		server: {
-			baseDir: 'dist',
-		},
-		open: false
-	})
-	done()
+    browserSync.init({
+        server: {
+            baseDir: 'dist',
+            middleware: function (req, res, next) {
+                if (req.url.startsWith("/api")) {
+                    // Proxy options
+                    const options = {
+                        target: 'http://event-tracker:8080', // Replace with the target host of your /event route
+                        changeOrigin: true
+                    }
+
+                    // Create a proxy
+                    const proxy = require('http-proxy').createProxyServer(options)
+                    
+                    // Proxy the request
+                    proxy.web(req, res)
+                } else {
+                    next()
+                }
+            }
+        },
+        open: false
+    })
+
+    done()
 })
 
 gulp.task('assets', resolve => {

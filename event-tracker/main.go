@@ -12,6 +12,7 @@ import (
     "event-tracker/routes"
 )
 
+
 const databaseName = "event-tracker"
 
 func main() {
@@ -36,7 +37,7 @@ func main() {
     collection := client.Database(databaseName).Collection("events")
 
     eventService := &routes.EventService{Collection: collection}
-    http.HandleFunc("/event", eventService.HandleEvent)
+    http.HandleFunc("/api/event", eventService.HandleEvent)
 
     log.Println("Server is starting...")
     log.Fatal(http.ListenAndServe(":8080", nil))

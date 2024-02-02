@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  database:
+    image: mongo:7.0.4
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    command: mongod --quiet --logpath /dev/null
+
+  event-tracker:
+    build: ./event-tracker
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    volumes:
+      - ./event-tracker:/app
+      - go-build:/go/pkg/mod
+    environment:
+      MONGO_URI: "mongodb://root:example@database:27017"
+    command: air
+
+  game:
+    build:
+      context: ./game
+    environment:
+      - FORCE_COLOR=1
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./game:/app/game
+      - game-dist:/app/game/dist
+      - node_modules:/app/game/node_modules/
+    command: npm run dev
+
+volumes:
+  mongo-data:
+  node_modules:
+  go-build:
+  game-dist:

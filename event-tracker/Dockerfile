@@ -10,11 +10,14 @@ COPY go.mod go.sum ./
 # Download all dependencies
 RUN go mod download
 
-# Copy the source from the current directory to the working directory inside the container
+# Install Air for live reloading
+RUN go install github.com/cosmtrek/air@latest
+
+# Copy the Air configuration file
+COPY .air.toml ./
+
 COPY . .
 
-# Build the Go app
 RUN go build -o main .
 
-# Expose port 8080 to the outside world
 EXPOSE 8080

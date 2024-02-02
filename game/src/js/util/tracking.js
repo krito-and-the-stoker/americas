@@ -1,10 +1,18 @@
+import { v4 as uuidv4 } from 'uuid';
+
+let userId = localStorage.getItem('userId');
+if (!userId) {
+    userId = uuidv4();
+    localStorage.setItem('userId', userId);
+}
+
 const trackEvent = async (name) => {
-	await fetch('/event', {
+	await fetch('/api/event', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ name }),
+    body: JSON.stringify({ name, userId }),
 	})
 	.then(response => {
     if (!response.ok) {
