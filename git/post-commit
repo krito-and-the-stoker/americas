@@ -1,6 +1,3 @@
 #/bin/bash
 
-echo "Running post-commit hook..."
-
-pwd
 ./pre-build-version.sh
