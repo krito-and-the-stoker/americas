@@ -2,7 +2,7 @@ export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('content:file:beforeParse', (file) => {
     if (file._id.endsWith('.md')) {
       file.body = file.body.replace(/\n/g, '  \n')
-      file.body = file.body.replace(/\[\[(.+)\]\]/g, (match, inner) => `::InternalLink{title="${inner}"}`)
+      file.body = file.body.replace(/\[\[([^\]]+)\]\]/g, (match, inner) => `:InternalLink{title="${inner}"}`)
     }
   })
 

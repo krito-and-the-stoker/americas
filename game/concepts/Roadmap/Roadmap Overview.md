@@ -1,6 +1,0 @@
-- [[Unit Movement Engine]] needs to be fixed.
-- A [[Reactive Html Framework]] and a better integration into our reactivity system.
-- A [[Dialogue Editor]] that allows non-programmers to edit dialogues.
-- A [[Colony Redesign]] is in order.
-- [[Sound]] and [[Musik]] is completely missing at this time.
-- [[Drag and Drop]] sometimes leads to bugs when a redraw happens during a drag
