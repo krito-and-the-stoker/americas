@@ -124,7 +124,7 @@ const Dashboard = () => {
         <Match when={data()}>
           <div class="container">
             <div class="chart">
-              <h3>Total Event Count: {data().totalCount}</h3>
+              <h3>Total Events: {data().totalCount}</h3>
               <Bar data={eventsAndUserData()} />
             </div>
             <div class="chart">
@@ -132,7 +132,7 @@ const Dashboard = () => {
               <Bar data={userActivityData()} />
             </div>
             <div class="chart">
-              <h3>Events Types</h3>
+              <h3>Event Types</h3>
               <Pie data={eventTypeData()} options={options} />
             </div>
             <div class="line-chart">
