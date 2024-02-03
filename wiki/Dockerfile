@@ -20,4 +20,4 @@ RUN mkdir -p /dist
 # Copy the rest of the application code into the container
 COPY . .
 
-RUN npm run build
+RUN npm run generate

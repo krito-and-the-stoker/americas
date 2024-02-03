@@ -9,8 +9,6 @@ definePageMeta({
 const { navigation } = useContent();
 const route = useRoute();
 
-console.log(navigation.value, route);
-
 const findLinks = (list, tag) => {
 	const links = list.filter((item) => {
 		return item.tags?.includes(tag);
@@ -26,7 +24,6 @@ const findLinks = (list, tag) => {
 }
 
 const links = findLinks(navigation.value, route.params.tag);
-console.log(links);
 </script>
 
 <template>
