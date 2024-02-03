@@ -1,106 +1,138 @@
 const input = `
-We can *count* **{counter}**!
+*Hallo* {counter} **Welt**!
 
-[repeat list] This is a {.}
-
+[if counter] We have a counter!
 [answer action:increment] Increment
+[answer] Do nothing
+
+[repeat list] item: {.}
+
 `
 
-// syntaxtic sugar
-const render = something => () => something
 
 const tags = {
 	bold: {
 		begin: '\\*\\*',
 		end:'\\*\\*',
-		replace: (content, parse) => <b>{parse(content)}</b>
+		replace: (subtree) => context => <b>{subtree(context)}</b>
 	},
 	italic: {
 		begin: '\\*',
 		end:'\\*',
-		replace: (content, parse) => <i>{parse(content)}</i>
+		replace: (subtree) => context => <i>{subtree(context)}</i>
 	},
 	function: {
 		begin: '\\[',
 		param: '\\]',
 		end: '\n',
-		replace: (content, parse, context, params) => {
+		replace: (subtree, params) => {
 			const fn = params[0]
 			const paramObject = {
-				content: parse(content)
+				subtree
 			}
 
 			params.forEach((param, i) => {
 				if (i > 0) {
 					const [key, value] = param.split(':')
-					if (key) {
-						paramObject[key] = typeof value === 'undefined'
-							? true
-							: value
+					if (typeof value === 'undefined') {
+						paramObject[i - 1] = key;
+						paramObject[key] = true;
 					} else {
-						console.error(`invalid key in ${param}`)
+						paramObject[key] = value;
 					}
 				}
 			})
 
-			return <>{context[fn](context, paramObject)}<br /></>
+			return context => context[fn](context, paramObject)
 		}
 	},
 	newline: {
 		begin: '\n',
-		replace: () => <br />
+		replace: () => () => <br />
 	},
 	interpolate: {
 		begin: '\{',
-		end: '\}',
-		replace: (content, parse, context) => context[content.trim()]
+		param: '\}',
+		replace: (subtree, params) => context => context[params[0].trim()]
 	},
 }
 
-const tagExpOuter = tag => tag.end
-	? tag.param
-		?	`(${tag.begin}.*?${tag.param}.*?${tag.end})`
-		: `(${tag.begin}.*?${tag.end})`
-	: `(${tag.begin})`
-const tagExpContent = tag => tag.end
-	? tag.param
-		?	`${tag.begin}.*?${tag.param}(.*?)${tag.end}`
-		: `${tag.begin}(.*?)${tag.end}`
-	: `${tag.begin}`
-const tagExpParam = tag => tag.param
-	? `${tag.begin}(.*?)${tag.param}.*?${tag.end}`
-	: `${tag.begin}`
+
+const tagExpOuter = tag => {
+	if (tag.param && tag.end) {
+		return `(${tag.begin}.*?${tag.param}.*?${tag.end})`
+	}
+	if (tag.end) {
+		return `(${tag.begin}.*?${tag.end})`
+	}
+	if (tag.param) {
+		return `(${tag.begin}.*?${tag.param})`
+	}
+	return `(${tag.begin})`
+}
+
+const tagExpContent = tag => {
+	if (tag.param && tag.end) {
+		return `${tag.begin}.*?${tag.param}(.*?)${tag.end}`
+	}
+	if (tag.end) {
+		return `${tag.begin}(.*?)${tag.end}`
+	}
+	if (tag.param) {
+		return `${tag.begin}.*?${tag.param}`
+	}
+	return `${tag.begin}`
+}
+
+const tagExpParam = tag => {
+	if (tag.param && tag.end) {
+		return `${tag.begin}(.*?)${tag.param}.*?${tag.end}`
+	}
+	if (tag.end) {
+		return `${tag.begin}.*?${tag.end}`
+	}
+	if (tag.param) {
+		return `${tag.begin}(.*?)${tag.param}`
+	}
+	return `${tag.begin}`
+}
 
 const splitRegex = new RegExp(Object.values(tags).map(tagExpOuter).join('|'))
 
-const createParser = (context) => {	
-	const tagReplace = chunk => {
-		const tag = Object.values(tags).find(t => chunk.match(new RegExp(tagExpOuter(t))))
-		if (tag) {
-			const content = chunk.match(new RegExp(tagExpContent(tag)))[1]
-			const param = tag.param && chunk.match(new RegExp(tagExpParam(tag)))[1]
-			return tag.replace(content, parse, context, param?.split(' '))
-		}
+const tagReplace = chunk => {
+	const tag = Object.values(tags).find(t => chunk.match(new RegExp(tagExpOuter(t))))
+	if (tag) {
+		const content = chunk.match(new RegExp(tagExpContent(tag)))[1]
+		const subtree = content
+			? parse(content)
+			: () => null
 
-		return chunk
+		const param = tag.param && chunk.match(new RegExp(tagExpParam(tag)))[1]
+		const result = tag.replace(subtree, param?.split(' '))
+
+		return result
 	}
-	const parse = text => text.split(splitRegex).filter(x => !!x).map(tagReplace)
 
-	return parse
+	return () => chunk
+}
+const parse = text => {
+	const nodes = text.split(splitRegex).filter(x => !!x).map(tagReplace);
+	return context => nodes.map(node => node(context))
 }
 
 const defaultContext = {
-	answer: (context, params) => <button onClick={() => context[params.action]()}>{params.content}</button>,
-	repeat: (context, params) => params.content,
+	answer: (context, params) => <button onClick={() => params.action && context[params.action]()}>{params.subtree(context)}</button>,
+	repeat: (context, params) => context[params[0]].map(item => params.subtree({
+		...context,
+		'.': item
+	})),
+	if: (context, params) => context[params[0]]() ? params.subtree(context) : null
 }
 
-export default (context) => {
-	const parse = createParser({
+export default () => {
+	const render = parse(input)
+	return context => render({
 		...defaultContext,
 		...context
-	});
-	const result = parse(input);
-	console.log('result', result)
-
-	return result
+	})
 }
