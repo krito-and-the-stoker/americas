@@ -5,7 +5,7 @@ const { navigation } = useContent()
 <template>
   <div class="container">
   	<div class="navigation">
-      <h2>Wikipages</h2>
+      <h2>Americas Wiki</h2>
       <nuxt-link to="/">Home</nuxt-link>
   		<ul>
   			<NavigationNode :node="item" v-for="item in navigation" />
