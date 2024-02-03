@@ -2,10 +2,11 @@ const input = `
 *Hallo* {counter} **Welt**!
 
 [if counter] We have a counter!
-[answer action:increment] Increment
-[answer] Do nothing
 
-[repeat list] item: {.}
+[answer action:increment] Increment
+[answer action:reset] Reset
+
+[repeat list] {.}, 
 
 `
 
@@ -120,18 +121,22 @@ const parse = text => {
 	return context => nodes.map(node => node(context))
 }
 
+const isFunction = f => typeof f === 'function'
+const evaluate = expr => isFunction(expr) ? expr() : expr
+
 const defaultContext = {
 	answer: (context, params) => <button onClick={() => params.action && context[params.action]()}>{params.subtree(context)}</button>,
-	repeat: (context, params) => context[params[0]].map(item => params.subtree({
-		...context,
-		'.': item
-	})),
-	if: (context, params) => context[params[0]]() ? params.subtree(context) : null
+	repeat: (context, params) => <For each={evaluate(context[params[0]])}>
+		{item => params.subtree({
+			...context,
+			'.': item
+		})}</For>,
+	if: (context, params) => <Show when={evaluate(context[params[0]]())}>{params.subtree(context)}</Show>
 }
 
 export default () => {
 	const render = parse(input)
-	return context => render({
+	return context => console.log('render') || render({
 		...defaultContext,
 		...context
 	})
