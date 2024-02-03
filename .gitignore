@@ -2,7 +2,8 @@ game/dist/
 game/node_modules/
 game/coverage/
 game/stuff/
-game/concepts/.obsidian
+
+.obsidian
 
 game/src/js/maps/*.climate.json
 
