@@ -15,7 +15,7 @@ services:
   mongo-express:
     image: mongo-express:latest
     ports:
-      - "3002:8081"
+      - "3003:8081"
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
@@ -42,7 +42,7 @@ services:
     environment:
       - FORCE_COLOR=1
     ports:
-      - "3001:5173"
+      - "3002:5173"
     volumes:
       - ./dashboard:/app/dashboard
       - dashboard-dist:/app/dashboard/dist
@@ -66,6 +66,19 @@ services:
       - event-tracker
     command: npm run dev
 
+  wiki:
+    build:
+      context: ./wiki
+    environment:
+      - FORCE_COLOR=1
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./wiki:/app/wiki
+      - wiki-dist:/app/wiki/dist
+      - wiki-modules:/app/wiki/node_modules/
+    command: npm run dev
+
 volumes:
   mongo-data:
   go-build:
@@ -73,3 +86,5 @@ volumes:
   game-dist:
   dashboard-modules:
   dashboard-dist:
+  wiki-modules:
+  wiki-dist:

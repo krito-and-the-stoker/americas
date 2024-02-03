@@ -6,6 +6,7 @@ const { navigation } = useContent()
   <div class="container">
   	<div class="navigation">
       <h2>Wikipages</h2>
+      <nuxt-link to="/">Home</nuxt-link>
   		<ul>
   			<NavigationNode :node="item" v-for="item in navigation" />
   		</ul>
@@ -25,6 +26,10 @@ const { navigation } = useContent()
   padding: 10px;
   width: 15vw;
   min-width: 200px;
+
+  ul {
+    margin-left: 0;
+  }
 }
 
 .content {
