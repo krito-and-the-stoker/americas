@@ -11,7 +11,7 @@ Literacy is used to describe the long term effort of bringing education to the w
 #### Literacy cap
 There will be no literacy cap for low class jobs, and the literacy cap for middle class jobs must be mild enough so that most free colonists will pass, but for example criminals and other especially uneducated will need to be educated first. Upper class jobs will have a literacy cap that is initially prohibitive for the average colonist, but with some education should also be possible
 #### Promotion speed
-We want to use literacy to greatly enhance promotion speed. In the early stages of the game, literacy will not be great. If the player builds [[Education Buildings]], this can be changed slowly over time, giving good access to experts ([[Professions]]) in the long run.
+We want to use literacy to greatly enhance promotion speed. In the early stages of the game, literacy will not be great. If the player builds [[Education Buildings]], this can be changed slowly over time, giving good access to experts (see [[Professions]]) in the long run.
 
 Literacy can be increased by [[Education Buildings]].
 
