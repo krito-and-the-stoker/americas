@@ -8,7 +8,7 @@ const props = defineProps({
 
 const { navigation } = useContent();
 const findPath = (node, title) => {
-	if (node.title === title) {
+	if (node.title?.toLowerCase() === title?.toLowerCase()) {
 		return node._path;
 	}
 

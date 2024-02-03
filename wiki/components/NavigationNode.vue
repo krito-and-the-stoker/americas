@@ -22,3 +22,10 @@ const props = defineProps({
 		<nuxt-link :href="props.node._path" v-else>{{ props.node.title }}</nuxt-link>
 	</li>
 </template>
+
+<style scoped>
+li {
+	list-style: none;
+	margin: 5px 0;
+}
+</style>

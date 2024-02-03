@@ -5,7 +5,7 @@ const { navigation } = useContent()
 <template>
   <div class="container">
   	<div class="navigation">
-      <h2>Navigation</h2>
+      <h2>Wikipages</h2>
   		<ul>
   			<NavigationNode :node="item" v-for="item in navigation" />
   		</ul>
@@ -24,6 +24,7 @@ const { navigation } = useContent()
 .navigation {
   padding: 10px;
   width: 15vw;
+  min-width: 200px;
 }
 
 .content {
