@@ -5,6 +5,7 @@ const { navigation } = useContent()
 <template>
   <div class="container">
   	<div class="navigation">
+      <h2>Navigation</h2>
   		<ul>
   			<NavigationNode :node="item" v-for="item in navigation" />
   		</ul>
