@@ -1,12 +1,15 @@
 const input = `
 *Hallo* {counter} **Welt**!
 
-[if counter] We have a counter!
+[if counter]
+	We have a counter!
+	[button action:reset] Reset []
+[]
 
-[answer action:increment] Increment
-[answer action:reset] Reset
 
-[repeat list] {.}, 
+[button action:increment] Increment []
+
+[repeat list] {.}, []
 
 `
 
@@ -15,17 +18,17 @@ const tags = {
 	bold: {
 		begin: '\\*\\*',
 		end:'\\*\\*',
-		replace: (subtree) => context => <b>{subtree(context)}</b>
+		replace: subtree => context => <b>{subtree(context)}</b>
 	},
 	italic: {
 		begin: '\\*',
 		end:'\\*',
-		replace: (subtree) => context => <i>{subtree(context)}</i>
+		replace: subtree => context => <i>{subtree(context)}</i>
 	},
 	function: {
 		begin: '\\[',
 		param: '\\]',
-		end: '\n',
+		end: '\\[\\]',
 		replace: (subtree, params) => {
 			const fn = params[0]
 			const paramObject = {
@@ -43,6 +46,7 @@ const tags = {
 					}
 				}
 			})
+			console.log(fn, paramObject)
 
 			return context => context[fn](context, paramObject)
 		}
@@ -61,36 +65,36 @@ const tags = {
 
 const tagExpOuter = tag => {
 	if (tag.param && tag.end) {
-		return `(${tag.begin}.*?${tag.param}.*?${tag.end})`
+		return `(${tag.begin}.+?${tag.param}[\\s\\S]*?${tag.end})`
 	}
 	if (tag.end) {
-		return `(${tag.begin}.*?${tag.end})`
+		return `(${tag.begin}[\\s\\S]*?${tag.end})`
 	}
 	if (tag.param) {
-		return `(${tag.begin}.*?${tag.param})`
+		return `(${tag.begin}.+?${tag.param})`
 	}
 	return `(${tag.begin})`
 }
 
 const tagExpContent = tag => {
 	if (tag.param && tag.end) {
-		return `${tag.begin}.*?${tag.param}(.*?)${tag.end}`
+		return `${tag.begin}.+?${tag.param}([\\s\\S]*?)${tag.end}`
 	}
 	if (tag.end) {
-		return `${tag.begin}(.*?)${tag.end}`
+		return `${tag.begin}([\\s\\S]*?)${tag.end}`
 	}
 	if (tag.param) {
-		return `${tag.begin}.*?${tag.param}`
+		return `${tag.begin}.+?${tag.param}`
 	}
 	return `${tag.begin}`
 }
 
 const tagExpParam = tag => {
 	if (tag.param && tag.end) {
-		return `${tag.begin}(.*?)${tag.param}.*?${tag.end}`
+		return `${tag.begin}(.*?)${tag.param}[\\s\\S]*?${tag.end}`
 	}
 	if (tag.end) {
-		return `${tag.begin}.*?${tag.end}`
+		return `${tag.begin}[\\s\\S]*?${tag.end}`
 	}
 	if (tag.param) {
 		return `${tag.begin}(.*?)${tag.param}`
@@ -125,7 +129,7 @@ const isFunction = f => typeof f === 'function'
 const evaluate = expr => isFunction(expr) ? expr() : expr
 
 const defaultContext = {
-	answer: (context, params) => <button onClick={() => params.action && context[params.action]()}>{params.subtree(context)}</button>,
+	button: (context, params) => <button onClick={() => params.action && context[params.action]()}>{params.subtree(context)}</button>,
 	repeat: (context, params) => <For each={evaluate(context[params[0]])}>
 		{item => params.subtree({
 			...context,

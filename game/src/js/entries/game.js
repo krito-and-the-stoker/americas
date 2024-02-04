@@ -42,18 +42,6 @@ import Dialog from 'view/ui/dialog'
 
 import GlobalPanel from 'view/panel/global'
 
-if (true) {
-	window.Record = Record
-	window.Unit = Unit
-	window.Colony = Colony
-	window.Market = Market
-	window.Tribe = Tribe
-	window.Colonist = Colonist
-	window.Europe = Europe
-	window.Storage = Storage
-	window.Tile = Tile
-}
-
 
 const captureException = err => {
 	if (process.env.SENTRY_DSN) {
