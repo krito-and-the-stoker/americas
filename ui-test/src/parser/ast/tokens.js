@@ -1,4 +1,4 @@
-import { matchAll, matchOne, matchNone, matchRepeat, describeTag } from './helper.js'
+import { matchAll, matchOne, matchNone, matchRepeat, describeTag } from './combinators.js'
 
 const baseTokens = {
 	italicToken: input => {
@@ -358,10 +358,4 @@ tokens.function = describeTag(match => {
 	tokens.fnClose,
 ]))
 
-
-export default (input) => {
-	// currently, template is the highest level entry point
-	return tokens.template(input)
-}
-
-
+export default tokens;
