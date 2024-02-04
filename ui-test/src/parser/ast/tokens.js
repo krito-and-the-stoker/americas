@@ -297,8 +297,8 @@ tokens.expression = describeTag(match => {
 		children: null,
 	}
 }, matchOne([
-		matchAll([tokens.unaryOperator, tokens.expression]),
 		matchAll([tokens.value, tokens.binaryOperator, tokens.expression]),
+		matchAll([tokens.unaryOperator, tokens.expression]),
 		tokens.value,
 ]))
 

@@ -49,12 +49,12 @@ This
 `
 
 const hello2 = `
-1: [if true] true []
+1: [if {counter > 0}] counter is larger than 0 []
 2: [if {not false}] not false []
-3: [if greeting] greeting []
+3: [if greeting] greeting: {greeting} []
 `
 
 export default () => {
-	const ast = generateAst(hello);
+	const ast = generateAst(hello + hello2);
 	return renderTemplate(ast)
 }
