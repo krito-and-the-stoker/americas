@@ -2,10 +2,20 @@ const isFunction = f => typeof f === 'function'
 const evaluate = expr => isFunction(expr) ? expr() : expr
 
 const renderer = {
-	text: value => context => value,
-	italicTag: (value, subtree) => context => <i>{subtree(context)}</i>,
-	boldTag: (value, subtree) => context => <b>{subtree(context)}</b>,
+	text: value => () => value,
+	italicTag: (_, subtree) => context => <i>{subtree(context)}</i>,
+	boldTag: (_, subtree) => context => <b>{subtree(context)}</b>,
 	interpolation: value => context => evaluate(context[value]),
+	newline: () => () => <br />,
+	function: (value, subtree) => {
+		const params = {
+			subtree,
+			arguments: value.args,
+			pairs: value.pairs,
+		}
+
+		return staticContext[value.fn](params)
+	}
 }
 
 
@@ -25,15 +35,19 @@ const renderGroup = nodes => {
 	return context => renderers.map(r => r(context))
 }
 
-const defaultContext = {
-	button: (context, params) => <button onClick={() => params.action && context[params.action]()}>{params.subtree(context)}</button>,
-	repeat: (context, params) => <For each={evaluate(context[params[0]])}>
-		{item => params.subtree({
-			...context,
-			'.': item
-		})}</For>,
-	if: (context, params) => <Show when={evaluate(context[params[0]]())}>{params.subtree(context)}</Show>
+const staticContext = {
+	button: params => context => <button onClick={() => params.pairs.action && context[params.pairs.action]()}>{params.subtree(context)}</button>,
+	if: params => context => <Show when={evaluate(context[params.arguments[0]])}>{params.subtree(context)}</Show>
 }
+// const staticContext = {
+// 	button: (context, params) => <button onClick={() => params.action && context[params.action]()}>{params.subtree(context)}</button>,
+// 	repeat: (context, params) => <For each={evaluate(context[params[0]])}>
+// 		{item => params.subtree({
+// 			...context,
+// 			'.': item
+// 		})}</For>,
+// 	if: (context, params) => <Show when={evaluate(context[params[0]]())}>{params.subtree(context)}</Show>
+// }
 
 export default (ast) => {
 	console.log('rendering', ast)
@@ -41,7 +55,7 @@ export default (ast) => {
 	console.log(template)
 
 	return (context = {}) => template({
-		...defaultContext,
+		...staticContext,
 		...context
 	})
 }

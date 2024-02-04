@@ -19,19 +19,46 @@ const baseTokens = {
 		}
 	},
 
-	interpolationStart: input => {
-		if (input.startsWith('{')) {
+	fnOpen: input => {
+		if (input.startsWith('[')) {
 			return {
-				name: 'interpolationStart',
+				name: 'fnOpen',
 				rest: input.substring(1)
 			}
 		}
 	},
 
-	interpolationEnd: input => {
+	fnClose: input => {
+		if (input.startsWith(']')) {
+			return {
+				name: 'fnClose',
+				rest: input.substring(1)
+			}
+		}
+	},
+
+	pairSperator: input => {
+		if (input.startsWith(':')) {
+			return {
+				name: 'pairSperator',
+				rest: input.substring(1)
+			}
+		}
+	},
+
+	interpolationOpen: input => {
+		if (input.startsWith('{')) {
+			return {
+				name: 'interpolationOpen',
+				rest: input.substring(1)
+			}
+		}
+	},
+
+	interpolationClose: input => {
 		if (input.startsWith('}')) {
 			return {
-				name: 'interpolationStart',
+				name: 'interpolationClose',
 				rest: input.substring(1)
 			}
 		}
@@ -47,6 +74,15 @@ const baseTokens = {
 				name: 'variable',
 				value: variable,
 				rest: input.substring(all.length)
+			}
+		}
+	},
+
+	newline: input => {
+		if (input.startsWith('\n')) {
+			return {
+				name: 'newline',
+				rest: input.substring(1)
 			}
 		}
 	},
@@ -74,6 +110,8 @@ tokens.nonTextContentElement = matchOne([
 	tokens.boldTag,
 	tokens.italicTag,
 	tokens.interpolation,
+	tokens.newline,
+	tokens.function,
 ])
 tokens.content = matchRepeat(matchOne([
 	tokens.nonTextContentElement,
@@ -121,7 +159,9 @@ tokens.text = describeTag(match => ({
 }), matchNone([
 		tokens.italicToken,
 		tokens.boldToken,
-		tokens.interpolationStart
+		tokens.interpolationOpen,
+		tokens.fnOpen,
+		tokens.newline,
 ]))
 
 
@@ -130,9 +170,55 @@ tokens.interpolation = describeTag(match => ({
 	value: match.children[1].value,
 	children: null,
 }), matchAll([
-	tokens.interpolationStart,
+	tokens.interpolationOpen,
 	tokens.variable,
-	tokens.interpolationEnd,
+	tokens.interpolationClose,
+]))
+
+tokens.pair = describeTag(match => ({
+	name: 'pair',
+	children: null,
+	value: {
+		key: match.children[0].value,
+		value: match.children[2].value
+	}
+}), matchAll([
+	tokens.variable,
+	tokens.pairSperator,
+	tokens.variable
+]))
+
+tokens.function = describeTag(match => {
+	const params = match.children[1].children
+	const fn = params[0].value
+	const args = params.slice(1).filter(p => p.name === 'variable').map(p => p.value)
+	
+	const pairs = {}
+	params.slice(1).filter(p => p.name === 'pair').forEach(p => {
+		pairs[p.value.key] = p.value.value
+	})
+
+	return {		
+		name: 'function',
+		value: {
+			fn,
+			args,
+			pairs
+		},
+		children: match.children[3].children,
+	}
+}, matchAll([
+	tokens.fnOpen,
+	matchRepeat(
+		matchOne([
+			tokens.pair,
+			tokens.variable,
+		])
+	),
+	tokens.fnClose,
+	tokens.content,
+	tokens.fnOpen,
+	tokens.fnClose,
 ]))
 
 
