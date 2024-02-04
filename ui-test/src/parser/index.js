@@ -1,4 +1,5 @@
 import generateAst from './ast';
+import renderTemplate from './render'
 
 const hello =`
 *Hallo {counter}* **Welt**!
@@ -17,7 +18,5 @@ const hello =`
 
 export default () => {
 	const ast = generateAst(hello);
-	console.log(ast)
-
-	return () => 'Hello World!'
+	return renderTemplate(ast)
 }

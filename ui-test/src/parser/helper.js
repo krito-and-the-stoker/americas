@@ -1,3 +1,14 @@
+// easier syntax to describe a tag
+export const describeTag = (describe, matcher) => input => {
+	const match = matcher(input)
+	if (match) {
+		return {
+			...match,
+			...describe(match)
+		}
+	}
+}
+
 // tries to repeatedly match the matcher
 // if no match is made it fails
 export const matchRepeat = matcher => input => {

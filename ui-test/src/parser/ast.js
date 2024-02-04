@@ -1,4 +1,4 @@
-import { matchAll, matchOne, matchNone, matchRepeat } from './helper.js'
+import { matchAll, matchOne, matchNone, matchRepeat, describeTag } from './helper.js'
 
 const baseTokens = {
 	italicToken: input => {
@@ -97,71 +97,44 @@ tokens.template = input => {
 	}
 }
 
-tokens.italicTag = input => {
-	const match = matchAll([
-		tokens.italicToken,
-		tokens.content,
-		tokens.italicToken,
-	])(input)
-	// console.log('italic', { input }, { match })
+tokens.italicTag = describeTag(match => ({
+	name: 'italicTag',
+	children: match.children[1].children,
+}), matchAll([
+	tokens.italicToken,
+	tokens.content,
+	tokens.italicToken,
+]))
 
-	if (match) {
-		return {
-			name: 'italicTag',
-			children: match.children[1].children,
-			rest: match.rest
-		}
-	}
-}
+tokens.boldTag = describeTag(match => ({
+	name: 'boldTag',
+	children: match.children[1].children,
+}), matchAll([
+	tokens.boldToken,
+	tokens.content,
+	tokens.boldToken,
+]))
 
-tokens.boldTag = input => {
-	const match = matchAll([
-		tokens.boldToken,
-		tokens.content,
-		tokens.boldToken,
-	])(input)
-
-	if (match) {
-		return {
-			name: 'boldTag',
-			children: match.children[1].children,
-			rest: match.rest
-		}
-	}
-}
-
-tokens.text = input => {
-	const match = matchNone([
+tokens.text = describeTag(match => ({
+	name: 'text',
+	value: match.value,
+}), matchNone([
 		tokens.italicToken,
 		tokens.boldToken,
 		tokens.interpolationStart
-	])(input)
-	// console.log('text:', input, { match })
+]))
 
-	if (match) {
-		return {
-			name: 'text',
-			value: match.value,
-			rest: match.rest
-		}
-	}
-}
 
-tokens.interpolation = input => {
-	const match = matchAll([
-		tokens.interpolationStart,
-		tokens.variable,
-		tokens.interpolationEnd,
-	])(input)
+tokens.interpolation = describeTag(match => ({
+	name: 'interpolation',
+	value: match.children[1].value,
+	children: null,
+}), matchAll([
+	tokens.interpolationStart,
+	tokens.variable,
+	tokens.interpolationEnd,
+]))
 
-	if (match) {
-		return {
-			name: 'interpolation',
-			value: match.children[1].value,
-			rest: match.rest
-		}
-	}
-}
 
 export default (input) => {
 	// currently, template is the highest level entry point
