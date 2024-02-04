@@ -328,7 +328,7 @@ tokens.pair = describeTag(match => ({
 tokens.function = describeTag(match => {
 	const params = match.children[1].children
 	const fn = params[0].value
-	const args = params.slice(1).filter(p => p.name === 'variable').map(p => p.value)
+	const args = params.slice(1).filter(p => p.name !== 'pair')
 	
 	const pairs = {}
 	params.slice(1).filter(p => p.name === 'pair').forEach(p => {
@@ -349,7 +349,8 @@ tokens.function = describeTag(match => {
 	matchRepeat(
 		matchOne([
 			tokens.pair,
-			tokens.variable,
+			tokens.value,
+			tokens.interpolation
 		])
 	),
 	tokens.fnClose,

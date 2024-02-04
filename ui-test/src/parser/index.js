@@ -28,7 +28,7 @@ This
 [if counter]
 	We have a counter!
 
-	[button action:reset] Reset []
+	[button action:reset] Reset {counter} -> 0 []
 []
 
 [repeat list]
@@ -41,11 +41,17 @@ This
 [repeat list]
 		[if _first] I like []
 		[if _inner], []
-		[if not:_first][if _last] and [][]
+		[if {not _first and _last}] and []
 		{_}
 		[if _last]. []
 		[] 
 
+`
+
+const hello2 = `
+1: [if true] true []
+2: [if {not false}] not false []
+3: [if greeting] greeting []
 `
 
 export default () => {

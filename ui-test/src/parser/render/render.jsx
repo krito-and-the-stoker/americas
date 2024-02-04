@@ -12,7 +12,9 @@ const renderer = {
 	function: (value, subtree) => {
 		const params = {
 			subtree,
-			arguments: value.args,
+			arguments: value.args.map(exp => exp.name === 'expression'
+				? resolveExpression(exp.value)
+				: resolveExpression(exp)),
 			pairs: value.pairs,
 		}
 
@@ -29,15 +31,12 @@ const renderer = {
 export const staticContext = {
 	button: params => context => <button onClick={() => params.pairs.action && context[params.pairs.action]()}>{params.subtree(context)}</button>,
 	if: params => context => {
-		const expression = () => params.pairs.not
-			? !evaluate(context[params.pairs.not])
-			: evaluate(context[params.arguments[0]])
-		return (<Show when={expression()}>
+		return (<Show when={evaluate(params.arguments[0](context))}>
 			{params.subtree(context)}
 		</Show>)
 	},
 	repeat: params => context => {
-		const list = context[params.arguments[0]]
+		const list = params.arguments[0](context)
 		const length = () => evaluate(list).length
 		return (<For each={evaluate(list)}>
 			{(item, index) => params.subtree({
