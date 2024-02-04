@@ -47,7 +47,21 @@ const renderGroup = nodes => {
 
 const staticContext = {
 	button: params => context => <button onClick={() => params.pairs.action && context[params.pairs.action]()}>{params.subtree(context)}</button>,
-	if: params => context => <Show when={evaluate(context[params.arguments[0]])}>{params.subtree(context)}</Show>
+	if: params => context => <Show when={evaluate(context[params.arguments[0]])}>{params.subtree(context)}</Show>,
+	repeat: params => context => {
+		const list = context[params.arguments[0]]
+		const length = () => evaluate(list).length
+		return (<For each={evaluate(list)}>
+			{(item, index) => params.subtree({
+				...context,
+				'_': item,
+				'_index': () => index,
+				'_first': () => index() === 0,
+				'_inner': () => index() > 0 && index() < length() - 1,
+				'_last': () => index() === length() - 1,
+				'_length': () => length,
+			})}</For>)
+	}
 }
 // const staticContext = {
 // 	button: (context, params) => <button onClick={() => params.action && context[params.action]()}>{params.subtree(context)}</button>,

@@ -4,7 +4,7 @@ import renderTemplate from './parser/index.js'
 function App() {
   const [counter, setCounter] = createSignal(0)
   const template = renderTemplate()
-  const list = () => ['Food', 'Gold', 'Cloth'].slice(0, counter())
+  const list = () => ['Food', 'Gold', 'Cloth', 'Hammer', 'Whatever'].slice(0, counter())
 
   const context = {
     counter,
@@ -16,7 +16,11 @@ function App() {
   return (
     <>
       <h1>Hi</h1>
-      {template(context)}
+{/*      <For each={list()}>
+        {(item, index) => <div>{index()}/{list().length}: {item}</div>}
+      </For>
+      <button onClick={context.increment}>Increment</button>
+*/}      {template(context)}
     </>
   )
 }
