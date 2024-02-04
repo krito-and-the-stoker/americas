@@ -5,13 +5,23 @@ const renderer = {
 	text: value => () => value,
 	italicTag: (_, subtree) => context => <i>{subtree(context)}</i>,
 	boldTag: (_, subtree) => context => <b>{subtree(context)}</b>,
-	interpolation: value => context => evaluate(context[value]),
+	interpolation: value => context => {
+		if (typeof context[value] === 'undefined') {
+			console.error('Did not find value in context:', value)
+		}
+		return evaluate(context[value])
+	},
 	newline: () => () => <br />,
 	function: (value, subtree) => {
 		const params = {
 			subtree,
 			arguments: value.args,
 			pairs: value.pairs,
+		}
+
+		if (!isFunction(staticContext[value.fn])) {
+			console.error('Did not find function in static context:', value.fn)
+			return () => null
 		}
 
 		return staticContext[value.fn](params)
@@ -52,9 +62,8 @@ const staticContext = {
 export default (ast) => {
 	console.log('rendering', ast)
 	const template = renderGroup(ast.children)
-	console.log(template)
 
-	return (context = {}) => template({
+	return (context = {}) => console.log('binding template', template) ?? template({
 		...staticContext,
 		...context
 	})

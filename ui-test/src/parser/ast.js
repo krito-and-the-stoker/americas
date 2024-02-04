@@ -119,19 +119,26 @@ tokens.content = matchRepeat(matchOne([
 ]))
 
 tokens.template = input => {
-	const match = tokens.content(input)
-	// console.log('template', { input }, { match })
-	if (match) {
-		if (!match.rest) {
-			return {
-				name: 'template',
-				children: match.children
+	let rest = input
+	let children = []
+	while (rest.length > 0) {		
+		const match = tokens.content(rest)
+		// console.log('template', { input }, { match })
+		if (match) {
+			children = children.concat(match.children)
+			if (!match.rest) {
+				return {
+					name: 'template',
+					children,
+				}
+			} else {
+				rest = match.rest.substring(1)
+				console.error('Unexpected input, ignoring next character: ', match.rest)
 			}
 		} else {
-			console.error('Could not read template, unexpected: ', match.rest)
+			console.error('Unexpected input, ignoring next character: ', rest)
+			rest = rest.substring(1)
 		}
-	} else {
-		console.error('Could not read template, unexpected: ', input)
 	}
 }
 
