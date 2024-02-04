@@ -52,7 +52,7 @@ These data types are allowed:
 [dialog]
 [name: Hello world]
 [format: wide]
-{world: World}
+
 Hello {world}!
 ```
 #### Example with dialog flow
@@ -60,23 +60,27 @@ Hello {world}!
 [dialog]
 [name: Answer Echo] // this can be triggered with action:dialog:answer-echo
 
-[if {answer}]
+[if answer]
 	You said {answer}
 [else]
 	Say something
-[answer default] Exit please
-[answer action:dialog:answer-echo:{answer:Hello}] Hello
-[answer action:dialog:answer-echo:{answer:Goodbye}] Goodbye
+[]
+[answer default] Exit please []
+[answer action:dialog answer:hello] Hello []
+[answer action:dialog answer:goodbye] Goodbye []
 ```
 #### Example with repeat
 ```
 [dialog]
 [name: Example with repeat]
-{items: Food, Gold, Rum}
 
-I like [repeat {items}]
-	[if {inner}], [/][if {last}] and [/]{.}
-[/] .
+[repeat list]
+		[if _first] I like []
+		[if _inner], []
+		[if not:_first][if _last] and [][]
+		{_}
+		[if _last]. []
+		[] 
 ```
 #### Example with object
 ```

@@ -64,6 +64,60 @@ const baseTokens = {
 		}
 	},
 
+	binaryOperator: input => {
+		const operators = ['+', '-', '*', '/', 'and', 'or', '==', '!=', '<', '<=', '>', '>=']
+		for (const operator of operators) {
+			if (input.startsWith(operator)) {
+				return {
+					name: 'binaryOperator',
+					value: operator,
+					rest: input.substring(operator.length)
+				}
+			}
+		}
+	},
+
+	unaryOperator: input => {
+		const operators = ['not']
+		for (const operator of operators) {
+			if (input.startsWith(operator)) {
+				return {
+					name: 'unaryOperator',
+					value: operator,
+					rest: input.substring(operator.length)
+				}
+			}
+		}
+	},
+
+	booleanConstant: input => {
+		const re = /^\s*(true|false)\s*/
+		const result = input.match(re)
+		if (result) {
+			const all = result[0]
+			const value = result[1] === 'true'
+			return {
+				name: 'booleanConstant',
+				value,
+				rest: input.substring(all.length)
+			}
+		}
+	},
+
+	numberConstant: input => {
+		const re = /^\s*([0-9]+(\.[0-9]+)?)\s*/
+		const result = input.match(re)
+		if (result) {
+			const all = result[0]
+			const value = parseFloat(result[1])
+			return {
+				name: 'numberConstant',
+				value,
+				rest: input.substring(all.length)
+			}
+		}
+	},
+
 	variable: input => {
 		const re = /^\s*(\b[a-zA-Z_][0-9a-zA-Z_]*\b)\s*/
 		const result = input.match(re)
@@ -74,6 +128,21 @@ const baseTokens = {
 				name: 'variable',
 				value: variable,
 				rest: input.substring(all.length)
+			}
+		}
+	},
+
+	indentation: input => {
+		if (input.startsWith('\t')) {
+			return {
+				name: 'indentation',
+				rest: input.substring(1)
+			}
+		}
+		if (input.startsWith('  ')) {
+			return {
+				name: 'indentation',
+				rest: input.substring(2)
 			}
 		}
 	},
@@ -110,6 +179,7 @@ tokens.nonTextContentElement = matchOne([
 	tokens.boldTag,
 	tokens.italicTag,
 	tokens.interpolation,
+	tokens.indentedNewline,
 	tokens.newline,
 	tokens.function,
 ])
@@ -142,6 +212,17 @@ tokens.template = input => {
 	}
 }
 
+tokens.indentedNewline = describeTag(match => ({
+	name: match.children[1].children.length === 1
+		? 'text'
+		: 'ignore',
+	children: null,
+	value: ' '
+}), matchAll([
+	tokens.newline,
+	matchRepeat(tokens.indentation),
+]))
+
 tokens.italicTag = describeTag(match => ({
 	name: 'italicTag',
 	children: match.children[1].children,
@@ -171,14 +252,63 @@ tokens.text = describeTag(match => ({
 		tokens.newline,
 ]))
 
+tokens.constant = describeTag(match => ({
+	name: 'constant',
+	value: match.value,
+}), matchOne([
+	tokens.booleanConstant,
+	tokens.numberConstant,
+]))
+
+tokens.value = matchOne([
+	tokens.constant,
+	tokens.variable
+])
+
+tokens.expression = describeTag(match => {
+	if (['variable', 'constant'].includes(match.name)) {
+		return {
+			name: match.name,
+			value: match.value
+		}
+	}
+
+	if (match.children[0].name === 'unaryOperator') {
+		return {
+			name: 'unaryOperator',
+			value: {
+				operator: match.children[0].value,
+				operand: {
+					name: match.children[1].name,
+					value: match.children[1].value
+				}
+			},
+			children: null
+		}
+	}
+
+	return {
+		name: 'binaryOperator',
+		value: {
+			operator: match.children[1].value,
+			leftOperand: match.children[0],
+			rightOperand: match.children[2],
+		},
+		children: null,
+	}
+}, matchOne([
+		matchAll([tokens.unaryOperator, tokens.expression]),
+		matchAll([tokens.value, tokens.binaryOperator, tokens.expression]),
+		tokens.value,
+]))
 
 tokens.interpolation = describeTag(match => ({
-	name: 'interpolation',
-	value: match.children[1].value,
+	name: 'expression',
+	value: match.children[1],
 	children: null,
 }), matchAll([
 	tokens.interpolationOpen,
-	tokens.variable,
+	tokens.expression,
 	tokens.interpolationClose,
 ]))
 

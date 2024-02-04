@@ -1,17 +1,77 @@
 const isFunction = f => typeof f === 'function'
 const evaluate = expr => isFunction(expr) ? expr() : expr
 
+const resolveVariable = value => context => {
+	if (typeof context[value] === 'undefined') {
+		console.error('Did not find value in context:', value)
+	}
+
+	return context[value]
+}
+const resolveUnaryOperator = (operator, operand) => {
+	if (operator === 'not') {
+		return context => !evaluate(operand(context))
+	}
+
+	console.error('Unknown operator:', operator)
+	return operand
+}
+
+const resolveBinaryOperator = (operator, left, right) => {
+	if (operator === '+') {
+		return context => evaluate(left(context)) + evaluate(right(context))
+	}
+
+	if (operator === '-') {
+		return context => evaluate(left(context)) - evaluate(right(context))
+	}
+
+	if (operator === '>') {
+		return context => evaluate(left(context)) > evaluate(right(context))
+	}
+
+	if (operator === '<') {
+		return context => evaluate(left(context)) < evaluate(right(context))
+	}
+
+	if (operator === 'and') {
+		return context => evaluate(left(context)) && evaluate(right(context))
+	}
+
+	if (operator === 'or') {
+		return context => evaluate(left(context)) || evaluate(right(context))
+	}
+
+	console.log('Operator not implemented:', operator)
+	return left
+}
+
+const resolveExpression = expression => {
+	if (expression.name === 'constant') {
+		return () => expression.value
+	}
+	if (expression.name === 'variable') {
+		return resolveVariable(expression.value)
+	}
+	if (expression.name === 'unaryOperator') {
+		return resolveUnaryOperator(expression.value.operator, resolveExpression(expression.value.operand))
+	}
+
+	if (expression.name === 'binaryOperator') {
+		return resolveBinaryOperator(expression.value.operator, resolveExpression(expression.value.leftOperand), resolveExpression(expression.value.rightOperand))
+	}
+
+	console.log(value)
+	return () => null
+}
+
 const renderer = {
 	text: value => () => value,
 	italicTag: (_, subtree) => context => <i>{subtree(context)}</i>,
 	boldTag: (_, subtree) => context => <b>{subtree(context)}</b>,
-	interpolation: value => context => {
-		if (typeof context[value] === 'undefined') {
-			console.error('Did not find value in context:', value)
-		}
-		return evaluate(context[value])
-	},
+	expression: value => resolveExpression(value),
 	newline: () => () => <br />,
+	ignore: () => () => null,
 	function: (value, subtree) => {
 		const params = {
 			subtree,
@@ -47,7 +107,14 @@ const renderGroup = nodes => {
 
 const staticContext = {
 	button: params => context => <button onClick={() => params.pairs.action && context[params.pairs.action]()}>{params.subtree(context)}</button>,
-	if: params => context => <Show when={evaluate(context[params.arguments[0]])}>{params.subtree(context)}</Show>,
+	if: params => context => {
+		const expression = () => params.pairs.not
+			? !evaluate(context[params.pairs.not])
+			: evaluate(context[params.arguments[0]])
+		return (<Show when={expression()}>
+			{params.subtree(context)}
+		</Show>)
+	},
 	repeat: params => context => {
 		const list = context[params.arguments[0]]
 		const length = () => evaluate(list).length
