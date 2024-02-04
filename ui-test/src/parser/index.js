@@ -1,11 +1,9 @@
 import generateAst from './ast';
 import renderTemplate from './render'
 
-const hello =`{counter}
-{not false}
-{100 + 1 + 5 - 50}
-
-*Hallo {counter + 1}* **Welt**!
+const hello =`
+*Hallo {2 + counter - 1}* **Welt**!
+{counter + 1 - counter}
 These
 	words
 	are

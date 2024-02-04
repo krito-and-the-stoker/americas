@@ -6,7 +6,7 @@ const renderer = {
 	text: value => () => value,
 	italicTag: (_, subtree) => context => <i>{subtree(context)}</i>,
 	boldTag: (_, subtree) => context => <b>{subtree(context)}</b>,
-	expression: value => resolveExpression(value),
+	expression: value => context => <>{resolveExpression(value)(context)}</>,
 	newline: () => () => <br />,
 	ignore: () => () => null,
 	function: (value, subtree) => {
