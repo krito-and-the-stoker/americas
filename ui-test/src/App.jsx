@@ -1,5 +1,5 @@
 import { createSignal } from 'solid-js'
-import renderTemplate from './parser.jsx'
+import renderTemplate from './parser/index.js'
 
 function App() {
   const [counter, setCounter] = createSignal(0)
