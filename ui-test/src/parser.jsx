@@ -1,4 +1,4 @@
-const input = `
+const hello =`
 *Hallo* {counter} **Welt**!
 
 [if counter]
@@ -16,19 +16,33 @@ const input = `
 
 const tags = {
 	bold: {
-		begin: '\\*\\*',
-		end:'\\*\\*',
+		begin: 'bold',
+		end: 'bold',
+		tokens: [{
+			match: '**',
+			name: 'bold'
+		}],
 		replace: subtree => context => <b>{subtree(context)}</b>
 	},
 	italic: {
-		begin: '\\*',
-		end:'\\*',
+		begin: 'italic',
+		end:'italic',
+		tokens: [{
+			match: '*',
+			name: 'italic'
+		}],
 		replace: subtree => context => <i>{subtree(context)}</i>
 	},
 	function: {
-		begin: '\\[',
-		param: '\\]',
-		end: '\\[\\]',
+		begin: 'openFunction',
+		end: 'closeFunction',
+		tokens: [{
+			match: /\[.+?\]/,
+			name: 'openFunction'
+		}, {
+			match: '[]',
+			name: 'closeFunction'
+		}],
 		replace: (subtree, params) => {
 			const fn = params[0]
 			const paramObject = {
@@ -52,57 +66,92 @@ const tags = {
 		}
 	},
 	newline: {
-		begin: '\n',
+		is: 'newline',
+		tokens: [{
+			match: '\n',
+			name: 'newline'
+		}],
 		replace: () => () => <br />
 	},
-	interpolate: {
-		begin: '\{',
-		param: '\}',
-		replace: (subtree, params) => context => context[params[0].trim()]
+	indentation: {
+		is: 'indentation',
+		tokens: [{
+			match: '\t',
+			name: 'indentation'
+		}, {
+			match: '  ',
+			name: 'indentation'
+		}]
 	},
+	interpolate: {
+		is: 'interpolation',
+		tokens: [{
+			match: /\{.+?\}/,
+			name: 'interpolation'
+		}],
+		replace: (subtree, params) => context => context[params[0].trim()]
+	}
 }
 
+const tokens = Object.values(tags).flatMap(tag => tag.tokens)
 
-const tagExpOuter = tag => {
-	if (tag.param && tag.end) {
-		return `(${tag.begin}.+?${tag.param}[\\s\\S]*?${tag.end})`
+const matchStart = (str, expr) => {
+	if (typeof expr === 'string') {
+		const match = str.startsWith(expr)
+		if (match) {
+			return expr.length
+		}
+
+		return 0
+	} else {
+		const re = new RegExp('^' + expr.source);
+		const match = str.match(re)
+		if (match) {
+			return match[0].length
+		}
+
+		return 0
 	}
-	if (tag.end) {
-		return `(${tag.begin}[\\s\\S]*?${tag.end})`
-	}
-	if (tag.param) {
-		return `(${tag.begin}.+?${tag.param})`
-	}
-	return `(${tag.begin})`
 }
 
-const tagExpContent = tag => {
-	if (tag.param && tag.end) {
-		return `${tag.begin}.+?${tag.param}([\\s\\S]*?)${tag.end}`
-	}
-	if (tag.end) {
-		return `${tag.begin}([\\s\\S]*?)${tag.end}`
-	}
-	if (tag.param) {
-		return `${tag.begin}.+?${tag.param}`
-	}
-	return `${tag.begin}`
-}
+const tokanize = input => {
+	let tokenList = []
+	let position = 0
+	let unused = ''
+	while (position < input.length) {
+		const str = input.substring(position)
 
-const tagExpParam = tag => {
-	if (tag.param && tag.end) {
-		return `${tag.begin}(.*?)${tag.param}[\\s\\S]*?${tag.end}`
-	}
-	if (tag.end) {
-		return `${tag.begin}[\\s\\S]*?${tag.end}`
-	}
-	if (tag.param) {
-		return `${tag.begin}(.*?)${tag.param}`
-	}
-	return `${tag.begin}`
-}
+		let match = 0
+		let newToken = null
+		for (const token of tokens) {
+			match = matchStart(str, token.match)
+			if (match > 0) {
+				if (unused) {
+					tokenList.push({
+						name: 'unmatched',
+						value: unused
+					})
+					unused = ''
+				}
+				tokenList.push({
+					name: token.name,
+					value: str.substring(0, match)
+				})
 
-const splitRegex = new RegExp(Object.values(tags).map(tagExpOuter).join('|'))
+				position += match
+
+				break
+			}
+		}
+
+		if (!match) {
+			unused += str.substring(0, 1)
+			position += 1
+		}
+	}
+
+	return tokenList
+}
 
 const tagReplace = chunk => {
 	const tag = Object.values(tags).find(t => chunk.match(new RegExp(tagExpOuter(t))))
@@ -139,9 +188,12 @@ const defaultContext = {
 }
 
 export default () => {
-	const render = parse(input)
-	return context => console.log('render') || render({
-		...defaultContext,
-		...context
-	})
+	const helloTokens = tokanize(hello)
+	console.log(helloTokens)
+	// const render = parse(hello)
+	// return context => console.log('render') || render({
+	// 	...defaultContext,
+	// 	...context
+	// })
+	return context => 'Not yet implemented'
 }
