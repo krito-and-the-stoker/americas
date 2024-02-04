@@ -9,6 +9,7 @@ function App() {
   const context = {
     counter,
     list,
+    greeting: 'Hallo Welt',
     increment: () => setCounter(x => x + 1),
     decrement: () => setCounter(x => x - 1),
     reset: () => setCounter(0),

@@ -43,11 +43,11 @@ export const staticContext = {
 			{(item, index) => params.subtree({
 				...context,
 				'_': item,
-				'_index': () => index,
+				'_index': index,
 				'_first': () => index() === 0,
 				'_inner': () => index() > 0 && index() < length() - 1,
 				'_last': () => index() === length() - 1,
-				'_length': () => length,
+				'_length': length,
 			})}</For>)
 	}
 }

@@ -3,7 +3,7 @@ import renderTemplate from './render'
 
 const hello =`
 *Hallo {2 + counter - 1}* **Welt**!
-{counter + 1 - counter}
+{greeting}
 These
 	words
 	are
@@ -32,7 +32,7 @@ This
 []
 
 [repeat list]
-	{_index}/{_length}: {_}
+	{_index+counter}/{_length - counter}: {_}
 	[if _first] (first) []
 	[if _inner] (inner) []
 	[if _last] (last) []
