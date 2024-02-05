@@ -50,7 +50,7 @@ const updateScale = newScale => {
 
 const getContainer = index => {
   while (containers.length <= index) {
-    const container = new PIXI.particles.ParticleContainer(MAX_TILES, {
+    const container = new PIXI.ParticleContainer(MAX_TILES, {
       tint: true,
     })
     if (containers.length > 0) {
@@ -170,7 +170,7 @@ const initialize = () => {
     preserveDrawingBuffer: true,
   })
 
-  undiscovered = new PIXI.extras.TilingSprite(
+  undiscovered = new PIXI.TilingSprite(
     Resources.texture('undiscovered'),
     layer.width,
     layer.height
