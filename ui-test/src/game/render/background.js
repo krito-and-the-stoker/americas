@@ -217,38 +217,36 @@ const doRenderWork = () => {
     container.removeChildren()
   })
 
-  if (visible) {
-    const numTilesX = Math.ceil(layer.width / 64 / scale) + 1
-    const numTilesY = Math.ceil(layer.height / 64 / scale) + 1
-    const offsetX = -Math.ceil(undiscovered.tilePosition.x / 64 / scale)
-    const offsetY = -Math.ceil(undiscovered.tilePosition.y / 64 / scale)
+  const numTilesX = Math.ceil(layer.width / 64 / scale) + 1
+  const numTilesY = Math.ceil(layer.height / 64 / scale) + 1
+  const offsetX = -Math.ceil(undiscovered.tilePosition.x / 64 / scale)
+  const offsetY = -Math.ceil(undiscovered.tilePosition.y / 64 / scale)
 
-    const xIndices = Util.range(numTilesX)
-      .map(x => x + offsetX)
-      .filter(x => x >= 0 && x < numTiles.x)
-    const yIndices = Util.range(numTilesY)
-      .map(y => y + offsetY)
-      .filter(y => y >= 0 && y < numTiles.y)
+  const xIndices = Util.range(numTilesX)
+    .map(x => x + offsetX)
+    .filter(x => x >= 0 && x < numTiles.x)
+  const yIndices = Util.range(numTilesY)
+    .map(y => y + offsetY)
+    .filter(y => y >= 0 && y < numTiles.y)
 
-    xIndices.forEach(x => {
-      yIndices.forEach(y => {
-        const index = y * numTiles.x + x
-        const coords = { x, y }
+  xIndices.forEach(x => {
+    yIndices.forEach(y => {
+      const index = y * numTiles.x + x
+      const coords = { x, y }
 
-        tiles[index].update(tiles[index], coords)
-        if (!tiles[index].initialized) {
-          tiles[index].initialize(tiles[index])
-        }
-        tiles[index].sprites.forEach(sprite => {
-          sprite.tint = MapView.instance.tintXY(coords)
-          tiles[index].container.addChild(sprite)
-        })
+      tiles[index].update(tiles[index], coords)
+      if (!tiles[index].initialized) {
+        tiles[index].initialize(tiles[index])
+      }
+      tiles[index].sprites.forEach(sprite => {
+        sprite.tint = MapView.instance.tintXY(coords)
+        tiles[index].container.addChild(sprite)
       })
     })
+  })
 
-    layer.app.render()
-    renderRequested = false
-  }
+  layer.app.render()
+  renderRequested = false
 }
 
 export default {

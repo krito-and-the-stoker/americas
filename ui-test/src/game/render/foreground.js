@@ -147,7 +147,7 @@ const updateScale = newScale => {
 let dimmingContainer, screenForeground
 const initialize = () => {
   layer = new Layer({
-    transparent: true,
+    backgroundAlpha: 0,
   })
 
   dimmingContainer = new PIXI.Container()
