@@ -7,6 +7,7 @@ import Tween from 'util/tween.js'
 import PathFinder from 'util/pathFinder'
 import Record from 'util/record'
 import Util from 'util/util'
+import Error from 'util/error'
 import Message from 'util/message'
 
 import Time from 'timeline/time'
@@ -52,9 +53,14 @@ const initialize = () => {
     timeStamp = t
     try {
       Time.advance(deltaTime)
+    } catch (err) {
+      Error.capture(err)
+    }
+
+    try {
       RenderView.onDraw()
     } catch (err) {
-      captureException(err)
+      Error.capture(err)
     }
     requestAnimationFrame(loop)
   }
@@ -189,7 +195,7 @@ const start = async () => {
     await nextFrame()
     initialize()
   } catch (err) {
-    captureException(err)
+    Error.capture(err)
     Dialog.create({
       type: 'menu',
       text: 'There has been an error initializing the game. A report has been sent and we will investigate.',
@@ -242,7 +248,7 @@ const load = async () => {
 
     initialize()
   } catch (err) {
-    captureException(err)
+    Error.capture(err)
     if (Record.getGlobal('revision') !== Version.revision) {
       Dialog.create({
         type: 'menu',

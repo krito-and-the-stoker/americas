@@ -21,7 +21,8 @@ const clickStart = async () => {
   disableButtons()
 
   requestAnimationFrame(async () => {
-    await intro()
+    // skip intro for now
+    // await intro()
     document.querySelector('#log').innerHTML = `Initializing game...`
     document.querySelector('.loading').classList.remove('hidden')
     await loadingGameCode
