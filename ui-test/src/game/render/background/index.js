@@ -160,7 +160,6 @@ const restart = () => {
   Message.log('Reassembling tiles')
   tiles = createTiles(AssembleMap.getTileStacks())
   numTiles = AssembleMap.getNumTiles()
-  console.log('created tiles', tiles)
 
   Util.execute(unsubscribeTiles)
   unsubscribeTiles = tiles.map((tile, index) =>
@@ -195,7 +194,6 @@ const initialize = () => {
     Message.log('Assembling tiles')
     tiles = createTiles(AssembleMap.getTileStacks())
     numTiles = AssembleMap.getNumTiles()
-    console.log('created tiles', tiles)
 
     Util.execute(unsubscribeTiles)
     unsubscribeTiles = tiles.map((tile, index) =>

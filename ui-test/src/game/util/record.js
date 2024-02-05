@@ -304,7 +304,7 @@ const serializeAsync = () =>
 
     if (window.Worker) {
       if (!worker) {
-        worker = new Worker('/worker.entry.js')
+        worker = new Worker(new URL('entries/worker.js', import.meta.url))
       }
 
       worker.onmessage = e => {
@@ -368,7 +368,7 @@ const save = () => {
   if (SAVE_TO_LOCAL_STORAGE) {
     if (USE_COMPRESSION) {
       if (window.Worker) {
-        const worker = new Worker('/worker.entry.js')
+        const worker = new Worker(new URL('entries/worker.js', import.meta.url))
         worker.onmessage = e => {
           window.localStorage.setItem('lastSaveCompressed', e.data)
           Message.log(`Entities saved to local storage using ${e.data.length} bytes.`)
@@ -443,6 +443,7 @@ const unserialize = (content, initRenderMapFn = null) => {
   tiles = []
 
   snapshot = JSON.parse(content)
+  // console.log('Loading', snapshot)
   if (snapshot.game !== 'americas') {
     Message.warn('The save game does not appear to be a valid americas save game.')
   }

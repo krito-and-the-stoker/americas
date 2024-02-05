@@ -56,6 +56,13 @@ const sell = ({ good, amount }) => {
 const save = () => market.europe
 const load = data => {
   market.europe = data
+
+  if (!data) {
+    console.warn('no market data found, initializing market instead')
+    initialize()
+    return
+  }
+
   // ensure backward compatibility
   Object.entries(market.europe).forEach(([good, price]) => {
     if (!price.stability) {

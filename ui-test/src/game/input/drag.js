@@ -26,6 +26,7 @@ const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = 
 
   const handleDown = e => {
     e.stopPropagation()
+    console.log('drag down', paramOptions.helpText)
     Input.makeHot(target)
     initialCoords = {
       x: e.data.global.x,
@@ -35,6 +36,7 @@ const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = 
 
   const handleMove = e => {
     if (!inProgress && Input.isHot(target)) {
+      console.log('drag init', paramOptions.helpText)
       e.stopPropagation()
       let coords = {
         x: e.data.global.x,
@@ -49,6 +51,7 @@ const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = 
 
     if (inProgress) {
       e.stopPropagation()
+      console.log('drag progress', paramOptions.helpText)
       Util.execute(onMove, {
         x: e.data.global.x,
         y: e.data.global.y,
@@ -59,6 +62,7 @@ const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = 
   const handleEnd = e => {
     if (inProgress) {
       e.stopPropagation()
+      console.log('drag end', paramOptions.helpText)
       inProgress = false
       Util.execute(onEnd, {
         x: e.data.global.x,
@@ -188,6 +192,7 @@ const makeDraggable = (sprite, entity, helpText) => {
   let clone = new PIXI.Sprite(sprite.texture)
 
   const start = coords => {
+    console.log('start drag', helpText)
     update(entity)
     validDragTargets = dragTargets
       .map(target => ({

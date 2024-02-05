@@ -54,7 +54,6 @@ const revive = command => {
 }
 
 const create = (name, params, info, functionFactory) => {
-  console.log('create command', name)
   const types = createTypes(name)
 
   params.tag = {

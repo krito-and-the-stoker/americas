@@ -7,6 +7,7 @@ const directories = [
   'command',
   'data',
   'entity',
+  'entries',
   'input',
   'interaction',
   'intro',

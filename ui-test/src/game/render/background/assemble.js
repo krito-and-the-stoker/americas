@@ -12,7 +12,6 @@ let numTiles
 let tileStacks
 
 const initialize = () => {
-  console.log('initialized map assembly')
   numTiles = MapEntity.get().numTiles
   tileStacks = MapEntity.get().tiles.map((tile, index) => {
     return {
