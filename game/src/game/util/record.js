@@ -33,6 +33,7 @@ const REFERENCE_KEY = 'referenceId'
 
 const SAVE_TO_LOCAL_STORAGE = true
 const USE_COMPRESSION = false
+const USE_WEBWORKER = false
 
 let lastSave = null
 
@@ -302,9 +303,10 @@ const serializeAsync = () =>
     }
     autosaveInProgress = true
 
-    if (window.Worker) {
+    if (USE_WEBWORKER && window.Worker) {
       if (!worker) {
-        worker = new Worker(new URL('entries/worker.js', import.meta.url))
+        throw new Error('Worker disabled for vite build')
+        // worker = new Worker(new URL('entries/worker.js', import.meta.url))
       }
 
       worker.onmessage = e => {
@@ -367,8 +369,9 @@ const save = () => {
   lastSave = serialize()
   if (SAVE_TO_LOCAL_STORAGE) {
     if (USE_COMPRESSION) {
-      if (window.Worker) {
-        const worker = new Worker(new URL('entries/worker.js', import.meta.url))
+      if (USE_WEBWORKER && window.Worker) {
+        // Worker disabled for vite build
+        const worker = null; //new Worker(new URL('entries/worker.js', import.meta.url))
         worker.onmessage = e => {
           window.localStorage.setItem('lastSaveCompressed', e.data)
           Message.log(`Entities saved to local storage using ${e.data.length} bytes.`)
