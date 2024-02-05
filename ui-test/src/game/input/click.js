@@ -14,9 +14,7 @@ const on = (target, fn, helpText) => {
       e.stopPropagation()
       Input.clear()
 
-      target.interactive = false
       await Util.execute(fn, e.data.global)
-      target.interactive = true
     }
   }
 
@@ -40,7 +38,7 @@ const on = (target, fn, helpText) => {
     }
   }
 
-  target.interactive = true
+  target.eventMode = 'static'
   target
     .on('mousedown', handleDown)
     .on('mouseup', handleUp)

@@ -11,7 +11,10 @@ const setDimensions = layer => {
 class Layer {
   constructor(props) {
     //Create Pixi Foreground canvas
-    this.app = new PIXI.Application(props)
+    this.app = new PIXI.Application({
+      ...props,
+      eventMode: 'passive',
+    })
     this.app.renderer.view.style.position = 'absolute'
     this.app.renderer.view.style.display = 'block'
     this.app.renderer.view.style.opacity = '0'

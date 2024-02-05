@@ -36,7 +36,6 @@ const create = colony => {
         view.sprite = createSprite(colony)
         view.sprite.x = TILE_SIZE * colony.mapCoordinates.x
         view.sprite.y = TILE_SIZE * colony.mapCoordinates.y
-        view.sprite.interactive = true
 
         const unsubscribeOwner = Owner.listen.input(colony.owner, input =>
           input
