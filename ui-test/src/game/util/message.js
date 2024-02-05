@@ -3,7 +3,8 @@
 const config = {
 	log: true,
 	event: false,
-	warn: true
+	warn: true,
+	error: true
 }
 
 const send = (...args) => log(...args)
@@ -26,6 +27,12 @@ const warn = (...args) => {
 	}
 }
 
+const error = (...args) => {
+	if (config.error) {
+		console.error(...args)
+	}
+}
+
 
 const event = (text, args) => {
 	if (config.event) {
@@ -34,4 +41,4 @@ const event = (text, args) => {
 }
 
 
-export default { send, log, event, warn }
+export default { send, log, event, warn, error }

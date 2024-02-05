@@ -1,20 +1,6 @@
 import * as PIXI from 'pixi.js'
 import Message from 'util/message'
 
-
-let counter = 2
-const logDownloadProgress = () => {
-	counter += 1
-	Message.log(`Downloading assets (${counter}/${numberOfAssets()})...`)		
-}
-
-const queueTextureVerbose = async path => new Promise(resolve => {
-	PIXI.loader.onComplete.add(() => resolve(PIXI.loader.resources[path].texture))
-	PIXI.loader.add(path)
-})
-
-const numberOfAssets = () => 2 + Object.entries(paths).length
-
 const paths = Object.freeze({
 	map: 'images/map.png',
 	colonyBackground: 'images/colony-screen/background.jpg',
@@ -78,64 +64,70 @@ const videos = {
 	zoom: 'videos/tutorial/zoom.mp4',
 }
 
+const offset = 2;
+let counter = offset;
+
+const logDownloadProgress = (loader, resource) => {
+	counter += 1;
+	Message.log(`Downloading assets (${counter}/${numberOfAssets()})...`);
+};
+
+const loadTexture = async (path) => {
+	const texture = await PIXI.Assets.load(path);
+	logDownloadProgress();
+	return texture;
+};
+
+const numberOfAssets = () => offset + Object.keys(paths).length;
+
 const rectangle = (index) => {
-	const width = 64
-	const height = 64
-	const tilesPerRow = Math.floor(1024 / width)
-	const row = Math.floor(index / tilesPerRow)
-	const col = index % tilesPerRow
-	return new PIXI.Rectangle(width * col, height * row, width, height)
-}
+	const width = 64;
+	const height = 64;
+	const tilesPerRow = Math.floor(1024 / width);
+	const row = Math.floor(index / tilesPerRow);
+	const col = index % tilesPerRow;
+	return new PIXI.Rectangle(width * col, height * row, width, height);
+};
 
 const texture = (name, options = {}) => {
 	if (!textures[name]) {
-		Message.warn('Texture not found in textures:', name, textures)
-		return textures.white
+		Message.warn('Texture not found in textures:', name, textures);
+		return textures.white;
 	}
 	if (options.frame || options.frame === 0) {
-		return new PIXI.Texture(textures[name], rectangle(options.frame))
+		return new PIXI.Texture(textures[name], rectangle(options.frame));
 	}
 	if (options.rectangle) {
-		return new PIXI.Texture(textures[name], options.rectangle)
+		return new PIXI.Texture(textures[name], options.rectangle);
 	}
-	return new PIXI.Texture(textures[name])
-}
+	return textures[name];
+};
 
-const video = name => {
+const video = (name) => {
 	if (!textures[name]) {
-		textures[name] = PIXI.Texture.fromVideo(videos[name])
+		textures[name] = PIXI.Texture.from(videos[name]);
 	}
+	return sprite(name);
+};
 
-	return sprite(name)
-}
+const sprite = (name, options) => new PIXI.Sprite(texture(name, options));
 
-const sprite = (name, options) => new PIXI.Sprite(texture(name, options))
+let loadAllPromise = null;
 
-let loadAllPromise = null
 const loadAll = () => {
-	if (!loadAllPromise) {	
-		loadAllPromise = Promise.all(Object.entries(paths)
-			.map(([key, path]) => 
-				queueTextureVerbose(path).then(texture => ({
-					key,
-					texture
-				})).then(({ key, texture }) => {
-					textures[key] = texture
-				})))
-
-		PIXI.loader.onLoad.add(logDownloadProgress)
-		requestAnimationFrame(() => {
-			PIXI.loader.load()
-		})
+	if (!loadAllPromise) {
+		loadAllPromise = Promise.all(Object.keys(paths).map(async (key) => {
+			const path = paths[key];
+			textures[key] = await loadTexture(path);
+		}));
 	}
 
-	return loadAllPromise
-}
+	return loadAllPromise;
+};
 
 const initialize = () => {
-	return loadAll()
-}
-
+	return loadAll();
+};
 
 export default {
 	initialize,
@@ -145,4 +137,4 @@ export default {
 	rectangle,
 	paths,
 	numberOfAssets
-}
+};
