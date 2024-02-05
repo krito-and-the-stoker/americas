@@ -25,6 +25,7 @@ const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = 
   let inProgress = false
 
   const handleDown = e => {
+    e.stopPropagation()
     Input.makeHot(target)
     initialCoords = {
       x: e.data.global.x,
@@ -34,6 +35,7 @@ const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = 
 
   const handleMove = e => {
     if (!inProgress && Input.isHot(target)) {
+      e.stopPropagation()
       let coords = {
         x: e.data.global.x,
         y: e.data.global.y,
@@ -46,6 +48,7 @@ const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = 
     }
 
     if (inProgress) {
+      e.stopPropagation()
       Util.execute(onMove, {
         x: e.data.global.x,
         y: e.data.global.y,
@@ -86,16 +89,12 @@ const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = 
     }
   }
 
-  target.interactive = true
+  target.eventMode = 'static'
   target
     .on('mousedown', handleDown)
-    .on('touchstart', handleDown)
-    .on('mousemove', handleMove)
-    .on('touchmove', handleMove)
+    .on('globalmousemove', handleMove)
     .on('mouseup', handleEnd)
     .on('mouseupoutside', handleEnd)
-    .on('touchend', handleEnd)
-    .on('touchendoutside', handleEnd)
     .on('mouseover', addHint)
     .on('mouseout', removeHint)
 
@@ -104,13 +103,9 @@ const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = 
     removeHint()
     target
       .off('mousedown', handleDown)
-      .off('touchstart', handleDown)
-      .off('mousemove', handleMove)
-      .off('touchmove', handleMove)
+      .off('globalmousemove', handleMove)
       .off('mouseup', handleEnd)
       .off('mouseupoutside', handleEnd)
-      .off('touchend', handleEnd)
-      .off('touchendoutside', handleEnd)
       .off('mouseover', addHint)
       .off('mouseout', removeHint)
   }
