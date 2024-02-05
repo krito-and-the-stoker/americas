@@ -11,6 +11,7 @@ import Time from 'timeline/time'
 
 import Unit from 'entity/unit'
 import Colonist from 'entity/colonist'
+import Colony from 'entity/colony'
 import Production from 'entity/production'
 import Tile from 'entity/tile'
 
