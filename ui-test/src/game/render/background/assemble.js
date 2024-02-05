@@ -42,6 +42,11 @@ function getTileStacks() {
 }
 
 function assembleTile(tile) {
+  if (!tile) {
+    console.warn('No tile for assembleTile:', tile)
+    return []
+  }
+  
   return []
     .concat(assembleBaseBlock(tile))
     .concat(assembleFarm(tile))
@@ -54,7 +59,9 @@ function assembleTile(tile) {
 
 function assembleTileXY(coords) {
   const tile = MapEntity.tile(coords)
-  console.warn('assembleTileXY: Did not find tile for coords', coords)
+  if (!tile) {
+    console.warn('assembleTileXY: Did not find tile for coords', coords)
+  }
   return tile ? assembleTile(tile) : []
 }
 
@@ -468,7 +475,7 @@ function neighborToName(top, right, down, left) {
 }
 
 function getForestTileModifier(up, right, down, left) {
-  let y = this.spriteSheetWidth
+  let y = spriteSheetWidth
 
   if (!up && !right && !down && !left) return 0
 

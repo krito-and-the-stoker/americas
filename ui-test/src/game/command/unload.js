@@ -4,10 +4,10 @@ import Events from 'util/events'
 import Time from 'timeline/time'
 
 import Unit from 'entity/unit'
+import Tile from 'entity/tile'
 
-import Move from 'command/move'
-import Commander from 'command/commander'
-
+// TODO: use factory for creation
+// it seems that unloading is a bit chaotic anyway...
 const createUnloadingOnly = unloadingStartedAt => {
   const update = currentTime => {
     return currentTime < unloadingStartedAt + Time.UNLOAD_TIME
@@ -109,8 +109,9 @@ const load = data => {
   if (data.decision === null) {
     return create(unit, data.coords)
   }
+  // TODO: What is going on here?
   if (data.decision === 1) {
-    return Commander.cancel()
+    // return Commander.cancel()
   }
   if (data.decision === 2 && data.unloadingStartedAt) {
     return createUnloadingOnly(data.unloadingStartedAt)

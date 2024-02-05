@@ -120,8 +120,13 @@ const createTiles = tileStacks =>
         return [result]
       }
 
-      // why would you return nothing here?
-      return []
+      // if we have no cache
+      const sprites = createSprite(stack.frames)
+      sprites.forEach(sprite => {
+        sprite.position.x = stack.position.x
+        sprite.position.y = stack.position.y
+      })
+      return sprites
     },
     update: (tile, coords) => {
       if (tile.initialized) {
@@ -144,7 +149,7 @@ const createTiles = tileStacks =>
     },
     initialize: tile => {
       tile.sprites = tile.createCachedSprites()
-      tile.container = getContainer(TileCache.getTextureIndex(tile.stack.frames))
+      tile.container = getContainer(TileCache.getTextureIndex(tile.stack.frames) ?? 0)
       tile.initialized = true
       tile.dirty = false
     },

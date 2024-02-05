@@ -1,9 +1,18 @@
 import Commander from 'command/commander'
+import Unload from 'command/unload'
 
 import Message from 'util/message'
 import Util from 'util/util'
 import Binding from 'util/binding'
 import Record from 'util/record'
+
+// This is the list of all commands that have been created
+// Every new command created through the factory will be saved here
+// We need this to load commands from save game, but cannot import
+// the commands directly, because that would create a circular dependency
+const Commands = {
+  Unload
+}
 
 const createTypes = name => {
   const types = {
@@ -23,10 +32,8 @@ const createTypes = name => {
           if (x.module === 'Commander') {
             return Commander.load(x)
           }
-          const Commands = require('command')
-          const module = Commands.default[x.module]
 
-          return module.load(x)
+          return Commands[x.module].load(x)
         }
         return null
       },
@@ -47,6 +54,7 @@ const revive = command => {
 }
 
 const create = (name, params, info, functionFactory) => {
+  console.log('create command', name)
   const types = createTypes(name)
 
   params.tag = {
@@ -138,6 +146,12 @@ const create = (name, params, info, functionFactory) => {
     return revive(create(args))
   }
 
+  // save command for loading
+  Commands[name] = {
+    create,
+    load
+  }
+
   return {
     create,
     load,
@@ -181,7 +195,7 @@ const commander = (name, params, info, functionFactory) => {
     type: 'raw',
   }
 
-  return {
+  const command = {
     create: (...args) => {
       const commander = Commander.create()
       params.commander.initialized = commander
@@ -204,6 +218,9 @@ const commander = (name, params, info, functionFactory) => {
       return wrap(commander, inner)
     },
   }
+
+  Commands[name] = command
+  return command
 }
 
 const update = {

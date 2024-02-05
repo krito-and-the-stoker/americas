@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js'
 
+const ENABLE_TILE_CACHE = false
+
 const TILE_SIZE = 64
 const MARGIN = 2
 
@@ -95,6 +97,10 @@ const renderStencil = (createSprites, indices) => {
 }
 
 const createCachedSprite = (createSprites, indices) => {
+  if (!ENABLE_TILE_CACHE) {
+    return null
+  }
+
   if (!hasStencil(indices)) {
     if (!addStencil(indices)) {
       return null

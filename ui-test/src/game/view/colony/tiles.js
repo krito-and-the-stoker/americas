@@ -8,6 +8,7 @@ import Drag from 'input/drag'
 import Click from 'input/click'
 
 import Colonist from 'entity/colonist'
+import Unit from 'entity/unit'
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Treasure from 'entity/treasure'

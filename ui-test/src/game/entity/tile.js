@@ -652,9 +652,9 @@ const supportingColony = tile => {
 
 const area = (tile, travelType) => {
   if (tile.colony && MovementCosts[travelType].harbour) {
-    const newTile = Tile.diagonalNeighbors(tile).find(neighbor => neighbor.domain !== 'land')
+    const newTile = diagonalNeighbors(tile).find(neighbor => neighbor.domain !== 'land')
     if (newTile) {
-      return Tile.area(newTile, travelType)
+      return area(newTile, travelType)
     }
   }
 

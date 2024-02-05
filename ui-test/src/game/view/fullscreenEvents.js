@@ -38,7 +38,7 @@ const create = (name, text) => {
 
   const padding = 30
   const relativeWidth = 0.35
-  const plane9 = new PIXI.mesh.NineSlicePlane(Resources.texture('status'), 100, 100, 100, 100)
+  const plane9 = new PIXI.NineSlicePlane(Resources.texture('status'), 100, 100, 100, 100)
   const textView = Text.create(text)
   textView.y = padding
   plane9.addChild(textView)

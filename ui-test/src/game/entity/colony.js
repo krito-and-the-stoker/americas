@@ -9,6 +9,7 @@ import Events from 'util/events'
 import Time from 'timeline/time'
 
 import Unit from 'entity/unit'
+import Colonist from 'entity/colonist'
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Storage from 'entity/storage'
