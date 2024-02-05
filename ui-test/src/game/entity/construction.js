@@ -7,6 +7,7 @@ import Message from 'util/message'
 
 import Building from 'entity/building'
 import Unit from 'entity/unit'
+import Colony from 'entity/colony'
 
 const create = () => {
   return {
