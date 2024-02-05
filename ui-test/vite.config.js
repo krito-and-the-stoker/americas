@@ -31,4 +31,12 @@ export default defineConfig({
       ...aliases,
     },
   },
+  server: {
+    proxy: {
+      '/api': 'http://localhost:8080',
+      '/favicon': 'http://localhost:3000',
+      '/images': 'http://localhost:3000',
+      '/styles': 'http://localhost:3000',
+    },
+  },
 })

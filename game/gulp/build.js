@@ -1,12 +1,9 @@
 const gulp = require('gulp')
-const pug = require('gulp-pug')
 const sass = require('gulp-sass')(require('sass'))
-const browserSync = require('browser-sync').create()
-const webpack = require('webpack')
 const path = require('path')
 const jimp = require('jimp')
 const fs = require('fs')
-const config = require('./webpack.config.js')
+const browserSync = require('browser-sync').create()
 
 gulp.task('version', done => {
     const versionFilePath = path.resolve(__dirname, '../src/version/version.json');
@@ -36,19 +33,6 @@ gulp.task('version', done => {
     done();
 });
 
-gulp.task('compile', () => {
-	return new Promise(resolve => webpack(config, (err, stats) => {
-		if (err) {
-			console.log('Webpack', err)     
-		}
-
-		console.log(stats.toString({ /* stats options */ }))
-		resolve()
-	}))
-})
-
-gulp.task('js', gulp.series('version', 'compile'))
-
 function swallowError (error) {
 	console.log(error.toString())
 	this.emit('end')
@@ -60,19 +44,10 @@ gulp.task('static', () => {
 		.pipe(gulp.dest('dist'))
 })
 
-gulp.task('pug', () => {
-	return gulp.src('src/pages/**/*.pug')
-		.pipe(pug()).on('error', swallowError)
-		.pipe(gulp.dest('dist'))
-		.pipe(browserSync.reload({
-			stream: true
-		}))
-})
-
 gulp.task('sass', () => {
 	return gulp.src('src/sass/**/*.scss')
 		.pipe(sass()).on('error', swallowError)
-		.pipe(gulp.dest('dist'))
+		.pipe(gulp.dest('dist/styles'))
 		.pipe(browserSync.stream())
 })
 
@@ -80,28 +55,6 @@ gulp.task('serve', done => {
     browserSync.init({
         server: {
             baseDir: 'dist',
-            middleware: function (req, res, next) {
-                if (req.url.startsWith("/api")) {
-                    try {
-	                    // Proxy options
-	                    const options = {
-	                        target: 'http://event-tracker:8080', // Replace with the target host of your /event route
-	                        changeOrigin: true
-	                    }
-
-	                    // Create a proxy
-	                    const proxy = require('http-proxy').createProxyServer(options)
-	                    
-	                    // Proxy the request
-	                    proxy.web(req, res)
-                    } catch(e) {
-                    	console.log(e)
-                    	next()
-                    }
-                } else {
-                    next()
-                }
-            }
         },
         open: false
     })
@@ -137,13 +90,9 @@ gulp.task('assets', resolve => {
 	})
 })
 
-gulp.task('build', gulp.series(gulp.parallel(['pug', 'js', 'sass', 'static', 'assets'])))
+gulp.task('build', gulp.series(gulp.parallel(['sass', 'static', 'assets'])))
 
 gulp.task('watch', () => {
-	gulp.watch('src/pages/**/*.pug', gulp.series('pug'))
-	gulp.watch('src/js/**/*.js', gulp.series('js'))
-	gulp.watch('src/js/**/*.json', gulp.series('js'))
-	gulp.watch('src/content/**/*.md', gulp.series('pug'))
 	gulp.watch('src/sass/**/*.scss', gulp.series('sass'))
 	gulp.watch('src/static/**/*', gulp.series('static'))
 	gulp.watch('src/assets/**/*', gulp.series('assets'))
