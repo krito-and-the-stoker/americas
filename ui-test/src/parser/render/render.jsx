@@ -41,12 +41,12 @@ export const staticContext = {
 		return (<For each={evaluate(list)}>
 			{(item, index) => params.subtree({
 				...context,
-				'_': item,
-				'_index': index,
-				'_first': () => index() === 0,
-				'_inner': () => index() > 0 && index() < length() - 1,
-				'_last': () => index() === length() - 1,
-				'_length': length,
+				'.': item,
+				'.index': index,
+				'.first': () => index() === 0,
+				'.inner': () => index() > 0 && index() < length() - 1,
+				'.last': () => index() === length() - 1,
+				'.length': length,
 			})}</For>)
 	}
 }

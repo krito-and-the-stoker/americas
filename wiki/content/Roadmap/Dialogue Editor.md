@@ -24,7 +24,7 @@ We will use a template language, that looks something like this:
 	Multiline content
 	[nestedfn] Nested Content []
 []
-[fn {not hide}] I am not hidden []
+[fn {not hide}] I am not hidden [] // expression as argument
 
 Because line breaks are important, they are rendered by default, except
   indentation will prevent a line to break and instead add a white space.
@@ -102,14 +102,14 @@ Hello {world}!
 [dialog]
 [name: example-with-object]
 
-We have {goods.food}[icon food], {goods.gold}[icon: gold] and {goods.rum}[icon rum] in store.
+We have {goods.food}[icon: food], {goods.gold}[icon: gold] and {goods.rum}[icon rum] in store.
 
 [answer] Fantastic. []
 ```
 #### Buying land from the natives when in the colony
 ```
 [template price]
-	{price}[icon gold] // transforms [price 500] -> 500[icon gold]
+	{price}[icon: gold] // transforms [price 500] -> 500[icon gold]
 []
 // the parameter to template "price" defines the templates name,
 // and binds the argument to {price} so it can be used inside the template

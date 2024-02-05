@@ -119,7 +119,7 @@ const baseTokens = {
 	},
 
 	variable: input => {
-		const re = /^\s*(\b[a-zA-Z_][0-9a-zA-Z_]*\b)\s*/
+		const re = /^\s*([a-zA-Z_\.][0-9a-zA-Z_\.]*)\s*/
 		const result = input.match(re)
 		if (result) {
 			const all = result[0]

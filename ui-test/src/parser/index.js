@@ -1,7 +1,7 @@
 import generateAst from './ast';
 import renderTemplate from './render'
 
-const hello =`
+const hello =`{1 + 2 + 3 + 4 + 5}
 *Hallo {2 + counter - 1}* **Welt**!
 {greeting}
 These
@@ -32,18 +32,18 @@ This
 []
 
 [repeat list]
-	{_index+counter}/{_length - counter}: {_}
-	[if _first] (first) []
-	[if _inner] (inner) []
-	[if _last] (last) []
+	{.index+counter}/{.length - counter}: {.}
+	[if .first] (first) []
+	[if .inner] (inner) []
+	[if .last] (last) []
 []
 
 [repeat list]
-		[if _first] I like []
-		[if _inner], []
-		[if {not _first and _last}] and []
-		{_}
-		[if _last]. []
+		[if .first] I like []
+		[if .inner], []
+		[if {not .first and .last}] and []
+		{.}
+		[if .last]. []
 		[] 
 
 `
