@@ -40,11 +40,12 @@ const listen = {
   screen: fn => Binding.listen(state, 'screen', fn),
 }
 
-const hitTest = coords =>
-  layer.app.renderer.plugins.interaction.hitTest(
-    new PIXI.Point(coords.x, coords.y),
-    layer.app.stage
+const hitTest = coords => {
+  return layer.app.renderer.events.rootBoundary.hitTest(
+    coords.x, coords.y
   )
+}
+
 const state = {
   screen: null,
   queue: [],

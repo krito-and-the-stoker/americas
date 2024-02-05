@@ -9,6 +9,7 @@ import Drag from 'input/drag'
 import Click from 'input/click'
 
 import Production from 'entity/production'
+import Unit from 'entity/unit'
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
 import Building from 'entity/building'
