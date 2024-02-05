@@ -2,9 +2,9 @@ import Record from 'util/record'
 import Binding from 'util/binding'
 import Events from 'util/events'
 
-import Background from 'render/background.js'
-import Foreground from 'render/foreground.js'
-import RenderMap from 'render/map'
+import Background from 'render/background'
+import Foreground from 'render/foreground'
+import AssembleMap from 'render/background/assemble'
 
 const get = () => ({
   scale: Record.getGlobal('scale'),
@@ -14,7 +14,7 @@ const get = () => ({
 let resizeFunctions = []
 
 const restart = () => {
-  new RenderMap()
+  AssembleMap.initialize()
   const { scale, coords } = get()
   updateScale(scale)
   updateMapCoords(coords)

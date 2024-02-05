@@ -1,13 +1,18 @@
 import * as PIXI from 'pixi.js'
+
 import Util from 'util/util'
-import Layer from './layer'
-import RenderView from './view'
-import TileCache from './tileCache'
-import Resources from './resources'
-import MapView from 'render/map'
-import MapEntity from 'entity/map'
+
+import Layer from 'render/layer'
+import RenderView from 'render/view'
+import Resources from 'render/resources'
+
 import Message from 'util/message'
+
+import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
+
+import AssembleMap from './assemble'
+import TileCache from './tileCache'
 
 const MAX_TILES = 30000
 
@@ -96,7 +101,7 @@ const createSprite = frames => {
   return createSpriteFromFrames(mapName, frames)
 }
 const createSpritesFromTile = tile =>
-  createSpriteFromFrames(mapName, MapView.instance.assembleTile(tile))
+  createSpriteFromFrames(mapName, AssembleMap.assembleTile(tile))
 
 const createTiles = tileStacks =>
   tileStacks.map((stack, index) => ({
@@ -107,6 +112,7 @@ const createTiles = tileStacks =>
     initialized: false,
     createCachedSprites: () => {
       const result = TileCache.createCachedSprite(createSprite, stack.frames)
+      // console.log('created cached sprites', stack, result)
       if (result) {
         result.position.x = stack.position.x
         result.position.y = stack.position.y
@@ -120,7 +126,7 @@ const createTiles = tileStacks =>
     update: (tile, coords) => {
       if (tile.initialized) {
         if (tile.dirty) {
-          const newStack = MapView.instance.assembleTileXY(coords)
+          const newStack = AssembleMap.assembleTileXY(coords)
           if (
             newStack.length !== tile.stack.frames.length ||
             !newStack.every((frame, i) => frame === tile.stack.frames[i])
@@ -132,7 +138,7 @@ const createTiles = tileStacks =>
           }
         }
       } else {
-        tile.stack.frames = MapView.instance.assembleTileXY(coords)
+        tile.stack.frames = AssembleMap.assembleTileXY(coords)
         tile.initialized = false
       }
     },
@@ -147,8 +153,9 @@ const createTiles = tileStacks =>
 let unsubscribeTiles = () => {}
 const restart = () => {
   Message.log('Reassembling tiles')
-  tiles = createTiles(MapView.instance.tileStacks)
-  numTiles = MapView.instance.numTiles
+  tiles = createTiles(AssembleMap.getTileStacks())
+  numTiles = AssembleMap.getNumTiles()
+  console.log('created tiles', tiles)
 
   Util.execute(unsubscribeTiles)
   unsubscribeTiles = tiles.map((tile, index) =>
@@ -162,13 +169,13 @@ const restart = () => {
 }
 
 const initialize = () => {
-  const mapView = MapView.instance
-
   layer = new Layer({
     transparent: true,
     clearBeforeRender: false,
     preserveDrawingBuffer: true,
   })
+
+  TileCache.initialize(layer.app.renderer)
 
   undiscovered = new PIXI.TilingSprite(
     Resources.texture('undiscovered'),
@@ -179,10 +186,11 @@ const initialize = () => {
   layer.app.stage.addChild(undiscovered)
   layer.app.stop()
 
-  if (mapView) {
+  if (AssembleMap.isReady()) {
     Message.log('Assembling tiles')
-    tiles = createTiles(mapView.tileStacks)
-    numTiles = mapView.numTiles
+    tiles = createTiles(AssembleMap.getTileStacks())
+    numTiles = AssembleMap.getNumTiles()
+    console.log('created tiles', tiles)
 
     Util.execute(unsubscribeTiles)
     unsubscribeTiles = tiles.map((tile, index) =>
@@ -239,7 +247,7 @@ const doRenderWork = () => {
         tiles[index].initialize(tiles[index])
       }
       tiles[index].sprites.forEach(sprite => {
-        sprite.tint = MapView.instance.tintXY(coords)
+        sprite.tint = AssembleMap.tintXY(coords)
         tiles[index].container.addChild(sprite)
       })
     })

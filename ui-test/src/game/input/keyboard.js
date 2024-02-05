@@ -16,7 +16,7 @@ import Plow from 'command/plow'
 import Road from 'command/road'
 
 import Foreground from 'render/foreground'
-import RenderMap from 'render/map.js'
+import AssembleMap from 'render/background/assemble'
 
 import MapView from 'view/map'
 import UnitView from 'view/map/unit'
@@ -53,7 +53,7 @@ const handleKeydown = e => {
     }
 
     if (e.key === 'l') {
-      Record.upload(() => new RenderMap())
+      Record.upload(() => AssembleMap.initialize())
       e.preventDefault()
     }
 

@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js'
-import Background from './background'
 
 const TILE_SIZE = 64
 const MARGIN = 2
@@ -7,6 +6,12 @@ const MARGIN = 2
 const renderTextureSize = {
   x: 2048,
   y: 2048,
+}
+
+
+let renderer
+const initialize = (_renderer) => {
+  renderer = _renderer
 }
 
 const textures = {}
@@ -34,8 +39,8 @@ const currentRenderTextureIndex = () => renderTextures.length - 1
 const currentFrame = () => numFrames % textureSize
 const hasStencil = indices => typeof getStencil(indices) !== 'undefined'
 const stencilReady = indices => typeof getStencil(indices).texture !== 'undefined'
-const getStencil = indices => textures[hash(indices)]
-const hash = indices => indices.reduce((s, n) => `${s}${n}x`, '')
+const getStencil = indices => textures[serialize(indices)]
+const serialize = indices => indices.reduce((s, n) => `${s}${n}x`, '')
 const getXYFromFrame = frame => ({
   x: (frame % tiles.x) * (TILE_SIZE + 2 * MARGIN) + MARGIN,
   y: Math.floor(frame / tiles.y) * (TILE_SIZE + 2 * MARGIN) + MARGIN,
@@ -50,7 +55,7 @@ const addStencil = indices => {
 
   if (hasStencil(indices)) return true
 
-  textures[hash(indices)] = {
+  textures[serialize(indices)] = {
     used: 0,
   }
 
@@ -58,7 +63,6 @@ const addStencil = indices => {
 }
 
 const renderStencil = (createSprites, indices) => {
-  const renderer = Background.get().layer.app.renderer
   if (currentFrame() === 0) addRenderTexture()
 
   const group = new PIXI.Container()
@@ -99,7 +103,7 @@ const createCachedSprite = (createSprites, indices) => {
 
   if (!stencilReady(indices)) renderStencil(createSprites, indices)
 
-  const h = hash(indices)
+  const h = serialize(indices)
   textures[h].used++
   return new PIXI.Sprite(textures[h].texture)
 }
@@ -113,6 +117,7 @@ const getTextureIndex = indices => {
 }
 
 export default {
+  initialize,
   createCachedSprite,
   getTextureIndex,
 }

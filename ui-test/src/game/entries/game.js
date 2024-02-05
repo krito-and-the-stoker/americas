@@ -28,10 +28,10 @@ import Meet from 'task/meet'
 import Input from 'input'
 
 import Resources from 'render/resources'
-import RenderMap from 'render/map.js'
-import RenderView from 'render/view.js'
+import RenderView from 'render/view'
 import Foreground from 'render/foreground'
 import Background from 'render/background'
+import AssmebleMap from 'render/background/assemble'
 
 import MapView from 'view/map'
 import AutosaveView from 'view/autosave'
@@ -136,7 +136,7 @@ const start = async () => {
 
     await nextFrame()
 
-    new RenderMap()
+    AssmebleMap.initialize()
 
     await nextFrame()
 
@@ -226,7 +226,7 @@ const load = async () => {
     await nextFrame()
     Message.log('Restoring game state...')
     await nextFrame()
-    Record.load(() => new RenderMap())
+    Record.load(() => AssmebleMap.initialize())
     await nextFrame()
     AutosaveView.initialize()
     Dialog.initialize()

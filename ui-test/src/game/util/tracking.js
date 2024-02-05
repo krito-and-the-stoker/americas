@@ -11,8 +11,8 @@ const getUserId = () => {
 }
 
 const trackEvent = async name => {
-  if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-    console.log("Localhost: Event tracking skipped");
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    console.log('Localhost: Event tracking skipped')
     return
   }
   await fetch('/api/event', {
