@@ -1,0 +1,53 @@
+{
+	"colony": {
+		"default": 144,
+		"0": 144,
+		"3": 145,
+		"9": 146,
+		"18": 147
+	},
+	"fortifications": {
+		"0": 128,
+		"1": 129,
+		"2": 130,
+		"3": 131
+	},
+	"names": [
+		"Jamestown",
+		"Plymouth",
+		"Roanoke",
+		"Barbados",
+		"Penobscot",
+		"Boston",
+		"Baltimore",
+		"Providence",
+		"Hartford",
+		"New Haven",
+		"New York",
+		"Albany",
+		"New Jersey",
+		"Charleston",
+		"Philadelphia",
+		"Newport",
+		"Yorktown",
+		"Annapolis",
+		"Halifax",
+		"Lexington",
+		"Savannah",
+		"Williamsburg",
+		"St. John's",
+		"Norfolk",
+		"Concord",
+		"Wilmington",
+		"Richmond",
+		"Portsmouth",
+		"Camden",
+		"Springfield",
+		"Newport News",
+		"Antigua",
+		"Rupert House",
+		"Kingston",
+		"Reading",
+		"Ottawa"
+	]
+}

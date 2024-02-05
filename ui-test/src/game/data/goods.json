@@ -1,0 +1,112 @@
+{
+	"types":[
+		"food",
+		"sugar",
+		"tobacco",
+		"cotton",
+		"furs",
+		"wood",
+		"ore",
+		"silver",
+		"horses",
+		"rum",
+		"cigars",
+		"cloth",
+		"coats",
+		"tradeGoods",
+		"tools",
+		"guns"
+	],
+	"productions":[
+		"construction",
+		"bells",
+		"crosses",
+		"books",
+		"gold",
+		"housing"
+	],
+	"food":{
+		"id": 64,
+		"expert": "farmer"
+	},
+	"sugar":{
+		"id": 65,
+		"expert": "sugarplanter"
+	},
+	"tobacco":{
+		"id": 66,
+		"expert": "tobaccoplanter"
+	},
+	"cotton":{
+		"id": 67,
+		"expert": "cottonplanter"
+	},
+	"furs":{
+		"id": 68,
+		"expert": "furtrapper"
+	},
+	"wood":{
+		"id": 69,
+		"expert": "lumberjack"
+	},
+	"ore":{
+		"id": 70,
+		"expert": "oreminer"
+	},
+	"silver":{
+		"id": 71,
+		"expert": "silverminer"
+	},
+	"horses":{
+		"id": 72
+	},
+	"rum":{
+		"id": 73,
+		"expert": "distiller"
+	},
+	"cigars":{
+		"id": 74,
+		"expert": "tobacconist"
+	},
+	"cloth":{
+		"id": 75,
+		"expert": "weaver"
+	},
+	"coats":{
+		"id": 76,
+		"expert": "furtrader"
+	},
+	"tradeGoods":{
+		"id": 77
+	},
+	"tools":{
+		"id": 78,
+		"expert": "blacksmith"
+	},
+	"guns":{
+		"id": 79,
+		"expert": "gunsmith"
+	},
+	"construction":{
+		"id": 112,
+		"expert": "carpenter"
+	},
+	"bells":{
+		"id": 113,
+		"expert": "statesman"
+	},
+	"crosses":{
+		"id": 114,
+		"expert": "preacher"
+	},
+	"books":{
+		"id": 134
+	},
+	"gold":{
+		"id": 116,
+		"displayFactor": 10
+	},
+	"housing":{
+		"id": 117
+	}
+}

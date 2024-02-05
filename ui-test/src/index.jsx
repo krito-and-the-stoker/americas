@@ -3,6 +3,6 @@ import { render } from 'solid-js/web'
 
 import App from './App'
 
-const root = document.getElementById('root')
+const root = document.getElementById('ui-root')
 
 render(() => <App />, root)
