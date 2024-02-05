@@ -34,10 +34,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': 'http://localhost:8080',
-      '/favicon': 'http://localhost:3000',
-      '/images': 'http://localhost:3000',
-      '/styles': 'http://localhost:3000',
+      '/api': 'http://event-tracker:8080',
+      '/favicon': 'http://assets:3000',
+      '/images': 'http://assets:3000',
+      '/styles': 'http://assets:3000',
     },
   },
 })

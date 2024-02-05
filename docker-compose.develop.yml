@@ -1,40 +1,34 @@
 version: '3.8'
 
 services:
-  database:
-    image: mongo:7.0.4
+  game:
+    build:
+      context: ./game
+    environment:
+      - FORCE_COLOR=1
     ports:
-      - "27017:27017"
+      - "3000:5173"
     volumes:
-      - mongo-data:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    command: mongod --quiet --logpath /dev/null
-
-  mongo-express:
-    image: mongo-express:latest
-    ports:
-      - "3003:8081"
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_SERVER: database
+      - ./game:/app/game
+      - game-dist:/app/game/dist
+      - game-modules:/app/game/node_modules/
     depends_on:
-      - database
+      - event-tracker
+      - assets
+    command: npm run dev
 
-  event-tracker:
-    build: ./event-tracker
+  wiki:
+    build:
+      context: ./wiki
+    environment:
+      - FORCE_COLOR=1
     ports:
-      - "8080:8080"
-    depends_on:
-      - database
+      - "3001:3000"
     volumes:
-      - ./event-tracker:/app
-      - go-build:/go/pkg/mod
-    environment:
-      MONGO_URI: "mongodb://root:example@database:27017"
-    command: air
+      - ./wiki:/app/wiki
+      - wiki-dist:/app/wiki/dist
+      - wiki-modules:/app/wiki/node_modules/
+    command: npm run dev
 
   dashboard:
     build:
@@ -51,33 +45,49 @@ services:
       - event-tracker
     command: npm run dev
 
-  game:
+  mongo-express:
+    image: mongo-express:latest
+    ports:
+      - "3003:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_SERVER: database
+    depends_on:
+      - database
+
+  assets:
     build:
-      context: ./game
+      context: ./assets
     environment:
       - FORCE_COLOR=1
-    ports:
-      - "3000:3000"
     volumes:
-      - ./game:/app/game
-      - game-dist:/app/game/dist
-      - game-modules:/app/game/node_modules/
+      - ./assets:/app/assets
+      - assets-dist:/app/assets/dist
+      - assets-modules:/app/assets/node_modules/
     depends_on:
       - event-tracker
     command: npm run dev
 
-  wiki:
-    build:
-      context: ./wiki
-    environment:
-      - FORCE_COLOR=1
-    ports:
-      - "3001:3000"
+  database:
+    image: mongo:7.0.4
     volumes:
-      - ./wiki:/app/wiki
-      - wiki-dist:/app/wiki/dist
-      - wiki-modules:/app/wiki/node_modules/
-    command: npm run dev
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    command: mongod --quiet --logpath /dev/null
+
+  event-tracker:
+    build: ./event-tracker
+    depends_on:
+      - database
+    volumes:
+      - ./event-tracker:/app
+      - go-build:/go/pkg/mod
+    environment:
+      MONGO_URI: "mongodb://root:example@database:27017"
+    command: air
 
 volumes:
   mongo-data:
@@ -88,3 +98,5 @@ volumes:
   dashboard-dist:
   wiki-modules:
   wiki-dist:
+  assets-modules:
+  assets-dist:
