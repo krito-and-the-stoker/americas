@@ -1,7 +1,7 @@
-import generateAst from './ast';
+import generateAst from './ast'
 import renderTemplate from './render'
 
-const hello =`{1 + 2 + 3 + 4 + 5}
+const hello = `{1 + 2 + 3 + 4 + 5}
 *Hallo {2 + counter - 1}* **Welt**!
 {greeting}
 These
@@ -55,6 +55,6 @@ const hello2 = `
 `
 
 export default () => {
-	const ast = generateAst(hello + hello2);
-	return renderTemplate(ast)
+  const ast = generateAst(hello + hello2)
+  return renderTemplate(ast)
 }

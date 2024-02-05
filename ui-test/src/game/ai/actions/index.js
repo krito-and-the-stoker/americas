@@ -6,10 +6,10 @@ import Disband from 'ai/actions/disband'
 import VisitColony from 'ai/actions/visitColony'
 
 export default {
-	CreateUnit,
-	AssignUnit,
-	EstablishRelations,
-	MoveUnit,
-	Disband,
-	VisitColony
+  CreateUnit,
+  AssignUnit,
+  EstablishRelations,
+  MoveUnit,
+  Disband,
+  VisitColony,
 }

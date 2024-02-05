@@ -9,7 +9,6 @@ import Time from 'timeline/time'
 import Binding from 'util/binding'
 import Text from 'render/text'
 
-
 const helpText = `AMERICAS by Krito and the Stoker
 
 
@@ -64,93 +63,93 @@ we currently only save one game, so when you start a new game,
 the old game is lost.`
 
 const help = {
-	position: 0
+  position: 0,
 }
 
 const update = {
-	position: value => Binding.update(help, 'position', value)
+  position: value => Binding.update(help, 'position', value),
 }
 
 const listen = {
-	position: fn => Binding.listen(help, 'position', fn)
+  position: fn => Binding.listen(help, 'position', fn),
 }
 
 const create = () => {
-	const container = new PIXI.Container()
-	const background = Resources.sprite('help')
-	const originalDimensions = {
-		x: 800,
-		y: 575
-	}
+  const container = new PIXI.Container()
+  const background = Resources.sprite('help')
+  const originalDimensions = {
+    x: 800,
+    y: 575,
+  }
 
-	const helpTextView = Text.create(helpText, {
-		fontFamily: 'Courier',
-		fontSize: 14,
-		align: 'left'
-	})
+  const helpTextView = Text.create(helpText, {
+    fontFamily: 'Courier',
+    fontSize: 14,
+    align: 'left',
+  })
 
-	helpTextView.x = 100
-	helpTextView.y = 100
+  helpTextView.x = 100
+  helpTextView.y = 100
 
-	container.addChild(background)
-	container.addChild(helpTextView)
+  container.addChild(background)
+  container.addChild(helpTextView)
 
-	RenderView.updateWhenResized(({ dimensions }) => {
-		const scale = {
-			x: dimensions.x / originalDimensions.x,
-			y: dimensions.y / originalDimensions.y,
-		}
-		const coverScale = Math.max(scale.x, scale.y)
-		background.scale.set(coverScale)
+  RenderView.updateWhenResized(({ dimensions }) => {
+    const scale = {
+      x: dimensions.x / originalDimensions.x,
+      y: dimensions.y / originalDimensions.y,
+    }
+    const coverScale = Math.max(scale.x, scale.y)
+    background.scale.set(coverScale)
 
-		const fitScale = Math.min(scale.x, scale.y)
-		helpTextView.scale.set(fitScale)
-	})
+    const fitScale = Math.min(scale.x, scale.y)
+    helpTextView.scale.set(fitScale)
+  })
 
-	listen.position(position => {
-		if (position < 0) {
-			update.position(0)
-			return
-		}
-		if (position > 600) {
-			update.position(600)
-			return
-		}
+  listen.position(position => {
+    if (position < 0) {
+      update.position(0)
+      return
+    }
+    if (position > 600) {
+      update.position(600)
+      return
+    }
 
-		helpTextView.y = 100 - position
-	})
+    helpTextView.y = 100 - position
+  })
 
-	Wheel.on(({ delta }) => {
-		update.position(help.position + delta.y)
-	})
+  Wheel.on(({ delta }) => {
+    update.position(help.position + delta.y)
+  })
 
-	Click.on(background, close)
+  Click.on(background, close)
 
-	const unsubscribe = () => {
-		Time.resume()		
-	}
+  const unsubscribe = () => {
+    Time.resume()
+  }
 
-	return {
-		container,
-		unsubscribe
-	}
+  return {
+    container,
+    unsubscribe,
+  }
 }
 
 const close = () => {
-	Foreground.closeScreen()
+  Foreground.closeScreen()
 }
 
 let screen = null
 const open = () => {
-	if (!screen) {
-		screen = create()
-	}
+  if (!screen) {
+    screen = create()
+  }
 
-	update.position(0)
-	Foreground.openScreen(screen, { name: 'help' })
-	Time.pause()
+  update.position(0)
+  Foreground.openScreen(screen, { name: 'help' })
+  Time.pause()
 }
 
 export default {
-	open,
+  open,
 }

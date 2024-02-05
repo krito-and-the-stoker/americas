@@ -19,11 +19,12 @@ function App() {
   return (
     <>
       <h1>Hi</h1>
-{/*      <For each={list()}>
+      {/*      <For each={list()}>
         {(item, index) => <div>{index()}/{list().length}: {item}</div>}
       </For>
       <button onClick={context.increment}>Increment</button>
-*/}      {template(context)}
+*/}{' '}
+      {template(context)}
     </>
   )
 }

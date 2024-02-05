@@ -18,87 +18,101 @@ import Foreground from 'render/foreground'
 
 import Dialog from 'view/ui/dialog'
 
-
 const TILE_SIZE = 64
 
 const create = settlement => {
-	const tile = MapEntity.tile(settlement.mapCoordinates)
-	const unsubscribe = Tile.listen.discovered(tile, discovered => {
-		if (discovered) {
-			const sprite = Resources.sprite('map', { frame: settlement.tribe.id - 1 })
-			sprite.x = TILE_SIZE * settlement.mapCoordinates.x
-			sprite.y = TILE_SIZE * settlement.mapCoordinates.y
+  const tile = MapEntity.tile(settlement.mapCoordinates)
+  const unsubscribe = Tile.listen.discovered(tile, discovered => {
+    if (discovered) {
+      const sprite = Resources.sprite('map', {
+        frame: settlement.tribe.id - 1,
+      })
+      sprite.x = TILE_SIZE * settlement.mapCoordinates.x
+      sprite.y = TILE_SIZE * settlement.mapCoordinates.y
 
-			const unsubscribeClick = Click.on(sprite, () => {
-				const player = Owner.player()
-				const relations = settlement.owner.ai.state.relations[player.referenceId]
-				const relation = relations ? Natives.describeRelations(relations) : null
-				const tribe = settlement.tribe.name
-				const expertName = Units.settler.name[settlement.expert]
-				const knowledge = settlement.presentGiven ?
-					`This settlement has the knowledge to train a **${expertName}**.` : 'We have *not visited* this village yet.'
-				const text = relation ? `The ${tribe} seem ${relation} at the moment.\n\n${knowledge}` : knowledge
-				const debug = window.DEBUG ? '<br />DebugOptions:<br /><options />' : ''
-				Dialog.create({
-					type: 'scout',
-					text: `${text}${debug}`,
-					options: [].concat(relations ? [{
-						text: 'Start raid (1)',
-						action: () => {
-							relations.raidPlanned = 1
-						}
-					}, {
-						text: 'Start raid (5)',
-						action: () => {
-							relations.raidPlanned = 5
-						}
-					}, {
-						text: 'Start raid (10)',
-						action: () => {
-							relations.raidPlanned = 10
-						}
-					}] : [])
-				})
-			}, `Inspect ${settlement.tribe.name} settlement`)
-			Foreground.addTerrain(sprite)
+      const unsubscribeClick = Click.on(
+        sprite,
+        () => {
+          const player = Owner.player()
+          const relations = settlement.owner.ai.state.relations[player.referenceId]
+          const relation = relations ? Natives.describeRelations(relations) : null
+          const tribe = settlement.tribe.name
+          const expertName = Units.settler.name[settlement.expert]
+          const knowledge = settlement.presentGiven
+            ? `This settlement has the knowledge to train a **${expertName}**.`
+            : 'We have *not visited* this village yet.'
+          const text = relation
+            ? `The ${tribe} seem ${relation} at the moment.\n\n${knowledge}`
+            : knowledge
+          const debug = window.DEBUG ? '<br />DebugOptions:<br /><options />' : ''
+          Dialog.create({
+            type: 'scout',
+            text: `${text}${debug}`,
+            options: [].concat(
+              relations
+                ? [
+                    {
+                      text: 'Start raid (1)',
+                      action: () => {
+                        relations.raidPlanned = 1
+                      },
+                    },
+                    {
+                      text: 'Start raid (5)',
+                      action: () => {
+                        relations.raidPlanned = 5
+                      },
+                    },
+                    {
+                      text: 'Start raid (10)',
+                      action: () => {
+                        relations.raidPlanned = 10
+                      },
+                    },
+                  ]
+                : []
+            ),
+          })
+        },
+        `Inspect ${settlement.tribe.name} settlement`
+      )
+      Foreground.addTerrain(sprite)
 
-			const unsubscribeMission = Settlement.listen.mission(settlement, mission => {
-				if (mission) {
-					const missionSymbol = Resources.sprite('map', { frame: Goods.crosses.id })
-					missionSymbol.x = sprite.x + 16
-					missionSymbol.y = sprite.y + 16
-					missionSymbol.scale.set(0.5)
-					Foreground.addTerrain(missionSymbol)
+      const unsubscribeMission = Settlement.listen.mission(settlement, mission => {
+        if (mission) {
+          const missionSymbol = Resources.sprite('map', {
+            frame: Goods.crosses.id,
+          })
+          missionSymbol.x = sprite.x + 16
+          missionSymbol.y = sprite.y + 16
+          missionSymbol.scale.set(0.5)
+          Foreground.addTerrain(missionSymbol)
 
-					return () => Foreground.removeTerrain(missionSymbol)
-				}
-			})
+          return () => Foreground.removeTerrain(missionSymbol)
+        }
+      })
 
-			return [
-				() => Foreground.removeTerrain(sprite),
-				unsubscribeMission,
-				unsubscribeClick
-			]
-		}
-	})
+      return [() => Foreground.removeTerrain(sprite), unsubscribeMission, unsubscribeClick]
+    }
+  })
 
-	return {
-		unsubscribe,
-	}
+  return {
+    unsubscribe,
+  }
 }
 
 const destroy = view => {
-	Util.execute(view.unsubscribe)
+  Util.execute(view.unsubscribe)
 }
 
 const initialize = () => {
-	Record.listen('settlement', settlement => {
-		const view = create(settlement)
+  Record.listen('settlement', settlement => {
+    const view = create(settlement)
 
-		return () => {
-			destroy(view)
-		}
-	})
+    return () => {
+      destroy(view)
+    }
+  })
 }
 
 export default { initialize }

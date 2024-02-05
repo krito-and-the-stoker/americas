@@ -40,30 +40,29 @@ import Dialog from 'view/ui/dialog'
 
 import GlobalPanel from 'view/panel/global'
 
-
 const AUTOSAVE_INTERVAL = 5 * 60 * 1000 // autosave every 5 minutes
 const initialize = () => {
-	let timeStamp = 0
-	setInterval(Record.autosave, AUTOSAVE_INTERVAL)
+  let timeStamp = 0
+  setInterval(Record.autosave, AUTOSAVE_INTERVAL)
 
-	Time.schedule(Meet.create())
+  Time.schedule(Meet.create())
 
-	const loop = t => {
-		const deltaTime = Math.min(t - timeStamp, 150)
-		timeStamp = t
-		try {		
-			Time.advance(deltaTime)
-			RenderView.onDraw()
-		} catch (err) {
-			captureException(err)
-		}
-		requestAnimationFrame(loop)
-	}
+  const loop = t => {
+    const deltaTime = Math.min(t - timeStamp, 150)
+    timeStamp = t
+    try {
+      Time.advance(deltaTime)
+      RenderView.onDraw()
+    } catch (err) {
+      captureException(err)
+    }
+    requestAnimationFrame(loop)
+  }
 
-	requestAnimationFrame(t => {
-		timeStamp = t
-		requestAnimationFrame(loop)
-	})
+  requestAnimationFrame(t => {
+    timeStamp = t
+    requestAnimationFrame(loop)
+  })
 }
 
 // const americaSmall = () => {
@@ -89,180 +88,180 @@ const initialize = () => {
 // }
 
 const americaLarge = () => {
-	const startCoordinates = Util.choose(
-		MapEntity.get().tiles.filter(Tile.isPossibleStartLocation)
-	).mapCoordinates
+  const startCoordinates = Util.choose(
+    MapEntity.get().tiles.filter(Tile.isPossibleStartLocation)
+  ).mapCoordinates
 
-	const pioneer = Unit.create('scout', startCoordinates, Owner.player())
-	const soldier = Unit.create('settler', startCoordinates, Owner.player())
-	const caravel = Unit.create('caravel', startCoordinates, Owner.player())
-	Unit.loadUnit(caravel, pioneer)
-	Unit.loadUnit(caravel, soldier)
-	MapView.centerAt(startCoordinates, 0, {
-		x: 0.5,
-		y: 0.5
-	})
-	MapView.zoomBy(1/0.35, null, 0)
-	Record.setGlobal('defaultShipArrival', startCoordinates)
+  const pioneer = Unit.create('scout', startCoordinates, Owner.player())
+  const soldier = Unit.create('settler', startCoordinates, Owner.player())
+  const caravel = Unit.create('caravel', startCoordinates, Owner.player())
+  Unit.loadUnit(caravel, pioneer)
+  Unit.loadUnit(caravel, soldier)
+  MapView.centerAt(startCoordinates, 0, {
+    x: 0.5,
+    y: 0.5,
+  })
+  MapView.zoomBy(1 / 0.35, null, 0)
+  Record.setGlobal('defaultShipArrival', startCoordinates)
 
-	return caravel
+  return caravel
 }
 
 const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve))
 
 let loadingResources = null
 const preload = () => {
-	Message.log(`Downloading files (2/${Resources.numberOfAssets()})...`)
-	loadingResources = Resources.initialize()
+  Message.log(`Downloading files (2/${Resources.numberOfAssets()})...`)
+  loadingResources = Resources.initialize()
 }
 
 const start = async () => {
-	try {
-		if (!loadingResources) {
-			preload()
-		}
+  try {
+    if (!loadingResources) {
+      preload()
+    }
 
-		await nextFrame()
+    await nextFrame()
 
-		Owner.initialize()
+    Owner.initialize()
 
-		// MapEntity.create({ data: americaSmallMap })
-		MapEntity.create({ data: americaLargeMap })
+    // MapEntity.create({ data: americaSmallMap })
+    MapEntity.create({ data: americaLargeMap })
 
-		await nextFrame()
+    await nextFrame()
 
-		new RenderMap()
+    new RenderMap()
 
-		await nextFrame()
+    await nextFrame()
 
-		await loadingResources
+    await loadingResources
 
-		RenderView.initialize()
+    RenderView.initialize()
 
-		await nextFrame()
-		MapView.initialize()
-		await nextFrame()
-		Tween.initialize()
-		await nextFrame()
-		PathFinder.initialize()
-		await nextFrame()
+    await nextFrame()
+    MapView.initialize()
+    await nextFrame()
+    Tween.initialize()
+    await nextFrame()
+    PathFinder.initialize()
+    await nextFrame()
 
-		Europe.initialize()
-		Treasure.initialize()
-		Market.initialize()
-		await nextFrame()
-		Tribe.createFromMap(MapEntity.get())
-		await nextFrame()
+    Europe.initialize()
+    Treasure.initialize()
+    Market.initialize()
+    await nextFrame()
+    Tribe.createFromMap(MapEntity.get())
+    await nextFrame()
 
-		AutosaveView.initialize()
-		GlobalPanel.initialize(Foreground.get().permanent)
-		Dialog.initialize()
+    AutosaveView.initialize()
+    GlobalPanel.initialize(Foreground.get().permanent)
+    Dialog.initialize()
 
-		// start game!
-		// const caravel = americaSmall()
-		const caravel = americaLarge()
+    // start game!
+    // const caravel = americaSmall()
+    const caravel = americaLarge()
 
-		await nextFrame()
-		MapView.zoomBy(1/0.35, null, 0)
-		MapView.zoomBy(1/0.35, null, 100)
-		setTimeout(async () => {
-			Message.log('Starting game...')
-			MapView.zoomBy(0.35, null, 3000)
-		}, 100)
+    await nextFrame()
+    MapView.zoomBy(1 / 0.35, null, 0)
+    MapView.zoomBy(1 / 0.35, null, 100)
+    setTimeout(async () => {
+      Message.log('Starting game...')
+      MapView.zoomBy(0.35, null, 3000)
+    }, 100)
 
-		setTimeout(() => {
-			Background.get().layer.show()
-			Foreground.get().layer.show()		
-		}, 750)
+    setTimeout(() => {
+      Background.get().layer.show()
+      Foreground.get().layer.show()
+    }, 750)
 
-		setTimeout(() => {
-			Input.initialize()
-			Dialog.create({
-				type: 'naval',
-				text: 'Sir,\nWe crossed the atlantic ocean. The new world called America lies ahead. Let us sail *west* and claim Englands fair share of this land!',
-				coords: caravel.mapCoordinates,
-				pause: true
-			})
-		}, 3500)
+    setTimeout(() => {
+      Input.initialize()
+      Dialog.create({
+        type: 'naval',
+        text: 'Sir,\nWe crossed the atlantic ocean. The new world called America lies ahead. Let us sail *west* and claim Englands fair share of this land!',
+        coords: caravel.mapCoordinates,
+        pause: true,
+      })
+    }, 3500)
 
-		FullscreenEvents.initialize()
+    FullscreenEvents.initialize()
 
-		await nextFrame()
-		initialize()
-	} catch (err) {
-		captureException(err)
-		Dialog.create({
-			type: 'menu',
-			text: 'There has been an error initializing the game. A report has been sent and we will investigate.'
-		})
-	}
+    await nextFrame()
+    initialize()
+  } catch (err) {
+    captureException(err)
+    Dialog.create({
+      type: 'menu',
+      text: 'There has been an error initializing the game. A report has been sent and we will investigate.',
+    })
+  }
 }
 
 const load = async () => {
-	try {
-		if (!loadingResources) {
-			preload()
-		}
+  try {
+    if (!loadingResources) {
+      preload()
+    }
 
-		await loadingResources
-		
-		await nextFrame()
-		RenderView.initialize()
+    await loadingResources
 
-		await nextFrame()
-		Tween.initialize()
+    await nextFrame()
+    RenderView.initialize()
 
-		MapView.initialize()
-		await nextFrame()
+    await nextFrame()
+    Tween.initialize()
 
-		// for no apparent reason the layers are not available inside TreasureView
-		Europe.initialize()
-		Treasure.initialize()
-		await nextFrame()
-		Message.log('Restoring game state...')
-		await nextFrame()
-		Record.load(() => new RenderMap())
-		await nextFrame()
-		AutosaveView.initialize()
-		Dialog.initialize()
+    MapView.initialize()
+    await nextFrame()
 
-		MapView.zoomBy(0.7, null, 100)
-		Message.log('Starting game...')
+    // for no apparent reason the layers are not available inside TreasureView
+    Europe.initialize()
+    Treasure.initialize()
+    await nextFrame()
+    Message.log('Restoring game state...')
+    await nextFrame()
+    Record.load(() => new RenderMap())
+    await nextFrame()
+    AutosaveView.initialize()
+    Dialog.initialize()
 
-		setTimeout(() => {
-			Background.get().layer.show()
-			Foreground.get().layer.show()
-			GlobalPanel.initialize(Foreground.get().permanent)
-		}, 750)
+    MapView.zoomBy(0.7, null, 100)
+    Message.log('Starting game...')
 
-		setTimeout(() => {
-			Input.initialize()
-		}, 750)
+    setTimeout(() => {
+      Background.get().layer.show()
+      Foreground.get().layer.show()
+      GlobalPanel.initialize(Foreground.get().permanent)
+    }, 750)
 
-		FullscreenEvents.initialize()
+    setTimeout(() => {
+      Input.initialize()
+    }, 750)
 
-		initialize()
-	} catch (err) {
-		captureException(err)
-		if (Record.getGlobal('revision') !== Version.revision) {		
-			Dialog.create({
-				type: 'menu',
-				text: 'There has been an error loading the save game. The save game is from an earlier release and this is most likely the reason.'
-			})
-		} else {
-			Dialog.create({
-				type: 'menu',
-				text: 'There has been an error initializing the game. A report has been sent and we will investigate and fix it shortly.'
-			})
-		}
-	}
+    FullscreenEvents.initialize()
+
+    initialize()
+  } catch (err) {
+    captureException(err)
+    if (Record.getGlobal('revision') !== Version.revision) {
+      Dialog.create({
+        type: 'menu',
+        text: 'There has been an error loading the save game. The save game is from an earlier release and this is most likely the reason.',
+      })
+    } else {
+      Dialog.create({
+        type: 'menu',
+        text: 'There has been an error initializing the game. A report has been sent and we will investigate and fix it shortly.',
+      })
+    }
+  }
 }
 
 const save = Record.save
 
 export default {
-	start,
-	load,
-	save,
-	preload
+  start,
+  load,
+  save,
+  preload,
 }

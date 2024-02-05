@@ -15,145 +15,141 @@ import LoadBetweenShips from 'interaction/loadBetweenShips'
 import LoadUnitToShip from 'interaction/loadUnitToShip'
 
 const create = unit => {
-	const container = new PIXI.Container()
-	const view = UnitView.create(unit)
-	const sprite = view.sprite
-	sprite.scale.set(2)
-	container.addChild(sprite)
+  const container = new PIXI.Container()
+  const view = UnitView.create(unit)
+  const sprite = view.sprite
+  sprite.scale.set(2)
+  container.addChild(sprite)
 
-	const unsubscribeDrag = unit.command.id !== 'tradeRoute' &&
-		Drag.makeDragTarget(sprite, args => {
-			if (args.good) {
-				if (args.buyFromEurope) {
-					return `Buy 100 ${args.good}`
-				}
-				if (args.colony) {
-					return `Load ${args.good} onto ${Unit.name(unit)}`
-				}
-				if (args.unit && args.unit !== unit) {
-					return `Load ${args.good} from ${Unit.name(args.unit)} to ${Unit.name(unit)}`
-				}
-			}
+  const unsubscribeDrag =
+    unit.command.id !== 'tradeRoute' &&
+    Drag.makeDragTarget(
+      sprite,
+      args => {
+        if (args.good) {
+          if (args.buyFromEurope) {
+            return `Buy 100 ${args.good}`
+          }
+          if (args.colony) {
+            return `Load ${args.good} onto ${Unit.name(unit)}`
+          }
+          if (args.unit && args.unit !== unit) {
+            return `Load ${args.good} from ${Unit.name(args.unit)} to ${Unit.name(unit)}`
+          }
+        }
 
-			if (args.unit && args.unit !== unit) {
-				return `Embark ${Unit.name(args.unit)} on ${Unit.name(unit)}`
-			}
+        if (args.unit && args.unit !== unit) {
+          return `Embark ${Unit.name(args.unit)} on ${Unit.name(unit)}`
+        }
 
-			if (args.passenger) {
-				return `Move ${Unit.name(args.passenger)} to ${Unit.name(unit)}`
-			}
-		}, args => {
-			const { good, amount, buyFromEurope, colony, passenger } = args
-			const fromUnit = args.unit
-			if (good) {
-				const pack = { good, amount }
-				if (buyFromEurope) {
-					BuyFromEurope(unit, pack)
-					return false
-				}
-				if (colony) {
-					LoadFromColonyToShip(colony, unit, pack)
-					return false
-				}
-				if (args.unit && args.unit !== unit) {
-					LoadBetweenShips(fromUnit, unit, pack)
-					return false
-				}
-			}
-			if (fromUnit && fromUnit !== unit) {
-				LoadUnitToShip(unit, fromUnit)
-				return false
-			}
+        if (args.passenger) {
+          return `Move ${Unit.name(args.passenger)} to ${Unit.name(unit)}`
+        }
+      },
+      args => {
+        const { good, amount, buyFromEurope, colony, passenger } = args
+        const fromUnit = args.unit
+        if (good) {
+          const pack = { good, amount }
+          if (buyFromEurope) {
+            BuyFromEurope(unit, pack)
+            return false
+          }
+          if (colony) {
+            LoadFromColonyToShip(colony, unit, pack)
+            return false
+          }
+          if (args.unit && args.unit !== unit) {
+            LoadBetweenShips(fromUnit, unit, pack)
+            return false
+          }
+        }
+        if (fromUnit && fromUnit !== unit) {
+          LoadUnitToShip(unit, fromUnit)
+          return false
+        }
 
-			if (passenger) {
-				LoadUnitFromShipToShip(unit, passenger)
-			}
+        if (passenger) {
+          LoadUnitFromShipToShip(unit, passenger)
+        }
 
-			return false
-		})
+        return false
+      }
+    )
 
-	const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
-	greyScaleFilter.blackAndWhite()
+  const greyScaleFilter = new PIXI.filters.ColorMatrixFilter()
+  greyScaleFilter.blackAndWhite()
 
-	const unsubscribePassengersAndStorage = Unit.listen.passengers(unit, passengers => {
-		let index = {
-			x: 0,
-			y: 0
-		}
+  const unsubscribePassengersAndStorage = Unit.listen.passengers(unit, passengers => {
+    let index = {
+      x: 0,
+      y: 0,
+    }
 
-		const unsubscribePassengers = passengers.map(passenger => {
-			const view = UnitView.create(passenger)
-			const sprite = view.sprite
-			sprite.x = index.x * 1.4 * 32 - 8
-			sprite.y = index.y * 1.2 * 32 + 80
-			sprite.scale.set(1.4)
-			container.addChild(sprite)
-			const unsubscribeDrag = Drag.makeDraggable(sprite, { passenger }, 'Unload passanger')
+    const unsubscribePassengers = passengers.map(passenger => {
+      const view = UnitView.create(passenger)
+      const sprite = view.sprite
+      sprite.x = index.x * 1.4 * 32 - 8
+      sprite.y = index.y * 1.2 * 32 + 80
+      sprite.scale.set(1.4)
+      container.addChild(sprite)
+      const unsubscribeDrag = Drag.makeDraggable(sprite, { passenger }, 'Unload passanger')
 
-			index.x += 1
-			if (index.x >= 2) {
-				index.x = 0
-				index.y += 1
-			}
+      index.x += 1
+      if (index.x >= 2) {
+        index.x = 0
+        index.y += 1
+      }
 
-			return [
-				view.unsubscribe,
-				unsubscribeDrag,
-				() => container.removeChild(sprite),
-			]
-		})
+      return [view.unsubscribe, unsubscribeDrag, () => container.removeChild(sprite)]
+    })
 
-		const unsubscribeStorage = Storage.listen(unit.storage, storage => {
-			const goods = Storage.split(storage)
-			let storageIndex = {
-				x: index.x,
-				y: index.y
-			}
-			return goods.map(pack => {
-				const view = GoodsView.create(pack)
-				view.sprite.x = storageIndex.x * 1.4 * 32 - 8
-				view.sprite.y = storageIndex.y * 1.2 * 32 + 80
-				view.sprite.scale.set(1.4)
-				if (pack.amount < 100) {
-					view.sprite.filters = [greyScaleFilter]
-				}
-				storageIndex.x += 1
-				if (storageIndex.x >= 2) {
-					storageIndex.x = 0
-					storageIndex.y += 1
-				}
-				const unsubscribeDrag = unit.command.id !== 'tradeRoute'
-					&& Drag.makeDraggable(view.sprite, { good: pack.good, amount: pack.amount, unit }, 'Unload cargo')
-				container.addChild(view.sprite)
+    const unsubscribeStorage = Storage.listen(unit.storage, storage => {
+      const goods = Storage.split(storage)
+      let storageIndex = {
+        x: index.x,
+        y: index.y,
+      }
+      return goods.map(pack => {
+        const view = GoodsView.create(pack)
+        view.sprite.x = storageIndex.x * 1.4 * 32 - 8
+        view.sprite.y = storageIndex.y * 1.2 * 32 + 80
+        view.sprite.scale.set(1.4)
+        if (pack.amount < 100) {
+          view.sprite.filters = [greyScaleFilter]
+        }
+        storageIndex.x += 1
+        if (storageIndex.x >= 2) {
+          storageIndex.x = 0
+          storageIndex.y += 1
+        }
+        const unsubscribeDrag =
+          unit.command.id !== 'tradeRoute' &&
+          Drag.makeDraggable(
+            view.sprite,
+            { good: pack.good, amount: pack.amount, unit },
+            'Unload cargo'
+          )
+        container.addChild(view.sprite)
 
-				return () => {
-					Util.execute(unsubscribeDrag)
-					container.removeChild(view.sprite)
-				}
-			})
-		})
+        return () => {
+          Util.execute(unsubscribeDrag)
+          container.removeChild(view.sprite)
+        }
+      })
+    })
 
-		return [
-			unsubscribePassengers,
-			unsubscribeStorage,
-		]
-	})
+    return [unsubscribePassengers, unsubscribeStorage]
+  })
 
+  const unsubscribe = [view.unsubscribe, unsubscribeDrag, unsubscribePassengersAndStorage]
 
-
-	const unsubscribe = [
-		view.unsubscribe,
-		unsubscribeDrag,
-		unsubscribePassengersAndStorage,
-	]
-
-	return {
-		container,
-		sprite,
-		unsubscribe,
-		unit
-	}
+  return {
+    container,
+    sprite,
+    unsubscribe,
+    unit,
+  }
 }
-
 
 export default { create }

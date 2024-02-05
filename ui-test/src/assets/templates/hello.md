@@ -1,10 +1,9 @@
-*Hallo* {counter} **Welt**!
+_Hallo_ {counter} **Welt**!
 
 [if counter]
-	We have a counter!
-	[button action:reset] Reset []
+We have a counter!
+[button action:reset] Reset []
 []
-
 
 [button action:increment] Increment []
 

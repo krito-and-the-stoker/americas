@@ -26,161 +26,160 @@ import ColonyScreen from 'view/screen/colonies'
 import Europe from 'view/europe'
 import Help from 'view/help'
 
-
 let controlAllPlayers = false
 const handleKeydown = e => {
-	if (e.ctrlKey) {	
-		if (e.key === 'o') {
-			Record.dump()
-			e.preventDefault()
-		}
+  if (e.ctrlKey) {
+    if (e.key === 'o') {
+      Record.dump()
+      e.preventDefault()
+    }
 
-		if (e.key === 'g') {
-			Treasure.gain(100)
-			e.preventDefault()
-		}
+    if (e.key === 'g') {
+      Treasure.gain(100)
+      e.preventDefault()
+    }
 
-		if (e.key === 'w') {
-			const unit = UnitView.selectedUnit()
-			if (unit) {
-				const treasure = Unit.create('treasure', unit.mapCoordinates)
-				treasure.treasure = Math.round(250 * Math.random())
-			}
-		}
+    if (e.key === 'w') {
+      const unit = UnitView.selectedUnit()
+      if (unit) {
+        const treasure = Unit.create('treasure', unit.mapCoordinates)
+        treasure.treasure = Math.round(250 * Math.random())
+      }
+    }
 
-		if (e.key === 's') {
-			Record.download()
-			e.preventDefault()
-		}
+    if (e.key === 's') {
+      Record.download()
+      e.preventDefault()
+    }
 
-		if (e.key === 'l') {
-			Record.upload(() => new RenderMap())
-			e.preventDefault()
-		}
+    if (e.key === 'l') {
+      Record.upload(() => new RenderMap())
+      e.preventDefault()
+    }
 
-		if (e.key === 'd') {
-			MapEntity.discoverAll()
-			e.preventDefault()
-		}
+    if (e.key === 'd') {
+      MapEntity.discoverAll()
+      e.preventDefault()
+    }
 
-		if (e.key === 'a') {
-			if (!controlAllPlayers) {
-				Message.log('now controlling everyone')
-				Record.getAll('owner').forEach(owner => {
-					Owner.update.visible(owner, true)
-					Owner.update.input(owner, true)
-				})
-			}
-			if (controlAllPlayers) {
-				Message.log('now controlling only player')
-				Record.getAll('owner').forEach(owner => {
-					Owner.update.visible(owner, owner === Owner.player())
-					Owner.update.input(owner, owner === Owner.player())
-				})
-			}
-			controlAllPlayers = !controlAllPlayers
-			e.preventDefault()
-		}
-	}
+    if (e.key === 'a') {
+      if (!controlAllPlayers) {
+        Message.log('now controlling everyone')
+        Record.getAll('owner').forEach(owner => {
+          Owner.update.visible(owner, true)
+          Owner.update.input(owner, true)
+        })
+      }
+      if (controlAllPlayers) {
+        Message.log('now controlling only player')
+        Record.getAll('owner').forEach(owner => {
+          Owner.update.visible(owner, owner === Owner.player())
+          Owner.update.input(owner, owner === Owner.player())
+        })
+      }
+      controlAllPlayers = !controlAllPlayers
+      e.preventDefault()
+    }
+  }
 
-	if (e.key === 'u') {
-		if (ColonyScreen.isOpen()) {
-			ColonyScreen.close()
-		}
+  if (e.key === 'u') {
+    if (ColonyScreen.isOpen()) {
+      ColonyScreen.close()
+    }
 
-		if (UnitScreen.isOpen()) {
-			UnitScreen.close()
-		} else {
-			UnitScreen.open()
-		}
-	}
+    if (UnitScreen.isOpen()) {
+      UnitScreen.close()
+    } else {
+      UnitScreen.open()
+    }
+  }
 
-	if (e.key === 'q') {
-		if (UnitScreen.isOpen()) {
-			UnitScreen.close()
-		}
+  if (e.key === 'q') {
+    if (UnitScreen.isOpen()) {
+      UnitScreen.close()
+    }
 
-		if (ColonyScreen.isOpen()) {
-			ColonyScreen.close()
-		} else {
-			ColonyScreen.open()
-		}
-	}
+    if (ColonyScreen.isOpen()) {
+      ColonyScreen.close()
+    } else {
+      ColonyScreen.open()
+    }
+  }
 
-	if (e.key === ' ') {
-		Time.togglePause()
-	}
+  if (e.key === ' ') {
+    Time.togglePause()
+  }
 
-	if (e.key === 'e') {
-		Europe.open()
-	}
+  if (e.key === 'e') {
+    Europe.open()
+  }
 
-	if (e.key === 'a' || e.key === 'Escape') {
-		Foreground.closeScreen()
-	}
+  if (e.key === 'a' || e.key === 'Escape') {
+    Foreground.closeScreen()
+  }
 
-	if (e.key === '+') {
-		Time.speedUp()
-	}
+  if (e.key === '+') {
+    Time.speedUp()
+  }
 
-	if (e.key === '-') {
-		Time.slowDown()
-	}
+  if (e.key === '-') {
+    Time.slowDown()
+  }
 
-	if (e.key === '0') {
-		Time.normalize()
-	}
+  if (e.key === '0') {
+    Time.normalize()
+  }
 
-	if (e.key === 'h') {
-		Help.open()
-	}
+  if (e.key === 'h') {
+    Help.open()
+  }
 
-	if (e.key === 'f') {
-		MapView.toggleForestVisibility()
-	}
+  if (e.key === 'f') {
+    MapView.toggleForestVisibility()
+  }
 
-	const unit = UnitView.selectedUnit()
-	if (unit && !e.ctrlKey && !e.metaKey) {
-		if (e.key === 'b') {
-			Commander.scheduleInstead(unit.commander, Found.create({ unit }))
-		}
-		if (e.key === 'p') {
-			Commander.scheduleBehind(unit.commander, Plow.create({ unit }))
-			Commander.scheduleBehind(unit.commander, CutForest.create({ unit }))
-		}
+  const unit = UnitView.selectedUnit()
+  if (unit && !e.ctrlKey && !e.metaKey) {
+    if (e.key === 'b') {
+      Commander.scheduleInstead(unit.commander, Found.create({ unit }))
+    }
+    if (e.key === 'p') {
+      Commander.scheduleBehind(unit.commander, Plow.create({ unit }))
+      Commander.scheduleBehind(unit.commander, CutForest.create({ unit }))
+    }
 
-		if (e.key === 'r') {
-			Commander.scheduleBehind(unit.commander, Road.create({ unit }))
-		}
+    if (e.key === 'r') {
+      Commander.scheduleBehind(unit.commander, Road.create({ unit }))
+    }
 
-		if (e.key === 't') {
-			Commander.scheduleInstead(unit.commander, TradeRoute.create({ unit }))
-		}
+    if (e.key === 't') {
+      Commander.scheduleInstead(unit.commander, TradeRoute.create({ unit }))
+    }
 
-		if (e.key === 'c') {
-			MapView.centerAt(unit.mapCoordinates, 350)
-		}
+    if (e.key === 'c') {
+      MapView.centerAt(unit.mapCoordinates, 350)
+    }
 
-		if (e.key === 'x') {
-			Unit.disband(unit)
-		}
+    if (e.key === 'x') {
+      Unit.disband(unit)
+    }
 
-		if (e.key === 'B') {
-			Commander.scheduleBehind(unit.commander, Found.create({ unit }))
-		}
-		if (e.key === 'P') {
-			Commander.scheduleBehind(unit.commander, Plow.create({ unit }))
-			Commander.scheduleBehind(unit.commander, CutForest.create({ unit }))
-		}
+    if (e.key === 'B') {
+      Commander.scheduleBehind(unit.commander, Found.create({ unit }))
+    }
+    if (e.key === 'P') {
+      Commander.scheduleBehind(unit.commander, Plow.create({ unit }))
+      Commander.scheduleBehind(unit.commander, CutForest.create({ unit }))
+    }
 
-		if (e.key === 'R') {
-			Commander.scheduleBehind(unit.commander, Road.create({ unit }))
-		}
-	}
+    if (e.key === 'R') {
+      Commander.scheduleBehind(unit.commander, Road.create({ unit }))
+    }
+  }
 }
 
 const initialize = () => {
-	window.addEventListener('keydown', handleKeydown)
+  window.addEventListener('keydown', handleKeydown)
 }
 
 export default { initialize }

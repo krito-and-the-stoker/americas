@@ -4,20 +4,20 @@ let hotTargets = []
 
 const isHot = target => hotTargets.includes(target)
 const makeHot = target => hotTargets.push(target)
-const makeCold = target => hotTargets = hotTargets.filter(t => t !== target)
-const clear = () => hotTargets = []
+const makeCold = target => (hotTargets = hotTargets.filter(t => t !== target))
+const clear = () => (hotTargets = [])
 const initialize = () => {
-	Keyboard.initialize()
+  Keyboard.initialize()
 
-	window.addEventListener('mouseup', () => {
-		requestAnimationFrame(clear)
-	})
+  window.addEventListener('mouseup', () => {
+    requestAnimationFrame(clear)
+  })
 }
 
 export default {
-	isHot,
-	makeHot,
-	makeCold,
-	initialize,
-	clear
+  isHot,
+  makeHot,
+  makeCold,
+  initialize,
+  clear,
 }

@@ -27,164 +27,178 @@ import UnitView from 'view/unit'
 import Transport from 'view/transport'
 import Dialog from 'view/ui/dialog'
 
-
 const closeIfNoShips = () => {
-	setTimeout(() => {
-		const unsubscribe = Europe.listen.units(units => {
-			if (units.filter(unit => unit.domain === 'sea').length === 0) {
-				Foreground.closeScreen()
-			}
-		})
-		unsubscribe()	
-	}, 1000)
+  setTimeout(() => {
+    const unsubscribe = Europe.listen.units(units => {
+      if (units.filter(unit => unit.domain === 'sea').length === 0) {
+        Foreground.closeScreen()
+      }
+    })
+    unsubscribe()
+  }, 1000)
 }
 
 const selectTarget = unit => {
-	const colonies = Record.getAll('colony').filter(colony => Colony.isReachable(colony, unit))
+  const colonies = Record.getAll('colony').filter(colony => Colony.isReachable(colony, unit))
 
-	const repairCost = Europe.repairShipCost(unit)
-	const options = [{
-		text: '*Open waters* in the Americas',
-		action: () => {
-			Commander.scheduleInstead(unit.commander, America.create({ unit }))
-			Commander.scheduleBehind(unit.commander, TriggerEvent.create({ name: 'notification', type: 'america', unit }))
-			closeIfNoShips()
-		}
-	}].concat(colonies.map((colony, index) => ({
-		margin: !index && colonies.length > 1,
-		text: `**${colony.name}** (${colony.colonists.length})`,
-		action: () => {
-			Commander.scheduleBehind(unit.commander, GoTo.create({ unit, colony }))
-			Commander.scheduleBehind(unit.commander, TriggerEvent.create({ name: 'notification', type: 'arrive', unit, colony }))
-			closeIfNoShips()
-		}
-	}))).concat([{
-		margin: true,
-		disabled: repairCost < 1 || repairCost > Treasure.amount(),
-		text: `repair ship (**${repairCost}<good>gold</good>**)`,
-		action: () => {
-			Europe.repairShip(unit)
-		}
-	}])
+  const repairCost = Europe.repairShipCost(unit)
+  const options = [
+    {
+      text: '*Open waters* in the Americas',
+      action: () => {
+        Commander.scheduleInstead(unit.commander, America.create({ unit }))
+        Commander.scheduleBehind(
+          unit.commander,
+          TriggerEvent.create({
+            name: 'notification',
+            type: 'america',
+            unit,
+          })
+        )
+        closeIfNoShips()
+      },
+    },
+  ]
+    .concat(
+      colonies.map((colony, index) => ({
+        margin: !index && colonies.length > 1,
+        text: `**${colony.name}** (${colony.colonists.length})`,
+        action: () => {
+          Commander.scheduleBehind(unit.commander, GoTo.create({ unit, colony }))
+          Commander.scheduleBehind(
+            unit.commander,
+            TriggerEvent.create({
+              name: 'notification',
+              type: 'arrive',
+              unit,
+              colony,
+            })
+          )
+          closeIfNoShips()
+        },
+      }))
+    )
+    .concat([
+      {
+        margin: true,
+        disabled: repairCost < 1 || repairCost > Treasure.amount(),
+        text: `repair ship (**${repairCost}<good>gold</good>**)`,
+        action: () => {
+          Europe.repairShip(unit)
+        },
+      },
+    ])
 
-	Dialog.create({
-		type: 'naval',
-		text: 'Where shall we *sail* to?<options/>',
-		closeScreen: false,
-		options,
-	})
+  Dialog.create({
+    type: 'naval',
+    text: 'Where shall we *sail* to?<options/>',
+    closeScreen: false,
+    options,
+  })
 }
 
 const create = () => {
-	const container = {
-		ships: new PIXI.Container(),
-		units: new PIXI.Container(),
-		dialog: new PIXI.Container(),
-	}
-	container.dialog.y = 0
-	container.dialog.x = 0
+  const container = {
+    ships: new PIXI.Container(),
+    units: new PIXI.Container(),
+    dialog: new PIXI.Container(),
+  }
+  container.dialog.y = 0
+  container.dialog.x = 0
 
+  const shipPositions = Util.range(20).map(index => ({
+    x: -index * 128,
+    y: 0,
+    taken: false,
+  }))
 
-	const shipPositions = Util.range(20).map(index => ({
-		x: -index * 128,
-		y: 0,
-		taken: false
-	}))
+  const landPositions = Util.range(20).map(index => ({
+    x: index * 64,
+    y: 0,
+    taken: false,
+  }))
 
-	const landPositions = Util.range(20).map(index => ({
-		x: index * 64,
-		y: 0,
-		taken: false
-	}))
+  const unsubscribeUnits = Europe.listenEach.units((unit, added) => {
+    if (unit.domain === 'sea') {
+      const position = shipPositions.find(pos => !pos.taken)
+      if (position) {
+        const view = Transport.create(unit)
 
-	const unsubscribeUnits = Europe.listenEach.units((unit, added) => {
-		if (unit.domain === 'sea') {
+        const unsubscribeClick = Click.on(
+          view.sprite,
+          () => selectTarget(unit),
+          `Send ${Unit.name(unit)} to the Americas`
+        )
 
-			const position = shipPositions.find(pos => !pos.taken)
-			if (position) {
-				const view = Transport.create(unit)
+        position.taken = unit
 
-				const unsubscribeClick = Click.on(view.sprite, () =>
-					selectTarget(unit), `Send ${Unit.name(unit)} to the Americas`)
+        view.container.x = position.x
+        view.container.y = position.y
+        view.container.scale.set(1.25)
+        container.ships.addChild(view.container)
 
-				position.taken = unit
+        if (added) {
+          Tween.moveFrom(view.container, { x: -1000, y: -300 }, 5000)
+        }
 
-				view.container.x = position.x
-				view.container.y = position.y
-				view.container.scale.set(1.25)
-				container.ships.addChild(view.container)
+        return () => {
+          position.taken = false
+          Util.execute([view.unsubscribe, unsubscribeClick])
+          Tween.moveTo(view.container, { x: -1000, y: -300 }, 5000).then(() => {
+            container.ships.removeChild(view.container)
+          })
+        }
+      }
+    }
 
-				if (added) {
-					Tween.moveFrom(view.container, { x: - 1000, y: -300 }, 5000)
-				}
+    if (unit.domain === 'land') {
+      const position = landPositions.find(pos => !pos.taken)
+      if (position) {
+        const view = UnitView.create(unit)
+        const sprite = view.sprite
 
-				return () => {
-					position.taken = false
-					Util.execute([
-						view.unsubscribe,
-						unsubscribeClick
-					])
-					Tween.moveTo(view.container, { x: - 1000, y: -300 }, 5000).then(() => {
-						container.ships.removeChild(view.container)
-					})
-				}
-			}
-		}
+        position.taken = unit
 
-		if (unit.domain === 'land') {
-			const position = landPositions.find(pos => !pos.taken)
-			if (position) {
-				const view = UnitView.create(unit)
-				const sprite = view.sprite
+        sprite.x = position.x
+        sprite.y = position.y
+        sprite.scale.set(2)
+        container.units.addChild(sprite)
+        const unsubscribeDrag = Drag.makeDraggable(sprite, { unit }, 'Sell to European market')
 
-				position.taken = unit
+        Tween.fadeIn(sprite, 350)
 
-				sprite.x = position.x
-				sprite.y = position.y
-				sprite.scale.set(2)
-				container.units.addChild(sprite)
-				const unsubscribeDrag = Drag.makeDraggable(sprite, { unit }, 'Sell to European market')
+        return () => {
+          position.taken = false
+          Util.execute([view.unsubscribe, unsubscribeDrag])
+          container.units.removeChild(sprite)
+        }
+      }
+    }
+  })
 
-				Tween.fadeIn(sprite, 350)
+  const rect = { x: 0, y: -100, width: 648, height: 250 }
+  const leaveShipZone = new PIXI.Container()
+  leaveShipZone.hitArea = new PIXI.Rectangle(rect.x, rect.y, rect.width, rect.height)
+  container.units.addChild(leaveShipZone)
 
-				return () => {
-					position.taken = false
-					Util.execute([
-						view.unsubscribe,
-						unsubscribeDrag
-					])
-					container.units.removeChild(sprite)
-				}
-			}
-		}
-	})
+  const unsubscribeDrag = Drag.makeDragTarget(
+    leaveShipZone,
+    ({ passenger }) => {
+      if (passenger) {
+        return `Unload ${Unit.name(passenger)} to docks`
+      }
+    },
+    ({ passenger }) => {
+      LoadUnitFromShipToEurope(passenger)
+    }
+  )
 
-	const rect = { x: 0, y: -100, width: 648, height: 250}
-	const leaveShipZone = new PIXI.Container()
-	leaveShipZone.hitArea = new PIXI.Rectangle(
-		rect.x,
-		rect.y,
-		rect.width,
-		rect.height)
-	container.units.addChild(leaveShipZone)
+  const unsubscribe = [unsubscribeDrag, unsubscribeUnits]
 
-	const unsubscribeDrag = Drag.makeDragTarget(leaveShipZone, ({ passenger }) => {
-		if (passenger) {
-			return `Unload ${Unit.name(passenger)} to docks`
-		}
-	}, ({ passenger }) => {
-		LoadUnitFromShipToEurope(passenger)
-	})
-
-	const unsubscribe = [
-		unsubscribeDrag,
-		unsubscribeUnits,
-	]
-
-	return {
-		container,
-		unsubscribe
-	}
+  return {
+    container,
+    unsubscribe,
+  }
 }
 
 export default { create }

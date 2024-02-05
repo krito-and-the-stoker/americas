@@ -5,7 +5,7 @@ import Colony from 'entity/colony'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
-const create = (colony) => {
+const create = colony => {
   const update = (currentTime, deltaTime) => {
     if (colony) {
       Europe.update.crosses(colony.crosses)
@@ -18,7 +18,7 @@ const create = (colony) => {
 
   return {
     update,
-    sort: 1
+    sort: 1,
   }
 }
 

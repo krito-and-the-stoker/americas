@@ -1,27 +1,27 @@
 import Util from 'util/util'
 
 const create = (waitTime, fn) => {
-	let finishedTime
+  let finishedTime
 
-	const init = currentTime => {
-		finishedTime = currentTime + waitTime
+  const init = currentTime => {
+    finishedTime = currentTime + waitTime
 
-		return true
-	}
+    return true
+  }
 
-	const update = currentTime => {
-		if (currentTime >= finishedTime) {
-			Util.execute(fn)
-			return false
-		}
+  const update = currentTime => {
+    if (currentTime >= finishedTime) {
+      Util.execute(fn)
+      return false
+    }
 
-		return true
-	}
+    return true
+  }
 
-	return {
-		init,
-		update
-	}
+  return {
+    init,
+    update,
+  }
 }
 
 export default { create }
