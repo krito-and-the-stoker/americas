@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prettier-check": "prettier --check .",
+    "prettier-write": "prettier --write ."
   },
   "dependencies": {
     "@tweenjs/tween.js": "^17.6.0",
@@ -23,6 +25,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "prettier": "^3.2.5",
     "seed-random": "^2.2.0",
     "vite": "^5.0.8",
     "vite-plugin-solid": "^2.8.0"

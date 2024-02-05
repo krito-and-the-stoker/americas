@@ -1,0 +1,4 @@
+node_modules
+dist
+src/game/data
+src/game/maps
