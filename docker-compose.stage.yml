@@ -18,6 +18,17 @@ services:
       MONGO_URI: "mongodb://root:example@database:27017"
     command: ./main
 
+  assets:
+    build:
+      context: ./assets
+    volumes:
+      - assets-dist:/dist
+    command: >
+      sh -c "rm -rf /dist/* &&
+             cp -r /app/assets/dist/* /dist &&
+             ls -l /dist &&
+             echo 'Copied files to /dist'"
+
   game:
     build:
       context: ./game
@@ -28,6 +39,7 @@ services:
              cp -r /app/game/dist/* /dist &&
              ls -l /dist &&
              echo 'Copied files to /dist'"
+
   dashboard:
     build:
       context: ./dashboard
@@ -55,6 +67,7 @@ services:
       context: ./nginx
     volumes:
       - game-dist:/usr/share/nginx/html/game:ro
+      - assets-dist:/usr/share/nginx/html/assets:ro
       - dashboard-dist:/usr/share/nginx/html/dashboard:ro
       - wiki-dist:/usr/share/nginx/html/wiki:ro
     ports:
@@ -72,3 +85,4 @@ volumes:
   game-dist:
   dashboard-dist:
   wiki-dist:
+  assets-dist:

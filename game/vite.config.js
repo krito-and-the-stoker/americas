@@ -35,7 +35,6 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://event-tracker:8080',
-      '/favicon': 'http://assets:3000',
       '/images': 'http://assets:3000',
       '/styles': 'http://assets:3000',
     },

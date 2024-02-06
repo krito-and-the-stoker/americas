@@ -1,8 +1,8 @@
 # Use an official Node.js runtime as a parent image
 FROM node:20-alpine
 
-# Set the working directory to /app/game
-WORKDIR /app/game
+# Set the working directory to /app/assets
+WORKDIR /app/assets
 
 # Move node modules outside the app folder
 ENV NODE_PATH /node_modules
