@@ -1,3 +1,5 @@
+[dialog]
+[name: complex]
 {1 + 2 + 3 + 4 + 5}
 *Hallo {2 + counter - 1}* **Welt**!
 {greeting}

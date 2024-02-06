@@ -1,4 +1,4 @@
-import { matchAll, matchOne, matchNone, matchRepeat, describeTag } from './combinators.js'
+import { matchAll, matchOne, matchNone, matchRepeat, matchRepeatOptional, describeTag } from './combinators.js'
 
 const baseTokens = {
   dialogTag: input => {
@@ -152,18 +152,17 @@ const baseTokens = {
     }
   },
 
-  // unused
-  // whitespace: input => {
-  //   const re = /^\s+/
-  //   const result = input.match(re)
-  //   if (result) {
-  //     const all = result[0]
-  //     return {
-  //       name: 'whitespace',
-  //       rest: input.substring(all.length),
-  //     }
-  //   }
-  // },
+  whitespace: input => {
+    const re = /^\s+/
+    const result = input.match(re)
+    if (result) {
+      const all = result[0]
+      return {
+        name: 'whitespace',
+        rest: input.substring(all.length),
+      }
+    }
+  },
 
   variable: input => {
     const re = /^\s*([a-zA-Z_\.][0-9a-zA-Z_\.]*)\s*/
@@ -251,11 +250,17 @@ tokens.dialog = describeTag(match => ({
   tokens.content
 ]))
 
-tokens.allDialogs = describeTag(match => ({
-  name: 'dialogs',
-  value: match.children[1].children,
-  children: null
-}), matchAll([
+tokens.allDialogs = describeTag(match => {
+  if (match.rest) {
+    console.error('Could not handle input:', match.rest)
+  }
+
+  return {    
+    name: 'dialogs',
+    value: match.children[1].children,
+    children: null
+  }
+}, matchAll([
   matchOne([
     tokens.content,
     tokens.empty,
@@ -408,7 +413,7 @@ tokens.pair = describeTag(
 tokens.singleLineFunction = describeTag(
   match => {
     const fn = match.children[1].value
-    const params = match.children[3].children
+    const params = match.children[4].children
     const args = params.map(p => {
       if (p.name === 'variable') {
         return {
@@ -433,6 +438,7 @@ tokens.singleLineFunction = describeTag(
     tokens.fnOpen,
     tokens.key,
     tokens.doubleDot,
+    matchRepeatOptional(tokens.whitespace),
     matchRepeat(matchOne([tokens.value, tokens.interpolation])),
     tokens.fnClose,
   ])
@@ -442,7 +448,7 @@ tokens.singleLineFunction = describeTag(
 tokens.multiLineFunction = describeTag(
   match => {
     const fn = match.children[1].value
-    const params = match.children[2].children
+    const params = match.children[3].children
     const args = params.filter(p => p.name !== 'pair')
 
     const pairs = {}
@@ -459,12 +465,13 @@ tokens.multiLineFunction = describeTag(
         args,
         pairs,
       },
-      children: match.children[3].children,
+      children: match.children[5].children,
     }
   },
   matchAll([
     tokens.fnOpen,
     tokens.key,
+    matchRepeatOptional(tokens.whitespace),
     matchRepeat(matchOne([tokens.pair, tokens.value, tokens.interpolation])),
     tokens.fnClose,
     tokens.content,

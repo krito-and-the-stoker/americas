@@ -42,6 +42,15 @@ export const matchRepeat = matcher => input => {
   }
 }
 
+export const matchRepeatOptional = matcher => input => {
+  const match = matchRepeat(matcher)(input)
+
+  return match || {
+    name: 'ignore',
+    rest: input
+  }
+}
+
 // tries to match all matchers in their specified order
 // if one matchers is not matched it fails
 export const matchAll = matchers => input => {

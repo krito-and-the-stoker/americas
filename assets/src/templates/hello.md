@@ -13,4 +13,5 @@ We have a counter!
 
 
 [dialog]
+[name: second_dialog]
 Here is a second dialog in one file

@@ -7,7 +7,7 @@ export default ast => {
   return {
     ...data,
     render: (context = {}) => {      
-      console.log('binding template', data.name, context)
+      console.log('binding template, context:', data.name, context, ast)
       return render(context)
     }
   }

@@ -43,7 +43,7 @@ export const fetchDialogs = async () => {
 					if (dialogs[template.name]) {
 						console.error('Duplicate dialog name', template.name)
 					} else {
-						console.log('Adding dialog', template.name, `to dialogs:\n${template.str}`)
+						// console.log('Adding dialog', template.name, `to dialogs:\n${template.str}`)
 						dialogs[template.name] = template
 					}
 				} else {
