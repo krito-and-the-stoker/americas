@@ -1,7 +1,4 @@
-import generateAst from './ast'
-import renderTemplate from './render'
-
-const hello = `{1 + 2 + 3 + 4 + 5}
+{1 + 2 + 3 + 4 + 5}
 *Hallo {2 + counter - 1}* **Welt**!
 {greeting}
 These
@@ -45,16 +42,3 @@ This
 		{.}
 		[if .last]. []
 		[] 
-
-`
-
-const hello2 = `
-1: [if {counter > 0}] counter is larger than 0 []
-2: [if {not false}] not false []
-3: [if greeting] greeting: {greeting} []
-`
-
-export default () => {
-  const ast = generateAst(hello + hello2)
-  return renderTemplate(ast)
-}

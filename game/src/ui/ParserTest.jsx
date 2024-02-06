@@ -1,6 +1,5 @@
 import { createSignal } from 'solid-js'
 import renderTemplate from './parser/index.js'
-import './game/entries/index.js'
 
 function App() {
   const [counter, setCounter] = createSignal(0)
@@ -19,11 +18,6 @@ function App() {
   return (
     <>
       <h1>Hi</h1>
-      {/*      <For each={list()}>
-        {(item, index) => <div>{index()}/{list().length}: {item}</div>}
-      </For>
-      <button onClick={context.increment}>Increment</button>
-*/}{' '}
       {template(context)}
     </>
   )

@@ -1,37 +1,10 @@
 const gulp = require('gulp')
+const tap = require('gulp-tap');
 const sass = require('gulp-sass')(require('sass'))
 const path = require('path')
 const jimp = require('jimp')
 const fs = require('fs')
 const browserSync = require('browser-sync').create()
-
-gulp.task('version', done => {
-    const versionFilePath = path.resolve(__dirname, '../src/version/version.json');
-
-    // Read the existing version.json file
-    let versionData;
-    try {
-        versionData = JSON.parse(fs.readFileSync(versionFilePath, 'utf8'));
-    } catch (err) {
-        console.error(`Error reading version file: ${err.message}`);
-        done(err);
-        return;
-    }
-
-    // Update the date in the version data
-    versionData.date = new Date().toUTCString();
-
-    // Write the updated data back to the version.json file
-    try {
-        fs.writeFileSync(versionFilePath, JSON.stringify(versionData, null, 2));
-    } catch (err) {
-        console.error(`Error writing version file: ${err.message}`);
-        done(err);
-        return;
-    }
-
-    done();
-});
 
 function swallowError (error) {
 	console.log(error.toString())
@@ -90,12 +63,31 @@ gulp.task('assets', resolve => {
 	})
 })
 
-gulp.task('build', gulp.series(gulp.parallel(['sass', 'static', 'assets'])))
+gulp.task('templates', () => {
+    const templatesDir = 'src/templates/**/*'; // Adjust the glob pattern as needed
+    const outputDir = 'dist/templates';
+    const templates = [];
+
+    return gulp.src(templatesDir)
+        .pipe(tap(file => {
+            templates.push(file.contents.toString());
+        }))
+        .on('end', () => {
+            // Write the JSON object to a file at the end of the stream
+            if (!fs.existsSync(outputDir)) {
+                fs.mkdirSync(outputDir, { recursive: true });
+            }
+            fs.writeFileSync(path.join(outputDir, 'all.json'), JSON.stringify(templates, null, 2));
+        });
+});
+
+gulp.task('build', gulp.series(gulp.parallel(['templates', 'sass', 'static', 'assets'])))
 
 gulp.task('watch', () => {
 	gulp.watch('src/sass/**/*.scss', gulp.series('sass'))
 	gulp.watch('src/static/**/*', gulp.series('static'))
 	gulp.watch('src/assets/**/*', gulp.series('assets'))
+	gulp.watch('src/templates/**/*', gulp.series('templates'))
 })
 
 gulp.task('default', gulp.series('build', 'serve', 'watch'))

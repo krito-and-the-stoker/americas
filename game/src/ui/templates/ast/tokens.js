@@ -1,10 +1,30 @@
 import { matchAll, matchOne, matchNone, matchRepeat, describeTag } from './combinators.js'
 
 const baseTokens = {
-  italicToken: input => {
+  dialogTag: input => {
+    const lengthOfFirstLine = input.indexOf('\n')
+    if (input.startsWith('[dialog]')) {
+      return {
+        name: 'dialogTag',
+        // ignore everything after dialog including the newline symbol
+        rest: input.substring(lengthOfFirstLine + 1),
+      }
+    }
+  },
+
+  italicUnderscore: input => {
+    if (input.startsWith('_')) {
+      return {
+        name: 'italicUnderscore',
+        rest: input.substring(1),
+      }
+    }
+  },
+
+  italicStar: input => {
     if (input.startsWith('*')) {
       return {
-        name: 'italicToken',
+        name: 'italicStar',
         rest: input.substring(1),
       }
     }
@@ -37,10 +57,10 @@ const baseTokens = {
     }
   },
 
-  pairSperator: input => {
+  doubleDot: input => {
     if (input.startsWith(':')) {
       return {
-        name: 'pairSperator',
+        name: 'doubleDot',
         rest: input.substring(1),
       }
     }
@@ -118,6 +138,33 @@ const baseTokens = {
     }
   },
 
+  key: input => {
+    const re = /^\s*([a-zA-Z_][0-9a-zA-Z_]*)/
+    const result = input.match(re)
+    if (result) {
+      const all = result[0]
+      const key = result[1]
+      return {
+        name: 'key',
+        value: key,
+        rest: input.substring(all.length),
+      }
+    }
+  },
+
+  // unused
+  // whitespace: input => {
+  //   const re = /^\s+/
+  //   const result = input.match(re)
+  //   if (result) {
+  //     const all = result[0]
+  //     return {
+  //       name: 'whitespace',
+  //       rest: input.substring(all.length),
+  //     }
+  //   }
+  // },
+
   variable: input => {
     const re = /^\s*([a-zA-Z_\.][0-9a-zA-Z_\.]*)\s*/
     const result = input.match(re)
@@ -155,6 +202,17 @@ const baseTokens = {
       }
     }
   },
+
+  // be careful with this one:
+  // it allows you to match nothing and consume nothing
+  // use this for optional elements:
+  // matchOne([token.iAmOptional, token.empty])
+  empty: input => {
+    return {
+      name: 'empty',
+      rest: input,
+    }
+  }
 }
 
 const tokens = new Proxy(baseTokens, {
@@ -184,6 +242,26 @@ tokens.nonTextContentElement = matchOne([
   tokens.function,
 ])
 tokens.content = matchRepeat(matchOne([tokens.nonTextContentElement, tokens.text]))
+
+tokens.dialog = describeTag(match => ({
+  name: 'dialog',
+  children: match.children[1].children,
+}), matchAll([
+  tokens.dialogTag,
+  tokens.content
+]))
+
+tokens.allDialogs = describeTag(match => ({
+  name: 'dialogs',
+  value: match.children[1].children,
+  children: null
+}), matchAll([
+  matchOne([
+    tokens.content,
+    tokens.empty,
+  ]),
+  matchRepeat(tokens.dialog)
+]))
 
 tokens.template = input => {
   let rest = input
@@ -223,7 +301,10 @@ tokens.italicTag = describeTag(
     name: 'italicTag',
     children: match.children[1].children,
   }),
-  matchAll([tokens.italicToken, tokens.content, tokens.italicToken])
+  matchOne([
+    matchAll([tokens.italicStar, tokens.content, tokens.italicStar]),
+    matchAll([tokens.italicUnderscore, tokens.content, tokens.italicUnderscore])
+  ])
 )
 
 tokens.boldTag = describeTag(
@@ -233,6 +314,11 @@ tokens.boldTag = describeTag(
   }),
   matchAll([tokens.boldToken, tokens.content, tokens.boldToken])
 )
+
+tokens.italicToken = matchOne([
+  tokens.italicStar,
+  tokens.italicUnderscore
+])
 
 tokens.text = describeTag(
   match => ({
@@ -316,18 +402,51 @@ tokens.pair = describeTag(
       value: match.children[2].value,
     },
   }),
-  matchAll([tokens.variable, tokens.pairSperator, tokens.variable])
+  matchAll([tokens.key, tokens.doubleDot, tokens.variable])
 )
 
-tokens.function = describeTag(
+tokens.singleLineFunction = describeTag(
   match => {
-    const params = match.children[1].children
-    const fn = params[0].value
-    const args = params.slice(1).filter(p => p.name !== 'pair')
+    const fn = match.children[1].value
+    const params = match.children[3].children
+    const args = params.map(p => {
+      if (p.name === 'variable') {
+        return {
+          ...p,
+          name: 'constant',
+        }
+      }
+
+      return p
+    })
+
+    return {
+      name: 'function',
+      value: {
+        fn,
+        args,
+      },
+      children: null,
+    }
+  },
+  matchAll([
+    tokens.fnOpen,
+    tokens.key,
+    tokens.doubleDot,
+    matchRepeat(matchOne([tokens.value, tokens.interpolation])),
+    tokens.fnClose,
+  ])
+)
+
+
+tokens.multiLineFunction = describeTag(
+  match => {
+    const fn = match.children[1].value
+    const params = match.children[2].children
+    const args = params.filter(p => p.name !== 'pair')
 
     const pairs = {}
     params
-      .slice(1)
       .filter(p => p.name === 'pair')
       .forEach(p => {
         pairs[p.value.key] = p.value.value
@@ -345,6 +464,7 @@ tokens.function = describeTag(
   },
   matchAll([
     tokens.fnOpen,
+    tokens.key,
     matchRepeat(matchOne([tokens.pair, tokens.value, tokens.interpolation])),
     tokens.fnClose,
     tokens.content,
@@ -352,5 +472,7 @@ tokens.function = describeTag(
     tokens.fnClose,
   ])
 )
+
+tokens.function = matchOne([tokens.singleLineFunction, tokens.multiLineFunction])
 
 export default tokens

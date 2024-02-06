@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "prettier": "^3.2.5",
+    "sass": "^1.70.0",
     "seed-random": "^2.2.0",
     "vite": "^5.0.8",
     "vite-plugin-solid": "^2.8.0"

@@ -9,6 +9,10 @@ const renderer = {
   expression: value => context => <>{resolveExpression(value)(context)}</>,
   newline: () => () => <br />,
   ignore: () => () => null,
+  dialog: (_, subtree) => {
+    staticContext.data.type = 'dialog'
+    return context => subtree(context)
+  },
   function: (value, subtree) => {
     const params = {
       subtree,
@@ -27,7 +31,17 @@ const renderer = {
   },
 }
 
-export const staticContext = {
+const staticSet = key => params => {
+  const value = evaluate(params.arguments[0](staticContext.data))
+  if (!staticContext.data) {
+    console.error('Static context has no data')
+  } else {
+    staticContext.data[key] = value
+  }
+  return () => null
+}
+
+const baseStaticContext = {
   button: params => context => (
     <button onClick={() => params.pairs.action && context[params.pairs.action]()}>
       {params.subtree(context)}
@@ -55,19 +69,30 @@ export const staticContext = {
       </For>
     )
   },
+  name: staticSet('name')
 }
 
-export const renderNode = node => {
+const renderNode = node => {
   if (renderer[node.name]) {
     const subtree = node.children ? renderGroup(node.children) : () => null
     return renderer[node.name](node.value, subtree)
   }
 
-  console.log('Not implemented:', node.name, node)
+  console.error('Not implemented:', node.name, node)
   return () => null
 }
 
-export const renderGroup = nodes => {
+const renderGroup = nodes => {
   const renderers = nodes.map(renderNode)
   return context => renderers.map(r => r(context))
+}
+
+let staticContext = {}
+export default (node) => {
+  // clear static context
+  staticContext = { ...baseStaticContext, data: {} }
+  return {
+    data: staticContext.data,
+    render: renderNode(node)
+  }
 }

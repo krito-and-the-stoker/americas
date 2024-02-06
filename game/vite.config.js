@@ -17,6 +17,7 @@ export default defineConfig({
       '/api': 'http://event-tracker:8080',
       '/images': 'http://assets:3000',
       '/styles': 'http://assets:3000',
+      '/templates': 'http://assets:3000',
     },
   },
 })
