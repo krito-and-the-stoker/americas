@@ -44,7 +44,7 @@ export const fetchDialogs = async () => {
 						console.error('Duplicate dialog name', template.name)
 					} else {
 						console.log('Adding dialog', template.name, `to dialogs:\n${template.str}`)
-						dialogs[template.name] = template.render
+						dialogs[template.name] = template
 					}
 				} else {
 					console.error('Dialog has no name, src:\n', template.str, { template })

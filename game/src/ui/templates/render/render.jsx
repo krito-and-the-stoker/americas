@@ -42,7 +42,7 @@ const staticSet = key => params => {
 }
 
 const baseStaticContext = {
-  button: params => context => (
+  button: params =>  context => (
     <button onClick={() => params.pairs.action && context[params.pairs.action]()}>
       {params.subtree(context)}
     </button>

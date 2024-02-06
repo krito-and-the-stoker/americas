@@ -1,34 +1,27 @@
-import { createResource, createEffect } from 'solid-js'
+import { createSignal } from 'solid-js'
 
-import 'entries/index.js'
-import { fetchDialogs } from './templates'
+import Dialog from './Dialog'
+
 import styles from './Main.module.scss'
 
-function Main() {
-  const [dialogs] = createResource(fetchDialogs)
-  const dialog = (name, context) => {
-    if (dialogs.loading) {
-      return null
-    }
-    if (dialogs.error) {
-      console.error('error loading dialogs', dialogs.error)
-      return null
-    }
-
-    const data = dialogs()
-    if (!data || ! data[name]) {
-      return null
-    }
-
-    return data[name](context)
+function registerDialogFunctions (setName, setContext) {
+  window.openDialog = (name, context = {}) => {
+    setContext(context)
+    setName(name)
   }
+  window.closeDialog = () => setName('')
+}
+
+function Main() {
+  const [name, setName] = createSignal('')
+  const [context, setContext] = createSignal({})
+  registerDialogFunctions(setName, setContext)
 
   return <>
-    <div class={styles.main}>
-      <h1>This is the UI</h1>
-      {dialog('simple', { greeting: 'Welt' })}
-    </div>
+    <Dialog name={name()} context={context()} />
   </>
 }
 
 export default Main
+
+
