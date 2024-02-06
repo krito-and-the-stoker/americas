@@ -1,31 +1,11 @@
 import { defineConfig } from 'vite'
 import solid from 'vite-plugin-solid'
 import path from 'path'
-
-const directories = [
-  'ai',
-  'command',
-  'data',
-  'entity',
-  'entries',
-  'input',
-  'interaction',
-  'intro',
-  'maps',
-  'render',
-  'task',
-  'timeline',
-  'util',
-  'view',
-]
-const aliases = directories
-  .map(dir => ({
-    [dir]: path.resolve(__dirname, `./src/game/${dir}`),
-  }))
-  .reduce((all, one) => ({ ...all, ...one }), {})
+import writeDateToVersion from './build/write-date-to-version'
+import aliases from './build/aliases'
 
 export default defineConfig({
-  plugins: [solid()],
+  plugins: [solid(), writeDateToVersion()],
   resolve: {
     alias: {
       version: path.resolve(__dirname, './src/version'),
