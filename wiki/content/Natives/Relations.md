@@ -1,7 +1,7 @@
 #new-world #map #natives
 
 ## Relations: A number how good it goes
--5 death
+-5 hate
 -4 war (attacks and raids)
 -3 hostile (scouts no food, occasional raid, no trade)
 -2 cold (settler no learning, scouts no gifts)

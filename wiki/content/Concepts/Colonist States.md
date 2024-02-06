@@ -22,6 +22,7 @@ the speed of promotion depends on:
 - increased chance of illness
 - **events**:
 	- Tear down building (results in partially restocking the wood and a lost building)
+	- Tries to become lumberjack
 ### Starving
 - production malus, except for food
 - increased chance of illness
