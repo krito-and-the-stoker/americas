@@ -19,3 +19,5 @@ Certain jobs or colonist states can give a temporary power bonus or malus.
 Power will be used to broadly simulate the effects of an unequal society.
 
 First of all, when colonists have needs and they want to access a colonies storage, they are sorted by power, and those with the most power access first. If the storage is empty, those with less power get unlucky and cannot fulfil their needs.
+
+There are several ways to get power. These (possibly) depend on the laws enacted in the colony and can involve the current job or the amount and type of goods produced.
