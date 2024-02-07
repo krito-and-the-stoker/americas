@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  game:
+    build:
+      context: ./game
+    environment:
+      - FORCE_COLOR=1
+    ports:
+      - "3000:5173"
+    volumes:
+      - ./game:/app/game
+      - game-dist:/app/game/dist
+      - game-modules:/app/game/node_modules/
+    depends_on:
+      - event-tracker
+      - assets
+    command: npm install
+
+  wiki:
+    build:
+      context: ./wiki
+    environment:
+      - FORCE_COLOR=1
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./wiki:/app/wiki
+      - wiki-dist:/app/wiki/dist
+      - wiki-modules:/app/wiki/node_modules/
+    command: npm install
+
+  dashboard:
+    build:
+      context: ./dashboard
+    environment:
+      - FORCE_COLOR=1
+    ports:
+      - "3002:5173"
+    volumes:
+      - ./dashboard:/app/dashboard
+      - dashboard-dist:/app/dashboard/dist
+      - dashboard-modules:/app/dashboard/node_modules/
+    depends_on:
+      - event-tracker
+    command: npm install
+
+  mongo-express:
+    image: mongo-express:latest
+    ports:
+      - "3003:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_SERVER: database
+    depends_on:
+      - database
+
+  assets:
+    build:
+      context: ./assets
+    environment:
+      - FORCE_COLOR=1
+    volumes:
+      - ./assets:/app/assets
+      - assets-dist:/app/assets/dist
+      - assets-modules:/app/assets/node_modules/
+    depends_on:
+      - event-tracker
+    command: npm install
+
+  database:
+    image: mongo:7.0.4
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    command: mongod --quiet --logpath /dev/null
+
+  event-tracker:
+    build: ./event-tracker
+    depends_on:
+      - database
+    volumes:
+      - ./event-tracker:/app
+      - go-build:/go/pkg/mod
+    environment:
+      MONGO_URI: "mongodb://root:example@database:27017"
+    command: air
+
+volumes:
+  mongo-data:
+  go-build:
+  game-modules:
+  game-dist:
+  dashboard-modules:
+  dashboard-dist:
+  wiki-modules:
+  wiki-dist:
+  assets-modules:
+  assets-dist:
