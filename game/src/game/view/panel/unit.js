@@ -37,33 +37,30 @@ const handleGoTo = unit => {
   const colonies = Record.getAll('colony').filter(colony => Colony.isReachable(colony, unit))
 
   if (unit.domain === 'sea') {
-    Dialog.create({
-      type: 'naval',
-      text: 'Where shall we go?<options/>',
-      options: colonies
-        .map(colony => ({
-          text: `**${colony.name}** (${colony.colonists.length})`,
-          action: () => {
-            Commander.scheduleInstead(unit.commander, GoTo.create({ unit, colony }))
-          },
-        }))
-        .concat([
-          {
-            text: '**London**',
-            margin: true,
-            action: () => {
-              Commander.scheduleInstead(unit.commander, GoTo.create({ unit, europe: true }))
-              Commander.scheduleBehind(
-                unit.commander,
-                TriggerEvent.create({
-                  name: 'notification',
-                  type: 'europe',
-                  unit,
-                })
-              )
-            },
-          },
-        ]),
+    Dialog.open('unit_goto_sea', {
+      colonies: colonies.map(colony => ({
+        ...colony,
+        size: colony.colonists.length,
+        action: () => {
+          console.log('go to', colony.name)
+          Commander.scheduleInstead(unit.commander, GoTo.create({ unit, colony }))
+        }
+      })),
+      homeport: {
+        name: 'London',
+        action: () => {
+          console.log('go to London')
+          Commander.scheduleInstead(unit.commander, GoTo.create({ unit, europe: true }))
+          Commander.scheduleBehind(
+            unit.commander,
+            TriggerEvent.create({
+              name: 'notification',
+              type: 'europe',
+              unit,
+            })
+          )
+        }
+      }
     })
   } else {
     Dialog.create({

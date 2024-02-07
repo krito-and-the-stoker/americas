@@ -412,15 +412,30 @@ tokens.interpolation = describeTag(
 )
 
 tokens.pair = describeTag(
-  match => ({
-    name: 'pair',
-    children: null,
-    value: {
-      key: match.children[0].value,
-      value: match.children[2].value,
-    },
-  }),
-  matchAll([tokens.key, tokens.doubleDot, tokens.variable])
+  match => {
+    let value
+    if (match.children[2].name === 'variable') {
+      value = {
+        name: 'constant',
+        value: match.children[2].value
+      }
+    } else {
+      value = match.children[2]
+    }
+    return {
+      name: 'pair',
+      children: null,
+      value: {
+        key: match.children[0].value,
+        value,
+      },
+    }
+  },
+  matchAll([
+    tokens.key,
+    tokens.doubleDot,
+    matchOne([tokens.value, tokens.interpolation])
+  ])
 )
 
 tokens.simpleFunction = describeTag(
@@ -449,7 +464,7 @@ tokens.simpleFunction = describeTag(
 tokens.functionWithContent = describeTag(
   match => {
     const fn = match.children[1].value
-    const params = match.children[3].children
+    const params = match.children[3].children ?? []
     const args = params.filter(p => p.name !== 'pair')
 
     const pairs = {}
@@ -473,7 +488,7 @@ tokens.functionWithContent = describeTag(
     tokens.fnOpen,
     tokens.key,
     matchRepeatOptional(tokens.whitespace),
-    matchRepeat(matchOne([tokens.pair, tokens.value, tokens.interpolation])),
+    matchRepeatOptional(matchOne([tokens.pair, tokens.value, tokens.interpolation])),
     tokens.fnClose,
     tokens.content,
     tokens.fnOpen,

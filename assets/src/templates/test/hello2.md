@@ -23,11 +23,9 @@ This
 		r
 		d
 
-[button action:increment] Increment []
 [if counter]
 	We have a counter!
 
-	[button action:reset] Reset {counter} -> 0 []
 []
 
 [repeat list]

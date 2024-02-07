@@ -9,6 +9,7 @@ import ObjectTree from './components/ObjectTree'
 import DialogImage from './components/DialogImage'
 import Answer from './components/Answer'
 import CoordinatesLink from './components/CoordinatesLink'
+import GameIcon from './components/GameIcon'
 
 const renderer = {
   text: value => () => value,
@@ -27,11 +28,16 @@ const renderer = {
       arguments: value.args.map(exp =>
         exp.name === 'expression' ? resolveExpression(exp.value) : resolveExpression(exp)
       ),
-      pairs: value.pairs,
+      pairs: value.pairs && Object.fromEntries(Object.entries(value.pairs).map(
+        ([key, exp]) => ([
+          key,
+          exp.name === 'expression' ? resolveExpression(exp.value) : resolveExpression(exp)
+        ])
+      )),
     }
 
     if (!isFunction(staticContext[value.fn])) {
-      console.error('Did not find function in static context:', value.fn)
+      console.error('Did not find function in static context, ignore:', value.fn)
       return () => null
     }
 
@@ -63,32 +69,35 @@ const staticExecute = key => params => {
 }
 
 const baseStaticContext = {
-  button: params => context => (
-    <button onClick={() => params.pairs.action && context[params.pairs.action]()}>
-      {params.subtree(context)}
-    </button>
-  ),
   if: params => context => {
     return <Show when={evaluate(params.arguments[0](context))}>{params.subtree(context)}</Show>
   },
   repeat: params => context => {
     const list = params.arguments[0](context)
     const length = () => evaluate(list).length
+
     return (
       <For each={evaluate(list)}>
-        {(item, index) =>
-          params.subtree({
+        {(item, index) => {
+          const subContext = {
+            'index': index,
+            'first': () => index() === 0,
+            'inner': () => index() > 0 && index() < length() - 1,
+            'last': () => index() === length() - 1,
+            'length': length,
+          }
+
+          if (item !== null && typeof item === 'object' && !Array.isArray(item)) {
+            Object.assign(subContext, item)
+          } else {
+            subContext['&'] = item
+          }
+
+          return params.subtree({
             ...context,
-            '&': {
-              '&': item,
-              'index': index,
-              'first': () => index() === 0,
-              'inner': () => index() > 0 && index() < length() - 1,
-              'last': () => index() === length() - 1,
-              'length': length,
-            }
+            '&': subContext,
           })
-        }
+        }}
       </For>
     )
   },
@@ -105,13 +114,14 @@ const baseStaticContext = {
     return <ObjectTree object={filteredObj()} />
   },
   answer: params => context => (
-    <Answer action={context[params.pairs.action]}>
+    <Answer action={context[evaluate(params.pairs.action(context))]}>
       {params.subtree(context)}
     </Answer>
   ),
   name: staticSet('name'),
   image: params => context => <DialogImage image={evaluate(params.arguments[0](context))} />,
-  coordinates: params => context => <CoordinatesLink coordinates={evaluate(params.arguments[0](context))} centerFn={staticContext.functions.centerMap} />
+  coordinates: params => context => <CoordinatesLink coordinates={evaluate(params.arguments[0](context))} centerFn={staticContext.functions.centerMap} />,
+  icon: params => context => <GameIcon name={evaluate(params.arguments[0](context))} />,
 }
 
 const renderNode = node => {

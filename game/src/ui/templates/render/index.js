@@ -9,7 +9,7 @@ export default (ast, staticContext) => {
     name: data.name,
     type: data.type,
     render: (context = {}) => {      
-      console.log('binding template, context:', data.name, context, ast)
+      console.log('binding template:', data.name, context, ast)
       return render(context)
     }
   }

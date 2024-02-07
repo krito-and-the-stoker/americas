@@ -39,61 +39,52 @@ const closeIfNoShips = () => {
 }
 
 const selectTarget = unit => {
-  const colonies = Record.getAll('colony').filter(colony => Colony.isReachable(colony, unit))
-
-  const repairCost = Europe.repairShipCost(unit)
-  const options = [
-    {
-      text: '*Open waters* in the Americas',
+  const colonies = Record.getAll('colony')
+    .filter(colony => Colony.isReachable(colony, unit))
+    .map((colony, index) => ({
+      ...colony,
+      size: colony.colonists.length,
       action: () => {
-        Commander.scheduleInstead(unit.commander, America.create({ unit }))
+        Commander.scheduleBehind(unit.commander, GoTo.create({ unit, colony }))
         Commander.scheduleBehind(
           unit.commander,
           TriggerEvent.create({
             name: 'notification',
-            type: 'america',
+            type: 'arrive',
             unit,
+            colony,
           })
         )
         closeIfNoShips()
       },
-    },
-  ]
-    .concat(
-      colonies.map((colony, index) => ({
-        margin: !index && colonies.length > 1,
-        text: `**${colony.name}** (${colony.colonists.length})`,
-        action: () => {
-          Commander.scheduleBehind(unit.commander, GoTo.create({ unit, colony }))
-          Commander.scheduleBehind(
-            unit.commander,
-            TriggerEvent.create({
-              name: 'notification',
-              type: 'arrive',
-              unit,
-              colony,
-            })
-          )
-          closeIfNoShips()
-        },
-      }))
-    )
-    .concat([
-      {
-        margin: true,
-        disabled: repairCost < 1 || repairCost > Treasure.amount(),
-        text: `repair ship (**${repairCost}<good>gold</good>**)`,
-        action: () => {
-          Europe.repairShip(unit)
-        },
-      },
-    ])
+    }))
 
-  Dialog.create({
-    type: 'naval',
-    text: 'Where shall we *sail* to?<options/>',
-    closeScreen: false,
-    options,
+  const openWaters = () => {
+    Commander.scheduleInstead(unit.commander, America.create({ unit }))
+    Commander.scheduleBehind(
+      unit.commander,
+      TriggerEvent.create({
+        name: 'notification',
+        type: 'america',
+        unit,
+      })
+    )
+    closeIfNoShips()
+  }
+
+  const repairCost = Europe.repairShipCost(unit)
+  const repair = {
+    cost: repairCost,
+    action: () => {
+      Europe.repairShip(unit)
+    },
+    disabled: repairCost < 1 || repairCost > Treasure.amount()
+  }
+
+  Dialog.open('unit_goto_americas', {
+    colonies,
+    openWaters,
+    repair
   })
 }
 
