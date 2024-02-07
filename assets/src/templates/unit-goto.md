@@ -8,7 +8,6 @@ Where shall we go?
   [repeat colonies]
 [answer action:{.action}] **{.name}** ({.size}) []
 []
-
 [answer action:{homeport.action}] **{homeport.name}** (Europe) []
 
 
@@ -39,3 +38,6 @@ Where shall we *sail* to?
 [answer action:{repair.action} disabled:{repair.disabled}]
   repair ship (**{repair.cost} [icon: gold]**)
 []
+
+[inspect: repair]
+

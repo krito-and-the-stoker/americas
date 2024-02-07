@@ -11,3 +11,8 @@
 	  text-decoration: none; /* Ensures the text isn't underlined on hover */
   }
 }
+
+.disabled {
+	opacity: 0.5;
+	pointer-events: none;
+}

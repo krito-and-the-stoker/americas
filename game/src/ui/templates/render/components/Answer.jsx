@@ -1,3 +1,4 @@
+import { classList } from 'solid-js/web';
 import Util from 'util/util'
 import ReactiveDialog from 'ui/reactiveDialog'
 
@@ -9,7 +10,10 @@ function Answer(props) {
 		ReactiveDialog.close()
 	}
 
-	return <a class={styles.answer} onClick={handleClick}>{props.children}</a>
+	return <a classList={{
+		[styles.answer]: true, 
+		[styles.disabled] : props.disabled
+	}} onClick={handleClick}>{props.children}</a>
 }
 
 export default Answer

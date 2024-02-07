@@ -71,9 +71,16 @@ const staticExecute = key => params => {
   }
 }
 
+const resolveCtxKey = (context, expression) => expression
+  ? context[evaluate(expression(context))]
+  : undefined
+const resolveCtxVariable = (context, expression) => expression
+  ? evaluate(expression(context))
+  : undefined
+
 const baseStaticContext = {
   if: params => context => {
-    return <Show when={evaluate(params.arguments[0](context))}>{params.subtree(context)}</Show>
+    return <Show when={resolveCtxVariable(context, params.arguments[0])}>{params.subtree(context)}</Show>
   },
   repeat: params => context => {
     const list = params.arguments[0](context)
@@ -106,7 +113,7 @@ const baseStaticContext = {
   },
   inspect: params => context => {
     const obj = () => params.arguments[0]
-      ? evaluate(params.arguments[0](context))
+      ? resolveCtxVariable(context, params.arguments[0])
       : context
     const filteredObj = () => filterObject(obj(), (key, value) =>
       !key?.endsWith('Listeners') && key !== 'listeners' && !isFunction(value)
@@ -117,15 +124,18 @@ const baseStaticContext = {
     return <ObjectTree object={filteredObj()} />
   },
   answer: params => context => (
-    <Answer action={context[evaluate(params.pairs.action(context))]}>
+    <Answer 
+      action={resolveCtxKey(context, params.pairs.action)}
+      disabled={resolveCtxVariable(context, params.pairs.disabled)}
+    >
       {params.subtree(context)}
     </Answer>
   ),
   name: staticSet('name'),
-  image: params => context => <DialogImage image={evaluate(params.arguments[0](context))} />,
-  coordinates: params => context => <CoordinatesLink coordinates={evaluate(params.arguments[0](context))} centerFn={staticContext.functions.centerMap} />,
-  icon: params => context => <GameIcon name={evaluate(params.arguments[0](context))} />,
-  backdrop: params => context => <Backdrop action={context[evaluate(params.arguments[0](context))]} />
+  image: params => context => <DialogImage image={resolveCtxVariable(context, params.arguments[0])} />,
+  coordinates: params => context => <CoordinatesLink coordinates={resolveCtxVariable(context, params.arguments[0])} centerFn={staticContext.functions.centerMap} />,
+  icon: params => context => <GameIcon name={resolveCtxVariable(context, params.arguments[0])} />,
+  backdrop: params => context => <Backdrop action={resolveCtxVariable(context, params.arguments[0])} />
 }
 
 const renderNode = node => {
