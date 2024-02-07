@@ -4,6 +4,7 @@ import { unwrap } from 'solid-js/store'
 import { isFunction, evaluate } from './utils'
 import resolveExpression from './expression'
 import { filterObject } from './helper'
+import ObjectTree from './components/ObjectTree'
 
 const renderer = {
   text: value => () => value,
@@ -88,12 +89,16 @@ const baseStaticContext = {
     )
   },
   inspect: params => context => {
-    createEffect(() => {      
-      const value = evaluate(params.arguments[0](context))
-      console.log('Inspect:', filterObject(value, (key, value) =>
-        !key?.endsWith('Listeners') && key !== 'listeners' && !isFunction(value))
-      )
-    })
+    const obj = () => params.arguments[0]
+      ? evaluate(params.arguments[0](context))
+      : context
+    const filteredObj = () => filterObject(obj(), (key, value) =>
+      !key?.endsWith('Listeners') && key !== 'listeners' && !isFunction(value)
+    )
+
+    console.log('Inspect:', filteredObj())
+
+    return <ObjectTree object={filteredObj()} />
   },
   name: staticSet('name'),
   image: staticSet('image'),

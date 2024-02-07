@@ -21,9 +21,13 @@ function Dialog() {
     return data[name].render(context)
   }
 
+  const stopPropagation = event => {
+    event.stopPropagation()
+  }
+
   return <Show when={ReactiveDialog.hasDialog(ReactiveDialog.name())}>
     <div class={styles.backdrop} onClick={ReactiveDialog.close}>
-      <div class={styles.dialog}>
+      <div class={styles.dialog} onClick={stopPropagation} onWheel={stopPropagation}>
         {render(ReactiveDialog.name(), ReactiveDialog.context)}
       </div>
     </div>
