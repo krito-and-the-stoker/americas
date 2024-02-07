@@ -36,26 +36,19 @@ const create = (unit, coords) => {
   let landingUnit = null
 
   const init = () => {
-    Events.trigger('dialog', {
-      type: 'naval',
-      text: 'Would you like to **disembark** here?<options/>',
-      coords: unit.mapCoordinates,
-      options: [
-        {
-          text: 'Make landfall',
-          action: () => {
-            decision = 2
-          },
+    Events.trigger('ui-dialog', {
+      name: 'disembark',
+      context: {
+        unit,
+        yes: () => {
+          decision = 'yes'
         },
-        {
-          text: 'Stay with the ships',
-          action: () => {
-            decision = 1
-          },
-          default: true,
-        },
-      ],
+        no: () => {
+          decision = 'no'
+        }
+      }
     })
+
 
     return true
   }
@@ -65,15 +58,15 @@ const create = (unit, coords) => {
       return currentTime < unloadingStartedAt + Time.UNLOAD_TIME
     }
 
-    if (decision === null) {
+    if (!decision) {
       return true
     }
 
-    if (decision === 1) {
+    if (decision === 'no') {
       return false
     }
 
-    if (decision === 2) {
+    if (decision === 'yes') {
       Events.trigger('disembark')
       landingUnit = Unit.unloadUnit(unit, Tile.closest(coords))
       // Commander.scheduleInstead(landingUnit.commander, Move.create({ unit: landingUnit, coords }))

@@ -1,6 +1,6 @@
 [dialog]
 [name: welcome]
-[center_map: caravel.mapCoordinates]
+[coordinates: caravel.mapCoordinates]
 [image: admiral]
 
 Sir,

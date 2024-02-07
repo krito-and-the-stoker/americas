@@ -1,4 +1,4 @@
-import { matchAll, matchOne, matchNone, matchRepeat, matchRepeatOptional, describeTag } from './combinators.js'
+import { matchAll, matchOne, matchNone, matchRepeat, matchRepeatOptional, matchOptional, describeTag } from './combinators.js'
 
 const baseTokens = {
   dialogTag: input => {
@@ -478,6 +478,7 @@ tokens.functionWithContent = describeTag(
     tokens.content,
     tokens.fnOpen,
     tokens.fnClose,
+    matchOptional(tokens.newline)
   ])
 )
 

@@ -4,6 +4,6 @@ const centerMap = (...args) => {
 
 export default {
 	functions: {
-		center_map: centerMap
+		centerMap
 	}
 }

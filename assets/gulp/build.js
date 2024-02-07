@@ -70,7 +70,9 @@ gulp.task('templates', () => {
 
     return gulp.src(templatesDir)
         .pipe(tap(file => {
-            templates.push(file.contents.toString());
+            if (file.contents) {
+                templates.push(file.contents.toString());
+            }
         }))
         .on('end', () => {
             // Write the JSON object to a file at the end of the stream

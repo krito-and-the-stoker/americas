@@ -8,6 +8,7 @@ import { filterObject } from './helper'
 import ObjectTree from './components/ObjectTree'
 import DialogImage from './components/DialogImage'
 import Answer from './components/Answer'
+import CoordinatesLink from './components/CoordinatesLink'
 
 const renderer = {
   text: value => () => value,
@@ -110,7 +111,7 @@ const baseStaticContext = {
   ),
   name: staticSet('name'),
   image: params => context => <DialogImage image={evaluate(params.arguments[0](context))} />,
-  center_map: staticExecute('center_map'),
+  coordinates: params => context => <CoordinatesLink coordinates={evaluate(params.arguments[0](context))} centerFn={staticContext.functions.centerMap} />
 }
 
 const renderNode = node => {
