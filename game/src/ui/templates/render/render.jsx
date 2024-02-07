@@ -10,6 +10,7 @@ import DialogImage from './components/DialogImage'
 import Answer from './components/Answer'
 import CoordinatesLink from './components/CoordinatesLink'
 import GameIcon from './components/GameIcon'
+import Backdrop from './components/Backdrop'
 
 const renderer = {
   text: value => () => value,
@@ -54,6 +55,8 @@ const staticSet = key => params => {
   }
   return () => null
 }
+
+// This is currently unused, maybe we don't need that after all
 const staticExecute = key => params => {
   const fn = staticContext.functions[key]
   if (!isFunction(fn)) {
@@ -122,6 +125,7 @@ const baseStaticContext = {
   image: params => context => <DialogImage image={evaluate(params.arguments[0](context))} />,
   coordinates: params => context => <CoordinatesLink coordinates={evaluate(params.arguments[0](context))} centerFn={staticContext.functions.centerMap} />,
   icon: params => context => <GameIcon name={evaluate(params.arguments[0](context))} />,
+  backdrop: params => context => <Backdrop action={context[evaluate(params.arguments[0](context))]} />
 }
 
 const renderNode = node => {
@@ -142,7 +146,7 @@ const renderGroup = nodes => {
 let staticContext = {}
 export default (node, context = {}) => {
   // clear static context
-  staticContext = { ...baseStaticContext, data: {}, functions: {}, ...context }
+  staticContext = { ...baseStaticContext, data: {}, ...context }
   return {
     data: staticContext.data,
     render: renderNode(node)

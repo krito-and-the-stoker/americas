@@ -1,6 +1,7 @@
 [dialog]
 [name: unit_goto_sea]
 [image: admiral]
+[backdrop: close]
 
 Where shall we go?
 
@@ -14,6 +15,7 @@ Where shall we go?
 [dialog]
 [name: unit_goto_land]
 [image: scout]
+[backdrop: close]
 
 Where shall we go?
 
@@ -25,6 +27,7 @@ Where shall we go?
 [dialog]
 [name: unit_goto_americas]
 [image: admiral]
+[backdrop: close]
 
 Where shall we *sail* to?
 

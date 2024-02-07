@@ -34,18 +34,19 @@ const ICON_SCALE = 0.5
 
 const handleGoTo = unit => {
   const area = Unit.area(unit)
-  const colonies = Record.getAll('colony').filter(colony => Colony.isReachable(colony, unit))
+  const colonies = Record.getAll('colony')
+    .filter(colony => Colony.isReachable(colony, unit))
+    .map(colony => ({
+      ...colony,
+      size: colony.colonists.length,
+      action: () => {
+        Commander.scheduleInstead(unit.commander, GoTo.create({ unit, colony }))
+      }
+    }))
 
   if (unit.domain === 'sea') {
     Dialog.open('unit_goto_sea', {
-      colonies: colonies.map(colony => ({
-        ...colony,
-        size: colony.colonists.length,
-        action: () => {
-          console.log('go to', colony.name)
-          Commander.scheduleInstead(unit.commander, GoTo.create({ unit, colony }))
-        }
-      })),
+      colonies,
       homeport: {
         name: 'London',
         action: () => {
@@ -63,15 +64,8 @@ const handleGoTo = unit => {
       }
     })
   } else {
-    Dialog.create({
-      type: 'scout',
-      text: 'Where shall we go?<options/>',
-      options: colonies.map(colony => ({
-        text: `**${colony.name}** (${colony.colonists.length})`,
-        action: () => {
-          Commander.scheduleInstead(unit.commander, GoTo.create({ unit, colony }))
-        },
-      })),
+    Dialog.open('unit_goto_land', {
+      colonies
     })
   }
 }

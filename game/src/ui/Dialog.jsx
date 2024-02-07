@@ -26,8 +26,7 @@ function Dialog() {
   }
 
   return <Show when={ReactiveDialog.hasDialog(ReactiveDialog.name())}>
-    {/* Will not close on click because styles set to pointer-events none */}
-    <div class={styles.backdrop} onClick={ReactiveDialog.close}>
+    <div class={styles.dimmer}>
       <div class={styles.dialog} onClick={stopPropagation} onWheel={stopPropagation}>
         <div class={styles.content}>
           {render(ReactiveDialog.name(), ReactiveDialog.context)}
