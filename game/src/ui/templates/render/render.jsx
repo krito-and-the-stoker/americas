@@ -1,4 +1,5 @@
 import { Show, For } from 'solid-js/web'
+import { unwrap } from 'solid-js/store'
 import { isFunction, evaluate } from './utils'
 import resolveExpression from './expression'
 
@@ -27,22 +28,39 @@ const renderer = {
       return () => null
     }
 
+    if (value.fn === 'center_map') {
+      console.log('center_map rendering', value)
+    }
+
     return staticContext[value.fn](params)
   },
 }
 
 const staticSet = key => params => {
-  const value = evaluate(params.arguments[0](staticContext.data))
+  const value = evaluate(params.arguments[0]({}))
   if (!staticContext.data) {
-    console.error('Static context has no data')
+    console.error('Template error: Static context has no data while setting key', key, 'to', value)
   } else {
     staticContext.data[key] = value
   }
   return () => null
 }
+const staticExecute = key => params => {
+  const fn = staticContext.functions[key]
+  if (!isFunction(fn)) {
+    console.error('Template error: Cannot execute from static context:', key, 'is', fn)
+    return  null
+  }
+
+  return context => {
+    const values = unwrap(params.arguments.map(param => evaluate(param(context))))
+    fn(...values)
+    return null
+  }
+}
 
 const baseStaticContext = {
-  button: params =>  context => (
+  button: params => context => (
     <button onClick={() => params.pairs.action && context[params.pairs.action]()}>
       {params.subtree(context)}
     </button>
@@ -58,12 +76,14 @@ const baseStaticContext = {
         {(item, index) =>
           params.subtree({
             ...context,
-            '.': item,
-            '.index': index,
-            '.first': () => index() === 0,
-            '.inner': () => index() > 0 && index() < length() - 1,
-            '.last': () => index() === length() - 1,
-            '.length': length,
+            '&': {
+              '&': item,
+              'index': index,
+              'first': () => index() === 0,
+              'inner': () => index() > 0 && index() < length() - 1,
+              'last': () => index() === length() - 1,
+              'length': length,
+            }
           })
         }
       </For>
@@ -71,7 +91,7 @@ const baseStaticContext = {
   },
   name: staticSet('name'),
   image: staticSet('image'),
-  center_map: staticSet('center_map')
+  center_map: staticExecute('center_map')
 }
 
 const renderNode = node => {
@@ -90,9 +110,9 @@ const renderGroup = nodes => {
 }
 
 let staticContext = {}
-export default (node) => {
+export default (node, context = {}) => {
   // clear static context
-  staticContext = { ...baseStaticContext, data: {} }
+  staticContext = { ...baseStaticContext, data: {}, functions: {}, ...context }
   return {
     data: staticContext.data,
     render: renderNode(node)

@@ -3,7 +3,7 @@ import renderTemplate from './render'
 
 const TEMPLATE_ENDPOINT = '/templates/all.json'
 let dialogs
-export const fetchDialogs = async () => {
+export const fetchDialogs = async (staticContext) => {
 	if (!dialogs) {
 		dialogs = {}
 
@@ -25,7 +25,7 @@ export const fetchDialogs = async () => {
 
 			return true
 		}).map(obj => {			
-			const templates = obj.ast.value.map(renderTemplate)
+			const templates = obj.ast.value.map(node => renderTemplate(node, staticContext))
 
 			return {
 				...obj,

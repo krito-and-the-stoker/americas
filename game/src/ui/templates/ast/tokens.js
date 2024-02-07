@@ -442,7 +442,7 @@ tokens.simpleFunction = describeTag(
       name: 'function',
       value: {
         fn,
-        args,
+        args: match.children[4].children,
       },
       children: null,
     }

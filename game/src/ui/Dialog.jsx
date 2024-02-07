@@ -1,23 +1,19 @@
 import { createResource, createEffect } from 'solid-js'
-import { fetchDialogs } from './templates'
 import styles from './Dialog.module.scss'
 
-import { dialogFns } from './Main'
+import ReactiveDialog from './reactiveDialog'
 
-function Dialog(props) {
-  const [dialogs] = createResource(fetchDialogs)
-
-  const closeDialog = () => dialogFns.close()
+function Dialog() {
   const render = (name, context) => {
-    if (dialogs.loading) {
+    if (ReactiveDialog.dialogs.loading) {
       return null
     }
-    if (dialogs.error) {
+    if (ReactiveDialog.dialogs.error) {
       console.error('error loading dialogs', dialogs.error)
       return null
     }
 
-    const data = dialogs()
+    const data = ReactiveDialog.dialogs()
     if (!data || ! data[name]) {
       return null
     }
@@ -25,17 +21,10 @@ function Dialog(props) {
     return data[name].render(context)
   }
 
-  const hasName = () => !!props.name && !!dialogs() && !!dialogs()[props.name]
-  createEffect(() => {
-    if (props.name && dialogs() && !dialogs()[props.name]) {
-      console.error('Dialog not found', props.name, '\nThese dialogs are valid:', Object.keys(dialogs()))
-    }
-  })
-
-  return <Show when={hasName()}>
-    <div class={styles.backdrop} onClick={closeDialog}>
+  return <Show when={ReactiveDialog.hasDialog(ReactiveDialog.name())}>
+    <div class={styles.backdrop} onClick={ReactiveDialog.close}>
       <div class={styles.dialog}>
-        {render(props.name, props.context)}
+        {render(ReactiveDialog.name(), ReactiveDialog.context)}
       </div>
     </div>
   </Show>

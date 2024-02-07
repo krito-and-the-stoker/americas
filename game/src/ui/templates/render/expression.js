@@ -1,11 +1,38 @@
 import { isFunction, evaluate } from './utils'
 
+function resolvePropertyPath(context, path) {
+  // Split the path into parts separated by '.'
+  // we allow empty string . notation like this: .index
+  // or even a single . to express access to temporary context
+  // under the hood this gets replaced with a & symbol
+  const parts = path.split('.').map(x => x || '&')
+  
+  console.log('resolving path', context, parts)
+  let current = context
+  for (let i = 0; i < parts.length; i++) {
+    if (current[parts[i]] === undefined) {
+      return undefined
+    }
+
+    current = current[parts[i]]
+  }
+  
+  return current
+}
+
+// resolution of a variable is context dependent
+// if the variable is not available in the context
+// we fallback to display the variable name
+// As long as temlates are simple we should be fine here...
 const resolveVariable = value => context => {
-  if (typeof context[value] === 'undefined') {
-    console.error('Did not find value in context:', value)
+  const result = resolvePropertyPath(context, value)
+  if (typeof result === 'undefined') {
+    console.log('Variable not found in context', value, context)
+    return value
+    // console.error('Did not find value in context:', value)
   }
 
-  return context[value]
+  return result
 }
 const resolveUnaryOperator = (operator, operand) => {
   if (operator === 'not') {

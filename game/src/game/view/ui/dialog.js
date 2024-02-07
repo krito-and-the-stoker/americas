@@ -1,13 +1,15 @@
-import LegacyDialog from './dialog-legacy'
-import { dialogFns } from 'ui/Main'
+import LegacyDialog from './dialogLegacy'
+import ReactiveDialog from 'ui/reactiveDialog'
 
 const open = (name, context) => {
   console.log('open', name, context)
-  dialogFns.open(name, context)
+  ReactiveDialog.open(name, context, data => {
+    console.log('data for', name, data)
+  })
 }
 
 const close = () => {
-  dialogFns.close()
+  ReactiveDialog.close()
 }
 
 
