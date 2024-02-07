@@ -7,7 +7,6 @@ function resolvePropertyPath(context, path) {
   // under the hood this gets replaced with a & symbol
   const parts = path.split('.').map(x => x || '&')
   
-  console.log('resolving path', context, parts)
   let current = context
   for (let i = 0; i < parts.length; i++) {
     if (current[parts[i]] === undefined) {
@@ -27,9 +26,8 @@ function resolvePropertyPath(context, path) {
 const resolveVariable = value => context => {
   const result = resolvePropertyPath(context, value)
   if (typeof result === 'undefined') {
-    console.log('Variable not found in context', value, context)
+    // console.log('Variable not found in context', value, context)
     return value
-    // console.error('Did not find value in context:', value)
   }
 
   return result
@@ -94,7 +92,6 @@ const resolveExpression = expression => {
     )
   }
 
-  console.log(value)
   return () => null
 }
 

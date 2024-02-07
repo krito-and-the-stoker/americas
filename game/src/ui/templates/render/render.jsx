@@ -1,7 +1,9 @@
+import { createEffect } from 'solid-js'
 import { Show, For } from 'solid-js/web'
 import { unwrap } from 'solid-js/store'
 import { isFunction, evaluate } from './utils'
 import resolveExpression from './expression'
+import { filterObject } from './helper'
 
 const renderer = {
   text: value => () => value,
@@ -26,10 +28,6 @@ const renderer = {
     if (!isFunction(staticContext[value.fn])) {
       console.error('Did not find function in static context:', value.fn)
       return () => null
-    }
-
-    if (value.fn === 'center_map') {
-      console.log('center_map rendering', value)
     }
 
     return staticContext[value.fn](params)
@@ -88,6 +86,14 @@ const baseStaticContext = {
         }
       </For>
     )
+  },
+  inspect: params => context => {
+    createEffect(() => {      
+      const value = evaluate(params.arguments[0](context))
+      console.log('Inspect:', filterObject(value, (key, value) =>
+        !key?.endsWith('Listeners') && key !== 'listeners' && !isFunction(value))
+      )
+    })
   },
   name: staticSet('name'),
   image: staticSet('image'),
