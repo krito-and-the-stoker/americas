@@ -5,14 +5,29 @@ import Dialog from './Dialog'
 
 import styles from './Main.module.scss'
 
+let dialogOpenFn, dialogCloseFn
+export const dialogFns = {
+  get open() {
+    return dialogOpenFn ?? ((...args) => {
+      console.error('Cannot open dialog, ui boundary not initialized:', ...args)
+    })
+  },
+
+  get close() {
+    return dialogCloseFn ?? ((...args) => {
+      console.error('Cannot open dialog, ui boundary not initialized:', ...args)
+    })
+  }
+}
+
 function registerDialogFunctions (setName, setContext) {
-  window.openDialog = (name, context = {}) => {
+  dialogOpenFn = (name, context = {}) => {
     setContext(context)
     setName(name)
 
     return setContext
   }
-  window.closeDialog = () => setName('')
+  dialogCloseFn = () => setName('')
 }
 
 function Main() {

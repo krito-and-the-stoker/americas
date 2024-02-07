@@ -182,11 +182,8 @@ const start = async () => {
 
     setTimeout(() => {
       Input.initialize()
-      Dialog.create({
-        type: 'naval',
-        text: 'Sir,\nWe crossed the atlantic ocean. The new world called America lies ahead. Let us sail *west* and claim Englands fair share of this land!',
-        coords: caravel.mapCoordinates,
-        pause: true,
+      Dialog.open('welcome', {
+        caravel
       })
     }, 3500)
 

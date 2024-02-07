@@ -2,8 +2,12 @@ import { createResource, createEffect } from 'solid-js'
 import { fetchDialogs } from './templates'
 import styles from './Dialog.module.scss'
 
+import { dialogFns } from './Main'
+
 function Dialog(props) {
   const [dialogs] = createResource(fetchDialogs)
+
+  const closeDialog = () => dialogFns.close()
   const render = (name, context) => {
     if (dialogs.loading) {
       return null
@@ -20,6 +24,7 @@ function Dialog(props) {
 
     return data[name].render(context)
   }
+
   const hasName = () => !!props.name && !!dialogs() && !!dialogs()[props.name]
   createEffect(() => {
     if (props.name && dialogs() && !dialogs()[props.name]) {
@@ -28,7 +33,7 @@ function Dialog(props) {
   })
 
   return <Show when={hasName()}>
-    <div class={styles.backdrop}>
+    <div class={styles.backdrop} onClick={closeDialog}>
       <div class={styles.dialog}>
         {render(props.name, props.context)}
       </div>

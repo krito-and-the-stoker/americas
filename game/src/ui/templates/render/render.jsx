@@ -69,7 +69,9 @@ const baseStaticContext = {
       </For>
     )
   },
-  name: staticSet('name')
+  name: staticSet('name'),
+  image: staticSet('image'),
+  center_map: staticSet('center_map')
 }
 
 const renderNode = node => {

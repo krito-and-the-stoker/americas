@@ -9,6 +9,7 @@ export default defineConfig({
   resolve: {
     alias: {
       version: path.resolve(__dirname, './src/version'),
+      ui: path.resolve(__dirname, 'src/ui'),
       ...aliases,
     },
   },

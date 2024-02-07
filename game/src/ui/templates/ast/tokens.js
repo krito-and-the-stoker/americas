@@ -242,10 +242,23 @@ tokens.nonTextContentElement = matchOne([
 ])
 tokens.content = matchRepeat(matchOne([tokens.nonTextContentElement, tokens.text]))
 
-tokens.dialog = describeTag(match => ({
-  name: 'dialog',
-  children: match.children[1].children,
-}), matchAll([
+tokens.dialog = describeTag(match => {
+  const children = match.children[1].children
+    .reverse()
+    .filter((node, i, all) => {
+      if (node.name === 'newline' && all.slice(0, i).every(before => before.name === 'newline')) {
+        return false
+      }
+
+      return true
+    })
+    .reverse()
+
+  return {    
+    name: 'dialog',
+    children,
+  }
+}, matchAll([
   tokens.dialogTag,
   tokens.content
 ]))
@@ -410,7 +423,7 @@ tokens.pair = describeTag(
   matchAll([tokens.key, tokens.doubleDot, tokens.variable])
 )
 
-tokens.singleLineFunction = describeTag(
+tokens.simpleFunction = describeTag(
   match => {
     const fn = match.children[1].value
     const params = match.children[4].children
@@ -441,11 +454,12 @@ tokens.singleLineFunction = describeTag(
     matchRepeatOptional(tokens.whitespace),
     matchRepeat(matchOne([tokens.value, tokens.interpolation])),
     tokens.fnClose,
+    matchRepeatOptional(tokens.newline)
   ])
 )
 
 
-tokens.multiLineFunction = describeTag(
+tokens.functionWithContent = describeTag(
   match => {
     const fn = match.children[1].value
     const params = match.children[3].children
@@ -480,6 +494,6 @@ tokens.multiLineFunction = describeTag(
   ])
 )
 
-tokens.function = matchOne([tokens.singleLineFunction, tokens.multiLineFunction])
+tokens.function = matchOne([tokens.simpleFunction, tokens.functionWithContent])
 
 export default tokens
