@@ -28,7 +28,9 @@ function Dialog() {
   return <Show when={ReactiveDialog.hasDialog(ReactiveDialog.name())}>
     <div class={styles.backdrop} onClick={ReactiveDialog.close}>
       <div class={styles.dialog} onClick={stopPropagation} onWheel={stopPropagation}>
-        {render(ReactiveDialog.name(), ReactiveDialog.context)}
+        <div class={styles.content}>
+          {render(ReactiveDialog.name(), ReactiveDialog.context)}
+        </div>
       </div>
     </div>
   </Show>

@@ -1,0 +1,12 @@
+.answer {
+	padding: 5px 20px;
+  display: block; /* Display as a block element */
+  transition: background-color 0.2s ease, box-shadow 0.2s ease; /* Smooth transition for specified properties */
+  cursor: pointer;
+
+  &:hover {
+	  background-color: rgba(240, 233, 201, 1); /* Slightly darker on hover for contrast */
+	  box-shadow: 0 0 8px 8px rgba(240, 233, 201, 1); /* Enhanced shadow for hover effect */
+	  text-decoration: none; /* Ensures the text isn't underlined on hover */
+  }
+}

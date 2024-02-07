@@ -4,7 +4,10 @@ import { unwrap } from 'solid-js/store'
 import { isFunction, evaluate } from './utils'
 import resolveExpression from './expression'
 import { filterObject } from './helper'
+
 import ObjectTree from './components/ObjectTree'
+import DialogImage from './components/DialogImage'
+import Answer from './components/Answer'
 
 const renderer = {
   text: value => () => value,
@@ -100,9 +103,14 @@ const baseStaticContext = {
 
     return <ObjectTree object={filteredObj()} />
   },
+  answer: params => context => (
+    <Answer action={context[params.pairs.action]}>
+      {params.subtree(context)}
+    </Answer>
+  ),
   name: staticSet('name'),
-  image: staticSet('image'),
-  center_map: staticExecute('center_map')
+  image: params => context => <DialogImage image={evaluate(params.arguments[0](context))} />,
+  center_map: staticExecute('center_map'),
 }
 
 const renderNode = node => {

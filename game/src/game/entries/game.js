@@ -36,9 +36,9 @@ import AssmebleMap from 'render/background/assemble'
 import MapView from 'view/map'
 import AutosaveView from 'view/autosave'
 import FullscreenEvents from 'view/fullscreenEvents'
+import UnitMapView from 'view/map/unit'
 
 import Dialog from 'view/ui/dialog'
-
 import GlobalPanel from 'view/panel/global'
 
 const AUTOSAVE_INTERVAL = 5 * 60 * 1000 // autosave every 5 minutes
@@ -183,7 +183,8 @@ const start = async () => {
     setTimeout(() => {
       Input.initialize()
       Dialog.open('welcome', {
-        caravel
+        caravel,
+        select: () => UnitMapView.select(caravel)
       })
     }, 3500)
 

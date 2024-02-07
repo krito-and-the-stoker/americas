@@ -1,6 +1,8 @@
 import { createSignal, createResource } from 'solid-js'
 import { createStore } from 'solid-js/store'
 
+import Util from 'util/util'
+
 import DialogContext from 'view/ui/dialogContext'
 import { fetchDialogs } from './templates'
 
@@ -15,6 +17,7 @@ const getDialog = () => hasDialog(name())
   : null
 
 
+let cleanup = null
 export const open = (name, context = {}, handleData = () => {}) => {
   if (!hasDialog(name)) {
     console.error('Dialog not found', name, '\nThese dialogs are valid:', Object.keys(dialogs()))
@@ -25,12 +28,20 @@ export const open = (name, context = {}, handleData = () => {}) => {
   setName(name)
   const data = getDialog().data ?? {}
   setStaticData(data)
-  handleData(data)
+
+  if (cleanup) {
+    console.warn('Dialog: Cleanup function should be null at this point')
+  }
+  cleanup = handleData(data)
 
   return close
 }
 
-export const close = () => setName('')
+export const close = () => {
+  setName('')
+  Util.execute(cleanup)
+  cleanup = null
+}
 
 
 export default {
