@@ -114,9 +114,9 @@ A **{unitName}** has arrived in *{colony.name}*
 
 
 ---dialog---
-[name: notification.colony.promoted]
+[name: notification.unit.promoted]
 [image: govenor]
-[coordinates: colony.mapCoordinates]
+[coordinates: unit.mapCoordinates]
 [backdrop: notified]
 
 A colonist has learned a *new profession* and is now considered a **{unitName}**.

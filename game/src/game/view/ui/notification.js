@@ -624,9 +624,8 @@ const createLearned = ({ colony, colonist, unit }) => {
   }
 
   const dialog = {
-    name: 'notification.colony.promoted',
+    name: 'notification.unit.promoted',
     context: {
-      colony,
       unit,
       unitName: Unit.name(unit)
     }

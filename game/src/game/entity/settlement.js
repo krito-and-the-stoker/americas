@@ -272,7 +272,9 @@ const dialog = (settlement, unit, answer) => {
             )
             tiles.forEach(tile => {
               if (Math.random() > 0.4) {
-                Tile.discover(tile, unit.owner)
+                setTimeout(() => {
+                  Tile.discover(tile, unit.owner)
+                }, Math.random() * 1000)
               }
             })
           }
@@ -447,6 +449,7 @@ const dialog = (settlement, unit, answer) => {
         }
       }
       if (unit.expert === settlement.expert) {
+        const expert = experts[settlement.expert]
         return {
           name: 'settlement.enter.fellow_expert',
           context: {
