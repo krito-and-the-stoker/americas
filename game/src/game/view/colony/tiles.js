@@ -32,33 +32,21 @@ const TILE_SIZE = 64
 const MAP_COLONY_FRAME_ID = 53
 
 const buyLandDialog = (tile, colony, settlement) =>
-  Dialog.create({
-    text: 'We *already use* this land and will appreciate if *you stay clear* of it.<options/>',
-    type: 'natives',
-    image: settlement.tribe.image,
-    options: [
-      {
-        text: 'We will *respect your wishes*',
-      },
-      {
-        text: 'We offer you **500**<good>gold</good> as a *compensation* for.',
-        action: () => {
-          settlement.owner.ai.state.relations[colony.owner.referenceId].trust -= 0.025
-          Treasure.spend(500)
-          Tile.update.harvestedBy(tile, null)
-        },
-        disabled: Treasure.amount() < 500,
-      },
-      {
-        text: 'We have *rightfully claimed* this land for the crown of England and will use it.',
-        action: () => {
-          settlement.owner.ai.state.relations[colony.owner.referenceId].trust -= 0.2
-          settlement.owner.ai.state.relations[colony.owner.referenceId].militancy += 0.1
-          Tile.update.harvestedBy(tile, null)
-        },
-      },
-    ],
+  Dialog.open('colony.buyland', {
+    settlement,
+    disableBuy: Treasure.amount() < 500,
+    buy: () => {
+      settlement.owner.ai.state.relations[colony.owner.referenceId].trust -= 0.025
+      Treasure.spend(500)
+      Tile.update.harvestedBy(tile, null)
+    },
+    claim: () => {
+      settlement.owner.ai.state.relations[colony.owner.referenceId].trust -= 0.2
+      settlement.owner.ai.state.relations[colony.owner.referenceId].militancy += 0.1
+      Tile.update.harvestedBy(tile, null)
+    }
   })
+
 
 const create = (colony, originalDimensions) => {
   const container = {
