@@ -245,7 +245,7 @@ const dialog = (settlement, unit, answer) => {
       }
     }
 
-    if (settlement.presentGiven || choice < 0.3) {
+    if (settlement.presentGiven || choice < 0.2) {
       settlement.presentGiven = true
       unit.equipment.food = Unit.UNIT_FOOD_CAPACITY
       Storage.update(unit.equipment)
@@ -256,12 +256,12 @@ const dialog = (settlement, unit, answer) => {
         }
       }
     }
-    if (choice < 0.8) {
+    if (choice < 0.7) {
       unit.equipment.food = Unit.UNIT_FOOD_CAPACITY
       Storage.update(unit.equipment)
 
       return {
-        name: 'settlement.chief.welcome',
+        name: 'settlement.chief.discover',
         context: {
           expert,
           discover: () => {

@@ -42,20 +42,18 @@ const commit = (tribe, state, colony) => {
   const amount = Math.ceil(5 + 15 * Math.random() + 20 * relation.trust)
 
   relation.colonies[colony.referenceId].visited = Time.now()
-  Events.trigger('dialog', {
-    type: 'natives',
-    image: tribe.image,
-    text: `You have made quite some progress with your village called **${colony.name}**. The *${tribe.name}* want to help you and gift you these **${amount}**<good>${good}</good>.<options/>`,
-    pause: true,
-    options: [
-      {
-        text: 'Thank you.',
-        default: true,
-        action: () => {
-          Storage.update(colony.storage, { good, amount })
-        },
-      },
-    ],
+  Events.trigger('ui-dialog', {
+    name: 'natives.visit_colony',
+    context: {
+      tribe,
+      relation,
+      good,
+      amount,
+      colony,
+      take: () => {
+        Storage.update(colony.storage, { good, amount })
+      }
+    }
   })
 }
 

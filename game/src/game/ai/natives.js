@@ -245,28 +245,21 @@ const establishRelations = (ai, owner) => {
     const numSettlements = Record.getAll('settlement').filter(
       settlement => settlement.tribe === ai.tribe
     ).length
-    Events.trigger('dialog', {
-      type: 'natives',
-      image: ai.tribe.image,
-      text: `Hello strange men from the sea. We are the **${ai.tribe.name}** and live here in *${numSettlements} settlements*. We welcome you on our land. Would you like to join our *peace* ceremony?<options/>`,
-      pause: true,
-      options: [
-        {
-          text: 'Yes',
-          action: () => {
-            ai.state.relations[owner.referenceId].trust += 0.15
-            update.state(ai)
-          },
+    Events.trigger('ui-dialog', {
+      name: 'natives.establish',
+      context: {
+        tribe,
+        numSettlements,
+        yes: () => {
+          ai.state.relations[owner.referenceId].trust += 0.15
+          update.state(ai)
         },
-        {
-          text: 'No',
-          action: () => {
-            ai.state.relations[owner.referenceId].trust -= 0.5
-            ai.state.relations[owner.referenceId].militancy += 0.2
-            update.state(ai)
-          },
-        },
-      ],
+        no: () => {
+          ai.state.relations[owner.referenceId].trust -= 0.5
+          ai.state.relations[owner.referenceId].militancy += 0.2
+          update.state(ai)
+        }
+      }
     })
   }
 }

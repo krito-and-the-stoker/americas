@@ -138,7 +138,7 @@ We *gladly welcome* you in our settlement.
 
 ---dialog---
 [name: settlement.enter.refuse]
-[image: marshall]
+[image: marshal]
 [coordinates: settlement.mapCoordinates]
 
 The *{settlement.tribe.name}* seem {description} and our civilians refuse to enter the settlement.
@@ -148,7 +148,7 @@ The *{settlement.tribe.name}* seem {description} and our civilians refuse to ent
 
 ---dialog---
 [name: settlement.enter.scout]
-[image: marshall]
+[image: settlement.tribe.image]
 [coordinates: settlement.mapCoordinates]
 
 The natives are *{description}* as you approach their {settlementDescription} settlement ({settlement.population}).
@@ -252,7 +252,7 @@ The natives greet you.
 
 ---dialog---
 [name: settlement.enter.military]
-[image: marshall]
+[image: marshal]
 [coordinates: settlement.mapCoordinates]
 
 Military units can not enter settlements for now: *not implemented*
