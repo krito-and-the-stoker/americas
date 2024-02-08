@@ -199,14 +199,9 @@ const purchaseOptions = () =>
   ]
     .map(option => ({
       ...option,
-      text: `<|**${option.name}**<->${option.price}<good>gold</good>|>`,
       disabled: Treasure.amount() < option.price,
       action: () => purchase(option),
     }))
-    .concat({
-      text: 'Nothing at the moment.',
-      margin: true,
-    })
 
 const purchase = option => {
   if (Treasure.spend(option.price) && option.unit) {
@@ -223,14 +218,11 @@ const purchase = option => {
 const trainOptions = () =>
   possibleTrainees
     .map(({ unit, name, expert, price }) => ({
-      text: `<|**${name}**<->${price}<good>gold</good>|>`,
+      name,
+      price,
       disabled: Treasure.amount() < price,
       action: () => train({ unit, expert, price }),
     }))
-    .concat({
-      text: 'Nothing at the moment.',
-      margin: true,
-    })
 
 const train = option => {
   if (Treasure.spend(option.price) && option.unit) {

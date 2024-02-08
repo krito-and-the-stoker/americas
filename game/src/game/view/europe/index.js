@@ -70,10 +70,8 @@ const create = () => {
   // normalContainer.addChild(recruitButton)
 
   const purchaseButton = Button.create('purchase', () =>
-    Dialog.create({
-      type: 'menu',
-      text: 'What would you like to *purchase*? <options/>',
-      options: Europe.purchaseOptions(),
+    Dialog.open('europe.purchase', {
+      options: Europe.purchaseOptions()
     })
   )
   purchaseButton.x = originalDimensions.x - purchaseButton.width - 20
@@ -81,9 +79,7 @@ const create = () => {
   normalContainer.addChild(purchaseButton)
 
   const trainButton = Button.create('train', () =>
-    Dialog.create({
-      type: 'menu',
-      text: 'Who would you like to *train*? <options/>',
+    Dialog.open('europe.train', {
       options: Europe.trainOptions(),
     })
   )

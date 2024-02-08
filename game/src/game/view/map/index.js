@@ -282,34 +282,22 @@ const initialize = () => {
         }
         const targetTile = MapEntity.tile(target)
         if (targetTile.name === 'sea lane') {
-          Dialog.create({
-            type: 'naval',
-            text: 'Would you like to set sail for *Europe*? <options/>',
-            options: [
-              {
-                text: '*Yes*, steady as she goes!',
-                action: () => {
-                  Commander.scheduleBehind(
-                    selectedUnit.commander,
-                    Europe.create({ unit: selectedUnit })
-                  )
-                  Commander.scheduleBehind(
-                    selectedUnit.commander,
-                    TriggerEvent.create({
-                      name: 'notification',
-                      type: 'europe',
-                      unit: selectedUnit,
-                    })
-                  )
-                },
-              },
-              {
-                text: '*No*, let as remain here',
-                action: () => {},
-                default: true,
-              },
-            ],
-            coords: selectedUnit.mapCoordinates,
+          Dialog.open('unit.goto.europe', {
+            unit: selectedUnit,
+            sail: () => {
+              Commander.scheduleBehind(
+                selectedUnit.commander,
+                Europe.create({ unit: selectedUnit })
+              )
+              Commander.scheduleBehind(
+                selectedUnit.commander,
+                TriggerEvent.create({
+                  name: 'notification',
+                  type: 'europe',
+                  unit: selectedUnit,
+                })
+              )
+            }
           })
         }
         Events.trigger('move', selectedUnit)

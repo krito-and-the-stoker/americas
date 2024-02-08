@@ -11,5 +11,3 @@ We crossed the Atlantic Ocean.
 Let us **sail west** and claim Englands fair share of this land!
 
 [answer action:select] Okay let's go []
-
-[inspect: caravel]

@@ -81,7 +81,7 @@ const selectTarget = unit => {
     disabled: repairCost < 1 || repairCost > Treasure.amount()
   }
 
-  Dialog.open('unit_goto_americas', {
+  Dialog.open('unit.goto.americas', {
     colonies,
     openWaters,
     repair

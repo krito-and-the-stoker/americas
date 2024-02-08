@@ -1,5 +1,5 @@
 [dialog]
-[name: unit_goto_sea]
+[name: unit.goto.sea]
 [image: admiral]
 [backdrop: close]
 
@@ -12,7 +12,7 @@ Where shall we go?
 
 
 [dialog]
-[name: unit_goto_land]
+[name: unit.goto.land]
 [image: scout]
 [backdrop: close]
 
@@ -24,7 +24,7 @@ Where shall we go?
 
 
 [dialog]
-[name: unit_goto_americas]
+[name: unit.goto.americas]
 [image: admiral]
 [backdrop: close]
 
@@ -39,5 +39,15 @@ Where shall we *sail* to?
   repair ship (**{repair.cost} [icon: gold]**)
 []
 
-[inspect: repair]
+
+[dialog]
+[name: unit.goto.europe]
+[image: admiral]
+[coordinates: unit.mapCoordinates]
+[backdrop: close]
+
+Would you like to set sail for *Europe*?
+
+[answer action:sail] *Yes*, steady as she goes! []
+[answer] *No*, let as remain here []
 

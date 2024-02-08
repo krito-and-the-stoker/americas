@@ -45,7 +45,7 @@ const handleGoTo = unit => {
     }))
 
   if (unit.domain === 'sea') {
-    Dialog.open('unit_goto_sea', {
+    Dialog.open('unit.goto.sea', {
       colonies,
       homeport: {
         name: 'London',
@@ -64,7 +64,7 @@ const handleGoTo = unit => {
       }
     })
   } else {
-    Dialog.open('unit_goto_land', {
+    Dialog.open('unit.goto.land', {
       colonies
     })
   }
