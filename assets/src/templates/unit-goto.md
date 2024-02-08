@@ -30,7 +30,7 @@ Where shall we go?
 
 Where shall we *sail* to?
 
-[answer action:openWaters] *Open waters* in the Americas []
+[answer action:openWaters] **Open waters** in the *Americas* []
 [repeat colonies]
 [answer action:{.action}] **{.name}** ({.size}) []
 []

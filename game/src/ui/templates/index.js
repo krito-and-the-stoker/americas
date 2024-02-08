@@ -55,5 +55,7 @@ export const fetchDialogs = async (staticContext) => {
 		})
 	}
 
+	console.log(`Prerendered ${Object.keys(dialogs).length} Dialog templates`)
+
 	return dialogs
 }

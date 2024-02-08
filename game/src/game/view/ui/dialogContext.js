@@ -1,5 +1,6 @@
-const centerMap = (...args) => {
-	console.log('centering map at', ...args)
+const centerMap = (coords) => {
+	console.log('centering map at', coords)
+	// MapView.centerAt(coords, 350)
 }
 
 export default {

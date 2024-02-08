@@ -6,7 +6,7 @@
 .left {
 	top: 50%;
 	left: 0;
-	transform: translate(-50%, -50%);
+	transform: translate(-42%, -50%);
 }
 
 .top {
@@ -14,4 +14,10 @@
 	left: 50%;
 	transform: translate(-50%, -75%);
 	mask-image: linear-gradient(to top, transparent, black 25%);
+}
+
+.right {
+	top: 50%;
+	right: 0;
+	transform: translate(42%, -50%);
 }

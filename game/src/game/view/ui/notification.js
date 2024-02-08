@@ -197,8 +197,10 @@ const createEurope = unit => {
   }
 
   const dialog = {
-    text: `A ${Unit.name(unit)} has arrived in Europe.`,
-    type: 'naval',
+    name: 'notification.unit.europe',
+    context: {
+      unitName: Unit.name(unit)
+    }
   }
 
   return {
@@ -223,8 +225,10 @@ const createImmigration = unit => {
   }
 
   const dialog = {
-    text: `Religous unrest has caused immigration from Europe. A new ${Unit.name(unit)} is waiting to be picked up in London.`,
-    type: 'religion',
+    name: 'notification.immigration',
+    context: {
+      unitName: Unit.name(unit)
+    }
   }
 
   return {
@@ -252,9 +256,11 @@ const createAmerica = unit => {
   }
 
   const dialog = {
-    text: `A ${Unit.name(unit)} has arrived in the new world.`,
-    coords: unit.mapCoordinates,
-    type: 'naval',
+    name: 'notification.unit.arrived.new_world',
+    context: {
+      unitName: Unit.name(unit),
+      unit,
+    }
   }
 
   return {
@@ -282,9 +288,11 @@ const createConstruction = (colony, { building, unit }) => {
 
   const constructionName = building ? Building.getName(colony, building) : Unit.name(unit)
   const dialog = {
-    text: `${colony.name} has finished the construction of a ${constructionName}.`,
-    coords: colony.mapCoordinates,
-    type: 'govenor',
+    name: 'notification.colony.construction',
+    context: {
+      colony,
+      constructionName
+    }
   }
 
   return {
@@ -322,9 +330,11 @@ const createTerraforming = unit => {
   }
 
   const dialog = {
-    text: `A ${Unit.name(unit)} has finished working on a tile`,
-    coords: unit.mapCoordinates,
-    type: 'scout',
+    name: 'notification.pioneer',
+    context: {
+      unit,
+      unitName: Unit.name(unit)
+    }
   }
 
   return {
@@ -345,20 +355,9 @@ const createRumor = (option, tile, unit) => {
   const action = () => {
     UnitMapView.select(unit)
     Tile.updateRumors(tile)
-    Dialog.create({
-      type: 'scout',
-      text: option.text,
-      options: [
-        {
-          action: () => {
-            option.action()
-          },
-          default: true,
-        },
-      ],
-      coords: unit.mapCoordinates,
-      pause: true,
-    })
+
+    console.log(option)
+    Dialog.open(option.name, option.context)
   }
 
   const dismiss = {
@@ -366,9 +365,11 @@ const createRumor = (option, tile, unit) => {
   }
 
   const dialog = {
-    text: `A ${Unit.name(unit)} has found a rumor.`,
-    coord: unit.mapCoordinates,
-    type: 'scout',
+    name: 'notification.rumor',
+    context: {
+      unitName: Unit.name(unit),
+      unit
+    }
   }
 
   return {
@@ -419,9 +420,11 @@ const createSettlement = (settlement, unit) => {
   }
 
   const dialog = {
-    text: `A ${Unit.name(unit)} has entered a native village`,
-    coords: settlement.mapCoordinates,
-    type: 'scout',
+    name: 'notification.settlement.enter',
+    context: {
+      unit: Unit.name(unit),
+      settlement,
+    }
   }
 
   return {
@@ -445,9 +448,10 @@ const createSettlerBorn = (colony, unit) => {
   }
 
   const dialog = {
-    text: `A new settler has been born in ${colony.name}`,
-    coords: colony.mapCoordinates,
-    type: 'govenor',
+    name: 'notification.colony.born',
+    context: {
+      colony
+    }
   }
 
   return {
@@ -472,9 +476,10 @@ const createStarving = colony => {
   }
 
   const dialog = {
-    text: `The food storage of ${colony.name} is empty and the settlers are starving! Make sure they have enough food to support themselves immediatly.`,
-    coord: colony.mapCoordinates,
-    type: 'govenor',
+    name: 'notification.colony.starving',
+    context: {
+      colony
+    }
   }
 
   return {
@@ -496,9 +501,11 @@ const createDied = unit => {
   const dismiss = {}
 
   const dialog = {
-    text: `A ${Unit.name(unit)} has died of starvation`,
-    coords: unit.mapCoordinates,
-    type: 'govenor',
+    name: 'notification.colony.died',
+    context: {
+      unitName: Unit.name(unit),
+      unit,
+    }
   }
 
   return {
@@ -523,9 +530,11 @@ const createStorageEmpty = (colony, good) => {
   }
 
   const dialog = {
-    text: `${colony.name} has run out of ${good}.`,
-    coords: colony.mapCoordinates,
-    type: 'govenor',
+    name: 'notification.colony.storage.empty',
+    context: {
+      colony,
+      good
+    }
   }
 
   return {
@@ -550,9 +559,10 @@ const createStorageFull = (colony, good) => {
   }
 
   const dialog = {
-    text: `The storage of ${colony.name} is full! Adding more goods will lead to loss.`,
-    coords: colony.mapCoordinates,
-    type: 'govenor',
+    name: 'notification.colony.storage.full',
+    context: {
+      colony
+    }
   }
 
   return {
@@ -576,9 +586,11 @@ const createArrive = (colony, unit) => {
   }
 
   const dialog = {
-    text: `A ${Unit.name(unit)} has arrived in ${colony.name}`,
-    coords: colony.mapCoordinates,
-    type: 'naval',
+    name: 'notification.unit.arrived.colony',
+    context: {
+      colony,
+      unitName: Unit.name(unit)
+    }
   }
 
   return {
@@ -613,9 +625,12 @@ const createLearned = ({ colony, colonist, unit }) => {
   }
 
   const dialog = {
-    text: `A colonist has learned a new profession and is now considered a **${Unit.name(unit)}**.`,
-    coords: unit.mapCoordinates,
-    type: 'govenor',
+    name: 'notification.colony.promoted',
+    context: {
+      colony,
+      unit,
+      unitName: Unit.name(unit)
+    }
   }
 
   return {
@@ -645,23 +660,14 @@ const createTreasure = (colony, unit) => {
     MapView.centerAt(unit.mapCoordinates, 350)
     UnitMapView.select(unit)
     if (!hasGalleon) {
-      Dialog.create({
-        type: 'king',
-        text: 'You do not seem to have **a galleon** ready for transport. Would you like us to *take care of the transport*? The crown would, of course, take a **fair share** for its efforts.<options/>',
-        coords: unit.mapCoordinates,
-        options: [
-          {
-            text: `Yes, please transport the treasure for us and take your share of 50% (${Math.round(0.5 * unit.treasure)}<good>gold</good>).`,
-            action: () => {
-              const amount = Math.ceil(0.5 * unit.treasure)
-              Unit.disband(unit)
-              Treasure.gain(amount)
-            },
-          },
-          {
-            text: 'No thank you, we will transport our valuables ourself.',
-          },
-        ],
+      Dialog.open('treasure.transport', {
+        unit,
+        cost: Math.ceil(0.5 * unit.treasure),
+        transport: () => {
+          const amount = Math.ceil(0.5 * unit.treasure)
+          Unit.disband(unit)
+          Treasure.gain(amount)
+        }
       })
     }
   }
@@ -669,9 +675,11 @@ const createTreasure = (colony, unit) => {
   const dismiss = {}
 
   const dialog = {
-    text: `We have secured the treasure in *${colony.name}*. However, we need **a galleon** to transport it to Europe.`,
-    type: 'govenor',
-    coords: unit.mapCoordinates,
+    name: 'notification.treasure',
+    context: {
+      colony,
+      unit
+    }
   }
 
   return {
@@ -700,9 +708,11 @@ const createDestroyed = (settlement, treasure) => {
 
   const tribeName = settlement.tribe.name
   const dialog = {
-    text: `A settlement of the *${tribeName}* has been **destroyed**. Natives flee in panic. The *${tribeName}* swear to take revenge. We have found **${treasure.treasure}**<good>gold</good> in the ruins.`,
-    type: 'marshal',
-    coords: settlement.mapCoordinates,
+    name: 'notification.settlement.destroyed',
+    context: {
+      treasure,
+      settlement,
+    }
   }
 
   return {
@@ -733,9 +743,10 @@ const createDecimated = settlement => {
 
   const tribeName = settlement.tribe.name
   const dialog = {
-    text: `A settlement of the *${tribeName}* has been decimated tremendously.`,
-    type: 'marshal',
-    coords: settlement.mapCoordinates,
+    name: 'notification.settlement.decimated',
+    context: {
+      settlement,
+    }
   }
 
   return {
@@ -756,19 +767,20 @@ const createRaid = (colony, unit, pack) => {
 
   const action = () => {
     MapView.centerAt(colony.mapCoordinates, 350)
-    Dialog.create({
-      type: 'govenor',
-      text: `The storage of *${colony.name}* has been *plundered*. **${Math.round(pack.amount)}**<good>${pack.good}</good> are missing.`,
-      coords: colony.mapCoordinates,
+    Dialog.open('notification.plundered', {
+      colony,
+      ...pack
     })
   }
 
   const dismiss = {}
 
   const dialog = {
-    text: `There has been *a raid* in *${colony.name}*. The storage has been plundered and lots of goods are missing. Try protect your cities with *armed forces*. *Stockades and forts* are greatly effective to prevent such events.`,
-    type: 'govenor',
-    coords: colony.mapCoordinates,
+    name: 'notification.raid',
+    context: {
+      colony,
+      ...pack
+    }
   }
 
   return {
@@ -827,18 +839,22 @@ const createCombat = (attacker, defender, loser, strength) => {
 
   const action = () => {
     MapView.centerAt(coords, 350)
-    Dialog.create({
-      type: 'marshal',
-      text: `A **${Unit.name(winner)}** (${winnerStrength}) has defeated a **${Unit.name(loser)}** (${loserStrength}) in battle.`,
+    Dialog.open('notification.fight.result', {
+      winner,
+      winnerName: Unit.name(winner),
+      loserName: Unit.name(loser),
+      winnerStrength,
+      loserStrength
     })
   }
 
   const dismiss = {}
 
   const dialog = {
-    type: 'marshal',
-    text: 'There has been a fight!',
-    coords: defender.mapCoordinates,
+    name: 'notification.fight',
+    context: {
+      defender
+    }
   }
 
   return {
@@ -897,34 +913,27 @@ const create = params => {
     })
     Secondary.on(notification.container, () => remove(notification))
   } else {
-    Dialog.create({
-      type: 'notification',
-      pause: true,
-      ...notification.dialog,
-      options: [
+    notification.dialog.context.notified = () => {
+      unsubscribePositioning()
+      notification.container.cacheAsBitmap = true
+      Tween.scaleTo(notification.container, 1.5, 1500)
+      Tween.moveTo(
+        notification.container,
         {
-          default: true,
-          action: () => {
-            unsubscribePositioning()
-            notification.container.cacheAsBitmap = true
-            Tween.scaleTo(notification.container, 1.5, 1500)
-            Tween.moveTo(
-              notification.container,
-              {
-                x: (notifications.length - 1) * (iconSize + iconMargin),
-                y: 0,
-              },
-              1500
-            )
-            Click.on(notification.container, () => {
-              notification.action()
-              remove(notification)
-            })
-            Secondary.on(notification.container, () => remove(notification))
-          },
+          x: (notifications.length - 1) * (iconSize + iconMargin),
+          y: 0,
         },
-      ],
-    })
+        1500
+      )
+      Click.on(notification.container, () => {
+        notification.action()
+        remove(notification)
+      })
+      Secondary.on(notification.container, () => remove(notification))
+    }
+
+    Dialog.open(notification.dialog.name, notification.dialog.context)
+
 
     notification.container.scale.set(2)
     const unsubscribePositioning = RenderView.listen.dimensions(dimensions => {

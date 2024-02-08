@@ -1,3 +1,4 @@
+import Record from 'util/record'
 import Events from 'util/events'
 
 import MapEntity from 'entity/map'
@@ -14,30 +15,29 @@ import Europe from 'entity/europe'
 
 const options = [
   {
-    text: () => 'Your find **nothing** but rumors',
+    name: 'rumor.empty',
     action: () => {},
     probability: 1,
   },
   {
-    text: () => 'Your expedition has **vanished** without a trace.',
+    name: 'expedition.vanished',
     action: ({ unit }) => Unit.disband(unit),
     probability: 0.1,
   },
   {
-    text: ({ random }) =>
-      `Your expedition enters a small friendly tribe. The chief offers you a gift worth **${Math.round(100 + 400 * random)}**<good>gold</good>.`,
+    name: 'expedition.tribeGift',
+    context: ({ random }) => ({ amount: Math.round(100 + 400 * random) }),
     action: ({ random }) => Treasure.gain(Math.round(100 + 400 * random)),
     probability: 2,
   },
   {
-    text: () =>
-      'You happen upon the desperate **survivors** of a former colony. In exchange for badly needed supplies, they swear allegiance to you.',
+    name: 'expedition.survivorsFound',
     action: ({ unit }) => Unit.create('settler', unit.mapCoordinates, unit.owner),
     probability: 0.5,
   },
   {
-    text: ({ random }) =>
-      `You find the ruins of a lost civilization. Within are gold and artifacts worth **${Math.round(2000 + 5000 * random)}**<good>gold</good>.`,
+    name: 'expedition.ruinsDiscovery',
+    context: ({ random }) => ({ amount: Math.round(2000 + 5000 * random) }),
     action: ({ random, unit }) => {
       const treasure = Unit.create('treasure', unit.mapCoordinates, unit.owner)
       treasure.treasure = Math.round(2000 + 5000 * random)
@@ -45,8 +45,8 @@ const options = [
     probability: 0.2,
   },
   {
-    text: ({ random }) =>
-      `You have found one of the *Seven Cities of Cibola*! Treasure worth **${Math.round(10000 + 20000 * random)}**<good>gold</good> unearthed in the ruins! It will take a *Galleon* to get this treasure back to Europe!`,
+    name: 'expedition.cibola',
+    context: ({ random }) => ({ amount: Math.round(10000 + 20000 * random) }),
     action: ({ random, unit }) => {
       const treasure = Unit.create('treasure', unit.mapCoordinates, unit.owner)
       treasure.treasure = Math.round(10000 + 20000 * random)
@@ -54,32 +54,51 @@ const options = [
     probability: 0.05,
   },
   {
-    text: () =>
-      'You have discovered a **Fountain of Youth**! Rumors fly in Europe! *Immigrants* line the docks to seek perpetual youth in the New World!',
+    name: 'expedition.fountainOfYouth',
     action: () => Europe.update.crosses(200),
     probability: 0.025,
   },
   {
-    text: () => 'You are *trespassing* near our holy shrines!',
+    name: 'expedition.trespassingWarning',
+    context: ({ unit }) => {
+      const tribe = Record.getAll('tribe').find(tribe => {
+        const relations = tribe.owner.ai.state.relations[unit.owner.referenceId]
+        if (relations) {
+          return true
+        }
+      })
+
+      return {
+        tribe
+      }
+    },
     action: () => {},
     probability: 0.1,
   },
 ]
 
+let counter = 7
 export default unit => {
   const totalProbabilities = options.reduce((sum, option) => sum + option.probability, 0)
   const option = options.reduce(
     (current, option) =>
       current.sum > 0 ? { ...option, sum: current.sum - option.probability } : current,
     { sum: totalProbabilities * Math.random() }
-  )
+  ) && options[counter % options.length]
+  counter += 1
 
   const random = Math.random()
   const tile = MapEntity.tile(unit.mapCoordinates)
   const evaluatedOption = {
-    text: option.text({ unit, random }),
-    action: () => option.action({ unit, random }),
+    name: option.name,
+    context: {
+      unit,
+      random,
+      ...(option.context ? option.context({ unit, random }) : {}),
+      action: () => option.action({ unit, random }),
+    }
   }
+
   Events.trigger('notification', {
     type: 'rumor',
     option: evaluatedOption,

@@ -7,7 +7,7 @@ const images = {
 	religion: '/images/dialog-characters/religion.png',
 	scout: '/images/dialog-characters/scout.png',
 
-	king_james: '/images/dialog-characters/king-james.png',
+	king: '/images/dialog-characters/king-james.png',
 
 	native1: '/images/characters-head/native1.png',
 	native2: '/images/characters-head/native2.png',
@@ -23,7 +23,7 @@ const images = {
 
 const positioning = {
 	left: ['admiral', 'govenor', 'marshal', 'religion', 'scout'],
-	right: ['king_james'],
+	right: ['king'],
 	top: [
 		'native1',
 		'native2',

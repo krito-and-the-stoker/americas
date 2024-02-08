@@ -4,14 +4,12 @@
 [backdrop: close]
 
 The *{settlement.tribe.name}* seem {relation} at the moment.
-
 [if settlement.presentGiven]
 This settlement has the knowledge to train a **{expert}**.
 []
 [if {not settlement.presentGiven}]
 We have *not visited* this village yet.
 []
-
 
 ---dialog---
 [name: settlement.reject]
@@ -145,10 +143,9 @@ We do not feel comfortable around your people at this time. *Please leave*.
 [name: settlement.live.accept]
 [image: settlement.tribe.image]
 [coordinates: settlement.mapCoordinates]
+[backdrop: live]
 
 We *gladly welcome* you in our settlement.
-
-[answer] Live with the *{settlement.tribe.name}* []
 
 
 ---dialog---
