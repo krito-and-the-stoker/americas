@@ -1,4 +1,4 @@
-[dialog]
+---dialog---
 [name: unit.goto.sea]
 [image: admiral]
 [backdrop: close]
@@ -11,7 +11,7 @@ Where shall we go?
 [answer action:{homeport.action}] **{homeport.name}** (Europe) []
 
 
-[dialog]
+---dialog---
 [name: unit.goto.land]
 [image: scout]
 [backdrop: close]
@@ -23,7 +23,7 @@ Where shall we go?
 []
 
 
-[dialog]
+---dialog---
 [name: unit.goto.americas]
 [image: admiral]
 [backdrop: close]
@@ -40,7 +40,7 @@ Where shall we *sail* to?
 []
 
 
-[dialog]
+---dialog---
 [name: unit.goto.europe]
 [image: admiral]
 [coordinates: unit.mapCoordinates]

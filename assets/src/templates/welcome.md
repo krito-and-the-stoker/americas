@@ -1,4 +1,4 @@
-[dialog]
+---dialog---
 [name: welcome]
 [coordinates: caravel.mapCoordinates]
 [image: admiral]

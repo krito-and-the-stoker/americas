@@ -381,26 +381,23 @@ const createRumor = (option, tile, unit) => {
 }
 
 const createSettlementDialog = (settlement, unit, answer) => {
-  const dialog = {
-    pause: true,
-    coords: unit.mapCoordinates,
-    ...Settlement.dialog(settlement, unit, answer),
-  }
-  dialog.options = dialog.options
-    ? dialog.options.map(option => ({
-        ...option,
-        action: () => {
-          if (option.action) {
-            option.action()
-          }
-          if (option.answer) {
-            createSettlementDialog(settlement, unit, option.answer)
-          }
-        },
-      }))
-    : []
-
-  Dialog.create(dialog)
+  const dialog = Settlement.dialog(settlement, unit, answer)
+  const actions = dialog.answers
+    ? Object.fromEntries(
+      dialog.answers.map(nextAnswer => ([
+        nextAnswer,
+        () => {
+          createSettlementDialog(settlement, unit, nextAnswer)
+        }
+      ]))
+    )
+    : {}
+  
+  Dialog.open(dialog.name, {
+    settlement,
+    ...(dialog.context ?? {}),
+    ...actions,
+  })
 }
 
 const createSettlement = (settlement, unit) => {

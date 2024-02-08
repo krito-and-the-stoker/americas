@@ -1,4 +1,4 @@
-[dialog]
+---dialog---
 [name: disembark]
 [image: admiral]
 [coordinates: unit.mapCoordinates]

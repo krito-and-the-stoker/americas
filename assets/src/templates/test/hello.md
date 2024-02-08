@@ -1,4 +1,4 @@
-[dialog]
+---dialog---
 [name: hello_world]
 _Hallo_ {counter} **Welt**!
 
@@ -10,6 +10,6 @@ We have a counter!
 [repeat list] {.}, []
 
 
-[dialog]
+---dialog---
 [name: second_dialog]
 Here is a second dialog in one file

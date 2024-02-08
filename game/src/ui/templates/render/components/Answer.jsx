@@ -6,8 +6,8 @@ import styles from './Answer.module.scss'
 
 function Answer(props) {
 	function handleClick() {
-		Util.execute(props.action)
 		ReactiveDialog.close()
+		Util.execute(props.action)
 	}
 
 	return <a classList={{

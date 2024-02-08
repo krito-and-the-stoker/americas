@@ -1,4 +1,4 @@
-[dialog]
+---dialog---
 [name: europe.purchase]
 [backdrop: close]
 
@@ -15,7 +15,7 @@ What would you like to *purchase*?
 
 [answer] Nothing at the moment. []
 
-[dialog]
+---dialog---
 [name: europe.train]
 [backdrop: close]
 

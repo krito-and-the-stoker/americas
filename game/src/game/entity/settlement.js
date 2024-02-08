@@ -86,38 +86,29 @@ const initialize = settlement => {
 
 const dialog = (settlement, unit, answer) => {
   const relations = settlement.owner.ai.state.relations[unit.owner.referenceId]
+  if (!relations) {
+    return {
+      name: 'settlement.no_relations'
+    }
+  }
+
   if (answer === 'food') {
     if (relations.trust < -0.3 && relations.militancy > 0.7) {
       return {
-        text: 'We would rather die than feed your greed!<options/>',
-        type: 'natives',
-        image: settlement.tribe.image,
-        options: [
-          {
-            text: 'Then you will die! (*threaten them*)',
-            action: () => {
-              relations.trust -= 0.5
-              relations.militancy += 0.2
-              Natives.update.state(settlement.owner.ai)
-            },
-          },
-          {
-            text: 'Never mind...',
-          },
-        ],
+        name: 'settlement.reject',
+        context: {
+          threaten: () => {
+            relations.trust -= 0.5
+            relations.militancy += 0.2
+            Natives.update.state(settlement.owner.ai)
+          }
+        }
       }
     }
 
     if (settlement.lastTaxation > Time.get().currentTime - Time.YEAR) {
       return {
-        text: 'We have already given you all we have. We cannot give you anything more this year. <options/>',
-        type: 'natives',
-        image: settlement.tribe.image,
-        options: [
-          {
-            text: 'So this is how you help out...',
-          },
-        ],
+        name: 'settlement.food.already_given',
       }
     }
 
@@ -126,51 +117,35 @@ const dialog = (settlement, unit, answer) => {
     settlement.lastTaxation = Time.get().currentTime
     const amount = Math.round(settlement.population * (1 + 2 * Math.random()))
     return {
-      text: `We do not really have a surplus, but take these **${amount}** <good>food</good> if you must. <options/>`,
-      type: 'natives',
-      image: settlement.tribe.image,
-      options: [
-        {
-          default: true,
-          action: () => {
+      name: {
+        name: 'settlement.food.give',
+        context: {
+          amount,
+          take: () => {
             Storage.update(unit.equipment, { good: 'food', amount })
           },
-        },
-      ],
+        }
+      }
     }
   }
+
   if (answer === 'tribute') {
     if (relations.trust < -0.3 && relations.militancy > 0.7) {
       return {
-        text: 'We would rather die than feed your greed!<options/>',
-        type: 'natives',
-        image: settlement.tribe.image,
-        options: [
-          {
-            text: 'Then you will die! (*threaten them*)',
-            action: () => {
-              relations.trust -= 0.5
-              relations.militancy += 0.2
-              Natives.update.state(settlement.owner.ai)
-            },
-          },
-          {
-            text: 'Never mind...',
-          },
-        ],
+        name: 'settlement.reject',
+        context: {
+          threaten: () => {
+            relations.trust -= 0.5
+            relations.militancy += 0.2
+            Natives.update.state(settlement.owner.ai)
+          }
+        }
       }
     }
 
     if (settlement.lastTaxation > Time.get().currentTime - Time.YEAR) {
       return {
-        text: 'We have already given you and will *not submit* to these demands. <options/>',
-        type: 'natives',
-        image: settlement.tribe.image,
-        options: [
-          {
-            text: 'Fine. But we will come back next year.',
-          },
-        ],
+        name: 'settlement.tax.already_given',
       }
     }
 
@@ -210,32 +185,25 @@ const dialog = (settlement, unit, answer) => {
     settlement.owner.ai.state.relations[unit.owner.referenceId].militancy += 0.1
 
     return {
-      text: `So be it then, take these **${amount}** <good>${good}</good>.`,
-      type: 'natives',
-      image: settlement.tribe.image,
-      options: [
-        {
-          default: true,
-          action: () => {
-            Storage.update(unit.equipment, { good, amount })
-          },
-        },
-      ],
+      name: 'settlement.tax.give',
+      context: {
+        amount,
+        good,
+        take: () => {
+          Storage.update(unit.equipment, { good, amount })
+        }
+      }
     }
   }
   if (answer === 'mission') {
     if (relations.militancy > 0.6 && relations.trust < 0) {
       return {
-        text: 'Your missionary was unable to establish friendly contact with the natives and has *vanished*.',
-        type: 'religion',
-        options: [
-          {
-            default: true,
-            action: () => {
-              Unit.disband(unit)
-            },
-          },
-        ],
+        name: 'settlement.mission.failed',
+        context: {
+          disband: () => {
+            Unit.disband(unit)
+          }
+        }
       }
     }
 
@@ -245,77 +213,70 @@ const dialog = (settlement, unit, answer) => {
         : relations.militancy > 0.3
           ? 'with hostility'
           : 'cautiously'
+
     return {
-      text: `The natives join your mission *${description}*.`,
-      type: 'religion',
-      options: [
-        {
-          default: true,
-          action: () => {
-            update.mission(settlement, unit.owner)
-            Unit.disband(unit)
-            relations.trust += 0.1
-          },
-        },
-      ],
+      name: 'settlement.mission.success',
+      context: {
+        description,
+        establish: () => {
+          update.mission(settlement, unit.owner)
+          Unit.disband(unit)
+          relations.trust += 0.1
+        }
+      }
     }
   }
+
   if (answer === 'chief') {
     if (relations.militancy < 0.5) {
       relations.trust += 0.01
     }
 
-    const welcomeText = `Welcome stranger! We are well known for our **${experts[settlement.expert]}**.`
+    const expert = experts[settlement.expert]
     const choice = Math.random()
     if (relations.militancy > 0.4 && relations.trust < 0) {
       return {
-        text: 'Your people have been untrustworthy and reckless against us. We will use you for target practice.',
-        type: 'natives',
-        image: settlement.tribe.image,
-        options: [
-          {
-            default: true,
-            action: () => {
-              Unit.disband(unit)
-            },
-          },
-        ],
+        name: 'settlement.chief.hostile',
+        context: {
+          disband: () => {
+            Unit.disband(unit)
+          }
+        }
       }
     }
+
     if (settlement.presentGiven || choice < 0.3) {
       settlement.presentGiven = true
       unit.equipment.food = Unit.UNIT_FOOD_CAPACITY
       Storage.update(unit.equipment)
       return {
-        text: `${welcomeText} We are always pleased to welcome English travelers.`,
-        type: 'natives',
-        image: settlement.tribe.image,
+        name: 'settlement.chief.welcome',
+        context: {
+          expert
+        }
       }
     }
     if (choice < 0.8) {
       unit.equipment.food = Unit.UNIT_FOOD_CAPACITY
       Storage.update(unit.equipment)
+
       return {
-        text: `${welcomeText} Come sit by the fire and we tell you about *nearby lands*.`,
-        type: 'natives',
-        image: settlement.tribe.image,
-        options: [
-          {
-            default: true,
-            action: () => {
-              settlement.presentGiven = true
-              const radius = Math.round(4 * (1 + Math.random()))
-              const tiles = Util.quantizedRadius(unit.mapCoordinates, radius).map(
-                MapEntity.tile
-              )
-              tiles.forEach(tile => {
-                if (Math.random() > 0.4) {
-                  Tile.discover(tile, unit.owner)
-                }
-              })
-            },
-          },
-        ],
+        name: 'settlement.chief.welcome',
+        context: {
+          expert,
+          discover: () => {
+            settlement.presentGiven = true
+            const radius = Math.round(4 * (1 + Math.random()))
+            const tiles = Util.quantizedRadius(unit.mapCoordinates, radius).map(
+              MapEntity.tile
+            )
+            tiles.forEach(tile => {
+              if (Math.random() > 0.4) {
+                Tile.discover(tile, unit.owner)
+              }
+            })
+          }
+        }
       }
     }
 
@@ -324,63 +285,50 @@ const dialog = (settlement, unit, answer) => {
     const worth = Math.round(
       settlement.tribe.civilizationLevel * settlement.population * (1 + 3 * Math.random())
     )
+
     return {
-      text: `${welcomeText} Have these valuable beads (**${worth}**<good>gold</good>) as our gift.`,
-      type: 'natives',
-      image: settlement.tribe.image,
-      options: [
-        {
-          default: true,
-          action: () => {
-            settlement.presentGiven = true
-            Treasure.gain(worth)
-          },
-        },
-      ],
+      name: 'settlement.chief.gift',
+      context: {
+        expert,
+        worth,
+        take: () => {
+          settlement.presentGiven = true
+          Treasure.gain(worth)          
+        }
+      }
     }
   }
   if (answer === 'live') {
     if (relations.militancy > 0.2 && relations.trust < -0.5) {
       return {
-        text: 'How dare you asking for our help when you brought so much misery to our people. *Prepare to die* for your foolishness.',
-        type: 'natives',
-        image: settlement.tribe.image,
-        options: [
-          {
-            default: true,
-            action: () => {
-              Unit.disband(unit)
-            },
+        name: 'settlement.live.kill',
+        context: {
+          disband: () => {
+            Unit.disband(unit)
           },
-        ],
+        }
       }
     }
     if (relations.trust < -0.2) {
       return {
-        text: 'We do not feel comfortable around your people at this time. *Please leave*.',
-        type: 'natives',
-        image: settlement.tribe.image,
+        name: 'settlement.live.reject',
       }
     }
+
     return {
-      text: 'We *gladly welcome* you in our settlement.',
-      type: 'natives',
-      image: settlement.tribe.image,
-      options: [
-        {
-          default: true,
-          action: () => {
-            settlement.hasLearned = true
-            Commander.scheduleInstead(
-              unit.commander,
-              LearnFromNatives.create({
-                unit,
-                profession: settlement.expert,
-              })
-            )
-          },
-        },
-      ],
+      name: 'settlement.live.accept',
+      context: {
+        live: () => {
+          settlement.hasLearned = true
+          Commander.scheduleInstead(
+            unit.commander,
+            LearnFromNatives.create({
+              unit,
+              profession: settlement.expert,
+            })
+          )
+        }
+      }
     }
   }
   if (answer === 'enter') {
@@ -392,142 +340,119 @@ const dialog = (settlement, unit, answer) => {
           ? 'large'
           : 'medium-sized'
 
-    if (unit.name === 'artillery') {
+    if (['artillery', 'soldier', 'dragoon'].includes(unit.name)) {
       return {
-        text: `Do you want to **bombard** the ${settlementDescription} settlement (${settlement.population})?<options/>`,
-        type: 'marshal',
-        options: [
-          {
-            text: 'Fire!',
-            action: () => {
-              Bombard(settlement, unit)
-            },
-          },
-          {
-            text: 'No, spare these people.',
-          },
-        ],
+        name: 'settlement.enter.military'
       }
     }
 
-    if (unit.name === 'soldier' || unit.name === 'dragoon') {
-      return {
-        text: `Our soldiers are ready for orders close to the ${settlementDescription} native settlement (${settlement.population}).<options/>`,
-        type: 'marshal',
-        options: [
-          {
-            text: 'Attack settlement',
-            action: () => {
-              Attack(settlement, unit)
-            },
-          },
-          {
-            text: 'Demand food supplies',
-            answer: 'food',
-          },
-          {
-            text: 'Demand taxation',
-            answer: 'tribute',
-          },
-          {
-            text: 'Leave',
-          },
-        ],
-      }
-    }
+    // if (unit.name === 'artillery') {
+    //   return {
+    //     text: `Do you want to **bombard** the ${settlementDescription} settlement (${settlement.population})?<options/>`,
+    //     type: 'marshal',
+    //     options: [
+    //       {
+    //         text: 'Fire!',
+    //         action: () => {
+    //           Bombard(settlement, unit)
+    //         },
+    //       },
+    //       {
+    //         text: 'No, spare these people.',
+    //       },
+    //     ],
+    //   }
+    // }
+
+    // if (unit.name === 'soldier' || unit.name === 'dragoon') {
+    //   return {
+    //     text: `Our soldiers are ready for orders close to the ${settlementDescription} native settlement (${settlement.population}).<options/>`,
+    //     type: 'marshal',
+    //     options: [
+    //       {
+    //         text: 'Attack settlement',
+    //         action: () => {
+    //           Attack(settlement, unit)
+    //         },
+    //       },
+    //       {
+    //         text: 'Demand food supplies',
+    //         answer: 'food',
+    //       },
+    //       {
+    //         text: 'Demand taxation',
+    //         answer: 'tribute',
+    //       },
+    //       {
+    //         text: 'Leave',
+    //       },
+    //     ],
+    //   }
+    // }
 
     if (relations.trust < 0.1 && relations.militancy > 0.5) {
       return {
-        text: `The *${settlement.tribe.name}* seem ${description} and our civilians refuse to enter the settlement.`,
-        type: 'marshal',
+        name: 'settlement.enter.refuse',
+        context: {
+          description
+        }
       }
     }
 
     if (unit.name === 'scout') {
       return {
-        text: `The natives are *${description}* as you approach their ${settlementDescription} settlement (${settlement.population}). <options/>`,
-        type: 'scout',
-        options: [
-          {
-            text: 'Ask to speek with the chief',
-            answer: 'chief',
-          },
-          {
-            text: 'Leave',
-          },
-        ],
+        name: 'settlement.enter.scout',
+        context: {
+          description,
+          settlementDescription
+        },
+        answers: ['chief']
       }
     }
     if (unit.name === 'settler') {
       if (!unit.expert || unit.expert === 'servant') {
         if (relations.trust < 0 && relations.militancy > 0.5) {
           return {
-            text: 'Our settlers have entered the natives village. We have not heard of them ever since.<options/>',
-            type: 'scout',
-            options: [
-              {
-                text: 'Argh...',
-                default: true,
-                action: () => {
-                  Unit.disband(unit)
-                },
-              },
-            ],
+            name: 'settlement.enter.vanished',
+            context: {
+              disband: () => {
+                Unit.disband(unit)
+              },              
+            }
           }
         }
         if (relations.trust < 0 && relations.militancy > 0) {
           return {
-            text: 'We are insulted by your presence.',
-            type: 'natives',
-            image: settlement.tribe.image,
-            options: [
-              {
-                text: 'Leave',
-              },
-            ],
+            name: 'settlement.enter.insulted',
           }
         }
         if (settlement.hasLearned && relations.trust < 0.5) {
           return {
-            text: 'We have *already shared our knowledge* with you. Now go your way and spread it amongst your people. <options/>',
-            type: 'natives',
-            image: settlement.tribe.image,
-            options: [
-              {
-                text: 'Leave',
-              },
-            ],
+            name: 'settlement.enter.already_trained',
           }
         }
+
         const expert = experts[settlement.expert]
         return {
-          text: `You seem unskilled and do not understand the way of the nature around you. We invite you to *live among us* and we will teach you to be a **${expert}**. <options/>`,
-          type: 'natives',
-          image: settlement.tribe.image,
-          options: [
-            {
-              text: 'Live among the natives',
-              answer: 'live',
-            },
-            {
-              text: 'Leave',
-            },
-          ],
+          name: 'settlement.enter.train',
+          context: {
+            expert
+          },
+          answers: ['live']
         }
       }
       if (unit.expert === 'criminal') {
         return {
-          text: 'You are unskilled and *your manners insult* our patience. We do not believe we can teach you anything. <options/>',
-          type: 'natives',
-          image: settlement.tribe.image,
-          options: [
-            {
-              text: 'Leave',
-            },
-          ],
+          name: 'settlement.enter.criminal'
         }
       }
       if (unit.expert === settlement.expert) {
+        return {
+          name: 'settlement.enter.fellow_expert',
+          context: {
+            expert
+          }
+        }
         return {
           text: `Fare well fellow ${experts[settlement.expert]}. <options/>`,
           type: 'natives',
@@ -539,53 +464,24 @@ const dialog = (settlement, unit, answer) => {
           ],
         }
       }
+
       return {
-        text: 'You are skilled and already know your way. We *cannot teach you* anything.<options/>',
-        type: 'natives',
-        image: settlement.tribe.image,
-        options: [
-          {
-            text: 'Leave',
-          },
-        ],
-      }
-    }
-    if (unit.name === 'wagontrain') {
-      return {
-        text: 'It is *not yet possible* to trade with the indians.<options/>',
-        type: 'govenor',
-        options: [
-          {
-            text: 'Leave',
-          },
-        ],
+        name: 'settlement.enter.other_expert'
       }
     }
     if (unit.name === 'missionary') {
       const description = Natives.describeRelations(relations)
       return {
-        text: `The natives are *${description}* as you approach their settlement.<options/>`,
-        type: 'religion',
-        options: [
-          {
-            text: 'Establish mission',
-            answer: 'mission',
-          },
-          {
-            text: 'Leave',
-          },
-        ],
+        name: 'settlement.enter.missionary',
+        context: {
+          description
+        },
+        answers: ['mission']
       }
     }
+
     return {
-      text: 'The natives greet you.<options/>',
-      type: 'natives',
-      image: settlement.tribe.image,
-      options: [
-        {
-          text: 'Leave',
-        },
-      ],
+      name: 'settlement.enter.default'
     }
   }
 }

@@ -1,4 +1,4 @@
-[dialog]
+---dialog---
 [name: if]
 
 1. [if {counter > 0}] counter is larger than 0 []

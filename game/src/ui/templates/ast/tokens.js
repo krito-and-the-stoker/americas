@@ -3,7 +3,7 @@ import { matchAll, matchOne, matchNone, matchRepeat, matchRepeatOptional, matchO
 const baseTokens = {
   dialogTag: input => {
     const lengthOfFirstLine = input.indexOf('\n')
-    if (input.startsWith('[dialog]')) {
+    if (input.startsWith('---dialog---')) {
       return {
         name: 'dialogTag',
         // ignore everything after dialog including the newline symbol
@@ -201,17 +201,6 @@ const baseTokens = {
       }
     }
   },
-
-  // be careful with this one:
-  // it allows you to match nothing and consume nothing
-  // use this for optional elements:
-  // matchOne([token.iAmOptional, token.empty])
-  empty: input => {
-    return {
-      name: 'empty',
-      rest: input,
-    }
-  }
 }
 
 const tokens = new Proxy(baseTokens, {
@@ -243,6 +232,8 @@ tokens.nonTextContentElement = matchOne([
 tokens.content = matchRepeat(matchOne([tokens.nonTextContentElement, tokens.text]))
 
 tokens.dialog = describeTag(match => {
+  // const nameFn = match.children[1].children.find(node => node.name === 'function' && node.value?.fn === 'name')
+  // const name = nameFn.value.args[0].value
   const children = match.children[1].children
     .reverse()
     .filter((node, i, all) => {
@@ -274,36 +265,9 @@ tokens.allDialogs = describeTag(match => {
     children: null
   }
 }, matchAll([
-  matchOne([
-    tokens.content,
-    tokens.empty,
-  ]),
+  matchOptional(tokens.content),
   matchRepeat(tokens.dialog)
 ]))
-
-tokens.template = input => {
-  let rest = input
-  let children = []
-  while (rest.length > 0) {
-    const match = tokens.content(rest)
-    // console.log('template', { input }, { match })
-    if (match) {
-      children = children.concat(match.children)
-      if (!match.rest) {
-        return {
-          name: 'template',
-          children,
-        }
-      } else {
-        rest = match.rest.substring(1)
-        console.error('Unexpected input, ignoring next character: ', match.rest)
-      }
-    } else {
-      console.error('Unexpected input, ignoring next character: ', rest)
-      rest = rest.substring(1)
-    }
-  }
-}
 
 tokens.indentedNewline = describeTag(
   match => ({
@@ -349,6 +313,7 @@ tokens.text = describeTag(
     tokens.interpolationOpen,
     tokens.fnOpen,
     tokens.newline,
+    tokens.dialogTag
   ])
 )
 

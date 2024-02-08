@@ -1,4 +1,4 @@
-[dialog]
+---dialog---
 [name: colony.construction]
 [backdrop: close]
 
@@ -25,7 +25,7 @@ What would you like to *construct*?
 [answer action:stop] **Stop Construction** []
 
 
-[dialog]
+---dialog---
 [name: colony.buyland]
 [image: settlement.tribe.image]
 [backdrop: close]

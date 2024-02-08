@@ -19,6 +19,7 @@ const getDialog = () => hasDialog(name())
 
 let cleanup = null
 export const open = (name, context = {}, handleData = () => {}) => {
+  // console.log('open dialog', name)
   if (!hasDialog(name)) {
     console.error('Dialog not found', name, '\nThese dialogs are valid:', Object.keys(dialogs()))
     return () => {}
