@@ -1,7 +1,16 @@
 .image {
 	position: absolute;
+	z-index: -1;
+}
+
+.left {
 	top: 50%;
 	left: 0;
 	transform: translate(-50%, -50%);
-	z-index: -1;
+}
+
+.top {
+	top: 0;
+	left: 50%;
+	transform: translate(-50%, -75%);
 }
