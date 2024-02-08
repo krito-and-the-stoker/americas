@@ -19,35 +19,20 @@ const create = (colony, originalDimensions) => {
     menu: new PIXI.Container(),
   }
 
-  const optionDescription = option => {
-    const cost = Object.entries(option.cost())
-      .map(([good, amount]) => `${amount}<good>${good}</good>`)
-      .join(' ')
-    return `<|**${option.name()}**<-> ${cost} (${Math.floor((100 * option.progress()) / Util.sum(Object.values(option.cost())))}%)|>`
-  }
-
   const constructionButton = Button.create('change', () => {
     const options = Construction.options(colony)
-    const choices = options
-      .map(option => ({
-        text: optionDescription(option),
-        action: () => {
-          Construction.start(colony, option)
-        },
-      }))
-      .concat([
-        {
-          text: '**Stop construction**',
-          action: () => {
-            Construction.start(colony, null)
-          },
-        },
-      ])
 
-    return Dialog.create({
-      type: 'menu',
-      text: 'What would you like to *construct*? <options/>',
-      options: choices,
+    const prepareOption = option => ({
+      ...option,
+      cost: option.cost(),
+      start: () => Construction.start(colony, option),
+      percentage: () => Math.floor((100 * option.progress()) / Util.sum(Object.values(option.cost()))),
+    })
+
+    return Dialog.open('colony.construction', {
+      buildings: options.buildings.map(prepareOption),
+      units: options.units.map(prepareOption),
+      stop: () => Construction.start(colony, null)
     })
   })
   constructionButton.x = originalDimensions.x - constructionButton.width - 20

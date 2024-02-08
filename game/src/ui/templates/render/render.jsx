@@ -12,6 +12,7 @@ import CoordinatesLink from './components/CoordinatesLink'
 import GameIcon from './components/GameIcon'
 import Backdrop from './components/Backdrop'
 import Grid from './components/Grid'
+import StorageGoods from './components/StorageGoods'
 
 const renderer = {
   text: value => () => value,
@@ -138,7 +139,8 @@ const baseStaticContext = {
   icon: params => context => <GameIcon name={resolveCtxVariable(context, params.arguments[0])} />,
   backdrop: params => context => <Backdrop action={resolveCtxVariable(context, params.arguments[0])} />,
   grid: params => context => <Grid columns={resolveCtxVariable(context, params.pairs.columns)}>{params.subtree(context)}</Grid>,
-  cell: params => context => <div>{params.subtree(context)}</div>
+  cell: params => context => <div>{params.subtree(context)}</div>,
+  goods: params => context => <StorageGoods goods={resolveCtxVariable(context, params.arguments[0])} />,
 }
 
 const renderNode = node => {

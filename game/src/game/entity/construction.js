@@ -69,7 +69,10 @@ const options = colony => {
       construct: () => ['createUnit'],
     }))
 
-  return [...buildings, ...units]
+  return {
+    buildings,
+    units
+  }
 }
 
 const construct = (colony, construction) => {

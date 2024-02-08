@@ -194,10 +194,7 @@ const start = async () => {
     initialize()
   } catch (err) {
     Error.capture(err)
-    Dialog.create({
-      type: 'menu',
-      text: 'There has been an error initializing the game. A report has been sent and we will investigate.',
-    })
+    Dialog.open('error.initialize')
   }
 }
 
@@ -248,15 +245,9 @@ const load = async () => {
   } catch (err) {
     Error.capture(err)
     if (Record.getGlobal('revision') !== Version.revision) {
-      Dialog.create({
-        type: 'menu',
-        text: 'There has been an error loading the save game. The save game is from an earlier release and this is most likely the reason.',
-      })
+      Dialog.open('error.load')
     } else {
-      Dialog.create({
-        type: 'menu',
-        text: 'There has been an error initializing the game. A report has been sent and we will investigate and fix it shortly.',
-      })
+      Dialog.open('error.initialize')
     }
   }
 }
