@@ -356,7 +356,6 @@ const createRumor = (option, tile, unit) => {
     UnitMapView.select(unit)
     Tile.updateRumors(tile)
 
-    console.log(option)
     Dialog.open(option.name, option.context)
   }
 

@@ -15,7 +15,7 @@ import Unit from 'entity/unit'
 
 const CANNOT_MOVE_COST = 500
 
-const tile = MapEntity.tile
+const tile = (...args) => MapEntity.tile(...args)
 
 const caching = {
   keyFn: (coords1, coords2, unit) =>
