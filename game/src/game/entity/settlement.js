@@ -274,7 +274,7 @@ const dialog = (settlement, unit, answer) => {
               if (Math.random() > 0.4) {
                 setTimeout(() => {
                   Tile.discover(tile, unit.owner)
-                }, Math.random() * 1000)
+                }, Math.random() * 500)
               }
             })
           }

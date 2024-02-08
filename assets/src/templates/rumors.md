@@ -1,7 +1,6 @@
 ---dialog---
 [name: rumor.empty]
 [image: scout]
-[coordinates: unit.mapCoordinates]
 [backdrop: action]
 
 Your find **nothing** but rumors
