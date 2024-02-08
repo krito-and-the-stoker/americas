@@ -222,11 +222,11 @@ const show = message => {
   if (message.type === 'video') {
     videoDialog(message)
   } else {
-    Dialog.create({
-      text: message.text,
-      type: message.type,
-      pause: true,
-    })
+    // Dialog.create({
+    //   text: message.text,
+    //   type: message.type,
+    //   pause: true,
+    // })
   }
 }
 

@@ -77,15 +77,14 @@ const options = [
   },
 ]
 
-let counter = 7
+
 export default unit => {
   const totalProbabilities = options.reduce((sum, option) => sum + option.probability, 0)
   const option = options.reduce(
     (current, option) =>
       current.sum > 0 ? { ...option, sum: current.sum - option.probability } : current,
     { sum: totalProbabilities * Math.random() }
-  ) && options[counter % options.length]
-  counter += 1
+  )
 
   const random = Math.random()
   const tile = MapEntity.tile(unit.mapCoordinates)
