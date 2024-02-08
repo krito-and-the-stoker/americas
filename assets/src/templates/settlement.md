@@ -1,11 +1,26 @@
 ---dialog---
+[name: settlement.inspect]
+[image: scout]
+[backdrop: close]
+
+The *{settlement.tribe.name}* seem {relation} at the moment.
+
+[if settlement.presentGiven]
+This settlement has the knowledge to train a **{expert}**.
+[]
+[if {not settlement.presentGiven}]
+We have *not visited* this village yet.
+[]
+
+
+---dialog---
 [name: settlement.reject]
 [image: settlement.tribe.image]
 [coordinates: settlement.mapCoordinates]
 
 We would rather die than feed your greed!
 
-[answer action:threaten] Then you will die! (*threaten them*) []
+[answer action:threaten] As you wish! (*threaten them*) []
 [answer] Never mind... []
 
 

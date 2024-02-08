@@ -453,16 +453,6 @@ const dialog = (settlement, unit, answer) => {
             expert
           }
         }
-        return {
-          text: `Fare well fellow ${experts[settlement.expert]}. <options/>`,
-          type: 'natives',
-          image: settlement.tribe.image,
-          options: [
-            {
-              text: 'Leave',
-            },
-          ],
-        }
       }
 
       return {

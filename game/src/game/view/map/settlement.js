@@ -37,41 +37,18 @@ const create = settlement => {
           const relations = settlement.owner.ai.state.relations[player.referenceId]
           const relation = relations ? Natives.describeRelations(relations) : null
           const tribe = settlement.tribe.name
-          const expertName = Units.settler.name[settlement.expert]
+          const expert = Units.settler.name[settlement.expert]
           const knowledge = settlement.presentGiven
-            ? `This settlement has the knowledge to train a **${expertName}**.`
+            ? `This settlement has the knowledge to train a **${expert}**.`
             : 'We have *not visited* this village yet.'
           const text = relation
             ? `The ${tribe} seem ${relation} at the moment.\n\n${knowledge}`
             : knowledge
           const debug = window.DEBUG ? '<br />DebugOptions:<br /><options />' : ''
-          Dialog.create({
-            type: 'scout',
-            text: `${text}${debug}`,
-            options: [].concat(
-              relations
-                ? [
-                    {
-                      text: 'Start raid (1)',
-                      action: () => {
-                        relations.raidPlanned = 1
-                      },
-                    },
-                    {
-                      text: 'Start raid (5)',
-                      action: () => {
-                        relations.raidPlanned = 5
-                      },
-                    },
-                    {
-                      text: 'Start raid (10)',
-                      action: () => {
-                        relations.raidPlanned = 10
-                      },
-                    },
-                  ]
-                : []
-            ),
+          Dialog.open('settlement.inspect', {
+            expert,
+            settlement,
+            relation
           })
         },
         `Inspect ${settlement.tribe.name} settlement`
