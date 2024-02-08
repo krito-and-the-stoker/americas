@@ -1,43 +1,20 @@
+import Message from 'util/message'
+
 import generateAst from './ast'
 import renderTemplate from './render'
 
-const TEMPLATE_ENDPOINT = '/templates/all.json'
+const TEMPLATE_ENDPOINT = '/templates/index.md'
 let dialogs
 export const fetchDialogs = async (staticContext) => {
 	if (!dialogs) {
 		dialogs = {}
 
 		const response = await fetch(TEMPLATE_ENDPOINT)
-		const strings = await response.json()
-		const templates = strings.map(str => ({
-			str
-		})).map(obj => {
-			const ast = generateAst(obj.str)
-			return {
-				...obj,
-				ast
-			}
-		}).filter(obj => {
-			if (!obj.ast) {
-				console.error('Failed to parse template, dropping:\n\n', obj.str)
-				return false
-			}
+		const text = await response.text()
+		const ast = generateAst(text)
+		const templates = ast.value.map(node => renderTemplate(node, staticContext))
 
-			return true
-		}).map(obj => {			
-			const templates = obj.ast.value.map(node => renderTemplate(node, staticContext))
-
-			return {
-				...obj,
-				templates
-			}
-		}).flatMap(obj => obj.templates.map(template => ({
-			str: obj.str,
-			ast: obj.ast,
-			...template
-		})))
-
-		templates.forEach(template => {
+		templates.forEach((template, index) => {
 			if (template.type === 'dialog') {
 				if (template.name) {
 					if (dialogs[template.name]) {
@@ -47,15 +24,15 @@ export const fetchDialogs = async (staticContext) => {
 						dialogs[template.name] = template
 					}
 				} else {
-					console.error('Dialog has no name, src:\n', template.str, { template })
+					console.error('Dialog has no name: ', { template }, ast.value[index])
 				}
 			} else {
-				console.error(`Unknown template type: ${template.type}\nsrc:${template.str}`, { template })
+				console.error(`Unknown template type: ${template.type}\nsrc:${text}`, { template })
 			}
 		})
 	}
 
-	console.log(`Prerendered ${Object.keys(dialogs).length} Dialog templates`)
+	Message.log(`Prerendered ${Object.keys(dialogs).length} dialog templates`)
 
 	return dialogs
 }

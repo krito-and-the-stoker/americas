@@ -79,7 +79,7 @@ gulp.task('templates', () => {
             if (!fs.existsSync(outputDir)) {
                 fs.mkdirSync(outputDir, { recursive: true });
             }
-            fs.writeFileSync(path.join(outputDir, 'all.json'), JSON.stringify(templates, null, 2));
+            fs.writeFileSync(path.join(outputDir, 'index.md'), templates.join('\n'));
         });
 });
 

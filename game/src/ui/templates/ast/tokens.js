@@ -2,8 +2,8 @@ import { matchAll, matchOne, matchNone, matchRepeat, matchRepeatOptional, matchO
 
 const baseTokens = {
   dialogTag: input => {
-    const lengthOfFirstLine = input.indexOf('\n')
     if (input.startsWith('---dialog---')) {
+      const lengthOfFirstLine = input.indexOf('\n')
       return {
         name: 'dialogTag',
         // ignore everything after dialog including the newline symbol
@@ -234,6 +234,7 @@ tokens.content = matchRepeat(matchOne([tokens.nonTextContentElement, tokens.text
 tokens.dialog = describeTag(match => {
   // const nameFn = match.children[1].children.find(node => node.name === 'function' && node.value?.fn === 'name')
   // const name = nameFn.value.args[0].value
+
   const children = match.children[1].children
     .reverse()
     .filter((node, i, all) => {
@@ -251,7 +252,7 @@ tokens.dialog = describeTag(match => {
   }
 }, matchAll([
   tokens.dialogTag,
-  tokens.content
+  tokens.content,
 ]))
 
 tokens.allDialogs = describeTag(match => {
@@ -259,14 +260,26 @@ tokens.allDialogs = describeTag(match => {
     console.error('Could not handle input:', match.rest)
   }
 
+  const dialogs = match.children[1].children.filter(dialog => {
+    if (!dialog.name) {
+      console.error('Could not handle input, skipped:', dialog.value)
+      return false
+    }
+
+    return true
+  })
+
   return {    
     name: 'dialogs',
-    value: match.children[1].children,
+    value: dialogs,
     children: null
   }
 }, matchAll([
   matchOptional(tokens.content),
-  matchRepeat(tokens.dialog)
+  matchRepeat(matchOne([
+    tokens.dialog,
+    matchNone([tokens.dialogTag]),
+  ]))
 ]))
 
 tokens.indentedNewline = describeTag(
