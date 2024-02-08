@@ -181,6 +181,11 @@ const initialize = colony => {
     Time.schedule(TransferCrosses.create(colony)),
     listen.construction(colony, () => {
       const construction = currentConstruction(colony)
+      if (!construction) {
+        // repair
+        Construction.start(colony, null)
+        return
+      }
       if (
         construction.progress > 0 &&
         construction.progress >= Util.sum(Object.values(construction.cost))

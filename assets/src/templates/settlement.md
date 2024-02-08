@@ -162,8 +162,9 @@ The *{settlement.tribe.name}* seem {description} and our civilians refuse to ent
 [name: settlement.enter.scout]
 [image: settlement.tribe.image]
 [coordinates: settlement.mapCoordinates]
+[backdrop: close]
 
-The natives are *{description}* as you approach their {settlementDescription} settlement ({settlement.population}).
+The {settlement.tribe.name} are *{description}* as you approach their {settlementDescription} settlement ({settlement.population}).
 
 [answer action:chief] Ask to speak to the chief []
 [answer] Leave []

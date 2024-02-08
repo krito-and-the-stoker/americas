@@ -104,9 +104,12 @@ const construct = (colony, construction) => {
   delete colony.construction[construction.target]
   Colony.update.construction(colony)
 
+  const { buildings, units } = options(colony)
+  const newTarget = [...buildings, ...units].find(option => option.target === construction.target)
+
   start(
     colony,
-    options(colony).find(option => option.target === construction.target)
+    newTarget
   )
 }
 

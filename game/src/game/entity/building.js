@@ -76,13 +76,8 @@ const create = () => {
   return Util.makeObject(buildings.map(building => [building.name, building]))
 }
 
-// TODO: remove getName function
-const getName = (colony, building) => {
-  console.warn('do not use this function anymore')
-  Buildings[building.name].name[building.level]
-}
 const level = (colony, name) => colony.buildings[name].level
-const name = (colony, name, requestedLevel) => {
+const name = (colony, name, requestedLevel = null) => {
   const buildingLevel =
     !requestedLevel && requestedLevel !== 0 ? level(colony, name) : requestedLevel
 
@@ -91,7 +86,7 @@ const name = (colony, name, requestedLevel) => {
     Buildings[name].name[Buildings[name].name.length - 1]
   )
 }
-const cost = (colony, name, requestedLevel) => {
+const cost = (colony, name, requestedLevel = null) => {
   const buildingLevel =
     !requestedLevel && requestedLevel !== 0 ? level(colony, name) : requestedLevel
 
@@ -107,7 +102,6 @@ const workspace = (colony, name) =>
     : Buildings[name].workspace) || 0
 
 export default {
-  getName,
   create,
   level,
   name,

@@ -286,7 +286,7 @@ const createConstruction = (colony, { building, unit }) => {
     colonyScreen: c => c === colony,
   }
 
-  const constructionName = building ? Building.getName(colony, building) : Unit.name(unit)
+  const constructionName = building ? Building.name(colony, building.name) : Unit.name(unit)
   const dialog = {
     name: 'notification.colony.construction',
     context: {

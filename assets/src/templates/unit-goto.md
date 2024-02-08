@@ -5,9 +5,10 @@
 
 Where shall we go?
 
-  [repeat colonies]
-[answer action:{.action}] **{.name}** ({.size}) []
+[repeat colonies]
+  [answer action:{.action}] **{.name}** ({.size}) []
 []
+
 [answer action:{homeport.action}] **{homeport.name}** (Europe) []
 
 
@@ -18,8 +19,8 @@ Where shall we go?
 
 Where shall we go?
 
-  [repeat colonies]
-[answer action:{.action}] **{.name}** ({.size}) []
+[repeat colonies]
+  [answer action:{.action}] **{.name}** ({.size}) []
 []
 
 
@@ -31,8 +32,9 @@ Where shall we go?
 Where shall we *sail* to?
 
 [answer action:openWaters] **Open waters** in the *Americas* []
+
 [repeat colonies]
-[answer action:{.action}] **{.name}** ({.size}) []
+  [answer action:{.action}] **{.name}** ({.size}) []
 []
 
 [answer action:{repair.action} disabled:{repair.disabled}]
