@@ -1,21 +1,18 @@
 import Commander from 'command/commander'
-import Unload from 'command/unload'
+import UnloadCommand from 'command/unload'
 
 import Message from 'util/message'
 import Util from 'util/util'
 import Binding from 'util/binding'
 import Record from 'util/record'
 
-// This is the list of all commands that have been created
-// Every new command created through the factory will be saved here
-// We need this to load commands from save game, but cannot import
-// the commands directly, because that would create a circular dependency
-const Commands = {
-  Unload
+// Registry for all available commands to avoid circular dependencies
+const CommandRegistry = {
+  Unload: UnloadCommand
 }
 
-const createTypes = name => {
-  const types = {
+const generateSerializationMethods = name => {
+  const serializationMethods = {
     save: {
       raw: x => x,
       entity: x => Record.reference(x),
@@ -33,16 +30,16 @@ const createTypes = name => {
             return Commander.load(x)
           }
 
-          return Commands[x.module].load(x)
+          return CommandRegistry[x.module].load(x)
         }
         return null
       },
-      commands: x => x.filter(y => !!y).map(y => types.load.command(y)),
+      commands: x => x.filter(y => !!y).map(y => serializationMethods.load.command(y)),
       name: () => name,
     },
   }
 
-  return types
+  return serializationMethods
 }
 
 const revive = command => {
@@ -53,28 +50,23 @@ const revive = command => {
   return command
 }
 
-const create = (name, params, info, functionFactory) => {
-  const types = createTypes(name)
+const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
+  const serializationMethods = generateSerializationMethods(name)
 
-  params.tag = {
-    type: 'raw',
-  }
+  commandData.tag = { type: 'raw' }
+  commandData.initHasBeenCalled = { type: 'raw' }
 
-  params.initHasBeenCalled = {
-    type: 'raw',
-  }
-
-  const create = (args = {}) => {
+  const createCommand = (args = {}) => {
     Object.keys(args).forEach(key => {
-      if (!params[key]) {
-        Message.warn('unspecified command creation argument', key, args, params)
+      if (!commandData[key]) {
+        Message.warn('Unspecified command creation argument', key, args, commandData)
       }
     })
 
     args.tag = args.tag || `${name} - ${Util.tag()}`
-    args.info = args.info || info
+    args.info = args.info || commandMeta
 
-    Object.entries(params)
+    Object.entries(commandData)
       .filter(([, description]) => description.required)
       .forEach(([key, description]) => {
         if (typeof args[key] === 'undefined') {
@@ -84,36 +76,36 @@ const create = (name, params, info, functionFactory) => {
         }
       })
 
-    Object.entries(params)
+    Object.entries(commandData)
       .filter(([, description]) => typeof description.default !== 'undefined')
       .filter(([key]) => typeof args[key] === 'undefined')
       .forEach(([key, description]) => {
         args[key] = Util.clone(description.default)
       })
 
-    Object.entries(params)
+    Object.entries(commandData)
       .filter(([, description]) => typeof description.initialized !== 'undefined')
       .forEach(([key, description]) => {
         args[key] = description.initialized
       })
 
-    const save = () => {
+    const saveCommandState = () => {
       return Util.makeObject(
-        Object.entries(params)
+        Object.entries(commandData)
           .concat([['module', { type: 'name' }]])
-          .map(([key, description]) => [key, types.save[description.type](args[key])])
+          .map(([key, description]) => [key, serializationMethods.save[description.type](args[key])])
       )
     }
 
-    const functions = functionFactory(args)
+    const commandFunctions = commandBehaviorFactory(args)
     if (args.initHasBeenCalled) {
-      delete functions.init
+      delete commandFunctions.init
     }
 
-    if (functions.init) {
-      const originalInit = functions.init
+    if (commandFunctions.init) {
+      const originalInit = commandFunctions.init
 
-      functions.init = (...initArgs) => {
+      commandFunctions.init = (...initArgs) => {
         const initResult = originalInit(...initArgs)
         if (initResult) {
           Object.assign(args, initResult)
@@ -125,54 +117,54 @@ const create = (name, params, info, functionFactory) => {
     }
 
     return {
-      ...functions,
-      save,
+      ...commandFunctions,
+      save: saveCommandState,
       tag: args.tag,
       state: args,
     }
   }
 
-  const load = data => {
+  const loadCommand = data => {
     const args = Util.makeObject(
-      Object.entries(params).map(([key, description]) => [
+      Object.entries(commandData).map(([key, description]) => [
         key,
-        types.load[description.type](
+        serializationMethods.load[description.type](
           data[key] || (description.default && Util.clone(description.default))
         ),
       ])
     )
 
-    return revive(create(args))
+    return revive(createCommand(args))
   }
 
-  // save command for loading
-  Commands[name] = {
-    create,
-    load
+  // Save command for later loading
+  CommandRegistry[name] = {
+    create: createCommand,
+    load: loadCommand
   }
 
   return {
-    create,
-    load,
+    create: createCommand,
+    load: loadCommand,
   }
 }
 
-const wrap = (commander, command) => {
+const enhanceCommandWithCommander = (commander, command) => {
   const wrappedCommand = {
     ...command,
-    update: (...x) => {
+    update: (...args) => {
       if (command.update) {
-        if (!command.update(...x)) {
+        if (!command.update(...args)) {
           // TODO: why is this here, why should it maybe not be here?
           // commander.schedule.stop()
         }
       }
 
-      return commander.update(...x)
+      return commander.update(...args)
     },
-    stopped: (...x) => {
-      Util.execute(command.stopped, ...x)
-      Util.execute(commander.stopped, ...x)
+    stopped: (...args) => {
+      Util.execute(command.stopped, ...args)
+      Util.execute(commander.stopped, ...args)
     },
     cancel: () => {
       Util.execute(commander.cancel)
@@ -184,51 +176,42 @@ const wrap = (commander, command) => {
   return wrappedCommand
 }
 
-const commander = (name, params, info, functionFactory) => {
-  const types = createTypes(name)
-  params.commander = {
-    type: 'command',
-  }
-
-  params.initHasBeenCalled = {
-    type: 'raw',
-  }
+const createWithCommander = (name, commandData, commandMeta, commandBehaviorFactory) => {
+  const serializationMethods = generateSerializationMethods(name)
+  commandData.commander = { type: 'command' }
+  commandData.initHasBeenCalled = { type: 'raw' }
 
   const command = {
     create: (...args) => {
       const commander = Commander.create()
-      params.commander.initialized = commander
-      const factory = create(name, params, info, functionFactory)
-      const inner = factory.create(...args)
+      commandData.commander.initialized = commander
+      const commandFactory = create(name, commandData, commandMeta, commandBehaviorFactory)
+      const innerCommand = commandFactory.create(...args)
 
-      return wrap(commander, inner)
+      return enhanceCommandWithCommander(commander, innerCommand)
     },
     load: data => {
       const commander = Commander.load(data.commander)
 
       const args = Util.makeObject(
-        Object.entries(params)
+        Object.entries(commandData)
           .filter(([key]) => key !== 'commander')
-          .map(([key, description]) => [key, types.load[description.type](data[key])])
+          .map(([key, description]) => [key, serializationMethods.load[description.type](data[key])])
       )
       args.commander = commander
-      const inner = revive(create(name, params, info, functionFactory).create(args))
+      const innerCommand = revive(create(name, commandData, commandMeta, commandBehaviorFactory).create(args))
 
-      return wrap(commander, inner)
+      return enhanceCommandWithCommander(commander, innerCommand)
     },
   }
 
-  Commands[name] = command
+  CommandRegistry[name] = command
   return command
 }
 
 const update = {
   info: (state, info) => Binding.update(state, 'info', info),
-  display: (state, display) =>
-    Binding.update(state, 'info', {
-      ...state.info,
-      display,
-    }),
+  display: (state, display) => Binding.update(state, 'info', { ...state.info, display }),
 }
 
-export default { create, commander, update }
+export default { create, commander: createWithCommander, update }
