@@ -127,7 +127,7 @@ const create = unit => {
 const selectedUnit = () => (state.selectedView ? state.selectedView.unit : null)
 
 const destroy = view => {
-  unselect(view.unit)
+  // unselect(view.unit)
   view.destroyed = true
   Util.execute(view.unsubscribe)
   Tween.fadeOut(view.sprite, 1000)
@@ -154,7 +154,7 @@ const show = view => {
 }
 
 const hide = view => {
-  unselect(view.unit)
+  // unselect(view.unit)
   Foreground.removeUnit(view.circle)
   Foreground.removeUnit(view.sprite)
 }
