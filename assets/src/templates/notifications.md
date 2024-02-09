@@ -56,7 +56,7 @@ A *{unitName}* has found a **rumor**.
 [coordinates: settlement.mapCoordinates]
 [backdrop: notified]
 
-A *{unitName}* has entered a **{settlement.tribe.name} village**.
+A *{unitName}* has entered a ***{settlement.tribe.name}* village**.
 
 
 ---dialog---
