@@ -7,7 +7,6 @@ import Serialization from './serialization'
 
 // Core factory function for creating command objects with specific behavior and data.
 const create = (name, dataDescription, commandMeta, commandBehaviorFactory) => {
-  const serializationMethods = Serialization.generateSerializationMethods(name) // Generates serialization methods for the command.
 
   // Initializes dataDescription with default raw types for tag and initHasBeenCalled.
   dataDescription.tag = { type: 'raw' }
@@ -58,11 +57,11 @@ const create = (name, dataDescription, commandMeta, commandBehaviorFactory) => {
 
       // Populate serializedState
       for (const [key, description] of Object.entries(dataDescription)) {
-          serializedState[key] = serializationMethods.save[description.type](args[key]);
+          serializedState[key] = Serialization.save[description.type](args[key]);
       }
 
       // Manually add the 'module' entry with its description
-      serializedState['module'] = serializationMethods.save.name();
+      serializedState['module'] = Serialization.save.name(name);
       return serializedState;
     }
 
@@ -109,7 +108,7 @@ const create = (name, dataDescription, commandMeta, commandBehaviorFactory) => {
             value = Util.clone(description.default)
         }
         // Apply the load method based on the description type
-        unserializedCommandData[key] = serializationMethods.load[description.type](value);
+        unserializedCommandData[key] = Serialization.load[description.type](value);
     }
 
     return Serialization.revive(createCommand(unserializedCommandData))

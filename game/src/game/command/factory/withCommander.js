@@ -36,7 +36,6 @@ const enhanceCommandWithCommander = (commander, command) => {
 // Extends the create function to automatically incorporate a Commander instance for managing command lifecycle.
 const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
   // Builds upon the basic command creation process, ensuring the command is tied to a Commander instance for enhanced control.
-  const serializationMethods = Serialization.generateSerializationMethods(name)
   commandData.commander = { type: 'command' }
   commandData.initHasBeenCalled = { type: 'raw' }
 
@@ -57,7 +56,7 @@ const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
           // Skip the 'commander' key
           if (key !== 'commander') {
               // Apply the load method based on the description type
-              args[key] = serializationMethods.load[description.type](data[key]);
+              args[key] = Serialization.load[description.type](data[key]);
           }
       }
 
