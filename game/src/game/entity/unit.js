@@ -449,6 +449,7 @@ const loadUnit = (unit, passenger) => {
   }
 
   update.vehicle(passenger, unit)
+  update.isBoarding(passenger, false)
   add.passenger(unit, passenger)
   return true
 }

@@ -1,3 +1,4 @@
+import BoardTransport from 'command/boardTransport'
 import Found from 'command/found'
 import Move from 'command/move'
 import MoveTo from 'command/moveTo'
@@ -17,6 +18,7 @@ import Road from 'command/road'
 import LearnFromNatives from 'command/learnFromNatives'
 
 export default {
+  BoardTransport,
   Found,
   Move,
   MoveTo,

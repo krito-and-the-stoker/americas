@@ -245,10 +245,11 @@ const establishRelations = (ai, owner) => {
     const numSettlements = Record.getAll('settlement').filter(
       settlement => settlement.tribe === ai.tribe
     ).length
+
     Events.trigger('ui-dialog', {
       name: 'natives.establish',
       context: {
-        tribe: owner.tribe,
+        tribe: ai.tribe,
         numSettlements,
         yes: () => {
           ai.state.relations[owner.referenceId].trust += 0.15

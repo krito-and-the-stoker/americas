@@ -1,6 +1,8 @@
+import LA from 'util/la'
 import Time from 'timeline/time'
 
 import Unit from 'entity/unit'
+import leaveColony from 'interaction/leaveColony'
 
 import Factory from 'command/factory'
 
@@ -21,26 +23,26 @@ export default Factory.create(
   },
   {
     id: 'loadUnit',
-    display: 'Boarding unit',
+    display: 'Loading unit',
   },
-  ({ transport, passenger, eta }) => {
+  state => {
+    let { transport, passenger, eta } = state
+    Factory.update.display(state, `Loading ${Unit.name(passenger)}`)
+
     const init = currentTime => {
       eta = currentTime + Time.LOAD_TIME
-
       return {
         eta,
       }
     }
 
-    const update = currentTime => currentTime < eta
-    const finished = () => {
-      Unit.loadUnit(transport, passenger)
+    const update = currentTime => {
+      return currentTime < eta
     }
 
     return {
       init,
       update,
-      finished,
     }
   }
 )

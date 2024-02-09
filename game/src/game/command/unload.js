@@ -90,7 +90,9 @@ const create = (unit, coords) => {
   }
 
   const finished = () => {
-    Unit.unloadUnit(unit, Tile.closest(coords), landingUnit)
+    if (decision === 'yes') {
+      Unit.unloadUnit(unit, Tile.closest(coords), landingUnit)
+    }
   }
 
   const save = () => ({
