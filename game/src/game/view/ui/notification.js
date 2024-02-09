@@ -1020,7 +1020,7 @@ const initialize = () => {
     create(params)
   })
   Events.listen('select', unit => {
-    if (Unit.isIdle(unit) && unit.tile.settlement) {
+    if (Unit.isIdle(unit) && unit.tile?.settlement) {
       Events.trigger('notification', {
         type: 'settlement',
         settlement: unit.tile.settlement,
