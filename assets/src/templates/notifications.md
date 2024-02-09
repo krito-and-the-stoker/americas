@@ -56,7 +56,7 @@ A *{unitName}* has found a **rumor**.
 [coordinates: settlement.mapCoordinates]
 [backdrop: notified]
 
-A *{unitName}* has entered a ***{settlement.tribe.name}* village**.
+A *{unitName}* has entered a **{settlement.tribe.name}** village.
 
 
 ---dialog---
@@ -140,7 +140,7 @@ We have secured the treasure worth **{unit.treasure}**[icon: gold] in *{colony.n
 You do not seem to have **a galleon** ready for transport. Would you like us to *take care of the transport*? The crown would, of course, take a **fair share** for its efforts.
 
 [answer action:transport]
-	Yes, please transport the treasure for us and take your share of 50% ({cost} [icon: gold]).
+	Yes, please transport it for us (You keep **{unit.treasure - cost} [icon: gold]**).
 []
 
 [answer] No thank you, we will transport our valuables *ourself*. []
