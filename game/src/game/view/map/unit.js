@@ -24,6 +24,8 @@ import Storage from 'entity/storage'
 import Commander from 'command/commander'
 import LoadUnit from 'command/loadUnit'
 import BoardTransport from 'command/boardTransport'
+import MoveTo from 'command/moveTo'
+import FollowUnit from 'command/followUnit'
 
 import ColonyView from 'view/colony'
 import Events from 'util/events'
@@ -300,10 +302,16 @@ const initialize = () => {
             if (transport.domain === 'sea'
               && passenger.domain === 'land'
               && Unit.hasCapacity(transport)
-              && Util.inMoveDistance(passenger, transport)
             ) {
-              Commander.scheduleInstead(transport.commander, LoadUnit.create({ transport, passenger }))
-              Commander.scheduleInstead(passenger.commander, BoardTransport.create({ passenger, transport }))
+              if (Util.inMoveDistance(passenger, transport)) {
+                Commander.scheduleInstead(transport.commander, LoadUnit.create({ transport, passenger }))
+                Commander.scheduleInstead(passenger.commander, BoardTransport.create({ passenger, transport }))
+              } else {
+                Commander.scheduleInstead(passenger.commander, FollowUnit.create({ unit: passenger, target: transport }))
+                Commander.scheduleInstead(transport.commander, FollowUnit.create({ unit: transport, target: passenger }))
+                Commander.scheduleBehind(transport.commander, LoadUnit.create({ transport, passenger }))
+                Commander.scheduleBehind(passenger.commander, BoardTransport.create({ passenger, transport }))
+              }
             }
           }
         })

@@ -75,19 +75,6 @@ export default Factory.commander(
     const finished = () => {
       const target = Tile.get(coords)
 
-      const shipsAtTarget = Unit.at(coords).filter(unit => unit.domain === 'sea')
-      if (
-        unit.domain === 'land' &&
-        target.domain === 'sea' &&
-        shipsAtTarget.some(unit.treasure ? canLoadTreasure : canLoad) &&
-        inMoveDistance(unit.mapCoordinates, coords)
-      ) {
-        Message.warn('boarding ships is unsupported now')
-        // const transport = shipsAtTarget.find(unit.treasure ? canLoadTreasure : canLoad)
-        // Commander.scheduleBehind(transport.commander, LoadUnit.create({ transport, passenger: unit }))
-        // Commander.scheduleInstead(unit.commander, BoardTransport.create({ unit, transport }))
-      }
-
       if (
         unit.domain === 'sea' &&
         unit.passengers.length > 0 &&

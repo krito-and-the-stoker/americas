@@ -495,13 +495,19 @@ const movementCost = (fromCoords, toCoords, unit) => {
       return distance * costTable.colony
     }
   }
-  if (to.domain === 'sea' && costTable.ocean) {
+  if (to.domain === 'sea' && from.domain === 'sea' && costTable.ocean) {
     return distance * costTable.ocean
   }
 
   if ((to.domain === from.domain || from.colony) && costTable[to.terrainName]) {
     return distance * costTable[to.terrainName]
   }
+
+  if (costTable['any']) {
+    return distance * costTable['any']
+  }
+
+
 
   // Message.warn(`No valid movement cost found for ${unit.properties.travelType} to ${to.terrainName}`)
   return Infinity

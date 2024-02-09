@@ -139,28 +139,6 @@
 		"colony": 1
 	},
 	"airline": {
-		"sea lane": 1,
-		"ocean": 1,
-		"harbour": 1,
-		"arctic": 1,
-		"arcticWithForest": 1,
-		"desert": 1,
-		"desertWithForest": 1,
-		"grassland": 1,
-		"grasslandWithForest": 1,
-		"hills": 1,
-		"marsh": 1,
-		"marshWithForest": 1,
-		"mountains": 1,
-		"plains": 1,
-		"plainsWithForest": 1,
-		"prairie": 1,
-		"prairieWithForest": 1,
-		"savannah": 1,
-		"savannahWithForest": 1,
-		"swamp": 1,
-		"swampWithForest": 1,
-		"tundra": 1,
-		"tundraWithForest": 1
+		"any": 1
 	}
 }
