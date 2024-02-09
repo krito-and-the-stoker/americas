@@ -12,20 +12,18 @@ const enhanceCommandWithCommander = (commander, command) => {
   const wrappedCommand = {
     ...command,
     update: (...args) => {
-      if (command.update) {
-        if (!command.update(...args)) {
-          // TODO: why is this here, why should it maybe not be here?
-          // commander.schedule.stop()
-        }
+      if (!command.update) {
+        return commander.update(...args)
       }
 
-      return commander.update(...args)
+      return command.update(...args) || commander.update(...args)
     },
     stopped: (...args) => {
       Util.execute(command.stopped, ...args)
       Util.execute(commander.stopped, ...args)
     },
     cancel: () => {
+      Util.execute(command.cancel)
       Util.execute(commander.cancel)
     },
     priority: true,
@@ -64,7 +62,7 @@ const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
       }
 
       args.commander = commander
-      const innerCommand = Serialization.revive(create(name, commandData, commandMeta, commandBehaviorFactory).create(args))
+      const innerCommand = Serialization.revive(SimpleCommand.create(name, commandData, commandMeta, commandBehaviorFactory).create(args))
 
       return enhanceCommandWithCommander(commander, innerCommand)
     },

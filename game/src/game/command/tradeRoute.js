@@ -131,7 +131,7 @@ export default Factory.commander(
       }
     })
 
-    const update = () => {
+    const update = (...args) => {
       if (state.needsOrders) {
         state.needsOrders = false
         if (Storage.split(unit.storage).length > 0) {
@@ -221,6 +221,7 @@ export default Factory.commander(
         }
       }
 
+      commander.update(...args)
       return tradeRouteActive
     }
 
