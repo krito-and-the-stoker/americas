@@ -495,7 +495,7 @@ const movementCost = (fromCoords, toCoords, unit) => {
       return distance * costTable.colony
     }
   }
-  if (to.domain === 'sea' && from.domain === 'sea' && costTable.ocean) {
+  if (to.domain === 'sea' && costTable.ocean) {
     return distance * costTable.ocean
   }
 

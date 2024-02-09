@@ -12,11 +12,8 @@ const create = (name, dataDescription, commandMeta, commandBehaviorFactory) => {
   dataDescription.tag = { type: 'raw' }
   dataDescription.initHasBeenCalled = { type: 'raw' }
 
-  // Main function to create a command object, configuring it with provided arguments.
+  // Main function to create a conrete command, configuring it with provided arguments.
   const createCommand = (args = {}) => {
-    // Validates and initializes command arguments, setting up the command object.
-    // Includes logic for handling required and default arguments, cloning defaults, and setting initialized values.
-
     // Validating Command Arguments Against Specifications
     for (const key in args) {
         if (!dataDescription[key]) {
@@ -24,6 +21,7 @@ const create = (name, dataDescription, commandMeta, commandBehaviorFactory) => {
         }
     }
 
+    // the tag is used for debugging and command matching
     args.tag = args.tag || `${name} - ${Util.tag()}`
     args.info = args.info || commandMeta
 
@@ -36,7 +34,7 @@ const create = (name, dataDescription, commandMeta, commandBehaviorFactory) => {
         }
     }
 
-    // Clone Defaults Where Undefined
+    // Set Defaults
     for (const [key, description] of Object.entries(dataDescription)) {
         if (typeof description.default !== 'undefined' && typeof args[key] === 'undefined') {
             args[key] = Util.clone(description.default);
