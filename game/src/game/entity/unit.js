@@ -60,6 +60,7 @@ const create = (name, coords, owner) => {
       pioneering: false,
       radius: 0,
       command: null,
+      isBoarding: false,
       movement: {
         target: MapEntity.tile(coords),
       },
@@ -300,6 +301,7 @@ const listen = {
   tile: (unit, fn) => Binding.listen(unit, 'tile', fn),
   radius: (unit, fn) => Binding.listen(unit, 'radius', fn),
   command: (unit, fn) => Binding.listen(unit, 'command', fn),
+  isBoarding: (unit, fn) => Binding.listen(unit, 'isBoarding', fn),
 }
 
 const update = {
@@ -314,6 +316,7 @@ const update = {
   tile: (unit, value) => Binding.update(unit, 'tile', value),
   radius: (unit, value) => Binding.update(unit, 'radius', value),
   command: (unit, value) => Binding.update(unit, 'command', value),
+  isBoarding: (unit, value) => Binding.update(unit, 'isBoarding', value),
 }
 
 const updateType = (unit, name) => {
@@ -459,6 +462,7 @@ const unloadUnit = (unit, tile, desiredPassenger = null) => {
     update.tile(passenger, tile)
     update.offTheMap(passenger, unit.offTheMap)
     update.vehicle(passenger, null)
+    update.isBoarding(passenger, false)
     if (tile.colony) {
       EnterColony(tile.colony, passenger)
     }
@@ -524,6 +528,7 @@ const save = unit => ({
   tile: Record.referenceTile(unit.tile),
   owner: Record.reference(unit.owner),
   radius: unit.radius,
+  isBoarding: unit.isBoarding,
   movement: {
     target: Record.referenceTile(unit.movement.target),
   },

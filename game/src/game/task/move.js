@@ -121,7 +121,7 @@ const sanitizeUnitPosition = (unit, deltaTime) => {
 
 const create = unit => {
   const update = (_, deltaTime) => {
-    if (unit.vehicle || unit.offTheMap) {
+    if (unit.vehicle || unit.offTheMap || unit.isBoarding) {
       return true
     }
 

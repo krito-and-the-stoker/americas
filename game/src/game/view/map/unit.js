@@ -12,6 +12,7 @@ import Foreground from 'render/foreground'
 import Resources from 'render/resources'
 
 import Click from 'input/click'
+import Secondary from 'input/secondary'
 
 import Unit from 'entity/unit'
 import Europe from 'entity/europe'
@@ -19,6 +20,10 @@ import Colonist from 'entity/colonist'
 import Owner from 'entity/owner'
 import Tile from 'entity/tile'
 import Storage from 'entity/storage'
+
+import Commander from 'command/commander'
+import LoadUnit from 'command/loadUnit'
+import BoardTransport from 'command/commander'
 
 import ColonyView from 'view/colony'
 import Events from 'util/events'
@@ -169,7 +174,7 @@ const createFoodDeclineMapping = () => {
 const updateVisibility = view => (visibleOnMap(view) ? show(view) : hide(view))
 const visibleOnMap = view =>
   (view === state.selectedView || !view.unit.colony) &&
-  !view.unit.vehicle &&
+  (!view.unit.vehicle || view.unit.isBoarding) &&
   !Europe.has.unit(view.unit) &&
   !view.unit.offTheMap &&
   !(view.unit.colonist && view.unit.colonist.colony) &&
@@ -196,6 +201,7 @@ const initialize = () => {
     }
 
     view.unsubscribe = [
+      Unit.listen.isBoarding(unit, updateBoundVisibility),
       Unit.listen.vehicle(unit, updateBoundVisibility),
       Unit.listen.offTheMap(unit, updateBoundVisibility),
       Unit.listen.colony(unit, updateBoundVisibility),
@@ -285,6 +291,20 @@ const initialize = () => {
             )
           : null
       ),
+
+      Owner.listen.input(unit.owner, input =>
+        input && Secondary.on(view.sprite, () => {
+          if (selectedUnit() && Unit.hasCapacity(unit)) {
+            const transport = unit
+            const passenger = selectedUnit()
+            if (Util.inMoveDistance(passenger, transport)) {
+              console.log('its boarding time')
+              // Commander.scheduleInstead(transport.commander, LoadUnit.create({ transport, passenger }))
+              // Commander.scheduleInstead(passenger.commander, BoardTransport.create({ unit: passenger, transport }))
+            }
+          }
+        })
+      )
 
       // Owner.listen.input(unit.owner, input =>
       // 	!input ? Secondary.on(view.sprite, () => {

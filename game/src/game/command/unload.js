@@ -1,5 +1,6 @@
 import Record from 'util/record'
 import Events from 'util/events'
+import LA from 'util/la'
 
 import Time from 'timeline/time'
 
@@ -35,6 +36,8 @@ const create = (unit, coords) => {
   let unloadingStartedAt = null
   let landingUnit = null
 
+  const transport = unit
+
   const init = () => {
     Events.trigger('ui-dialog', {
       name: 'disembark',
@@ -42,6 +45,16 @@ const create = (unit, coords) => {
         unit,
         yes: () => {
           decision = 'yes'
+          landingUnit = transport.passengers.find(x => !!x)
+          if (!landingUnit) {
+            console.error('Unloading, but transport has no passengers')
+            decision = 'no'
+            return null
+          }
+
+          Unit.update.offTheMap(landingUnit, transport.offTheMap)
+          Unit.update.mapCoordinates(landingUnit, { ...transport.mapCoordinates })
+          Unit.update.isBoarding(landingUnit, true)
         },
         no: () => {
           decision = 'no'
@@ -55,6 +68,9 @@ const create = (unit, coords) => {
 
   const update = currentTime => {
     if (unloadingStartedAt) {
+      const progress = (currentTime - unloadingStartedAt) / Time.UNLOAD_TIME
+      const position = LA.lerp(coords, transport.mapCoordinates, progress)
+      Unit.update.mapCoordinates(landingUnit, position)
       return currentTime < unloadingStartedAt + Time.UNLOAD_TIME
     }
 
@@ -68,11 +84,13 @@ const create = (unit, coords) => {
 
     if (decision === 'yes') {
       Events.trigger('disembark')
-      landingUnit = Unit.unloadUnit(unit, Tile.closest(coords))
-      // Commander.scheduleInstead(landingUnit.commander, Move.create({ unit: landingUnit, coords }))
-      // unloadingStartedAt = currentTime
-      return false
+      unloadingStartedAt = currentTime
+      return true
     }
+  }
+
+  const finished = () => {
+    Unit.unloadUnit(unit, Tile.closest(coords), landingUnit)
   }
 
   const save = () => ({
@@ -86,8 +104,10 @@ const create = (unit, coords) => {
 
   return {
     update,
+    finished,
     init,
     save,
+    priority: true,
     state: {
       info: {
         id: 'unload',

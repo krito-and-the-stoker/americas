@@ -50,7 +50,6 @@ const handleGoTo = unit => {
       homeport: {
         name: 'London',
         action: () => {
-          console.log('go to London')
           Commander.scheduleInstead(unit.commander, GoTo.create({ unit, europe: true }))
           Commander.scheduleBehind(
             unit.commander,

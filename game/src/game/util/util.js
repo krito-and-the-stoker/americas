@@ -13,6 +13,7 @@ const inDistance = (unit, other) =>
   distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
 const inRaidDistance = (unit, other) =>
   distance(unit.mapCoordinates, other.mapCoordinates) < 0.25 * unit.properties.radius
+const inMoveDistance = (unit, other) => LA.distanceManhatten(unit.mapCoordinates, other.mapCoordinates) <= 1
 
 const isArray = something => something && something.constructor === Array
 const flatten = array => {
@@ -186,6 +187,7 @@ export default {
   inBattleDistance,
   inDistance,
   inRaidDistance,
+  inMoveDistance,
   min,
   max,
   minPair,
