@@ -5,5 +5,19 @@ const CommandRegistry = {
   Unload
 }
 
+const get = key => {
+  if (!CommandRegistry[key]) {
+    console.error('Command Registry does not have ', key, 'Choose one of those', CommandRegistry)
+  }
 
-export default CommandRegistry
+  return CommandRegistry[key]
+}
+
+const add = (key, Command) => {
+  CommandRegistry[key] = Command
+}
+
+export default {
+  get,
+  add
+}

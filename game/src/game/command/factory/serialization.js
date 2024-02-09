@@ -31,7 +31,7 @@ const generateSerializationMethods = commandName => {
           if (x.module === 'Commander') {
             return Commander.load(x)
           }
-          return CommandRegistry[x.module].load(x)
+          return CommandRegistry.get(x.module).load(x)
         }
         return null
       },

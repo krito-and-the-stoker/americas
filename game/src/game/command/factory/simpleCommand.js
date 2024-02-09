@@ -6,57 +6,64 @@ import Serialization from './serialization'
 
 
 // Core factory function for creating command objects with specific behavior and data.
-const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
+const create = (name, dataDescription, commandMeta, commandBehaviorFactory) => {
   const serializationMethods = Serialization.generateSerializationMethods(name) // Generates serialization methods for the command.
 
-  // Initializes commandData with default raw types for tag and initHasBeenCalled.
-  commandData.tag = { type: 'raw' }
-  commandData.initHasBeenCalled = { type: 'raw' }
+  // Initializes dataDescription with default raw types for tag and initHasBeenCalled.
+  dataDescription.tag = { type: 'raw' }
+  dataDescription.initHasBeenCalled = { type: 'raw' }
 
   // Main function to create a command object, configuring it with provided arguments.
   const createCommand = (args = {}) => {
     // Validates and initializes command arguments, setting up the command object.
     // Includes logic for handling required and default arguments, cloning defaults, and setting initialized values.
-    Object.keys(args).forEach(key => {
-      if (!commandData[key]) {
-        Message.warn('Unspecified command creation argument', key, args, commandData)
-      }
-    })
+
+    // Validating Command Arguments Against Specifications
+    for (const key in args) {
+        if (!dataDescription[key]) {
+            Message.warn('Unspecified command creation argument', key, args, dataDescription);
+        }
+    }
 
     args.tag = args.tag || `${name} - ${Util.tag()}`
     args.info = args.info || commandMeta
 
-    Object.entries(commandData)
-      .filter(([, description]) => description.required)
-      .forEach(([key, description]) => {
-        if (typeof args[key] === 'undefined') {
-          throw new Error(
-            `Invalid command invocation. name: ${name}, key: ${key}, arg: ${args[key]}, type: ${description.type}, required: ${description.required}`
-          )
+    // Check for Required Fields
+    for (const [key, description] of Object.entries(dataDescription)) {
+        if (description.required && typeof args[key] === 'undefined') {
+            throw new Error(
+                `Invalid command invocation. name: ${name}, key: ${key}, arg: ${args[key]}, type: ${description.type}, required: ${description.required}`
+            );
         }
-      })
+    }
 
-    Object.entries(commandData)
-      .filter(([, description]) => typeof description.default !== 'undefined')
-      .filter(([key]) => typeof args[key] === 'undefined')
-      .forEach(([key, description]) => {
-        args[key] = Util.clone(description.default)
-      })
+    // Clone Defaults Where Undefined
+    for (const [key, description] of Object.entries(dataDescription)) {
+        if (typeof description.default !== 'undefined' && typeof args[key] === 'undefined') {
+            args[key] = Util.clone(description.default);
+        }
+    }
 
-    Object.entries(commandData)
-      .filter(([, description]) => typeof description.initialized !== 'undefined')
-      .forEach(([key, description]) => {
-        args[key] = description.initialized
-      })
+    // Initialize with Predefined Values
+    for (const [key, description] of Object.entries(dataDescription)) {
+        if (typeof description.initialized !== 'undefined') {
+            args[key] = description.initialized;
+        }
+    }
 
 
+    // Saves the command state, converting each property based on its type using serialization methods.
     const saveCommandState = () => {
-      // Saves the command state, converting each property based on its type using serialization methods.
-     return Util.makeObject(
-        Object.entries(commandData)
-          .concat([['module', { type: 'name' }]])
-          .map(([key, description]) => [key, serializationMethods.save[description.type](args[key])])
-      )
+      let serializedState = {};
+
+      // Populate serializedState
+      for (const [key, description] of Object.entries(dataDescription)) {
+          serializedState[key] = serializationMethods.save[description.type](args[key]);
+      }
+
+      // Manually add the 'module' entry with its description
+      serializedState['module'] = serializationMethods.save.name();
+      return serializedState;
     }
 
     // Constructs the command's behavior and finalizes its initialization.
@@ -90,25 +97,29 @@ const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
   }
 
   // Loads a command from saved data, reconstituting its state and behavior.
-  const loadCommand = data => {
+  const loadCommand = rawData => {
     // Rebuilds the command's arguments from saved data and revives the command object.
-    const args = Util.makeObject(
-      Object.entries(commandData).map(([key, description]) => [
-        key,
-        serializationMethods.load[description.type](
-          data[key] || (description.default && Util.clone(description.default))
-        ),
-      ])
-    )
+    let unserializedCommandData = {}
 
-    return Serialization.revive(createCommand(args))
+    for (const [key, description] of Object.entries(dataDescription)) {
+        // Determine the value to load
+        // take rawData[key] if present, or clone default value
+        let value = rawData[key]
+        if (value === undefined && description.default !== undefined) {
+            value = Util.clone(description.default)
+        }
+        // Apply the load method based on the description type
+        unserializedCommandData[key] = serializationMethods.load[description.type](value);
+    }
+
+    return Serialization.revive(createCommand(unserializedCommandData))
   }
 
   // Registers the command in the CommandRegistry for later loading and creation.
-  CommandRegistry[name] = {
+  CommandRegistry.add(name, {
     create: createCommand,
     load: loadCommand
-  }
+  })
 
   // Exposes the create and load functions for the command.
   return {

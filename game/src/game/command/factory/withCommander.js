@@ -54,11 +54,15 @@ const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
     load: data => {
       const commander = Commander.load(data.commander)
 
-      const args = Util.makeObject(
-        Object.entries(commandData)
-          .filter(([key]) => key !== 'commander')
-          .map(([key, description]) => [key, serializationMethods.load[description.type](data[key])])
-      )
+      let args = {}
+      for (const [key, description] of Object.entries(commandData)) {
+          // Skip the 'commander' key
+          if (key !== 'commander') {
+              // Apply the load method based on the description type
+              args[key] = serializationMethods.load[description.type](data[key]);
+          }
+      }
+
       args.commander = commander
       const innerCommand = Serialization.revive(create(name, commandData, commandMeta, commandBehaviorFactory).create(args))
 
@@ -66,7 +70,7 @@ const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
     },
   }
 
-  CommandRegistry[name] = command
+  CommandRegistry.add(name, command)
   return command
 }
 
