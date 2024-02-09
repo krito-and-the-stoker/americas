@@ -1,3 +1,4 @@
+// Importing necessary modules and components for command handling, utilities, and messaging.
 import Commander from 'command/commander'
 import UnloadCommand from 'command/unload'
 
@@ -6,57 +7,61 @@ import Util from 'util/util'
 import Binding from 'util/binding'
 import Record from 'util/record'
 
-// Registry for all available commands to avoid circular dependencies
+// Defines a registry for commands to manage dependencies and avoid circular import issues.
 const CommandRegistry = {
   Unload: UnloadCommand
 }
 
+// Function to generate serialization methods for a command, enabling saving and loading of command states.
 const generateSerializationMethods = name => {
   const serializationMethods = {
     save: {
-      raw: x => x,
-      entity: x => Record.reference(x),
-      command: x => (x ? x.save() : null),
-      commands: x => x.filter(y => !!y).map(y => y.save()),
-      name: () => name,
+      raw: x => x, // Saves raw data as-is.
+      entity: x => Record.reference(x), // Transforms entity into a reference for saving.
+      command: x => (x ? x.save() : null), // Saves a command if present, otherwise returns null.
+      commands: x => x.filter(y => !!y).map(y => y.save()), // Filters out falsy commands and saves the rest.
+      name: () => name, // Saves the command's name.
     },
-
     load: {
-      raw: x => x,
-      entity: x => Record.dereference(x),
+      raw: x => x, // Loads raw data as-is.
+      entity: x => Record.dereference(x), // Dereferences an entity during loading.
       command: x => {
+        // Loads a command based on its module, either from Commander or CommandRegistry.
         if (x) {
           if (x.module === 'Commander') {
             return Commander.load(x)
           }
-
           return CommandRegistry[x.module].load(x)
         }
         return null
       },
-      commands: x => x.filter(y => !!y).map(y => serializationMethods.load.command(y)),
-      name: () => name,
+      commands: x => x.filter(y => !!y).map(y => serializationMethods.load.command(y)), // Filters and loads commands.
+      name: () => name, // Loads the command's name.
     },
   }
-
   return serializationMethods
 }
 
+// Revives a command after it has been loaded, ensuring any necessary initialization is performed.
 const revive = command => {
   if (command.loaded) {
-    command.loaded()
+    command.loaded() // Calls the loaded hook if present.
   }
-
   return command
 }
 
+// Core factory function for creating command objects with specific behavior and data.
 const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
-  const serializationMethods = generateSerializationMethods(name)
+  const serializationMethods = generateSerializationMethods(name) // Generates serialization methods for the command.
 
+  // Initializes commandData with default raw types for tag and initHasBeenCalled.
   commandData.tag = { type: 'raw' }
   commandData.initHasBeenCalled = { type: 'raw' }
 
+  // Main function to create a command object, configuring it with provided arguments.
   const createCommand = (args = {}) => {
+    // Validates and initializes command arguments, setting up the command object.
+    // Includes logic for handling required and default arguments, cloning defaults, and setting initialized values.
     Object.keys(args).forEach(key => {
       if (!commandData[key]) {
         Message.warn('Unspecified command creation argument', key, args, commandData)
@@ -89,15 +94,19 @@ const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
         args[key] = description.initialized
       })
 
+
     const saveCommandState = () => {
-      return Util.makeObject(
+      // Saves the command state, converting each property based on its type using serialization methods.
+     return Util.makeObject(
         Object.entries(commandData)
           .concat([['module', { type: 'name' }]])
           .map(([key, description]) => [key, serializationMethods.save[description.type](args[key])])
       )
     }
 
+    // Constructs the command's behavior and finalizes its initialization.
     const commandFunctions = commandBehaviorFactory(args)
+    // Overrides and enhances specific command functions (e.g., init) if necessary.
     if (args.initHasBeenCalled) {
       delete commandFunctions.init
     }
@@ -116,6 +125,7 @@ const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
       }
     }
 
+    // Returns the assembled command object with behavior methods, save functionality, and state information.
     return {
       ...commandFunctions,
       save: saveCommandState,
@@ -124,7 +134,9 @@ const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
     }
   }
 
+  // Loads a command from saved data, reconstituting its state and behavior.
   const loadCommand = data => {
+    // Rebuilds the command's arguments from saved data and revives the command object.
     const args = Util.makeObject(
       Object.entries(commandData).map(([key, description]) => [
         key,
@@ -137,19 +149,22 @@ const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
     return revive(createCommand(args))
   }
 
-  // Save command for later loading
+  // Registers the command in the CommandRegistry for later loading and creation.
   CommandRegistry[name] = {
     create: createCommand,
     load: loadCommand
   }
 
+  // Exposes the create and load functions for the command.
   return {
     create: createCommand,
     load: loadCommand,
   }
 }
 
+// Enhances a command object with additional functionality provided by a Commander instance.
 const enhanceCommandWithCommander = (commander, command) => {
+  // Wraps the command with new behaviors (update, stopped, cancel), integrating it with Commander's capabilities.
   const wrappedCommand = {
     ...command,
     update: (...args) => {
@@ -176,7 +191,9 @@ const enhanceCommandWithCommander = (commander, command) => {
   return wrappedCommand
 }
 
+// Extends the create function to automatically incorporate a Commander instance for managing command lifecycle.
 const createWithCommander = (name, commandData, commandMeta, commandBehaviorFactory) => {
+  // Builds upon the basic command creation process, ensuring the command is tied to a Commander instance for enhanced control.
   const serializationMethods = generateSerializationMethods(name)
   commandData.commander = { type: 'command' }
   commandData.initHasBeenCalled = { type: 'raw' }
@@ -209,9 +226,11 @@ const createWithCommander = (name, commandData, commandMeta, commandBehaviorFact
   return command
 }
 
+// Utility functions for updating command states, such as information and display properties.
 const update = {
   info: (state, info) => Binding.update(state, 'info', info),
   display: (state, display) => Binding.update(state, 'info', { ...state.info, display }),
 }
 
+// Exports the main functionalities of the module, making them available for use elsewhere in the application.
 export default { create, commander: createWithCommander, update }
