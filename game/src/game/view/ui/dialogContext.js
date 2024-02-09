@@ -1,7 +1,6 @@
 import MapView from 'view/map'
 
 const centerMap = (coords) => {
-	console.log('centering map at', coords)
 	MapView.centerAt(coords, 350)
 }
 
