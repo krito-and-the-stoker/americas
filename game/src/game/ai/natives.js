@@ -248,7 +248,7 @@ const establishRelations = (ai, owner) => {
     Events.trigger('ui-dialog', {
       name: 'natives.establish',
       context: {
-        tribe: settlement.tribe,
+        tribe: owner.tribe,
         numSettlements,
         yes: () => {
           ai.state.relations[owner.referenceId].trust += 0.15
