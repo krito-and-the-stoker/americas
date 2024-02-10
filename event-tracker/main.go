@@ -16,10 +16,15 @@ import (
 const databaseName = "event-tracker"
 
 func main() {
-    mongoURI := os.Getenv("MONGO_URI")
-    if mongoURI == "" {
-        log.Fatal("MONGO_URI environment variable is not set")
+    mongoUser := os.Getenv("MONGO_INITDB_ROOT_USERNAME")
+    mongoPass := os.Getenv("MONGO_INITDB_ROOT_PASSWORD")
+    if mongoUser == "" {
+        log.Fatal("MONGO_INITDB_ROOT_USERNAME environment variable is not set")
     }
+    if mongoPass == "" {
+        log.Fatal("MONGO_INITDB_ROOT_PASSWORD environment variable is not set")
+    }
+    mongoURI := "mongodb://" + mongoUser + ":" + mongoPass + "@database:27017"
 
     clientOptions := options.Client().ApplyURI(mongoURI)
     client, err := mongo.Connect(context.TODO(), clientOptions)

@@ -1,22 +1,6 @@
 version: '3.8'
 
 services:
-  database:
-    image: mongo
-    volumes:
-      - mongo-data:/data/db
-    env_file:
-      - .env.mongodb
-    command: mongod --quiet --logpath /dev/null
-
-  event-tracker:
-    build: ./event-tracker
-    depends_on:
-      - database
-    env_file:
-      - .env.mongodb
-    command: ./main
-
   assets:
     build:
       context: ./assets
@@ -61,6 +45,24 @@ services:
              ls -l /dist &&
              echo 'Copied files to /dist'"
 
+  database:
+    image: mongo
+    env_file:
+      - .env.mongodb
+    volumes:
+      - /database/mongodb:/data/db
+    command: mongod --quiet --logpath /dev/null
+    restart: always
+
+  event-tracker:
+    build: ./event-tracker
+    depends_on:
+      - database
+    env_file:
+      - .env.mongodb
+    command: ./main
+    restart: always
+
   webserver:
     build:
       context: ./nginx
@@ -69,16 +71,14 @@ services:
       - assets-dist:/usr/share/nginx/html/assets:ro
       - dashboard-dist:/usr/share/nginx/html/dashboard:ro
       - wiki-dist:/usr/share/nginx/html/wiki:ro
-      - ./nginx/stage.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
-      - "3000:3000"
-      - "3001:3001"
-      - "3002:3002"
+      - "80:80"
     depends_on:
       - game
       - dashboard
       - wiki
       - event-tracker
+    restart: always
 
 volumes:
   mongo-data:

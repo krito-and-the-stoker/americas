@@ -73,9 +73,8 @@ services:
     image: mongo:7.0.4
     volumes:
       - mongo-data:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+    env_file:
+      - .env.mongodb
     command: mongod --quiet --logpath /dev/null
 
   event-tracker:
@@ -85,8 +84,8 @@ services:
     volumes:
       - ./event-tracker:/app
       - go-build:/go/pkg/mod
-    environment:
-      MONGO_URI: "mongodb://root:example@database:27017"
+    env_file:
+      - .env.mongodb
     command: air
 
 volumes:
