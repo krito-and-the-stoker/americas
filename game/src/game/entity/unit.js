@@ -25,6 +25,7 @@ import FillEquipment from 'task/fillEquipment'
 import ConsumeEquipment from 'task/consumeEquipment'
 
 import Commander from 'command/commander'
+import Factory from 'command/factory'
 
 import EnterColony from 'interaction/enterColony'
 import LeaveColony from 'interaction/leaveColony'
@@ -549,7 +550,9 @@ const load = unit => {
   Record.dereferenceLazy(unit.colonist, colonist => (unit.colonist = colonist))
   Record.dereferenceLazy(unit.vehicle, vehicle => (unit.vehicle = vehicle))
   Record.entitiesLoaded(() => {
+    // console.log(unit.commander)
     unit.commander = Commander.load(unit.commander)
+    // Factory.printCommandTree(unit.commander)
     unit.destroy = initialize(unit)
   })
 

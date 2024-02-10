@@ -8,7 +8,7 @@ import Serialization from './serialization'
 // Core factory function for creating command objects with specific behavior and data.
 const create = (name, dataDescription, commandMeta, commandBehaviorFactory) => {
 
-  // Initializes dataDescription with default raw types for tag and initHasBeenCalled.
+  // Add tag and initHasBeenCalled to dataDescription
   dataDescription.tag = { type: 'raw' }
   dataDescription.initHasBeenCalled = { type: 'raw' }
 

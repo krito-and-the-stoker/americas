@@ -197,6 +197,10 @@ const schedule = e => {
     task.willStop = true
   }
 
+  if (e.scheduled) {
+    e.scheduled()
+  }
+
   return stop
 }
 

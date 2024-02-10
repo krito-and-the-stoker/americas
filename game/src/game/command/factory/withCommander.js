@@ -7,27 +7,27 @@ import SimpleCommand from './simpleCommand'
 
 
 // Enhances a command object with additional functionality provided by a Commander instance.
-const enhanceCommandWithCommander = (commander, command) => {
+const enhanceCommandWithCommander = (baseCommand, commander) => {
   // Wraps the command with new behaviors (update, stopped, cancel), integrating it with Commander's capabilities.
   const wrappedCommand = {
-    ...command,
+    ...baseCommand,
     update: (...args) => {
-      if (!command.update) {
+      if (!baseCommand.update) {
         return commander.update(...args)
       }
 
-      return command.update(...args) || commander.update(...args)
+      return baseCommand.update(...args) || commander.update(...args)
     },
     stopped: (...args) => {
-      Util.execute(command.stopped, ...args)
+      Util.execute(baseCommand.stopped, ...args)
       Util.execute(commander.stopped, ...args)
     },
     cancel: () => {
-      Util.execute(command.cancel)
+      Util.execute(baseCommand.cancel)
       Util.execute(commander.cancel)
     },
     priority: true,
-    tag: `Wrapped ${command.tag}`,
+    tag: `Wrapped ${baseCommand.tag}`,
   }
 
   return wrappedCommand
@@ -44,9 +44,9 @@ const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
       const commander = Commander.create()
       commandData.commander.initialized = commander
       const commandFactory = SimpleCommand.create(name, commandData, commandMeta, commandBehaviorFactory)
-      const innerCommand = commandFactory.create(...args)
+      const baseCommand = commandFactory.create(...args)
 
-      return enhanceCommandWithCommander(commander, innerCommand)
+      return enhanceCommandWithCommander(baseCommand, commander)
     },
     load: data => {
       const commander = Commander.load(data.commander)
@@ -61,9 +61,9 @@ const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
       }
 
       args.commander = commander
-      const innerCommand = Serialization.revive(SimpleCommand.create(name, commandData, commandMeta, commandBehaviorFactory).create(args))
+      const baseCommand = SimpleCommand.create(name, commandData, commandMeta, commandBehaviorFactory).create(args)
 
-      return enhanceCommandWithCommander(commander, innerCommand)
+      return Serialization.revive(enhanceCommandWithCommander(baseCommand, commander))
     },
   }
 

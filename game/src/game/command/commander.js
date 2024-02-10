@@ -34,7 +34,7 @@ const schedule = {
   },
   clear: parent => {
     parent.state.commands.forEach(cmd => Util.execute(cmd.canceled))
-    parent.state.commands.length = 0
+    parent.state.commands = []
     if (parent.state.currentCommand) {
       Util.execute(parent.state.currentCommand.cancel)
     }
@@ -114,7 +114,8 @@ const { create, load } = Factory.create(
         }
       }
 
-      return keep || state.currentCommand || state.commands.length > 0
+      const shouldStayAlive = keep || state.currentCommand || state.commands.length > 0
+      return shouldStayAlive
     }
 
     const stopped = () => {
@@ -123,6 +124,7 @@ const { create, load } = Factory.create(
 
     const loaded = () => {
       if (state.currentCommand) {
+        // console.log('hook', state.tag, 'starts', state.currentCommand.tag, state.currentCommand)
         unschedule = startCurrentCommand(state)
       }
     }
