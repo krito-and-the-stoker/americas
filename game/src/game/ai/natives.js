@@ -301,7 +301,7 @@ const makePlansAndRunThem = ai => {
             !hasRaidPlanned(relation)
         )
         .forEach(relation => {
-          relation.raidPlanned = 6
+          relation.raidPlanned = 0
 
           // relation.militancy = 0.0
           // relation.trust *= 0.5
