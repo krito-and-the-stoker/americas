@@ -289,6 +289,7 @@ const makePlansAndRunThem = ai => {
     init: () => {
       Units.unassignAll(ai.owner)
 
+
       Object.values(ai.state.relations)
         // TODO: should be relation.militancy > 0.5
         .filter(
