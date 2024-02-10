@@ -81,7 +81,6 @@ services:
     restart: always
 
 volumes:
-  mongo-data:
   game-dist:
   dashboard-dist:
   wiki-dist:
