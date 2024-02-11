@@ -14,3 +14,5 @@ done
 
 # Run Certbot
 certbot certonly --webroot -w $WEBROOT_PATH $DOMAINS_OPTION --email $EMAIL --agree-tos --no-eff-email
+
+tail -n 100 /var/log/letsencrypt/letsencrypt.log
