@@ -50,7 +50,7 @@ services:
     env_file:
       - .env.mongodb
     volumes:
-      - /database/mongodb:/data/db
+      - /root/database/live:/data/db
     command: mongod --quiet --logpath /dev/null
     restart: always
 
@@ -67,6 +67,7 @@ services:
     build:
       context: ./nginx
     volumes:
+      - /root/certbot:/usr/share/nginx/html:ro
       - game-dist:/usr/share/nginx/html/game:ro
       - assets-dist:/usr/share/nginx/html/assets:ro
       - dashboard-dist:/usr/share/nginx/html/dashboard:ro
