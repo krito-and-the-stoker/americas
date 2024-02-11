@@ -12,9 +12,5 @@ for SUBDOMAIN in $SUBDOMAINS; do
     DOMAINS_OPTION="$DOMAINS_OPTION -d $SUBDOMAIN"
 done
 
-rm /var/log/letsencrypt/letsencrypt.log
-
 # Run Certbot
 certbot certonly --webroot -w $WEBROOT_PATH $DOMAINS_OPTION --email $EMAIL --agree-tos --no-eff-email
-
-cat /var/log/letsencrypt/letsencrypt.log
