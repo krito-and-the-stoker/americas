@@ -4,7 +4,7 @@
 DOMAIN="play-americas.com"
 SUBDOMAINS="www.play-americas.com wiki.play-americas.com dashboard.play-americas.com"
 EMAIL="public@krito.de"
-WEBROOT_PATH="/root/certbot"
+WEBROOT_PATH="/usr/share/nginx/html"
 
 # Prepare the -d options for Certbot
 DOMAINS_OPTION="-d $DOMAIN"
