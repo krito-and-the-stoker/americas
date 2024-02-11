@@ -18,5 +18,8 @@ RUN chmod a+x /bin/create-certificates.sh
 COPY ./renew-certificates.sh /bin/renew-certificates.sh
 RUN chmod a+x /bin/renew-certificates.sh
 
+RUN mkdir -p /usr/share/nginx/html/.well-known
+RUN chmod 777 /usr/share/nginx/html/.well-known
+
 # Copy the nginx configuration file
 COPY ./default.conf /etc/nginx/conf.d/default.conf
