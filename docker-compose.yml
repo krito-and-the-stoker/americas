@@ -67,11 +67,11 @@ services:
     build:
       context: ./nginx
     volumes:
-      - /root/certbot:/usr/share/nginx/html:ro
       - game-dist:/usr/share/nginx/html/game:ro
       - assets-dist:/usr/share/nginx/html/assets:ro
       - dashboard-dist:/usr/share/nginx/html/dashboard:ro
       - wiki-dist:/usr/share/nginx/html/wiki:ro
+      - /root/certbot/.well-known:/usr/share/nginx/html/.well-known:ro
     ports:
       - "80:80"
     depends_on:
