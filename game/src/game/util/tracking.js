@@ -28,7 +28,7 @@ const trackEvent = async name => {
       }
       return response.json()
     })
-    .then(data => console.log('Success:', data))
+    // .then(data => console.log('Success:', data))
     .catch(error => console.error('Error:', error))
 }
 
