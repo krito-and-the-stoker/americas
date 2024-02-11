@@ -69,7 +69,8 @@ services:
       - assets-dist:/usr/share/nginx/html/assets:ro
       - dashboard-dist:/usr/share/nginx/html/dashboard:ro
       - wiki-dist:/usr/share/nginx/html/wiki:ro
-      - ./nginx/stage.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/conf/local.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/conf:/etc/nginx/conf.d/include
     ports:
       - "3000:3000"
       - "3001:3001"
