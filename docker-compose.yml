@@ -71,6 +71,7 @@ services:
       - assets-dist:/usr/share/nginx/html/assets:ro
       - dashboard-dist:/usr/share/nginx/html/dashboard:ro
       - wiki-dist:/usr/share/nginx/html/wiki:ro
+      - certifcates:/etc/letsencrypt/
     ports:
       - "80:80"
     depends_on:
@@ -85,3 +86,4 @@ volumes:
   dashboard-dist:
   wiki-dist:
   assets-dist:
+  certificates:
