@@ -75,13 +75,13 @@ A shipment of tobacco could be about as valuable as the whole ship, if not more.
 - **Coffee**: Like tea, coffee became a highly valued commodity in Europe.
 - **Furs**: High-quality furs were in demand for luxury clothing and accessories.
 - **Coats**: Finished garments made from quality materials, including furs, would have a significant value, though less efficiently packed.
-- **Cloths** (regular): Essential for clothing and household goods, widely traded but less valuable per unit than luxury textiles.
 
 ### Moderate Value
 
-- **Sugar**: A key commodity in the colonial trade, with substantial demand.
-- **Tobacco**: A major cash crop, valuable for its wide consumption, though less than processed cigars.
+- **Cloths** (regular): Essential for clothing and household goods, widely traded but less valuable per unit than luxury textiles.- **Sugar**: A key commodity in the colonial trade, with substantial demand.
 - **Rum**: Popular alcoholic beverage, with value added through distillation.
+- **Sugar**: Worth more than tobacco but harder to produce.
+- **Tobacco**: A major cash crop, valuable for its wide consumption, though less than processed cigars.
 - **Tools**: Essential for construction, agriculture, and daily life, representing significant value.
 
 ### Lower Value
