@@ -41,6 +41,21 @@ const months = [
   'December',
 ]
 
+const daysInMonth = {
+  January: 31,
+  February: 28,
+  March: 31,
+  April: 30,
+  Mai: 31,
+  June: 30,
+  July: 31,
+  August: 31,
+  September: 30,
+  October: 31,
+  November: 30,
+  December: 31
+}
+
 const startYear = 1607
 const time = {
   scale: 1,
@@ -49,6 +64,7 @@ const time = {
   paused: 0,
   monthNumber: 0,
   month: months[0],
+  dayOfMonth: 0,
 }
 
 const get = () => ({
@@ -136,6 +152,10 @@ const advance = deltaTime => {
     time.monthNumber = Math.floor(12 * time.timeOfYear)
     update.month(months[time.monthNumber])
   }
+  const dayOfMonth = Math.ceil(((12 * time.timeOfYear) % 1) * daysInMonth[time.month])
+  if (dayOfMonth !== time.dayOfMonth) {
+    update.dayOfMonth(dayOfMonth)
+  }
 
   Binding.applyAllUpdates()
 }
@@ -166,6 +186,7 @@ const listen = {
   scale: fn => Binding.listen(time, 'scale', fn),
   paused: fn => Binding.listen(time, 'paused', fn),
   month: fn => Binding.listen(time, 'month', fn),
+  dayOfMonth: fn => Binding.listen(time, 'dayOfMonth', fn),
 }
 
 const update = {
@@ -174,6 +195,7 @@ const update = {
   scale: value => Binding.update(time, 'scale', value),
   paused: value => Binding.update(time, 'paused', value),
   month: value => Binding.update(time, 'month', value),
+  dayOfMonth: value => Binding.update(time, 'dayOfMonth', value),
 }
 
 const schedule = e => {
