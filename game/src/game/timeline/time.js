@@ -244,6 +244,7 @@ export default {
   advance,
   season,
   listen,
+  update,
   schedule,
   togglePause,
   yearAndMonth,
