@@ -5,14 +5,16 @@ import { isFunction, evaluate } from './utils'
 import resolveExpression from './expression'
 import { filterObject } from './helper'
 
-import ObjectTree from './components/ObjectTree'
-import DialogImage from './components/DialogImage'
-import Answer from './components/Answer'
-import CoordinatesLink from './components/CoordinatesLink'
-import GameIcon from './components/GameIcon'
-import Backdrop from './components/Backdrop'
-import Grid from './components/Grid'
-import StorageGoods from './components/StorageGoods'
+import ObjectTree from 'ui/components/ObjectTree'
+import CoordinatesLink from 'ui/components/CoordinatesLink'
+import GameIcon from 'ui/components/GameIcon'
+import Grid from 'ui/components/Grid'
+import StorageGoods from 'ui/components/StorageGoods'
+
+import DialogImage from 'ui/components/dialog/DialogImage'
+import Answer from 'ui/components/dialog/Answer'
+import Backdrop from 'ui/components/dialog/Backdrop'
+
 
 const renderer = {
   text: value => () => value,

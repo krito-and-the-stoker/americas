@@ -39,7 +39,7 @@ import FullscreenEvents from 'view/fullscreenEvents'
 import UnitMapView from 'view/map/unit'
 
 import Dialog from 'view/ui/dialog'
-import GlobalPanel from 'view/panel/global'
+import Overlay from 'ui/overlay'
 
 const AUTOSAVE_INTERVAL = 5 * 60 * 1000 // autosave every 5 minutes
 const initialize = () => {
@@ -160,7 +160,7 @@ const start = async () => {
     await nextFrame()
 
     AutosaveView.initialize()
-    GlobalPanel.initialize(Foreground.get().permanent)
+    Overlay.initialize()
     Dialog.initialize()
 
     // start game!
@@ -232,7 +232,7 @@ const load = async () => {
     setTimeout(() => {
       Background.get().layer.show()
       Foreground.get().layer.show()
-      GlobalPanel.initialize(Foreground.get().permanent)
+      Overlay.initialize()
     }, 750)
 
     setTimeout(() => {

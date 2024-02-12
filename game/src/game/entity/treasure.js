@@ -55,6 +55,7 @@ export default {
   spend,
   gain,
   listen,
+  update,
   amount,
   maximum,
   save,
