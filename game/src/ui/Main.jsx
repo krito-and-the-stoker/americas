@@ -1,11 +1,11 @@
 import Dialog from './Dialog'
-import Global from './overlay/Global'
+import Overlay from './overlay/Overlay'
 
 import styles from './Main.module.scss'
 
 function Main() {
   return <>
-    <Global />
+    <Overlay />
     <Dialog />
   </>
 }

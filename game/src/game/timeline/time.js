@@ -68,6 +68,7 @@ const time = {
 }
 
 const get = () => ({
+  scale: time.scale,
   scheduled,
   currentTime,
   year: time.year,

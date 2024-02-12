@@ -241,6 +241,7 @@ const load = async () => {
 
     FullscreenEvents.initialize()
 
+    Time.togglePause()
     initialize()
   } catch (err) {
     Error.capture(err)

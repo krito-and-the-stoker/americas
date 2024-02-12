@@ -1,5 +1,4 @@
-import { Show, createSignal, createEffect } from 'solid-js'
-import Overlay from 'ui/overlay'
+import { createSignal, createEffect } from 'solid-js'
 import style from './Global.module.scss'
 
 import Time from 'timeline/time'
@@ -10,10 +9,32 @@ import Foreground from 'render/foreground'
 
 import GameIcon from 'ui/components/GameIcon'
 
+function findClosestIndex(arr, target) {
+  let closestIndex = 0; // Start with the first element as the closest
+  let smallestDifference = Math.abs(target - arr[0]); // Calculate the initial difference
+
+  // Loop through the array starting from the second element
+  for (let i = 1; i < arr.length; i++) {
+    // Calculate the absolute difference between the target value and the current array element
+    let difference = Math.abs(target - arr[i]);
+
+    // If this difference is smaller than the smallest difference found so far
+    if (difference < smallestDifference) {
+      // Update the smallest difference and the index of the closest element
+      smallestDifference = difference;
+      closestIndex = i;
+    }
+  }
+
+  // Return the index of the closest element
+  return closestIndex;
+}
+
+const timeScales = [.2, .4, .8, 1.6, 3.2]
 function Global() {
-	const [speed, setSpeed] = createSignal(3)
+	const [speed, setSpeed] = createSignal(findClosestIndex(timeScales, Time.get().scale) + 1)
 	createEffect(() => {
-		const scale = [.2, .66, 1, 1.5, 3][speed() - 1]
+		const scale = timeScales[speed() - 1]
 		Time.update.scale(scale)
 	})
 
@@ -26,9 +47,9 @@ function Global() {
 	const [treasure] = Binding.create(Treasure.listen.amount)
 
 	const isEurope = () => screen()?.params?.name === 'europe'
-	const toggleEurope = () => isEurope() ? Europe.close : Europe.open
+	const toggleEurope = () => isEurope() ? Europe.close() : Europe.open()
 
-	return <Show when={Overlay.isVisible()}>
+	return (
 		<div class={style.main}>
 			<div>{month()} {dayOfMonth()}, A.D. {year()}</div>
 			<div class={style.speed}>
@@ -41,9 +62,9 @@ function Global() {
 				<span onClick={() => setSpeed(5)} class={speed() === 5 ? style.selected : null}>5</span>
 			</div>
 			<div>Treasure: {Math.round(treasure())}<GameIcon name="gold" scale={0.8} /></div>
-			<div class={style.europe} onClick={toggleEurope()}>view {isEurope() ? 'Americas' : 'Europe'}</div>
+			<div class={style.europe} onClick={toggleEurope}>view {isEurope() ? 'Americas' : 'Europe'}</div>
 		</div>
-	</Show>
+	)
 }
 
 export default Global
