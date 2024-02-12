@@ -3,7 +3,7 @@ import Util from 'util/util'
 
 
 function create(listen, update) {
-	const [signal, setSignal] = createSignal()
+	const [signal, setSignal] = createSignal(undefined, { equals: false })
 	const cleanup = listen(value => {
 		setSignal(value)
 	})
