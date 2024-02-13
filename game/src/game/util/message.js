@@ -8,7 +8,7 @@ const level = {
 
 const domains = {
   event: false,
-  command: true,
+  command: false,
   colony: true,
   europe: true,
   unit: true,
@@ -19,7 +19,7 @@ const domains = {
   record: true,
   util: true,
   tutorial: true,
-  templates: true,
+  templates: false,
 }
 
 const print = (level, domain, ...args) => {
