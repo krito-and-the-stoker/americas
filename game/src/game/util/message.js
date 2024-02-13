@@ -7,7 +7,7 @@ const level = {
 }
 
 const domains = {
-  event: true,
+  event: false,
   command: true,
   colony: true,
   europe: true,
