@@ -7,6 +7,7 @@ import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 
 import MoveTo from 'command/moveTo'
+import GoTo from 'command/goTo'
 import Commander from 'command/commander'
 import Europe from 'command/europe'
 import TriggerEvent from 'command/triggerEvent'
@@ -285,21 +286,11 @@ const initialize = () => {
           Dialog.open('unit.goto.europe', {
             unit: selectedUnit,
             sail: () => {
-              Commander.scheduleBehind(
-                selectedUnit.commander,
-                Europe.create({ unit: selectedUnit })
-              )
-              Commander.scheduleBehind(
-                selectedUnit.commander,
-                TriggerEvent.create({
-                  name: 'notification',
-                  type: 'europe',
-                  unit: selectedUnit,
-                })
-              )
+              Command.scheduleInstead(GoTo.create({ unit: selectedUnit, europe: true }))
             }
           })
         }
+
         Events.trigger('move', selectedUnit)
       }
     }

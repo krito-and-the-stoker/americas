@@ -11,6 +11,7 @@ import Factory from 'command/factory'
 import MoveTo from 'command/moveTo'
 import America from 'command/america'
 import EuropeCommand from 'command/europe'
+import TriggerEvent from 'command/triggerEvent'
 
 export default Factory.commander(
   'GoTo',
@@ -47,13 +48,32 @@ export default Factory.commander(
             commander,
             MoveTo.create({ unit, coords: colony.mapCoordinates })
           )
+          Commander.scheduleBehind(
+            commander,
+            TriggerEvent.create({
+              name: 'notification',
+              type: 'arrive',
+              unit,
+              colony,
+            })
+          )
         } else {
           // from somewhere to colony
           Commander.scheduleBehind(
             commander,
             MoveTo.create({ unit, coords: colony.mapCoordinates })
           )
+          Commander.scheduleBehind(
+            commander,
+            TriggerEvent.create({
+              name: 'notification',
+              type: 'arrive',
+              unit,
+              colony,
+            })
+          )
         }
+
         Factory.update.display(state, `Travelling to ${colony.name}`)
       }
 
@@ -67,7 +87,16 @@ export default Factory.commander(
             MoveTo.create({ unit, coords: targetCoordinates })
           )
           Commander.scheduleBehind(commander, EuropeCommand.create({ unit }))
+          Commander.scheduleBehind(
+            commander,
+            TriggerEvent.create({
+              name: 'notification',
+              type: 'europe',
+              unit,
+            })
+          )
         }
+
         // from europe to europe -> nothing to do
         Factory.update.display(state, 'Travelling to London')
       }

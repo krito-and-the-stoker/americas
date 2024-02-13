@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 
 const level = {
+  info: true,
   log: true,
   warn: true,
-  error: true,
 }
 
 const domains = {
@@ -18,13 +18,14 @@ const domains = {
   owner: true,
   record: true,
   util: true,
-  tutorial: false,
+  tutorial: true,
   templates: true,
 }
 
-const print = (level, ...args) => {
+const print = (level, domain, ...args) => {
   if (typeof document !== 'undefined') {
-    console.log(`${level}:`, ...args)
+    console.log(`${level} ${domain}:`, ...args)
+    // TODO: Display a few things in the intro log
     // const logElement = document.querySelector('#log')
     // if (logElement) {
     //   logElement.innerHTML = text
@@ -32,49 +33,46 @@ const print = (level, ...args) => {
   }
 }
 
-const info = (...args) => {
+const info = domain => (...args) => {
   if (level.info) {
-    print('info', ...args)
+    print('Info', domain, ...args)
   }
 }
 
-const log = (...args) => {
+const log = domain => (...args) => {
   if (level.log) {
-    print('log', ...args)
+    print('Log', domain, ...args)
   }
 }
 
-const warn = (...args) => {
+const warn = domain => (...args) => {
   if (level.warn) {
-    print('warn', ...args)
+    print('Warn', domain, ...args)
   }
 }
 
-const error = (...args) => {
-  if (level.error) {
-    print('error', ...args)
-  }
+const error = domain => (...args) => {
+  print('Error', domain, ...args)
 }
 
 
 const emptyFn = () => {}
 
-const domainFunctions = Object.fromEntries(Object.entries(domains).map(([key, isEnabled]) => {
+const domainFunctions = Object.fromEntries(Object.entries(domains).map(([domain, isEnabled]) => {
   const functions = isEnabled ? {
-    log,
-    warn,
-    info,
-    error,
+    info: info(domain),
+    log: log(domain),
+    warn: warn(domain),
+    error: error(domain),
   } : {
+    info: emptyFn,
     log: emptyFn,
     warn: emptyFn,
-    info: emptyFn,
-    error: emptyFn,
+    error: error(domain),
   }
 
-  return [key, functions]
+  return [domain, functions]
 }))
 
-console.log(domainFunctions)
 
 export default domainFunctions

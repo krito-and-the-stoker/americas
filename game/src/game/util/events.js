@@ -7,7 +7,7 @@ const init = name => {
 }
 
 const trigger = (name, arg) => {
-  Message.event.log(`Event: ${name}`, arg)
+  Message.event.log(`Event ${name}`, arg)
   if (listeners[name]) {
     listeners[name].forEach(fn => fn(arg))
   }

@@ -68,7 +68,6 @@ export default Factory.commander(
         Tile.description(targetTile, unit.owner)
 
       Factory.update.display(state, displayName)
-
       Commander.scheduleInstead(commander, Move.create({ unit, coords }))
     }
 
