@@ -69,7 +69,7 @@ let counter = offset
 
 const logDownloadProgress = (loader, resource) => {
   counter += 1
-  Message.log(`Downloading assets (${counter}/${numberOfAssets()})...`)
+  Message.initialize.log(`Downloading assets (${counter}/${numberOfAssets()})...`)
 }
 
 const loadTexture = async path => {
@@ -91,7 +91,7 @@ const rectangle = index => {
 
 const texture = (name, options = {}) => {
   if (!textures[name]) {
-    Message.warn('Texture not found in textures:', name, textures)
+    Message.initialize.warn('Texture not found in textures:', name, textures)
     return textures.white
   }
   if (options.frame || options.frame === 0) {

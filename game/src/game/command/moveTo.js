@@ -51,11 +51,11 @@ export default Factory.commander(
       coords.x >= MapEntity.get().numTiles.x ||
       coords.y >= MapEntity.get().numTiles.y
     ) {
-      Message.warn('invalid coords', Unit.name(unit), coords)
+      Message.command.warn('invalid coords', Unit.name(unit), coords)
     }
 
     if (!MapEntity.tile(coords)) {
-      Message.warn('no targetTile', coords, Unit.name(unit), state)
+      Message.command.warn('no targetTile', coords, Unit.name(unit), state)
       coords.x = Math.round(coords.x)
       coords.y = Math.round(coords.y)
     }

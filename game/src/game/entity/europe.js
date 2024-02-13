@@ -298,13 +298,13 @@ const initialize = () => {
         europe.crossesNeeded += CROSSES_COST_IMPROVE
         Events.trigger('notification', { type: 'immigration', unit })
         Events.trigger('immigration')
-        Message.send(
+        Message.europe.log(
           `Religious unrest in Europe has caused a ${chosen.name} to line up for migration to the new world.`
         )
       }
     }),
   ]
-  Message.log('Europe initialized')
+  Message.europe.log('Europe initialized')
 }
 
 export default {

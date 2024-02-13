@@ -7,7 +7,7 @@ import Storage from 'entity/storage'
 
 export default (colony, unit) => {
   if (unit.disbanded) {
-    Message.warn('disbanded unit entering colony', colony.name, unit)
+    Message.unit.warn('disbanded unit entering colony', colony.name, unit)
     return
   }
   if (colony.owner === unit.owner) {

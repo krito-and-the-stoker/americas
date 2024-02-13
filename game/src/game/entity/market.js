@@ -29,13 +29,13 @@ const buy = ({ good, amount }) => {
   const pricePerGood = ask(good)
   const price = pricePerGood * amount
   if (Treasure.spend(price)) {
-    Message.send(`bought ${amount} ${good}`)
+    Message.europe.log(`bought ${amount} ${good}`)
     market.europe[good].storage -= amount
     return amount
   }
   const actualAmount = Math.floor(Treasure.amount() / pricePerGood)
   Treasure.spend(actualAmount * pricePerGood)
-  Message.send(`bought ${actualAmount} ${good}`)
+  Message.europe.log(`bought ${actualAmount} ${good}`)
   market.europe[good].storage -= actualAmount
   return actualAmount
 }
@@ -49,7 +49,7 @@ const unbuy = ({ good, amount }) => {
 const sell = ({ good, amount }) => {
   const pricePerGood = bid(good)
   Treasure.gain(amount * pricePerGood)
-  Message.send(`sold ${amount} ${good}`)
+  Message.europe.log(`sold ${amount} ${good}`)
   market.europe[good].storage += amount
 }
 

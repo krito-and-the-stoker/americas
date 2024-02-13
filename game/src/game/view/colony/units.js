@@ -63,7 +63,7 @@ const create = (colony, closeScreen, originalDimensions) => {
       )
       const position = shipPositions.find(pos => !pos.taken)
       if (!position) {
-        Message.warn('could not display unit, no position left', unit)
+        Message.unit.warn('could not display unit, no position left', unit)
         return unsubscribeClick
       }
 
@@ -99,7 +99,7 @@ const create = (colony, closeScreen, originalDimensions) => {
   const drawLandUnit = (unit, added) => {
     const position = landPositions.find(pos => !pos.taken)
     if (!position) {
-      Message.warn('could not display unit, no position left', unit)
+      Message.unit.warn('could not display unit, no position left', unit)
       return
     }
     position.taken = true

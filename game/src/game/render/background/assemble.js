@@ -24,7 +24,7 @@ const initialize = () => {
   })
   const totalSprites = tileStacks.reduce((count, stack) => count + stack.frames.length, 0)
   if (totalSprites > 0) {
-    Message.log(`Using a total of ${totalSprites} sprites for map`)
+    Message.initialize.log(`Using a total of ${totalSprites} sprites for map`)
   }
 }
 

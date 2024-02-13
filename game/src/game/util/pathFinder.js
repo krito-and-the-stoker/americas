@@ -145,7 +145,7 @@ const findPath = Cache.create({
     const area = Unit.area(unit)
     const target = MapEntity.tile(toCoords)
     if (!target) {
-      Message.warn('toCoords must resolve to a tile')
+      Message.unit.warn('toCoords must resolve to a tile')
       return null
     }
 
@@ -154,7 +154,7 @@ const findPath = Cache.create({
       if (newCoords) {
         return findPath(fromCoords, newCoords, unit)
       }
-      Message.warn('could not find path to target area')
+      Message.unit.warn('could not find path to target area')
       return null
     }
 

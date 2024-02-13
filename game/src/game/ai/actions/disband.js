@@ -10,7 +10,7 @@ import MoveUnit from 'ai/actions/moveUnit'
 import Units from 'ai/resources/units'
 
 const create = unit => {
-  Message.log('disbanding', unit.name, unit.referenceId)
+  Message.unit.log('disbanding', unit.name, unit.referenceId)
   const settlement =
     Util.choose(
       Record.getAll('settlement').filter(

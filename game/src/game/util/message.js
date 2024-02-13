@@ -1,42 +1,80 @@
 /* eslint-disable no-console */
 
-const config = {
+const level = {
   log: true,
-  event: false,
   warn: true,
   error: true,
 }
 
-const send = (...args) => log(...args)
+const domains = {
+  event: true,
+  command: true,
+  colony: true,
+  europe: true,
+  unit: true,
+  natives: true,
+  initialize: true,
+  tile: true,
+  owner: true,
+  record: true,
+  util: true,
+  tutorial: false,
+  templates: true,
+}
 
-const log = (text, ...args) => {
-  if (config.log) {
-    if (typeof document !== 'undefined') {
-      console.log(`Log: ${text}`, ...args)
-      const logElement = document.querySelector('#log')
-      if (logElement) {
-        logElement.innerHTML = text
-      }
-    }
+const print = (level, ...args) => {
+  if (typeof document !== 'undefined') {
+    console.log(`${level}:`, ...args)
+    // const logElement = document.querySelector('#log')
+    // if (logElement) {
+    //   logElement.innerHTML = text
+    // }
+  }
+}
+
+const info = (...args) => {
+  if (level.info) {
+    print('info', ...args)
+  }
+}
+
+const log = (...args) => {
+  if (level.log) {
+    print('log', ...args)
   }
 }
 
 const warn = (...args) => {
-  if (config.warn) {
-    console.warn(...args)
+  if (level.warn) {
+    print('warn', ...args)
   }
 }
 
 const error = (...args) => {
-  if (config.error) {
-    console.error(...args)
+  if (level.error) {
+    print('error', ...args)
   }
 }
 
-const event = (text, args) => {
-  if (config.event) {
-    console.log(text, args)
-  }
-}
 
-export default { send, log, event, warn, error }
+const emptyFn = () => {}
+
+const domainFunctions = Object.fromEntries(Object.entries(domains).map(([key, isEnabled]) => {
+  const functions = isEnabled ? {
+    log,
+    warn,
+    info,
+    error,
+  } : {
+    log: emptyFn,
+    warn: emptyFn,
+    info: emptyFn,
+    error: emptyFn,
+  }
+
+  return [key, functions]
+}))
+
+console.log(domainFunctions)
+
+export default domainFunctions

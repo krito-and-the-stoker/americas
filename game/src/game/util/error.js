@@ -1,7 +1,5 @@
-import Message from 'util/message'
-
 const capture = error => {
-  Message.error('Captured error:', error)
+  console.error('Captured error:', error)
 
   if (window.location.hostname === 'localhost') {
     // throw early in development

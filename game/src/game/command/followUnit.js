@@ -57,7 +57,7 @@ export default Factory.commander(
     }
 
     const finished = () => {
-      Message.log('Finished pursuit', Unit.name(unit), '->', Unit.name(target))
+      Message.command.log('Finished pursuit', Unit.name(unit), '->', Unit.name(target))
     }
 
     return {

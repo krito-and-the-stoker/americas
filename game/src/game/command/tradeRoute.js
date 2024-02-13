@@ -23,7 +23,7 @@ const scheduleRoute = (state, route) => {
       s ? `${s}, ${order.amount} ${order.good}` : `${order.amount} ${order.good}`,
     null
   )
-  Message.send(
+  Message.command.log(
     `A ${Unit.name(unit)} will bring ${goods} from ${route.src.name} to ${route.dest.name}`
   )
   Factory.update.display(
@@ -172,7 +172,7 @@ export default Factory.commander(
               scheduleRoute(state, subRoute)
             } else {
               // go to route src first
-              Message.log(
+              Message.command.log(
                 `A ${Unit.name(unit)} is moving to ${route.src.name} for next transport`
               )
               Factory.update.display(state, `Moving to ${route.src.name} for next transport`)
@@ -206,7 +206,7 @@ export default Factory.commander(
             })
           )
         } else {
-          Message.send(
+          Message.command.log(
             `A ${Unit.name(unit)} has not found any routes and will look again shortly`
           )
           Factory.update.display(state, 'Waiting for transport routes')

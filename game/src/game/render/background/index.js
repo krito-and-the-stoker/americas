@@ -157,7 +157,7 @@ const createTiles = tileStacks =>
 
 let unsubscribeTiles = () => {}
 const restart = () => {
-  Message.log('Reassembling tiles')
+  Message.initialize.log('Reassembling tiles')
   tiles = createTiles(AssembleMap.getTileStacks())
   numTiles = AssembleMap.getNumTiles()
 
@@ -191,7 +191,7 @@ const initialize = () => {
   layer.app.stop()
 
   if (AssembleMap.isReady()) {
-    Message.log('Assembling tiles')
+    Message.initialize.log('Assembling tiles')
     tiles = createTiles(AssembleMap.getTileStacks())
     numTiles = AssembleMap.getNumTiles()
 

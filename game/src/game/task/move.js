@@ -106,7 +106,7 @@ const sanitizeUnitPosition = (unit, deltaTime) => {
     )
 
   if (allBadCoords.length === 4) {
-    Message.warn('Unit is stuck and therefor removed', unit)
+    Message.command.warn('Unit is stuck and therefor removed', unit)
     Unit.disband(unit)
   }
 

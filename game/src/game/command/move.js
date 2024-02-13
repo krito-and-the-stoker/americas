@@ -30,7 +30,7 @@ export default Factory.create(
       coords.x >= MapEntity.get().numTiles.x ||
       coords.y >= MapEntity.get().numTiles.y
     ) {
-      Message.warn('coords out of range', coords)
+      Message.command.warn('coords out of range', coords)
     }
 
     let active = true

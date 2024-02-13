@@ -11,7 +11,7 @@ import Units from 'ai/resources/units'
 import Disband from 'ai/actions/disband'
 
 const create = ({ tribe, state, colony }) => {
-  Message.log('visiting', colony.name)
+  Message.natives.log('visiting', colony.name)
   const prev = MoveUnit.create({
     owner: tribe.owner,
     coords: colony.mapCoordinates,

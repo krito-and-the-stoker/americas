@@ -89,7 +89,7 @@ const createFromMap = ({ tiles }) => {
     const tribe = tribes.find(tribe => tribe.id === MapEntity.tile(coords).zone)
     Settlement.create(tribe, coords, tribe.owner)
   })
-  Message.log(`Tribes created (${tribes.length})`)
+  Message.natives.log(`Tribes created (${tribes.length})`)
 }
 
 const create = (id, owner) => {

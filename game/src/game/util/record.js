@@ -60,7 +60,7 @@ const add = (type, entity) => {
 const remove = entity => {
   const record = records.find(record => record.entity === entity)
   if (!record) {
-    Message.warn('cannot remove, entity not found. Possible duplicate removal', entity)
+    Message.record.warn('cannot remove, entity not found. Possible duplicate removal', entity)
   } else {
     Util.execute(record.destroy)
   }
@@ -146,8 +146,8 @@ const revive = record => {
 }
 
 const dump = () => {
-  Message.log('Records', records)
-  Message.log('Globals', globals)
+  Message.record.log('Records', records)
+  Message.record.log('Globals', globals)
 
   window.Record = {
     add,
@@ -357,15 +357,15 @@ const serializeAsync = () =>
   })
 
 const autosave = async () => {
-  Message.log('Saving...')
+  Message.record.log('Saving...')
   const content = await serializeAsync()
   window.localStorage.setItem('lastSave', content)
   Tracking.autosave()
-  Message.log(`Entities saved to local storage using ${Math.round(content.length / 1024)} kb.`)
+  Message.record.log(`Entities saved to local storage using ${Math.round(content.length / 1024)} kb.`)
 }
 
 const save = () => {
-  Message.log('Saving...')
+  Message.record.log('Saving...')
   lastSave = serialize()
   if (SAVE_TO_LOCAL_STORAGE) {
     if (USE_COMPRESSION) {
@@ -374,20 +374,20 @@ const save = () => {
         const worker = null; //new Worker(new URL('entries/worker.js', import.meta.url))
         worker.onmessage = e => {
           window.localStorage.setItem('lastSaveCompressed', e.data)
-          Message.log(`Entities saved to local storage using ${e.data.length} bytes.`)
+          Message.record.log(`Entities saved to local storage using ${e.data.length} bytes.`)
         }
         worker.postMessage(lastSave)
       } else {
         const compressed = LZString.compress(lastSave)
         window.localStorage.setItem('lastSaveCompressed', compressed)
-        Message.log(`Entities saved to local storage using ${compressed.length} bytes.`)
+        Message.record.log(`Entities saved to local storage using ${compressed.length} bytes.`)
       }
     } else {
       window.localStorage.setItem('lastSave', lastSave)
-      Message.log(`Entities saved to local storage using ${lastSave.length} bytes.`)
+      Message.record.log(`Entities saved to local storage using ${lastSave.length} bytes.`)
     }
   } else {
-    Message.log(`Entities saved in memory using ${lastSave.length} bytes.`)
+    Message.record.log(`Entities saved in memory using ${lastSave.length} bytes.`)
   }
   Events.trigger('save')
 }
@@ -408,7 +408,7 @@ const dereference = ref => {
     return revive(dead)
   }
 
-  Message.warn('could not find reference for ', ref, snapshot.entities)
+  Message.record.warn('could not find reference for ', ref, snapshot.entities)
   return null
 }
 const dereferenceLazy = (ref, fn) => {
@@ -422,7 +422,7 @@ const dereferenceLazy = (ref, fn) => {
     } else {
       const dead = snapshot.entities.find(record => record.id === referenceId)
       if (!dead) {
-        Message.warn('Could not find reference for', ref)
+        Message.record.warn('Could not find reference for', ref)
       } else {
         dead.listeners.push(fn)
       }
@@ -448,10 +448,10 @@ const unserialize = (content, initRenderMapFn = null) => {
   snapshot = JSON.parse(content)
   // console.log('Loading', snapshot)
   if (snapshot.game !== 'americas') {
-    Message.warn('The save game does not appear to be a valid americas save game.')
+    Message.record.warn('The save game does not appear to be a valid americas save game.')
   }
   if (snapshot.revision !== Version.revision) {
-    Message.warn(
+    Message.record.warn(
       'The save games version does not match the version of the game. If you see no errors you can ignore this warning.'
     )
   }
@@ -473,7 +473,7 @@ const unserialize = (content, initRenderMapFn = null) => {
 }
 
 const load = (initRenderMap, src = null) => {
-  Message.log('Loading...')
+  Message.record.log('Loading...')
 
   if (src) {
     lastSave = src
@@ -491,7 +491,7 @@ const load = (initRenderMap, src = null) => {
   PathFinder.initialize()
 
   Events.trigger('restart')
-  Message.log('Game loaded')
+  Message.record.log('Game loaded')
 }
 
 const download = () => {
@@ -514,7 +514,7 @@ const upload = initRenderMap => {
         document.body.removeChild(input)
       }
       reader.onerror = function (evt) {
-        Message.log('oh no, something went wrong :/', evt)
+        Message.record.log('oh no, something went wrong :/', evt)
         document.body.removeChild(input)
       }
     }

@@ -29,7 +29,7 @@ const create = () => {
     buildings.filter(building => building.width === 2).length <
     2 * buildings.filter(building => building.width === 2)
   ) {
-    Message.warn(
+    Message.colony.warn(
       'There might not be enough slots for double width buildings left',
       buildings,
       positions
@@ -60,7 +60,7 @@ const create = () => {
     buildings.filter(building => building.width === 1).length >
     positions.filter(pos => !pos.taken).length
   ) {
-    Message.warn(
+    Message.colony.warn(
       'There is not enough slots left for buildings with size 1',
       buildings,
       positions

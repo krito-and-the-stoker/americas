@@ -85,7 +85,7 @@ const construct = (colony, construction) => {
         colony,
         building: colony.buildings[construction.target],
       })
-      Message.send(
+      Message.colony.log(
         `${colony.name} has completed construction of ${Building.name(colony, construction.target)}.`
       )
     },
@@ -96,7 +96,7 @@ const construct = (colony, construction) => {
         colony,
         unit,
       })
-      Message.send(`${colony.name} has completed construction of ${Unit.name(unit)}.`)
+      Message.colony.log(`${colony.name} has completed construction of ${Unit.name(unit)}.`)
     },
   }
   Util.execute(construction.construct.map(actionName => actions[actionName]))

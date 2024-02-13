@@ -149,7 +149,7 @@ const initialize = ai => {
                     if (relation) {
                       relation.trust -= 0.05
                     }
-                    Message.log(`road built registered by ${tribe.name}`)
+                    Message.natives.log(`road built registered by ${tribe.name}`)
                   }
                 }
               }),
@@ -164,7 +164,7 @@ const initialize = ai => {
                     if (relation) {
                       relation.trust -= 0.05
                     }
-                    Message.log(`plowed registered by ${tribe.name}`)
+                    Message.natives.log(`plowed registered by ${tribe.name}`)
                   }
                 }
               }),
@@ -179,7 +179,7 @@ const initialize = ai => {
                     if (relation) {
                       relation.trust -= 0.05
                     }
-                    Message.log(`cut forest registered by ${tribe.name}`)
+                    Message.natives.log(`cut forest registered by ${tribe.name}`)
                   }
                 }
               }),

@@ -69,7 +69,7 @@ export default (attacker, other) => {
     }
     // if loser is not ok anymore...
   } else {
-    Message.send(`A ${Unit.name(winner)} defeated a ${Unit.name(loser)} on the battle field`)
+    Message.unit.log(`A ${Unit.name(winner)} defeated a ${Unit.name(loser)} on the battle field`)
 
     if (loser.properties.defeated) {
       if (loser.properties.defeated.transfer) {

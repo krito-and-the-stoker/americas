@@ -123,7 +123,7 @@ const prepareMessage = message => {
       message[key] = funcs[key]
     })
   } else {
-    Message.warn('no listeners attached to tutorial message', message.name, message)
+    Message.tutorial.warn('no listeners attached to tutorial message', message.name, message)
   }
 
   return message
