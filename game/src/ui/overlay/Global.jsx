@@ -1,4 +1,6 @@
 import { createSignal, createEffect } from 'solid-js'
+import { useKeyDownEvent } from "@solid-primitives/keyboard";
+
 import style from './Global.module.scss'
 
 import Time from 'timeline/time'
@@ -48,6 +50,40 @@ function Global() {
 
 	const isEurope = () => screen()?.params?.name === 'europe'
 	const toggleEurope = () => isEurope() ? Europe.close() : Europe.open()
+
+	const keyboardMap = {
+		'1': () => {
+			setSpeed(1)
+		},
+		'2': () => {
+			setSpeed(2)
+		},
+		'3': () => {
+			setSpeed(3)
+		},
+		'4': () => {
+			setSpeed(4)
+		},
+		'5': () => {
+			setSpeed(5)
+		},
+		' ': () => {
+		  Time.togglePause()
+		}
+	}
+	const keyDownEvent = useKeyDownEvent();
+	createEffect(() => {
+	  const e = keyDownEvent();
+
+	  if (e) {
+	  	const keyHandler = keyboardMap[e.key]
+	  	if (keyboardMap[e.key]) {
+	  		keyHandler()
+		    e.preventDefault();
+	  	}
+	  }
+	});
+
 
 	return (
 		<div class={style.main}>

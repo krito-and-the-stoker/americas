@@ -106,10 +106,6 @@ const handleKeydown = e => {
     }
   }
 
-  if (e.key === ' ') {
-    Time.togglePause()
-  }
-
   if (e.key === 'e') {
     Europe.open()
   }
