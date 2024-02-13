@@ -68,7 +68,7 @@ const get = () => ({
 })
 
 const create = ({ data }) => {
-  Message.initilaize.log('Creating map')
+  Message.initialize.log('Creating map')
 
   const baseLayer = layer(data, 'terrain base')
   numTiles = {

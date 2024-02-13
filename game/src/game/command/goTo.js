@@ -28,6 +28,10 @@ export default Factory.commander(
       type: 'raw',
       default: false,
     },
+    showNotification: {
+      type: 'raw',
+      default: true
+    }
   },
   {
     id: 'goTo',
@@ -48,30 +52,34 @@ export default Factory.commander(
             commander,
             MoveTo.create({ unit, coords: colony.mapCoordinates })
           )
-          Commander.scheduleBehind(
-            commander,
-            TriggerEvent.create({
-              name: 'notification',
-              type: 'arrive',
-              unit,
-              colony,
-            })
-          )
+          if (state.showNotification) {
+            Commander.scheduleBehind(
+              commander,
+              TriggerEvent.create({
+                name: 'notification',
+                type: 'arrive',
+                unit,
+                colony,
+              })
+            )
+          }
         } else {
           // from somewhere to colony
           Commander.scheduleBehind(
             commander,
             MoveTo.create({ unit, coords: colony.mapCoordinates })
           )
-          Commander.scheduleBehind(
-            commander,
-            TriggerEvent.create({
-              name: 'notification',
-              type: 'arrive',
-              unit,
-              colony,
-            })
-          )
+          if (state.showNotification) {
+            Commander.scheduleBehind(
+              commander,
+              TriggerEvent.create({
+                name: 'notification',
+                type: 'arrive',
+                unit,
+                colony,
+              })
+            )
+          }
         }
 
         Factory.update.display(state, `Travelling to ${colony.name}`)
@@ -87,14 +95,16 @@ export default Factory.commander(
             MoveTo.create({ unit, coords: targetCoordinates })
           )
           Commander.scheduleBehind(commander, EuropeCommand.create({ unit }))
-          Commander.scheduleBehind(
-            commander,
-            TriggerEvent.create({
-              name: 'notification',
-              type: 'europe',
-              unit,
-            })
-          )
+          if (state.showNotification) {
+            Commander.scheduleBehind(
+              commander,
+              TriggerEvent.create({
+                name: 'notification',
+                type: 'europe',
+                unit,
+              })
+            )
+          }
         }
 
         // from europe to europe -> nothing to do

@@ -46,6 +46,7 @@ const scheduleRoute = (state, route) => {
       unit,
       colony: route.dest.type === 'colony' ? route.dest : null,
       europe: route.dest.type === 'europe',
+      showNotification: false,
     })
   )
 
@@ -194,6 +195,7 @@ export default Factory.commander(
                   unit,
                   colony: route.src.type === 'colony' ? route.src : null,
                   europe: route.src.type === 'europe',
+                  showNotification: false,
                 })
               )
             }
