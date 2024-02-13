@@ -46,15 +46,6 @@ const selectTarget = unit => {
       size: colony.colonists.length,
       action: () => {
         Commander.scheduleBehind(unit.commander, GoTo.create({ unit, colony }))
-        Commander.scheduleBehind(
-          unit.commander,
-          TriggerEvent.create({
-            name: 'notification',
-            type: 'arrive',
-            unit,
-            colony,
-          })
-        )
         closeIfNoShips()
       },
     }))

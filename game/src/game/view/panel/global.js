@@ -15,6 +15,9 @@ import UnitScreen from 'view/screen/units'
 import ColonyScreen from 'view/screen/colonies'
 
 const initialize = () => {
+  console.log('initialize global panel')
+  return null
+
   const { h, patch } = Dom
   let globalPanel = document.createElement('div')
   document.body.appendChild(globalPanel)

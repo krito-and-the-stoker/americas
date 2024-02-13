@@ -94,7 +94,7 @@ const create = (name, coords, owner) => {
 
     return unit
   } else {
-    Message.warn('unit type not found', name)
+    Message.unit.warn('unit type not found', name)
     return null
   }
 }
@@ -211,7 +211,7 @@ const initialize = unit => {
             coords => Tile.closest(coords),
             tile => {
               if (!tile) {
-                Message.warn('tile is null, this should not be', unit)
+                Message.unit.warn('tile is null, this should not be', unit)
                 return
               }
               Tile.discover(tile, unit.owner)
@@ -259,7 +259,7 @@ const initialize = unit => {
         unit.domain === other.domain &&
         unit.radius > 0.1 * unit.properties.radius
       ) {
-        Message.log('player attacking hostile', unit.name, other.name)
+        Message.unit.log('player attacking hostile', unit.name, other.name)
         Fight(unit, other)
       }
     }),
@@ -475,7 +475,7 @@ const unloadUnit = (unit, tile, desiredPassenger = null) => {
     return passenger
   }
 
-  Message.warn('could not unload, no units on board', unit)
+  Message.unit.warn('could not unload, no units on board', unit)
   return null
 }
 
@@ -550,9 +550,9 @@ const load = unit => {
   Record.dereferenceLazy(unit.colonist, colonist => (unit.colonist = colonist))
   Record.dereferenceLazy(unit.vehicle, vehicle => (unit.vehicle = vehicle))
   Record.entitiesLoaded(() => {
-    // console.log(unit.commander)
+    Message.command.log(unit.commander)
     unit.commander = Commander.load(unit.commander)
-    // Factory.printCommandTree(unit.commander)
+    Factory.printCommandTree(unit.commander)
     unit.destroy = initialize(unit)
   })
 

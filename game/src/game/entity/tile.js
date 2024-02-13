@@ -30,7 +30,7 @@ const TERRAIN_NAMES = [
 
 const prepare = ({ id, layers, index }) => {
   if (!Object.entries(Terrain).find(([, terrain]) => terrain.id === id)) {
-    Message.warn(`No terrain type found for id ${id}.`)
+    Message.tile.warn(`No terrain type found for id ${id}.`)
     throw new Error(`No terrain type found for id ${id}.`)
   }
 
@@ -294,7 +294,7 @@ const load = (data, index) => {
   tile.index = index
   const [name, terrain] = Object.entries(Terrain).find(([, terrain]) => terrain.id === tile.id)
   if (!terrain) {
-    Message.warn(`No terrain type found for id ${tile.id}.`)
+    Message.tile.warn(`No terrain type found for id ${tile.id}.`)
     throw new Error(`No terrain type found for id ${tile.id}.`)
   }
   tile.name = name
@@ -357,7 +357,7 @@ const diagonalNeighbors = tile => {
     result = result.concat([left(down(tile)), right(down(tile))])
   }
   if (!up(tile) && !down(tile)) {
-    Message.warn('tile has no vertical neighbors', tile)
+    Message.tile.warn('tile has no vertical neighbors', tile)
   }
   return result.filter(n => n)
 }
@@ -423,7 +423,7 @@ const tileMovementCost = (tile, travelType) => {
     return costTable[tile.terrainName]
   }
 
-  // Message.warn(`No valid movement cost found for ${unit.properties.travelType} to ${to.terrainName}`)
+  // Message.tile.warn(`No valid movement cost found for ${unit.properties.travelType} to ${to.terrainName}`)
   return Infinity
 }
 
@@ -509,7 +509,7 @@ const movementCost = (fromCoords, toCoords, unit) => {
 
 
 
-  // Message.warn(`No valid movement cost found for ${unit.properties.travelType} to ${to.terrainName}`)
+  // Message.tile.warn(`No valid movement cost found for ${unit.properties.travelType} to ${to.terrainName}`)
   return Infinity
 }
 

@@ -17,7 +17,7 @@ const create = (name, dataDescription, commandMeta, commandBehaviorFactory) => {
     // Validating Command Arguments Against Specifications
     for (const key in args) {
         if (!dataDescription[key]) {
-            Message.warn('Unspecified command creation argument', key, args, dataDescription);
+            Message.command.warn('Unspecified command creation argument', key, args, dataDescription);
         }
     }
 

@@ -64,14 +64,14 @@ const handleKeydown = e => {
 
     if (e.key === 'a') {
       if (!controlAllPlayers) {
-        Message.log('now controlling everyone')
+        Message.owner.log('now controlling everyone')
         Record.getAll('owner').forEach(owner => {
           Owner.update.visible(owner, true)
           Owner.update.input(owner, true)
         })
       }
       if (controlAllPlayers) {
-        Message.log('now controlling only player')
+        Message.owner.log('now controlling only player')
         Record.getAll('owner').forEach(owner => {
           Owner.update.visible(owner, owner === Owner.player())
           Owner.update.input(owner, owner === Owner.player())
@@ -104,10 +104,6 @@ const handleKeydown = e => {
     } else {
       ColonyScreen.open()
     }
-  }
-
-  if (e.key === ' ') {
-    Time.togglePause()
   }
 
   if (e.key === 'e') {

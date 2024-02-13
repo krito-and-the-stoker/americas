@@ -26,7 +26,7 @@ const tag = () => {
   const name = choose(names)
   names = names.filter(n => n !== name)
   if (names.length === 0) {
-    Message.warn('Resetting names. Consider using more in future.')
+    Message.util.warn('Resetting names. Consider using more in future.')
     names = Names
   }
 
@@ -52,7 +52,7 @@ const execute = (something, ...arg) => {
       .map(fn => fn(...arg))
   }
 
-  Message.warn('unable to execute', something)
+  Message.util.warn('unable to execute', something)
   // throw new Error('unable to execute')
 }
 

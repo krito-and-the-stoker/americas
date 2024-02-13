@@ -1,3 +1,4 @@
+import Message from 'util/message'
 import renderAst from './render'
 
 // renders a template from an AST
@@ -8,8 +9,8 @@ export default (ast, staticContext) => {
     data,
     name: data.name,
     type: data.type,
-    render: (context = {}) => {      
-      console.log('binding template:', data.name, context, ast)
+    render: (context = {}) => {
+      Message.templates.log('binding', data.name, context, ast)
       return render(context)
     }
   }

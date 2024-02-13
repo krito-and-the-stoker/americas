@@ -1,42 +1,78 @@
 /* eslint-disable no-console */
 
-const config = {
+const level = {
+  info: true,
   log: true,
-  event: false,
   warn: true,
-  error: true,
 }
 
-const send = (...args) => log(...args)
+const domains = {
+  event: false,
+  command: false,
+  colony: true,
+  europe: true,
+  unit: true,
+  natives: true,
+  initialize: true,
+  tile: true,
+  owner: true,
+  record: true,
+  util: true,
+  tutorial: true,
+  templates: false,
+}
 
-const log = (text, ...args) => {
-  if (config.log) {
-    if (typeof document !== 'undefined') {
-      console.log(`Log: ${text}`, ...args)
-      const logElement = document.querySelector('#log')
-      if (logElement) {
-        logElement.innerHTML = text
-      }
-    }
+const print = (level, domain, ...args) => {
+  if (typeof document !== 'undefined') {
+    console.log(`${level} ${domain}:`, ...args)
+    // TODO: Display a few things in the intro log
+    // const logElement = document.querySelector('#log')
+    // if (logElement) {
+    //   logElement.innerHTML = text
+    // }
   }
 }
 
-const warn = (...args) => {
-  if (config.warn) {
-    console.warn(...args)
+const info = domain => (...args) => {
+  if (level.info) {
+    print('Info', domain, ...args)
   }
 }
 
-const error = (...args) => {
-  if (config.error) {
-    console.error(...args)
+const log = domain => (...args) => {
+  if (level.log) {
+    print('Log', domain, ...args)
   }
 }
 
-const event = (text, args) => {
-  if (config.event) {
-    console.log(text, args)
+const warn = domain => (...args) => {
+  if (level.warn) {
+    print('Warn', domain, ...args)
   }
 }
 
-export default { send, log, event, warn, error }
+const error = domain => (...args) => {
+  print('Error', domain, ...args)
+}
+
+
+const emptyFn = () => {}
+
+const domainFunctions = Object.fromEntries(Object.entries(domains).map(([domain, isEnabled]) => {
+  const functions = isEnabled ? {
+    info: info(domain),
+    log: log(domain),
+    warn: warn(domain),
+    error: error(domain),
+  } : {
+    info: emptyFn,
+    log: emptyFn,
+    warn: emptyFn,
+    error: error(domain),
+  }
+
+  return [domain, functions]
+}))
+
+
+export default domainFunctions

@@ -165,7 +165,7 @@ const create = ({ tribe, state, owner }) => {
 
         Time.schedule({
           init: () => {
-            Message.log('starting raid', state.relations[owner.referenceId].raidPlanned)
+            Message.natives.log('starting raid', state.relations[owner.referenceId].raidPlanned)
             return true
           },
           update: (_, deltaTime) => {
@@ -224,7 +224,7 @@ const create = ({ tribe, state, owner }) => {
             return state.relations[owner.referenceId].raidPlanned > 0
           },
           finished: () => {
-            Message.log('Raid is over', state.relations[owner.referenceId].raidPlanned)
+            Message.natives.log('Raid is over', state.relations[owner.referenceId].raidPlanned)
           },
           priority: true,
         })

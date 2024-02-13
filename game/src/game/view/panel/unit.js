@@ -51,14 +51,6 @@ const handleGoTo = unit => {
         name: 'London',
         action: () => {
           Commander.scheduleInstead(unit.commander, GoTo.create({ unit, europe: true }))
-          Commander.scheduleBehind(
-            unit.commander,
-            TriggerEvent.create({
-              name: 'notification',
-              type: 'europe',
-              unit,
-            })
-          )
         }
       }
     })

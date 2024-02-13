@@ -34,7 +34,7 @@ export default Factory.create(
     const init = () => {
       const tile = unit.tile
       if (!tile || tile.name !== 'sea lane') {
-        Message.warn('not going to europe', tile.name, unit, tile)
+        Message.command.warn('not going to europe', tile.name, unit, tile)
         return false
       }
 
@@ -63,10 +63,10 @@ export default Factory.create(
 
     const finished = () => {
       if (state.progress >= 1) {
-        Message.send(`A ${Unit.name(unit)} arrived in Europe.`)
+        Message.command.log(`A ${Unit.name(unit)} arrived in Europe.`)
         EnterEurope(unit)
       } else {
-        Message.send(`A ${Unit.name(unit)} arrived back in the Americas.`)
+        Message.command.log(`A ${Unit.name(unit)} arrived back in the Americas.`)
         Unit.update.offTheMap(unit, false)
       }
     }

@@ -81,7 +81,7 @@ const create = colony => {
     colonyWoodBackground.y = -container.y / scale
   })
 
-  colonyWoodBackground.interactive = true
+  colonyWoodBackground.eventMode = 'static'
   const unsubscribe = [
     tiles.unsubscribe,
     storage.unsubscribe,

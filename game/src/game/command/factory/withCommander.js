@@ -39,12 +39,13 @@ const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
   commandData.commander = { type: 'command' }
   commandData.initHasBeenCalled = { type: 'raw' }
 
+  const baseCommandFactory = SimpleCommand.create(name, commandData, commandMeta, commandBehaviorFactory)
+
   const command = {
     create: (...args) => {
       const commander = Commander.create()
       commandData.commander.initialized = commander
-      const commandFactory = SimpleCommand.create(name, commandData, commandMeta, commandBehaviorFactory)
-      const baseCommand = commandFactory.create(...args)
+      const baseCommand = baseCommandFactory.create(...args)
 
       return enhanceCommandWithCommander(baseCommand, commander)
     },
@@ -61,7 +62,7 @@ const create = (name, commandData, commandMeta, commandBehaviorFactory) => {
       }
 
       args.commander = commander
-      const baseCommand = SimpleCommand.create(name, commandData, commandMeta, commandBehaviorFactory).create(args)
+      const baseCommand = baseCommandFactory.create(args)
 
       return Serialization.revive(enhanceCommandWithCommander(baseCommand, commander))
     },

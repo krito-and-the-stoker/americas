@@ -1,5 +1,6 @@
 // Importing necessary modules and components for command handling, utilities, and messaging.
 import Binding from 'util/binding'
+import Message from 'util/message'
 
 import WithCommander from './withCommander'
 import SimpleCommand from './simpleCommand'
@@ -12,7 +13,7 @@ const update = {
 
 function printCommandTree(command, indent = '') {
   // Print the current command's tag
-  console.log(indent + '├── ' + command.tag);
+  Message.command.log(indent + '├── ' + command.tag);
 
   // Increase indentation for child commands
   const childIndent = indent + '│   ';
@@ -32,7 +33,7 @@ function printCommandTree(command, indent = '') {
     command.state.commands.forEach((cmd, index, array) => {
       // For the last command in the list, use a different prefix to indicate it's the last child
       if (index === array.length - 1) {
-        console.log(childIndent.replace('│   ', '└── ') + cmd.tag);
+        Message.command.log(childIndent.replace('│   ', '└── ') + cmd.tag);
       } else {
         printCommandTree(cmd, childIndent);
       }

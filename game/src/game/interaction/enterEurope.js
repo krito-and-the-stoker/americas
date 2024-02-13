@@ -9,7 +9,7 @@ export default unit => {
   Unit.unloadAllUnits(unit)
   if (unit.treasure) {
     Treasure.gain(unit.treasure)
-    Message.send(
+    Message.europe.log(
       `A treasure worth ${unit.treasure} has arrived in Europe. The king is very pleased.`
     )
     Unit.disband(unit)

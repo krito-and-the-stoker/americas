@@ -39,7 +39,7 @@ import FullscreenEvents from 'view/fullscreenEvents'
 import UnitMapView from 'view/map/unit'
 
 import Dialog from 'view/ui/dialog'
-import GlobalPanel from 'view/panel/global'
+import Overlay from 'ui/overlay'
 
 const AUTOSAVE_INTERVAL = 5 * 60 * 1000 // autosave every 5 minutes
 const initialize = () => {
@@ -117,7 +117,7 @@ const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve))
 
 let loadingResources = null
 const preload = () => {
-  Message.log(`Downloading files (2/${Resources.numberOfAssets()})...`)
+  Message.initialize.log(`Downloading files (2/${Resources.numberOfAssets()})...`)
   loadingResources = Resources.initialize()
 }
 
@@ -160,7 +160,7 @@ const start = async () => {
     await nextFrame()
 
     AutosaveView.initialize()
-    GlobalPanel.initialize(Foreground.get().permanent)
+    Overlay.initialize()
     Dialog.initialize()
 
     // start game!
@@ -171,7 +171,7 @@ const start = async () => {
     MapView.zoomBy(1 / 0.35, null, 0)
     MapView.zoomBy(1 / 0.35, null, 100)
     setTimeout(async () => {
-      Message.log('Starting game...')
+      Message.initialize.log('Starting game...')
       MapView.zoomBy(0.35, null, 3000)
     }, 100)
 
@@ -219,7 +219,7 @@ const load = async () => {
     Europe.initialize()
     Treasure.initialize()
     await nextFrame()
-    Message.log('Restoring game state...')
+    Message.initialize.log('Restoring game state...')
     await nextFrame()
     Record.load(() => AssmebleMap.initialize())
     await nextFrame()
@@ -227,12 +227,12 @@ const load = async () => {
     Dialog.initialize()
 
     MapView.zoomBy(0.7, null, 100)
-    Message.log('Starting game...')
+    Message.initialize.log('Starting game...')
 
     setTimeout(() => {
       Background.get().layer.show()
       Foreground.get().layer.show()
-      GlobalPanel.initialize(Foreground.get().permanent)
+      Overlay.initialize()
     }, 750)
 
     setTimeout(() => {
@@ -241,6 +241,7 @@ const load = async () => {
 
     FullscreenEvents.initialize()
 
+    // Time.togglePause()
     initialize()
   } catch (err) {
     Error.capture(err)

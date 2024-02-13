@@ -59,7 +59,7 @@ const createAreas = (tiles, travelType) => {
     }
   })
 
-  Message.log(`Found ${currentArea - 1} seperate areas for ${travelType}`)
+  Message.initialize.log(`Found ${currentArea - 1} seperate areas for ${travelType}`)
 }
 
 const get = () => ({
@@ -68,7 +68,7 @@ const get = () => ({
 })
 
 const create = ({ data }) => {
-  Message.log('Creating map')
+  Message.initialize.log('Creating map')
 
   const baseLayer = layer(data, 'terrain base')
   numTiles = {
@@ -77,7 +77,7 @@ const create = ({ data }) => {
   }
   numTiles.total = numTiles.x * numTiles.y
 
-  Message.log('Creating tiles')
+  Message.initialize.log('Creating tiles')
   const preparedTiles = layer(data, 'terrain base').data.map((id, index) =>
     Tile.prepare({
       id,
@@ -143,10 +143,10 @@ const create = ({ data }) => {
   const bonusTiles = medianTiles
   tiles = bonusTiles.map(Tile.create)
   tiles.forEach(Tile.initialize)
-  Message.log('Creating coast line')
+  Message.initialize.log('Creating coast line')
   createCoastLine(tiles)
   createAllAreas(tiles)
-  Message.log('Map created')
+  Message.initialize.log('Map created')
 
   Record.setGlobal('numTiles', numTiles)
 }
@@ -172,7 +172,7 @@ const prepare = () => {
 }
 
 const load = () => {
-  Message.log('Loading map...')
+  Message.initialize.log('Loading map...')
   tiles = Util.range(numTiles.x * numTiles.y)
     .map(index => Record.referenceTile({ index }))
     .map(Record.dereferenceTile)

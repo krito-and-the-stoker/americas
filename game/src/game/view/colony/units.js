@@ -63,7 +63,7 @@ const create = (colony, closeScreen, originalDimensions) => {
       )
       const position = shipPositions.find(pos => !pos.taken)
       if (!position) {
-        Message.warn('could not display unit, no position left', unit)
+        Message.unit.warn('could not display unit, no position left', unit)
         return unsubscribeClick
       }
 
@@ -91,15 +91,15 @@ const create = (colony, closeScreen, originalDimensions) => {
   greyScaleFilter.blackAndWhite()
 
   const landPositions = Util.range(25).map(index => ({
-    x: 0.9 * originalDimensions.x - index * 64,
-    y: 0.9 * originalDimensions.y - 125 - 64,
+    x: 610 + index * 64,
+    y: 0.9 * originalDimensions.y - 125 - 32 - 64,
     taken: false,
   }))
 
   const drawLandUnit = (unit, added) => {
     const position = landPositions.find(pos => !pos.taken)
     if (!position) {
-      Message.warn('could not display unit, no position left', unit)
+      Message.unit.warn('could not display unit, no position left', unit)
       return
     }
     position.taken = true

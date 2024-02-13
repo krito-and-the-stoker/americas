@@ -3,7 +3,7 @@
 [image: scout]
 [backdrop: close]
 
-The *{settlement.tribe.name}* seem {relation} at the moment.
+The *{settlement.tribe.name}* seem **{relation}** at the moment.
 [if settlement.presentGiven]
 This settlement has the knowledge to train a **{expert}**.
 []

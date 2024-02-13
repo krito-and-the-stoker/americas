@@ -19,26 +19,6 @@ const create = (colony, originalDimensions) => {
     menu: new PIXI.Container(),
   }
 
-  const constructionButton = Button.create('change', () => {
-    const options = Construction.options(colony)
-
-    const prepareOption = option => ({
-      ...option,
-      cost: option.cost(),
-      start: () => Construction.start(colony, option),
-      percentage: () => Math.floor((100 * option.progress()) / Util.sum(Object.values(option.cost()))),
-    })
-
-    return Dialog.open('colony.construction', {
-      buildings: options.buildings.map(prepareOption),
-      units: options.units.map(prepareOption),
-      stop: () => Construction.start(colony, null)
-    })
-  })
-  constructionButton.x = originalDimensions.x - constructionButton.width - 20
-  constructionButton.y = 650
-  container.panel.addChild(constructionButton)
-
   const buildingText = Text.create(Colony.currentConstruction(colony).name)
   buildingText.x = originalDimensions.x - 450 + 20
   buildingText.y = originalDimensions.y / 2 - 75

@@ -13,10 +13,12 @@ import Unit from 'entity/unit'
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
 import Building from 'entity/building'
+import Construction from 'entity/construction'
 
 import JoinColony from 'interaction/joinColony'
 
 import Resources from 'render/resources'
+import Dialog from 'view/ui/dialog'
 
 import ProductionView from 'view/production'
 
@@ -89,9 +91,26 @@ const createBuilding = (colony, building) => {
   )
 
   // TODO: Implement a nice detailed popup
-  // const unsubscribeClick = Click.on(sprite, () => {
-  // 	console.log(building)
-  // }, `Inspect ${Building.getName(colony, building)}`)
+  const unsubscribeClick = (building.level > 0 || building.name === 'carpenters') &&
+    Click.on(sprite, () => {
+    	console.log(building)
+      if (building.name === 'carpenters') {
+        const options = Construction.options(colony)
+
+        const prepareOption = option => ({
+          ...option,
+          cost: option.cost(),
+          start: () => Construction.start(colony, option),
+          percentage: () => Math.floor((100 * option.progress()) / Util.sum(Object.values(option.cost()))),
+        })
+
+        return Dialog.open('colony.construction', {
+          buildings: options.buildings.map(prepareOption),
+          units: options.units.map(prepareOption),
+          stop: () => Construction.start(colony, null)
+        })
+      }
+    }, `Inspect ${Building.name(colony, building.name)}`)
 
   const createColonistView = (productionBonus, colonist, work) => {
     if (work && work.building === name) {
@@ -194,7 +213,7 @@ const createBuilding = (colony, building) => {
   const unsubscribe = [
     unsubscribeColonists,
     unsubscribeDrag,
-    // unsubscribeClick
+    unsubscribeClick
   ]
 
   return {

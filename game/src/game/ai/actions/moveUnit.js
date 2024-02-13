@@ -56,7 +56,7 @@ const create = ({ owner, unit, coords }) => {
     }
   }
 
-  Message.warn('moveUnit action needs either a unit or an owner.')
+  Message.unit.warn('moveUnit action needs either a unit or an owner.')
 }
 
 const commit = (unit, coords, resolve) => {

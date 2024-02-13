@@ -57,7 +57,7 @@ export default Factory.create(
 
     const init = () => {
       if (unit.colony !== colony) {
-        Message.warn(
+        Message.command.warn(
           'unit loads cargo but is not inside colony',
           colony.name,
           Unit.name(unit),

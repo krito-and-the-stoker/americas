@@ -37,37 +37,37 @@ const describeRelations = relations => {
   const debugInfo = `(trust: ${relations.trust.toFixed(2)}, mil: ${relations.militancy.toFixed(2)})`
   if (relations.militancy > 0.5) {
     if (relations.trust >= 0.5) {
-      return `respectful ${debugInfo}`
+      return `respectful`
     }
 
     if (relations.trust >= 0) {
-      return `proud ${debugInfo}`
+      return `proud`
     }
 
-    return `hostile ${debugInfo}`
+    return `hostile`
   }
 
   if (relations.militancy > 0) {
     if (relations.trust >= 0.5) {
-      return `friendly ${debugInfo}`
+      return `friendly`
     }
 
     if (relations.trust >= 0) {
-      return `neutral ${debugInfo}`
+      return `neutral`
     }
 
-    return `tense ${debugInfo}`
+    return `tense`
   }
 
   if (relations.trust >= 0.5) {
-    return `happy ${debugInfo}`
+    return `happy`
   }
 
   if (relations.trust >= 0) {
-    return `cordial ${debugInfo}`
+    return `cordial`
   }
 
-  return `submissive ${debugInfo}`
+  return `submissive`
 }
 
 const hasRaidPlanned = relation => relation.raidPlanned > 0
@@ -149,7 +149,7 @@ const initialize = ai => {
                     if (relation) {
                       relation.trust -= 0.05
                     }
-                    Message.log(`road built registered by ${tribe.name}`)
+                    Message.natives.log(`road built registered by ${tribe.name}`)
                   }
                 }
               }),
@@ -164,7 +164,7 @@ const initialize = ai => {
                     if (relation) {
                       relation.trust -= 0.05
                     }
-                    Message.log(`plowed registered by ${tribe.name}`)
+                    Message.natives.log(`plowed registered by ${tribe.name}`)
                   }
                 }
               }),
@@ -179,7 +179,7 @@ const initialize = ai => {
                     if (relation) {
                       relation.trust -= 0.05
                     }
-                    Message.log(`cut forest registered by ${tribe.name}`)
+                    Message.natives.log(`cut forest registered by ${tribe.name}`)
                   }
                 }
               }),

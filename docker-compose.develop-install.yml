@@ -9,7 +9,7 @@ services:
     volumes:
       - ./game:/app/game
       - game-modules:/app/game/node_modules/
-    command: npm install
+    command: npm ci
 
   wiki:
     build:
@@ -19,7 +19,7 @@ services:
     volumes:
       - ./wiki:/app/wiki
       - wiki-modules:/app/wiki/node_modules/
-    command: npm install
+    command: npm ci
 
   dashboard:
     build:
@@ -29,7 +29,7 @@ services:
     volumes:
       - ./dashboard:/app/dashboard
       - dashboard-modules:/app/dashboard/node_modules/
-    command: npm install
+    command: npm ci
 
   assets:
     build:
@@ -39,7 +39,7 @@ services:
     volumes:
       - ./assets:/app/assets
       - assets-modules:/app/assets/node_modules/
-    command: npm install
+    command: npm ci
 
 
 volumes:

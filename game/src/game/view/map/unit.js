@@ -127,7 +127,7 @@ const create = unit => {
 const selectedUnit = () => (state.selectedView ? state.selectedView.unit : null)
 
 const destroy = view => {
-  // unselect(view.unit)
+  unselect(view.unit)
   view.destroyed = true
   Util.execute(view.unsubscribe)
   Tween.fadeOut(view.sprite, 1000)
@@ -154,7 +154,7 @@ const show = view => {
 }
 
 const hide = view => {
-  // unselect(view.unit)
+  unselect(view.unit)
   Foreground.removeUnit(view.circle)
   Foreground.removeUnit(view.sprite)
 }
@@ -307,6 +307,7 @@ const initialize = () => {
                 Commander.scheduleInstead(transport.commander, LoadUnit.create({ transport, passenger }))
                 Commander.scheduleInstead(passenger.commander, BoardTransport.create({ passenger, transport }))
               } else {
+                // TODO: put this into one command
                 Commander.scheduleInstead(passenger.commander, FollowUnit.create({ unit: passenger, target: transport }))
                 Commander.scheduleInstead(transport.commander, FollowUnit.create({ unit: transport, target: passenger }))
                 Commander.scheduleBehind(transport.commander, LoadUnit.create({ transport, passenger }))
