@@ -65,29 +65,28 @@ A shipment of tobacco could be about as valuable as the whole ship, if not more.
 ## Prices
 ### Highest Value
 
-- **Silver**: As a precious metal, it has the highest value per freight ton.
-- **Tea**: Highly prized, especially as demand in Europe grew.
-- **Cigars**: Luxury tobacco product, high value per unit.
-- **Guns**: Essential for defense, hunting, and trade, with a high value especially when of superior quality.
+- **Silver**: Only topped by gold, can be minted into money.
+- **Tea**: Highly prized, especially as demand in Europe grows. Cannot be grown in the Americas.
+- **Cigars**: Luxury tobacco product, high value per unit, price may plummet quickly.
+- **Guns**: High value per measurement ton. Look at the dimensions: a caravel can easily load arms for 5k soldiers.
 
 ### High Value
 
-- **Coffee**: Like tea, coffee became a highly valued commodity in Europe.
-- **Furs**: High-quality furs were in demand for luxury clothing and accessories.
-- **Coats**: Finished garments made from quality materials, including furs, would have a significant value, though less efficiently packed.
-
+- **Coffee**: Appears later in the game, highly valued commodity in Europe.
+- **Furs**: High-quality furs were in demand for luxury clothing and accessories. They are hard to get so the demand can never be met
+- **Coats**: Coats are being produced from cloth and furs, having great value especially in America, but may not meet the special fashion taste of the European high class.
+- **Cloths** (regular): Essential for clothing and household goods, widely traded but less valuable per unit than coats and furs.
 ### Moderate Value
 
-- **Cloths** (regular): Essential for clothing and household goods, widely traded but less valuable per unit than luxury textiles.- **Sugar**: A key commodity in the colonial trade, with substantial demand.
-- **Rum**: Popular alcoholic beverage, with value added through distillation.
-- **Sugar**: Worth more than tobacco but harder to produce.
+- **Rum**: Popular especially in the Americas and with the British navy, not a luxury item.
+- **Sugar**: A key commodity in the colonial trade, with substantial demand. Worth more than tobacco but harder to produce.
 - **Tobacco**: A major cash crop, valuable for its wide consumption, though less than processed cigars.
 - **Tools**: Essential for construction, agriculture, and daily life, representing significant value.
 
 ### Lower Value
 
-- **Cotton**: Pre-industrialization, its value was less due to the labor-intensive process of cleaning and preparation.
-- **Iron Ore**: Essential for making iron and steel, but bulkier and of lower value per ton than precious metals.
+- **Cotton**: Pre-industrialization, its value was less due to the labor-intensive process of cleaning and preparation. This will change at 1793 with a steep increase in demand.
+- **Iron Ore**: Essential for making iron and steel.
 - **Wood**: Crucial for construction and as fuel, but its value per ton is lower due to its abundance and bulk.
 - **Stone**: Similar to wood, essential for construction but widely available and bulky.
 
