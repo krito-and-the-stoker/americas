@@ -3,7 +3,7 @@ import { useKeyDownEvent } from "@solid-primitives/keyboard";
 
 import style from './Global.module.scss'
 
-import Signal from 'util/xsignal'
+import Signal from 'util/signal'
 import Time from 'timeline/time'
 import Treasure from 'entity/treasure'
 import Europe from 'view/europe'

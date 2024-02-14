@@ -6,7 +6,6 @@ const isVisible = () => {
 }
 
 const initialize = () => {
-	console.log('initialize overlay')
 	setVisible(true)
 }
 

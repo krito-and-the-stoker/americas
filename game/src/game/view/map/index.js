@@ -29,8 +29,6 @@ import Events from 'util/events'
 import Notification from 'view/ui/notification'
 import Dialog from 'view/ui/dialog'
 
-import UnitPanel from 'view/panel/unit'
-
 // min scale means how far can you zoom out
 const MIN_SCALE = 0.3
 const MAX_SCALE = 4
@@ -225,7 +223,6 @@ const initialize = () => {
   UnitView.initialize()
   SettlementView.initialize()
   Notification.initialize()
-  UnitPanel.initialize()
 
   const stage = Foreground.get().layer.app.stage
 

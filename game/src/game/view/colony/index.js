@@ -11,7 +11,6 @@ import ColonyTiles from 'view/colony/tiles'
 import ColonyStorage from 'view/colony/storage'
 import ColonyUnits from 'view/colony/units'
 import ColonyBuildings from 'view/colony/buildings'
-import ColonyLiberty from 'view/colony/liberty'
 import ColonyInfo from 'view/colony/info'
 
 const close = () => {
@@ -37,12 +36,10 @@ const create = colony => {
   const storage = ColonyStorage.create(colony, originalDimensions)
   const units = ColonyUnits.create(colony, () => close(), originalDimensions)
   const buildings = ColonyBuildings.create(colony)
-  const liberty = ColonyLiberty.create(colony)
   const info = ColonyInfo.create(originalDimensions)
 
   container.addChild(colonyWoodBackground)
   container.addChild(background.container)
-  container.addChild(liberty.container)
   container.addChild(tiles.container.tiles)
   container.addChild(buildings.container.buildings)
 
@@ -77,7 +74,6 @@ const create = colony => {
     storage.unsubscribe,
     units.unsubscribe,
     buildings.unsubscribe,
-    liberty.unsubscribe,
     info.unsubscribe,
     background.unsubscribe,
     unsubscribeResize,

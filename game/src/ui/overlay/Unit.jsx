@@ -1,6 +1,6 @@
 import { createEffect, createComputed, Show } from 'solid-js'
 
-import Signal from 'util/xsignal'
+import Signal from 'util/signal'
 import Record from 'util/record'
 import Util from 'util/util'
 
@@ -151,16 +151,16 @@ function UnitComponent() {
   	tile()?.forest
 
   const cancelCommandName = () => ({
-    cutForest: 'Cancel cutting forest',
-    plow: 'Cancel plow',
-    tradeRoute: 'Cancel trade route',
+    cutForest: 'Cancel Cutting Forest',
+    plow: 'Cancel Plow',
+    tradeRoute: 'Cancel Automatic Transport',
   })[command()?.id]
 
 
   const commands = () => [
     canFoundColony() && ['Found Colony', foundColony],
     canGoto() && ['Go to', goTo],
-    canAssignTransport() && ['Assign automatic Transport', assignTransport],
+    canAssignTransport() && ['Assign Automatic Transport', assignTransport],
     canPlow() && ['Build Farm', plow],
     canBuildRoad() && ['Build Road', buildRoad],
     canCutForest() && ['Cut Forest', cutForest],

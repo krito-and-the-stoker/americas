@@ -6,7 +6,7 @@ import Storage from 'entity/storage'
 import Colony from 'entity/colony'
 
 import Foreground from 'render/foreground'
-import Signal from 'util/xsignal'
+import Signal from 'util/signal'
 
 import ProductionGoods from 'ui/components/ProductionGoods'
 import StorageGoods from 'ui/components/StorageGoods'
@@ -46,10 +46,18 @@ function ColonyComponent() {
 	const progressPercentage = () => 100 * target()?.progress / costSum()
 	const name = () => target()?.name
 
-	createEffect(() => {
-		console.log(construction())
-		console.log(constructionTarget())
-	})
+	const [bells, colonists] = Signal.create(
+		Signal.chain(
+			colonySignal,
+			[
+				Colony.listen.bells,
+				Colony.listen.colonists
+			]
+		)
+	)
+	// make sure bells and colonists are evaluated for tracking
+  const rebels = () => (bells() || bells() === 0) && colonists() && Colony.rebels(colony())
+  const tories = () => (bells() || bells() === 0) && colonists() && Colony.tories(colony())
 
 	return <Show when={colony()}>
 		<div class={styles.name}>{colony()?.name}</div>
@@ -58,9 +66,19 @@ function ColonyComponent() {
 			<ProductionGoods goods={productionSummary()} />
 			<div class={styles.construction}>
 				<div>Construction</div>
-				<span><i>{name()}</i></span>
-				<StorageGoods goods={cost()} />
-				<span>{progressPercentage()?.toFixed(0)}%</span>
+				<Show when={target()} fallback={<i>None</i>}>
+					<span><i>{name()}</i></span>
+					<StorageGoods goods={cost()} />
+					<span>{progressPercentage()?.toFixed(0)}%</span>
+				</Show>
+			</div>
+			<div class={styles.colonists}>
+				<div classList={{[styles.green]: rebels()?.percentage >= 50}}>
+					<i>Integrated</i> {rebels()?.percentage}% ({rebels()?.number} Colonists)
+				</div>
+				<div classList={{[styles.red]: tories()?.number >= 10}}>
+					<i>Unorganized</i> {tories()?.percentage}% ({tories()?.number} Colonists)
+				</div>
 			</div>
 		</div>
 	</Show>
