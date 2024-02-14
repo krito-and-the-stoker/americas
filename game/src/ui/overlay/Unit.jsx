@@ -148,7 +148,7 @@ function UnitComponent() {
   	!tile()?.plowed
   const canCutForest = () =>
   	canPioneer() &&
-  	!tile()?.forest
+  	tile()?.forest
 
   const cancelCommandName = () => ({
     cutForest: 'Cancel cutting forest',
