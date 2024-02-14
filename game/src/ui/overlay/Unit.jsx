@@ -1,6 +1,6 @@
 import { createEffect, createComputed, Show } from 'solid-js'
 
-import Signal from 'util/signal'
+import Signal from 'util/xsignal'
 import Record from 'util/record'
 import Util from 'util/util'
 

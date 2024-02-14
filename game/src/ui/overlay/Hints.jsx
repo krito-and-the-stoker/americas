@@ -3,7 +3,7 @@ import { createEffect, For, Show } from 'solid-js'
 import Hints from 'input/hints'
 import Foreground from 'render/foreground'
 
-import Signal from 'util/signal'
+import Signal from 'util/xsignal'
 
 import style from './Hints.module.scss'
 
