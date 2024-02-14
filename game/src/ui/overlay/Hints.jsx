@@ -3,14 +3,14 @@ import { createEffect, For, Show } from 'solid-js'
 import Hints from 'input/hints'
 import Foreground from 'render/foreground'
 
-import Binding from 'util/binding'
+import Signal from 'util/signal'
 
 import style from './Hints.module.scss'
 
 
 function HintsComponent() {
-	const [hints]	= Binding.signal(Hints.listen)
-	const [screen] = Binding.signal(Foreground.listen.screen)
+	const hints	= Signal.create(Hints.listen)
+	const screen = Signal.create(Foreground.listen.screen)
 	const isEurope = () => screen()?.params?.name === 'europe'
 
 	const hasHints = () => hints()?.length > 0

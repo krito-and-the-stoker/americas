@@ -1,12 +1,13 @@
 import GameIcon from './GameIcon'
 
 function StorageGoods(props) {
-	const list = () => Object.entries(props.goods)
-		.map(([good, amount]) => ({ good, amount }))
+	const keys = () => Object.entries(props?.goods || {})
+		.filter(([_, amount ]) => amount > 0)
+		.map(([good, amount]) => good)
 
-	return <For each={list()}>
+	return <For each={keys()}>
 		{good => <>
-			{good.amount}<GameIcon name={good.good} />
+			{Math.ceil(props.goods[good])}<GameIcon name={good} />
 		</>}
 	</For>
 }

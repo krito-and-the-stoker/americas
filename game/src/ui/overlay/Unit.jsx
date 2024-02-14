@@ -5,7 +5,6 @@ import Record from 'util/record'
 
 import Tile from 'entity/tile'
 import Unit from 'entity/unit'
-import Storage from 'entity/storage'
 import Colony from 'entity/colony'
 
 import Commander from 'command/commander'
@@ -17,7 +16,6 @@ import TradeRoute from 'command/tradeRoute'
 import GoTo from 'command/goTo'
 import TriggerEvent from 'command/triggerEvent'
 
-import Dom from 'render/dom'
 import Foreground from 'render/foreground'
 
 import GoodsView from 'view/goods'
@@ -29,9 +27,13 @@ import Dialog from 'view/ui/dialog'
 
 
 
-import Binding from 'util/binding'
+import Signal from 'util/signal'
+
+import Storage from 'entity/storage'
 
 import UnitMapView from 'view/map/unit'
+
+import StorageGoods from 'ui/components/StorageGoods'
 
 import styles from './Unit.module.scss'
 
@@ -127,34 +129,54 @@ const commands = unit => {
 
   return [
     foundColonyVisible && ['Found Colony', foundColony],
+    gotoTextVisible && ['Go to', goTo],
     tradeVisible && ['Assign automatic Transport', trade],
+    plowTextVisible && ['Build Farm', plow],
     buildRoadTextVisible && ['Build Road', buildRoad],
     cutForestTextVisible && ['Cut Forest', cutForest],
-    plowTextVisible && ['Build Farm', plow],
-    gotoTextVisible && ['Go to', goTo],
     cancelCommandName && [cancelCommandName, cancel],
   ].filter(x => x)
 }
 
 
 function UnitComponent() {
-	const [selectedView] = Binding.signal(UnitMapView.listen.selectedView)
-	const [screen] = Binding.signal(Foreground.listen.screen)
-	const unit = () => selectedView()?.unit
+	const unitListener = Signal.map(UnitMapView.listen.selectedView, view => view?.unit)
+	const unit = Signal.create(unitListener)
+	const name = () => unit() && Unit.name(unit())
+
+	console.log(Signal)
+	const command = Signal.create(
+		Signal.concat(unitListener, Unit.listen.command) // listens to the changes of the command
+	)
+	const storage = Signal.create(
+		Signal.concat(
+			Signal.map(unitListener, unit => unit?.storage), // listens to the storage of a unit
+			Storage.listen // listens to the changes of the storage
+		)
+	)
+
+	const screen = Signal.create(Foreground.listen.screen)
 	const isVisible = () => !screen() && !!unit()
 
-	const [unitEntity, setUnitEntity] = Binding.entitySignal(unit(), Unit.listen)
-	createComputed(() => {
-		setUnitEntity(unit())
+	createEffect(() => {
+		console.log('unit', unit())
+	})
+	createEffect(() => {
+		console.log('command', command())
+	})
+	createEffect(() => {
+		console.log('storage', storage())
+	})
+	createEffect(() => {
+		console.log('visible', isVisible())
 	})
 
 	return (
 		<Show when={isVisible()}>
 			<div class={styles.main}>
-				<div>{Unit.name(unitEntity)}</div>
-				<For each={commands(unitEntity)}>
-					{([text, action]) => <div onClick={() => action(unit())}>{text}</div>}
-				</For>
+				<div>{name()}</div>
+				<div>{command()?.display}</div>
+				<StorageGoods goods={storage()} />
 			</div>
 		</Show>
 	)

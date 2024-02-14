@@ -3,7 +3,7 @@ import { useKeyDownEvent } from "@solid-primitives/keyboard";
 
 import style from './Global.module.scss'
 
-import Binding from 'util/binding'
+import Signal from 'util/signal'
 import Time from 'timeline/time'
 import Treasure from 'entity/treasure'
 import Europe from 'view/europe'
@@ -40,13 +40,13 @@ function Global() {
 		Time.update.scale(scale)
 	})
 
-	const [paused] = Binding.signal(Time.listen.paused)
-	const [year] = Binding.signal(Time.listen.year)
-	const [month] = Binding.signal(Time.listen.month)
-	const [dayOfMonth] = Binding.signal(Time.listen.dayOfMonth)
-	const [screen] = Binding.signal(Foreground.listen.screen)
+	const paused = Signal.create(Time.listen.paused)
+	const year = Signal.create(Time.listen.year)
+	const month = Signal.create(Time.listen.month)
+	const dayOfMonth = Signal.create(Time.listen.dayOfMonth)
+	const screen = Signal.create(Foreground.listen.screen)
 
-	const [treasure] = Binding.signal(Treasure.listen.amount)
+	const treasure = Signal.create(Treasure.listen.amount)
 
 	const isEurope = () => screen()?.params?.name === 'europe'
 	const toggleEurope = () => isEurope() ? Europe.close() : Europe.open()
