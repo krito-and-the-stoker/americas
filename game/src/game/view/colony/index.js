@@ -71,10 +71,10 @@ const create = colony => {
   const unsubscribeResize = RenderView.updateWhenResized(({ dimensions }) => {
     const scaleX = dimensions.x / originalDimensions.x
     const scaleY = dimensions.y / originalDimensions.y
-    const scale = 0.85 * Math.min(scaleX, scaleY)
+    const scale = 1.0 * Math.min(scaleX, scaleY)
     container.scale.set(scale)
     container.position.x = (dimensions.x - scale * originalDimensions.x) / 2
-    container.position.y = (dimensions.y - scale * originalDimensions.y) / 2
+    container.position.y = (dimensions.y - scale * originalDimensions.y)
     colonyWoodBackground.width = dimensions.x / scale
     colonyWoodBackground.height = dimensions.y / scale
     colonyWoodBackground.x = -container.x / scale

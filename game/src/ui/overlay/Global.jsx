@@ -49,7 +49,8 @@ function Global() {
 	const treasure = Signal.create(Treasure.listen.amount)
 
 	const isEurope = () => screen()?.params?.name === 'europe'
-	const toggleEurope = () => isEurope() ? Europe.close() : Europe.open()
+	const hasOpenScreen = () => !!screen()
+	const toggleScreen = () => hasOpenScreen() ? Foreground.closeScreen() : Europe.open()
 
 	const keyboardMap = {
 		'1': () => {
@@ -97,8 +98,8 @@ function Global() {
 				<span onClick={() => setSpeed(4)} class={speed() === 4 ? style.selected : null}>4</span>
 				<span onClick={() => setSpeed(5)} class={speed() === 5 ? style.selected : null}>5</span>
 			</div>
-			<div>Treasure: {Math.round(treasure())}<GameIcon name="gold" scale={0.8} /></div>
-			<div class={style.europe} onClick={toggleEurope}>view {isEurope() ? 'Americas' : 'Europe'}</div>
+			<div>Treasure: {Math.round(treasure())}<GameIcon icon="gold" scale={0.8} /></div>
+			<div class={style.europe} onClick={toggleScreen}>view {hasOpenScreen() ? 'Americas' : 'Europe'}</div>
 		</div>
 	)
 }

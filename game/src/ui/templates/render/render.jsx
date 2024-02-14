@@ -138,7 +138,7 @@ const baseStaticContext = {
   name: staticSet('name'),
   image: params => context => <DialogImage image={resolveCtxVariable(context, params.arguments[0])} />,
   coordinates: params => context => <CoordinatesLink coordinates={resolveCtxVariable(context, params.arguments[0])} centerFn={staticContext.functions.centerMap} />,
-  icon: params => context => <GameIcon name={resolveCtxVariable(context, params.arguments[0])} />,
+  icon: params => context => <GameIcon good={resolveCtxVariable(context, params.arguments[0])} />,
   backdrop: params => context => <Backdrop action={resolveCtxVariable(context, params.arguments[0])} />,
   grid: params => context => <Grid columns={resolveCtxVariable(context, params.pairs.columns)}>{params.subtree(context)}</Grid>,
   cell: params => context => <div>{params.subtree(context)}</div>,
