@@ -8,11 +8,9 @@ import RenderView from 'render/view'
 
 import ColonyBackground from 'view/colony/background'
 import ColonyTiles from 'view/colony/tiles'
-import ColonyHeadline from 'view/colony/headline'
 import ColonyStorage from 'view/colony/storage'
 import ColonyUnits from 'view/colony/units'
 import ColonyBuildings from 'view/colony/buildings'
-import ColonyProduction from 'view/colony/production'
 import ColonyConstruction from 'view/colony/construction'
 import ColonyLiberty from 'view/colony/liberty'
 import ColonyInfo from 'view/colony/info'
@@ -37,11 +35,9 @@ const create = colony => {
   const originalDimensions = background.originalDimensions
 
   const tiles = ColonyTiles.create(colony, originalDimensions)
-  const headline = ColonyHeadline.create(colony, originalDimensions)
   const storage = ColonyStorage.create(colony, originalDimensions)
   const units = ColonyUnits.create(colony, () => close(), originalDimensions)
   const buildings = ColonyBuildings.create(colony)
-  const production = ColonyProduction.create(colony)
   const construction = ColonyConstruction.create(colony, originalDimensions)
   const liberty = ColonyLiberty.create(colony)
   const info = ColonyInfo.create(originalDimensions)
@@ -50,9 +46,7 @@ const create = colony => {
   container.addChild(background.container)
   container.addChild(liberty.container)
   container.addChild(tiles.container.tiles)
-  container.addChild(production.container)
   container.addChild(buildings.container.buildings)
-  container.addChild(headline.container)
   container.addChild(construction.container.panel)
 
   container.addChild(tiles.container.colonists)
@@ -71,10 +65,10 @@ const create = colony => {
   const unsubscribeResize = RenderView.updateWhenResized(({ dimensions }) => {
     const scaleX = dimensions.x / originalDimensions.x
     const scaleY = dimensions.y / originalDimensions.y
-    const scale = 1.0 * Math.min(scaleX, scaleY)
+    const scale = 0.9 * Math.min(scaleX, scaleY)
     container.scale.set(scale)
     container.position.x = (dimensions.x - scale * originalDimensions.x) / 2
-    container.position.y = (dimensions.y - scale * originalDimensions.y)
+    container.position.y = (dimensions.y - scale * originalDimensions.y) / 2
     colonyWoodBackground.width = dimensions.x / scale
     colonyWoodBackground.height = dimensions.y / scale
     colonyWoodBackground.x = -container.x / scale
@@ -87,11 +81,9 @@ const create = colony => {
     storage.unsubscribe,
     units.unsubscribe,
     buildings.unsubscribe,
-    production.unsubscribe,
     liberty.unsubscribe,
     construction.unsubscribe,
     info.unsubscribe,
-    headline.unsubscribe,
     background.unsubscribe,
     unsubscribeResize,
     Click.on(colonyWoodBackground, close, 'Close Colony screen'),

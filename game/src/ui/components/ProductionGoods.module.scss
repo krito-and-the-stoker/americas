@@ -1,0 +1,32 @@
+.main {
+	display: flex;
+	flex-wrap: wrap;
+	max-width: 330px;
+}
+
+.entry {
+	margin-right: 20px;
+	margin-bottom: 10px;
+	position: relative;
+}
+.red span {
+	filter: sepia(100%) hue-rotate(-45deg) saturate(600%);
+}
+
+.good {
+	display: inline-block;
+	margin-right: -24px;
+}
+
+.number {
+	color: white;
+	position: absolute;
+	left: 6px;
+	top: -4px;
+	background-color: rgba(0, 0, 0, .2);
+	// font-weight: bolder;
+	// background-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.3) 30%, rgba(0, 0, 0, 0) 70%);
+	// border-radius: 50%;
+	// padding: 1px 2px;
+	display: block;
+}

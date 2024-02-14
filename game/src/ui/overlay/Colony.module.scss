@@ -1,0 +1,23 @@
+.name {
+	font-size: 60px;
+	position: fixed;
+	top: 50px;
+	left: 50vw;
+	transform: translateX(-50%);
+	color: white;
+	pointer-events: none;
+}
+
+.title {
+	margin-bottom: 20px;
+}
+
+.hoverBox {
+	position: fixed;
+	bottom: calc(-19.5vw + 433px);
+	left: 5.3vw;
+  background-color: rgba(240, 233, 201, 0.85);
+  font-size: 20px;
+  padding: 10px;
+  box-shadow: 0 0 5px 5px rgba(240, 233, 201, 0.85);	
+}

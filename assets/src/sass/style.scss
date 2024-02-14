@@ -30,7 +30,7 @@ body {
 	z-index: 1;
 	top: 10px;
 	left: 10px;
-	color: white;
+	color: rgba(255, 255, 255, 0.7);
 	display: inline;
 	@include no-select;
 }

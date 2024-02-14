@@ -24,7 +24,7 @@ const domains = {
 
 const print = (level, domain, ...args) => {
   if (typeof document !== 'undefined') {
-    console.log(`${level} ${domain}:`, ...args)
+    console[level.toLowerCase()](`${level} ${domain}:`, ...args)
     // TODO: Display a few things in the intro log
     // const logElement = document.querySelector('#log')
     // if (logElement) {

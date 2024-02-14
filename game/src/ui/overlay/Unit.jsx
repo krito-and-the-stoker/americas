@@ -186,7 +186,7 @@ function UnitComponent() {
 				</div>
 				<Show when={treasure()}>
 					<div class={styles.treasure}>
-						{treasure()}<GameIcon icon="gold" />
+						<b>{treasure()}</b><GameIcon icon="gold" />
 					</div>
 				</Show>
 				<div class={styles.cargo}>
