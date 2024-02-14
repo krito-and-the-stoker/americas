@@ -6,9 +6,9 @@ function StorageGoods(props) {
 		.map(([good, amount]) => good)
 
 	return <For each={keys()}>
-		{good => <>
-			{Math.ceil(props.goods[good])}<GameIcon name={good} />
-		</>}
+		{good => <span>
+			{Math.ceil(props.goods[good])}<GameIcon good={good} />
+		</span>}
 	</For>
 }
 

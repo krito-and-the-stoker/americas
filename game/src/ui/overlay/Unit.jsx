@@ -20,9 +20,11 @@ import GoTo from 'command/goTo'
 import Foreground from 'render/foreground'
 
 import UnitMapView from 'view/map/unit'
+import MapView from 'view/map'
 
 import Dialog from 'view/ui/dialog'
 import StorageGoods from 'ui/components/StorageGoods'
+import GameIcon from 'ui/components/GameIcon'
 
 import styles from './Unit.module.scss'
 
@@ -57,7 +59,6 @@ const handleGoTo = unit => {
 }
 
 
-
 const foundColony = unit =>
   Commander.scheduleInstead(unit.commander, Found.create({ unit }))
 const assignTransport = unit =>
@@ -71,62 +72,54 @@ const plow = unit =>
 const goTo = unit => handleGoTo(unit)
 const cancel = unit => Commander.clearSchedule(unit.commander)
 
+
 function UnitComponent() {
 	const unitListener = Signal.map(UnitMapView.listen.selectedView, view => view?.unit)
 	const unit = Signal.create(unitListener)
 	const name = () => unit() && Unit.name(unit())
 
-	const command = Signal.create(
-		Signal.concat(unitListener, Unit.listen.command) // listens to the changes of the command
-	)
-	const storage = Signal.create(
-		Signal.concat(
-			Signal.map(unitListener, unit => unit?.storage), // listens to the storage of a unit
-			Storage.listen // listens to the changes of the storage
-		)
-	)
-	const equipment = Signal.create(
-		Signal.concat(
-			Signal.map(unitListener, unit => unit?.equipment),
+	const [cargo, equipment] = Signal.create(
+		Signal.chain(
+			Signal.map(unitListener, [
+				unit => unit?.storage,
+				unit => unit?.equipment
+			]),
 			Storage.listen
 		)
 	)
 
-	const passengers = Signal.create(
-		Signal.concat(
-			unitListener,
-			Unit.listen.passengers
-		)
+	const [command, passengers, properties, tile, [supplyColony, coords]] = Signal.create(
+		Signal.chain(unitListener, [
+			Unit.listen.command,
+			Unit.listen.passengers,
+			Unit.listen.properties,
+			Unit.listen.tile,
+			Signal.map(
+				Unit.listen.mapCoordinates,[
+					coords => Tile.supportingColony(Tile.closest(coords)),
+					coords => coords
+				]
+			)
+		])
 	)
 
-	const properties = Signal.create(
-		Signal.concat(
-			unitListener,
-			Unit.listen.properties
-		)
-	)
+	const strength = () => coords() && equipment() && Unit.strength(unit()).toFixed(2)
+	const speed = () => properties() && equipment() && Unit.speed(unit()).toFixed(2)
+	const cost = () => properties()?.cost ? properties().cost.toFixed(0) : 0
+	const treasure = () => unit()?.treasure
 
 	const screen = Signal.create(Foreground.listen.screen)
 	const isVisible = () => !screen() && !!unit()
 
-	const supplyColony = Signal.create(
-		Signal.map(
-			Signal.concat(
-				unitListener,
-				Unit.listen.mapCoordinates
-			),
-			coords => Tile.supportingColony(Tile.closest(coords))
-		)
-	)
+	const supplyFragment = () => supplyColony()
+		? <>Supplies from <b>{supplyColony().name}</b></>
+		: <>No external supplies</>
 
 	const supplyColonyText = () => supplyColony()
     ? `Supplies from ${supplyColony().name}`
     : 'No external supplies'
 
-
-  const tile = Signal.create(
-  	Signal.concat(unitListener, Unit.listen.tile)
-  )
+  const center = () => MapView.centerAt(coords(), 350)
 
   const isPioneering = () => ['cutForest', 'plow', 'road'].includes(command()?.id)
   const isTrading = () => command()?.id === 'tradeRoute'
@@ -177,14 +170,37 @@ function UnitComponent() {
 	return (
 		<Show when={isVisible()}>
 			<div class={styles.main}>
-				<For each={commands()}>
-					{([text, action]) => <div onClick={() => action(unit())}>{text}</div>}
-				</For>
-				<div>{name()}</div>
-				<div>{command()?.display}</div>
-				<StorageGoods goods={storage()} />
-				<div>{supplyColonyText()}</div>
-				<StorageGoods goods={equipment()} />
+				<div class={styles.commands}>
+					<For each={commands()}>
+						{([text, action]) => <div onClick={() => action(unit())}>{text}</div>}
+					</For>
+				</div>
+				<div onClick={center} class={styles.name}>{name()}</div>
+				<div class={styles.command}><i>{command()?.display}</i></div>
+				<div class={styles.properties}>
+					<span><GameIcon icon="go" scale="0.75" />{speed()}</span>
+					<span><GameIcon icon="combat" scale="0.75" />{strength()}</span>
+					<Show when={cost()}>
+						<span><GameIcon icon="gold" scale="0.75" />{cost()}</span>
+					</Show>
+				</div>
+				<Show when={treasure()}>
+					<div class={styles.treasure}>
+						{treasure()}<GameIcon icon="gold" />
+					</div>
+				</Show>
+				<div class={styles.cargo}>
+					<StorageGoods goods={cargo()} />
+				</div>
+				<Show when={passengers()?.length > 0}>
+					<div class={styles.passengers}>
+						<For each={passengers()}>
+							{passenger => <div class={styles.passenger}><GameIcon unit={passenger} scale={2} /></div>}
+						</For>
+					</div>
+				</Show>
+				<div class={styles.supply}>{supplyFragment()}</div>
+				<div class={styles.equipment}><StorageGoods goods={equipment()} /></div>
 			</div>
 		</Show>
 	)

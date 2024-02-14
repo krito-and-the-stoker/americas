@@ -1,11 +1,74 @@
 .main {
 	position: fixed;
 	bottom: 0;
-	left: 500px;
+	left: 0;
 	padding: 20px;
 
   background-color: rgba(240, 233, 201, 0.6);
   box-shadow: 0 0 5px 5px rgba(240, 233, 201, 0.6);
   color: black;
   font-size: 20px;
+}
+
+.commands {
+	font-size: 24px;
+	margin-bottom: 20px;
+	> div {
+		cursor: pointer;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}
+
+.name {
+	font-size: 40px;
+	cursor: pointer;
+}
+
+.command {
+	font-size: 18px;
+}
+
+.properties {
+	display: flex;
+	margin-top: 10px;
+	> span {
+		margin-right: 24px;
+	}
+}
+
+
+.passengers {
+	padding-top: 32px;
+	height: 64px;
+	display: flex;
+	> div {
+		margin-right: 10px;
+	}
+}
+
+.cargo {
+	margin-top: 20px;
+	font-size: 24px;
+	> div {
+		margin-right: 10px;
+	}
+}
+
+.treasure {
+	margin-top: 20px;
+}
+
+
+
+.supply {
+	margin-top: 16px;
+}
+
+.equipment {
+	margin-top: 5px;
+	> span {
+		margin-right: 10px;
+	}
 }

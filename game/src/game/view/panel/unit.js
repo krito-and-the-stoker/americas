@@ -62,6 +62,7 @@ const handleGoTo = unit => {
 }
 
 const initialize = () => {
+  return null
   const { h, patch } = Dom
 
   let unitPanel = document.createElement('div')
