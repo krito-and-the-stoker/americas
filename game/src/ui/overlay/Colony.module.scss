@@ -20,4 +20,13 @@
   font-size: 20px;
   padding: 10px;
   box-shadow: 0 0 5px 5px rgba(240, 233, 201, 0.85);	
+
+  pointer-events: none;
+}
+
+.construction {
+	margin-top: 20px;
+	> span {
+		margin-right: 16px;
+	}
 }

@@ -11,7 +11,6 @@ import ColonyTiles from 'view/colony/tiles'
 import ColonyStorage from 'view/colony/storage'
 import ColonyUnits from 'view/colony/units'
 import ColonyBuildings from 'view/colony/buildings'
-import ColonyConstruction from 'view/colony/construction'
 import ColonyLiberty from 'view/colony/liberty'
 import ColonyInfo from 'view/colony/info'
 
@@ -38,7 +37,6 @@ const create = colony => {
   const storage = ColonyStorage.create(colony, originalDimensions)
   const units = ColonyUnits.create(colony, () => close(), originalDimensions)
   const buildings = ColonyBuildings.create(colony)
-  const construction = ColonyConstruction.create(colony, originalDimensions)
   const liberty = ColonyLiberty.create(colony)
   const info = ColonyInfo.create(originalDimensions)
 
@@ -47,14 +45,12 @@ const create = colony => {
   container.addChild(liberty.container)
   container.addChild(tiles.container.tiles)
   container.addChild(buildings.container.buildings)
-  container.addChild(construction.container.panel)
 
   container.addChild(tiles.container.colonists)
   container.addChild(buildings.container.colonists)
   container.addChild(units.container)
   container.addChild(storage.container)
   container.addChild(info.container)
-  container.addChild(construction.container.menu)
 
   const mask = new PIXI.Graphics()
   mask.beginFill(0xffffff)
@@ -82,7 +78,6 @@ const create = colony => {
     units.unsubscribe,
     buildings.unsubscribe,
     liberty.unsubscribe,
-    construction.unsubscribe,
     info.unsubscribe,
     background.unsubscribe,
     unsubscribeResize,
