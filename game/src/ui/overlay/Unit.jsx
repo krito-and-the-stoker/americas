@@ -1,8 +1,11 @@
 import { createEffect, createComputed, Show } from 'solid-js'
 
-import Util from 'util/util'
+import Signal from 'util/signal'
 import Record from 'util/record'
+import Util from 'util/util'
 
+import Storage from 'entity/storage'
+import Tile from 'entity/tile'
 import Unit from 'entity/unit'
 import Colony from 'entity/colony'
 
@@ -13,26 +16,12 @@ import Plow from 'command/plow'
 import CutForest from 'command/cutForest'
 import TradeRoute from 'command/tradeRoute'
 import GoTo from 'command/goTo'
-import TriggerEvent from 'command/triggerEvent'
 
 import Foreground from 'render/foreground'
 
-import GoodsView from 'view/goods'
-import UnitView from 'view/unit'
-import Icon from 'view/ui/icon'
-import MapView from 'view/map'
-
-import Dialog from 'view/ui/dialog'
-
-
-
-import Signal from 'util/signal'
-
-import Storage from 'entity/storage'
-import Tile from 'entity/tile'
-
 import UnitMapView from 'view/map/unit'
 
+import Dialog from 'view/ui/dialog'
 import StorageGoods from 'ui/components/StorageGoods'
 
 import styles from './Unit.module.scss'
@@ -67,84 +56,26 @@ const handleGoTo = unit => {
   }
 }
 
-const commands = unit => {
-	if (!unit) {
-		return []
-	}
 
-  const pioneering = ['cutForest', 'plow', 'road'].includes(unit.command.id)
-  const trading = unit.command.id === 'tradeRoute'
-  const moving = !unit.tile
 
-  const gotoTextVisible = !pioneering
-  const foundColonyVisible =
-    unit.properties.canFound &&
-    !moving &&
-    !Tile.radius(unit.tile).some(tile => tile.colony) &&
-    !unit.tile.settlement &&
-    !pioneering
-  const buildRoadTextVisible =
-    unit.properties.canTerraform &&
-    !moving &&
-    !unit.tile.road &&
-    !unit.tile.settlement &&
-    !pioneering
-  const plowTextVisible =
-    unit.properties.canTerraform &&
-    !moving &&
-    !unit.tile.forest &&
-    !unit.tile.plowed &&
-    !unit.tile.settlement &&
-    !pioneering
-  const cutForestTextVisible =
-    unit.properties.canTerraform &&
-    !moving &&
-    unit.tile.forest &&
-    !unit.tile.settlement &&
-    !pioneering
-
-  const tradeVisible =
-    unit.properties.cargo > 0 && unit.passengers.length === 0 && !pioneering && !trading
-
-  const command = (text, handler) => () => <div onClick={handler}>{text()}</div>
-
-  const cancelCommandName = {
-    cutForest: 'Cancel cutting forest',
-    plow: 'Cancel plow',
-    tradeRoute: 'Cancel trade route',
-  }[unit.command.id]
-
-  const foundColony = unit =>
-    Commander.scheduleInstead(unit.commander, Found.create({ unit }))
-  const trade = unit =>
-    Commander.scheduleInstead(unit.commander, TradeRoute.create({ unit }))
-  const buildRoad = unit =>
-    Commander.scheduleInstead(unit.commander, Road.create({ unit }))
-  const cutForest = unit =>
-    Commander.scheduleInstead(unit.commander, CutForest.create({ unit }))
-  const plow = unit =>
-    Commander.scheduleInstead(unit.commander, Plow.create({ unit }))
-  const goTo = unit => handleGoTo(unit)
-  const cancel = unit => Commander.clearSchedule(unit.commander)
-
-  return [
-    foundColonyVisible && ['Found Colony', foundColony],
-    gotoTextVisible && ['Go to', goTo],
-    tradeVisible && ['Assign automatic Transport', trade],
-    plowTextVisible && ['Build Farm', plow],
-    buildRoadTextVisible && ['Build Road', buildRoad],
-    cutForestTextVisible && ['Cut Forest', cutForest],
-    cancelCommandName && [cancelCommandName, cancel],
-  ].filter(x => x)
-}
-
+const foundColony = unit =>
+  Commander.scheduleInstead(unit.commander, Found.create({ unit }))
+const assignTransport = unit =>
+  Commander.scheduleInstead(unit.commander, TradeRoute.create({ unit }))
+const buildRoad = unit =>
+  Commander.scheduleInstead(unit.commander, Road.create({ unit }))
+const cutForest = unit =>
+  Commander.scheduleInstead(unit.commander, CutForest.create({ unit }))
+const plow = unit =>
+  Commander.scheduleInstead(unit.commander, Plow.create({ unit }))
+const goTo = unit => handleGoTo(unit)
+const cancel = unit => Commander.clearSchedule(unit.commander)
 
 function UnitComponent() {
 	const unitListener = Signal.map(UnitMapView.listen.selectedView, view => view?.unit)
 	const unit = Signal.create(unitListener)
 	const name = () => unit() && Unit.name(unit())
 
-	console.log(Signal)
 	const command = Signal.create(
 		Signal.concat(unitListener, Unit.listen.command) // listens to the changes of the command
 	)
@@ -158,6 +89,20 @@ function UnitComponent() {
 		Signal.concat(
 			Signal.map(unitListener, unit => unit?.equipment),
 			Storage.listen
+		)
+	)
+
+	const passengers = Signal.create(
+		Signal.concat(
+			unitListener,
+			Unit.listen.passengers
+		)
+	)
+
+	const properties = Signal.create(
+		Signal.concat(
+			unitListener,
+			Unit.listen.properties
 		)
 	)
 
@@ -178,22 +123,63 @@ function UnitComponent() {
     ? `Supplies from ${supplyColony().name}`
     : 'No external supplies'
 
-	createEffect(() => {
-		console.log('unit', unit())
-	})
-	createEffect(() => {
-		console.log('command', command())
-	})
-	createEffect(() => {
-		console.log('storage', storage())
-	})
-	createEffect(() => {
-		console.log('visible', isVisible())
-	})
+
+  const tile = Signal.create(
+  	Signal.concat(unitListener, Unit.listen.tile)
+  )
+
+  const isPioneering = () => ['cutForest', 'plow', 'road'].includes(command()?.id)
+  const isTrading = () => command()?.id === 'tradeRoute'
+  const isMoving = () => !tile()
+
+  const canFoundColony = () =>
+    properties()?.canFound &&
+    !isMoving() &&
+    !Tile.radius(tile()).some(tile => tile.colony) &&
+    !tile()?.settlement &&
+    !isPioneering()
+  const canGoto = () => !isPioneering()
+  const canAssignTransport = () =>
+    properties()?.cargo > 0 && passengers()?.length === 0 && !isPioneering() && !isTrading()
+  const canPioneer = () =>
+  	properties()?.canTerraform &&
+  	!isMoving() &&
+  	!isPioneering()
+  	!tile()?.settlement
+  const canBuildRoad = () =>
+  	canPioneer() &&
+  	!tile()?.road
+  const canPlow = () =>
+  	canPioneer() &&
+  	!tile()?.forest &&
+  	!tile()?.plowed
+  const canCutForest = () =>
+  	canPioneer() &&
+  	!tile()?.forest
+
+  const cancelCommandName = () => ({
+    cutForest: 'Cancel cutting forest',
+    plow: 'Cancel plow',
+    tradeRoute: 'Cancel trade route',
+  })[command()?.id]
+
+
+  const commands = () => [
+    canFoundColony() && ['Found Colony', foundColony],
+    canGoto() && ['Go to', goTo],
+    canAssignTransport() && ['Assign automatic Transport', assignTransport],
+    canPlow() && ['Build Farm', plow],
+    canBuildRoad() && ['Build Road', buildRoad],
+    canCutForest() && ['Cut Forest', cutForest],
+    cancelCommandName() && [cancelCommandName(), cancel],
+  ].filter(x => !!x)
 
 	return (
 		<Show when={isVisible()}>
 			<div class={styles.main}>
+				<For each={commands()}>
+					{([text, action]) => <div onClick={() => action(unit())}>{text}</div>}
+				</For>
 				<div>{name()}</div>
 				<div>{command()?.display}</div>
 				<StorageGoods goods={storage()} />
