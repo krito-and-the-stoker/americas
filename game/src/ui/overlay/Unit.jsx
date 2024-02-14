@@ -3,7 +3,6 @@ import { createEffect, createComputed, Show } from 'solid-js'
 import Util from 'util/util'
 import Record from 'util/record'
 
-import Tile from 'entity/tile'
 import Unit from 'entity/unit'
 import Colony from 'entity/colony'
 
@@ -30,6 +29,7 @@ import Dialog from 'view/ui/dialog'
 import Signal from 'util/signal'
 
 import Storage from 'entity/storage'
+import Tile from 'entity/tile'
 
 import UnitMapView from 'view/map/unit'
 
@@ -154,9 +154,29 @@ function UnitComponent() {
 			Storage.listen // listens to the changes of the storage
 		)
 	)
+	const equipment = Signal.create(
+		Signal.concat(
+			Signal.map(unitListener, unit => unit?.equipment),
+			Storage.listen
+		)
+	)
 
 	const screen = Signal.create(Foreground.listen.screen)
 	const isVisible = () => !screen() && !!unit()
+
+	const supplyColony = Signal.create(
+		Signal.map(
+			Signal.concat(
+				unitListener,
+				Unit.listen.mapCoordinates
+			),
+			coords => Tile.supportingColony(Tile.closest(coords))
+		)
+	)
+
+	const supplyColonyText = () => supplyColony()
+    ? `Supplies from ${supplyColony().name}`
+    : 'No external supplies'
 
 	createEffect(() => {
 		console.log('unit', unit())
@@ -177,6 +197,8 @@ function UnitComponent() {
 				<div>{name()}</div>
 				<div>{command()?.display}</div>
 				<StorageGoods goods={storage()} />
+				<div>{supplyColonyText()}</div>
+				<StorageGoods goods={equipment()} />
 			</div>
 		</Show>
 	)
