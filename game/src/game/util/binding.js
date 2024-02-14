@@ -1,4 +1,5 @@
 import { createSignal, onCleanup } from 'solid-js'
+import { createStore, reconcile } from 'solid-js/store'
 import Util from 'util/util'
 
 const create = (instance, key) => {
@@ -128,6 +129,52 @@ function signal(listen, update) {
   return [signal, setValue]
 }
 
+function signalAt(entity, listen, update) {
+  const boundListener = listen.bind(null, entity)
+  const boundUpdate = update.bind(null, entity)
+  return signal(boundListener, boundUpdate)  
+}
+
+function entitySignal(initialEntity, listeners, update) {
+  const [store, setStore] = createStore({})
+  let unsubscribe = null
+  let entity = initialEntity
+
+  const updateObject = (arg0, value) => {
+    // update single key
+    if (typeof arg0 === 'string') {
+      if (!entity) {
+        console.error('Cannot set value on empty entity', arg0, value)
+      }
+
+      const key = arg0
+      update(entity, key, value)
+    }
+      
+    Util.execute(unsubscribe)
+    unsubscribe = null
+    entity = arg0
+    setStore(reconcile({}))
+
+
+    // update complete value
+    if (entity) {
+      console.log('updating entity', entity, Object.keys(listeners))
+      // runs immediately and sets all reactive values on entity
+      unsubscribe = Object.entries(listeners).map(([key, listen]) =>
+        listen(entity, value => {
+          // console.log('setting key=value', key, value)
+          setStore(key, value)
+        }))
+    }
+  }
+
+  updateObject(initialEntity)
+  onCleanup(() => Util.execute(unsubscribe))
+
+  return [store, updateObject]
+}
+
 export default {
   update,
   listen,
@@ -136,5 +183,7 @@ export default {
   map,
   applyUpdate,
   applyAllUpdates,
-  signal
+  signal,
+  signalAt,
+  entitySignal,
 }
