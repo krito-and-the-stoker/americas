@@ -10,8 +10,8 @@
 
 .hoverBox {
 	position: fixed;
-	bottom: calc(433px - 19.5vw);
-	left: 5.3vw;
+	left: calc((100vw - 0.9 * min(100vw / 1920, 100vh / 1080) * 1920) / 2);
+	bottom: calc((100vh - 0.685 * min(100vw / 1920, 100vh / 1080) * 1080) / 2);
   background-color: rgba(240, 233, 201, 0.85);
   font-size: 20px;
   padding: 10px;
