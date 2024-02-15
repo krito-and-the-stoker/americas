@@ -67,20 +67,20 @@ function UnitSummary() {
 			<GameIcon unit={unit()} scale={2} />
 		</div>
 		<Show when={hasEntries(positiveConsumption())}>
-			<div class={styles.subtitle}>Consumption</div>
-			<div class={styles.consumption}>
+			<div class={styles.subtitleConsumption}>Consumption</div>
+			<div>
 				<ProductionGoods goods={positiveConsumption()} />
 			</div>
 		</Show>
 		<Show when={hasPositiveEntries(equipment())}>
 			<div class={styles.subtitle}>Equipment {equipmentPercentage()?.toFixed()}%</div>
-			<div class={styles.consumption}>
+			<div>
 				<StorageGoods goods={equipment()} />
 			</div>
 		</Show>
 		<Show when={hasPositiveEntries(cargo())}>
 			<div class={styles.subtitle}>Cargo {cargoPercentage()?.toFixed()}%</div>
-			<div class={styles.consumption}>
+			<div>
 				<StorageGoods goods={cargo()} />
 			</div>
 		</Show>

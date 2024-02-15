@@ -10,7 +10,7 @@
 
 .hoverBox {
 	position: fixed;
-	bottom: calc(-19.5vw + 433px);
+	bottom: calc(433px - 19.5vw);
 	left: 5.3vw;
   background-color: rgba(240, 233, 201, 0.85);
   font-size: 20px;
