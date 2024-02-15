@@ -12,7 +12,7 @@ import styles from './index.module.scss'
 
 function ColonyComponent() {
 	const colony = Signal.create(
-		Signal.map(
+		Signal.select(
 			Foreground.listen.screen,
 			screen => screen?.params?.colony
 		)

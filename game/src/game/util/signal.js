@@ -78,22 +78,22 @@ function bind(entity, listenerWithInput) {
 
 // Maps the output of a listener to another value
 // Example:
-// Signal.map(Colonist.listen.unit, unit => unit?.equipment)
+// Signal.select(Colonist.listen.unit, unit => unit?.equipment)
 // Will listen to the unit of a colonist and map the value to its equipment
 // Important: This will not create a listener to the equipment.
 // For that we need a chain:
 // Signal.chain(
-//   Signal.map(Colonist.listen.unit, unit => unit?.equipment),
+//   Signal.select(Colonist.listen.unit, unit => unit?.equipment),
 //   Storage.listen
 // )
 //
-function map(listenerMaybeInput, mapping) {
+function select(listenerMaybeInput, mapping) {
   if (Array.isArray(listenerMaybeInput)) {
-    return listenerMaybeInput.map(l => map(l, mapping))
+    return listenerMaybeInput.map(l => select(l, mapping))
   }
 
   if (Array.isArray(mapping)) {
-    return mapping.map(m => map(listenerMaybeInput, m))
+    return mapping.map(m => select(listenerMaybeInput, m))
   }
 
   // There are two call signatures of listeners:
@@ -108,7 +108,7 @@ function map(listenerMaybeInput, mapping) {
 // Sometimes we want to chain a signal with multiple things,
 // and still get back the unchained result.
 // Example:
-// [data, ...] = Signal.chain(Hover.listen.data, [Signal.through, Signal.map(...)])
+// [data, ...] = Signal.chain(Hover.listen.data, [Signal.through, Signal.select(...)])
 function through(value, fn) {
   return fn(value)
 }
@@ -117,6 +117,6 @@ export default {
   create,
   bind,
   through,
-  map,
+  select,
   chain,
 }

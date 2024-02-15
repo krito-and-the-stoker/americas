@@ -74,13 +74,13 @@ const cancel = unit => Commander.clearSchedule(unit.commander)
 
 
 function UnitComponent() {
-	const unitListener = Signal.map(UnitMapView.listen.selectedView, view => view?.unit)
+	const unitListener = Signal.select(UnitMapView.listen.selectedView, view => view?.unit)
 	const unit = Signal.create(unitListener)
 	const name = () => unit() && Unit.name(unit())
 
 	const [cargo, equipment] = Signal.create(
 		Signal.chain(
-			Signal.map(unitListener, [
+			Signal.select(unitListener, [
 				unit => unit?.storage,
 				unit => unit?.equipment
 			]),
@@ -94,7 +94,7 @@ function UnitComponent() {
 			Unit.listen.passengers,
 			Unit.listen.properties,
 			Unit.listen.tile,
-			Signal.map(
+			Signal.select(
 				Unit.listen.mapCoordinates,[
 					coords => Tile.supportingColony(Tile.closest(coords)),
 					coords => coords

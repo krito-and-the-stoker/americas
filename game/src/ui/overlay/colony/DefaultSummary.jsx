@@ -32,7 +32,7 @@ function openConstructionDialog(colony) {
 }
 
 function DefaultSummary() {
-	const colonySignal = Signal.map(
+	const colonySignal = Signal.select(
 		Foreground.listen.screen,
 		screen => screen?.params?.colony
 	)
@@ -40,7 +40,7 @@ function DefaultSummary() {
 	const colony = Signal.create(colonySignal)
 	const productionSummary = Signal.create(
 		Signal.chain(
-			Signal.map(colonySignal, colony => colony?.productionSummary),
+			Signal.select(colonySignal, colony => colony?.productionSummary),
 			Storage.listen
 		)
 	)
