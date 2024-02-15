@@ -25,27 +25,27 @@ const create = (colony, closeScreen, originalDimensions) => {
   const shipPositions = [
     {
       x: 0,
-      y: 550,
+      y: 24,
       taken: false,
     },
     {
       x: 128,
-      y: 550,
+      y: 24,
       taken: false,
     },
     {
       x: 256,
-      y: 550,
+      y: 24,
       taken: false,
     },
     {
       x: 3 * 128,
-      y: 550,
+      y: 24,
       taken: false,
     },
     {
       x: 512,
-      y: 550,
+      y: 24,
       taken: false,
     },
   ]
@@ -91,7 +91,7 @@ const create = (colony, closeScreen, originalDimensions) => {
   greyScaleFilter.blackAndWhite()
 
   const landPositions = Util.range(25).map(index => ({
-    x: 610 + index * 64,
+    x: 730 + index * 64,
     y: 0.9 * originalDimensions.y - 125 - 32 - 64,
     taken: false,
   }))
