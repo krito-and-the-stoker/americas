@@ -4,7 +4,7 @@ import Overlay from 'ui/overlay'
 import Global from './Global'
 import Unit from './Unit'
 import Hints from './Hints'
-import Colony from './Colony'
+import Colony from './colony'
 
 
 function OverlayComponent() {

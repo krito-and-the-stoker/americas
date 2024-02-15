@@ -12,7 +12,7 @@ import Dialog from 'view/ui/dialog'
 import ProductionGoods from 'ui/components/ProductionGoods'
 import StorageGoods from 'ui/components/StorageGoods'
 
-import styles from './Colony.module.scss'
+import styles from './DefaultSummary.module.scss'
 
 function openConstructionDialog(colony) {
   const options = Construction.options(colony)
@@ -31,8 +31,7 @@ function openConstructionDialog(colony) {
   })
 }
 
-function ColonyComponent() {
-	const screen = Signal.create(Foreground.listen.screen)
+function DefaultSummary() {
 	const colonySignal = Signal.map(
 		Foreground.listen.screen,
 		screen => screen?.params?.colony
@@ -76,29 +75,26 @@ function ColonyComponent() {
   const rebels = () => (bells() || bells() === 0) && colonists() && Colony.rebels(colony())
   const tories = () => (bells() || bells() === 0) && colonists() && Colony.tories(colony())
 
-	return <Show when={colony()}>
-		<div class={styles.name}>{colony()?.name}</div>
-		<div class={styles.hoverBox}>
-			<div class={styles.title}>Production and Consumption</div>
-			<ProductionGoods goods={productionSummary()} />
-			<div class={styles.construction} onClick={() => openConstructionDialog(colony())}>
-				<div>Construction</div>
-				<Show when={target()} fallback={<i>None</i>}>
-					<span><i>{name()}</i></span>
-					<StorageGoods goods={cost()} />
-					<span>{progressPercentage()?.toFixed(0)}%</span>
-				</Show>
+	return <>
+		<div class={styles.title}>Production and Consumption</div>
+		<ProductionGoods goods={productionSummary()} />
+		<div class={styles.construction} onClick={() => openConstructionDialog(colony())}>
+			<div>Construction</div>
+			<Show when={target()} fallback={<i>None</i>}>
+				<span><i>{name()}</i></span>
+				<StorageGoods goods={cost()} />
+				<span>{progressPercentage()?.toFixed(0)}%</span>
+			</Show>
+		</div>
+		<div class={styles.colonists}>
+			<div classList={{[styles.green]: rebels()?.percentage >= 50}}>
+				<i>Integrated</i> {rebels()?.percentage}% ({rebels()?.number} Colonists)
 			</div>
-			<div class={styles.colonists}>
-				<div classList={{[styles.green]: rebels()?.percentage >= 50}}>
-					<i>Integrated</i> {rebels()?.percentage}% ({rebels()?.number} Colonists)
-				</div>
-				<div classList={{[styles.red]: tories()?.number >= 10}}>
-					<i>Unorganized</i> {tories()?.percentage}% ({tories()?.number} Colonists)
-				</div>
+			<div classList={{[styles.red]: tories()?.number >= 10}}>
+				<i>Unorganized</i> {tories()?.percentage}% ({tories()?.number} Colonists)
 			</div>
 		</div>
-	</Show>
+	</>
 }
 
-export default ColonyComponent
+export default DefaultSummary

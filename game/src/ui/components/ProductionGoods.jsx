@@ -12,7 +12,7 @@ function ProductionGoods(props) {
 		<For each={keys()}>
 			{good => <span classList={{[styles.red]: props.goods[good] < 0, [styles.entry]: true}}>
 				<For each={Array(Math.min(20, Math.abs(Math.ceil(props.goods[good])))).fill()}>{() => <span class={styles.good}><GameIcon good={good} scale={1.2} /></span>}</For>
-				<Show when={Math.abs(Math.ceil(props.goods[good])) > 5}><span class={styles.number}>
+				<Show when={Math.abs(Math.ceil(props.goods[good])) > 4}><span class={styles.number}>
 					{Math.ceil(props.goods[good])}
 				</span></Show>
 			</span>}

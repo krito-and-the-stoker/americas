@@ -6,6 +6,7 @@ import Util from 'util/util'
 
 import Drag from 'input/drag'
 import Click from 'input/click'
+import Hover from 'input/hover'
 
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
@@ -162,6 +163,10 @@ const create = (colony, originalDimensions) => {
             sprite,
             () => ColonistView.createDetailView(colonist),
             'View colonist details'
+          ),
+          Hover.track(
+            sprite,
+            { type: 'colonist', colonist }
           ),
           Drag.makeDraggable(
             sprite,

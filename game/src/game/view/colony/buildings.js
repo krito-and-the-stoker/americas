@@ -7,6 +7,7 @@ import Util from 'util/util'
 
 import Drag from 'input/drag'
 import Click from 'input/click'
+import Hover from 'input/hover'
 
 import Production from 'entity/production'
 import Unit from 'entity/unit'
@@ -112,6 +113,8 @@ const createBuilding = (colony, building) => {
       }
     }, `Inspect ${Building.name(colony, building.name)}`)
 
+  const unsubscribeHover = Hover.track(sprite, { type: 'building', building })
+
   const createColonistView = (productionBonus, colonist, work) => {
     if (work && work.building === name) {
       const position = {
@@ -166,6 +169,10 @@ const createBuilding = (colony, building) => {
             () => ColonistView.createDetailView(colonist),
             'View details'
           ),
+          Hover.track(
+            colonistSprite,
+            { type: 'colonist', colonist }
+          ),
           Drag.makeDraggable(
             colonistSprite,
             { colonist },
@@ -182,6 +189,10 @@ const createBuilding = (colony, building) => {
           colonistSprite,
           () => ColonistView.createDetailView(colonist),
           'View details'
+        ),
+        Hover.track(
+          colonistSprite,
+          { type: 'colonist', colonist }
         ),
         Drag.makeDraggable(
           colonistSprite,
@@ -213,7 +224,8 @@ const createBuilding = (colony, building) => {
   const unsubscribe = [
     unsubscribeColonists,
     unsubscribeDrag,
-    unsubscribeClick
+    unsubscribeClick,
+    unsubscribeHover
   ]
 
   return {

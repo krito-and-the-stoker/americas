@@ -8,10 +8,6 @@
 	pointer-events: none;
 }
 
-.title {
-	margin-bottom: 20px;
-}
-
 .hoverBox {
 	position: fixed;
 	bottom: calc(-19.5vw + 433px);
@@ -26,23 +22,3 @@
   pointer-events: none;
 }
 
-.construction {
-	margin-top: 20px;
-	pointer-events: auto;
-	cursor: pointer;
-	> span {
-		margin-right: 16px;
-	}
-}
-
-.colonists {
-	margin-top: 20px;
-	font-size: 16px;
-}
-
-.red {
-	color: rgb(255, 50, 50);
-}
-.green {
-	color: rgb(50, 255, 50);
-}
