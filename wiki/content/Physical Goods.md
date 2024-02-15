@@ -67,7 +67,7 @@ A shipment of tobacco could be about as valuable as the whole ship, if not more.
 
 - **Silver**: Only topped by gold, can be minted into money.
 - **Tea**: Highly prized, especially as demand in Europe grows. Cannot be grown in the Americas.
-- **Cigars**: Luxury tobacco product, high value per unit, price may plummet quickly.
+- **Cigars**: Luxury tobacco product, high value per unit, price may vary, cannot mass sell.
 - **Guns**: High value per measurement ton. Look at the dimensions: a caravel can easily load arms for 5k soldiers.
 
 ### High Value
@@ -75,7 +75,7 @@ A shipment of tobacco could be about as valuable as the whole ship, if not more.
 - **Coffee**: Appears later in the game, highly valued commodity in Europe.
 - **Furs**: High-quality furs were in demand for luxury clothing and accessories. They are hard to get so the demand can never be met
 - **Coats**: Coats are being produced from cloth and furs, having great value especially in America, but may not meet the special fashion taste of the European high class.
-- **Cloths** (regular): Essential for clothing and household goods, widely traded but less valuable per unit than coats and furs.
+- **Cloths** (regular): Essential for clothing and household goods, cumbersome to make, widely traded but less valuable per unit than coats and furs. This will change at 1793.
 ### Moderate Value
 
 - **Rum**: Popular especially in the Americas and with the British navy, not a luxury item.
