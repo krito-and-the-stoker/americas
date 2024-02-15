@@ -79,7 +79,7 @@ function DefaultSummary() {
 		<div class={styles.title}>Production and Consumption</div>
 		<ProductionGoods goods={productionSummary()} />
 		<div class={styles.construction} onClick={() => openConstructionDialog(colony())}>
-			<div>Construction</div>
+			<div class={styles.subtitle}>Construction</div>
 			<Show when={target()} fallback={<i>None</i>}>
 				<span><i>{name()}</i></span>
 				<StorageGoods goods={cost()} />

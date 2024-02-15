@@ -80,7 +80,7 @@ function ColonistSummary() {
 
 	return <>
 		<div class={styles.title}>{name()}</div>
-		<div>
+		<div class={styles.colonist}>
 			<GameIcon unit={unit()} scale={2} />
 		</div>
 		<div class={styles.subtitle}>{hasEntries(productionInput()) ? 'Manufacturing' : 'Production'}</div>
