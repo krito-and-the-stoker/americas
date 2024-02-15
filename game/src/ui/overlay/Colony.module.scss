@@ -28,6 +28,8 @@
 
 .construction {
 	margin-top: 20px;
+	pointer-events: auto;
+	cursor: pointer;
 	> span {
 		margin-right: 16px;
 	}

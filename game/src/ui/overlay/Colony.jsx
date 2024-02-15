@@ -4,15 +4,32 @@ import Util from 'util/util'
 
 import Storage from 'entity/storage'
 import Colony from 'entity/colony'
+import Construction from 'entity/construction'
 
 import Foreground from 'render/foreground'
 import Signal from 'util/signal'
-
+import Dialog from 'view/ui/dialog'
 import ProductionGoods from 'ui/components/ProductionGoods'
 import StorageGoods from 'ui/components/StorageGoods'
 
 import styles from './Colony.module.scss'
 
+function openConstructionDialog(colony) {
+  const options = Construction.options(colony)
+
+  const prepareOption = option => ({
+    ...option,
+    cost: option.cost(),
+    start: () => Construction.start(colony, option),
+    percentage: () => Math.floor((100 * option.progress()) / Util.sum(Object.values(option.cost()))),
+  })
+
+  Dialog.open('colony.construction', {
+    buildings: options.buildings.map(prepareOption),
+    units: options.units.map(prepareOption),
+    stop: () => Construction.start(colony, null)
+  })
+}
 
 function ColonyComponent() {
 	const screen = Signal.create(Foreground.listen.screen)
@@ -64,7 +81,7 @@ function ColonyComponent() {
 		<div class={styles.hoverBox}>
 			<div class={styles.title}>Production and Consumption</div>
 			<ProductionGoods goods={productionSummary()} />
-			<div class={styles.construction}>
+			<div class={styles.construction} onClick={() => openConstructionDialog(colony())}>
 				<div>Construction</div>
 				<Show when={target()} fallback={<i>None</i>}>
 					<span><i>{name()}</i></span>
