@@ -52,6 +52,14 @@ const create = (colony, building, colonist) => {
         good: production.good,
         amount: unscaledProductionAmount,
       })
+      Storage.update(colonist.productionRecord, {
+        good: consumption.good,
+        amount: -unscaledConsumptionAmount,
+      })
+      Storage.update(colonist.productionRecord, {
+        good: production.good,
+        amount: unscaledProductionAmount,
+      })
     }
 
     if (production.type === 'good') {
@@ -82,6 +90,10 @@ const create = (colony, building, colonist) => {
           good: 'construction',
           amount: productionFactor * production.amount,
         })
+        Storage.update(colonist.productionRecord, {
+          good: 'construction',
+          amount: productionFactor * production.amount,
+        })
 
         // consume goods
         Object.entries(construction.cost).forEach(([good, amount]) => {
@@ -91,6 +103,10 @@ const create = (colony, building, colonist) => {
             amount: -scale * consumed,
           })
           Storage.update(colony.productionRecord, {
+            good,
+            amount: -consumed,
+          })
+          Storage.update(colonist.productionRecord, {
             good,
             amount: -consumed,
           })
@@ -105,10 +121,18 @@ const create = (colony, building, colonist) => {
         good: production.good,
         amount: productionAmount / scale,
       })
+      Storage.update(colonist.productionRecord, {
+        good: production.good,
+        amount: productionAmount / scale,
+      })
     }
     if (production.type === 'crosses') {
       Colony.update.crosses(colony, productionAmount)
       Storage.update(colony.productionRecord, {
+        good: production.good,
+        amount: productionAmount / scale,
+      })
+      Storage.update(colonist.productionRecord, {
         good: production.good,
         amount: productionAmount / scale,
       })

@@ -63,6 +63,10 @@ const create = (unit, tile) => {
         good: 'food',
         amount: -unscale(foodAmount),
       })
+      Storage.update(unit.consumptionRecord, {
+        good: 'food',
+        amount: -unscale(foodAmount),
+      })
     }
 
     return true

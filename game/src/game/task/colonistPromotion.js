@@ -2,6 +2,7 @@ import Colonists from 'data/colonists'
 import Goods from 'data/goods'
 
 import Util from 'util/util'
+import Messge from 'util/message'
 
 import Time from 'timeline/time'
 
@@ -23,7 +24,7 @@ const PRODUCTION_MALUS_AMOUNT = -1
 
 const sortByPower = (one, other) => Colonist.power(other) - Colonist.power(one)
 
-const addScaledAmountToColony = (colony, good, scaledAmount, scale) => {
+const addScaledAmountToColony = (colony, colonist, good, scaledAmount, scale) => {
   if (good === 'bells') {
     Colony.update.bells(colony, scaledAmount)
   } else if (good === 'crosses') {
@@ -36,6 +37,10 @@ const addScaledAmountToColony = (colony, good, scaledAmount, scale) => {
   Storage.update(colony.productionRecord, {
     good,
     amount: scaledAmount / scale,
+  })
+  Storage.update(colonist.consumptionRecord, {
+    good,
+    amount: scaledAmount / scale
   })
 }
 
@@ -60,7 +65,7 @@ const consumeGoods = (colonist, deltaTime, consumptionObject) =>
       }
 
       if (Math.round(scaledAmount / scale) >= amount) {
-        addScaledAmountToColony(colony, good, -scaledAmount, scale)
+        addScaledAmountToColony(colony, colonist, good, -scaledAmount, scale)
 
         return {
           ...obj,
@@ -85,7 +90,7 @@ const roundGoodAmounts = statusObject =>
     ])
   )
 
-const returnUnusedGoods = (statusObject, colony, deltaTime) => {
+const returnUnusedGoods = (statusObject, colonist, deltaTime) => {
   if (statusObject.result) {
     return roundGoodAmounts(statusObject)
   }
@@ -98,7 +103,7 @@ const returnUnusedGoods = (statusObject, colony, deltaTime) => {
         .filter(([good]) => Goods[good])
         .map(([good, value]) => {
           if (value > 0) {
-            addScaledAmountToColony(colony, good, value * scale, scale)
+            addScaledAmountToColony(colonist.colony, colonist, good, value * scale, scale)
 
             return [good, 0]
           }
@@ -193,7 +198,7 @@ const advanceDemotion = (colonist, target, delta) => {
 
   colonist.promotion.demote[target] += delta * DEMOTION_BASE_FACTOR * demotionStrength
   if (colonist.promotion.demote[target] >= 1) {
-    console.log('demoted', colonist.unit.expert, 'to', target)
+    Message.colony.log('demoted', colonist.unit.expert, 'to', target)
     const demotionTarget = target === 'settler' ? null : target
 
     if (!colonist.promotion.promote) {
@@ -272,7 +277,7 @@ const create = (colony, good, amount) => {
       } else {
         colonist.promotion.promoting = returnUnusedGoods(
           consumeGoods(colonist, deltaTime, promotionObject),
-          colonist.colony,
+          colonist,
           deltaTime
         )
       }
@@ -295,7 +300,7 @@ const create = (colony, good, amount) => {
       } else {
         colonist.promotion.bonus = returnUnusedGoods(
           consumeGoods(colonist, deltaTime, consumption.bonus),
-          colonist.colony,
+          colonist,
           deltaTime
         )
       }

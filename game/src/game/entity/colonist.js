@@ -11,11 +11,13 @@ import Tile from 'entity/tile'
 import Production from 'entity/production'
 import Unit from 'entity/unit'
 import Building from 'entity/building'
+import Storage from 'entity/storage'
 
 import Time from 'timeline/time'
 
 import Harvest from 'task/harvest'
 import Produce from 'task/produce'
+import ProductionSummary from 'task/productionSummary'
 
 import UnjoinColony from 'interaction/unjoinColony'
 
@@ -91,12 +93,21 @@ const update = {
 const initialize = colonist => {
   colonist.productionModifier = 0
 
+  // the record will be used to record during production and consumption
+  colonist.productionRecord = Storage.createWithProduction()
+  colonist.consumptionRecord = Storage.createWithProduction()
+  // the summary is a snapshot created at a reasonable time
+  // that can always be displayed
+  colonist.productionSummary = Storage.createWithProduction()
+  colonist.consumptionSummary = Storage.createWithProduction()
+
   return [
     listen.unit(colonist, unit => {
       if (!unit) {
         disband(colonist)
       }
     }),
+    Time.schedule(ProductionSummary.create(colonist)),
   ]
 }
 

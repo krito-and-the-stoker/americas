@@ -68,6 +68,10 @@ const create = (unit, tile) => {
             good: pack.good,
             amount: -unscale(amount),
           })
+          Storage.update(unit.consumptionRecord, {
+            good: pack.good,
+            amount: -unscale(amount)
+          })
         }
       }
     })

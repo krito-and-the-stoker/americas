@@ -23,6 +23,7 @@ import ConsumeFood from 'task/consumeFood'
 import FillFoodStock from 'task/fillFoodStock'
 import FillEquipment from 'task/fillEquipment'
 import ConsumeEquipment from 'task/consumeEquipment'
+import ProductionSummary from 'task/productionSummary'
 
 import Commander from 'command/commander'
 import Factory from 'command/factory'
@@ -127,6 +128,9 @@ const isMoving = unit => unit.tile !== unit.movement.target
 const initialize = unit => {
   Util.execute(unit.destroy)
 
+  unit.consumptionRecord = Storage.createWithProduction()
+  unit.consumptionSummary = Storage.createWithProduction()
+
   if (unit.tile) {
     Tile.discover(unit.tile, unit.owner)
     Tile.diagonalNeighbors(unit.tile).forEach(other => Tile.discover(other, unit.owner))
@@ -136,6 +140,7 @@ const initialize = unit => {
     Time.schedule(unit.commander),
     Time.schedule(Move.create(unit)),
     Time.schedule(ConsumeEquipment.create(unit)),
+    Time.schedule(ProductionSummary.create(unit)),
     Binding.listen(unit.commander.state, 'info', info => {
       update.command(unit, info)
     }),

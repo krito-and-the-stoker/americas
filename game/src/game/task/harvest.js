@@ -40,6 +40,12 @@ const create = (colony, tile, good, colonist = null) => {
       good,
       amount: unscaledProduction,
     })
+    if (colonist) {
+      Storage.update(colonist.productionRecord, {
+        good,
+        amount: unscaledProduction,
+      })
+    }
 
     return true
   }
