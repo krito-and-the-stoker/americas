@@ -7,6 +7,7 @@ import Foreground from 'render/foreground'
 import DefaultSummary from 'ui/overlay/colony/DefaultSummary'
 import ColonistSummary from 'ui/overlay/colony/ColonistSummary'
 import UnitSummary from 'ui/overlay/colony/UnitSummary'
+import GoodSummary from 'ui/overlay/colony/GoodSummary'
 
 import styles from './index.module.scss'
 
@@ -30,6 +31,7 @@ function ColonyComponent() {
 			<Switch fallback={<DefaultSummary />}>
 				<Match when={hover()?.type === 'colonist'}><ColonistSummary /></Match>
 				<Match when={hover()?.type === 'unit'}><UnitSummary /></Match>
+				<Match when={hover()?.type === 'good'}><GoodSummary /></Match>
 			</Switch>			
 		</div>
 	</Show>

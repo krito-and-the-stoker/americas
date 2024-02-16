@@ -9,6 +9,7 @@ import Colony from 'entity/colony'
 
 import Click from 'input/click'
 import Drag from 'input/drag'
+import Hover from 'input/hover'
 
 import GoodsView from 'view/goods'
 import Icon from 'view/ui/icon'
@@ -52,6 +53,10 @@ const create = (colony, originalDimensions) => {
           Trade.update(colony.trade)
         },
         `Set trade options for ${good}`
+      ),
+      Hover.track(
+        sprite,
+        { type: 'good', good }
       ),
     ]
 
