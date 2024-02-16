@@ -165,7 +165,7 @@ function each(...args) {
         return
       }
 
-      return resolve(newValue)
+      return resolve(values)
     }
 
     const unsubscribe = input.map((item, i) => listenerWithInput(item, value => updateItem(value, i)))
@@ -201,7 +201,7 @@ function combine(...args) {
         return
       }
 
-      return resolve(newValue)
+      return resolve(values)
     }
 
     const unsubscribe = listenersWithInput.map((listener, i) => listener(input, value => updateItem(value, i)))
