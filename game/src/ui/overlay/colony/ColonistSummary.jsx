@@ -18,12 +18,12 @@ import styles from './ColonistSummary.module.scss'
 function ColonistSummary() {
 	const colonist = Signal.create(
 		Hover.listen.data,
-		Signal.niceSelect(data => data?.colonist)
+		Signal.select(data => data?.colonist)
 	)
 
 	const [unit, expert, properties] = Signal.create(
 		Hover.listen.data,
-		Signal.niceSelect(data => data?.colonist),
+		Signal.select(data => data?.colonist),
 		Colonist.listen.unit,
 		[
 			Signal.through,
@@ -36,7 +36,7 @@ function ColonistSummary() {
 
 	const [production, consumption] = Signal.create(
 		Hover.listen.data,
-		Signal.niceSelect([
+		Signal.select([
 			data => data?.colonist?.productionSummary,
 			data => data?.colonist?.consumptionSummary,
 		]),

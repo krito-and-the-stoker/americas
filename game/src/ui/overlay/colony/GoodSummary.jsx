@@ -15,18 +15,18 @@ import GameIcon from 'ui/components/GameIcon'
 function GoodSummary() {
 	const good = Signal.create(
 		Hover.listen.data,
-		Signal.niceSelect(data => data.good)
+		Signal.select(data => data.good)
 	)
 
 	const colonists = Signal.create(
 		Foreground.listen.screen,
-		Signal.niceSelect(screen => screen.params?.colony),
+		Signal.select(screen => screen.params?.colony),
 		Colony.listen.colonists,
-		Signal.niceSelect(colonists => colonists.map(colonist => colonist.consumptionSummary)),
+		Signal.select(colonists => colonists.map(colonist => colonist.consumptionSummary)),
 		Signal.each(
 			Signal.chain(
 				Storage.listen,
-				Signal.niceSelect(storage => storage.cotton)
+				Signal.select(storage => storage.cotton)
 			),
 			Util.sum
 		),
@@ -39,7 +39,7 @@ function GoodSummary() {
 
 	const storage = Signal.create(
 		Foreground.listen.screen,
-		Signal.niceSelect(
+		Signal.select(
 			screen => screen?.params?.colony?.storage
 		),
 		Storage.listen

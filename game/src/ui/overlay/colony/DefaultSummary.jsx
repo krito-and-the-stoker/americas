@@ -34,7 +34,7 @@ function openConstructionDialog(colony) {
 function DefaultSummary() {
 	const colonySignal = Signal.chain(
 		Foreground.listen.screen,
-		Signal.niceSelect(screen => screen.params?.colony),
+		Signal.select(screen => screen.params?.colony),
 	)
 
 	const [colony, productionSummary,construction, constructionTarget] = Signal.create(
@@ -42,7 +42,7 @@ function DefaultSummary() {
 		[
 			Signal.through,
 			Signal.chain(
-				Signal.niceSelect(colony => colony.productionSummary),
+				Signal.select(colony => colony.productionSummary),
 				Storage.listen
 			),
 			Colony.listen.construction,

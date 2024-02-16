@@ -15,7 +15,7 @@ import styles from './index.module.scss'
 function ColonyComponent() {
 	const colony = Signal.create(
 		Foreground.listen.screen,
-		Signal.niceSelect(screen => screen?.params?.colony)
+		Signal.select(screen => screen?.params?.colony)
 	)
 
 	const name = () => colony()?.name

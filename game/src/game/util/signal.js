@@ -77,8 +77,8 @@ function chain(listenerMaybeInput, ...args) {
 
 
   return (arg0, arg1) => Util.isFunction(arg0)
-    ? listenerMaybeInput(value => (value || value === 0) && listenerWithInput(value, arg0))
-    : listenerMaybeInput(arg0, value => (value || value === 0) && listenerWithInput(value, arg1))
+    ? listenerMaybeInput(value => (value || value === 0) ? listenerWithInput(value, arg0) : arg0())
+    : listenerMaybeInput(arg0, value => (value || value === 0) ? listenerWithInput(value, arg1) : arg1())
 }
 
 // Allows to statically bind an input
@@ -97,33 +97,6 @@ function bind(entity, listenerWithInput) {
   return listenerWithInput.bind(null, entity)
 }
 
-// Maps the output of a listener to another value
-// Example:
-// Signal.select(Colonist.listen.unit, unit => unit?.equipment)
-// Will listen to the unit of a colonist and map the value to its equipment
-// Important: This will not create a listener to the equipment.
-// For that we need a chain:
-// Signal.chain(
-//   Signal.select(Colonist.listen.unit, unit => unit?.equipment),
-//   Storage.listen
-// )
-//
-function select(listenerMaybeInput, mapping) {
-  if (Array.isArray(listenerMaybeInput)) {
-    return listenerMaybeInput.map(l => select(l, mapping))
-  }
-
-  if (Array.isArray(mapping)) {
-    return mapping.map(m => select(listenerMaybeInput, m))
-  }
-
-  // There are two call signatures of listeners:
-  // 1. listener(fn) // no input
-  // 2. listener(entity, fn) // with input
-  return (arg0, arg1) => Util.isFunction(arg0)
-    ? listenerMaybeInput(Binding.map(mapping, arg0))
-    : listenerMaybeInput(arg0, Binding.map(mapping, arg1))
-}
 
 // Acts as a pass through listener for chaining:
 // Sometimes we want to chain a signal with multiple things,
@@ -139,9 +112,9 @@ function emit(value) {
 }
 
 
-function niceSelect(mapping, equals) {
+function select(mapping, equals) {
   if (Array.isArray(mapping)) {
-    return mapping.map(m => niceSelect(m))
+    return mapping.map(m => select(m))
   }
 
   // if we ever have a problem with Binding.map, we can always go back here
@@ -211,7 +184,6 @@ export default {
   effect,
   through,
   select,
-  niceSelect,
   chain,
   each,
 }

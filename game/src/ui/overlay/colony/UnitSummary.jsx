@@ -20,13 +20,13 @@ import styles from './UnitSummary.module.scss'
 function UnitSummary() {
 	const [unit, expert, properties, [consumption, equipment, cargo]] = Signal.create(
 		Hover.listen.data,
-		Signal.niceSelect(data => data?.unit),
+		Signal.select(data => data?.unit),
 		[
 			Signal.through,
 			Unit.listen.expert,
 			Unit.listen.properties,
 			Signal.chain(
-				Signal.niceSelect([
+				Signal.select([
 					unit => unit?.consumptionSummary,
 					unit => unit?.equipment,
 					unit => unit?.storage,
