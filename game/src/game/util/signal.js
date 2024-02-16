@@ -77,8 +77,8 @@ function chain(listenerMaybeInput, ...args) {
 
 
   return (arg0, arg1) => Util.isFunction(arg0)
-    ? listenerMaybeInput(value => (value || value === 0) ? listenerWithInput(value, arg0) : arg0())
-    : listenerMaybeInput(arg0, value => (value || value === 0) ? listenerWithInput(value, arg1) : arg1())
+    ? listenerMaybeInput(value => (value !== undefined) ? listenerWithInput(value, arg0) : arg0())
+    : listenerMaybeInput(arg0, value => (value !== undefined) ? listenerWithInput(value, arg1) : arg1())
 }
 
 // Allows to statically bind an input
@@ -110,7 +110,7 @@ function emit(value) {
   return resolve => resolve(value)
 }
 
-function newSignal(listenerNoInput) {
+function source(listenerNoInput) {
   return (value, resolve) => listenerNoInput(resolve)
 }
 
@@ -223,5 +223,5 @@ export default {
   chain,
   each,
   combine,
-  new: newSignal,
+  source,
 }
