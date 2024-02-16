@@ -18,23 +18,27 @@ function GoodSummary() {
 		Signal.select(data => data.good)
 	)
 
-	const colonists = Signal.create(
+
+	const consumption = Signal.create(
 		Foreground.listen.screen,
 		Signal.select(screen => screen.params?.colony),
 		Colony.listen.colonists,
-		Signal.select(colonists => colonists.map(colonist => colonist.consumptionSummary)),
 		Signal.each(
-			Signal.chain(
+			Signal.select(colonist => colonist.consumptionSummary),
+			Signal.combine([
 				Storage.listen,
-				Signal.select(storage => storage.cotton)
-			),
-			Util.sum
+				Signal.chain(
+					Signal.new(Hover.listen.data),
+					Signal.select(data => data.good)
+				)
+			]),
+			Signal.select(([storage, good]) => storage[good])
 		),
-		Signal.effect(x => console.log('summaries', x))
+		Signal.select(Util.sum),
 	)
 
 	createEffect(() => {
-		console.log('colonists:', colonists())
+		console.log('consumption:', consumption())
 	})
 
 	const storage = Signal.create(

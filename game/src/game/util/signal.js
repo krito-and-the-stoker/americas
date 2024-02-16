@@ -71,7 +71,7 @@ function chain(listenerMaybeInput, ...args) {
   }
 
   if (!Util.isFunction(listenerMaybeInput)) {
-    console.error('listenerMaybeInput is not a function, skipped:', listenerMaybeInput)
+    console.error('Signal.chain: listenerMaybeInput is not a function, skipped', listenerMaybeInput)
     return through
   }
 
@@ -97,18 +97,21 @@ function bind(entity, listenerWithInput) {
   return listenerWithInput.bind(null, entity)
 }
 
-
 // Acts as a pass through listener for chaining:
 // Sometimes we want to chain a signal with multiple things,
 // and still get back the unchained result.
 // Example:
 // [data, ...] = Signal.chain(Hover.listen.data, [Signal.through, Signal.select(...)])
-function through(value, exec) {
-  return exec(value)
+function through(value, resolve) {
+  return resolve(value)
 }
 
 function emit(value) {
-  return exec => exec(value)
+  return resolve => resolve(value)
+}
+
+function newSignal(listenerNoInput) {
+  return (value, resolve) => listenerNoInput(resolve)
 }
 
 
@@ -141,49 +144,84 @@ function effect(effect) {
   }
 }
 
-function reduce(reducer, initial) {
-  return (values, resolve) => resolve(values.reduce(reducer, initial))
-}
 
-function each(listenerWithInput, resolver = x => x) {
+function each(...args) {
+  const listenerWithInput = chain(...args)
+
   return (input, resolve) => {
     const values = []
-    let oldValue
     let updateReady = false
-    let pendingResolve
+    let pendingResolve = null
+
     const updateItem = (value, i) => {
       Util.execute(pendingResolve)
+      if (values[i] === value) {
+        return
+      }
+
       values[i] = value
 
       if (!updateReady) {
         return
       }
 
-      const newValue = resolver(values)
-      if (newValue !== oldValue) {
-        oldValue = newValue
-        return resolve(newValue)
-      }
+      return resolve(newValue)
     }
 
     const unsubscribe = input.map((item, i) => listenerWithInput(item, value => updateItem(value, i)))
     updateReady = true
-    pendingResolve = resolve(resolver(values))
+    pendingResolve = resolve(values)
 
     return unsubscribe
   }
 }
 
-each('hallo', 'welt', 'cool')
+function combine(...args) {
+  const listenersWithInput = chain(...args)
+
+  if (!Array.isArray(listenersWithInput)) {
+    console.error('Signal.combine expected array of signals, passed')
+    return listenersWithInput
+  }
+
+  return (input, resolve) => {
+    const values = []
+    let updateReady = false
+    let pendingResolve = null
+
+    const updateItem = (value, i) => {
+      Util.execute(pendingResolve)
+      if (values[i] === value) {
+        return
+      }
+
+      values[i] = value
+
+      if (!updateReady) {
+        return
+      }
+
+      return resolve(newValue)
+    }
+
+    const unsubscribe = listenersWithInput.map((listener, i) => listener(input, value => updateItem(value, i)))
+    updateReady = true
+    pendingResolve = resolve(values)
+
+    return unsubscribe
+  }
+}
+
 
 export default {
   create,
   bind,
-  log,
   emit,
   effect,
   through,
   select,
   chain,
   each,
+  combine,
+  new: newSignal,
 }
