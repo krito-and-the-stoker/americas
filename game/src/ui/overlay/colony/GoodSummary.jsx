@@ -36,55 +36,15 @@ function GoodSummary() {
 	createEffect(() => {
 		console.log('colonists:', colonists())
 	})
-	// const colonists = Signal.create(
-	// 	Foreground.listen.screen,
-	// 	Signal.niceSelect(screen => screen.params?.colony),
-	// 	Colony.listen.colonists
-	// )
-
-	// createEffect(() => {
-	// 	console.log('colonists', colonists())
-	// })
-
 
 	const storage = Signal.create(
-		Signal.chain(
-			Signal.select(
-				Foreground.listen.screen,
-				screen => screen?.params?.colony?.storage
-			),
-			Storage.listen
-		)
+		Foreground.listen.screen,
+		Signal.niceSelect(
+			screen => screen?.params?.colony?.storage
+		),
+		Storage.listen
 	)
 
-
-
-	// const [[colony], storage] = Signal.create([
-	// 	Signal.chain(
-	// 		Signal.select(
-	// 			Foreground.listen.screen,
-	// 			screen => screen?.params?.colony
-	// 		),
-	// 		[
-	// 			Signal.through,
-	// 			Signal.chain(
-	// 				Colony.listen.colonists,
-	// 				Signal.select(colonists => colonists.map(colonist => colonist.productionSummary)),
-	// 				Signal.each(Storage.listen)
-	// 				Signal.reduce(
-	// 					(sum, summary) => sum + summary['food'], 0
-	// 				)
-	// 			)
-	// 		]
-	// 	),
-	// 	Signal.chain(
-	// 		Signal.select(
-	// 			Foreground.listen.screen,
-	// 			screen => screen?.params?.colony?.storage
-	// 		),
-	// 		Storage.listen
-	// 	)
-	// ])
 
 	const amount = () => storage() && Math.floor(storage()[good()])
 

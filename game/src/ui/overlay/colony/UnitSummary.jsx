@@ -19,22 +19,21 @@ import styles from './UnitSummary.module.scss'
 
 function UnitSummary() {
 	const [unit, expert, properties, [consumption, equipment, cargo]] = Signal.create(
-		Signal.chain(
-			Signal.select(Hover.listen.data, data => data?.unit),
-			[
-				Signal.through,
-				Unit.listen.expert,
-				Unit.listen.properties,
-				Signal.chain(
-					Signal.select(Signal.through, [
-						unit => unit?.consumptionSummary,
-						unit => unit?.equipment,
-						unit => unit?.storage,
-					]),
-					Storage.listen
-				)
-			]
-		)
+		Hover.listen.data,
+		Signal.niceSelect(data => data?.unit),
+		[
+			Signal.through,
+			Unit.listen.expert,
+			Unit.listen.properties,
+			Signal.chain(
+				Signal.niceSelect([
+					unit => unit?.consumptionSummary,
+					unit => unit?.equipment,
+					unit => unit?.storage,
+				]),
+				Storage.listen
+			)
+		]
 	)
 
 	const name = () => properties() && Unit.name(unit())

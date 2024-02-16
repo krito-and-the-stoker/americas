@@ -141,7 +141,7 @@ function emit(value) {
 
 function niceSelect(mapping, equals) {
   if (Array.isArray(mapping)) {
-    return mapping.map(m => select(m))
+    return mapping.map(m => niceSelect(m))
   }
 
   // if we ever have a problem with Binding.map, we can always go back here

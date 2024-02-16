@@ -32,27 +32,22 @@ function openConstructionDialog(colony) {
 }
 
 function DefaultSummary() {
-	const colonySignal = Signal.select(
+	const colonySignal = Signal.chain(
 		Foreground.listen.screen,
-		screen => screen?.params?.colony
+		Signal.niceSelect(screen => screen.params?.colony),
 	)
 
-	const colony = Signal.create(colonySignal)
-	const productionSummary = Signal.create(
-		Signal.chain(
-			Signal.select(colonySignal, colony => colony?.productionSummary),
-			Storage.listen
-		)
-	)
-
-	const [construction, constructionTarget] = Signal.create(
-		Signal.chain(
-			colonySignal,
-			[
-				Colony.listen.construction,
-				Colony.listen.constructionTarget
-			]
-		)
+	const [colony, productionSummary,construction, constructionTarget] = Signal.create(
+		colonySignal,
+		[
+			Signal.through,
+			Signal.chain(
+				Signal.niceSelect(colony => colony.productionSummary),
+				Storage.listen
+			),
+			Colony.listen.construction,
+			Colony.listen.constructionTarget
+		]
 	)
 
 	const target = () => construction() && construction()[constructionTarget()]
@@ -63,13 +58,11 @@ function DefaultSummary() {
 	const name = () => target()?.name
 
 	const [bells, colonists] = Signal.create(
-		Signal.chain(
-			colonySignal,
-			[
-				Colony.listen.bells,
-				Colony.listen.colonists
-			]
-		)
+		colonySignal,
+		[
+			Colony.listen.bells,
+			Colony.listen.colonists
+		]
 	)
 	// make sure bells and colonists are evaluated for tracking
   const rebels = () => (bells() || bells() === 0) && colonists() && Colony.rebels(colony())
