@@ -55,7 +55,7 @@ const create = (colony, originalDimensions) => {
     colonists: new PIXI.Container(),
   }
   const center = MapEntity.tile(colony.mapCoordinates)
-  const tiles = Tile.radius(center)
+  const tiles = Tile.radius(center).concat([center])
   const relativePosition = tile => ({
     x: TILE_SIZE * (1 + tile.mapCoordinates.x - center.mapCoordinates.x),
     y: TILE_SIZE * (1 + tile.mapCoordinates.y - center.mapCoordinates.y),
@@ -280,32 +280,34 @@ const create = (colony, originalDimensions) => {
     const colonySprite = Resources.sprite('map', {
       frame: MAP_COLONY_FRAME_ID,
     })
-    colonySprite.position.x = TILE_SIZE
-    colonySprite.position.y = TILE_SIZE
+    colonySprite.position.x = 1.25 * TILE_SIZE
+    colonySprite.position.y = 1.25 * TILE_SIZE
+    colonySprite.scale.x = 0.5
+    colonySprite.scale.y = 0.5
     container.tiles.addChild(colonySprite)
 
     // production sprites for center
-    const productionGoods = Tile.colonyProductionGoods(center)
-    const productionSprites = productionGoods
-      .map((good, i) => {
-        const sprites = ProductionView.create(
-          good,
-          Tile.production(center, good),
-          TILE_SIZE / 2
-        )
-        sprites.forEach(s => {
-          s.scale.set(1.0 / productionGoods.length)
-          s.position.x += TILE_SIZE
-          s.position.y += TILE_SIZE + (i * TILE_SIZE) / productionGoods.length
-          container.tiles.addChild(s)
-        })
-        return sprites
-      })
-      .flat()
+    // const productionGoods = Tile.colonyProductionGoods(center)
+    // const productionSprites = productionGoods
+    //   .map((good, i) => {
+    //     const sprites = ProductionView.create(
+    //       good,
+    //       Tile.production(center, good),
+    //       TILE_SIZE / 2
+    //     )
+    //     sprites.forEach(s => {
+    //       s.scale.set(1.0 / productionGoods.length)
+    //       s.position.x += TILE_SIZE
+    //       s.position.y += TILE_SIZE + (i * TILE_SIZE) / productionGoods.length
+    //       container.tiles.addChild(s)
+    //     })
+    //     return sprites
+    //   })
+    //   .flat()
 
     return () => {
       container.tiles.removeChild(colonySprite)
-      container.tiles.removeChild(productionSprites)
+      // container.tiles.removeChild(productionSprites)
     }
   })
 

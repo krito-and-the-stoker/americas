@@ -154,12 +154,11 @@ const initialize = colony => {
   colony.productionRecord = Storage.createWithProduction()
   const tile = MapEntity.tile(colony.mapCoordinates)
 
+  if (tile.harvestedBy === colony) {
+    Tile.update.harvestedBy(tile, null)
+  }
+
   colony.destroy = [
-    Tile.listen.tile(tile, () =>
-      Tile.colonyProductionGoods(tile).map(good =>
-        Time.schedule(Harvest.create(colony, tile, good))
-      )
-    ),
     Time.schedule(ColonistPromotion.create(colony)),
     listen.colonists(colony, colonists =>
       listen.bells(

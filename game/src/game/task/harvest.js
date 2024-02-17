@@ -13,26 +13,26 @@ const create = (colony, tile, good, colonist = null) => {
     return {}
   }
 
+  if (!colonist) {
+    console.log('harvesting for colony not supported anymore', colony.name)
+    return {}
+  }
+
   let production = 0
   let unscaledProduction = 0
   const calculate = () =>
     Tile.listen.tile(tile, () =>
       Colony.listen.productionBonus(colony, () => {
-        if (colonist) {
-          return Colonist.listen.productionModifier(colonist, productionModifier => {
-            unscaledProduction = Tile.production(tile, good, colonist)
-            production = unscaledProduction * PRODUCTION_BASE_FACTOR
-          })
-        } else {
+        return Colonist.listen.productionModifier(colonist, productionModifier => {
           unscaledProduction = Tile.production(tile, good, colonist)
-          production = PRODUCTION_BASE_FACTOR * unscaledProduction
-        }
+          production = unscaledProduction * PRODUCTION_BASE_FACTOR
+        })
       })
     )
 
   const unsubscribe = colonist ? Unit.listen.expert(colonist.unit, calculate) : calculate()
 
-  Tile.update.harvestedBy(tile, colonist || colony)
+  Tile.update.harvestedBy(tile, colonist)
   const update = (currentTime, deltaTime) => {
     const amount = deltaTime * production
     Storage.update(colony.storage, { good, amount })
@@ -40,12 +40,10 @@ const create = (colony, tile, good, colonist = null) => {
       good,
       amount: unscaledProduction,
     })
-    if (colonist) {
-      Storage.update(colonist.productionRecord, {
-        good,
-        amount: unscaledProduction,
-      })
-    }
+    Storage.update(colonist.productionRecord, {
+      good,
+      amount: unscaledProduction,
+    })
 
     return true
   }
