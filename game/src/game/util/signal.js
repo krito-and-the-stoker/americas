@@ -4,29 +4,42 @@ import Util from 'util/util'
 import Binding from 'util/binding'
 
 
+const passArgumentsToChain = fn => (...args) => fn(chain(...args))
+function isObject(value) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+const expand = fn => (...args) => {
+  for(const [pos, arg] of args.entries()) {
+    if (Array.isArray(arg)) {
+      const newArguments = [...args]
+
+      return arg.map(a => {
+        newArguments[pos] = a
+        return expand(fn)(...newArguments)
+      })
+    }
+    if (isObject(arg)) {
+      const newArguments = [...args]
+      return Object.fromEntries(
+        Object.entries(arg).map(([key, value]) => {
+          newArguments[pos] = value
+          return [key, expand(fn)(...newArguments)]
+        })
+      )
+    }
+  }
+
+  return fn(...args)
+}
+
+
 // Create a signal that can be used with solid
 // Expects a listener with no input
 // Example:
 // screen = Signal.create(Foreground.listen.screen)
 // supports arrays:
 // [screen, data] = Signal.create([Foreground.listen.screen, Hover.listen.data])
-function create(...args) {
-  let listenerNoInput
-  if (args.length === 0) {
-    return null
-  }
-  if (args.length === 1) {
-    listenerNoInput = args[0]
-  }
-  if (args.length > 1) {
-    // automatic chaining for multiple arguments
-    listenerNoInput = chain(...args)
-  }
-
-  if (Array.isArray(listenerNoInput)) {
-    return listenerNoInput.map(l => create(l))
-  }
-
+const create = expand(passArgumentsToChain(listenerNoInput => {
   const [signal, setSignal] = createSignal(undefined, { equals: false })
   const cleanup = listenerNoInput(value => {
     setSignal(value)
@@ -34,9 +47,8 @@ function create(...args) {
 
   onCleanup(() => Util.execute(cleanup))
 
-
   return signal
-}
+}))
 
 // Chains two listeners together
 // Example:
@@ -50,7 +62,7 @@ function create(...args) {
 // Signal.chain(Unit.listen.vehicle, Unit.listen.tile, Tile.listen.colony)
 // Will listen to the colony of the tile of the vehicle of a unit.
 // This chain still needs a unit as input, because the Unit.listen.vehicle needs that
-function chain(listenerMaybeInput, ...args) {
+const chain = expand((listenerMaybeInput, ...args) => {
   // resolve multiple args
   let listenerWithInput
   if (args.length === 0) {
@@ -60,14 +72,6 @@ function chain(listenerMaybeInput, ...args) {
     listenerWithInput = chain(args[0], ...args.slice(1))
   } else {
     listenerWithInput = args[0]
-  }
-  // resolve arrays
-  if (Array.isArray(listenerMaybeInput)) {
-    return listenerMaybeInput.map(l => chain(l, listenerWithInput))
-  }
-
-  if (Array.isArray(listenerWithInput)) {
-    return listenerWithInput.map(k => chain(listenerMaybeInput, k))
   }
 
   if (!Util.isFunction(listenerMaybeInput)) {
@@ -79,7 +83,7 @@ function chain(listenerMaybeInput, ...args) {
   return (arg0, arg1) => Util.isFunction(arg0)
     ? listenerMaybeInput(value => (value !== undefined) ? listenerWithInput(value, arg0) : arg0())
     : listenerMaybeInput(arg0, value => (value !== undefined) ? listenerWithInput(value, arg1) : arg1())
-}
+})
 
 // Allows to statically bind an input
 // Example:
@@ -107,7 +111,13 @@ function through(value, resolve) {
 }
 
 function emit(value) {
-  return resolve => resolve(value)
+  return (arg0, arg1) => {
+    if (Util.isFunction(arg0)) {
+      arg0(value)
+    } else {
+      arg1(value)
+    }
+  }
 }
 
 function source(listenerNoInput) {
@@ -115,28 +125,16 @@ function source(listenerNoInput) {
 }
 
 
-const equality = (a, b) => a === b
-function select(mapping, equals = equality) {
-  if (Array.isArray(mapping)) {
-    return mapping.map(m => select(m))
-  }
-
-  let lastValue = null
-
+const select = expand(mapping => {
   return (value, resolve) => {
     if (Util.isFunction(value)) {
       console.error('Signal.select expects input, none given, mapping bypassed.')
       return value()
     }
 
-    const mapped = mapping(value)
-    // for some reason the equal border does not work...
-    if (true || !equals || !equals(mapped, lastValue)) {
-      lastValue = mapped
-      return resolve(mapped)
-    }
+    return resolve(mapping(value))
   }
-}
+})
 
 function effect(effect) {
   return (arg0, arg1) => {    
@@ -150,10 +148,9 @@ function effect(effect) {
   }
 }
 
+const log = effect(value => console.log('Signal.log:', value))
 
-function each(...args) {
-  const listenerWithInput = chain(...args)
-
+const each = passArgumentsToChain(listenerWithInput => {
   return (input, resolve) => {
     const values = []
     let updateReady = false
@@ -180,44 +177,75 @@ function each(...args) {
 
     return unsubscribe
   }
-}
+})
 
-function combine(...args) {
-  const listenersWithInput = chain(...args)
+const combine = passArgumentsToChain(listenersWithInput => {
+  if (Array.isArray(listenersWithInput)) {
+    return (input, resolve) => {
+      const values = []
+      let updateReady = false
+      let pendingResolve = null
 
-  if (!Array.isArray(listenersWithInput)) {
-    console.error('Signal.combine expected array of signals, passed')
-    return listenersWithInput
-  }
+      const updateItem = (value, i) => {
+        Util.execute(pendingResolve)
+        if (values[i] === value) {
+          return
+        }
 
-  return (input, resolve) => {
-    const values = []
-    let updateReady = false
-    let pendingResolve = null
+        values[i] = value
 
-    const updateItem = (value, i) => {
-      Util.execute(pendingResolve)
-      if (values[i] === value) {
-        return
+        if (!updateReady) {
+          return
+        }
+
+        return resolve(values)
       }
 
-      values[i] = value
+      const unsubscribe = listenersWithInput.map((listener, i) => listener(input, value => updateItem(value, i)))
+      updateReady = true
+      pendingResolve = resolve(values)
 
-      if (!updateReady) {
-        return
-      }
-
-      return resolve(values)
+      return unsubscribe
     }
-
-    const unsubscribe = listenersWithInput.map((listener, i) => listener(input, value => updateItem(value, i)))
-    updateReady = true
-    pendingResolve = resolve(values)
-
-    return unsubscribe
   }
-}
 
+  if (isObject(listenersWithInput)) {
+    return (input, resolve) => {
+      const values = {}
+      let updateReady = false
+      let pendingResolve = null
+
+      const updateItem = (value, key) => {
+        Util.execute(pendingResolve)
+        if (values[key] === value) {
+          return
+        }
+
+        values[key] = value
+
+        if (!updateReady) {
+          return
+        }
+
+        return resolve(values)
+      }
+
+      const unsubscribe = Object.entries(listenersWithInput)
+        .map(([key, listener]) => listener(input, value => updateItem(value, key)))
+      updateReady = true
+      pendingResolve = resolve(values)
+
+      return unsubscribe
+    }
+  }
+
+
+  console.error('Signal.combine expected array or object of signals, passed')
+  return listenersWithInput
+})
+
+const sidechain = (...args) => source(chain(...args))
+const preselect = (...args) => combine(select(...args))
 
 export default {
   create,
@@ -226,8 +254,11 @@ export default {
   effect,
   through,
   select,
+  preselect,
   chain,
+  sidechain,
   each,
   combine,
   source,
+  log,
 }

@@ -25,75 +25,63 @@ function GoodSummary() {
 		Signal.select(data => data.good)
 	)
 
-	const [production, producers, manufacturing, manufacturers] = Signal.create(
+	const storageChain = storageName => Signal.chain(
 		Foreground.listen.screen,
 		Signal.select(screen => screen.params?.colony),
 		Colony.listen.colonists,
 		Signal.each(
-			Signal.combine([
-				Signal.through,
-				Signal.chain(
-					Signal.select(colonist => colonist.productionSummary),
+			Signal.combine({
+				colonist: Signal.through,
+				storage: Signal.chain(
+					Signal.select(colonist => colonist[storageName]),
 					Storage.listen
 				),
-				Signal.chain(
-					Signal.source(Hover.listen.data),
+				good: Signal.sidechain(
+					Hover.listen.data,
 					Signal.select(data => data.good)
 				),
-			]),
-			Signal.select(([colonist, storage, good]) => ({ colonist, goods: storage[good] }))
+			}),
+			Signal.select(({ colonist, storage, good }) => ({ colonist, goods: storage[good] }))
 		),
-		[
-			Signal.select(
-				items => Util.sum(items.filter(item => item.goods > 0).map(item => item.goods))
-			),
-			Signal.select(
-				items => items.filter(item => item.goods > 0).map(item => item.colonist.unit)
-			),
-			Signal.select(
-				items => Util.sum(items.filter(item => item.goods < 0).map(item => -item.goods))
-			),
-			Signal.select(
-				items => items.filter(item => item.goods < 0).map(item => item.colonist.unit)
-			),
-		]
+	)
+
+	const { production, producers, manufacturing, manufacturers } = Signal.create(
+		storageChain('productionSummary'),
+		Signal.preselect({
+			production: items => items.filter(item => item.goods > 0),
+			manufacturing: items => items.filter(item => item.goods < 0),
+		}),
+		Signal.select({
+			production: ({ production }) => Util.sum(production?.map(item => item.goods) ?? []),
+			producers: ({ production }) => production?.map(item => item.colonist.unit),
+			manufacturing: ({ manufacturing }) => Util.sum(manufacturing?.map(item => -item.goods) ?? []),
+			manufacturers: ({ manufacturing }) => manufacturing?.map(item => item.colonist.unit),
+		}),
 	)
 
 
-	const [consumption, consumers] = Signal.create(
-		Foreground.listen.screen,
-		Signal.select(screen => screen.params?.colony),
-		Colony.listen.colonists,
-		Signal.each(
-			Signal.combine([
-				Signal.through,
-				Signal.chain(
-					Signal.select(colonist => colonist.consumptionSummary),
-					Storage.listen
-				),
-				Signal.chain(
-					Signal.source(Hover.listen.data),
-					Signal.select(data => data.good)
-				),
-			]),
-			Signal.select(([colonist, storage, good]) => ({ colonist, goods: -storage[good] }))
-		),
-		[
-			Signal.select(items => Util.sum(items.map(item => item.goods))),
-			Signal.select(items => items.filter(item => item.goods > 0).map(item => item.colonist.unit))
-		]
+	const { consumption, consumers } = Signal.create(
+		storageChain('consumptionSummary'),
+		Signal.select({			
+			consumption: items => Util.sum(items.map(item => -item.goods)),
+			consumers: items => items.filter(item => item.goods < 0).map(item => item.colonist.unit)
+		})
 	)
 
-	const storage = Signal.create(
+	const amount = Signal.create(
 		Foreground.listen.screen,
 		Signal.select(
 			screen => screen?.params?.colony?.storage
 		),
-		Storage.listen
+		Signal.combine({
+			storage: Storage.listen,
+			good: Signal.sidechain(
+				Hover.listen.data, Signal.select(data => data.good)
+			)
+		}),
+		Signal.select(({ storage, good }) => Math.floor(storage[good]))
 	)
 
-
-	const amount = () => storage() && Math.floor(storage()[good()])
 
 	return <Show when={good()}>
 		<div class={styles.title}>{displayName(good())}</div>
