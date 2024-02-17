@@ -11,16 +11,15 @@ const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const REFILL_BASE = 2
 const IN_COLONY_FACTOR = 10
 
-const create = (unit, tile) => {
+const create = (unit, colony) => {
   const isColonistInColony = () =>
-    unit.colonist && tile.colony && unit.colonist.colony === tile.colony
+    unit.colonist && colony && unit.colonist.colony === colony
 
   const update = (currentTime, deltaTime) => {
     if (!unit.properties.equipment) {
       return true
     }
 
-    const colony = Tile.supportingColony(tile)
     if (!colony) {
       return true
     }

@@ -16,6 +16,7 @@ import Storage from 'entity/storage'
 import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
 import Owner from 'entity/owner'
+import Colony from 'entity/colony'
 
 import Move from 'task/move'
 import PayUnits from 'task/payUnits'
@@ -243,12 +244,19 @@ const initialize = unit => {
             listen.mapCoordinates(
               unit,
               Binding.map(
-                coords => Tile.closest(coords),
-                tile =>
-                  tile && [
-                    properties.needsFood && Time.schedule(FillFoodStock.create(unit, tile)),
-                    properties.equipment && Time.schedule(FillEquipment.create(unit, tile)),
-                  ]
+                coords => Tile.supportingColony(Tile.closest(coords)),
+                colony => {
+                  if (colony) {
+                    Colony.update.supportedUnits(colony, [...colony.supportedUnits, unit])
+                    return [
+                      properties.needsFood && Time.schedule(FillFoodStock.create(unit, colony)),
+                      properties.equipment && Time.schedule(FillEquipment.create(unit, colony)),
+                      () => {
+                        Colony.update.supportedUnits(colony, colony.supportedUnits.filter(other => other !== unit))
+                      }
+                    ]
+                  }
+                }
               )
             ),
           ]

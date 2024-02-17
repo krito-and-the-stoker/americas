@@ -81,8 +81,8 @@ const chain = expand((listenerMaybeInput, ...args) => {
 
 
   return (arg0, arg1) => Util.isFunction(arg0)
-    ? listenerMaybeInput(value => (value !== undefined) ? listenerWithInput(value, arg0) : arg0())
-    : listenerMaybeInput(arg0, value => (value !== undefined) ? listenerWithInput(value, arg1) : arg1())
+    ? listenerMaybeInput(value => (value !== undefined && value !== null) ? listenerWithInput(value, arg0) : arg0())
+    : listenerMaybeInput(arg0, value => (value !== undefined && value !== null) ? listenerWithInput(value, arg1) : arg1())
 })
 
 // Allows to statically bind an input
@@ -158,22 +158,18 @@ const each = passArgumentsToChain(listenerWithInput => {
 
     const updateItem = (value, i) => {
       Util.execute(pendingResolve)
-      if (values[i] === value) {
-        return
-      }
-
       values[i] = value
 
       if (!updateReady) {
         return
       }
 
-      return resolve(values)
+      return resolve(values.filter(x => x !== undefined && x !== null))
     }
 
     const unsubscribe = input.map((item, i) => listenerWithInput(item, value => updateItem(value, i)))
     updateReady = true
-    pendingResolve = resolve(values)
+    pendingResolve = resolve(values.filter(x => x !== undefined && x !== null))
 
     return unsubscribe
   }

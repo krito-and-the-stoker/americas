@@ -71,6 +71,7 @@ const listen = {
   growth: (colony, fn) => Binding.listen(colony, 'growth', fn),
   buildings: (colony, fn) => Binding.listen(colony, 'buildings', fn),
   productionBonus: (colony, fn) => Binding.listen(colony, 'productionBonus', fn),
+  supportedUnits: (colony, fn) => Binding.listen(colony, 'supportedUnits', fn),
 }
 
 const listenEach = {
@@ -86,6 +87,7 @@ const update = {
   housing: (colony, value) => Binding.update(colony, 'housing', colony.housing + value),
   growth: (colony, value) => Binding.update(colony, 'growth', colony.growth + value),
   productionBonus: (colony, value) => Binding.update(colony, 'productionBonus', value),
+  supportedUnits: (colony, value) => Binding.update(colony, 'supportedUnits', value),
 }
 
 const tories = colony => {
@@ -248,6 +250,7 @@ const create = (coords, owner) => {
     crosses: 0,
     housing: 0,
     growth: 0,
+    supportedUnits: [],
   }
   colony.storage = Storage.create()
   colony.trade = Storage.create()
@@ -310,6 +313,8 @@ const load = colony => {
   colony.trade = Trade.load(colony.trade)
   colony.owner = Record.dereference(colony.owner)
   colony.construction = Construction.load(colony.construction)
+  colony.supportedUnits = []
+
 
   // legacy games load
   if (!colony.growth) {

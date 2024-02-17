@@ -4,6 +4,8 @@ import Util from 'util/util'
 
 import Storage from 'entity/storage'
 import Colony from 'entity/colony'
+import Unit from 'entity/unit'
+import Colonist from 'entity/colonist'
 import Construction from 'entity/construction'
 
 import Foreground from 'render/foreground'
@@ -11,6 +13,7 @@ import Signal from 'util/signal'
 import Dialog from 'view/ui/dialog'
 import ProductionGoods from 'ui/components/ProductionGoods'
 import StorageGoods from 'ui/components/StorageGoods'
+import GameIcon from 'ui/components/GameIcon'
 
 import styles from './DefaultSummary.module.scss'
 
@@ -68,6 +71,23 @@ function DefaultSummary() {
   const rebels = () => (bells() || bells() === 0) && colonists() && Colony.rebels(colony())
   const tories = () => (bells() || bells() === 0) && colonists() && Colony.tories(colony())
 
+  const supportedUnits = Signal.create(
+  	colonySignal,
+  	Colony.listen.supportedUnits,
+  	Signal.each(
+  		Signal.combine({
+  			unit: Signal.through,
+  			colony: Signal.chain(
+		  		Unit.listen.colonist,
+		  		Colonist.listen.colony,
+  			)
+  		}),
+  	),
+  	Signal.select(entries => entries.filter(entry => !entry.colony)),
+  	Signal.select(entries => entries.map(entry => entry.unit)),
+  )
+
+
 	return <>
 		<div class={styles.title}>Production and Consumption</div>
 		<ProductionGoods goods={productionSummary()} />
@@ -87,6 +107,14 @@ function DefaultSummary() {
 				<i>Unorganized</i> {tories()?.percentage}% ({tories()?.number} Colonists)
 			</div>
 		</div>
+		<Show when={supportedUnits()?.length > 0}>
+			<div class={styles.supportTitle}>Supported Units</div>
+			<div class={styles.supported}>
+				<For each={supportedUnits()}>
+					{unit => <GameIcon unit={unit} />}
+				</For>
+			</div>
+		</Show>
 	</>
 }
 
