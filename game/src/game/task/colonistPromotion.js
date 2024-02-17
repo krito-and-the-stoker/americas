@@ -2,7 +2,7 @@ import Colonists from 'data/colonists'
 import Goods from 'data/goods'
 
 import Util from 'util/util'
-import Messge from 'util/message'
+import Message from 'util/message'
 
 import Time from 'timeline/time'
 
