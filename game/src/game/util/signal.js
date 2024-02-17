@@ -115,21 +115,27 @@ function source(listenerNoInput) {
 }
 
 
-function select(mapping, equals) {
+const equality = (a, b) => a === b
+function select(mapping, equals = equality) {
   if (Array.isArray(mapping)) {
     return mapping.map(m => select(m))
   }
 
-  // if we ever have a problem with Binding.map, we can always go back here
-  // return (value, exec) => {
-  //   if (Util.isFunction(value)) {
-  //     console.error('Signal.select expects input, none given, mapping bypassed.')
-  //     return value()
-  //   }
-  //   return exec(mapping(value))
-  // }
-  // this does not make too much sense right now
-  return (value, resolve) => Binding.map.bind(null, mapping)(resolve, equals)(value)
+  let lastValue = null
+
+  return (value, resolve) => {
+    if (Util.isFunction(value)) {
+      console.error('Signal.select expects input, none given, mapping bypassed.')
+      return value()
+    }
+
+    const mapped = mapping(value)
+    // for some reason the equal border does not work...
+    if (true || !equals || !equals(mapped, lastValue)) {
+      lastValue = mapped
+      return resolve(mapped)
+    }
+  }
 }
 
 function effect(effect) {
