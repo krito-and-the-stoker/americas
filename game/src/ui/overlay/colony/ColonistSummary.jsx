@@ -79,12 +79,14 @@ function ColonistSummary() {
 		<div class={styles.colonist}>
 			<GameIcon unit={unit()} scale={2} />
 		</div>
-		<div class={styles.subtitle}>{hasEntries(productionInput()) ? 'Manufacturing' : 'Production'}</div>
-		<div class={styles.production}>
-			<ProductionGoods goods={productionInput()} />
-			<Show when={hasEntries(productionInput())}><span class={styles.arrow}>into</span></Show>
-			<ProductionGoods goods={productionOutput()} />
-		</div>
+		<Show when={hasEntries(productionOutput())}>
+			<div class={styles.subtitle}>{hasEntries(productionInput()) ? 'Manufacturing' : 'Production'}</div>
+			<div class={styles.production}>
+				<ProductionGoods goods={productionInput()} />
+				<Show when={hasEntries(productionInput())}><span class={styles.arrow}>into</span></Show>
+				<ProductionGoods goods={productionOutput()} />
+			</div>
+		</Show>
 		<div class={styles.subtitle}>Consumption</div>
 		<div class={styles.consumption}>
 			<ProductionGoods goods={positiveConsumption()} />
