@@ -68,6 +68,30 @@ function GoodSummary() {
 		})
 	)
 
+	const { support, supported } = Signal.create(
+		Foreground.listen.screen,
+		Signal.select(screen => screen.params?.colony),
+		Colony.listen.supportedUnits,
+		Signal.each(
+			Signal.combine({
+				unit: Signal.through,
+				storage: Signal.chain(
+					Signal.select(unit => unit.consumptionSummary),
+					Storage.listen
+				),
+				good: Signal.sidechain(
+					Hover.listen.data,
+					Signal.select(data => data.good)
+				),
+			}),
+			Signal.select(({ unit, storage, good }) => ({ unit, goods: storage[good] }))
+		),
+		Signal.select({			
+			support: items => Util.sum(items.map(item => -item.goods)),
+			supported: items => items.filter(item => item.goods < 0).map(item => item.unit)
+		})
+	)
+
 	const amount = Signal.create(
 		Foreground.listen.screen,
 		Signal.select(
@@ -87,7 +111,7 @@ function GoodSummary() {
 		<div class={styles.title}>{displayName(good())}</div>
 		<div class={styles.summary}>
 			<div class={styles.amount}><b>{amount()}</b><GameIcon good={good()} /></div>
-			<div><ProductionGoods goods={{ [good()]: production() - manufacturing() - consumption() }} /></div>
+			<div><ProductionGoods goods={{ [good()]: production() - manufacturing() - consumption() - support()}} /></div>
 		</div>
 		<Show when={production() > 0}>
 			<div class={styles.subtitle}>Production</div>
@@ -112,6 +136,15 @@ function GoodSummary() {
 			<ProductionGoods goods={{ [good()]: consumption() }} />
 			<div class={styles.units}>
 				<For each={consumers()}>
+					{unit => <GameIcon unit={unit} scale={1.5} />}
+				</For>
+			</div>
+		</Show>
+		<Show when={support() > 0}>
+			<div class={styles.subtitle}>Supported Units</div>
+			<ProductionGoods goods={{ [good()]: support() }} />
+			<div class={styles.units}>
+				<For each={supported()}>
 					{unit => <GameIcon unit={unit} scale={1.5} />}
 				</For>
 			</div>
