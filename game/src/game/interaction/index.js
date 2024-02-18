@@ -17,7 +17,6 @@ import LoadUnitFromShipToEurope from 'interaction/loadUnitFromShipToEurope'
 import LoadUnitFromShipToShip from 'interaction/loadUnitFromShipToShip'
 import LoadUnitToShip from 'interaction/loadUnitToShip'
 import SellInEurope from 'interaction/sellInEurope'
-import ShrinkFromStarvation from 'interaction/shrinkFromStarvation'
 import UnjoinColony from 'interaction/unjoinColony'
 
 export default {
@@ -40,6 +39,5 @@ export default {
   LoadUnitFromShipToShip,
   LoadUnitToShip,
   SellInEurope,
-  ShrinkFromStarvation,
   UnjoinColony,
 }

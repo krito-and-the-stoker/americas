@@ -106,6 +106,29 @@ function GoodSummary() {
 		Signal.select(({ storage, good }) => Math.round(storage[good]))
 	)
 
+	const reserve = Signal.create(
+		Foreground.listen.screen,
+		Signal.select(
+			screen => screen?.params?.colony
+		),
+		Colony.listen.colonists,
+		Signal.each(
+			Signal.combine({
+				storage: Signal.chain(
+					Signal.select(colonist => colonist.storage),
+					Storage.listen,
+				),
+				good: Signal.sidechain(
+					Hover.listen.data,
+					Signal.select(data => data.good)
+				),
+			}),
+			Signal.select(({ storage, good}) => storage[good])
+		),
+		Signal.select(Util.sum),
+		Signal.select(amount => Math.round(amount))
+	)
+
 
 	return <Show when={good()}>
 		<div class={styles.title}>{displayName(good())}</div>
@@ -113,6 +136,12 @@ function GoodSummary() {
 			<div class={styles.amount}><b>{amount()}</b><GameIcon good={good()} /></div>
 			<div><ProductionGoods goods={{ [good()]: production() - manufacturing() - consumption() - support()}} /></div>
 		</div>
+		<Show when={reserve() > 0}>
+			<div>
+				<div class={styles.subtitle}>Personal Reserve</div>
+				<div class={styles.amount}>{reserve()}<GameIcon good={good()} /></div>
+			</div>
+		</Show>
 		<Show when={production() > 0}>
 			<div class={styles.subtitle}>Production</div>
 			<ProductionGoods goods={{ [good()]: production() }} />

@@ -70,6 +70,7 @@ const stopWorking = colonist => {
 
 const listen = {
   work: (colonist, fn) => Binding.listen(colonist, 'work', fn),
+  state: (colonist, fn) => Binding.listen(colonist, 'state', fn),
   colony: (colonist, fn) => Binding.listen(colonist, 'colony', fn),
   unit: (colonist, fn) => Binding.listen(colonist, 'unit', fn),
   promotion: (colonist, fn) => Binding.listen(colonist, 'promotion', fn),
@@ -80,6 +81,7 @@ const listen = {
 }
 const update = {
   work: (colonist, value) => Binding.update(colonist, 'work', value),
+  state: (colonist, value) => Binding.update(colonist, 'state', value),
   colony: (colonist, value) => Binding.update(colonist, 'colony', value),
   unit: (colonist, value) => Binding.update(colonist, 'unit', value),
   promotion: (colonist, value) => Binding.update(colonist, 'promotion', value),
@@ -150,13 +152,13 @@ const power = colonist => {
   }
 
   const currentProfession = profession(colonist)
-  return (
+  return Math.max((
     colonist.mood +
     colonist.power +
     (colonist.unit.expert === currentProfession ? 1 : 0) +
     (Colonists[currentProfession] || Colonists.default).power +
     (Colonists[colonist.unit.expert] || Colonists.default).power
-  )
+  ), 0)
 }
 
 const profession = colonist => {

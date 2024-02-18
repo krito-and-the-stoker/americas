@@ -8,15 +8,16 @@ import Storage from 'entity/storage'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const STORAGE_PER_POWER = 1.0 / 10 // 1 storage factor for every 10 power
+const MAXIMUM_TRANSFER = 20 // a colonist can not get transfer more goods per production cycle
 
 const canPromote = (colonist, profession) => false
-
 
 const needForGood = (needDescription, good) => needDescription ? needDescription[good] || 0 : 0
 
 const create = colony => {
   const update = (_, deltaTime) => {
     const scale = PRODUCTION_BASE_FACTOR * deltaTime
+    const maximumTransfer = scale * MAXIMUM_TRANSFER
 
     colony.colonists.forEach(colonist => {
       const properties = ColonistData[colonist.unit.expert] || ColonistData.default
@@ -43,18 +44,10 @@ const create = colony => {
 
       Storage.goods(colony.storage).forEach(({ good, amount }) => {
         const want = target(good) - colonist.storage[good]
-        const transferAmount = Math.min(want, amount)
+        const transferAmount = Math.min(want, amount, maximumTransfer)
 
         if (transferAmount !== 0) {
           Storage.transfer(colony.storage, colonist.storage, { good, amount: transferAmount })
-          Storage.update(colony.productionRecord, {
-            good,
-            amount: -transferAmount / scale,
-          })
-          Storage.update(colonist.consumptionRecord, {
-            good,
-            amount: -transferAmount / scale
-          })
         }
       })
     })

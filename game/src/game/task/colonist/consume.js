@@ -13,8 +13,9 @@ const canPromote = (colonist, profession) => false
 
 const fulfillNeeds = (colonist, needDescription, scale) => {
   let fulfilled = true
-  Storage.goods(needDescription).forEach(({ good, amount }) => {
-    const want = amount
+  
+  Storage.goods(needDescription).filter(({ amount }) => amount > 0).forEach(({ good, amount }) => {
+    const want = scale * amount
     const has = colonist.storage[good]
     if (has < want) {
       fulfilled = false
@@ -22,14 +23,22 @@ const fulfillNeeds = (colonist, needDescription, scale) => {
 
     const transferAmount = Math.min(want, has)
     if (transferAmount > 0) {
-      Storage.update(colonist.storage, { good, amount: -scale * transferAmount })
+      Storage.update(colonist.storage, { good, amount: -transferAmount })
+      Storage.update(colonist.colony.productionRecord, {
+        good,
+        amount: -transferAmount / scale,
+      })
+      Storage.update(colonist.consumptionRecord, {
+        good,
+        amount: -transferAmount / scale
+      })
     }
   })
 
   const colony = colonist.colony
   Storage.productions(needDescription).filter(({ amount }) => amount > 0).forEach(({ good, amount }) => {
     if (['bells', 'housing', 'crosses'].includes(good)) {
-      const want = amount
+      const want = scale * amount
       const has = colony[good]
       if (has < want) {
         fulfilled = false
@@ -37,15 +46,15 @@ const fulfillNeeds = (colonist, needDescription, scale) => {
 
       const transferAmount = Math.min(want, has)
       if (transferAmount > 0) {
-        Colony.update[good](colony, -scale * transferAmount)
-        Storage.update(colonist.storage, { good, amount: scale * transferAmount })
+        Colony.update[good](colony, -transferAmount)
+        Storage.update(colonist.storage, { good, amount: transferAmount })
         Storage.update(colony.productionRecord, {
           good,
-          amount: -transferAmount,
+          amount: -transferAmount / scale,
         })
         Storage.update(colonist.consumptionRecord, {
           good,
-          amount: -transferAmount
+          amount: -transferAmount / scale,
         })
       }
     } else {
@@ -73,39 +82,36 @@ const create = colony => {
       const promotionNeeds = canPromote(colonist, profession) && ColonistData[profession]?.luxury
 
       if (foodNeeds) {
-      	const fulfilled = fulfillNeeds(colonist, foodNeeds, scale)
-      	colonist.state.noFood = !fulfilled
+      	colonist.state.noFood = !fulfillNeeds(colonist, foodNeeds, scale)
       } else {
       	colonist.state.noFood = false
       }
 
       if (woodNeeds) {
-      	const fulfilled = fulfillNeeds(colonist, woodNeeds, scale)
-      	colonist.state.noWood = !fulfilled
+      	colonist.state.noWood = !fulfillNeeds(colonist, woodNeeds, scale)
       } else {
       	colonist.state.noWood = false
       }
 
       if (luxuryNeeds) {
-      	const fulfilled = fulfillNeeds(colonist, luxuryNeeds, scale)
-      	colonist.state.noLuxury = !fulfilled
+      	colonist.state.noLuxury = !fulfillNeeds(colonist, luxuryNeeds, scale)
       } else {
       	colonist.state.noLuxury = false
       }
 
       if (bonusNeeds) {
-      	const fulfilled = fulfillNeeds(colonist, bonusNeeds, scale)
-      	colonist.state.hasBonus = fulfilled
+      	colonist.state.hasBonus = fulfillNeeds(colonist, bonusNeeds, scale)
       } else {
       	colonist.state.hasBonus = false
       }
 
       if (promotionNeeds) {
-      	const fulfilled = fulfillNeeds(colonist, promotionNeeds, scale)
-      	colonist.state.isPromoting = fulfilled
+      	colonist.state.isPromoting = fulfillNeeds(colonist, promotionNeeds, scale)
       } else {
       	colonist.state.isPromoting = false
       }
+
+      Colonist.update.state(colonist)
     })
 
     return true

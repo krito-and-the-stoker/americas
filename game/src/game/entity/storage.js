@@ -76,6 +76,12 @@ const transferWithProduction = (src, dest) => {
   update(dest)
 }
 
+const clear = storage => {
+  goods(storage).forEach(({ good }) => {
+    storage[good] = 0
+  })
+}
+
 const clearWithProduction = storage => {
   goods(storage).forEach(({ good }) => {
     storage[good] = 0
@@ -113,8 +119,9 @@ export default {
   total,
   maximum,
   goods,
-  clearWithProduction,
   productions,
+  clear,
+  clearWithProduction,
   equals,
   copy,
 }

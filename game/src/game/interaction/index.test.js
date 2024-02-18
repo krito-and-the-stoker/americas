@@ -107,10 +107,6 @@ test('sell in europe', () => {
   Interaction.SellInEurope(ship(), tools())
 })
 
-test('shrink from starvation', () => {
-  Interaction.ShrinkFromStarvation(jamestown())
-})
-
 test('unjoin colony', () => {
   Interaction.UnjoinColony(jamestown().colonists[0])
 })

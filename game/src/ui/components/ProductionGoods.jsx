@@ -3,10 +3,13 @@ import GameIcon from './GameIcon'
 import styles from './ProductionGoods.module.scss'
 
 function ProductionGoods(props) {
-	const keys = () => Object.entries(props?.goods || {})
+	const filtered = () => Object.entries(props?.goods || {})
 		.filter(([_, amount ]) => amount > 0 || amount < 0)
-		.sort((a, b) => b[1] - a[1])
-		.map(([good, amount]) => good)
+	const sorted = () => filtered().sort((a, b) => b[1] - a[1])
+	const keys = () => props.sort
+		? sorted().map(([good, amount]) => good)
+		: filtered().map(([good, amount]) => good)
+
 
 	return <div class={styles.main}>
 		<For each={keys()}>
