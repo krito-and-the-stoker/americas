@@ -94,16 +94,18 @@ function GoodSummary() {
 
 	const amount = Signal.create(
 		Foreground.listen.screen,
-		Signal.select(
-			screen => screen?.params?.colony?.storage
-		),
 		Signal.combine({
-			storage: Storage.listen,
+			storage: Signal.chain(
+				Signal.select(
+					screen => screen?.params?.colony?.storage
+				),
+				Storage.listen,
+			),
 			good: Signal.sidechain(
 				Hover.listen.data, Signal.select(data => data.good)
 			)
 		}),
-		Signal.select(({ storage, good }) => Math.round(storage[good]))
+		Signal.select(({ storage, good }) => Math.round(storage[good])),
 	)
 
 	const reserve = Signal.create(

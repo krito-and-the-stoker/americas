@@ -184,10 +184,6 @@ const combine = passArgumentsToChain(listenersWithInput => {
 
       const updateItem = (value, i) => {
         Util.execute(pendingResolve)
-        if (values[i] === value) {
-          return
-        }
-
         values[i] = value
 
         if (!updateReady) {
@@ -213,10 +209,6 @@ const combine = passArgumentsToChain(listenersWithInput => {
 
       const updateItem = (value, key) => {
         Util.execute(pendingResolve)
-        if (values[key] === value) {
-          return
-        }
-
         values[key] = value
 
         if (!updateReady) {
