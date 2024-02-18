@@ -23,7 +23,7 @@ import Colony from 'entity/colony'
 import Colonist from 'entity/colonist'
 import Tile from 'entity/tile'
 
-import Meet from 'task/meet'
+import Meet from 'task/unit/meet'
 
 import Input from 'input'
 

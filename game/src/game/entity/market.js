@@ -8,7 +8,7 @@ import Time from 'timeline/time'
 
 import Treasure from 'entity/treasure'
 
-import MarketPrice from 'task/marketPrice'
+import MarketPrice from 'task/europe/marketPrice'
 
 const market = {
   europe: null,

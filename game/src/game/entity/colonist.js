@@ -15,9 +15,9 @@ import Storage from 'entity/storage'
 
 import Time from 'timeline/time'
 
-import Harvest from 'task/harvest'
-import Produce from 'task/produce'
-import ProductionSummary from 'task/productionSummary'
+import Harvest from 'task/colonist/harvest'
+import Produce from 'task/colonist/manufacture'
+import ProductionSummary from 'task/colony/productionSummary'
 
 import UnjoinColony from 'interaction/unjoinColony'
 
@@ -125,8 +125,16 @@ const create = unit => {
     mood: 0,
     work: null,
     beingEducated: false,
+    state: {
+      noFood: false,
+      noWood: false,
+      noLuxury: false,
+      isPromoting: false,
+      hasBonus: false,
+    }
   }
 
+  colonist.storage = Storage.create()
   colonist.destroy = initialize(colonist)
 
   Record.add('colonist', colonist)
@@ -200,6 +208,7 @@ const save = colonist => ({
   education: colonist.education,
   power: colonist.power,
   mood: colonist.mood,
+  storage: Storage.save(colonist.storage),
   promotion: colonist.promotion,
   work: colonist.work
     ? {
@@ -219,6 +228,11 @@ const load = colonist => {
   colonist.unit = Record.dereference(colonist.unit)
 
   // load legacy savegames
+  colonist.storage = colonist.storage
+    ? Storage.load(colonist.storage)
+    : Storage.create()
+  colonist.state = colonist.state || {}
+
   colonist.power = colonist.power || Math.random()
   colonist.mood = colonist.mood || 0
   colonist.promotion = colonist.promotion || {}

@@ -103,7 +103,7 @@ function GoodSummary() {
 				Hover.listen.data, Signal.select(data => data.good)
 			)
 		}),
-		Signal.select(({ storage, good }) => Math.floor(storage[good]))
+		Signal.select(({ storage, good }) => Math.round(storage[good]))
 	)
 
 

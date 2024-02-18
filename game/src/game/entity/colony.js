@@ -18,13 +18,15 @@ import Trade from 'entity/trade'
 import Owner from 'entity/owner'
 import Construction from 'entity/construction'
 
-import Harvest from 'task/harvest'
-import Consume from 'task/consume'
-import ColonistPromotion from 'task/colonistPromotion'
-import ColonyProduction from 'task/colonyProduction'
-import ProductionSummary from 'task/productionSummary'
-import TeachingSummary from 'task/teachingSummary'
-import TransferCrosses from 'task/transferCrosses'
+import Harvest from 'task/colonist/harvest'
+import Consume from 'task/colony/consume'
+import FillStorage from 'task/colonist/fillStorage'
+import Consumption from 'task/colonist/consume'
+import SortByPower from 'task/colonist/sortByPower'
+import ColonyProduction from 'task/colony/colonyProduction'
+import ProductionSummary from 'task/colony/productionSummary'
+import TeachingSummary from 'task/colonist/teachingSummary'
+import TransferCrosses from 'task/europe/transferCrosses'
 
 import UnjoinColony from 'interaction/unjoinColony'
 import LeaveColony from 'interaction/leaveColony'
@@ -159,7 +161,9 @@ const initialize = colony => {
   }
 
   colony.destroy = [
-    Time.schedule(ColonistPromotion.create(colony)),
+    Time.schedule(FillStorage.create(colony)),
+    Time.schedule(Consumption.create(colony)),
+    Time.schedule(SortByPower.create(colony)),
     listen.colonists(colony, colonists =>
       listen.bells(
         colony,

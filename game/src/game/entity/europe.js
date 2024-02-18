@@ -9,7 +9,7 @@ import Events from 'util/events'
 
 import Time from 'timeline/time'
 
-import TransferCrosses from 'task/transferCrosses'
+import TransferCrosses from 'task/europe/transferCrosses'
 
 import Unit from 'entity/unit'
 import Treasure from 'entity/treasure'

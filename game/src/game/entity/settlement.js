@@ -14,7 +14,7 @@ import Storage from 'entity/storage'
 import Commander from 'command/commander'
 import LearnFromNatives from 'command/learnFromNatives'
 
-import ConvertNatives from 'task/convertNatives'
+import ConvertNatives from 'task/natives/convertNatives'
 
 import Bombard from 'interaction/bombard'
 import Attack from 'interaction/attack'

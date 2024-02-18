@@ -7,7 +7,7 @@ function StorageGoods(props) {
 
 	return <For each={keys()}>
 		{good => <span>
-			{Math.ceil(props.goods[good])}<GameIcon good={good} />
+			{Math.round(props.goods[good])}<GameIcon good={good} />
 		</span>}
 	</For>
 }

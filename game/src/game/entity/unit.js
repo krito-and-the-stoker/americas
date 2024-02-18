@@ -18,13 +18,13 @@ import Colonist from 'entity/colonist'
 import Owner from 'entity/owner'
 import Colony from 'entity/colony'
 
-import Move from 'task/move'
-import PayUnits from 'task/payUnits'
-import ConsumeFood from 'task/consumeFood'
-import FillFoodStock from 'task/fillFoodStock'
-import FillEquipment from 'task/fillEquipment'
-import ConsumeEquipment from 'task/consumeEquipment'
-import ProductionSummary from 'task/productionSummary'
+import Move from 'task/unit/move'
+import PayUnit from 'task/unit/payUnit'
+import ConsumeFood from 'task/unit/consumeFood'
+import FillFoodStock from 'task/unit/fillFoodStock'
+import FillEquipment from 'task/unit/fillEquipment'
+import ConsumeEquipment from 'task/unit/consumeEquipment'
+import ProductionSummary from 'task/colony/productionSummary'
 
 import Commander from 'command/commander'
 import Factory from 'command/factory'
@@ -227,7 +227,7 @@ const initialize = unit => {
         )
     ),
 
-    listen.properties(unit, () => Time.schedule(PayUnits.create(unit))),
+    listen.properties(unit, () => Time.schedule(PayUnit.create(unit))),
     listen.properties(unit, properties =>
       // in europe nobody needs to eat
       listen.offTheMap(

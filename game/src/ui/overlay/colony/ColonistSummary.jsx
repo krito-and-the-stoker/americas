@@ -10,6 +10,7 @@ import Unit from 'entity/unit'
 import Hover from 'input/hover'
 
 import ProductionGoods from 'ui/components/ProductionGoods'
+import StorageGoods from 'ui/components/StorageGoods'
 import GameIcon from 'ui/components/GameIcon'
 import styles from './ColonistSummary.module.scss'
 
@@ -34,11 +35,12 @@ function ColonistSummary() {
 
 	const name = () => properties() && Unit.name(unit())
 
-	const [production, consumption] = Signal.create(
+	const [production, consumption, storage] = Signal.create(
 		Hover.listen.data,
 		Signal.select([
 			data => data?.colonist?.productionSummary,
 			data => data?.colonist?.consumptionSummary,
+			data => data?.colonist?.storage,
 		]),
 		Storage.listen
 	)
@@ -67,7 +69,7 @@ function ColonistSummary() {
 		}
 
 		return Object.fromEntries(
-			Object.entries(consumption()).filter(([_, value]) => value < 0).map(([key, value]) => ([key, -value]))
+			Object.entries(consumption()).filter(([_, value]) => value !== 0).map(([key, value]) => ([key, -value]))
 		)
 	}
 
@@ -78,6 +80,7 @@ function ColonistSummary() {
 		<div class={styles.title}>{name()}</div>
 		<div class={styles.colonist}>
 			<GameIcon unit={unit()} scale={2} />
+			<span>Power {Math.round(10 * Colonist.power(colonist()))}</span>
 		</div>
 		<Show when={hasEntries(productionOutput())}>
 			<div class={styles.subtitle}>{hasEntries(productionInput()) ? 'Manufacturing' : 'Production'}</div>
@@ -90,6 +93,10 @@ function ColonistSummary() {
 		<div class={styles.subtitle}>Consumption</div>
 		<div class={styles.consumption}>
 			<ProductionGoods goods={positiveConsumption()} />
+		</div>
+		<div class={styles.subtitle}>Personal Storage</div>
+		<div class={styles.backup}>
+			<StorageGoods goods={storage()} />
 		</div>
 	</>
 }

@@ -22,8 +22,6 @@ const COLONIST_PROMOTION_AFTER_DEMOTION = 0.9
 const PRODUCTION_BONUS_AMOUNT = 1
 const PRODUCTION_MALUS_AMOUNT = -1
 
-const sortByPower = (one, other) => Colonist.power(other) - Colonist.power(one)
-
 const addScaledAmountToColony = (colony, colonist, good, scaledAmount, scale) => {
   if (good === 'bells') {
     Colony.update.bells(colony, scaledAmount)
@@ -90,32 +88,6 @@ const roundGoodAmounts = statusObject =>
     ])
   )
 
-const returnUnusedGoods = (statusObject, colonist, deltaTime) => {
-  if (statusObject.result) {
-    return roundGoodAmounts(statusObject)
-  }
-
-  const scale = PRODUCTION_BASE_FACTOR * deltaTime
-
-  return {
-    ...Util.makeObject(
-      Object.entries(statusObject)
-        .filter(([good]) => Goods[good])
-        .map(([good, value]) => {
-          if (value > 0) {
-            addScaledAmountToColony(colonist.colony, colonist, good, value * scale, scale)
-
-            return [good, 0]
-          }
-
-          return [good, Math.round(value)]
-        })
-    ),
-    result: false,
-    reason: statusObject.reason,
-  }
-}
-
 const advancePromotion = (colonist, target, delta) => {
   if (!colonist.promotion.promote) {
     colonist.promotion.promote = {}
@@ -169,86 +141,12 @@ const advancePromotion = (colonist, target, delta) => {
   Colonist.update.promotion(colonist)
 }
 
-const advanceDemotion = (colonist, target, delta) => {
-  if (!colonist.promotion.demote) {
-    colonist.promotion.demote = {}
-  }
-
-  if (!colonist.promotion.demote[target]) {
-    colonist.promotion.demote[target] = 0
-  }
-
-  // the less goods the faster the demotion goes
-  colonist.promotion.satisfactionLevel = Object.values(colonist.promotion.satisfied)
-    .filter(value => typeof value === 'number')
-    .reduce(
-      (all, value) => ({
-        supplied: all.supplied + (value > 0 ? value : 0),
-        demanded: all.demanded + Math.abs(value),
-      }),
-      {
-        supplied: 0,
-        demanded: 0,
-      }
-    )
-  const demotionStrength =
-    1 -
-    colonist.promotion.satisfactionLevel.supplied /
-      colonist.promotion.satisfactionLevel.demanded
-
-  colonist.promotion.demote[target] += delta * DEMOTION_BASE_FACTOR * demotionStrength
-  if (colonist.promotion.demote[target] >= 1) {
-    Message.colony.log('demoted', colonist.unit.expert, 'to', target)
-    const demotionTarget = target === 'settler' ? null : target
-
-    if (!colonist.promotion.promote) {
-      colonist.promotion.promote = {}
-    }
-
-    // keep some percentage so promotion back again goes much more quickly
-    colonist.promotion.promote[colonist.unit.expert || 'settler'] =
-      COLONIST_PROMOTION_AFTER_DEMOTION
-
-    Unit.update.expert(colonist.unit, demotionTarget)
-    delete colonist.promotion.demote[target]
-  }
-
-  Colonist.update.promotion(colonist)
-}
-
-const rollbackDemotion = (colonist, delta) => {
-  // remove demotion slowly
-  if (!colonist.promotion.demote) {
-    colonist.promotion.demote = {}
-  }
-  Object.keys(colonist.promotion.demote).forEach(demotionTarget => {
-    colonist.promotion.demote[demotionTarget] -= delta * DEMOTION_BASE_FACTOR
-    if (colonist.promotion.demote[demotionTarget] <= 0) {
-      delete colonist.promotion.demote[demotionTarget]
-    }
-  })
-
-  Colonist.update.promotion(colonist)
-}
 
 const create = (colony, good, amount) => {
   const update = (currentTime, deltaTime) => {
-    colony.colonists.sort(sortByPower)
-
-    // transfer power to those who have
-    colony.colonists.forEach((colonist, index) => {
-      colonist.power +=
-        (colony.colonists.length + colonist.mood - 2 * index) *
-        POWER_TRANSFER_BASE_FACTOR *
-        deltaTime
-      if (Colonist.power(colonist) < 0) {
-        colonist.power -= Colonist.power(colonist)
-      }
-    })
-
     colony.colonists.forEach(colonist => {
-      const colonistObject = Colonists[colonist.unit.expert] || Colonists.default
-      const consumption = colonistObject.consumption
+      const properties = Colonists[colonist.unit.expert] || Colonists.default
+      const consumption = properties.consumption
       const currentProfession = Colonist.profession(colonist)
 
       colonist.promotion.satisfied = roundGoodAmounts(

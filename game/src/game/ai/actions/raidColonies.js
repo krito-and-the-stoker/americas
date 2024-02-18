@@ -7,7 +7,7 @@ import Time from 'timeline/time'
 
 import Unit from 'entity/unit'
 
-import Move from 'task/move'
+import Move from 'task/unit/move'
 
 import Raid from 'interaction/raid'
 
