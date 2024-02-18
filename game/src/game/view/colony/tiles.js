@@ -286,28 +286,8 @@ const create = (colony, originalDimensions) => {
     colonySprite.scale.y = 0.5
     container.tiles.addChild(colonySprite)
 
-    // production sprites for center
-    // const productionGoods = Tile.colonyProductionGoods(center)
-    // const productionSprites = productionGoods
-    //   .map((good, i) => {
-    //     const sprites = ProductionView.create(
-    //       good,
-    //       Tile.production(center, good),
-    //       TILE_SIZE / 2
-    //     )
-    //     sprites.forEach(s => {
-    //       s.scale.set(1.0 / productionGoods.length)
-    //       s.position.x += TILE_SIZE
-    //       s.position.y += TILE_SIZE + (i * TILE_SIZE) / productionGoods.length
-    //       container.tiles.addChild(s)
-    //     })
-    //     return sprites
-    //   })
-    //   .flat()
-
     return () => {
       container.tiles.removeChild(colonySprite)
-      // container.tiles.removeChild(productionSprites)
     }
   })
 
