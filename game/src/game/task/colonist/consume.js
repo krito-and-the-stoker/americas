@@ -9,8 +9,6 @@ import Storage from 'entity/storage'
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
 
-const canPromote = (colonist, profession) => false
-
 const hasColonistStateChanged = (colonist, oldState) => {
   const keys = ['noFood', 'noWood', 'noLuxury', 'isPromoting', 'hasBonus']
   return keys.some(key => colonist.state[key] !== oldState[key])
@@ -43,7 +41,8 @@ const fulfillNeeds = (colonist, needDescription, scale) => {
   const colony = colonist.colony
   Storage.productions(needDescription).filter(({ amount }) => amount > 0).forEach(({ good, amount }) => {
     if (['bells', 'housing', 'crosses'].includes(good)) {
-      const want = scale * amount
+      // take a little bit less so we do not produce rounding artefacts
+      const want = 0.99 * scale * amount
       const has = colony[good]
       if (has < want) {
         fulfilled = false
@@ -79,12 +78,14 @@ const create = colony => {
       const properties = ColonistData[colonist.unit.expert] || ColonistData.default
       const consumption = properties.consumption
       const profession = Colonist.profession(colonist)
+      const target = Colonist.promotionTarget(colonist)
 
       const foodNeeds = consumption.food
       const woodNeeds = consumption.wood
       const bonusNeeds = consumption.bonus
       const luxuryNeeds = consumption.luxury
-      const promotionNeeds = canPromote(colonist, profession) && ColonistData[profession]?.luxury
+      const promotionNeeds = Colonist.canPromote(colonist) && Colonist.needsForPromotion(target)
+
 
       const oldState = { ...colonist.state }
 

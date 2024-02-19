@@ -74,7 +74,6 @@ const listen = {
   colony: (colonist, fn) => Binding.listen(colonist, 'colony', fn),
   unit: (colonist, fn) => Binding.listen(colonist, 'unit', fn),
   promotion: (colonist, fn) => Binding.listen(colonist, 'promotion', fn),
-  promotionStatus: (colonist, fn) => Binding.listen(colonist, 'promotionStatus', fn),
   beingEducated: (colonist, fn) => Binding.listen(colonist, 'beingEducated', fn),
   expert: (colonist, fn) => Unit.listen.expert(colonist.unit, fn), // legacy, will be removed
 }
@@ -84,7 +83,6 @@ const update = {
   colony: (colonist, value) => Binding.update(colonist, 'colony', value),
   unit: (colonist, value) => Binding.update(colonist, 'unit', value),
   promotion: (colonist, value) => Binding.update(colonist, 'promotion', value),
-  promotionStatus: (colonist, value) => Binding.update(colonist, 'promotionStatus', value),
   beingEducated: (colonist, value) => Binding.update(colonist, 'beingEducated', value),
   expert: (colonist, value) => Unit.update.expert(colonist.unit, value), // legacy, will be removed
 }
@@ -175,6 +173,38 @@ const profession = colonist => {
   return currentProfession
 }
 
+const canPromote = colonist => {
+  const properties = Colonists[colonist.unit.expert] || Colonists.default
+  if (['criminal', 'servant'].includes(colonist.unit.expert)) {
+    return true
+  }
+
+  return properties.promote?.includes(profession(colonist))
+}
+
+const promotionTarget = colonist => {
+  if (colonist.unit.expert === 'servant') {
+    return 'settler'
+  }
+  if (colonist.unit.expert === 'criminal') {
+    return 'servant'
+  }
+
+  return profession(colonist)
+}
+
+const needsForPromotion = promotionTarget => {
+  const properties = Colonists[promotionTarget] || Colonists.default
+  const luxury = properties?.consumption?.luxury
+  const promotion = properties?.consumption?.promotion
+
+  return {
+    ...luxury,
+    ...promotion,
+  }
+}
+
+
 const production = colonist => {
   return colonist.work.type === 'Building'
     ? Production.production(colonist.colony, colonist.work.building, colonist)
@@ -233,6 +263,11 @@ const load = colonist => {
   colonist.power = colonist.power || Math.random()
   colonist.mood = colonist.mood || 0
   colonist.promotion = colonist.promotion || {}
+  if (colonist.promotion.promote) {
+    colonist.promotion = {
+      progress: colonist.promotion.promote
+    }
+  }
 
   Record.entitiesLoaded(() => {
     initialize(colonist)
@@ -272,4 +307,7 @@ export default {
   production,
   listen,
   update,
+  canPromote,
+  promotionTarget,
+  needsForPromotion,
 }

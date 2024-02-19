@@ -58,6 +58,17 @@ function ColonistSummary() {
 		})
 	)
 
+	const promotionProgress = Signal.create(
+		Hover.listen.data,
+		Signal.select(data => data?.colonist),
+		Colonist.listen.promotion,
+		Signal.select(promotion => promotion.target
+			&& promotion.progress
+			&& promotion.progress[promotion.target]
+		),
+		Signal.select(progress => Math.floor(100 * progress))
+	)
+
 	const productionOutput = () => {
 		if (!production()) {
 			return null
@@ -98,7 +109,7 @@ function ColonistSummary() {
 				<Show when={state.noFood()}><div>No Food</div></Show>
 				<Show when={state.noWood()}><div>No Wood</div></Show>
 				<Show when={state.noLuxury()}><div>No Luxury</div></Show>
-				<Show when={state.isPromoting()}><div>Promoting</div></Show>
+				<Show when={state.isPromoting()}><div>Promoting {promotionProgress()}%</div></Show>
 				<Show when={state.hasBonus()}><div>Bonus</div></Show>
 			</div>
 		</div>

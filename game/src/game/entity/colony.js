@@ -23,6 +23,7 @@ import Consume from 'task/colony/consume'
 import FillStorage from 'task/colonist/fillStorage'
 import Consumption from 'task/colonist/consume'
 import SortByPower from 'task/colonist/sortByPower'
+import Promote from 'task/colonist/promote'
 import ColonyProduction from 'task/colony/colonyProduction'
 import ProductionSummary from 'task/colony/productionSummary'
 import TeachingSummary from 'task/colonist/teachingSummary'
@@ -163,6 +164,7 @@ const initialize = colony => {
   colony.destroy = [
     Time.schedule(FillStorage.create(colony)),
     Time.schedule(Consumption.create(colony)),
+    Time.schedule(Promote.create(colony)),
     Time.schedule(SortByPower.create(colony)),
     listen.colonists(colony, colonists =>
       listen.bells(

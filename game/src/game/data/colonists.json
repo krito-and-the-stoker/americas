@@ -12,6 +12,9 @@
       },
       "bonus": {
         "housing": 1
+      },
+      "promotion": {
+        "crosses": 1
       }
     },
     "promote": [
@@ -39,6 +42,9 @@
       },
       "wood": {
         "wood": 1
+      },
+      "promotion": {
+        "bells": 1
       }
     },
     "promote": [
@@ -269,6 +275,7 @@
         "wood": 1
       },
       "luxury": {
+        "cotton": 1,
         "crosses": 1
       },
       "bonus": {
