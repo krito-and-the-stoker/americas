@@ -11,6 +11,11 @@ const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
 const canPromote = (colonist, profession) => false
 
+const hasColonistStateChanged = (colonist, oldState) => {
+  const keys = ['noFood', 'noWood', 'noLuxury', 'isPromoting', 'hasBonus']
+  return keys.some(key => colonist.state[key] !== oldState[key])
+}
+
 const fulfillNeeds = (colonist, needDescription, scale) => {
   let fulfilled = true
   
@@ -81,6 +86,8 @@ const create = colony => {
       const luxuryNeeds = consumption.luxury
       const promotionNeeds = canPromote(colonist, profession) && ColonistData[profession]?.luxury
 
+      const oldState = { ...colonist.state }
+
       if (foodNeeds) {
       	colonist.state.noFood = !fulfillNeeds(colonist, foodNeeds, scale)
       } else {
@@ -111,7 +118,9 @@ const create = colony => {
       	colonist.state.isPromoting = false
       }
 
-      Colonist.update.state(colonist)
+      if (hasColonistStateChanged(colonist, oldState)) {
+        Colonist.update.state(colonist)
+      }
     })
 
     return true

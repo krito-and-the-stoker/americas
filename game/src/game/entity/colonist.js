@@ -74,7 +74,6 @@ const listen = {
   colony: (colonist, fn) => Binding.listen(colonist, 'colony', fn),
   unit: (colonist, fn) => Binding.listen(colonist, 'unit', fn),
   promotion: (colonist, fn) => Binding.listen(colonist, 'promotion', fn),
-  productionModifier: (colonist, fn) => Binding.listen(colonist, 'productionModifier', fn),
   promotionStatus: (colonist, fn) => Binding.listen(colonist, 'promotionStatus', fn),
   beingEducated: (colonist, fn) => Binding.listen(colonist, 'beingEducated', fn),
   expert: (colonist, fn) => Unit.listen.expert(colonist.unit, fn), // legacy, will be removed
@@ -85,16 +84,12 @@ const update = {
   colony: (colonist, value) => Binding.update(colonist, 'colony', value),
   unit: (colonist, value) => Binding.update(colonist, 'unit', value),
   promotion: (colonist, value) => Binding.update(colonist, 'promotion', value),
-  productionModifier: (colonist, value) =>
-    Binding.update(colonist, 'productionModifier', value),
   promotionStatus: (colonist, value) => Binding.update(colonist, 'promotionStatus', value),
   beingEducated: (colonist, value) => Binding.update(colonist, 'beingEducated', value),
   expert: (colonist, value) => Unit.update.expert(colonist.unit, value), // legacy, will be removed
 }
 
 const initialize = colonist => {
-  colonist.productionModifier = 0
-
   // the record will be used to record during production and consumption
   colonist.productionRecord = Storage.createWithProduction()
   colonist.consumptionRecord = Storage.createWithProduction()
@@ -122,7 +117,6 @@ const create = unit => {
       progress: 0,
     },
     promotion: {},
-    productionModifier: 0,
     power: Math.random(),
     mood: 0,
     work: null,
@@ -212,6 +206,7 @@ const save = colonist => ({
   mood: colonist.mood,
   storage: Storage.save(colonist.storage),
   promotion: colonist.promotion,
+  state: colonist.state,
   work: colonist.work
     ? {
         type: colonist.work.type,

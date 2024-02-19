@@ -157,7 +157,7 @@ const createBuilding = (colony, building) => {
           container.colonists.addChild(s)
         })
         return [
-          Colonist.listen.promotionStatus(colonist, () => {
+          Colonist.listen.state(colonist, () => {
             colonistSprite.tint = ColonistView.tint(colonist)
           }),
           () => {
@@ -212,7 +212,7 @@ const createBuilding = (colony, building) => {
           work =>
             colonist?.unit &&
             Unit.listen.expert(colonist.unit, () =>
-              Colonist.listen.promotionStatus(colonist, () =>
+              Colonist.listen.state(colonist, () =>
                 createColonistView(productionBonus, colonist, work)
               )
             )

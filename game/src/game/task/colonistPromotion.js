@@ -241,12 +241,6 @@ const create = (colony, good, amount) => {
         Colonist.update.promotionStatus(colonist, newStatus)
       }
 
-      const newProductionModifier =
-        (colonist.promotion.bonus.result ? PRODUCTION_BONUS_AMOUNT : 0) +
-        (colonist.promotion.satisfied.result ? 0 : PRODUCTION_MALUS_AMOUNT)
-      if (newProductionModifier !== colonist.productionModifier) {
-        Colonist.update.productionModifier(colonist, newProductionModifier)
-      }
     })
 
     return true

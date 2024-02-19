@@ -150,10 +150,10 @@ const create = (colony, originalDimensions) => {
 
       if (colonist.colony === colony) {
         return [
-          Colonist.listen.promotionStatus(colonist, () => {
+          Colonist.listen.state(colonist, () => {
             sprite.tint = ColonistView.tint(colonist)
           }),
-          Colonist.listen.productionModifier(colonist, () =>
+          Colonist.listen.state(colonist, () =>
             Colony.listen.productionBonus(colony, () =>
               Colony.listen.buildings(colony, () => drawProductionSprites(sprite))
             )

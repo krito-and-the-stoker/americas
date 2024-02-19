@@ -358,15 +358,22 @@ const createDetailView = colonist => {
 }
 
 const tint = colonist => {
-  if (colonist.promotionStatus === 'demoting' || colonist.promotionStatus === 'malus') {
+  if (colonist.state.noFood) {    
     return 0xff6666
   }
+  if (colonist.state.noWood) {
+    return 0xff8888
+  }
 
-  if (colonist.promotionStatus === 'promoting') {
+  if(colonist.state.noLuxury) {
+    return 0xffaaaa
+  }
+
+  if (colonist.state.isPromoting) {
     return 0xbbff99
   }
 
-  if (colonist.promotionStatus === 'bonus') {
+  if(colonist.state.hasBonus) {
     return 0x99bbff
   }
 

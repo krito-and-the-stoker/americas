@@ -19,7 +19,7 @@ const create = (colony, building, colonist) => {
   const unsubscribe = Unit.listen.expert(colonist.unit, () =>
     Colony.listen.productionBonus(colony, () =>
       Colony.listen.buildings(colony, () =>
-        Colonist.listen.productionModifier(colonist, productionModifier => {
+        Colonist.listen.state(colonist, () => {
           production = Production.production(colony, building, colonist)
           consumption = Production.consumption(building)
         })

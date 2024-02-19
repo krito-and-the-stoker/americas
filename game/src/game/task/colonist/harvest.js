@@ -23,7 +23,7 @@ const create = (colony, tile, good, colonist = null) => {
   const calculate = () =>
     Tile.listen.tile(tile, () =>
       Colony.listen.productionBonus(colony, () => {
-        return Colonist.listen.productionModifier(colonist, productionModifier => {
+        return Colonist.listen.state(colonist, state => {
           unscaledProduction = Tile.production(tile, good, colonist)
           production = unscaledProduction * PRODUCTION_BASE_FACTOR
         })
@@ -31,8 +31,8 @@ const create = (colony, tile, good, colonist = null) => {
     )
 
   const unsubscribe = colonist ? Unit.listen.expert(colonist.unit, calculate) : calculate()
-
   Tile.update.harvestedBy(tile, colonist)
+  
   const update = (currentTime, deltaTime) => {
     const amount = deltaTime * production
     Storage.update(colony.storage, { good, amount })
