@@ -2,7 +2,8 @@ import * as PIXI from 'pixi.js'
 
 import Buildings from 'data/buildings'
 import Goods from 'data/goods'
-import Triangles from 'data/triangles'
+import SimpleTriangles from 'data/triangles.json'
+import Triangles from 'data/triangles/index.js'
 
 import Util from 'util/util'
 
@@ -28,19 +29,21 @@ import ColonistView from 'view/colony/colonist'
 
 const TILE_SIZE = 64
 
-const WIDTH = 256
-const HEIGHT = 128
-const buildingRectangle = (colony, building) => {
-  const position = Triangles[building.name] ?? {
-    x: 0,
-    y: 31
-  }
+const WIDTH = 128
+const HEIGHT = 64
+const OFFSET_X = 0.5 * WIDTH
+const OFFSET_Y = 1.5 * HEIGHT
+const PADDING_X = 64
+const PADDING_Y = 32
 
+const buildingRectangle = (colony, building) => {
+  const choices = Triangles[building.name]?.level[building.level] || Triangles.empty
+  const data = Util.choose(choices)
   return new PIXI.Rectangle(
-    position.x * WIDTH,
-    position.y * HEIGHT,
-    WIDTH,
-    HEIGHT,
+    OFFSET_X + data.position.x * WIDTH - PADDING_X,
+    OFFSET_Y + data.position.y * HEIGHT - PADDING_Y,
+    data.width * WIDTH + 2 * PADDING_X,
+    data.height * HEIGHT + 2 * PADDING_Y,
   )
 }
 
