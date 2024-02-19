@@ -59,8 +59,19 @@ const Dashboard = () => {
   };
 
   const eventTypeData = () => {
+    const colors = {
+      pageview: '#4572f9',
+      newgame: '#45f9ba',
+      resume: '#f9c045',
+      autosave: '#f96645',
+    }
     const labels = Object.keys(data().countByName);
-    const backgroundColors = labels.map(() => `#${Math.floor(Math.random()*16777215).toString(16)}`); // Random colors
+    const backgroundColors = [
+      colors.autosave,
+      colors.newgame,
+      colors.pageview,
+      colors.resume
+    ]
 
     return {
       labels,
