@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 
 import Buildings from 'data/buildings'
 import Goods from 'data/goods'
+import Triangles from 'data/triangles'
 
 import Util from 'util/util'
 
@@ -27,22 +28,20 @@ import ColonistView from 'view/colony/colonist'
 
 const TILE_SIZE = 64
 
-const frame = (colony, building) =>
-  Buildings[building.name].frame[colony.buildings[building.name].level]
-    ? Buildings[building.name].frame[colony.buildings[building.name].level] - 1
-    : Buildings[building.name].frame[Buildings[building.name].frame.length - 1] - 1
+const WIDTH = 256
+const HEIGHT = 128
 const buildingRectangle = (colony, building) => {
-  if (frame(colony, building) === null) {
-    return null
+  const position = Triangles[building.name] ?? {
+    x: 0,
+    y: 31
   }
 
-  const fr = frame(colony, building)
-  const cols = 13
-  const x = 128 * (fr % cols)
-  const y = 128 * Math.floor(fr / cols)
-  const width = Buildings[building.name].width * 128
-  const height = 128
-  return new PIXI.Rectangle(x, y, width, height)
+  return new PIXI.Rectangle(
+    position.x * WIDTH,
+    position.y * HEIGHT,
+    WIDTH,
+    HEIGHT,
+  )
 }
 
 const createBuilding = (colony, building) => {
@@ -56,7 +55,7 @@ const createBuilding = (colony, building) => {
   if (!rectangle || !building.position) {
     return null
   }
-  const sprite = Resources.sprite('buildings', { rectangle })
+  const sprite = Resources.sprite('triangles', { rectangle })
   container.building.addChild(sprite)
 
   const unsubscribeDrag = Drag.makeDragTarget(
