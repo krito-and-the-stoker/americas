@@ -35,7 +35,7 @@ const create = (colony, tile, good, colonist = null) => {
   
   const update = (currentTime, deltaTime) => {
     const amount = deltaTime * production
-    Storage.update(colony.storage, { good, amount })
+    Storage.update(colonist.storage, { good, amount })
     Storage.update(colony.productionRecord, {
       good,
       amount: unscaledProduction,

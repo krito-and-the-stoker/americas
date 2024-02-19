@@ -63,7 +63,7 @@ const create = (colony, building, colonist) => {
     }
 
     if (production.type === 'good') {
-      Storage.update(colony.storage, {
+      Storage.update(colonist.storage, {
         good: production.good,
         amount: productionAmount,
       })
