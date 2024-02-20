@@ -478,12 +478,10 @@ const load = (initRenderMap, src = null) => {
   if (src) {
     lastSave = src
   } else {
-    if (SAVE_TO_LOCAL_STORAGE) {
-      if (USE_COMPRESSION) {
-        lastSave = LZString.decompress(window.localStorage.getItem('lastSaveCompressed'))
-      } else {
-        lastSave = window.localStorage.getItem('lastSave')
-      }
+    if (USE_COMPRESSION) {
+      lastSave = LZString.decompress(window.localStorage.getItem('lastSaveCompressed'))
+    } else {
+      lastSave = window.localStorage.getItem('lastSave')
     }
   }
 
