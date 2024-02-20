@@ -1,5 +1,6 @@
 import Buildings from 'data/buildings.json'
 import Goods from 'data/goods.json'
+import Building from 'entity/building'
 
 const production = (colony, building, colonist) => {
   if (!Buildings[building].production) {
@@ -9,7 +10,7 @@ const production = (colony, building, colonist) => {
     return 0
   }
 
-  const level = colony.buildings[building].level
+  const level = Building.level(colony, building)
   const good = Buildings[building].production.good
   const type = ['crosses', 'bells', 'construction'].includes(good) ? good : 'good'
   let amount = Buildings[building].production.amount[level]

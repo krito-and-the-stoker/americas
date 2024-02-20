@@ -5,6 +5,7 @@ import Record from 'util/record'
 import Binding from 'util/binding'
 import Member from 'util/member'
 import Events from 'util/events'
+import Message from 'util/message'
 
 import Time from 'timeline/time'
 
@@ -17,6 +18,7 @@ import Building from 'entity/building'
 import Trade from 'entity/trade'
 import Owner from 'entity/owner'
 import Construction from 'entity/construction'
+import Buildings from 'entity/buildings'
 
 import Harvest from 'task/colonist/harvest'
 import Consume from 'task/colony/consume'
@@ -72,7 +74,7 @@ const listen = {
   constructionTarget: (colony, fn) => Binding.listen(colony, 'constructionTarget', fn),
   bells: (colony, fn) => Binding.listen(colony, 'bells', fn),
   growth: (colony, fn) => Binding.listen(colony, 'growth', fn),
-  buildings: (colony, fn) => Binding.listen(colony, 'buildings', fn),
+  newBuildings: (colony, fn) => Binding.listen(colony, 'newBuildings', fn),
   productionBonus: (colony, fn) => Binding.listen(colony, 'productionBonus', fn),
   supportedUnits: (colony, fn) => Binding.listen(colony, 'supportedUnits', fn),
 }
@@ -84,7 +86,7 @@ const listenEach = {
 const update = {
   construction: (colony, value) => Binding.update(colony, 'construction', value),
   constructionTarget: (colony, value) => Binding.update(colony, 'constructionTarget', value),
-  buildings: (colony, value) => Binding.update(colony, 'buildings', value),
+  newBuildings: (colony, value) => Binding.update(colony, 'newBuildings', value),
   bells: (colony, value) => Binding.update(colony, 'bells', colony.bells + value),
   crosses: (colony, value) => Binding.update(colony, 'crosses', colony.crosses + value),
   housing: (colony, value) => Binding.update(colony, 'housing', colony.housing + value),
@@ -146,7 +148,7 @@ const expertLevel = {
   preacher: 3,
 }
 const canTeach = (colony, expert) =>
-  expert && expertLevel[expert] && expertLevel[expert] <= colony.buildings.school.level
+  expert && expertLevel[expert] && expertLevel[expert] <= Building.level(colony, 'school')
 const canEmploy = (colony, building, expert) =>
   colony.colonists.filter(colonist => colonist.work && colonist.work.building === building)
     .length < Building.workspace(colony, building) &&
@@ -162,6 +164,7 @@ const initialize = colony => {
   }
 
   colony.destroy = [
+    () => colony.newBuildings.forEach(building => Util.execute(building.destroy)),
     Time.schedule(FillStorage.create(colony)),
     Time.schedule(Consumption.create(colony)),
     Time.schedule(Promote.create(colony)),
@@ -232,7 +235,7 @@ const initialize = colony => {
 const canFillEquipment = (colony, unit) => {
   if (unit.properties.repair) {
     return Object.entries(unit.properties.repair).every(
-      ([building, level]) => colony.buildings[building]?.level >= level
+      ([building, level]) => Building.level(colony, building) >= level
     )
   }
 
@@ -246,9 +249,6 @@ const create = (coords, owner) => {
     owner: owner || Owner.player(),
     units: [],
     colonists: [],
-    buildings: Building.create(),
-    construction: Construction.create(),
-    constructionTarget: null,
     mapCoordinates: { ...coords },
     productionBonus: 0,
     bells: 0,
@@ -256,9 +256,16 @@ const create = (coords, owner) => {
     housing: 0,
     growth: 0,
     supportedUnits: [],
+    construction: Construction.create(),
+    constructionTarget: null,
+
+    // yeah
+    newBuildings: []
   }
   colony.storage = Storage.create()
   colony.trade = Storage.create()
+
+  colony.newBuildings.push(Buildings.Carpenters.create())
 
   const tile = MapEntity.tile(coords)
   Tile.update.colony(tile, colony)
@@ -277,7 +284,7 @@ const protection = colony =>
       .map(unit => Unit.strength(unit) - 1)
   ) +
     1) *
-  (colony.buildings.fortifications.level + 1)
+  (Building.level(colony, 'fortifications') + 1)
 
 const disband = colony => {
   colony.disbanded = true
@@ -292,6 +299,12 @@ const disband = colony => {
   Record.remove(colony)
 }
 
+const addBuilding = (colony, name) => {
+  const building = Buildings[name]?.create(colony)  
+  colony.newBuildings.push(building)
+  update.newBuildings(colony)
+}
+
 const save = colony => ({
   name: colony.name,
   units: colony.units.map(unit => Record.reference(unit)),
@@ -299,7 +312,7 @@ const save = colony => ({
   mapCoordinates: colony.mapCoordinates,
   storage: Storage.save(colony.storage),
   trade: Trade.save(colony.trade),
-  buildings: colony.buildings,
+  newBuildings: colony.newBuildings,
   construction: Construction.save(colony.construction),
   constructionTarget: colony.constructionTarget,
   bells: colony.bells,
@@ -319,6 +332,24 @@ const load = colony => {
   colony.owner = Record.dereference(colony.owner)
   colony.construction = Construction.load(colony.construction)
   colony.supportedUnits = []
+  colony.newBuildings = colony.newBuildings
+    ?? Object.entries(colony.buildings)
+      .filter(([name, data]) => data.level > 0 || data.name === 'carpenters')
+      .map(([name, data]) => {
+        const building = Buildings[name]?.create(colony)
+
+        if (!building) {
+          Message.colony.warn('Could not upgrade building', Buildings, name, data)
+        } else {
+          building.level = data.level
+          if (data.name === 'carpenters') {
+            building.level += 1
+          }
+          Record.entitiesLoaded(() => Buildings[name].initialize(building))
+        }
+
+        return building
+      }).filter(x => !!x)
 
 
   // legacy games load
@@ -373,6 +404,7 @@ export default {
   canEmploy,
   coastalDirection,
   create,
+  addBuilding,
   currentConstruction,
   defender,
   disband,

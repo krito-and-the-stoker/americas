@@ -6,6 +6,7 @@ import Time from 'timeline/time'
 import Storage from 'entity/storage'
 import Forecast from 'entity/forecast'
 import Unit from 'entity/unit'
+import Building from 'entity/building'
 
 import Factory from 'command/factory'
 
@@ -53,7 +54,7 @@ export default Factory.create(
     const loadingSpeed =
       100.0 /
       (Time.CARGO_BASE_LOAD_TIME *
-        (unit.domain === 'sea' ? 3 / (colony.buildings.harbour.level + 1) : 1))
+        (unit.domain === 'sea' ? 3 / (Building.level(colony, 'harbour')  + 1) : 1))
 
     const init = () => {
       if (unit.colony !== colony) {

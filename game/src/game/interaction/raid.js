@@ -5,6 +5,7 @@ import Events from 'util/events'
 import Unit from 'entity/unit'
 import Storage from 'entity/storage'
 import Colony from 'entity/colony'
+import Building from 'entity/building'
 
 const relativeRaidAmont = () => 0.25 + 0.6 * Math.random()
 
@@ -62,7 +63,7 @@ export default (colony, raider) => {
   }
 
   // the raiding happens here
-  const fortificationLevel = colony.buildings.fortifications?.level || 0
+  const fortificationLevel = Building.level(colony, 'fortifications')
   const pack = Util.choose(Storage.goods(colony.storage).filter(p => p.amount >= 5))
   if (pack) {
     pack.amount = Util.clamp(

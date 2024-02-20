@@ -155,7 +155,7 @@ const create = (colony, originalDimensions) => {
           }),
           Colonist.listen.state(colonist, () =>
             Colony.listen.productionBonus(colony, () =>
-              Colony.listen.buildings(colony, () => drawProductionSprites(sprite))
+              Colony.listen.newBuildings(colony, () => drawProductionSprites(sprite))
             )
           ),
           drawEducation(),

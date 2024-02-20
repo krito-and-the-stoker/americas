@@ -26,7 +26,7 @@ const create = colony => {
     Colony.update.housing(colony, -colony.housing)
 
     Object.keys(PassiveBuildings)
-      .filter(name => colony.buildings[name])
+      .filter(name => Building.level(colony, name) > 0)
       .forEach(name => {
         const level = Building.level(colony, name)
         const good = PassiveBuildings[name].production.good

@@ -241,7 +241,9 @@ const load = async () => {
 
     FullscreenEvents.initialize()
 
-    // Time.togglePause()
+    if (RESUME_GAME_PAUSED) {
+      Time.togglePause()
+    }
     initialize()
   } catch (err) {
     Error.capture(err)

@@ -7,6 +7,7 @@ import Colony from 'entity/colony'
 import Tile from 'entity/tile'
 import MapEntity from 'entity/map'
 import Owner from 'entity/owner'
+import Building from 'entity/building'
 
 import Click from 'input/click'
 
@@ -67,14 +68,14 @@ const create = colony => {
           view.number.text = `${colonists.length}`
         })
 
-        const unsubscribeBuildings = Colony.listen.buildings(colony, buildings => {
+        const unsubscribeBuildings = Colony.listen.newBuildings(colony, () => {
           if (view.fortifications) {
             view.fortifications.texture = Resources.texture('map', {
-              frame: ColonyFrames.fortifications[buildings.fortifications.level],
+              frame: ColonyFrames.fortifications[Building.level(colony, 'fortifications')],
             })
           } else {
             view.fortifications = Resources.sprite('map', {
-              frame: ColonyFrames.fortifications[buildings.fortifications.level],
+              frame: ColonyFrames.fortifications[Building.level(colony, 'fortifications')],
             })
           }
         })

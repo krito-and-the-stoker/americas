@@ -105,8 +105,8 @@ const colonyIcon = colony => {
 }
 
 const frame = (colony, building) =>
-  Buildings[building.name].frame[colony.buildings[building.name].level]
-    ? Buildings[building.name].frame[colony.buildings[building.name].level] - 1
+  Buildings[building.name].frame[Building.level(colony, building.name)]
+    ? Buildings[building.name].frame[Building.level(colony, building.name)] - 1
     : null
 const buildingRectangle = (colony, building) => {
   if (frame(colony, building) === null) {

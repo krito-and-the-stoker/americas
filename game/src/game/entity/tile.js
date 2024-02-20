@@ -14,6 +14,7 @@ import PathFinder from 'util/pathFinder'
 
 import Owner from 'entity/owner'
 import MapEntity from 'entity/map'
+import Building from 'entity/building'
 
 const BONUS_CHANCE = 0.15
 const FOREST_SWITCH_CHANCE = 0.1
@@ -573,7 +574,7 @@ const production = (tile, resource, colonist = null) => {
     tile.domain === 'sea' &&
     colonist &&
     colonist.colony &&
-    !colonist.colony.buildings.harbour.level
+    !Building.level(colonist.colony, 'harbour')
   ) {
     base = Math.floor(base / 2)
   }

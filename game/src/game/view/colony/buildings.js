@@ -242,8 +242,8 @@ const create = colony => {
     colonists: new PIXI.Container(),
   }
 
-  const unsubscribe = Colony.listen.buildings(colony, buildings =>
-    Object.values(buildings).map(building => {
+  const unsubscribe = Colony.listen.newBuildings(colony, buildings =>
+    buildings.map(building => {
       const buildingView = createBuilding(colony, building)
       if (buildingView) {
         buildingView.container.building.x = building.position.x * 128

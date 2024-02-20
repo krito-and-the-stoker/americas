@@ -17,6 +17,7 @@ import Europe from 'entity/europe'
 import Colonist from 'entity/colonist'
 import Owner from 'entity/owner'
 import Colony from 'entity/colony'
+import Building from 'entity/building'
 
 import Move from 'task/unit/move'
 import PayUnit from 'task/unit/payUnit'
@@ -395,7 +396,7 @@ const strength = unit => {
   }
 
   if (unit.colony && unit.owner === unit.colony.owner) {
-    result += unit.colony.buildings.fortifications.level
+    result += Building.level(unit.colony, 'fortifications')
     if (unit.properties.colonyDefense) {
       result += unit.properties.colonyDefense
     }
