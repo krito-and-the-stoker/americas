@@ -50,7 +50,9 @@ const options = colony => {
       target: name,
       progress: () => (colony.construction[name] ? colony.construction[name].progress : 0),
       name: () => Building.upgradeName(colony, name),
-      cost: () => Building.upgradeCost(colony, name),
+      cost: () => Building.get(colony, name)
+        ? Building.upgradeCost(colony, name)
+        : Building.cost(colony, name),
       construct: () => ['increaseLevel'],
     }))
 
