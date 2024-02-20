@@ -9,14 +9,15 @@ import LoadUnitFromShipToColony from 'interaction/loadUnitFromShipToColony'
 
 const create = colony => {
   const container = new PIXI.Container()
-  const background = Resources.sprite('colonyBackground')
-  container.addChild(background)
+  // const background = Resources.sprite('colonyBackground')
 
-  const coastalDirection = Colony.coastalDirection(colony)
-  if (coastalDirection) {
-    const coast = Resources.sprite(`coast${coastalDirection}`)
-    container.addChild(coast)
-  }
+  const background = new PIXI.Graphics();
+  // background.beginFill(0x43602a, 1);
+  background.beginFill(0x41492a, 1);
+  background.drawRect(0, 0, 1920, 1080); // Change these values as needed
+  background.endFill();  
+
+  container.addChild(background)
 
   const originalDimensions = {
     x: background.width,
