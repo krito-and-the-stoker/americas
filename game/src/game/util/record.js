@@ -31,7 +31,7 @@ import Unit from 'entity/unit'
 
 const REFERENCE_KEY = 'referenceId'
 
-const SAVE_TO_LOCAL_STORAGE = true
+const SAVE_TO_LOCAL_STORAGE = false
 const USE_COMPRESSION = false
 const USE_WEBWORKER = false
 
