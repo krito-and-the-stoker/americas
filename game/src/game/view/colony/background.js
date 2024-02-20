@@ -30,7 +30,7 @@ const create = colony => {
   leaveColonyZone.hitArea = new PIXI.Rectangle(
     0.3 * originalDimensions.x,
     0.65 * originalDimensions.y,
-    (1 - 0.3) * originalDimensions.x,
+    0.45 * originalDimensions.x,
     0.25 * originalDimensions.y
   )
   container.addChild(leaveColonyZone)
