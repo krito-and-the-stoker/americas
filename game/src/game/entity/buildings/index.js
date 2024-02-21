@@ -1,4 +1,5 @@
 import BuildingsFactory from './factory'
+import house from './house'
 
 export default {
 	fortifications: BuildingsFactory.make('fortifications'),
@@ -14,5 +15,5 @@ export default {
 	stables: BuildingsFactory.make('stables'),
 	school: BuildingsFactory.make('school'),
 	church: BuildingsFactory.make('church'),
-	house: BuildingsFactory.make('house'),
+	house,
 }

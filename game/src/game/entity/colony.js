@@ -21,12 +21,12 @@ import Construction from 'entity/construction'
 import Buildings from 'entity/buildings'
 
 import Harvest from 'task/colonist/harvest'
-import Consume from 'task/colony/consume'
+import Bells from 'task/colony/bells'
 import FillStorage from 'task/colonist/fillStorage'
-import Consumption from 'task/colonist/consume'
+import Consume from 'task/colonist/consume'
 import SortByPower from 'task/colonist/sortByPower'
 import Promote from 'task/colonist/promote'
-import ColonyProduction from 'task/colony/colonyProduction'
+import VirtualGoods from 'task/colony/virtualGoods'
 import ProductionSummary from 'task/colony/productionSummary'
 import TeachingSummary from 'task/colonist/teachingSummary'
 import TransferCrosses from 'task/europe/transferCrosses'
@@ -166,7 +166,7 @@ const initialize = colony => {
   colony.destroy = [
     () => colony.newBuildings.forEach(building => Util.execute(building.destroy)),
     Time.schedule(FillStorage.create(colony)),
-    Time.schedule(Consumption.create(colony)),
+    Time.schedule(Consume.create(colony)),
     Time.schedule(Promote.create(colony)),
     Time.schedule(SortByPower.create(colony)),
     listen.colonists(colony, colonists =>
@@ -174,7 +174,7 @@ const initialize = colony => {
         colony,
         Binding.map(
           () => rebels(colony).number,
-          rebelColonists => Time.schedule(Consume.create(colony, 'bells', rebelColonists))
+          rebelColonists => Time.schedule(Bells.create(colony, 'bells', rebelColonists))
         )
       )
     ),
@@ -212,7 +212,7 @@ const initialize = colony => {
         colony.growth = 0
       }
     }),
-    Time.schedule(ColonyProduction.create(colony)),
+    Time.schedule(VirtualGoods.create(colony)),
     Time.schedule(ProductionSummary.create(colony)),
     listen.colonists(colony, colonists =>
       colonists.map(colonist =>
@@ -312,7 +312,7 @@ const save = colony => ({
   mapCoordinates: colony.mapCoordinates,
   storage: Storage.save(colony.storage),
   trade: Trade.save(colony.trade),
-  newBuildings: colony.newBuildings,
+  newBuildings: colony.newBuildings.map(building => Buildings[building.name].save(building)),
   construction: Construction.save(colony.construction),
   constructionTarget: colony.constructionTarget,
   bells: colony.bells,
@@ -333,8 +333,10 @@ const load = colony => {
   colony.construction = Construction.load(colony.construction)
   colony.supportedUnits = []
   colony.newBuildings = colony.newBuildings
-    ?? Object.entries(colony.buildings)
-      .filter(([name, data]) => data.level > 0 || data.name === 'carpenters')
+    ? colony.newBuildings.map(building => Buildings[building.name].load(building))
+    : Object.entries(colony.buildings)
+      .filter(([name, data]) => data.level > 0 || name === 'carpenters')
+      .filter(([name, data]) => name !== 'house')
       .map(([name, data]) => {
         const building = Buildings[name]?.create(colony)
 
@@ -345,11 +347,16 @@ const load = colony => {
           if (data.name === 'carpenters') {
             building.level += 1
           }
-          Record.entitiesLoaded(() => Buildings[name].initialize(building))
         }
 
         return building
       }).filter(x => !!x)
+  if (colony.buildings.house.level > 0) {
+    const houses = Array(colony.buildings.house.level).fill()
+      .map(() => Buildings.house.create(colony))
+    colony.newBuildings.push(...houses)
+  }
+  Record.entitiesLoaded(() => colony.newBuildings.forEach(building => Buildings[building.name].initialize(building)))
 
 
   // legacy games load

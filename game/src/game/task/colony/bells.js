@@ -33,7 +33,7 @@ const create = (colony, good, amount) => {
 
   return {
     update,
-    sort: 3,
+    sort: 4,
   }
 }
 
