@@ -267,7 +267,7 @@ const create = (coords, owner) => {
   colony.storage = Storage.create()
   colony.trade = Storage.create()
 
-  colony.newBuildings.push(Buildings.Carpenters.create())
+  colony.newBuildings.push(Buildings.carpenters.create(colony))
 
   const tile = MapEntity.tile(coords)
   Tile.update.colony(tile, colony)
@@ -361,7 +361,7 @@ const load = colony => {
 
         return building
       }).filter(x => !!x)
-  if (colony.buildings.house.level > 0) {
+  if (colony.buildings?.house.level > 0) {
     const houses = Array(colony.buildings.house.level).fill()
       .map(() => Buildings.house.create(colony))
     colony.newBuildings.push(...houses)

@@ -137,7 +137,7 @@ const createBuilding = (colony, building) => {
       const colonistSprite = ColonistView.create(colonist)
       colonistSprite.x = position.x
       colonistSprite.y = position.y
-      colonistSprite.scale.set(1.0)
+      colonistSprite.scale.set(1.25)
       container.colonists.addChild(colonistSprite)
 
       const unsubscribeEducation = Colonist.listen.beingEducated(colonist, beingEducated => {
@@ -164,8 +164,8 @@ const createBuilding = (colony, building) => {
         )
         productionSprites.forEach(s => {
           s.position.x += position.x
-          s.position.y += position.y + TILE_SIZE / 2
-          s.scale.set(0.5)
+          s.position.y += position.y + 3 * TILE_SIZE / 4
+          s.scale.set(0.66)
           container.colonists.addChild(s)
         })
         return [
@@ -254,8 +254,6 @@ const create = colony => {
     buildings.map(building => {
       const buildingView = createBuilding(colony, building)
       if (buildingView) {
-        // buildingView.container.building.x = building.position.x * WIDTH
-        // buildingView.container.building.y = building.position.y * HEIGHT
         buildingView.container.colonists.x = building.placement[0].position.x * WIDTH
         buildingView.container.colonists.y = building.placement[0].position.y * HEIGHT
         container.buildings.addChild(buildingView.container.building)

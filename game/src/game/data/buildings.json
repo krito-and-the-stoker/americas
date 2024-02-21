@@ -99,7 +99,7 @@
 	"carpenters": {
 		"frame": [138, 10, 10, 11],
 		"population": [0, 0, 3, 6],
-		"name": ["Trees, Carpenters House", "Carpenters Shop", "Lumber Mill"],
+		"name": ["Trees", "Carpenters House", "Carpenters Shop", "Lumber Mill"],
 		"cost": [{
 			"wood": 0
 		}, {

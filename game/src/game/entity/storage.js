@@ -103,7 +103,7 @@ const productions = storage =>
   }))
 
 const save = storage => Object.values(Goods.types).map(good => [good, storage[good]])
-const load = data => Util.makeObject(data || [])
+const load = data => Util.makeObject(data)
 
 export default {
   create,

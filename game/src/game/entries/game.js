@@ -41,7 +41,7 @@ import UnitMapView from 'view/map/unit'
 import Dialog from 'view/ui/dialog'
 import Overlay from 'ui/overlay'
 
-const RESUME_GAME_PAUSED = true
+const RESUME_GAME_PAUSED = false
 const AUTOSAVE_INTERVAL = 5 * 60 * 1000 // autosave every 5 minutes
 const initialize = () => {
   let timeStamp = 0

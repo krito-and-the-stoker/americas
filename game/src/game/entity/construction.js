@@ -81,15 +81,13 @@ const options = colony => {
 const construct = (colony, construction) => {
   const actions = {
     increaseLevel: () => {
-      if (!Building.get(colony, construction.target)) {
-        console.log('Creating new Building', construction.target)
-        Colony.addBuilding(colony, construction.target)
-      }
-      const building = Building.get(colony, construction.target)
+      let building = Building.get(colony, construction.target)
       if (!building) {
-        console.log('building not created', Buildings, construction.target, Buildings[construction.target])
+        Colony.addBuilding(colony, construction.target)
+        building = Building.get(colony, construction.target)
+      } else {
+        building.level = Building.level(colony, construction.target) + 1
       }
-      building.level = Building.level(colony, construction.target) + 1
       Colony.update.newBuildings(colony)
       Events.trigger('notification', {
         type: 'construction',

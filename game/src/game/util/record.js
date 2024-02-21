@@ -31,7 +31,7 @@ import Unit from 'entity/unit'
 
 const REFERENCE_KEY = 'referenceId'
 
-const SAVE_TO_LOCAL_STORAGE = false
+const SAVE_TO_LOCAL_STORAGE = true
 const USE_COMPRESSION = false
 const USE_WEBWORKER = false
 
@@ -411,7 +411,7 @@ const dereference = ref => {
   Message.record.warn('could not find reference for ', ref, snapshot.entities)
   return null
 }
-const dereferenceLazy = (ref, fn) => {
+const dereferenceLazy = (ref, fn = () => {}) => {
   if (!ref) {
     fn(null)
   } else {
