@@ -328,7 +328,7 @@ const save = colony => ({
 
 const load = colony => {
   colony.type = 'colony'
-  console.log('Loading colony', colony)
+  // console.log('Loading colony', colony)
 
   const tile = MapEntity.tile(colony.mapCoordinates)
   tile.colony = colony
@@ -339,7 +339,7 @@ const load = colony => {
   colony.supportedUnits = []
   colony.layout = colony.layout ? Layout.load(colony.layout) : Layout.create()
   colony.newBuildings = colony.newBuildings
-    ? colony.newBuildings.map(building => Buildings[building.name].load(building))
+    ? colony.newBuildings.map(building => Buildings[building.name].load(building, colony))
     : Util.disordered(Object.entries(colony.buildings))
       .filter(([name, data]) => data.level > 0 || name === 'carpenters')
       .filter(([name, data]) => name !== 'house')

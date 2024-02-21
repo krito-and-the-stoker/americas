@@ -1,5 +1,5 @@
 import Triangles from 'data/triangles'
-import { default as BuildingFactory, positions } from './factory'
+import BuildingFactory from './factory'
 
 import Util from 'util/util'
 import Time from 'timeline/time'
@@ -35,15 +35,15 @@ const initialize = building => {
 	]
 }
 
-const display = () => 'house'
-const upgradeDisplay = () => 'house'
+const display = () => 'Houses'
+const upgradeDisplay = () => 'House'
 const cost = () => ({
-	wood: '25',
-	tools: '5'
+	wood: 25,
+	tools: 5
 })
 const upgradeCost = () => ({
-	wood: '25',
-	tools: '5'
+	wood: 25,
+	tools: 5
 })
 const workspace = building => 0
 

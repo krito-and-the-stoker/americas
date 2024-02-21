@@ -4,7 +4,16 @@
 
 What would you like to *construct*?
 
-[repeat buildings]
+[repeat newBuildings]
+	[answer action:{.start}]
+		[grid columns:2]
+			[cell] **{.name}** []
+			[cell] [goods: {.cost}] ({.percentage}%) []
+		[]
+	[]
+[]
+
+[repeat upgradeBuildings]
 	[answer action:{.start}]
 		[grid columns:2]
 			[cell] **{.name}** []

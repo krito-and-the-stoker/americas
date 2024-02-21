@@ -40,19 +40,28 @@ const start = (colony, option) => {
 }
 
 const options = colony => {
-  const buildings = BuildingData.places
+  const newBuildings = BuildingData.places
+    .map(name => ({
+      target: name,
+      progress: () => colony.construction[name]?.progress ?? 0,
+      name: () => Building.name(colony, name),
+      cost: () => Building.cost(colony, name),
+      construct: () => ['addBuilding'],
+    }))
+
+  const upgradeBuildings = BuildingData.places
     .filter(
       name =>
-        BuildingData[name].unlimitedLevels ||
-        BuildingData[name].name.length > Building.level(colony, name) + 1
+        Building.level(colony, name) > 0 && (
+          BuildingData[name].unlimitedLevels ||
+          BuildingData[name].name.length > Building.level(colony, name) + 1
+        )
     )
     .map(name => ({
       target: name,
-      progress: () => (colony.construction[name] ? colony.construction[name].progress : 0),
+      progress: () => colony.construction[name]?.progress ?? 0,
       name: () => Building.upgradeName(colony, name),
-      cost: () => Building.get(colony, name)
-        ? Building.upgradeCost(colony, name)
-        : Building.cost(colony, name),
+      cost: () => Building.upgradeCost(colony, name),
       construct: () => ['increaseLevel'],
     }))
 
@@ -66,28 +75,39 @@ const options = colony => {
     )
     .map(([name, unit]) => ({
       target: name,
-      progress: () => (colony.construction[name] ? colony.construction[name].progress : 0),
+      progress: () => colony.construction[name]?.progress ?? 0,
       name: () => unit.name.default,
       cost: () => unit.construction.cost,
       construct: () => ['createUnit'],
     }))
 
   return {
-    buildings,
-    units
+    newBuildings,
+    upgradeBuildings,
+    units,
   }
 }
 
 const construct = (colony, construction) => {
   const actions = {
+    addBuilding: () => {
+      Colony.addBuilding(colony, construction.target)
+      const building = Building.get(colony, construction.target)
+      colony.construction[construction.target] = null
+      Colony.update.newBuildings(colony)
+      Events.trigger('notification', {
+        type: 'construction',
+        colony,
+        building,
+      })
+      Message.colony.log(
+        `${colony.name} has completed construction of a new ${Building.name(colony, construction.target)}.`
+      )
+    },
     increaseLevel: () => {
-      let building = Building.get(colony, construction.target)
-      if (!building) {
-        Colony.addBuilding(colony, construction.target)
-        building = Building.get(colony, construction.target)
-      } else {
-        building.level = Building.level(colony, construction.target) + 1
-      }
+      const building = Building.get(colony, construction.target)
+      building.level = Building.level(colony, construction.target) + 1
+      colony.construction[construction.target] = null
       Colony.update.newBuildings(colony)
       Events.trigger('notification', {
         type: 'construction',
@@ -113,8 +133,8 @@ const construct = (colony, construction) => {
   delete colony.construction[construction.target]
   Colony.update.construction(colony)
 
-  const { buildings, units } = options(colony)
-  const newTarget = [...buildings, ...units].find(option => option.target === construction.target)
+  const { newBuildings, upgradeBuildings, units } = options(colony)
+  const newTarget = [...newBuildings, upgradeBuildings, ...units].find(option => option.target === construction.target)
 
   start(
     colony,

@@ -103,7 +103,8 @@
 		"cost": [{
 			"wood": 0
 		}, {
-			"wood": 0
+			"wood": 40,
+			"tools": 10
 		}, {
 			"wood": 50,
 			"tools": 50
@@ -369,7 +370,6 @@
 		}, {
 			"wood": 40,
 			"tools": 10
-		}],
-		"unlimitedLevels": true
+		}]
 	}
 }

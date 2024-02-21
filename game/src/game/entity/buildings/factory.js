@@ -27,10 +27,10 @@ const save = building => ({
   colony: Record.reference(building.colony)
 })
 
-const load = building => {
+const load = (building, colony) => {
   return {
     ...building,
-  colony: Record.dereferenceLazy(building.colony)
+  colony
   }
 }
 
@@ -60,6 +60,9 @@ const upgradeDisplay = building => {
   )
 }
 
+const isInteractive = building => {
+  return building.name === 'carpenters'
+}
 
 const make = name => {
   const create = colony => {
@@ -101,6 +104,7 @@ const make = name => {
     cost,
     upgradeCost,
     workspace,
+    isInteractive,
     save,
     load,
   }
@@ -108,6 +112,7 @@ const make = name => {
 
 export default {
   make,
+  isInteractive,
   load,
   save,
   initialize,

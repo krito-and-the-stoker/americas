@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 
-import Buildings from 'data/buildings'
+import BuildingData from 'data/buildings'
 import Goods from 'data/goods'
 import Triangles from 'data/triangles/index.js'
 
@@ -15,6 +15,7 @@ import Unit from 'entity/unit'
 import Colonist from 'entity/colonist'
 import Colony from 'entity/colony'
 import Building from 'entity/building'
+import Buildings from 'entity/buildings'
 import Construction from 'entity/construction'
 
 import JoinColony from 'interaction/joinColony'
@@ -95,7 +96,7 @@ const createBuilding = (colony, building) => {
     )
 
     // TODO: Implement a nice detailed popup
-    const unsubscribeClick = (building.level > 0 || building.name === 'carpenters') &&
+    const unsubscribeClick = Buildings[building.name].isInteractive(building) &&
       Click.on(sprite, () => {
       	console.log(building)
         if (building.name === 'carpenters') {
@@ -109,7 +110,8 @@ const createBuilding = (colony, building) => {
           })
 
           return Dialog.open('colony.construction', {
-            buildings: options.buildings.map(prepareOption),
+            newBuildings: options.newBuildings.map(prepareOption),
+            upgradeBuildings: options.upgradeBuildings.map(prepareOption),
             units: options.units.map(prepareOption),
             stop: () => Construction.start(colony, null)
           })
@@ -123,7 +125,6 @@ const createBuilding = (colony, building) => {
       unsubscribeHover,
     ]
   })
-
 
 
   const createColonistView = (productionBonus, colonist, work) => {
