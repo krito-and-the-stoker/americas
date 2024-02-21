@@ -19,6 +19,15 @@
 
   max-width: 33vw;
 
-  pointer-events: none;
+  > * {
+  	pointer-events: none;
+  }
+
+  opacity: 1;
+  transition: opacity 0.15s ease;
+}
+
+.hidden {
+	opacity: 0;
 }
 

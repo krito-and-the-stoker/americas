@@ -1,4 +1,4 @@
-import { createEffect, Show, Switch, Match } from 'solid-js'
+import { createEffect, createSignal, Show, Switch, Match } from 'solid-js'
 
 import Signal from 'util/signal'
 import Hover from 'input/hover'
@@ -21,11 +21,15 @@ function ColonyComponent() {
 	const name = () => colony()?.name
 
 	const hover = Signal.create(Hover.listen.data)
-
+	const [isInside, setIsInside] = createSignal(false)
 
 	return <Show when={colony()}>
 		<div class={styles.name}>{name()}</div>
-		<div class={styles.hoverBox}>
+		<div
+			classList={{ [styles.hoverBox]: true, [styles.hidden]: isInside()}}
+			onMouseEnter={() => { setIsInside(true) }}
+			onMouseLeave={() => { setIsInside(false) }}
+		>
 			<Switch fallback={<DefaultSummary />}>
 				<Match when={hover()?.type === 'colonist'}><ColonistSummary /></Match>
 				<Match when={hover()?.type === 'unit'}><UnitSummary /></Match>

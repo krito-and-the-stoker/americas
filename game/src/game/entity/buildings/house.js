@@ -19,7 +19,6 @@ const create = colony => {
 }
 
 const initialize = building => {
-	console.log('new house in', building.colony.name)
 	return [
 		Time.schedule(Produce.create(building.colony, 'housing', 1))
 	]
