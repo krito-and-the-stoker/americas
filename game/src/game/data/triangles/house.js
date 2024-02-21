@@ -7,7 +7,15 @@ const properties = {
 
 const level0 = empty
 
-const level1 = [{
+const move = (entry, x, y) => ({
+	...entry,
+	position: {
+		x: entry.position.x + x,
+		y: entry.position.y + y,
+	}
+})
+
+const base = [{
 	...properties,
 	position: {
 		x: 0,
@@ -36,6 +44,11 @@ const level1 = [{
 	},
 	shape: [[4]],
 }]
+
+const row = [...base, ...base.map(entry => move(entry, 8, 0))]
+
+const level1 = Array(7).fill().flatMap((_, i) => row.map(entry => move(entry, 0, 2*i)))
+console.log(level1)
 
 export default {
 	level: [
