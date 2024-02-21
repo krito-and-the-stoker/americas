@@ -1,4 +1,5 @@
-import BuildingData from 'data/buildings.json'
+import BuildingData from 'data/buildings'
+import Triangles from 'data/triangles'
 
 import Util from 'util/util'
 import Record from 'util/record'
@@ -6,6 +7,7 @@ import Message from 'util/message'
 import Events from 'util/events'
 
 import Colony from 'entity/colony'
+import Layout from 'entity/layout'
 
 
 export const positions = Util.range(11)
@@ -64,8 +66,13 @@ const make = name => {
       level: 1,
       colony,
       width: BuildingData[name].width,
-      position: Util.choose(positions),
+      height: 1,
+      triangles: Triangles[name] || Triangles.empty,
     }
+
+    const placement = Layout.placeBuilding(colony, building)
+    building.position = placement.position
+    building.triangle = placement.triangle
 
     initialize(building)
 

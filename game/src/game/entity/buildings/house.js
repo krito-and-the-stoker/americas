@@ -1,7 +1,12 @@
+import Triangles from 'data/triangles'
 import { default as BuildingFactory, positions } from './factory'
+
 import Util from 'util/util'
-import Produce from 'task/colony/produce'
 import Time from 'timeline/time'
+
+import Layout from 'entity/layout'
+
+import Produce from 'task/colony/produce'
 
 
 const create = colony => {
@@ -10,8 +15,13 @@ const create = colony => {
     level: 1,
     colony,
     width: 1,
-    position: Util.choose(positions),
+    height: 1,
+    triangles: Triangles.house,
   }
+
+  const placement = Layout.placeBuilding(colony, building)
+  building.position = placement.position
+  building.triangle = placement.triangle
 
   building.destroy = initialize(building)
 

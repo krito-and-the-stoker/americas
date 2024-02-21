@@ -19,6 +19,7 @@ import Trade from 'entity/trade'
 import Owner from 'entity/owner'
 import Construction from 'entity/construction'
 import Buildings from 'entity/buildings'
+import Layout from 'entity/layout'
 
 import Harvest from 'task/colonist/harvest'
 import Bells from 'task/colony/bells'
@@ -260,7 +261,8 @@ const create = (coords, owner) => {
     constructionTarget: null,
 
     // yeah
-    newBuildings: []
+    newBuildings: [],
+    layout: Layout.create(),
   }
   colony.storage = Storage.create()
   colony.trade = Storage.create()
@@ -313,6 +315,7 @@ const save = colony => ({
   storage: Storage.save(colony.storage),
   trade: Trade.save(colony.trade),
   newBuildings: colony.newBuildings.map(building => Buildings[building.name].save(building)),
+  layout: Layout.save(colony.layout),
   construction: Construction.save(colony.construction),
   constructionTarget: colony.constructionTarget,
   bells: colony.bells,
@@ -332,12 +335,16 @@ const load = colony => {
   colony.owner = Record.dereference(colony.owner)
   colony.construction = Construction.load(colony.construction)
   colony.supportedUnits = []
+  colony.layout = colony.layout ? Layout.load(colony.layout) : Layout.create()
   colony.newBuildings = colony.newBuildings
     ? colony.newBuildings.map(building => Buildings[building.name].load(building))
-    : Object.entries(colony.buildings)
+    : Util.disordered(Object.entries(colony.buildings))
       .filter(([name, data]) => data.level > 0 || name === 'carpenters')
       .filter(([name, data]) => name !== 'house')
       .map(([name, data]) => {
+        if (!colony.newBuildings) {
+          colony.newBuildings = []
+        }
         const building = Buildings[name]?.create(colony)
 
         if (!building) {
@@ -347,6 +354,7 @@ const load = colony => {
           if (data.name === 'carpenters') {
             building.level += 1
           }
+          colony.newBuildings.push(building)
         }
 
         return building

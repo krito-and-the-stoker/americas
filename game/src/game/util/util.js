@@ -33,6 +33,18 @@ const tag = () => {
   return name
 }
 
+const disordered = array => {
+  const copy = [...array]
+  array.forEach((_, index) => {
+    const swapIndex = Math.floor(Math.random() * copy.length)
+    const tmp = copy[index]
+    copy[index] = copy[swapIndex]
+    copy[swapIndex] = tmp
+  })
+
+  return copy
+}
+
 const isFunction = something => typeof something === 'function'
 
 // const mergeFunctions = funcArray => funcArray.filter(fn => isFunction(fn)).reduce((all, fn) => arg => { all(arg); fn(arg) }, () => {})
@@ -140,6 +152,7 @@ const uid = () => {
   return currentId
 }
 
+
 const clamp = (value, lower = 0, upper = 1) => Math.min(Math.max(value, lower), upper)
 
 const quantize = (value, resolution) => resolution * Math.round((1.0 * value) / resolution)
@@ -174,6 +187,7 @@ export default {
   execute,
   isArray,
   flatten,
+  disordered,
   clamp,
   quantize,
   quantizeDown,

@@ -2,7 +2,6 @@ import * as PIXI from 'pixi.js'
 
 import Buildings from 'data/buildings'
 import Goods from 'data/goods'
-import SimpleTriangles from 'data/triangles.json'
 import Triangles from 'data/triangles/index.js'
 
 import Util from 'util/util'
@@ -37,8 +36,7 @@ const PADDING_X = 64
 const PADDING_Y = 32
 
 const buildingRectangle = (colony, building) => {
-  const choices = Triangles[building.name]?.level[building.level] || Triangles.empty
-  const data = Util.choose(choices)
+  const data = building.triangle
   return new PIXI.Rectangle(
     OFFSET_X + data.position.x * WIDTH - PADDING_X,
     OFFSET_Y + data.position.y * HEIGHT - PADDING_Y,
@@ -246,10 +244,10 @@ const create = colony => {
     buildings.map(building => {
       const buildingView = createBuilding(colony, building)
       if (buildingView) {
-        buildingView.container.building.x = building.position.x * 128
-        buildingView.container.building.y = building.position.y * 128
-        buildingView.container.colonists.x = building.position.x * 128
-        buildingView.container.colonists.y = building.position.y * 128
+        buildingView.container.building.x = building.position.x * WIDTH
+        buildingView.container.building.y = building.position.y * HEIGHT
+        buildingView.container.colonists.x = building.position.x * WIDTH
+        buildingView.container.colonists.y = building.position.y * HEIGHT
         container.buildings.addChild(buildingView.container.building)
         container.colonists.addChild(buildingView.container.colonists)
 
