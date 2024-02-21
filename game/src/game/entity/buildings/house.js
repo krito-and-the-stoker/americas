@@ -19,10 +19,11 @@ const create = colony => {
     triangles: Triangles.house,
   }
 
-  const placement = Layout.placeBuilding(colony, building)
-  building.position = placement.position
-  building.triangle = placement.triangle
-
+  building.placement = [
+    Layout.placeBuilding(colony, building),
+    Layout.placeBuilding(colony, building),
+    Layout.placeBuilding(colony, building),
+  ]
   building.destroy = initialize(building)
 
   return building

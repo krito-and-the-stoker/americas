@@ -314,6 +314,7 @@ const save = colony => ({
   mapCoordinates: colony.mapCoordinates,
   storage: Storage.save(colony.storage),
   trade: Trade.save(colony.trade),
+  buildings: colony.buildings,
   newBuildings: colony.newBuildings.map(building => Buildings[building.name].save(building)),
   layout: Layout.save(colony.layout),
   construction: Construction.save(colony.construction),
@@ -327,6 +328,7 @@ const save = colony => ({
 
 const load = colony => {
   colony.type = 'colony'
+  console.log('Loading colony', colony)
 
   const tile = MapEntity.tile(colony.mapCoordinates)
   tile.colony = colony

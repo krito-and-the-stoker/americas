@@ -35,8 +35,8 @@ const OFFSET_Y = 1.5 * HEIGHT
 const PADDING_X = 64
 const PADDING_Y = 32
 
-const buildingRectangle = (colony, building) => {
-  const data = building.triangle
+const placementRectangle = (colony, placement) => {
+  const data = placement.triangle
   return new PIXI.Rectangle(
     OFFSET_X + data.position.x * WIDTH - PADDING_X,
     OFFSET_Y + data.position.y * HEIGHT - PADDING_Y,
@@ -52,74 +52,85 @@ const createBuilding = (colony, building) => {
   }
 
   const name = building.name
-  const rectangle = buildingRectangle(colony, building)
-  if (!rectangle || !building.position) {
-    return null
-  }
-  const sprite = Resources.sprite('triangles', { rectangle })
-  container.building.addChild(sprite)
+  const unsubscribePlacement = building.placement.map(placement => {
+    const rectangle = placementRectangle(colony, placement)
+    if (!rectangle || !placement.position) {
+      return null
+    }
+    const sprite = Resources.sprite('triangles', { rectangle })
+    sprite.x = placement.position.x * WIDTH
+    sprite.y = placement.position.y * HEIGHT
+    container.building.addChild(sprite)
 
-  const unsubscribeDrag = Drag.makeDragTarget(
-    () => {
-      return [sprite].concat(container.colonists.children)
-    },
-    args => {
-      const { unit, colonist } = args
-      if (colony.disbanded) {
-        return
-      }
+    const unsubscribeDrag = Drag.makeDragTarget(
+      () => {
+        return [sprite].concat(container.colonists.children)
+      },
+      args => {
+        const { unit, colonist } = args
+        if (colony.disbanded) {
+          return
+        }
 
-      if (colonist?.unit && Colony.canEmploy(colony, name, colonist.unit.expert)) {
-        return `Let colonist work in ${name}`
-      }
+        if (colonist?.unit && Colony.canEmploy(colony, name, colonist.unit.expert)) {
+          return `Let colonist work in ${name}`
+        }
 
-      if (unit && unit.properties.canJoin) {
-        if (Colony.canEmploy(colony, name, unit.expert)) {
-          return `Join colony and start working in ${name}`
+        if (unit && unit.properties.canJoin) {
+          if (Colony.canEmploy(colony, name, unit.expert)) {
+            return `Join colony and start working in ${name}`
+          }
+        }
+      },
+      ({ colonist, unit }) => {
+        if (unit) {
+          JoinColony(colony, unit.colonist)
+          Colonist.beginColonyWork(unit.colonist, name)
+        }
+
+        if (colonist) {
+          Colonist.beginColonyWork(colonist, name)
         }
       }
-    },
-    ({ colonist, unit }) => {
-      if (unit) {
-        JoinColony(colony, unit.colonist)
-        Colonist.beginColonyWork(unit.colonist, name)
-      }
+    )
 
-      if (colonist) {
-        Colonist.beginColonyWork(colonist, name)
-      }
-    }
-  )
+    // TODO: Implement a nice detailed popup
+    const unsubscribeClick = (building.level > 0 || building.name === 'carpenters') &&
+      Click.on(sprite, () => {
+      	console.log(building)
+        if (building.name === 'carpenters') {
+          const options = Construction.options(colony)
 
-  // TODO: Implement a nice detailed popup
-  const unsubscribeClick = (building.level > 0 || building.name === 'carpenters') &&
-    Click.on(sprite, () => {
-    	console.log(building)
-      if (building.name === 'carpenters') {
-        const options = Construction.options(colony)
+          const prepareOption = option => ({
+            ...option,
+            cost: option.cost(),
+            start: () => Construction.start(colony, option),
+            percentage: () => Math.floor((100 * option.progress()) / Util.sum(Object.values(option.cost()))),
+          })
 
-        const prepareOption = option => ({
-          ...option,
-          cost: option.cost(),
-          start: () => Construction.start(colony, option),
-          percentage: () => Math.floor((100 * option.progress()) / Util.sum(Object.values(option.cost()))),
-        })
+          return Dialog.open('colony.construction', {
+            buildings: options.buildings.map(prepareOption),
+            units: options.units.map(prepareOption),
+            stop: () => Construction.start(colony, null)
+          })
+        }
+      }, `Inspect ${Building.name(colony, building.name)}`)
+    const unsubscribeHover = Hover.track(sprite, { type: 'building', building })
 
-        return Dialog.open('colony.construction', {
-          buildings: options.buildings.map(prepareOption),
-          units: options.units.map(prepareOption),
-          stop: () => Construction.start(colony, null)
-        })
-      }
-    }, `Inspect ${Building.name(colony, building.name)}`)
+    return [
+      unsubscribeDrag,
+      unsubscribeClick,
+      unsubscribeHover,
+    ]
+  })
 
-  const unsubscribeHover = Hover.track(sprite, { type: 'building', building })
+
 
   const createColonistView = (productionBonus, colonist, work) => {
     if (work && work.building === name) {
       const position = {
         x:
-          (work.position * 92 * Buildings[work.building].width) /
+          (work.position * 92) /
           (Building.workspace(colony, work.building) || 1) + 64,
         y: 20 + 32,
       }
@@ -224,9 +235,7 @@ const createBuilding = (colony, building) => {
 
   const unsubscribe = [
     unsubscribeColonists,
-    unsubscribeDrag,
-    unsubscribeClick,
-    unsubscribeHover
+    unsubscribePlacement
   ]
 
   return {
@@ -245,10 +254,10 @@ const create = colony => {
     buildings.map(building => {
       const buildingView = createBuilding(colony, building)
       if (buildingView) {
-        buildingView.container.building.x = building.position.x * WIDTH
-        buildingView.container.building.y = building.position.y * HEIGHT
-        buildingView.container.colonists.x = building.position.x * WIDTH
-        buildingView.container.colonists.y = building.position.y * HEIGHT
+        // buildingView.container.building.x = building.position.x * WIDTH
+        // buildingView.container.building.y = building.position.y * HEIGHT
+        buildingView.container.colonists.x = building.placement[0].position.x * WIDTH
+        buildingView.container.colonists.y = building.placement[0].position.y * HEIGHT
         container.buildings.addChild(buildingView.container.building)
         container.colonists.addChild(buildingView.container.colonists)
 

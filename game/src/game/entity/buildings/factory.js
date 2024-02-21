@@ -27,10 +27,12 @@ const save = building => ({
   colony: Record.reference(building.colony)
 })
 
-const load = building => ({
-  ...building,
-  colony: Record.dereference(building.colony)
-})
+const load = building => {
+  return {
+    ...building,
+  colony: Record.dereferenceLazy(building.colony)
+  }
+}
 
 
 const upgradeCost = building => {
@@ -70,9 +72,7 @@ const make = name => {
       triangles: Triangles[name] || Triangles.empty,
     }
 
-    const placement = Layout.placeBuilding(colony, building)
-    building.position = placement.position
-    building.triangle = placement.triangle
+    building.placement = [Layout.placeBuilding(colony, building)]
 
     initialize(building)
 

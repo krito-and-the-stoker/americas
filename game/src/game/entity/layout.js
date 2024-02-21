@@ -3,11 +3,11 @@ import Util from 'util/util'
 import LA from 'util/la'
 
 
-const SIZE_X = 10
-const SIZE_Y = 10
+const SIZE_X = 15
+const SIZE_Y = 15
 
 const create = () => {
-	// 20x20 array of zeros
+	// SIZE_X * SIZE_Y array of zeros
 	return Array(SIZE_Y).fill().map(() => (Array(SIZE_X).fill(0)))
 }
 
@@ -81,23 +81,34 @@ const putLayout = (baseLayout, testLayout, offsetX, offsetY) => {
 // building is currently not used, but most likely it will be
 const landValueMap = (colony, building) => {
 	const landValue = create()
+	const iterateLandValue = iterate(landValue)
 
 	// fixed good value at center
-	iterate(landValue).forEach(entry => {
-		set(landValue, entry.x, entry.y, 0.5 * Math.random())
+	iterateLandValue.forEach(entry => {
+		set(landValue, entry.x, entry.y, Math.random())
 	})
 	set(landValue, Math.floor(SIZE_X / 2), Math.floor(SIZE_Y / 2), 5)
 
-	colony.newBuildings.forEach(building => {
-		building.center = {
-			x: building.position.x + 0.5 * building.width,
-			y: building.position.y + 0.5 * building.height,
-		}
+	colony.newBuildings.forEach(otherBuilding => {
+		otherBuilding.placement.forEach(place => {
+			const center = place.position
 
-		iterate(landValue).forEach(entry => {
-			update(landValue, entry.x, entry.y, value =>
-				value + 4.0 / (2.0 + LA.sqDistance(building.center, entry)) - 3.0 / (1.0 + LA.sqDistance(building.center, entry))
-			)
+			const keepDistance = (center, entry) => 3 / (1.0 + LA.sqDistance(center, entry))
+			const attraction = (center, entry) => 4 / (2.0 + LA.sqDistance(center, entry))
+			const buildingExtra = (center, entry) => (
+				otherBuilding.name === 'house' ?
+					0
+				: otherBuilding.name === 'church' ?
+					1
+				: otherBuilding.name === 'townhall' ?
+					1
+				: 0) / (1.0 + LA.sqDistance(center, entry))
+
+			iterateLandValue.forEach(entry => {
+				update(landValue, entry.x, entry.y, value =>
+					value + attraction(center, entry) - keepDistance(center, entry) + buildingExtra(center, entry)
+				)
+			})
 		})
 	})
 
@@ -112,7 +123,7 @@ const placeBuilding = (colony, building) => {
 		const fit = Util.disordered(triangles).find(triangle => canPutLayout(colony.layout, triangle.shape, entry.x, entry.y))
 		if (fit) {
 			putLayout(colony.layout, fit.shape, entry.x, entry.y)
-			console.log('found placement', colony.name, building, entry)
+			console.log('found placement', colony.name, building, entry, landValue)
 			return {
 				position: {
 					x: entry.x,
