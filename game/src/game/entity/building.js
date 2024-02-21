@@ -9,7 +9,9 @@ import Unit from 'entity/unit'
 const get = (colony, name) => colony.newBuildings.find(building => building.name === name)
 const level = (colony, name) => get(colony, name)?.level ?? 0
 const display = (colony, name) => Buildings[name].display(get(colony, name))
-const upgradeName = (colony, name) => Buildings[name].upgradeDisplay(get(colony, name))
+const upgradeName = (colony, name) => get(colony, name)
+  ? Buildings[name].upgradeDisplay(get(colony, name))
+  : Buildings[name].display()
 const cost = (colony, name) => Buildings[name].cost()
 const upgradeCost = (colony, name) => Buildings[name].upgradeCost(get(colony, name))
 const workspace = (colony, name) => Buildings[name].workspace(get(colony, name))

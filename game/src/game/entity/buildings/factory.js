@@ -47,12 +47,6 @@ const workspace = building =>
 
 const initialize = building => {}
 
-const display = building => {
-  return (
-    BuildingData[building.name].name[building.level] ||
-    BuildingData[building.name].name[BuildingData[building.name].name.length - 1]
-  )
-}
 
 const upgradeDisplay = building => {
   const level = building ? building.level + 1 : 1
@@ -76,6 +70,14 @@ const make = name => {
     initialize(building)
 
     return building
+  }
+
+  const display = building => {
+    const level = building?.level ?? 1
+    return (
+      BuildingData[name].name[level] ||
+      BuildingData[name].name[BuildingData[name].name.length - 1]
+    )
   }
 
   const cost = () => {
@@ -102,7 +104,6 @@ export default {
   load,
   save,
   initialize,
-  display,
   upgradeDisplay,
   upgradeCost,
   workspace,
