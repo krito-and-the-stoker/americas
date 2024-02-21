@@ -84,9 +84,9 @@ const landValueMap = (colony, building) => {
 
 	// fixed good value at center
 	iterate(landValue).forEach(entry => {
-		set(landValue, entry.x, entry.y, Math.random())
+		set(landValue, entry.x, entry.y, 0.5 * Math.random())
 	})
-	set(landValue, 3, 3, 5)
+	set(landValue, Math.floor(SIZE_X / 2), Math.floor(SIZE_Y / 2), 5)
 
 	colony.newBuildings.forEach(building => {
 		building.center = {
@@ -96,7 +96,7 @@ const landValueMap = (colony, building) => {
 
 		iterate(landValue).forEach(entry => {
 			update(landValue, entry.x, entry.y, value =>
-				value + 1.0 / (1.0 + LA.sqDistance(building.center, entry))
+				value + 4.0 / (2.0 + LA.sqDistance(building.center, entry)) - 3.0 / (1.0 + LA.sqDistance(building.center, entry))
 			)
 		})
 	})

@@ -119,14 +119,14 @@ const createBuilding = (colony, building) => {
     if (work && work.building === name) {
       const position = {
         x:
-          (work.position * 128 * Buildings[work.building].width) /
-          (Building.workspace(colony, work.building) || 1),
-        y: 20,
+          (work.position * 92 * Buildings[work.building].width) /
+          (Building.workspace(colony, work.building) || 1) + 64,
+        y: 20 + 32,
       }
       const colonistSprite = ColonistView.create(colonist)
       colonistSprite.x = position.x
       colonistSprite.y = position.y
-      colonistSprite.scale.set(1.5)
+      colonistSprite.scale.set(1.0)
       container.colonists.addChild(colonistSprite)
 
       const unsubscribeEducation = Colonist.listen.beingEducated(colonist, beingEducated => {
@@ -149,11 +149,12 @@ const createBuilding = (colony, building) => {
         const productionSprites = ProductionView.create(
           production.good,
           Math.round(production.amount),
-          TILE_SIZE / 2
+          TILE_SIZE / 4
         )
         productionSprites.forEach(s => {
           s.position.x += position.x
-          s.position.y += position.y + TILE_SIZE
+          s.position.y += position.y + TILE_SIZE / 2
+          s.scale.set(0.5)
           container.colonists.addChild(s)
         })
         return [
