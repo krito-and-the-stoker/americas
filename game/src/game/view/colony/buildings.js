@@ -158,17 +158,16 @@ const createBuilding = (colony, building) => {
     // TODO: Implement a nice detailed popup
     const unsubscribeClick = Buildings[building.name].isInteractive(building) &&
       Click.on(sprite, () => {
-      	console.log(building)
         if (building.name === 'carpenters') {
           const options = Construction.options(colony)
 
           const prepareOption = option => ({
             ...option,
-            cost: option.cost(),
             start: () => Construction.start(colony, option),
-            percentage: () => Math.floor((100 * option.progress()) / Util.sum(Object.values(option.cost()))),
+            percentage: Math.floor((100 * option.progress) / Util.sum(Object.values(option.cost))),
           })
 
+        	console.log(options)
           return Dialog.open('colony.construction', {
             newBuildings: options.newBuildings.map(prepareOption),
             upgradeBuildings: options.upgradeBuildings.map(prepareOption),

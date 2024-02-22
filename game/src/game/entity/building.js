@@ -12,14 +12,10 @@ import Unit from 'entity/unit'
 
 // TODO: Deprecate the (colony, name) access in favour of access through building directly
 // This is necessary because we have multiple buildings of one type
-const get = (colony, name) => colony.newBuildings.find(building => building.name === name)
+const get = (colony, name) => colony?.newBuildings.find(building => building.name === name)
 const level = (colony, name) => get(colony, name)?.level ?? 0
 const display = (colony, name) => Buildings[name].display(get(colony, name))
-const upgradeName = (colony, name) => get(colony, name)
-  ? Buildings[name].upgradeDisplay(get(colony, name))
-  : Buildings[name].display()
 const cost = (colony, name) => Buildings[name].cost()
-const upgradeCost = (colony, name) => Buildings[name].upgradeCost(get(colony, name))
 const workspace = (colony, name) => Buildings[name].workspace(get(colony, name))
 
 
@@ -32,6 +28,8 @@ const save = building => {
   return Buildings[building.name].save(building)
 }
 
+const upgradeDisplay = building => Buildings[building.name].upgradeDisplay(building)
+const upgradeCost = building => Buildings[building.name].upgradeCost(building)
 const canEmploy = (building, expert) => Buildings[building.name]?.canEmploy && Buildings[building.name]?.canEmploy(building, expert)
 
 
@@ -42,7 +40,8 @@ export default {
   level,
   canEmploy,
   name: display,
-  upgradeName,
+  display,
+  upgradeDisplay,
   cost,
   upgradeCost,
   workspace,

@@ -331,6 +331,9 @@ const load = colony => {
   colony.trade = Trade.load(colony.trade)
   colony.owner = Record.dereference(colony.owner)
   colony.construction = Construction.load(colony.construction)
+  if (!colony.construction[colony.constructionTarget]) {
+    colony.constructionTarget = null
+  }
   colony.supportedUnits = []
   colony.layout = colony.layout ? Layout.load(colony.layout) : Layout.create()
   

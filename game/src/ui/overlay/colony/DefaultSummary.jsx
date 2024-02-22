@@ -22,12 +22,12 @@ function openConstructionDialog(colony) {
 
   const prepareOption = option => ({
     ...option,
-    cost: option.cost(),
     start: () => Construction.start(colony, option),
-    percentage: () => Math.floor((100 * option.progress()) / Util.sum(Object.values(option.cost()))),
+    percentage: Math.floor((100 * option.progress) / Util.sum(Object.values(option.cost))),
   })
 
-  return Dialog.open('colony.construction', {
+	console.log(options)
+  Dialog.open('colony.construction', {
     newBuildings: options.newBuildings.map(prepareOption),
     upgradeBuildings: options.upgradeBuildings.map(prepareOption),
     units: options.units.map(prepareOption),
@@ -41,7 +41,7 @@ function DefaultSummary() {
 		Signal.select(screen => screen?.params?.colony),
 	)
 
-	const [colony, productionSummary,construction, constructionTarget] = Signal.create(
+	const [colony, productionSummary, construction] = Signal.create(
 		colonySignal,
 		[
 			Signal.through,
@@ -49,23 +49,28 @@ function DefaultSummary() {
 				Signal.select(colony => colony.productionSummary),
 				Storage.listen
 			),
-			Colony.listen.construction,
-			Colony.listen.constructionTarget
+			Signal.chain(
+				Signal.combine([
+					Signal.through,
+					Colony.listen.construction,
+					Colony.listen.constructionTarget,
+				]),
+				Signal.select(([colony]) => colony && Colony.currentConstruction(colony))
+			)
 		]
 	)
 
-	const target = () => construction() && construction()[constructionTarget()]
 
-	const costSum = () => Util.sum(Object.values(target()?.cost ?? []))
-	const cost = () => target()?.cost
-	const progressPercentage = () => 100 * target()?.progress / costSum()
-	const name = () => target()?.name
+	const costSum = () => Util.sum(Object.values(construction()?.cost ?? []))
+	const cost = () => construction()?.cost
+	const progressPercentage = () => 100 * construction()?.progress / costSum()
+	const display = () => construction()?.display
 
 	const [bells, colonists] = Signal.create(
 		colonySignal,
 		[
 			Colony.listen.bells,
-			Colony.listen.colonists
+			Colony.listen.colonists,
 		]
 	)
 	// make sure bells and colonists are evaluated for tracking
@@ -97,8 +102,8 @@ function DefaultSummary() {
 		<Show when={hasConstruction()}>
 			<div class={styles.construction} onClick={() => openConstructionDialog(colony())}>
 				<div class={styles.subtitle}>Construction</div>
-				<Show when={target()} fallback={<i>None</i>}>
-					<span><i>{name()}</i></span>
+				<Show when={construction()} fallback={<i>None</i>}>
+					<span><i>{display()}</i></span>
 					<StorageGoods goods={cost()} />
 					<span>{progressPercentage()?.toFixed(0)}%</span>
 				</Show>

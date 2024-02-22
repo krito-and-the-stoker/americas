@@ -27,43 +27,76 @@ const start = (colony, option) => {
     return
   }
 
-  colony.construction[option.target] = {
-    target: option.target,
-    cost: option.cost(),
-    name: option.name(),
-    construct: option.construct(),
-    progress: option.progress(),
-  }
+  colony.construction[option.id] = option
 
   Colony.update.construction(colony)
-  Colony.update.constructionTarget(colony, option.target)
+  Colony.update.constructionTarget(colony, option.id)
 }
+
+const createOptionAdd = (colony, name) => {
+  const id = `addBuilding-${name}`
+  const option = {
+    id,
+    progress: colony.construction[id]?.progress ?? 0,
+    display: Building.display(null, name),
+    cost: Building.cost(null, name),
+    construct: {
+      action: 'addBuilding',
+      building: name,
+    }
+  }
+
+  return option
+}
+
+
+const createOptionIncrease = building => {
+  const colony = building.colony
+  const id = `increaseLevel-${building.name}`
+  const option = {
+    id,
+    progress: colony.construction[id]?.progress ?? 0,
+    display: Building.upgradeDisplay(building),
+    cost: Building.upgradeCost(building),
+    construct: {
+      action: 'increaseLevel',
+      building: building.name,
+    }
+  }
+
+  return option
+}
+
+const createOptionUnit = (colony, unit, name) => {
+  const id = `createUnit-${name}`
+  const option = {
+    id,
+    progress: colony.construction[id]?.progress ?? 0,
+    display: unit.name.default,
+    cost: unit.construction.cost,
+    construct: {
+      action: 'createUnit',
+      unit: name,
+    }
+  }
+
+  return option
+}
+
+
 
 const options = colony => {
   const newBuildings = BuildingData.places
-    .map(name => ({
-      target: name,
-      progress: () => colony.construction[name]?.progress ?? 0,
-      name: () => Building.name(colony, name),
-      cost: () => Building.cost(colony, name),
-      construct: () => ['addBuilding'],
-    }))
+    .map(place => createOptionAdd(colony, place))
 
-  const upgradeBuildings = BuildingData.places
+  const upgradeBuildings = colony.newBuildings
     .filter(
-      name =>
-        Building.level(colony, name) > 0 && (
-          BuildingData[name].unlimitedLevels ||
-          BuildingData[name].name.length > Building.level(colony, name) + 1
-        )
+      building =>
+          BuildingData[building.name].unlimitedLevels ||
+          BuildingData[building.name].name.length > building.level + 1
     )
-    .map(name => ({
-      target: name,
-      progress: () => colony.construction[name]?.progress ?? 0,
-      name: () => Building.upgradeName(colony, name),
-      cost: () => Building.upgradeCost(colony, name),
-      construct: () => ['increaseLevel'],
-    }))
+    .map(building => createOptionIncrease(building))
+
 
   const units = Object.entries(Units)
     .filter(
@@ -73,13 +106,7 @@ const options = colony => {
           ([name, level]) => Building.level(colony, name) >= level
         )
     )
-    .map(([name, unit]) => ({
-      target: name,
-      progress: () => colony.construction[name]?.progress ?? 0,
-      name: () => unit.name.default,
-      cost: () => unit.construction.cost,
-      construct: () => ['createUnit'],
-    }))
+    .map(([name, unit]) => createOptionUnit(colony, unit, name))
 
   return {
     newBuildings,
@@ -88,12 +115,11 @@ const options = colony => {
   }
 }
 
-const construct = (colony, construction) => {
+const construct = (colony, option) => {
   const actions = {
     addBuilding: () => {
-      Colony.addBuilding(colony, construction.target)
-      const building = Building.get(colony, construction.target)
-      colony.construction[construction.target] = null
+      Colony.addBuilding(colony, option.action.building)
+      const building = Building.get(colony, option.action.building)
       Colony.update.newBuildings(colony)
       Events.trigger('notification', {
         type: 'construction',
@@ -101,13 +127,12 @@ const construct = (colony, construction) => {
         building,
       })
       Message.colony.log(
-        `${colony.name} has completed construction of a new ${Building.name(colony, construction.target)}.`
+        `${colony.name} has completed construction of a new ${Building.name(colony, option.action.building)}.`
       )
     },
     increaseLevel: () => {
-      const building = Building.get(colony, construction.target)
-      building.level = Building.level(colony, construction.target) + 1
-      colony.construction[construction.target] = null
+      const building = Building.get(colony, option.action.building)
+      building.level = Building.level(colony, option.action.building) + 1
       Colony.update.newBuildings(colony)
       Events.trigger('notification', {
         type: 'construction',
@@ -115,11 +140,11 @@ const construct = (colony, construction) => {
         building,
       })
       Message.colony.log(
-        `${colony.name} has completed construction of ${Building.name(colony, construction.target)}.`
+        `${colony.name} has completed construction of ${Building.name(colony, option.action.building)}.`
       )
     },
     createUnit: () => {
-      const unit = Unit.create(construction.target, colony.mapCoordinates, colony.owner)
+      const unit = Unit.create(option.action.unit, colony.mapCoordinates, colony.owner)
       Events.trigger('notification', {
         type: 'construction',
         colony,
@@ -128,17 +153,16 @@ const construct = (colony, construction) => {
       Message.colony.log(`${colony.name} has completed construction of ${Unit.name(unit)}.`)
     },
   }
-  Util.execute(construction.construct.map(actionName => actions[actionName]))
-
-  delete colony.construction[construction.target]
+  Util.execute(actions[option.construct.action])
+  delete colony.construction[option.id]
   Colony.update.construction(colony)
 
   const { newBuildings, upgradeBuildings, units } = options(colony)
-  const newTarget = [...newBuildings, upgradeBuildings, ...units].find(option => option.target === construction.target)
+  // const newTarget = [...newBuildings, upgradeBuildings, ...units].find(option => option.target === construction.target)
 
   start(
     colony,
-    newTarget
+    null
   )
 }
 
