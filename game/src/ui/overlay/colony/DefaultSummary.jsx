@@ -88,18 +88,22 @@ function DefaultSummary() {
   	Signal.select(entries => entries.map(entry => entry.unit)),
   )
 
+  const hasConstruction = () => productionSummary()?.construction > 0
+
 
 	return <>
 		<div class={styles.title}>Production and Consumption</div>
 		<ProductionGoods goods={productionSummary()} sort={true} />
-		<div class={styles.construction} onClick={() => openConstructionDialog(colony())}>
-			<div class={styles.subtitle}>Construction</div>
-			<Show when={target()} fallback={<i>None</i>}>
-				<span><i>{name()}</i></span>
-				<StorageGoods goods={cost()} />
-				<span>{progressPercentage()?.toFixed(0)}%</span>
-			</Show>
-		</div>
+		<Show when={hasConstruction()}>
+			<div class={styles.construction} onClick={() => openConstructionDialog(colony())}>
+				<div class={styles.subtitle}>Construction</div>
+				<Show when={target()} fallback={<i>None</i>}>
+					<span><i>{name()}</i></span>
+					<StorageGoods goods={cost()} />
+					<span>{progressPercentage()?.toFixed(0)}%</span>
+				</Show>
+			</div>
+		</Show>
 		<div class={styles.colonists}>
 			<div classList={{[styles.green]: rebels()?.percentage >= 50}}>
 				<i>Integrated</i> {rebels()?.percentage}% ({rebels()?.number} Colonists)
