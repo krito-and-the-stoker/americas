@@ -16,7 +16,7 @@ import Storage from 'entity/storage'
 import Time from 'timeline/time'
 
 import Harvest from 'task/colonist/harvest'
-import Produce from 'task/colonist/manufacture'
+import Manufacture from 'task/colonist/manufacture'
 import ProductionSummary from 'task/colony/productionSummary'
 
 import UnjoinColony from 'interaction/unjoinColony'
@@ -42,14 +42,14 @@ const beginColonyWork = (colonist, building) => {
     .map(col => col.work.position)
     .reduce(
       (free, occupied) => free.filter(pos => pos !== occupied),
-      Util.range(Building.workspace(colonist.colony, building))
+      Util.range(Building.workspace(colonist.colony, building.name))
     )
     .find(() => true)
 
   const stop =
-    building === 'school'
+    building.name === 'school'
       ? null
-      : Time.schedule(Produce.create(colonist.colony, building, colonist))
+      : Time.schedule(Manufacture.create(colonist.colony, building, colonist))
   update.work(colonist, {
     type: 'Building',
     building,
@@ -158,14 +158,14 @@ const profession = colonist => {
     return 'settler'
   }
 
-  if (colonist.work.building === 'school') {
+  if (colonist.work.building?.name === 'school') {
     return 'teacher'
   }
 
   let currentProfession =
     colonist.work.type === 'Field'
       ? Goods[colonist.work.good].expert
-      : Goods[Buildings[colonist.work.building].production.good].expert
+      : Goods[Buildings[colonist.work.building.name].production.good].expert
   if (currentProfession === 'farmer' && colonist.work.tile.domain === 'sea') {
     currentProfession = 'fisher'
   }
@@ -207,7 +207,7 @@ const needsForPromotion = promotionTarget => {
 
 const production = colonist => {
   return colonist.work.type === 'Building'
-    ? Production.production(colonist.colony, colonist.work.building, colonist)
+    ? Production.production(colonist.colony, colonist.work.building.name, colonist)
     : {
         good: colonist.work.good,
         amount: Tile.production(colonist.work.tile, colonist.work.good, colonist),
@@ -241,7 +241,7 @@ const save = colonist => ({
     ? {
         type: colonist.work.type,
         good: colonist.work.good,
-        building: colonist.work.building,
+        building: Record.reference(colonist.work.building),
         position: colonist.work.position,
         tile: Record.referenceTile(colonist.work.tile),
       }
@@ -269,6 +269,10 @@ const load = colonist => {
     }
   }
 
+  if (colonist.work?.building) {
+    colonist.work.building = Record.dereference(colonist.work.building)
+  }
+
   Record.entitiesLoaded(() => {
     initialize(colonist)
     if (colonist.work) {
@@ -280,9 +284,9 @@ const load = colonist => {
         )
       }
       if (colonist.work.type === 'Building') {
-        if (colonist.work.building !== 'school') {
+        if (colonist.work.building.name !== 'school') {
           colonist.work.stop = Time.schedule(
-            Produce.create(colonist.colony, colonist.work.building, colonist)
+            Manufacture.create(colonist.colony, colonist.work.building, colonist)
           )
         }
       }

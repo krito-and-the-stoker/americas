@@ -86,11 +86,11 @@ const createBuilding = (colony, building) => {
       ({ colonist, unit }) => {
         if (unit) {
           JoinColony(colony, unit.colonist)
-          Colonist.beginColonyWork(unit.colonist, name)
+          Colonist.beginColonyWork(unit.colonist, building)
         }
 
         if (colonist) {
-          Colonist.beginColonyWork(colonist, name)
+          Colonist.beginColonyWork(colonist, building)
         }
       }
     )
@@ -128,11 +128,11 @@ const createBuilding = (colony, building) => {
 
 
   const createColonistView = (productionBonus, colonist, work) => {
-    if (work && work.building === name) {
+    if (work && work.building === building) {
       const position = {
         x:
           (work.position * 92) /
-          (Building.workspace(colony, work.building) || 1) + 64,
+          (Building.workspace(colony, work.building.name) || 1) + 64,
         y: 20 + 32,
       }
       const colonistSprite = ColonistView.create(colonist)

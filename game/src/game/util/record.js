@@ -213,6 +213,10 @@ const reference = entity => {
     return null
   }
 
+  if (entity && !entity.referenceId) {
+    console.warn('No referenceId on entity', entity)
+  }
+
   return {
     [REFERENCE_KEY]: entity.referenceId,
   }
@@ -235,6 +239,7 @@ const getModule = name =>
     settlement: Settlement,
     tribe: Tribe,
     owner: Owner,
+    building: Building,
   })[name]
 
 const saveSingleRecord = record => ({
@@ -411,7 +416,7 @@ const dereference = ref => {
   Message.record.warn('could not find reference for ', ref, snapshot.entities)
   return null
 }
-const dereferenceLazy = (ref, fn = () => {}) => {
+const dereferenceLazy = (ref, fn) => {
   if (!ref) {
     fn(null)
   } else {

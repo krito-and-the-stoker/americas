@@ -22,6 +22,6 @@ export default colonist => {
   if (winner.tile) {
     Colonist.beginFieldWork(colonist, winner.tile, 'food')
   } else {
-    Colonist.beginColonyWork(colonist, 'carpenters')
+    Colonist.beginColonyWork(colonist, colony.newBuildings.find(building => building.name === 'carpenters'))
   }
 }

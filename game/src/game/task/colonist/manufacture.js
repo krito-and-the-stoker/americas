@@ -20,8 +20,8 @@ const create = (colony, building, colonist) => {
     Colony.listen.productionBonus(colony, () =>
       Colony.listen.newBuildings(colony, () =>
         Colonist.listen.state(colonist, () => {
-          production = Production.production(colony, building, colonist)
-          consumption = Production.consumption(building)
+          production = Production.production(colony, building.name, colonist)
+          consumption = Production.consumption(building.name)
         })
       )
     )

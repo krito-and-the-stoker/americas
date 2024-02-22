@@ -2,6 +2,7 @@ import Triangles from 'data/triangles'
 import BuildingFactory from './factory'
 
 import Util from 'util/util'
+import Record from 'util/record'
 import Time from 'timeline/time'
 
 import Layout from 'entity/layout'
@@ -26,6 +27,7 @@ const create = colony => {
   ]
   building.destroy = initialize(building)
 
+  Record.add('building', building)
   return building
 }
 
@@ -35,6 +37,24 @@ const initialize = building => {
 	]
 }
 
+const save = building => ({
+  ...building,
+  colony: Record.reference(building.colony)
+})
+
+const load = building => {
+  Record.dereferenceLazy(building.colony, entity => {
+    building.colony = entity
+  })
+
+  Record.entitiesLoaded(() => initialize(building))
+
+  return {
+    ...building,
+  }
+}
+
+const isInteractive = () => false
 const display = () => 'Houses'
 const upgradeDisplay = () => 'House'
 const cost = () => ({
@@ -49,8 +69,10 @@ const workspace = building => 0
 
 
 export default {
-	...BuildingFactory,
+	load,
+  save,
   create,
+  isInteractive,
   initialize,
   display,
   upgradeDisplay,

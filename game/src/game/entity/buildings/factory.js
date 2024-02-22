@@ -27,10 +27,15 @@ const save = building => ({
   colony: Record.reference(building.colony)
 })
 
-const load = (building, colony) => {
+const load = building => {
+  Record.dereferenceLazy(building.colony, entity => {
+    building.colony = entity
+  })
+
+  Record.entitiesLoaded(() => initialize(building))
+
   return {
     ...building,
-  colony
   }
 }
 
@@ -49,7 +54,9 @@ const workspace = building =>
     ? BuildingData[building.name].workspace[building.level]
     : BuildingData[building.name].workspace) || 0
 
-const initialize = building => {}
+const initialize = building => {
+
+}
 
 
 const upgradeDisplay = building => {
@@ -79,6 +86,7 @@ const make = name => {
 
     initialize(building)
 
+    Record.add('building', building)
     return building
   }
 

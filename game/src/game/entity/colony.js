@@ -99,7 +99,7 @@ const update = {
 const tories = colony => {
   const colonists = colony.colonists.length
   const administrators = colony.colonists.filter(
-    colonist => colonist.work.type === 'Building' && colonist.work.building === 'townhall'
+    colonist => colonist.work.type === 'Building' && colonist.work.building?.name === 'townhall'
   ).length
 
   const percentage = Math.max(
@@ -151,7 +151,7 @@ const expertLevel = {
 const canTeach = (colony, expert) =>
   expert && expertLevel[expert] && expertLevel[expert] <= Building.level(colony, 'school')
 const canEmploy = (colony, building, expert) =>
-  colony.colonists.filter(colonist => colonist.work && colonist.work.building === building)
+  colony.colonists.filter(colonist => colonist.work && colonist.work.building?.name === building)
     .length < Building.workspace(colony, building) &&
   (building !== 'school' || canTeach(colony, expert))
 
@@ -314,8 +314,7 @@ const save = colony => ({
   mapCoordinates: colony.mapCoordinates,
   storage: Storage.save(colony.storage),
   trade: Trade.save(colony.trade),
-  buildings: colony.buildings,
-  newBuildings: colony.newBuildings.map(building => Buildings[building.name].save(building)),
+  newBuildings: colony.newBuildings.map(building => Record.reference(building)),
   layout: Layout.save(colony.layout),
   construction: Construction.save(colony.construction),
   constructionTarget: colony.constructionTarget,
@@ -328,7 +327,7 @@ const save = colony => ({
 
 const load = colony => {
   colony.type = 'colony'
-  // console.log('Loading colony', colony)
+  Message.colony.log('Loading colony', colony)
 
   const tile = MapEntity.tile(colony.mapCoordinates)
   tile.colony = colony
@@ -338,46 +337,12 @@ const load = colony => {
   colony.construction = Construction.load(colony.construction)
   colony.supportedUnits = []
   colony.layout = colony.layout ? Layout.load(colony.layout) : Layout.create()
-  colony.newBuildings = colony.newBuildings
-    ? colony.newBuildings.map(building => Buildings[building.name].load(building, colony))
-    : Util.disordered(Object.entries(colony.buildings))
-      .filter(([name, data]) => data.level > 0 || name === 'carpenters')
-      .filter(([name, data]) => name !== 'house')
-      .map(([name, data]) => {
-        if (!colony.newBuildings) {
-          colony.newBuildings = []
-        }
-        const building = Buildings[name]?.create(colony)
-
-        if (!building) {
-          Message.colony.warn('Could not upgrade building', Buildings, name, data)
-        } else {
-          building.level = data.level
-          if (data.name === 'carpenters') {
-            building.level += 1
-          }
-          colony.newBuildings.push(building)
-        }
-
-        return building
-      }).filter(x => !!x)
-  if (colony.buildings?.house.level > 0) {
-    const houses = Array(colony.buildings.house.level).fill()
-      .map(() => Buildings.house.create(colony))
-    colony.newBuildings.push(...houses)
-  }
-  Record.entitiesLoaded(() => colony.newBuildings.forEach(building => Buildings[building.name].initialize(building)))
-
-
-  // legacy games load
-  if (!colony.growth) {
-    colony.growth = 0
-  }
-  if (!colony.crosses) {
-    colony.crosses = 0
-  }
-  if (!colony.housing) {
-    colony.housing = 0
+  
+  // no map, because the dereferencing might access the newBuildings array
+  const newBuildingsData = colony.newBuildings
+  colony.newBuildings = []
+  for (const building of newBuildingsData) {
+    colony.newBuildings.push(Record.dereference(building))
   }
 
   colony.colonists.forEach((colonist, index) =>
