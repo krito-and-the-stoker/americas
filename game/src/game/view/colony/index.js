@@ -27,7 +27,6 @@ const create = colony => {
   const colonyWoodBackground = Resources.sprite('white')
   colonyWoodBackground.tint = 0x382f1f
   colonyWoodBackground.alpha = 0.7
-  window.background = colonyWoodBackground
 
   const background = ColonyBackground.create(colony)
   const originalDimensions = background.originalDimensions
@@ -40,8 +39,9 @@ const create = colony => {
 
   container.addChild(colonyWoodBackground)
   container.addChild(background.container)
-  container.addChild(tiles.container.tiles)
+  container.addChild(buildings.container.background)
   container.addChild(buildings.container.buildings)
+  container.addChild(tiles.container.tiles)
 
   container.addChild(tiles.container.colonists)
   container.addChild(buildings.container.colonists)
@@ -53,6 +53,8 @@ const create = colony => {
   mask.beginFill(0xffffff)
   mask.drawRect(0, 0, originalDimensions.x, originalDimensions.y)
   units.container.mask = mask
+  buildings.container.buildings.mask = mask
+  buildings.container.colonists.mask = mask
   container.addChild(mask)
 
   const unsubscribeResize = RenderView.updateWhenResized(({ dimensions }) => {

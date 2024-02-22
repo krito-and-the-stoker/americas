@@ -5,10 +5,12 @@ import Goods from 'data/goods'
 import Triangles from 'data/triangles/index.js'
 
 import Util from 'util/util'
+import LA from 'util/la'
 
 import Drag from 'input/drag'
 import Click from 'input/click'
 import Hover from 'input/hover'
+import Wheel from 'input/wheel'
 
 import Production from 'entity/production'
 import Unit from 'entity/unit'
@@ -22,6 +24,8 @@ import Layout from 'entity/layout'
 import JoinColony from 'interaction/joinColony'
 
 import Resources from 'render/resources'
+import RenderView from 'render/view'
+
 import Dialog from 'view/ui/dialog'
 
 import ProductionView from 'view/production'
@@ -303,27 +307,90 @@ const createBuilding = (colony, building) => {
 
 const create = colony => {
   const container = {
+    background: new PIXI.Container(),
     buildings: new PIXI.Container(),
     colonists: new PIXI.Container(),
   }
 
-  const unsubscribe = Colony.listen.newBuildings(colony, buildings =>
-    buildings.map(building => {
-      const buildingView = createBuilding(colony, building)
-      if (buildingView) {
-        buildingView.container.colonists.x = building.placement[0].position.x * WIDTH
-        buildingView.container.colonists.y = building.placement[0].position.y * HEIGHT
-        container.buildings.addChild(buildingView.container.building)
-        container.colonists.addChild(buildingView.container.colonists)
+  // const background = Resources.sprite('colonyBackground')
 
-        return () => {
-          Util.execute(buildingView.unsubscribe)
-          container.buildings.removeChild(buildingView.container.building)
-          container.colonists.removeChild(buildingView.container.colonists)
+  const background = new PIXI.Graphics();
+  background.beginFill(0x43602a, 1); // light green
+  // background.beginFill(0x41492a, 1); // the dark green
+  // background.beginFill(0x838165, 1); // the grey of the buildings floor
+  background.drawRect(0, 0, 1920, 1080); // Change these values as needed
+  background.endFill();  
+
+  container.background.addChild(background)
+
+  // capture click on background so we dont close the screen
+  const unsubscribeClick = Click.on(background)
+
+  const originalDimensions = {
+    x: background.width,
+    y: background.height,
+  }
+
+  let initialCoords = { x: 0, y: 0 }
+  let containerCoords = { x: 0, y: 0 }
+  let dragFactor = 1
+  RenderView.updateWhenResized(({ dimensions }) => {
+    dragFactor = 1920.0 / dimensions.x
+  })
+  const dragStart = (coords) => {
+    initialCoords = coords
+  }
+
+  const dragMove = (coords) => {
+    const cursorDelta = LA.multiply(dragFactor, LA.subtract(coords, initialCoords))
+    const newPosition = LA.add(containerCoords, cursorDelta)
+
+    container.buildings.position.x = newPosition.x
+    container.buildings.position.y = newPosition.y
+    container.colonists.position.x = newPosition.x
+    container.colonists.position.y = newPosition.y
+  }
+  const dragEnd = (coords) => {
+    containerCoords = LA.add(containerCoords, LA.multiply(dragFactor, LA.subtract(coords, initialCoords)))
+  }
+
+  const ZOOM_FACTOR = 0.001
+  let zoomScale = 1.0
+  const handleWheel = ({ delta, position }) => {
+    const deltaFactor = Math.exp(-ZOOM_FACTOR * delta.y)
+    zoomScale *= deltaFactor
+    container.buildings.scale.set(zoomScale)
+    container.colonists.scale.set(zoomScale)
+
+    containerCoords = LA.madd(containerCoords, dragFactor * (1 - deltaFactor) / zoomScale, LA.subtract(position, containerCoords))
+    container.buildings.position.x = containerCoords.x
+    container.buildings.position.y = containerCoords.y
+    container.colonists.position.x = containerCoords.x
+    container.colonists.position.y = containerCoords.y
+  }
+
+
+  const unsubscribe = [
+    Colony.listen.newBuildings(colony, buildings =>
+      buildings.map(building => {
+        const buildingView = createBuilding(colony, building)
+        if (buildingView) {
+          buildingView.container.colonists.x = building.placement[0].position.x * WIDTH
+          buildingView.container.colonists.y = building.placement[0].position.y * HEIGHT
+          container.buildings.addChild(buildingView.container.building)
+          container.colonists.addChild(buildingView.container.colonists)
+
+          return () => {
+            Util.execute(buildingView.unsubscribe)
+            container.buildings.removeChild(buildingView.container.building)
+            container.colonists.removeChild(buildingView.container.colonists)
+          }
         }
-      }
-    })
-  )
+      })
+    ),
+    Drag.on(background, dragStart, dragMove, dragEnd, { highlight: false }),
+    Wheel.on(handleWheel),
+  ]
 
   return {
     container,
