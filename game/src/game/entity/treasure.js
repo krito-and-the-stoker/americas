@@ -1,8 +1,8 @@
 import Binding from 'util/binding'
 
 let treasure = {
-  amount: 5000,
-  maximum: 5000,
+  amount: 1000,
+  maximum: 1000, // for automated trade
 }
 
 const initialize = () => {
