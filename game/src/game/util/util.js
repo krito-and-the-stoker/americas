@@ -107,7 +107,8 @@ const quantizedRadius = (coords, radius) =>
     )
 
 const choose = array => array[Math.floor(Math.random() * array.length)]
-const unique = (value, index, self) => self.indexOf(value) === index
+const unique = (value, index, array) => array.indexOf(value) === index
+const uniqueFn = fn => (value, index, array) => array.findIndex(other => fn(other) == fn(value)) === index
 const sum = array => array.reduce((all, single) => all + single, 0)
 const average = array => (array.length > 0 ? sum(array) / array.length : 0)
 
@@ -194,6 +195,7 @@ export default {
   quantizeUp,
   removeDuplicates,
   unique,
+  uniqueFn,
   distance,
   minDistance,
   entityDistance,

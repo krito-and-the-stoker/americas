@@ -109,6 +109,8 @@ const create = (colony, building, colonist) => {
         })
       }
     }
+
+    // other virtual goods
     if (production.type === 'bells') {
       // Treasure.spend(productionAmount * BELLS_TO_GOLD_FACTOR)
       // Storage.update(colony.productionRecord, { good: 'gold', amount: -BELLS_TO_GOLD_FACTOR * unscaledProductionAmount })

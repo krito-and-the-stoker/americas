@@ -41,6 +41,7 @@ const production = (colony, building, colonist) => {
 
   const type = ['crosses', 'bells', 'construction'].includes(good) ? good : 'good'
 
+
   return {
     amount,
     good,

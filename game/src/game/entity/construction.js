@@ -95,7 +95,7 @@ const options = colony => {
           BuildingData[building.name].name.length > building.level + 1
     )
     .map(building => createOptionIncrease(building))
-
+    .filter(Util.uniqueFn(option => option.id))
 
   const units = Object.entries(Units)
     .filter(

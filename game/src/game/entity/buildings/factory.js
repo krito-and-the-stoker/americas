@@ -80,10 +80,17 @@ const production = (building, colonist) => {
   return { amount, good }
 }
 
-const consumption = building => ({
-  good: BuildingData[building.name].consumption ? BuildingData[building.name].consumption.good : null,
-  factor: BuildingData[building.name]?.consumption?.factor ?? 1,
-})
+const consumption = building => {
+  const good = BuildingData[building.name].consumption ? BuildingData[building.name].consumption.good : null
+  const factor = BuildingData[building.name]?.consumption?.factor ?? 1
+
+  if (good) {
+    return {
+      good,
+      factor
+    }
+  }
+}
 
 const canEmploy = (building, expert) => {
   return building.colony.colonists
