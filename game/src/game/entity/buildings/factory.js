@@ -126,6 +126,7 @@ const make = name => {
   return {
     create,
     production,
+    consumption,
     load,
     save,
     initialize,

@@ -13,7 +13,6 @@ import Colony from 'entity/colony'
 const create = () => {
   return {
     none: {
-      target: 'none',
       progress: 0,
       cost: {},
       name: 'No construction',
@@ -118,8 +117,8 @@ const options = colony => {
 const construct = (colony, option) => {
   const actions = {
     addBuilding: () => {
-      Colony.addBuilding(colony, option.action.building)
-      const building = Building.get(colony, option.action.building)
+      Colony.addBuilding(colony, option.construct.building)
+      const building = Building.get(colony, option.construct.building)
       Colony.update.newBuildings(colony)
       Events.trigger('notification', {
         type: 'construction',
@@ -127,12 +126,12 @@ const construct = (colony, option) => {
         building,
       })
       Message.colony.log(
-        `${colony.name} has completed construction of a new ${Building.name(colony, option.action.building)}.`
+        `${colony.name} has completed construction of a new ${Building.name(colony, option.construct.building)}.`
       )
     },
     increaseLevel: () => {
-      const building = Building.get(colony, option.action.building)
-      building.level = Building.level(colony, option.action.building) + 1
+      const building = Building.get(colony, option.construct.building)
+      building.level = Building.level(colony, option.construct.building) + 1
       Colony.update.newBuildings(colony)
       Events.trigger('notification', {
         type: 'construction',
@@ -140,7 +139,7 @@ const construct = (colony, option) => {
         building,
       })
       Message.colony.log(
-        `${colony.name} has completed construction of ${Building.name(colony, option.action.building)}.`
+        `${colony.name} has completed construction of ${Building.name(colony, option.construct.building)}.`
       )
     },
     createUnit: () => {

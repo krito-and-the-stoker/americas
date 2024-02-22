@@ -615,7 +615,7 @@ const production = (tile, resource, colonist = null) => {
       result = Math.ceil(result)
     }
     if (colonist.state.noWood && resource !== 'wood') {
-      result -= 1
+      result -= 2
     }
     if (result < 0) {
       result = 0

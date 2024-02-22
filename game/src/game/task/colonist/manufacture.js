@@ -14,23 +14,16 @@ const BELLS_TO_GOLD_FACTOR = 10
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
 const create = (colony, building, colonist) => {
-  let production
-  let consumption
-  const unsubscribe = Unit.listen.expert(colonist.unit, () =>
-    Colony.listen.productionBonus(colony, () =>
-      Colony.listen.newBuildings(colony, () =>
-        Colonist.listen.state(colonist, () => {
-          production = Production.production(colony, building, colonist)
-          consumption = Production.consumption(building)
-        })
-      )
-    )
-  )
-
   const update = (currentTime, deltaTime) => {
+    const production = Production.production(colony, building, colonist)
+    const consumption = Production.consumption(building)
     const scale = deltaTime * PRODUCTION_BASE_FACTOR
 
+    // full scale production
     let productionAmount = scale * production.amount
+
+    // make sure we have enough goods to consume,
+    // otherweise scale down 
     if (consumption) {
       productionAmount =
         Math.min(colony.storage[consumption.good], consumption.factor * productionAmount) /
@@ -39,35 +32,38 @@ const create = (colony, building, colonist) => {
     const consumptionAmount = consumption ? productionAmount * consumption.factor : 0
     const unscaledProductionAmount = productionAmount / scale
     const unscaledConsumptionAmount = consumptionAmount / scale
-    if (consumption && production.type !== 'construction') {
-      Storage.update(colony.storage, {
-        good: consumption.good,
-        amount: -consumptionAmount,
-      })
-      Storage.update(colony.productionRecord, {
-        good: consumption.good,
-        amount: -unscaledConsumptionAmount,
-      })
-      Storage.update(colony.productionRecord, {
-        good: production.good,
-        amount: unscaledProductionAmount,
-      })
-      Storage.update(colonist.productionRecord, {
-        good: consumption.good,
-        amount: -unscaledConsumptionAmount,
-      })
-      Storage.update(colonist.productionRecord, {
-        good: production.good,
-        amount: unscaledProductionAmount,
-      })
-    }
 
+    // manufacturing
     if (production.type === 'good') {
+      if (consumption) {
+        Storage.update(colony.storage, {
+          good: consumption.good,
+          amount: -consumptionAmount,
+        })
+        Storage.update(colony.productionRecord, {
+          good: consumption.good,
+          amount: -unscaledConsumptionAmount,
+        })
+        Storage.update(colonist.productionRecord, {
+          good: consumption.good,
+          amount: -unscaledConsumptionAmount,
+        })
+      }
+      Storage.update(colony.productionRecord, {
+        good: production.good,
+        amount: unscaledProductionAmount,
+      })
+      Storage.update(colonist.productionRecord, {
+        good: production.good,
+        amount: unscaledProductionAmount,
+      })
       Storage.update(colonist.storage, {
         good: production.good,
         amount: productionAmount,
       })
     }
+
+    // construction only
     if (production.type === 'construction') {
       const construction = Colony.currentConstruction(colony)
       const totalCost = Util.sum(Object.values(construction.cost))
@@ -118,22 +114,22 @@ const create = (colony, building, colonist) => {
       // Storage.update(colony.productionRecord, { good: 'gold', amount: -BELLS_TO_GOLD_FACTOR * unscaledProductionAmount })
       Colony.update.bells(colony, productionAmount)
       Storage.update(colony.productionRecord, {
-        good: production.good,
+        good: 'bells',
         amount: productionAmount / scale,
       })
       Storage.update(colonist.productionRecord, {
-        good: production.good,
+        good: 'bells',
         amount: productionAmount / scale,
       })
     }
     if (production.type === 'crosses') {
       Colony.update.crosses(colony, productionAmount)
       Storage.update(colony.productionRecord, {
-        good: production.good,
+        good: 'crosses',
         amount: productionAmount / scale,
       })
       Storage.update(colonist.productionRecord, {
-        good: production.good,
+        good: 'crosses',
         amount: productionAmount / scale,
       })
     }
@@ -141,13 +137,9 @@ const create = (colony, building, colonist) => {
     return true
   }
 
-  const finished = () => {
-    unsubscribe()
-  }
 
   return {
     update,
-    finished,
     sort: 3,
   }
 }

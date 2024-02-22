@@ -74,9 +74,6 @@ const create = colony => {
         const want = target - colonist.storage[good]
         const amount = Math.min(want, colony.storage[good], maximumTransfer)
         if (amount > 0) {
-          // if (good === 'food') {
-          //   console.log('giving to colonist', colonist.unit.expert, Colonist.power(colonist), amount)
-          // }
           Storage.transfer(colony.storage, colonist.storage, { good, amount })
         }
       })

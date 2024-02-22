@@ -123,7 +123,6 @@ const placeBuilding = (colony, building) => {
 		const fit = Util.disordered(triangles).find(triangle => canPutLayout(colony.layout, triangle.shape, entry.x, entry.y))
 		if (fit) {
 			putLayout(colony.layout, fit.shape, entry.x, entry.y)
-			console.log('found placement', colony.name, building, entry, landValue)
 			return {
 				position: {
 					x: entry.x,
