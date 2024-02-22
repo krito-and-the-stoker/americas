@@ -55,7 +55,7 @@ function DefaultSummary() {
 					Colony.listen.construction,
 					Colony.listen.constructionTarget,
 				]),
-				Signal.select(([colony]) => colony && Colony.currentConstruction(colony))
+				Signal.select(([colony]) => colony && Colony.currentConstruction(colony)),
 			)
 		]
 	)
@@ -63,7 +63,7 @@ function DefaultSummary() {
 
 	const costSum = () => Util.sum(Object.values(construction()?.cost ?? []))
 	const cost = () => construction()?.cost
-	const progressPercentage = () => 100 * construction()?.progress / costSum()
+	const progressPercentage = () => 100 * construction()?.progress / (costSum() || 1)
 	const display = () => construction()?.display
 
 	const [bells, colonists] = Signal.create(
@@ -93,16 +93,27 @@ function DefaultSummary() {
   	Signal.select(entries => entries.map(entry => entry.unit)),
   )
 
-  const hasConstruction = () => productionSummary()?.construction > 0
+  const hasConstructors = Signal.create(
+  	colonySignal,
+  	Colony.listen.colonists,
+  	Signal.each(
+  		Colonist.listen.work
+  	),
+  	Signal.select(
+  		works => works.filter(
+  			work => work.type === 'Building' && work.building?.name === 'carpenters'
+  		).length > 0
+  	),
+  )
 
 
 	return <>
 		<div class={styles.title}>Production and Consumption</div>
 		<ProductionGoods goods={productionSummary()} sort={true} />
-		<Show when={hasConstruction()}>
+		<Show when={hasConstructors()}>
 			<div class={styles.construction} onClick={() => openConstructionDialog(colony())}>
 				<div class={styles.subtitle}>Construction</div>
-				<Show when={construction()} fallback={<i>None</i>}>
+				<Show when={construction()?.target !== 'none'} fallback={<i>None</i>}>
 					<span><i>{display()}</i></span>
 					<StorageGoods goods={cost()} />
 					<span>{progressPercentage()?.toFixed(0)}%</span>
