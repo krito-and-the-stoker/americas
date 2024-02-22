@@ -73,12 +73,12 @@ const createBuilding = (colony, building) => {
           return
         }
 
-        if (colonist?.unit && Colony.canEmploy(colony, name, colonist.unit.expert)) {
+        if (colonist?.unit && Building.canEmploy(building, colonist.unit.expert)) {
           return `Let colonist work in ${name}`
         }
 
         if (unit && unit.properties.canJoin) {
-          if (Colony.canEmploy(colony, name, unit.expert)) {
+          if (Building.canEmploy(building, unit.expert)) {
             return `Join colony and start working in ${name}`
           }
         }
@@ -156,7 +156,7 @@ const createBuilding = (colony, building) => {
         }
       })
 
-      const production = Production.production(colony, name, colonist)
+      const production = Production.production(colony, building, colonist)
       if (production) {
         const productionSprites = ProductionView.create(
           production.good,

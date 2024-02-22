@@ -150,10 +150,6 @@ const expertLevel = {
 }
 const canTeach = (colony, expert) =>
   expert && expertLevel[expert] && expertLevel[expert] <= Building.level(colony, 'school')
-const canEmploy = (colony, building, expert) =>
-  colony.colonists.filter(colonist => colonist.work && colonist.work.building?.name === building)
-    .length < Building.workspace(colony, building) &&
-  (building !== 'school' || canTeach(colony, expert))
 
 const initialize = colony => {
   colony.productionSummary = Storage.createWithProduction()
@@ -383,7 +379,6 @@ const isReachable = (colony, unit) =>
 export default {
   add,
   canFillEquipment,
-  canEmploy,
   coastalDirection,
   create,
   addBuilding,

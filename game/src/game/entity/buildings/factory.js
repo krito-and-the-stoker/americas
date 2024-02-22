@@ -1,5 +1,6 @@
 import BuildingData from 'data/buildings'
 import Triangles from 'data/triangles'
+import Goods from 'data/goods'
 
 import Util from 'util/util'
 import Record from 'util/record'
@@ -34,9 +35,7 @@ const load = building => {
 
   Record.entitiesLoaded(() => initialize(building))
 
-  return {
-    ...building,
-  }
+  return building
 }
 
 
@@ -71,6 +70,28 @@ const isInteractive = building => {
   return building.name === 'carpenters'
 }
 
+const production = (building, colonist) => {
+  const good = BuildingData[building.name].production.good
+  let amount = BuildingData[building.name].production.amount[building.level]
+  if (!colonist.state.noLuxury && colonist.unit?.expert === Goods[good].expert) {
+    amount *= 3
+  }
+
+  return { amount, good }
+}
+
+const consumption = building => ({
+  good: BuildingData[building.name].consumption ? BuildingData[building.name].consumption.good : null,
+  factor: BuildingData[building.name]?.consumption?.factor ?? 1,
+})
+
+const canEmploy = (building, expert) => {
+  return building.colony.colonists
+    .filter(colonist => colonist.work && colonist.work.building === building)
+    .length < workspace(building)
+}
+
+
 const make = name => {
   const create = colony => {
     const building = {
@@ -104,29 +125,20 @@ const make = name => {
 
   return {
     create,
+    production,
     load,
     save,
     initialize,
     display,
     upgradeDisplay,
     cost,
+    canEmploy,
     upgradeCost,
     workspace,
     isInteractive,
-    save,
-    load,
   }
 }
 
 export default {
-  make,
-  isInteractive,
-  load,
-  save,
-  initialize,
-  upgradeDisplay,
-  upgradeCost,
-  workspace,
-  save,
-  load,
+  make
 }

@@ -20,8 +20,8 @@ const create = (colony, building, colonist) => {
     Colony.listen.productionBonus(colony, () =>
       Colony.listen.newBuildings(colony, () =>
         Colonist.listen.state(colonist, () => {
-          production = Production.production(colony, building.name, colonist)
-          consumption = Production.consumption(building.name)
+          production = Production.production(colony, building, colonist)
+          consumption = Production.consumption(building)
         })
       )
     )
@@ -31,15 +31,15 @@ const create = (colony, building, colonist) => {
     const scale = deltaTime * PRODUCTION_BASE_FACTOR
 
     let productionAmount = scale * production.amount
-    if (consumption.good) {
+    if (consumption) {
       productionAmount =
         Math.min(colony.storage[consumption.good], consumption.factor * productionAmount) /
         (1.0 * consumption.factor)
     }
-    const consumptionAmount = productionAmount * consumption.factor
+    const consumptionAmount = consumption ? productionAmount * consumption.factor : 0
     const unscaledProductionAmount = productionAmount / scale
     const unscaledConsumptionAmount = consumptionAmount / scale
-    if (consumption.good && production.type !== 'construction') {
+    if (consumption && production.type !== 'construction') {
       Storage.update(colony.storage, {
         good: consumption.good,
         amount: -consumptionAmount,

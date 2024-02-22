@@ -207,7 +207,7 @@ const needsForPromotion = promotionTarget => {
 
 const production = colonist => {
   return colonist.work.type === 'Building'
-    ? Production.production(colonist.colony, colonist.work.building.name, colonist)
+    ? Production.production(colonist.colony, colonist.work.building, colonist)
     : {
         good: colonist.work.good,
         amount: Tile.production(colonist.work.tile, colonist.work.good, colonist),

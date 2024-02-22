@@ -32,11 +32,15 @@ const save = building => {
   return Buildings[building.name].save(building)
 }
 
+const canEmploy = (building, expert) => Buildings[building.name]?.canEmploy && Buildings[building.name]?.canEmploy(building, expert)
+
+
 export default {
   get,
   save,
   load,
   level,
+  canEmploy,
   name: display,
   upgradeName,
   cost,

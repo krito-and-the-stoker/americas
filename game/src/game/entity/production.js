@@ -1,22 +1,16 @@
-import Buildings from 'data/buildings.json'
-import Goods from 'data/goods.json'
-import Building from 'entity/building'
+import Buildings from 'entity/buildings'
+
 
 const production = (colony, building, colonist) => {
-  if (!Buildings[building].production) {
-    return null
+  if (!Buildings[building.name]?.production) {
+    return 0
   }
+
   if (colonist.unit?.expert === 'slave') {
     return 0
   }
 
-  const level = Building.level(colony, building)
-  const good = Buildings[building].production.good
-  const type = ['crosses', 'bells', 'construction'].includes(good) ? good : 'good'
-  let amount = Buildings[building].production.amount[level]
-  if (!colonist.state.noLuxury && colonist.unit?.expert === Goods[good].expert) {
-    amount *= 3
-  }
+  let { amount, good } = Buildings[building.name].production(building, colonist)
   if (amount > 0) {
     amount += colony.productionBonus
   }
@@ -45,6 +39,8 @@ const production = (colony, building, colonist) => {
     amount = 0
   }
 
+  const type = ['crosses', 'bells', 'construction'].includes(good) ? good : 'good'
+
   return {
     amount,
     good,
@@ -52,10 +48,14 @@ const production = (colony, building, colonist) => {
   }
 }
 
-const consumption = building => ({
-  good: Buildings[building].consumption ? Buildings[building].consumption.good : null,
-  factor: Buildings[building]?.consumption?.factor ?? 1,
-})
+const consumption = building => {
+  if (!Buildings[building.name]?.consumption) {
+    return null
+  }
+
+  return Buildings[building.name].consumption(building)
+}
+
 
 export default {
   production,

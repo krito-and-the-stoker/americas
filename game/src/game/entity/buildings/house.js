@@ -65,7 +65,7 @@ const upgradeCost = () => ({
 	wood: 25,
 	tools: 5
 })
-const workspace = building => 0
+const workspace = () => 0
 
 
 export default {
