@@ -12,8 +12,9 @@ const create = colony => {
   // const background = Resources.sprite('colonyBackground')
 
   const background = new PIXI.Graphics();
-  // background.beginFill(0x43602a, 1);
-  background.beginFill(0x41492a, 1);
+  background.beginFill(0x43602a, 1); // light green
+  // background.beginFill(0x41492a, 1); // the dark green
+  // background.beginFill(0x838165, 1); // the grey of the buildings floor
   background.drawRect(0, 0, 1920, 1080); // Change these values as needed
   background.endFill();  
 
