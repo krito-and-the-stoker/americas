@@ -17,7 +17,7 @@ const create = colony => {
     const scale = PRODUCTION_BASE_FACTOR * deltaTime
     const maximumTransfer = scale * MAXIMUM_TRANSFER
 
-    colony.colonists.forEach(colonist => {
+    const transfers = colony.colonists.map(colonist => {
       const properties = ColonistData[colonist.unit.expert] || ColonistData.default
       const consumption = properties.consumption
       const profession = Colonist.profession(colonist)
@@ -41,15 +41,47 @@ const create = colony => {
         needForGood(promotionNeeds, good)
       )
 
-      Storage.goods(colony.storage).forEach(({ good, amount }) => {
-        const want = target(good) - colonist.storage[good]
-        const transferAmount = Math.min(want, amount, maximumTransfer)
+      const packs = Storage.goods(colony.storage).map(({ good, amount }) => {
+        return {
+          good,
+          target: target(good)
+        }
+      })
 
-        if (transferAmount !== 0) {
-          Storage.transfer(colony.storage, colonist.storage, { good, amount: transferAmount })
+      return {
+        packs,
+        colonist
+      }
+    })
+
+    // these two must be different steps, because
+    // colonists produce and harvest into their personal storage
+    // so we must first have every colonist put his goods onto the big pile...
+    transfers.forEach(({ colonist, packs }) => {
+      // give back own production onto storage pile
+      packs.forEach(({ good, target }) => {
+        const want = target - colonist.storage[good]
+        if (want < 0) {
+          Storage.transfer(colony.storage, colonist.storage, { good, amount: want })
         }
       })
     })
+
+    // ... and only once we have gathered all goods, the most powerful take what they need etc.
+    transfers.forEach(({ colonist, packs }) => {
+      // take production from storage pile
+      packs.forEach(({ good, target }) => {
+        const want = target - colonist.storage[good]
+        const amount = Math.min(want, colony.storage[good], maximumTransfer)
+        if (amount > 0) {
+          // if (good === 'food') {
+          //   console.log('giving to colonist', colonist.unit.expert, Colonist.power(colonist), amount)
+          // }
+          Storage.transfer(colony.storage, colonist.storage, { good, amount })
+        }
+      })
+    })
+
 
     return true
   }

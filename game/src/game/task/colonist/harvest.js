@@ -8,7 +8,7 @@ import Unit from 'entity/unit'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
-const create = (colony, tile, good, colonist = null) => {
+const create = (colony, tile, good, colonist) => {
   if (tile.harvestedBy && colonist) {
     return {}
   }
@@ -44,6 +44,7 @@ const create = (colony, tile, good, colonist = null) => {
       good,
       amount: unscaledProduction,
     })
+
 
     return true
   }

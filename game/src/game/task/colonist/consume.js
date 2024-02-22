@@ -18,7 +18,8 @@ const fulfillNeeds = (colonist, needDescription, scale) => {
   let fulfilled = true
   
   Storage.goods(needDescription).filter(({ amount }) => amount > 0).forEach(({ good, amount }) => {
-    const want = scale * amount
+    // require 1% less to avoid rounding errors, that lead to state flipping
+    const want = 0.99 * scale * amount
     const has = colonist.storage[good]
     if (has < want) {
       fulfilled = false

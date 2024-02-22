@@ -22,15 +22,15 @@ const production = (colony, building, colonist) => {
   }
 
   if (amount > 0) {
+    if (colonist.state.hasBonus) {
+      amount += 1
+    }
     if (colonist.state.noFood) {
       amount *= 0.5
       amount = Math.floor(amount)
     }
     if (colonist.state.noWood) {
       amount -= 1
-    }
-    if (colonist.state.hasBonus) {
-      amount += 1
     }
   }
 
