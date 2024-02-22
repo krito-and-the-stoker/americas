@@ -139,5 +139,5 @@ const placeBuilding = (colony, building) => {
 
 
 export default {
-	create, load, save, placeBuilding
+	create, load, save, placeBuilding, iterate
 }

@@ -17,6 +17,7 @@ import Colony from 'entity/colony'
 import Building from 'entity/building'
 import Buildings from 'entity/buildings'
 import Construction from 'entity/construction'
+import Layout from 'entity/layout'
 
 import JoinColony from 'interaction/joinColony'
 
@@ -36,7 +37,7 @@ const OFFSET_Y = 1.5 * HEIGHT
 const PADDING_X = 64
 const PADDING_Y = 32
 
-const placementRectangle = (colony, placement) => {
+const placementRectangle = placement => {
   const data = placement.triangle
   return new PIXI.Rectangle(
     OFFSET_X + data.position.x * WIDTH - PADDING_X,
@@ -44,6 +45,60 @@ const placementRectangle = (colony, placement) => {
     data.width * WIDTH + 2 * PADDING_X,
     data.height * HEIGHT + 2 * PADDING_Y,
   )
+}
+
+const multiHitArea = array => ({
+  contains: (...args) => array.some(elem => elem?.contains(...args))
+})
+
+const hitArea = placement => {
+  const data = placement.triangle.shape
+  const points = []
+  const result = new PIXI.Polygon(points)
+
+  return multiHitArea(Layout.iterate(placement.triangle.shape).map(({ x, y, shape }) => {
+    const offset = {
+      x: PADDING_X + x * WIDTH,
+      y: PADDING_Y + y * HEIGHT,
+    }
+
+    if (shape === 1) {
+      return new PIXI.Polygon([
+        new PIXI.Point(offset.x, offset.y),
+        new PIXI.Point(offset.x, offset.y + HEIGHT),
+        new PIXI.Point(offset.x + WIDTH, offset.y),
+      ])
+    }
+    if (shape === 2) {
+      return new PIXI.Polygon([
+        new PIXI.Point(offset.x, offset.y),
+        new PIXI.Point(offset.x, offset.y + HEIGHT),
+        new PIXI.Point(offset.x + WIDTH, offset.y + HEIGHT),
+      ])
+    }
+    if (shape === 3) {
+      return new PIXI.Polygon([
+        new PIXI.Point(offset.x, offset.y + HEIGHT),
+        new PIXI.Point(offset.x + WIDTH, offset.y + HEIGHT),
+        new PIXI.Point(offset.x + WIDTH, offset.y),
+      ])
+    }
+    if (shape === 4) {
+      return new PIXI.Polygon([
+        new PIXI.Point(offset.x, offset.y),
+        new PIXI.Point(offset.x + WIDTH, offset.y + HEIGHT),
+        new PIXI.Point(offset.x + WIDTH, offset.y),
+      ])
+    }
+    if (shape === 5) {
+      return new PIXI.Rectangle(
+        offset.x,
+        offset.y,
+        WIDTH,
+        HEIGHT,
+      )
+    }
+  }))
 }
 
 const createBuilding = (colony, building) => {
@@ -54,13 +109,14 @@ const createBuilding = (colony, building) => {
 
   const name = building.name
   const unsubscribePlacement = building.placement.map(placement => {
-    const rectangle = placementRectangle(colony, placement)
+    const rectangle = placementRectangle(placement)
     if (!rectangle || !placement.position) {
       return null
     }
     const sprite = Resources.sprite('triangles', { rectangle })
     sprite.x = placement.position.x * WIDTH
     sprite.y = placement.position.y * HEIGHT
+    sprite.hitArea = hitArea(placement)
     container.building.addChild(sprite)
 
     const unsubscribeDrag = Drag.makeDragTarget(
