@@ -143,7 +143,7 @@ const construct = (colony, option) => {
       )
     },
     createUnit: () => {
-      const unit = Unit.create(option.action.unit, colony.mapCoordinates, colony.owner)
+      const unit = Unit.create(option.construct.unit, colony.mapCoordinates, colony.owner)
       Events.trigger('notification', {
         type: 'construction',
         colony,
