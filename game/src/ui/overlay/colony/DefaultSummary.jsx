@@ -113,7 +113,7 @@ function DefaultSummary() {
 		<Show when={hasConstructors()}>
 			<div class={styles.construction} onClick={() => openConstructionDialog(colony())}>
 				<div class={styles.subtitle}>Construction</div>
-				<Show when={construction()?.target !== 'none'} fallback={<i>None</i>}>
+				<Show when={display()} fallback={<i>None</i>}>
 					<span><i>{display()}</i></span>
 					<StorageGoods goods={cost()} />
 					<span>{progressPercentage()?.toFixed(0)}%</span>
