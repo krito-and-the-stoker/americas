@@ -86,10 +86,15 @@ function DefaultSummary() {
   			colony: Signal.chain(
 		  		Unit.listen.colonist,
 		  		Colonist.listen.colony,
+  			),
+  			consumption: Signal.chain(
+  				Signal.select(unit => unit.consumptionSummary),
+  				Storage.listen,
+  				Signal.select(storage => Util.sum(Storage.goods(storage).map(pack => pack.amount)))
   			)
   		}),
   	),
-  	Signal.select(entries => entries.filter(entry => !entry.colony)),
+  	Signal.select(entries => entries.filter(entry => !entry.colony && entry.consumption < 0)),
   	Signal.select(entries => entries.map(entry => entry.unit)),
   )
 
