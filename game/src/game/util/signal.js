@@ -233,7 +233,6 @@ const combine = passArgumentsToChain(listenersWithInput => {
 })
 
 const sidechain = (...args) => source(chain(...args))
-const preselect = (...args) => combine(select(...args))
 
 export default {
   create,
@@ -242,7 +241,6 @@ export default {
   effect,
   through,
   select,
-  preselect,
   chain,
   sidechain,
   each,

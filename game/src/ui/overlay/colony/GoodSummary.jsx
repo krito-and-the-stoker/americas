@@ -47,10 +47,10 @@ function GoodSummary() {
 
 	const { production, producers, manufacturing, manufacturers } = Signal.create(
 		storageChain('productionSummary'),
-		Signal.preselect({
-			production: items => items.filter(item => item.goods > 0),
-			manufacturing: items => items.filter(item => item.goods < 0),
-		}),
+		Signal.select(items => ({
+			production: items.filter(item => item.goods > 0),
+			manufacturing: items.filter(item => item.goods < 0),
+		})),
 		Signal.select({
 			production: ({ production }) => Util.sum(production?.map(item => item.goods) ?? []),
 			producers: ({ production }) => production?.map(item => item.colonist.unit),
