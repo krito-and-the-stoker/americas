@@ -2,6 +2,8 @@ import Triangles from 'data/triangles'
 import Util from 'util/util'
 import LA from 'util/la'
 
+import Tile from 'entity/tile'
+import Colony from 'entity/colony'
 
 const SIZE_X = 15
 const SIZE_Y = 15
@@ -72,7 +74,7 @@ const canPutLayout = (baseLayout, testLayout, offsetX, offsetY) => {
 	})
 }
 
-const putLayout = (baseLayout, testLayout, offsetX, offsetY) => {
+const putLayout = (baseLayout, testLayout, offsetX = 0, offsetY = 0) => {
 	return iterate(testLayout).forEach(({ shape, x, y }) => {
 		return putTriangle(baseLayout, offsetX + x, offsetY + y, shape)
 	})
@@ -137,6 +139,65 @@ const placeBuilding = (colony, building) => {
 }
 
 
+const placeWater = colony => {
+	const surrounding = Tile.diagonalNeighbors(Colony.tile(colony))
+		.filter(tile => tile.domain === 'sea')
+		.map(tile => LA.subtract(tile.mapCoordinates, colony.mapCoordinates))
+	const waterMap = create()
+	surrounding.forEach(coords => {
+		// west coast
+		if (coords.x === 1 && coords.y === 0) {
+			iterate(waterMap).forEach(({ x, y }) => {
+				if (x === SIZE_X - 1) {
+					set(waterMap, x, y, 3.5 * Math.random())
+				}
+			})
+		}
+		// south coast
+		if (coords.x === 0 && coords.y === 1) {
+			iterate(waterMap).forEach(({ x, y }) => {
+				if (y === SIZE_Y - 1) {
+					set(waterMap, x, y, 3.5 * Math.random())
+				}
+			})
+		}
+	})
+
+	// grow water
+	let growMore = true
+	while(growMore) {
+		growMore = false
+		iterate(waterMap).forEach(({ x, y, shape }) => {
+			if (shape > 1) {
+				if (get(waterMap, x + 1, y) < shape - 1) {
+					growMore = true
+					set(waterMap, x + 1, y, shape - 1)
+				}
+				if (get(waterMap, x - 1, y) < shape - 1) {
+					growMore = true
+					set(waterMap, x - 1, y, shape - 1)
+				}
+				if (get(waterMap, x, y + 1) < shape - 1) {
+					growMore = true
+					set(waterMap, x, y + 1, shape - 1)
+				}
+				if (get(waterMap, x, y - 1) < shape - 1) {
+					growMore = true
+					set(waterMap, x, y - 1, shape - 1)
+				}
+			}
+		})
+	}
+
+	iterate(waterMap).forEach(({ x, y, shape}) => {
+		set(waterMap, x, y, shape > 0 ? 5 : 0)
+	})
+
+	putLayout(colony.layout, waterMap)
+	return waterMap
+}
+
+
 export default {
-	create, load, save, placeBuilding, iterate
+	create, load, save, iterate, placeBuilding, placeWater
 }

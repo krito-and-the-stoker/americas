@@ -31,6 +31,7 @@ function ColonyComponent() {
 	const reflow = colony => {
 		console.log(colony.newBuildings)
 		colony.layout = Layout.create()
+		colony.waterMap = Layout.placeWater(colony)
 		colony.newBuildings.forEach(building => {
 			building.placement = building.placement.map(() => Layout.placeBuilding(colony, building))
 		})

@@ -263,6 +263,7 @@ const create = (coords, owner) => {
   colony.storage = Storage.create()
   colony.trade = Storage.create()
 
+  colony.waterMap = Layout.placeWater(colony)
   colony.newBuildings.push(Buildings.carpenters.create(colony))
 
   const tile = MapEntity.tile(coords)
