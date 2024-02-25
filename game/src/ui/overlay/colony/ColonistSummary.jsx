@@ -22,13 +22,12 @@ function ColonistSummary() {
 		Signal.select(data => data?.colonist)
 	)
 
-	const [unit, expert, properties] = Signal.create(
+	const [unit, properties] = Signal.create(
 		Hover.listen.data,
 		Signal.select(data => data?.colonist),
 		Colonist.listen.unit,
 		[
 			Signal.through,
-			Unit.listen.expert,
 			Unit.listen.properties,
 		]
 	)
@@ -50,11 +49,11 @@ function ColonistSummary() {
 		Signal.select(data => data?.colonist),
 		Colonist.listen.state,
 		Signal.select({
-      noFood: state => state.noFood,
-      noWood: state => state.noWood,
-      noLuxury: state => state.noLuxury,
-      isPromoting: state => state.isPromoting,
-      hasBonus: state => state.hasBonus,
+			noFood: state => state.noFood,
+			noWood: state => state.noWood,
+			noLuxury: state => state.noLuxury,
+			isPromoting: state => state.isPromoting,
+			hasBonus: state => state.hasBonus,
 		})
 	)
 
