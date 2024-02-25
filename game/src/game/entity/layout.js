@@ -93,8 +93,8 @@ const landValueMap = (colony, building) => {
 		otherBuilding.placement.forEach(place => {
 			const center = place.position
 
-			const keepDistance = (center, entry) => 3 / (1.0 + LA.sqDistance(center, entry))
-			const attraction = (center, entry) => 4 / (2.0 + LA.sqDistance(center, entry))
+			const keepDistance = (center, entry) => 3.0 / (1.0 + LA.sqDistance(center, entry))
+			const attraction = (center, entry) => 4.5 / (2.0 + LA.sqDistance(center, entry))
 			const buildingExtra = (center, entry) => (
 				otherBuilding.name === 'house' ?
 					0

@@ -111,7 +111,6 @@ function DefaultSummary() {
   	),
   )
 
-
 	return <>
 		<div class={styles.title}>Production and Consumption</div>
 		<ProductionGoods goods={productionSummary()} sort={true} />

@@ -33,6 +33,18 @@ const expand = fn => (...args) => {
 }
 
 
+function allowNoInput(listenerMaybeInput) {
+  return (arg0, arg1) => {
+    if (Util.isFunction(arg0)) {
+      return listenerMaybeInput(null, arg0)
+    }
+
+    return listenerMaybeInput(arg0, arg1)
+  }
+}
+
+
+
 // Create a signal that can be used with solid
 // Expects a listener with no input
 // Example:
@@ -45,7 +57,7 @@ const create = expand(passArgumentsToChain(listenerNoInput => {
     setSignal(value)
   })
 
-  onCleanup(() => Util.execute(cleanup))
+  onCleanup(() => Util.execute(cleanup, true))
 
   return signal
 }))
@@ -85,21 +97,7 @@ const chain = expand((listenerMaybeInput, ...args) => {
     : listenerMaybeInput(arg0, value => (value !== undefined && value !== null) ? listenerWithInput(value, arg1) : arg1())
 })
 
-// Allows to statically bind an input
-// Example:
-// Signal.bind(colonist, Colonist.listen.unit)
-// Will listen to the unit of a colonist.
-//
-// All functions support signal splitting using arrays:
-// bind(colonist, [Colonist.listen.unit, Colonist.listen.expert])
-// will return an array of bound listeners,
-// that can be fed everywhere a listener is expected
-function bind(entity, listenerWithInput) {
-  if (Array.isArray(listenerWithInput)) {
-    return listenerWithInput.map(l => bind(entity, l))
-  }
-  return listenerWithInput.bind(null, entity)
-}
+
 
 // Acts as a pass through listener for chaining:
 // Sometimes we want to chain a signal with multiple things,
@@ -110,14 +108,8 @@ function through(value, resolve) {
   return resolve(value)
 }
 
-function emit(value) {
-  return (arg0, arg1) => {
-    if (Util.isFunction(arg0)) {
-      arg0(value)
-    } else {
-      arg1(value)
-    }
-  }
+const emit = (value) => {
+  return allowNoInput((_, fn) => fn(value))
 }
 
 function source(listenerNoInput) {
@@ -125,7 +117,8 @@ function source(listenerNoInput) {
 }
 
 
-const select = expand(mapping => {
+const basicEquality = (a, b) => a === b
+const selectSimple = expand(mapping => {
   return (value, resolve) => {
     if (Util.isFunction(value)) {
       console.error('Signal.select expects input, none given, mapping bypassed.')
@@ -136,28 +129,101 @@ const select = expand(mapping => {
   }
 })
 
-function effect(effect) {
-  return (arg0, arg1) => {    
-    if (Util.isFunction(arg0)) {
-      effect()
-      return arg0()
-    }
+// this cannot work at the moment:
+// when the signal for equality is not reached,
+// because the signal died previously due to becoming null,
+// the equality is never called and when the signal has value again,
+// it has no way of knowing that it was null before and needs to fire now.
+// For example, when a signal goes from '1' -> null -> '1',
+// the second '1' will not be fired, because it is equal to the first '1'
+const equality = (equals = basicEquality) => {
+  let lastValue
 
-    effect(arg0)
-    return arg1(arg0)
+  const rememberLastValue = value => final => {
+    if (final) {
+      lastValue = undefined
+    } else {
+      lastValue = value
+    }
+  }
+
+  return (value, resolve) => {
+    if (!equals(lastValue, value)) {
+      return [
+        rememberLastValue(value),
+        resolve(value),
+      ]
+    }
   }
 }
 
+// const select = (mapping, equals = basicEquality) => chain(selectSimple(mapping), equality(equals))
+const select = selectSimple
+
+
+// executes this function as a side effect
+function effect(sideEffect) {
+  return (arg0, arg1) => {    
+    if (Util.isFunction(arg0)) {
+      return [
+        sideEffect(),
+        arg0(),
+      ]
+    }
+
+    return [
+      sideEffect(arg0),
+      arg1(arg0),
+    ]
+  }
+}
+
+// awaits the function given
+const awaitFn = expand(asyncFunction => {
+  return allowNoInput((value, resolve) => {
+    let nextCleanup = null
+    let shouldResolve = true
+    const cleanup = final => {
+      Util.execute(nextCleanup, final)
+      nextCleanup = null
+      shouldResolve = false
+    }
+
+    asyncFunction(value).then(result => {
+      if (shouldResolve) {
+        nextCleanup = resolve(result)
+      }
+    })
+
+    return cleanup
+  })
+})
+
+// log the signal at any point
 const log = effect(value => console.log('Signal.log:', value))
 
+// executes a listener onto each value of an array
+// For example:
+// Signal.chain(
+//   Signal.emit([1, 2, 3])
+//   Signal.each(
+//     Signal.select(number => number * 2)
+//   ),
+//   Signal.log // [2, 4, 6]
+// )
 const each = passArgumentsToChain(listenerWithInput => {
   return (input, resolve) => {
     const values = []
     let updateReady = false
-    let pendingResolve = null
+    let pendingCleanup = null
+
+    const cleanup = final => {
+      Util.execute(pendingCleanup, final)
+      pendingCleanup = null
+    }      
 
     const updateItem = (value, i) => {
-      Util.execute(pendingResolve)
+      cleanup()
       values[i] = value
 
       if (!updateReady) {
@@ -169,21 +235,34 @@ const each = passArgumentsToChain(listenerWithInput => {
 
     const unsubscribe = input.map((item, i) => listenerWithInput(item, value => updateItem(value, i)))
     updateReady = true
-    pendingResolve = resolve(values.filter(x => x !== undefined && x !== null))
+    pendingCleanup = resolve(values.filter(x => x !== undefined && x !== null))
 
-    return unsubscribe
+    return [unsubscribe, cleanup]
   }
 })
 
+
+// combines an array or object one level deep into a single signal
+// Example:
+// Signal.combine([
+//   Signal.emit(1),
+//   Signal.emit(2),
+// ])
+// -> [1, 2]
 const combine = passArgumentsToChain(listenersWithInput => {
   if (Array.isArray(listenersWithInput)) {
-    return (input, resolve) => {
+    return allowNoInput((input, resolve) => {
       const values = []
       let updateReady = false
-      let pendingResolve = null
+      let pendingCleanup = null
+
+      const cleanup = final => {
+        Util.execute(pendingCleanup, final)
+        pendingCleanup = null
+      }
 
       const updateItem = (value, i) => {
-        Util.execute(pendingResolve)
+        cleanup()
         values[i] = value
 
         if (!updateReady) {
@@ -195,20 +274,25 @@ const combine = passArgumentsToChain(listenersWithInput => {
 
       const unsubscribe = listenersWithInput.map((listener, i) => listener(input, value => updateItem(value, i)))
       updateReady = true
-      pendingResolve = resolve(values)
+      pendingCleanup = resolve(values)
 
-      return unsubscribe
-    }
+      return [unsubscribe, cleanup]
+    })
   }
 
   if (isObject(listenersWithInput)) {
-    return (input, resolve) => {
+    return allowNoInput((input, resolve) => {
       const values = {}
       let updateReady = false
-      let pendingResolve = null
+      let pendingCleanup = null
+
+      const cleanup = final => {
+        Util.execute(pendingCleanup, final)
+        pendingCleanup = null
+      }
 
       const updateItem = (value, key) => {
-        Util.execute(pendingResolve)
+        cleanup()
         values[key] = value
 
         if (!updateReady) {
@@ -221,10 +305,10 @@ const combine = passArgumentsToChain(listenersWithInput => {
       const unsubscribe = Object.entries(listenersWithInput)
         .map(([key, listener]) => listener(input, value => updateItem(value, key)))
       updateReady = true
-      pendingResolve = resolve(values)
+      pendingCleanup = resolve(values)
 
-      return unsubscribe
-    }
+      return [unsubscribe, cleanup]
+    })
   }
 
 
@@ -234,9 +318,42 @@ const combine = passArgumentsToChain(listenersWithInput => {
 
 const sidechain = (...args) => source(chain(...args))
 
+// create a basic listener object with initial value passed in
+// myNumber = Signal.basic(5)
+// myNumber.listen(value => console.log(value)) // prints 5
+// myNumber.update(10) // prints 10
+// Can be used in signal chain
+// Signal.create(myNumber.listen, Signal.log) // will log whenever the number is updated
+const basic = initialValue => {
+  let currentValue = initialValue
+  let listeners = []
+
+  const listen = fn => {
+    const cleanup = fn(currentValue)
+
+    listeners.push({
+      cleanup,
+      fn
+    })
+  }
+
+  const update = newValue => {
+    currentValue = newValue
+    listeners.forEach(listener => {
+      Util.execute(listener.cleanup)
+      listener.cleanup = listener.fn(currentValue)
+    })
+  }
+
+  return {
+    listen,
+    update
+  }
+}
+
+
 export default {
   create,
-  bind,
   emit,
   effect,
   through,
@@ -247,4 +364,6 @@ export default {
   combine,
   source,
   log,
+  basic,
+  await: awaitFn,
 }
