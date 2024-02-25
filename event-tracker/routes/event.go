@@ -1,12 +1,43 @@
 package routes
 
 import (
-    "context"
     "encoding/json"
     "net/http"
     "time"
+    "strings"
+    "os"
     "log"
+    "io/ioutil"
+    "fmt"
 )
+
+func FetchLocation(ip string) (GeoLocation, error) {
+    var geoLocation GeoLocation
+    apiKey := os.Getenv("GEOLOCATION_API_KEY")
+    url := fmt.Sprintf("https://api.ipgeolocation.io/ipgeo?apiKey=%s&ip=%s", apiKey, ip)
+    response, err := http.Get(url)
+    if err != nil {
+        return geoLocation, err
+    }
+    defer response.Body.Close()
+
+    if response.StatusCode != http.StatusOK {
+        return geoLocation, fmt.Errorf("Failed to fetch location: %s", response.Status)
+    }
+
+    body, err := ioutil.ReadAll(response.Body)
+    if err != nil {
+        return geoLocation, err
+    }
+
+    fmt.Printf("Response (%d): %s\n", response.StatusCode, body)
+
+    if err := json.Unmarshal(body, &geoLocation); err != nil {
+        return geoLocation, err
+    }
+
+    return geoLocation, nil
+}
 
 // HandleEvent is responsible for handling the /event route
 func (es *EventService) HandleEvent(w http.ResponseWriter, r *http.Request) {
@@ -24,12 +55,18 @@ func (es *EventService) HandleEvent(w http.ResponseWriter, r *http.Request) {
 
     event.Timestamp = time.Now()
 
-    // Insert a single document
-    insertResult, err := es.Collection.InsertOne(context.Background(), event)
+    ip := strings.Split(r.RemoteAddr, ":")[0]
+    geoLocation, err := FetchLocation(ip)
     if err != nil {
-        log.Fatal(err) // Or handle the error more gracefully
+        log.Println("Failed to fetch location: ", err)
+    }
+    event.Location = geoLocation
+
+    // Insert document
+    _, err = es.Collection.InsertOne(r.Context(), event)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
     }
 
-    log.Println("Inserted a single document: ", insertResult.InsertedID)
-    json.NewEncoder(w).Encode(event)
+    w.WriteHeader(http.StatusOK)
 }

@@ -6,7 +6,7 @@ services:
     volumes:
       - mongo-data:/data/db
     env_file:
-      - .env.mongodb
+      - .env.backend
     command: mongod --quiet --logpath /dev/null
 
   event-tracker:
@@ -14,7 +14,7 @@ services:
     depends_on:
       - database
     env_file:
-      - .env.mongodb
+      - .env.backend
     command: ./main
 
   assets:

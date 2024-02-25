@@ -15,11 +15,19 @@ type EventService struct {
     Prefix string
 }
 
-// Event represents the structure of our resource
+
+type GeoLocation struct {
+    Country string `json:"country_name"`
+    Continent  string `json:"continent_name"`
+    City        string `json:"city"`
+}
+
+
 type Event struct {
     Name      string `json:"name"`
     UserId    string `json:"userId"`
     Timestamp time.Time `json:"timestamp"`
+    Location  GeoLocation `json:"location"`
 }
 
 func NewEventService(collection *mongo.Collection, prefix string) *EventService {

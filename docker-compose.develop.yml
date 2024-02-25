@@ -74,7 +74,7 @@ services:
     volumes:
       - mongo-data:/data/db
     env_file:
-      - .env.mongodb
+      - .env.backend
     command: mongod --quiet --logpath /dev/null
 
   event-tracker:
@@ -85,7 +85,7 @@ services:
       - ./event-tracker:/app
       - go-build:/go/pkg/mod
     env_file:
-      - .env.mongodb
+      - .env.backend
     command: air
 
 volumes:

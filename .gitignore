@@ -1,6 +1,6 @@
 .obsidian
 
-
+.env*
 *.sublime-*
 
 .DS_Store

@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"context"
     "net/http"
     "encoding/json"
 
@@ -18,22 +17,19 @@ func (es *EventService) HandleReport(w http.ResponseWriter, r *http.Request) {
 	// Define a slice to hold the results
 	var events []Event
 
-	// Create a context for the MongoDB query
-	ctx := context.TODO()
-
 	// Set options to limit the number of results to 50
 	opts := options.Find().SetLimit(50)
 
 	// Query the database
-	cursor, err := es.Collection.Find(ctx, bson.D{{}}, opts)
+	cursor, err := es.Collection.Find(r.Context(), bson.D{{}}, opts)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(r.Context())
 
 	// Iterate over the cursor and decode each document
-	for cursor.Next(ctx) {
+	for cursor.Next(r.Context()) {
 		var event Event
 		err := cursor.Decode(&event)
 		if err != nil {

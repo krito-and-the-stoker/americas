@@ -48,7 +48,7 @@ services:
   database:
     image: mongo
     env_file:
-      - .env.mongodb
+      - .env.backend
     volumes:
       - /root/database/live:/data/db
     command: mongod --quiet --logpath /dev/null
@@ -59,7 +59,7 @@ services:
     depends_on:
       - database
     env_file:
-      - .env.mongodb
+      - .env.backend
     command: ./main
     restart: always
 
