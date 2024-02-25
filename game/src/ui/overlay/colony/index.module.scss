@@ -1,50 +1,51 @@
 .name {
-	font-size: 60px;
-	position: fixed;
-	top: 50px;
-	left: 50vw;
-	transform: translateX(-50%);
-	color: white;
-	pointer-events: none;
+    font-size: 60px;
+    position: fixed;
+    top: 50px;
+    left: 50vw;
+    transform: translateX(-50%);
+    color: white;
+    pointer-events: none;
 }
 
 .hoverBox {
-	position: fixed;
-	left: calc((100vw - 0.9 * min(100vw / 1920, 100vh / 1080) * 1920) / 2);
-	bottom: calc((100vh - 0.685 * min(100vw / 1920, 100vh / 1080) * 1080) / 2);
-  background-color: rgba(240, 233, 201, 0.85);
-  font-size: 20px;
-  padding: 10px;
-  box-shadow: 0 0 5px 5px rgba(240, 233, 201, 0.85);
+    position: fixed;
+    left: calc((100vw - 0.9 * min(100vw / 1920, 100vh / 1080) * 1920) / 2);
+    bottom: calc((100vh - 0.685 * min(100vw / 1920, 100vh / 1080) * 1080) / 2);
+    background-color: rgba(240, 233, 201, 0.85);
+    font-size: 20px;
+    padding: 10px;
+    box-shadow: 0 0 5px 5px rgba(240, 233, 201, 0.85);
 
-  max-width: 33vw;
+    max-width: 33vw;
 
-  opacity: 1;
-  transition: opacity 0.15s ease;
+    opacity: 1;
+    transition: opacity 0.15s ease;
 }
 
 .hidden {
-	opacity: 0.2;
+    opacity: 0.2;
 }
 
 .debug {
-	position: fixed;
-	left: calc((100vw - 0.9 * min(100vw / 1920, 100vh / 1080) * 1920) / 2);
-	top: calc((100vh - 0.9 * min(100vw / 1920, 100vh / 1080) * 1080) / 2);
-  background-color: rgba(240, 233, 201, 0.85);
-  font-size: 20px;
-  padding: 10px;
-  box-shadow: 0 0 5px 5px rgba(240, 233, 201, 0.85);
+    display: none;
+    position: fixed;
+    left: calc((100vw - 0.9 * min(100vw / 1920, 100vh / 1080) * 1920) / 2);
+    top: calc((100vh - 0.9 * min(100vw / 1920, 100vh / 1080) * 1080) / 2);
+    background-color: rgba(240, 233, 201, 0.85);
+    font-size: 20px;
+    padding: 10px;
+    box-shadow: 0 0 5px 5px rgba(240, 233, 201, 0.85);
 
-  max-width: 33vw;
+    max-width: 33vw;
 
-  opacity: 1;
-  transition: opacity 0.15s ease;
+    opacity: 1;
+    transition: opacity 0.15s ease;
 
-  a {
-  	cursor: pointer;
-  	&:hover {
-  		text-decoration: underline;
-  	}
-  }
+    a {
+        cursor: pointer;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }
