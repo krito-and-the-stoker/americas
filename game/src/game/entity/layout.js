@@ -5,8 +5,9 @@ import LA from 'util/la'
 import Tile from 'entity/tile'
 import Colony from 'entity/colony'
 
-const SIZE_X = 15
-const SIZE_Y = 15
+const SIZE_X = 20
+const SIZE_Y = 20
+const WATER_REACH = 8
 
 const create = () => {
 	// SIZE_X * SIZE_Y array of zeros
@@ -83,13 +84,20 @@ const putLayout = (baseLayout, testLayout, offsetX = 0, offsetY = 0) => {
 // building is currently not used, but most likely it will be
 const landValueMap = (colony, building) => {
 	const landValue = create()
-	const iterateLandValue = iterate(landValue)
 
 	// fixed good value at center
-	iterateLandValue.forEach(entry => {
-		set(landValue, entry.x, entry.y, Math.random())
+	iterate(landValue).forEach(entry => {
+		const { x, y } = entry
+		const neighbors = [
+			get(colony.waterMap, x, y) > 0,
+			get(colony.waterMap, x, y - 1) > 0,
+			get(colony.waterMap, x + 1, y) > 0,
+			get(colony.waterMap, x, y + 1) > 0,
+			get(colony.waterMap, x - 1, y) > 0,
+		].filter(x => !!x)
+
+		set(landValue, entry.x, entry.y, 0.1 * Math.random() * (neighbors.length + 1))
 	})
-	set(landValue, Math.floor(SIZE_X / 2), Math.floor(SIZE_Y / 2), 5)
 
 	colony.newBuildings.forEach(otherBuilding => {
 		otherBuilding.placement.forEach(place => {
@@ -101,12 +109,12 @@ const landValueMap = (colony, building) => {
 				otherBuilding.name === 'house' ?
 					0
 				: otherBuilding.name === 'church' ?
-					1
+					1.0
 				: otherBuilding.name === 'townhall' ?
-					1
+					1.0
 				: 0) / (1.0 + LA.sqDistance(center, entry))
 
-			iterateLandValue.forEach(entry => {
+			iterate(landValue).forEach(entry => {
 				update(landValue, entry.x, entry.y, value =>
 					value + attraction(center, entry) - keepDistance(center, entry) + buildingExtra(center, entry)
 				)
@@ -144,23 +152,56 @@ const placeWater = colony => {
 		.filter(tile => tile.domain === 'sea')
 		.map(tile => LA.subtract(tile.mapCoordinates, colony.mapCoordinates))
 	const waterMap = create()
+	let filterFns = []
 	surrounding.forEach(coords => {
-		// west coast
+		// east coast
 		if (coords.x === 1 && coords.y === 0) {
-			iterate(waterMap).forEach(({ x, y }) => {
-				if (x === SIZE_X - 1) {
-					set(waterMap, x, y, 3.5 * Math.random())
-				}
-			})
+			filterFns.push(({ x }) => x === SIZE_X - 1)
 		}
 		// south coast
 		if (coords.x === 0 && coords.y === 1) {
-			iterate(waterMap).forEach(({ x, y }) => {
-				if (y === SIZE_Y - 1) {
-					set(waterMap, x, y, 3.5 * Math.random())
-				}
-			})
+			filterFns.push(({ y }) => y === SIZE_Y - 1)
 		}
+		// west coast
+		if (coords.x === -1 && coords.y === 0) {
+			filterFns.push(({ x }) => x === 0)
+		}
+		// north coast
+		if (coords.x === 0 && coords.y === -1) {
+			filterFns.push(({ y }) => y === 0)
+		}
+
+		// put diagonal water only if no other present
+		if (filterFns.length <= 1) {
+			// south west coast
+			if (coords.x === -1 && coords.y === 1) {
+				filterFns.push(({ x, y }) => x === 0 && y > 0.66 * SIZE_Y)
+				filterFns.push(({ x, y }) => x < 0.33 * SIZE_X && y === SIZE_Y - 1)
+			}
+
+			// south east coast
+			if (coords.x === 1 && coords.y === 1) {
+				filterFns.push(({ x, y }) => x === SIZE_X - 1 && y > 0.66 * SIZE_Y)
+				filterFns.push(({ x, y }) => x > 0.66 * SIZE_X && y === SIZE_Y - 1)
+			}
+
+			// north west coast
+			if (coords.x === -1 && coords.y === -1) {
+				filterFns.push(({ x, y }) => x === 0 && y < 0.33 * SIZE_Y)
+				filterFns.push(({ x, y }) => x < 0.33 * SIZE_X && y === 0)
+			}
+
+			// north east coast
+			if (coords.x === 1 && coords.y === -1) {
+				filterFns.push(({ x, y }) => x === SIZE_X - 1 && y < 0.33 * SIZE_Y)
+				filterFns.push(({ x, y }) => x > 0.66 * SIZE_X && y === 0)
+			}
+		}
+
+	})
+
+	iterate(waterMap).filter(({ x, y }) => filterFns.some(fn => fn(({ x, y })))).forEach(({ x, y }) => {
+		set(waterMap, x, y, 1 + WATER_REACH * Math.random())
 	})
 
 	// grow water
@@ -190,8 +231,49 @@ const placeWater = colony => {
 	}
 
 	iterate(waterMap).forEach(({ x, y, shape}) => {
-		set(waterMap, x, y, shape > 0 ? 5 : 0)
+		set(waterMap, x, y, shape >= 1 ? 5 : shape)
 	})
+	iterate(waterMap)
+		.filter(({ shape }) => shape < 1)
+		.forEach(({ x, y }) => {
+			const neighbors = [
+				get(waterMap, x, y - 1) >= 5,
+				get(waterMap, x + 1, y) >= 5,
+				get(waterMap, x, y + 1) >= 5,
+				get(waterMap, x - 1, y) >= 5,
+			]
+			const [north, east, south, west] = neighbors
+			const neighorsCount = neighbors.filter(x => !!x).length
+
+			// surrounded by water becomes water
+			if (neighorsCount === 4) {
+				set(waterMap, x, y, 5)
+				return null
+			}
+
+			if (neighorsCount === 2) {
+				if (north && west) {
+					set(waterMap, x, y, 1)
+					return null
+				}
+				if (west && south) {
+					set(waterMap, x, y, 2)
+					return null
+				}
+				if (south && east) {
+					set(waterMap, x, y, 3)
+					return null
+				}
+				if (east && north) {
+					set(waterMap, x, y, 4)
+					return null
+				}
+			}
+
+			// default to become land
+			set(waterMap, x, y, 0)
+		})
+
 
 	putLayout(colony.layout, waterMap)
 	return waterMap

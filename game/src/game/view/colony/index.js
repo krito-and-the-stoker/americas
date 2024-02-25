@@ -40,6 +40,7 @@ const create = colony => {
   container.addChild(colonyWoodBackground)
   container.addChild(background.container)
   container.addChild(buildings.container.background)
+  container.addChild(buildings.container.water)
   container.addChild(buildings.container.buildings)
   container.addChild(tiles.container.tiles)
 
@@ -55,6 +56,7 @@ const create = colony => {
   units.container.mask = mask
   buildings.container.buildings.mask = mask
   buildings.container.colonists.mask = mask
+  buildings.container.water.mask = mask
   container.addChild(mask)
 
   const unsubscribeResize = RenderView.updateWhenResized(({ dimensions }) => {

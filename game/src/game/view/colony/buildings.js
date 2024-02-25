@@ -1,8 +1,7 @@
 import * as PIXI from 'pixi.js'
 
-import BuildingData from 'data/buildings'
 import Goods from 'data/goods'
-import Triangles from 'data/triangles/index.js'
+import Water from 'data/triangles/water'
 
 import Util from 'util/util'
 import LA from 'util/la'
@@ -41,13 +40,12 @@ const OFFSET_Y = 1.5 * HEIGHT
 const PADDING_X = 64
 const PADDING_Y = 32
 
-const placementRectangle = placement => {
-  const data = placement.triangle
+const placementRectangle = triangle => {
   return new PIXI.Rectangle(
-    OFFSET_X + data.position.x * WIDTH - PADDING_X,
-    OFFSET_Y + data.position.y * HEIGHT - PADDING_Y,
-    data.width * WIDTH + 2 * PADDING_X,
-    data.height * HEIGHT + 2 * PADDING_Y,
+    OFFSET_X + triangle.position.x * WIDTH - PADDING_X,
+    OFFSET_Y + triangle.position.y * HEIGHT - PADDING_Y,
+    triangle.width * WIDTH + 2 * PADDING_X,
+    triangle.height * HEIGHT + 2 * PADDING_Y,
   )
 }
 
@@ -56,10 +54,6 @@ const multiHitArea = array => ({
 })
 
 const hitArea = placement => {
-  const data = placement.triangle.shape
-  const points = []
-  const result = new PIXI.Polygon(points)
-
   return multiHitArea(Layout.iterate(placement.triangle.shape).map(({ x, y, shape }) => {
     const offset = {
       x: PADDING_X + x * WIDTH,
@@ -113,7 +107,7 @@ const createBuilding = (colony, building) => {
 
   const name = building.name
   const unsubscribePlacement = building.placement.map(placement => {
-    const rectangle = placementRectangle(placement)
+    const rectangle = placementRectangle(placement.triangle)
     if (!rectangle || !placement.position) {
       return null
     }
@@ -309,16 +303,37 @@ const create = colony => {
     background: new PIXI.Container(),
     buildings: new PIXI.Container(),
     colonists: new PIXI.Container(),
+    water: new PIXI.Container(),
   }
 
-  // const background = Resources.sprite('colonyBackground')
+  if (colony.waterMap) {
+    Layout.iterate(colony.waterMap).forEach(({ x, y, shape }) => {
+      let triangles = []
+      if (shape > 0 && shape < 5) {
+        triangles = [Water[shape - 1]]
+      }
+      if (shape === 5) {
+        triangles = [Water[0], Water[2]]
+      }
 
+      triangles.forEach(triangle => {
+        const rectangle = placementRectangle(triangle)
+        const sprite = Resources.sprite('triangles', { rectangle })
+        sprite.x = x * WIDTH
+        sprite.y = y * HEIGHT
+        container.water.addChild(sprite)
+      })
+    })
+  }
+
+
+  // const background = Resources.sprite('colonyBackground')
   const background = new PIXI.Graphics();
   background.beginFill(0x43602a, 1); // light green
   // background.beginFill(0x41492a, 1); // the dark green
   // background.beginFill(0x838165, 1); // the grey of the buildings floor
   background.drawRect(0, 0, 1920, 1080); // Change these values as needed
-  background.endFill();  
+  background.endFill();
 
   container.background.addChild(background)
 
@@ -348,6 +363,8 @@ const create = colony => {
     container.buildings.position.y = newPosition.y
     container.colonists.position.x = newPosition.x
     container.colonists.position.y = newPosition.y
+    container.water.position.x = newPosition.x
+    container.water.position.y = newPosition.y
   }
   const dragEnd = (coords) => {
     containerCoords = LA.add(containerCoords, LA.multiply(dragFactor, LA.subtract(coords, initialCoords)))
@@ -360,16 +377,20 @@ const create = colony => {
     zoomScale *= deltaFactor
     container.buildings.scale.set(zoomScale)
     container.colonists.scale.set(zoomScale)
+    container.water.scale.set(zoomScale)
 
     containerCoords = LA.madd(containerCoords, dragFactor * (1 - deltaFactor) / zoomScale, LA.subtract(position, containerCoords))
     container.buildings.position.x = containerCoords.x
     container.buildings.position.y = containerCoords.y
     container.colonists.position.x = containerCoords.x
     container.colonists.position.y = containerCoords.y
+    container.water.position.x = containerCoords.x
+    container.water.position.y = containerCoords.y
   }
 
 
   const unsubscribe = [
+    unsubscribeClick,
     Colony.listen.newBuildings(colony, buildings =>
       buildings.map(building => {
         const buildingView = createBuilding(colony, building)

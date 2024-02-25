@@ -32,9 +32,12 @@ function ColonyComponent() {
 		console.log(colony.newBuildings)
 		colony.layout = Layout.create()
 		colony.waterMap = Layout.placeWater(colony)
-		colony.newBuildings.forEach(building => {
+		const buildings = colony.newBuildings
+		colony.newBuildings = []
+		for (const building of buildings) {
 			building.placement = building.placement.map(() => Layout.placeBuilding(colony, building))
-		})
+			colony.newBuildings.push(building)
+		}
 
 		Colony.update.newBuildings(colony)
 	}

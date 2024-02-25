@@ -313,6 +313,7 @@ const save = colony => ({
   trade: Trade.save(colony.trade),
   newBuildings: colony.newBuildings.map(building => Record.reference(building)),
   layout: Layout.save(colony.layout),
+  waterMap: Layout.save(colony.waterMap),
   construction: Construction.save(colony.construction),
   constructionTarget: colony.constructionTarget,
   bells: colony.bells,
@@ -337,13 +338,9 @@ const load = colony => {
   }
   colony.supportedUnits = []
   colony.layout = colony.layout ? Layout.load(colony.layout) : Layout.create()
+  colony.waterMap = colony.waterMap ? Layout.load(colony.waterMap) : Layout.create()
   
-  // no map, because the dereferencing might access the newBuildings array
-  const newBuildingsData = colony.newBuildings
-  colony.newBuildings = []
-  for (const building of newBuildingsData) {
-    colony.newBuildings.push(Record.dereference(building))
-  }
+  colony.newBuildings = colony.newBuildings.map(building => Record.dereference(building))
 
   colony.colonists.forEach((colonist, index) =>
     Record.dereferenceLazy(colonist, entity => (colony.colonists[index] = entity))

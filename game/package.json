@@ -6,9 +6,7 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview",
-    "prettier-check": "prettier --check .",
-    "prettier-write": "prettier --write ."
+    "preview": "vite preview"
   },
   "dependencies": {
     "@solid-primitives/keyboard": "^1.2.6",
@@ -26,7 +24,6 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "prettier": "^3.2.5",
     "sass": "^1.70.0",
     "seed-random": "^2.2.0",
     "vite": "^5.0.8",
