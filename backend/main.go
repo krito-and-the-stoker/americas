@@ -9,7 +9,7 @@ import (
     "go.mongodb.org/mongo-driver/mongo"
     "go.mongodb.org/mongo-driver/mongo/options"
 
-    "event-tracker/routes"
+    "backend/tracking"
 )
 
 
@@ -41,8 +41,8 @@ func main() {
 
     collection := client.Database(databaseName).Collection("events")
 
-    eventService := routes.NewEventService(collection, "/api")
-    http.HandleFunc(eventService.Prefix, eventService.Handle)
+    trackingService := tracking.NewEventService(collection, "/api")
+    http.HandleFunc(trackingService.Prefix, trackingService.Handle)
 
     log.Println("Server is starting...")
     log.Fatal(http.ListenAndServe(":8080", nil))

@@ -54,8 +54,8 @@ services:
     command: mongod --quiet --logpath /dev/null
     restart: always
 
-  event-tracker:
-    build: ./event-tracker
+  backend:
+    build: ./backend
     depends_on:
       - database
     env_file:
@@ -79,7 +79,7 @@ services:
       - game
       - dashboard
       - wiki
-      - event-tracker
+      - backend
     restart: always
 
 volumes:

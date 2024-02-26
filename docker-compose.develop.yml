@@ -13,7 +13,7 @@ services:
       - game-dist:/app/game/dist
       - game-modules:/app/game/node_modules/
     depends_on:
-      - event-tracker
+      - backend
       - assets
     command: npm run dev
 
@@ -42,7 +42,7 @@ services:
       - dashboard-dist:/app/dashboard/dist
       - dashboard-modules:/app/dashboard/node_modules/
     depends_on:
-      - event-tracker
+      - backend
     command: npm run dev
 
   mongo-express:
@@ -66,7 +66,7 @@ services:
       - assets-dist:/app/assets/dist
       - assets-modules:/app/assets/node_modules/
     depends_on:
-      - event-tracker
+      - backend
     command: npm run dev
 
   database:
@@ -77,12 +77,12 @@ services:
       - .env.backend
     command: mongod --quiet --logpath /dev/null
 
-  event-tracker:
-    build: ./event-tracker
+  backend:
+    build: ./backend
     depends_on:
       - database
     volumes:
-      - ./event-tracker:/app
+      - ./backend:/app
       - go-build:/go/pkg/mod
     env_file:
       - .env.backend

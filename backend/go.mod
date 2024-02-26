@@ -1,4 +1,4 @@
-module event-tracker
+module backend
 
 go 1.21.6
 
