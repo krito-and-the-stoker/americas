@@ -51,7 +51,8 @@ services:
       - .env.backend
     volumes:
       - /root/database/live:/data/db
-    command: mongod --quiet --logpath /dev/null
+    # command: mongod --quiet --logpath /dev/null
+    command: mongod
     restart: always
 
   event-tracker:
