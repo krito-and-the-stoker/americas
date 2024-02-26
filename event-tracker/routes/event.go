@@ -14,6 +14,11 @@ import (
 func FetchLocation(ip string) (GeoLocation, error) {
     var geoLocation GeoLocation
     apiKey := os.Getenv("GEOLOCATION_API_KEY")
+    if apiKey == "" {
+        log.Println("GEOLOCATION_API_KEY is not set")
+    }
+
+    log.Println("Fetching location for IP: ", ip)
     url := fmt.Sprintf("https://api.ipgeolocation.io/ipgeo?apiKey=%s&ip=%s", apiKey, ip)
     response, err := http.Get(url)
     if err != nil {
