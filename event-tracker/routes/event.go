@@ -60,7 +60,7 @@ func (es *EventService) HandleEvent(w http.ResponseWriter, r *http.Request) {
 
     event.Timestamp = time.Now()
 
-    ip := strings.Split(r.RemoteAddr, ":")[0]
+    ip := r.Header.Get("X-Real-IP")
     geoLocation, err := FetchLocation(ip)
     if err != nil {
         log.Println("Failed to fetch location: ", err)
