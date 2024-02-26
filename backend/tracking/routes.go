@@ -45,14 +45,14 @@ func NewEventService(collection *mongo.Collection, prefix string) *EventService 
 func (es *EventService) Handle(w http.ResponseWriter, r *http.Request) {
     log.Println("Requested: ", r.URL.Path)
     switch {
-    case strings.HasPrefix(r.URL.Path, es.Prefix + "event"):
-        es.HandleEvent(w, r)
-    case strings.HasPrefix(r.URL.Path, es.Prefix + "summary"):
-        es.HandleSummary(w, r)
-    // case strings.HasPrefix(r.URL.Path, es.Prefix + "report"):
-    //     es.HandleReport(w, r)
-    default:
-        // Handle unknown path or return a 404 error
-        http.NotFound(w, r)
+        case strings.HasPrefix(r.URL.Path, es.Prefix + "create"):
+            es.HandleEvent(w, r)
+        case strings.HasPrefix(r.URL.Path, es.Prefix + "summary"):
+            es.HandleSummary(w, r)
+        // case strings.HasPrefix(r.URL.Path, es.Prefix + "report"):
+        //     es.HandleReport(w, r)
+        default:
+            // Handle unknown path or return a 404 error
+            http.NotFound(w, r)
     }
 }

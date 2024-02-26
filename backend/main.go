@@ -10,10 +10,11 @@ import (
     "go.mongodb.org/mongo-driver/mongo/options"
 
     "backend/tracking"
+    "backend/game"
 )
 
 
-const databaseName = "event-tracker"
+const databaseName = "americas"
 
 func main() {
     mongoUser := os.Getenv("MONGO_INITDB_ROOT_USERNAME")
@@ -39,9 +40,13 @@ func main() {
 
     log.Println("Connected to MongoDB!")
 
-    collection := client.Database(databaseName).Collection("events")
 
-    trackingService := tracking.NewEventService(collection, "/api")
+    gameCollection := client.Database(databaseName).Collection("games")
+    gameService := game.NewGameService(gameCollection, "/api/game")
+    http.HandleFunc(gameService.Prefix, gameService.Handle)
+
+    eventCollection := client.Database(databaseName).Collection("events")
+    trackingService := tracking.NewEventService(eventCollection, "/api/events")
     http.HandleFunc(trackingService.Prefix, trackingService.Handle)
 
     log.Println("Server is starting...")

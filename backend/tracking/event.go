@@ -17,7 +17,11 @@ func FetchLocation(ip string) (GeoLocation, error) {
         log.Println("GEOLOCATION_API_KEY is not set")
     }
 
+    if (ip == "") {
+        return geoLocation, fmt.Errorf("IP address is not set")
+    }
     log.Println("Fetching location for IP: ", ip)
+
     url := fmt.Sprintf("https://api.ipgeolocation.io/ipgeo?apiKey=%s&ip=%s", apiKey, ip)
     response, err := http.Get(url)
     if err != nil {
@@ -33,8 +37,6 @@ func FetchLocation(ip string) (GeoLocation, error) {
     if err != nil {
         return geoLocation, err
     }
-
-    fmt.Printf("Response (%d): %s\n", response.StatusCode, body)
 
     if err := json.Unmarshal(body, &geoLocation); err != nil {
         return geoLocation, err
@@ -62,7 +64,7 @@ func (es *EventService) HandleEvent(w http.ResponseWriter, r *http.Request) {
     ip := r.Header.Get("X-Real-IP")
     geoLocation, err := FetchLocation(ip)
     if err != nil {
-        log.Println("Failed to fetch location: ", err)
+        log.Println("Failed to fetch location:", err)
     }
     event.Location = geoLocation
 

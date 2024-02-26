@@ -15,7 +15,7 @@ const trackEvent = async name => {
     console.log('Localhost: Event tracking skipped')
     return
   }
-  await fetch('/api/event', {
+  await fetch('/api/events/create', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

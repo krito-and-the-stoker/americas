@@ -120,7 +120,7 @@ const loadAll = () => {
     loadAllPromise = Promise.all(
       Object.keys(paths).map(async key => {
         const path = paths[key]
-        textures[key] = await loadTexture(path)
+        textures[key] = await loadTexture('/' + path)
       })
     )
   }

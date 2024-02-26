@@ -9,6 +9,7 @@ import Record from 'util/record'
 import Util from 'util/util'
 import Error from 'util/error'
 import Message from 'util/message'
+import Savegame from 'util/savegame'
 
 import Time from 'timeline/time'
 
@@ -127,6 +128,8 @@ const start = async () => {
     if (!loadingResources) {
       preload()
     }
+
+    Savegame.initialize()
 
     await nextFrame()
 

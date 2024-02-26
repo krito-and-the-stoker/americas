@@ -15,7 +15,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': 'http://event-tracker:8080',
+      '/api': 'http://backend:8080',
       '/images': 'http://assets:3000',
       '/styles': 'http://assets:3000',
       '/templates': 'http://assets:3000',

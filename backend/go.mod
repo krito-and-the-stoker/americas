@@ -20,6 +20,7 @@ require (
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.1 // indirect
+	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/tdewolff/parse/v2 v2.7.11 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
