@@ -13,7 +13,7 @@ const lineOptions = {
 const Dashboard = () => {
   const [data] = createResource(async () => {
     try {      
-      const res = await fetch('/api/summary');
+      const res = await fetch('/api/events/summary');
       return await res.json();
     } catch(e) {
       console.error(e);

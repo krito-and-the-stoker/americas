@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     proxy: {
-      '/api': 'http://event-tracker:8080',
+      '/api': 'http://backend:8080',
     },
   },
 })
