@@ -51,6 +51,12 @@ func (es *EventService) HandleEvent(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    log.Println("Logging headers")
+    for name, values := range r.Header {
+        // Header names are case-insensitive, values is a []string
+        log.Printf("%v: %v\n", name, values)
+    }
+
     var event Event
     err := json.NewDecoder(r.Body).Decode(&event)
     if err != nil {
