@@ -2,24 +2,24 @@ package game
 
 import (
     "net/http"
-    "log"
     "encoding/json"
-    "time"
 
     "go.mongodb.org/mongo-driver/bson"
 )
 
-type SaveData struct {
+type LoadData struct {
     Id      string `json:"id"`
-    Game     string `json:"game"`
 }
 
-type SaveResponse struct {
-    Ok  bool `json:"ok"`
+type LoadResponse struct {
+    Name    string `json:"name"`
+    UserId  string `json:"userId"`
+    Game    string `json:"game"`
+    Ok      bool `json:"ok"`
 }
 
 
-func (service *GameService) SaveGame(w http.ResponseWriter, r *http.Request) {
+func (service *GameService) LoadGame(w http.ResponseWriter, r *http.Request) {
     var data SaveData
     err := json.NewDecoder(r.Body).Decode(&data)
     if err != nil {
@@ -35,22 +35,12 @@ func (service *GameService) SaveGame(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    update := bson.M{
-        "$set": bson.M{
-            "savegame": data.Game,
-            "lastsave": time.Now(),
-        },
-    }
 
-    _, err = service.Collection.UpdateOne(r.Context(), filter, update)
-    if err != nil {
-        log.Println("Error updating game: ", err)
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
-
-    response := SaveResponse{
+    response := LoadResponse{
+        Name: game.Name,
+        UserId: game.UserId,
         Ok: true,
+        Game: game.Savegame,
     }
 
     w.Header().Set("Content-Type", "application/json")

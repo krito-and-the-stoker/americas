@@ -421,7 +421,7 @@ const createSettlement = (settlement, unit) => {
   const dialog = {
     name: 'notification.settlement.enter',
     context: {
-      unit: Unit.name(unit),
+      unitName: Unit.name(unit),
       settlement,
     }
   }

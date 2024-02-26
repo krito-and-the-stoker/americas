@@ -1,4 +1,3 @@
-import LZString from 'lz-string'
 import FileSaver from 'file-saver'
 
 import Version from 'version/version.json'
@@ -34,8 +33,6 @@ const REFERENCE_KEY = 'referenceId'
 const SAVE_TO_LOCAL_STORAGE = true
 const USE_COMPRESSION = false
 const USE_WEBWORKER = false
-
-let lastSave = null
 
 let idCounter = 0
 const makeId = () => (idCounter += 1)
@@ -163,7 +160,7 @@ const dump = () => {
     setGlobal,
     getGlobal,
     save,
-    load,
+    resume,
     dump,
     getAll,
     get,
@@ -361,41 +358,6 @@ const serializeAsync = () =>
     }
   })
 
-const autosave = async () => {
-  Message.record.log('Saving...')
-  const content = await serializeAsync()
-  window.localStorage.setItem('lastSave', content)
-  Tracking.autosave()
-  Message.record.log(`Entities saved to local storage using ${Math.round(content.length / 1024)} kb.`)
-}
-
-const save = () => {
-  Message.record.log('Saving...')
-  lastSave = serialize()
-  if (SAVE_TO_LOCAL_STORAGE) {
-    if (USE_COMPRESSION) {
-      if (USE_WEBWORKER && window.Worker) {
-        // Worker disabled for vite build
-        const worker = null; //new Worker(new URL('entries/worker.js', import.meta.url))
-        worker.onmessage = e => {
-          window.localStorage.setItem('lastSaveCompressed', e.data)
-          Message.record.log(`Entities saved to local storage using ${e.data.length} bytes.`)
-        }
-        worker.postMessage(lastSave)
-      } else {
-        const compressed = LZString.compress(lastSave)
-        window.localStorage.setItem('lastSaveCompressed', compressed)
-        Message.record.log(`Entities saved to local storage using ${compressed.length} bytes.`)
-      }
-    } else {
-      window.localStorage.setItem('lastSave', lastSave)
-      Message.record.log(`Entities saved to local storage using ${lastSave.length} bytes.`)
-    }
-  } else {
-    Message.record.log(`Entities saved in memory using ${lastSave.length} bytes.`)
-  }
-  Events.trigger('save')
-}
 
 const dereferenceTile = ref => (ref ? tiles[ref.tileIndex] : null)
 const dereference = ref => {
@@ -477,20 +439,15 @@ const unserialize = (content, initRenderMapFn = null) => {
   loadedListeners.sort((a, b) => a.priority - b.priority).forEach(({ fn }) => fn())
 }
 
-const load = (initRenderMap, src = null) => {
+const resume = (data, initRenderMap) => {
   Message.record.log('Loading...')
 
-  if (src) {
-    lastSave = src
-  } else {
-    if (USE_COMPRESSION) {
-      lastSave = LZString.decompress(window.localStorage.getItem('lastSaveCompressed'))
-    } else {
-      lastSave = window.localStorage.getItem('lastSave')
-    }
+  if (!data) {
+    Message.record.error('No save game found, make sure to pass savegame data')
+    return null;
   }
 
-  unserialize(lastSave, initRenderMap)
+  unserialize(data, initRenderMap)
   PathFinder.initialize()
 
   Events.trigger('restart')
@@ -499,7 +456,7 @@ const load = (initRenderMap, src = null) => {
 
 const download = () => {
   save()
-  var blob = new Blob([lastSave], { type: 'application/json;charset=utf-8' })
+  var blob = new Blob([serialize()], { type: 'application/json;charset=utf-8' })
   FileSaver.saveAs(blob, 'americas-save-game.json')
 }
 
@@ -513,7 +470,7 @@ const upload = initRenderMap => {
       var reader = new FileReader()
       reader.readAsText(file, 'UTF-8')
       reader.onload = evt => {
-        load(initRenderMap, evt.target.result)
+        resume(initRenderMap, evt.target.result)
         document.body.removeChild(input)
       }
       reader.onerror = function (evt) {
@@ -542,10 +499,9 @@ export default {
   entitiesLoaded,
   setGlobal,
   getGlobal,
-  autosave,
-  save,
-  load,
+  resume,
   serialize,
+  serializeAsync,
   unserialize,
   dump,
   getAll,

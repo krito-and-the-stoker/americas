@@ -53,7 +53,7 @@ const disableButtons = () => {
 }
 
 const prepareGame = () => {
-  window.addEventListener('beforeunload', game.save)
+  window.addEventListener('beforeunload', () => game.save())
   setTimeout(() => {
     document.querySelector('.loading').classList.add('hidden')
   }, 750)
@@ -76,13 +76,8 @@ window.addEventListener('load', async () => {
     Journey.preload()
     loadingGameCode = import(/* webpackChunkName: "game" */ './game.js').then(module => {
       game = module.default
-      return module.default.preload()
+      return module.default.preload(clickResume)
     })
-
-    if (window.localStorage.getItem('lastSave')) {
-      document.querySelector('.load').addEventListener('click', clickResume)
-      document.querySelector('.load').classList.remove('disabled')
-    }
   } else {
     const overlay = document.createElement('div')
     overlay.innerHTML = '<p>Sorry, we currently do not support mobile devices.</p>'

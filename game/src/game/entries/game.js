@@ -1,7 +1,6 @@
 import Version from 'version/version'
 
 import americaLargeMap from 'maps/america-large'
-import Terrain from 'data/terrain'
 
 import Tween from 'util/tween.js'
 import PathFinder from 'util/pathFinder'
@@ -20,8 +19,6 @@ import Market from 'entity/market'
 import Tribe from 'entity/tribe'
 import Owner from 'entity/owner'
 import Treasure from 'entity/treasure'
-import Colony from 'entity/colony'
-import Colonist from 'entity/colonist'
 import Tile from 'entity/tile'
 
 import Meet from 'task/unit/meet'
@@ -44,9 +41,10 @@ import Overlay from 'ui/overlay'
 
 const RESUME_GAME_PAUSED = false
 const AUTOSAVE_INTERVAL = 5 * 60 * 1000 // autosave every 5 minutes
+// const AUTOSAVE_INTERVAL = 30 * 1000 // autosave every 30 seconds
 const initialize = () => {
   let timeStamp = 0
-  setInterval(Record.autosave, AUTOSAVE_INTERVAL)
+  setInterval(Savegame.autosave, AUTOSAVE_INTERVAL)
 
   Time.schedule(Meet.create())
 
@@ -118,9 +116,11 @@ const americaLarge = () => {
 const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve))
 
 let loadingResources = null
-const preload = () => {
+const preload = (clickResume) => {
   Message.initialize.log(`Downloading files (2/${Resources.numberOfAssets()})...`)
   loadingResources = Resources.initialize()
+
+  Savegame.initialize(clickResume)
 }
 
 const start = async () => {
@@ -129,7 +129,7 @@ const start = async () => {
       preload()
     }
 
-    Savegame.initialize()
+    Savegame.start()
 
     await nextFrame()
 
@@ -225,7 +225,7 @@ const load = async () => {
     await nextFrame()
     Message.initialize.log('Restoring game state...')
     await nextFrame()
-    Record.load(() => AssmebleMap.initialize())
+    Record.resume(await Savegame.getData(), () => AssmebleMap.initialize())
     await nextFrame()
     AutosaveView.initialize()
     Dialog.initialize()
@@ -259,7 +259,7 @@ const load = async () => {
   }
 }
 
-const save = Record.save
+const save = Savegame.save
 
 export default {
   start,

@@ -20,6 +20,7 @@ const domains = {
   util: true,
   tutorial: true,
   templates: false,
+  savegame: true,
 }
 
 const print = (level, domain, ...args) => {

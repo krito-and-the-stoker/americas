@@ -1,13 +1,19 @@
 import { v4 as uuidv4 } from 'uuid'
 
+let userId
 const getUserId = () => {
-  let userId = window.localStorage?.getItem('userId')
+  userId = window.localStorage?.getItem('userId')
   if (!userId) {
     userId = uuidv4()
     window.localStorage?.setItem('userId', userId)
   }
 
   return userId
+}
+
+const updateUserId = newValue => {
+  userId = newValue
+  window.localStorage?.setItem('userId', userId)
 }
 
 const trackEvent = async name => {
@@ -37,6 +43,8 @@ const resumeGame = () => trackEvent('ResumeGame')
 const autosave = () => trackEvent('Autosave')
 
 export default {
+  getUserId,
+  updateUserId,
   pageView,
   newGame,
   resumeGame,

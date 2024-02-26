@@ -15,7 +15,7 @@ export default (game, steps = 750) => {
 		Message.log('Restoring game state...')
 
 		// might be broken, look at initRenderMapFn
-		Record.load(null, JSON.stringify(game))
+		Record.resume(JSON.stringify(game))
 
 		Time.schedule(Meet.create())
 		Util.range(steps).forEach(() => Time.advance(16 + 16*Math.random()))

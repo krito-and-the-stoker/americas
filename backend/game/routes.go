@@ -11,17 +11,12 @@ import (
 
 
 type Game struct {
+    Name        string `json:"name"`
     Version     int16 `json:"version"`
-    UserId      string `json:"userId"`
-    Id         string `json:"id"`
+    UserId      string `json:"userid"`
+    Id          string `json:"id"`
     Savegame    string `json:"savegame"`
-    LastSaved   time.Time `json:"lastSaved"`
-}
-
-type Response struct {
-    Ok              bool   `json:"ok"`
-    Id              string `json:"id"`
-    Redirect        string `json:"redirect"`
+    LastSaved   time.Time `json:"lastsaved"`
 }
 
 
@@ -52,6 +47,8 @@ func (service *GameService) Handle(w http.ResponseWriter, r *http.Request) {
             service.CreateGame(w, r)
         case strings.HasPrefix(r.URL.Path, service.Prefix + "save"):
             service.SaveGame(w, r)
+        case strings.HasPrefix(r.URL.Path, service.Prefix + "load"):
+            service.LoadGame(w, r)
         // case strings.HasPrefix(r.URL.Path, service.Prefix + "load"):
             // service.LoadGame(w, r)
         default:
