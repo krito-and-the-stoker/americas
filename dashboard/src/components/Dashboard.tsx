@@ -20,6 +20,7 @@ const Dashboard = () => {
     }
   });
 
+
   const numberOfUsers = () => Object.keys(data().countByUserID).length;
   const userActivityData = () => {
     const buckets: number[] = [];
@@ -83,6 +84,20 @@ const Dashboard = () => {
     };
   };
 
+  const cityData = () => {
+    const labels = Object.keys(data().countByCity).filter(x => !!x);
+    const backgroundColors = labels.map(() => `#${Math.floor(Math.random()*16777215).toString(16)}`)
+
+    return {
+      labels,
+      datasets: [{
+        data: Object.keys(data().countByCity).filter(x => !!x).map(key => data().countByCity[key]),
+        backgroundColor: backgroundColors,
+        hoverBackgroundColor: backgroundColors
+      }]
+    };
+  };
+
   const eventsPerDay = () => {
     return {
       labels: Object.keys(data().countByDay),
@@ -113,7 +128,7 @@ const Dashboard = () => {
           justify-content: space-between;
         }
         .chart {
-          width: calc(33% - 5vw);
+          width: calc(25% - 5vw);
           margin-bottom: 5vw;
         }
         .line-chart {
@@ -145,6 +160,10 @@ const Dashboard = () => {
             <div class="chart">
               <h3>Event Types</h3>
               <Pie data={eventTypeData()} options={options} />
+            </div>
+            <div class="chart">
+              <h3>Cities</h3>
+              <Pie data={cityData()} options={options} />
             </div>
             <div class="line-chart">
               <h3>Timeline</h3>
