@@ -1,11 +1,11 @@
 ---dialog---
-[name: error.initialize]
+[name: error.general]
 
-There has been an error initializing the game. A report has been sent and we will investigate.
+**An error has occured :/**
+Sometimes it helps to **reload** the page.
 
+If the error persists, please *try again later*. We have received a notification and will attempt to fix the problem.
 
----dialog---
-[name: error.load]
+Error: *{error}*
 
-There has been an error loading the save game. The save game is from an earlier release and this is most likely the reason.
-
+[answer action:reload] Reload []

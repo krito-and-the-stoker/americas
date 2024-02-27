@@ -114,13 +114,21 @@ func (es *EventService) HandleSummary(w http.ResponseWriter, r *http.Request) {
     countByCity := bson.D{
         {"$group", bson.D{
             {"_id", bson.D{
-                {"$ifNull", []interface{}{"$location.city", "Unknown"}},
+                {"$ifNull", bson.A{
+                    bson.D{{"$concat", bson.A{
+                        bson.D{{"$ifNull", bson.A{"$location.city", ""}}},
+                        ", ",
+                        bson.D{{"$ifNull", bson.A{"$location.country", "Unknown"}}},
+                    }}},
+                    "Unknown",
+                }},
             }},
             {"count", bson.D{
                 {"$sum", 1},
             }},
         }},
     }
+
     cursor, err = es.Collection.Aggregate(r.Context(), mongo.Pipeline{countByCity})
     if err != nil {
         log.Fatal(err) // Or handle the error more gracefully

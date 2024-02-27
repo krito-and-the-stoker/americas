@@ -11,6 +11,7 @@ import (
 
     "backend/tracking"
     "backend/game"
+    "backend/errors"
 )
 
 
@@ -48,6 +49,10 @@ func main() {
     eventCollection := client.Database(databaseName).Collection("events")
     trackingService := tracking.NewEventService(eventCollection, "/api/events")
     http.HandleFunc(trackingService.Prefix, trackingService.Handle)
+
+    errorCollection := client.Database(databaseName).Collection("errors")
+    errorService := errors.NewErrorService(errorCollection, "/api/error")
+    http.HandleFunc(errorService.Prefix, errorService.Handle)
 
     log.Println("Server is starting...")
     log.Fatal(http.ListenAndServe(":8080", nil))

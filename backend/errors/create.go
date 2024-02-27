@@ -1,26 +1,25 @@
-package game
+package errors
 
 import (
-	"net/http"
-	"log"
-	"encoding/json"
-    "fmt"
+    "net/http"
+    "log"
+    "encoding/json"
+    "time"
 
-    "github.com/satori/go.uuid"
+    "backend/game"
 )
 
-
 type CreateData struct {
-    UserId      string `json:"userId"`
+    Message     string `json:"error"`
+    GameId    string `json:"id"`
+    Game      string `json:"game"`
 }
 
 type CreateResponse struct {
     Ok              bool   `json:"ok"`
-    Id              string `json:"id"`
-    Redirect        string `json:"redirect"`
 }
 
-func (service *GameService) CreateGame(w http.ResponseWriter, r *http.Request) {
+func (service *ErrorService) CreateError(w http.ResponseWriter, r *http.Request) {
     var data CreateData
     err := json.NewDecoder(r.Body).Decode(&data)
     if err != nil {
@@ -28,7 +27,7 @@ func (service *GameService) CreateGame(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    if data.UserId == "" {
+    if data.GameId == "" {
         http.Error(w, "userId is required", http.StatusBadRequest)
         return
     }
@@ -36,13 +35,14 @@ func (service *GameService) CreateGame(w http.ResponseWriter, r *http.Request) {
     // Set the content type to application/json
     w.Header().Set("Content-Type", "application/json")
 
-    var game Game
-    game.Name = pickName()
-    game.Version = SAVEGAME_VERSION
-    game.UserId = data.UserId
-    game.Id = fmt.Sprintf("v%d--%s--%s", game.Version, slugify(game.Name), uuid.NewV4().String())
+    var capture ErrorCapture
+    capture.Version = game.SAVEGAME_VERSION
+    capture.Message = data.Message
+    capture.GameId = data.GameId
+    capture.SaveGame = data.Game
+    capture.Timestamp = time.Now()
 
-    _, err = service.Collection.InsertOne(r.Context(), game)
+    _, err = service.Collection.InsertOne(r.Context(), capture)
     if err != nil {
         log.Println("Error inserting game: ", err)
         http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -51,8 +51,6 @@ func (service *GameService) CreateGame(w http.ResponseWriter, r *http.Request) {
 
     response := CreateResponse{
         Ok: true,
-        Id: game.Id,
-        Redirect: fmt.Sprintf("/game/%s", game.Id),
     }
 
     if err := json.NewEncoder(w).Encode(response); err != nil {

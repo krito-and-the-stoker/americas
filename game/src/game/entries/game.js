@@ -6,7 +6,7 @@ import Tween from 'util/tween.js'
 import PathFinder from 'util/pathFinder'
 import Record from 'util/record'
 import Util from 'util/util'
-import Error from 'util/error'
+import ErrorDisplay from 'util/error'
 import Message from 'util/message'
 import Savegame from 'util/savegame'
 
@@ -56,13 +56,13 @@ const initialize = () => {
     try {
       Time.advance(deltaTime)
     } catch (err) {
-      Error.capture(err)
+      ErrorDisplay.core(err)
     }
 
     try {
       RenderView.onDraw()
     } catch (err) {
-      Error.capture(err)
+      ErrorDisplay.draw(err)
     }
     requestAnimationFrame(loop)
   }

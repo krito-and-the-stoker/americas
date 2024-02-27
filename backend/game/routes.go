@@ -9,6 +9,8 @@ import (
     "go.mongodb.org/mongo-driver/mongo"
 )
 
+const SAVEGAME_VERSION = 1
+
 
 type Game struct {
     Name        string `json:"name"`

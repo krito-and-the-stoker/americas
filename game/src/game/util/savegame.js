@@ -18,12 +18,16 @@ const update = {
     isRunning: isRunning.update,
 }
 
+const state = {
+    get gameId() { return gameId.value },
+}
+
 const initialize = async clickResume => {
     setGameIdFromUrl()
     window.addEventListener('popstate', () => {
         if (isRunning.value) {
             save()
-            window.location = window.location
+            window.location.reload()
         } else {
             setGameIdFromUrl()
         }
@@ -187,6 +191,7 @@ export default {
     start,
     derived,
     update,
+    state,
     initialize,
     save,
     autosave,
