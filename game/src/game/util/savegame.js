@@ -12,11 +12,22 @@ const SAVE_TO_REMOTE = true
 
 const gameId = Signal.basic(null)
 const gamesToSync = Signal.basic(JSON.parse(window.localStorage.getItem('needsSync') || '[]'))
+const isRunning = Signal.basic(false)
 
+const update = {
+    isRunning: isRunning.update,
+}
 
 const initialize = async clickResume => {
     setGameIdFromUrl()
-    window.addEventListener('popstate', setGameIdFromUrl)
+    window.addEventListener('popstate', () => {
+        if (isRunning.value) {
+            save()
+            window.location = window.location
+        } else {
+            setGameIdFromUrl()
+        }
+    })
 
     derived.gameData.listen(data => {
         if (data) {
@@ -175,6 +186,7 @@ const derived = {
 export default {
     start,
     derived,
+    update,
     initialize,
     save,
     autosave,
