@@ -41,7 +41,7 @@ func (service *GameService) CreateGame(w http.ResponseWriter, r *http.Request) {
     game.Name = pickName()
     game.Version = VERSION
     game.UserId = data.UserId
-    game.Id = fmt.Sprintf("v%d--%s", game.Version, uuid.NewV4().String())
+    game.Id = fmt.Sprintf("v%d--%s--%s", game.Version, slugify(game.Name), uuid.NewV4().String())
 
     _, err = service.Collection.InsertOne(r.Context(), game)
     if err != nil {

@@ -17,6 +17,10 @@ const remove = (instance, key, listener) => {
 }
 
 const listen = (instance, key, fn) => {
+  if (!instance) {
+    return fn()
+  }
+
   const listeners = listenerKey(key)
   const value = key ? instance[key] : instance
   const cleanup = fn(value)

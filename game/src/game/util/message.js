@@ -13,7 +13,7 @@ const domains = {
   europe: true,
   unit: true,
   natives: true,
-  initialize: true,
+  initialize: false,
   tile: true,
   owner: true,
   record: true,
@@ -21,6 +21,8 @@ const domains = {
   tutorial: true,
   templates: false,
   savegame: true,
+  tracking: false,
+  signal: true
 }
 
 const print = (level, domain, ...args) => {

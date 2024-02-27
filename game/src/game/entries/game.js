@@ -225,7 +225,7 @@ const load = async () => {
     await nextFrame()
     Message.initialize.log('Restoring game state...')
     await nextFrame()
-    Record.resume(await Savegame.getData(), () => AssmebleMap.initialize())
+    Record.resume(Savegame.derived.gameData.value, () => AssmebleMap.initialize())
     await nextFrame()
     AutosaveView.initialize()
     Dialog.initialize()

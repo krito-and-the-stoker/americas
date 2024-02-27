@@ -113,6 +113,6 @@ func pickName() string {
     rand.Seed(time.Now().UnixNano())
     randomIndex := rand.Intn(len(names))
 
-    return slugify(names[randomIndex])
+    return names[randomIndex]
 }
 

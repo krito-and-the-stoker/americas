@@ -2,6 +2,7 @@ import { createSignal, onCleanup } from 'solid-js'
 
 import Util from 'util/util'
 import Binding from 'util/binding'
+import Message from 'util/message'
 
 
 const passArgumentsToChain = fn => (...args) => fn(chain(...args))
@@ -62,6 +63,8 @@ const create = expand(passArgumentsToChain(listenerNoInput => {
   return signal
 }))
 
+
+
 // Chains two listeners together
 // Example:
 // Signal.chain(Colonist.listen.unit, Unit.listen.passengers)
@@ -93,8 +96,8 @@ const chain = expand((listenerMaybeInput, ...args) => {
 
 
   return (arg0, arg1) => Util.isFunction(arg0)
-    ? listenerMaybeInput(value => (value !== undefined && value !== null) ? listenerWithInput(value, arg0) : arg0())
-    : listenerMaybeInput(arg0, value => (value !== undefined && value !== null) ? listenerWithInput(value, arg1) : arg1())
+    ? listenerMaybeInput(value => listenerWithInput(value, arg0))
+    : listenerMaybeInput(arg0, value => listenerWithInput(value, arg1))
 })
 
 
@@ -117,7 +120,7 @@ function source(listenerNoInput) {
 }
 
 
-const basicEquality = (a, b) => a === b
+const isEqualBasic = (a, b) => a === b
 const selectSimple = expand(mapping => {
   return (value, resolve) => {
     if (Util.isFunction(value)) {
@@ -125,18 +128,12 @@ const selectSimple = expand(mapping => {
       return value()
     }
 
-    return resolve(mapping(value))
+    return resolve(value !== undefined ? mapping(value) : value)
   }
 })
 
-// this cannot work at the moment:
-// when the signal for equality is not reached,
-// because the signal died previously due to becoming null,
-// the equality is never called and when the signal has value again,
-// it has no way of knowing that it was null before and needs to fire now.
-// For example, when a signal goes from '1' -> null -> '1',
-// the second '1' will not be fired, because it is equal to the first '1'
-const equality = (equals = basicEquality) => {
+
+const equality = (equals = isEqualBasic) => {
   let lastValue
 
   const rememberLastValue = value => final => {
@@ -157,8 +154,7 @@ const equality = (equals = basicEquality) => {
   }
 }
 
-// const select = (mapping, equals = basicEquality) => chain(selectSimple(mapping), equality(equals))
-const select = selectSimple
+const select = (mapping, equals = isEqualBasic) => chain(selectSimple(mapping), equality(equals))
 
 
 // executes this function as a side effect
@@ -179,7 +175,7 @@ function effect(sideEffect) {
 }
 
 // awaits the function given
-const awaitFn = expand(asyncFunction => {
+const awaitFnSimple = expand(asyncFunction => {
   return allowNoInput((value, resolve) => {
     let nextCleanup = null
     let shouldResolve = true
@@ -193,11 +189,18 @@ const awaitFn = expand(asyncFunction => {
       if (shouldResolve) {
         nextCleanup = resolve(result)
       }
+    }).catch(e => {
+      if (shouldResolve) {
+        Message.signal.error(e)
+        nextCleanup = resolve(undefined)
+      }
     })
 
     return cleanup
   })
 })
+
+const awaitFn = (asyncFn, equals = isEqualBasic) => chain(equality(equals), awaitFnSimple(asyncFn))
 
 // log the signal at any point
 const log = effect(value => console.log('Signal.log:', value))
@@ -347,9 +350,50 @@ const basic = initialValue => {
 
   return {
     listen,
-    update
+    update,
+    get value() {
+      return currentValue
+    }
   }
 }
+
+const state = expand(passArgumentsToChain(listenerNoInput => {
+  let isActive = true
+  let signal = basic()
+
+  let currentValue
+
+  const stateObject = {
+    get value() {
+      if (!isActive) {
+        Message.signal.warn('Signal.state: state is not active', currentValue)
+      }
+      return currentValue
+    },
+    get listen() {
+      if (!isActive) {
+        Message.signal.warn('Signal.state: state is not active', currentValue)
+      }
+      return signal.listen
+    },
+    get cleanup() {
+      if (!isActive) {
+        Message.signal.warn('Signal.state: state is not active', currentValue)
+      }
+      return [cleanup, () => {
+        cleanup = null
+        isActive = false
+      }]
+    },
+  }
+
+  let cleanup = listenerNoInput(value => {
+    currentValue = value
+    signal.update(value)
+  })
+
+  return stateObject
+}))
 
 
 export default {
@@ -365,5 +409,6 @@ export default {
   source,
   log,
   basic,
+  state,
   await: awaitFn,
 }

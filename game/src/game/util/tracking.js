@@ -1,5 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
 
+import Message from 'util/message'
+
+
 let userId
 const getUserId = () => {
   userId = window.localStorage?.getItem('userId')
@@ -18,7 +21,7 @@ const updateUserId = newValue => {
 
 const trackEvent = async name => {
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    console.log('Localhost: Event tracking skipped')
+    Message.tracking.log('Localhost: Event tracking skipped')
     return
   }
   await fetch('/api/events/create', {
@@ -33,8 +36,8 @@ const trackEvent = async name => {
         throw new Error('Network response was not ok ' + response.statusText)
       }
     })
-    // .then(data => console.log('Success:', data))
-    .catch(error => console.error('Error:', error))
+    // .then(data => Message.tracking.log('Success:', data))
+    .catch(error => Message.tracking.error('Error:', error))
 }
 
 const pageView = () => trackEvent('PageView')
