@@ -45,6 +45,10 @@ const AUTOSAVE_INTERVAL = 5 * 60 * 1000 // autosave every 5 minutes
 const initialize = () => {
   let timeStamp = 0
   setInterval(Savegame.autosave, AUTOSAVE_INTERVAL)
+  // when the game is running we want a hard reload for browser back/forth buttons
+  window.addEventListener('popstate', () => {
+    window.location = window.location
+  })
 
   Time.schedule(Meet.create())
 
