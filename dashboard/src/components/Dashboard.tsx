@@ -86,14 +86,14 @@ const Dashboard = () => {
 
   const cityData = () => {
     const labels = Object.keys(data().countByCity).filter(x => !!x);
-    const backgroundColors = labels.map(() => `#${Math.floor(Math.random()*16777215).toString(16)}`)
 
     return {
       labels,
       datasets: [{
         data: Object.keys(data().countByCity).filter(x => !!x).map(key => data().countByCity[key]),
-        backgroundColor: backgroundColors,
-        hoverBackgroundColor: backgroundColors
+        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
       }]
     };
   };
@@ -123,15 +123,17 @@ const Dashboard = () => {
         .container {
           width: 95vw;
           margin: 0 auto;
+        }
+        .row {
           display: flex;
           flex-wrap: wrap;
           justify-content: space-between;
         }
-        .chart {
-          width: calc(25% - 5vw);
+        .chart3rd {
+          width: calc(33% - 5vw);
           margin-bottom: 5vw;
         }
-        .line-chart {
+        .chart-full {
           width: calc(100% - 5vw);
           margin-bottom: 5vw;
         }
@@ -149,25 +151,31 @@ const Dashboard = () => {
 
         <Match when={data()}>
           <div class="container">
-            <div class="chart">
-              <h3>Total Events: {data().totalCount}</h3>
-              <Bar data={eventsAndUserData()} />
+            <div class="row">
+              <div class="chart3rd">
+                <h3>Total Events: {data().totalCount}</h3>
+                <Bar data={eventsAndUserData()} />
+              </div>
+              <div class="chart3rd">
+                <h3>Total Users: {numberOfUsers()}</h3>
+                <Bar data={userActivityData()} />
+              </div>
+              <div class="chart3rd">
+                <h3>Event Types</h3>
+                <Pie data={eventTypeData()} options={options} />
+              </div>
             </div>
-            <div class="chart">
-              <h3>Total Users: {numberOfUsers()}</h3>
-              <Bar data={userActivityData()} />
+            <div class="row">
+              <div class="chart-full">
+                <h3>Cities</h3>
+                <Bar data={cityData()} options={options} />
+              </div>
             </div>
-            <div class="chart">
-              <h3>Event Types</h3>
-              <Pie data={eventTypeData()} options={options} />
-            </div>
-            <div class="chart">
-              <h3>Cities</h3>
-              <Pie data={cityData()} options={options} />
-            </div>
-            <div class="line-chart">
-              <h3>Timeline</h3>
-              <Line data={eventsPerDay()} options={lineOptions} />
+            <div class="row">
+              <div class="chart-full">
+                <h3>Timeline</h3>
+                <Line data={eventsPerDay()} options={lineOptions} />
+              </div>
             </div>
           </div>
         </Match>
