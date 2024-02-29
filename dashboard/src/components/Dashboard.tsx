@@ -86,11 +86,15 @@ const Dashboard = () => {
 
   const cityData = () => {
     const labels = Object.keys(data().countByCity).filter(x => !!x);
+    const dd = Object.keys(data().countByCity)
+      .filter(x => !!x)
+      .map(key => data().countByCity[key])
+      .sort((a, b) => b - a)
 
     return {
       labels,
       datasets: [{
-        data: Object.keys(data().countByCity).filter(x => !!x).map(key => data().countByCity[key]),
+        data: dd,
         backgroundColor: 'rgba(54, 162, 235, 0.5)',
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1,
@@ -168,7 +172,7 @@ const Dashboard = () => {
             <div class="row">
               <div class="chart-full">
                 <h3>Cities</h3>
-                <Bar data={cityData()} options={options} />
+                <Bar data={cityData()} options={lineOptions} />
               </div>
             </div>
             <div class="row">
