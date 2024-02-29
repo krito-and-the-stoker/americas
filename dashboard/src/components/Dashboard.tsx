@@ -85,11 +85,13 @@ const Dashboard = () => {
   };
 
   const cityData = () => {
-    const labels = Object.keys(data().countByCity).filter(x => !!x);
-    const dd = Object.keys(data().countByCity)
-      .filter(x => !!x)
-      .map(key => data().countByCity[key])
-      .sort((a, b) => b - a)
+    const dataByCity = data().countByCity as { [key: string]: number }
+    const baseData = [...Object.entries(dataByCity)
+      .filter(([key, _]) => !!key)
+      .sort(([_, a], [__, b]) => b - a)]
+
+    const labels = baseData.map(([key]) => key)
+    const dd = baseData.map(([_, value]) => value)
 
     return {
       labels,
