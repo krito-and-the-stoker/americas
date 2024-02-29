@@ -2,6 +2,8 @@ import { v4 as uuidv4 } from 'uuid'
 
 import Message from 'util/message'
 
+const DISABLE_TRACKING_ON_LOCALHOST = true
+
 
 let userId
 const getUserId = () => {
@@ -20,10 +22,13 @@ const updateUserId = newValue => {
 }
 
 const trackEvent = async name => {
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    Message.tracking.log('Localhost: Event tracking skipped')
-    return
+  if (DISABLE_TRACKING_ON_LOCALHOST) {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      Message.tracking.log('Localhost: Event tracking skipped')
+      return
+    }
   }
+
   await fetch('/api/events/create', {
     method: 'POST',
     headers: {
@@ -44,6 +49,7 @@ const pageView = () => trackEvent('PageView')
 const newGame = () => trackEvent('NewGame')
 const resumeGame = () => trackEvent('ResumeGame')
 const autosave = () => trackEvent('Autosave')
+const error = () => trackEvent('Error')
 
 export default {
   getUserId,
@@ -52,4 +58,5 @@ export default {
   newGame,
   resumeGame,
   autosave,
+  error,
 }

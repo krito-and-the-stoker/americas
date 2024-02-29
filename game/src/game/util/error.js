@@ -2,6 +2,8 @@ import Record from 'util/record'
 import Savegame from 'util/savegame'
 import Dialog from 'view/ui/dialog'
 import Message from 'util/message'
+import Tracking from 'util/tracking'
+
 
 let sending = Promise.resolve()
 const show = error => {
@@ -23,17 +25,21 @@ const send = error => {
         game: data,
     })
 
-    sending = fetch('/api/error/create', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body,
-    }).catch(e => {
-        console.error('Could not send error to server', e)
-    })
-
-    Message.savegame.log('Synced savegame to server')
+    sending = Promise.all([
+        fetch('/api/error/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body,
+        }).then(() => {
+            Message.savegame.log('Sent error with savegame to server')
+        })
+        .catch(e => {
+            console.error('Could not send error to server', e)
+        }),
+        Tracking.error()
+    ])
 }
 
 const core = error => {

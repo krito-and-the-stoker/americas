@@ -60,24 +60,39 @@ const Dashboard = () => {
   };
 
   const eventTypeData = () => {
+    const sortedData = [
+      data().countByName.PageView,
+      data().countByName.NewGame,
+      data().countByName.ResumeGame,
+      data().countByName.Autosave,
+      data().countByName.Error,
+    ]
+    const labels = [
+      "PageView",
+      "NewGame",
+      "ResumeGame",
+      "AutoSave",
+      "Error",
+    ]
     const colors = {
-      pageview: '#4572f9',
-      newgame: '#45f9ba',
-      resume: '#f9c045',
-      autosave: '#f96645',
+      pageview: '#4572F9',
+      newgame: '#46FAD9',
+      resume: '#24B379',
+      autosave: '#FAE26C',
+      error: '#AF2626',
     }
-    const labels = Object.keys(data().countByName);
     const backgroundColors = [
-      colors.autosave,
-      colors.newgame,
       colors.pageview,
-      colors.resume
+      colors.newgame,
+      colors.resume,
+      colors.autosave,
+      colors.error,
     ]
 
     return {
       labels,
       datasets: [{
-        data: Object.values(data().countByName),
+        data: sortedData,
         backgroundColor: backgroundColors,
         hoverBackgroundColor: backgroundColors
       }]
