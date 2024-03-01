@@ -133,9 +133,9 @@ const uniqueFn = <T>(fn: Function1<T, any>) => (value: T, index: number, array: 
 const sum = (array: number[]) => array.reduce((all, single) => all + single, 0)
 const average = (array: number[]) => (array.length > 0 ? sum(array) / array.length : 0)
 
-const minDistance = (many: number[], one: number ) =>
+const minDistance = (many: Coordinates[], one: Coordinates ) =>
   distance(
-    min(many, other => distance(one, other)),
+    min(many, other => distance(one, other)) ?? one,
     one
   )
 const entityDistance = (one: hasCoordinates, other: hasCoordinates) => distance(one.mapCoordinates, other.mapCoordinates)

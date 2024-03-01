@@ -17,7 +17,7 @@ const madd = (v: Coordinates, m: number, w: Coordinates) => ({
   y: v.y + m * w.y,
 })
 
-const mmadd = (l, v: Coordinates, m: number, w: Coordinates) => ({
+const mmadd = (l: number, v: Coordinates, m: number, w: Coordinates) => ({
   x: l * v.x + m * w.x,
   y: l * v.y + m * w.y,
 })

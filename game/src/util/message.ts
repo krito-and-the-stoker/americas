@@ -68,18 +68,18 @@ const emptyFn = () => {}
 
 const domainFunctions = Object.fromEntries(Object.entries(domains).map(([domain, isEnabled]) => {
   const functions = isEnabled ? {
-    info: info(domain),
-    log: log(domain),
-    warn: warn(domain),
-    error: error(domain),
+    info: info(domain as Domain),
+    log: log(domain as Domain),
+    warn: warn(domain as Domain),
+    error: error(domain as Domain),
   } : {
     info: emptyFn,
     log: emptyFn,
     warn: emptyFn,
-    error: error(domain),
+    error: error(domain as Domain),
   }
 
-  return [domain, functions]
+  return [domain as Domain, functions]
 }))
 
 
