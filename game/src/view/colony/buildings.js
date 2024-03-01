@@ -364,13 +364,35 @@ const create = colony => {
   RenderView.updateWhenResized(({ dimensions }) => {
     dragFactor = 1920.0 / dimensions.x
   })
+
+
+  let minPosition = { x: 0, y: 0 }
+  const sanitizePosition = newPosition => {
+    if (newPosition.x > 0) {
+      newPosition.x = 0
+    }
+    if (newPosition.x < minPosition.x) {
+      newPosition.x = minPosition.x
+    }
+
+    if (newPosition.y > 0) {
+      newPosition.y = 0
+    }
+    if (newPosition.y < minPosition.y) {
+      newPosition.y = minPosition.y
+    }
+
+    return newPosition
+  }
+
+
   const dragStart = (coords) => {
     initialCoords = coords
   }
 
   const dragMove = (coords) => {
     const cursorDelta = LA.multiply(dragFactor, LA.subtract(coords, initialCoords))
-    const newPosition = LA.add(containerCoords, cursorDelta)
+    const newPosition = sanitizePosition(LA.add(containerCoords, cursorDelta))
 
     container.buildings.position.x = newPosition.x
     container.buildings.position.y = newPosition.y
@@ -383,18 +405,50 @@ const create = colony => {
     containerCoords = LA.add(containerCoords, LA.multiply(dragFactor, LA.subtract(coords, initialCoords)))
   }
 
-  const ZOOM_FACTOR = 0.001
   let zoomScale = 1.0
+  let minZoom = 0
+  RenderView.updateWhenResized(({ dimensions }) => {
+    const scaleX = dimensions.x / originalDimensions.x
+    const scaleY = dimensions.y / originalDimensions.y
+    const scale = 0.9 * Math.min(scaleX, scaleY)
+
+    const width = 1920.0 * scale
+    const height = 1080.0 * scale
+    const colonyDimensions = {
+      x: Layout.dimensions(colony.layout).x * WIDTH,
+      y: Layout.dimensions(colony.layout).y * HEIGHT,
+    }
+    minZoom = Math.max(width / colonyDimensions.x, height / colonyDimensions.y) / scale
+    console.log(colonyDimensions, width, height, scale, minZoom)
+  })
+  const updateMinPosition = () => {
+    const colonyDimensions = {
+      x: Layout.dimensions(colony.layout).x * WIDTH,
+      y: Layout.dimensions(colony.layout).y * HEIGHT,
+    }
+    minPosition = {
+      x: -colonyDimensions.x * zoomScale + 1920.0,
+      y: -colonyDimensions.y * zoomScale + 1080.0,
+    }
+  }
+
+  const ZOOM_FACTOR = 0.001
   const handleWheel = ({ delta, position }) => {
     const deltaFactor = Math.exp(-ZOOM_FACTOR * delta.y)
+    if (deltaFactor * zoomScale < minZoom) {
+      return
+    }
+
     zoomScale *= deltaFactor
     container.buildings.scale.set(zoomScale)
     container.colonists.scale.set(zoomScale)
     container.water.scale.set(zoomScale)
+    updateMinPosition()
 
     const center = container.buildings.toLocal(position)
     const offset = LA.multiply((1.0 - deltaFactor) * zoomScale, center)
     containerCoords = LA.add(containerCoords, offset)
+    containerCoords = sanitizePosition(containerCoords)
 
     container.buildings.position.x = containerCoords.x
     container.buildings.position.y = containerCoords.y

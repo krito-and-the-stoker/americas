@@ -48,6 +48,11 @@ const update = (layout: ShapeMap, x: number, y: number, fn: Function1<number, nu
 	layout[y][x] = fn(layout[y][x])
 }
 
+const dimensions = (layout: ShapeMap) => ({
+	x: layout[0].length,
+	y: layout.length,
+})
+
 const canPutTriangle = (layout: ShapeMap, x: number, y: number, shape: number) => {
 	const haveShape = get(layout, x, y)
 	if (haveShape === 0) {
@@ -435,6 +440,7 @@ export default {
 	load,
 	save,
 	iterate,
+	dimensions,
 	removeBuilding,
 	placeBuilding,
 	placeWater,
