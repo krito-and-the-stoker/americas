@@ -1,10 +1,9 @@
-/* eslint-disable no-console */
-
 const level = {
   info: true,
   log: true,
   warn: true,
-}
+  error: true,
+} as const;
 
 const domains = {
   event: false,
@@ -23,11 +22,17 @@ const domains = {
   savegame: true,
   tracking: false,
   signal: true
-}
+} as const;
 
-const print = (level, domain, ...args) => {
+// Extract keys from `level` and `domains` objects where the value is `true`
+type Level = keyof typeof level;
+type Domain = keyof typeof domains;
+
+
+const print = (level: Level, domain: Domain, ...args: any[]) => {
   if (typeof document !== 'undefined') {
-    console[level.toLowerCase()](`${level} ${domain}:`, ...args)
+    const method = console[level as keyof Console] as Function;
+    method?.(`${level} ${domain}:`, ...args);
     // TODO: Display a few things in the intro log
     // const logElement = document.querySelector('#log')
     // if (logElement) {
@@ -36,26 +41,26 @@ const print = (level, domain, ...args) => {
   }
 }
 
-const info = domain => (...args) => {
+const info = (domain: Domain) => (...args: any[]) => {
   if (level.info) {
-    print('Info', domain, ...args)
+    print('info', domain, ...args)
   }
 }
 
-const log = domain => (...args) => {
+const log = (domain: Domain) => (...args: any[]) => {
   if (level.log) {
-    print('Log', domain, ...args)
+    print('log', domain, ...args)
   }
 }
 
-const warn = domain => (...args) => {
+const warn = (domain: Domain) => (...args: any[]) => {
   if (level.warn) {
-    print('Warn', domain, ...args)
+    print('warn', domain, ...args)
   }
 }
 
-const error = domain => (...args) => {
-  print('Error', domain, ...args)
+const error = (domain: Domain) => (...args: any[]) => {
+  print('error', domain, ...args)
 }
 
 
