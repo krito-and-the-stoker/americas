@@ -12,7 +12,9 @@ const SAVE_TO_REMOTE = true
 
 const gameId = Signal.basic(null)
 const gamesToSync = Signal.basic(JSON.parse(window.localStorage.getItem('needsSync') || '[]'))
+const lastSaveId = Signal.basic(window.localStorage.getItem('lastSaveId'))
 const isRunning = Signal.basic(false)
+const gamesInStorage = Signal.basic(Object.keys(window.localStorage).filter(key => key.startsWith('game-')))
 
 const update = {
     isRunning: isRunning.update,
@@ -49,11 +51,15 @@ const initialize = async clickResume => {
         window.localStorage.setItem('needsSync', JSON.stringify(newValue))
     })
 
+    lastSaveId.listen(id => {
+        window.localStorage.setItem('lastSaveId', id || '')
+    })
+
 
     if (SAVE_TO_REMOTE) {
         await Promise.all(
             gamesToSync.value.map(id => {
-                const data = window.localStorage.getItem(id)
+                const data = loadFromStorage(id)
                 if (data) {
                     return saveToRemote(id, data).then(() => {
                         gamesToSync.update(gamesToSync.value.filter(item => item !== id))
@@ -62,6 +68,7 @@ const initialize = async clickResume => {
                     })
                 } else {
                     Message.savegame.error('Could not sync to server, no data found for', id)
+                    gamesToSync.update(gamesToSync.value.filter(item => item !== id))
                 }
             })
         )
@@ -69,7 +76,7 @@ const initialize = async clickResume => {
 }
 
 const setGameIdFromUrl = () => {
-    const newValue = window.location.pathname.split('/').pop()
+    const newValue = window.location.pathname.split('/').pop() || lastSaveId.value
     gameId.update(newValue)
 }
 
@@ -108,32 +115,53 @@ const saveToRemote = async (id, data) => {
     Message.savegame.log('Synced savegame to server')
 }
 
+const saveLocal = (id, data) => {
+    const key = `game-${id}`
+    try {
+        window.localStorage.setItem(key, data)
+    } catch(e) {
+        Message.savegame.log('Could not save to local storage, removing other games and retry')
+        const doNotDelete = gamesToSync.value.map(otherId => `game-${otherId}`)
+        gamesInStorage.value
+            .filter(key => !doNotDelete.includes(key))
+            .forEach(key => window.localStorage.removeItem(key))
+
+        window.localStorage.setItem(key, data)
+    }
+
+    gamesInStorage.update([...gamesInStorage.value, key])
+    lastSaveId.update(id)
+}
+
+const loadFromStorage = id => {
+    return window.localStorage.getItem(`game-${id}`)
+}
+
 const save = (savegame = null) => {
-    Message.savegame.log('Saving...')
+    Message.savegame.log('Saving...', gameId.value)
     const data = savegame || Record.serialize()
     if (SAVE_TO_LOCAL_STORAGE) {
-        window.localStorage.setItem(gameId.value, data)
-        Message.savegame.log(`Entities saved to local storage using ${data.length} bytes.`)
+        saveLocal(gameId.value, data)
         if (SAVE_TO_REMOTE) {
             gamesToSync.update([...gamesToSync.value, gameId.value])
         }
     }
 
-    Message.savegame.log(`Entities saved in memory using ${data.length} bytes.`)
+    Message.savegame.log(`Entities saved to local storage using ${Math.round(data.length / 1024)} kb.`)
     Events.trigger('save')
 }
 
 const autosave = async () => {
-    Message.savegame.log('Saving...')
+    Message.savegame.log('Saving...', gameId.value)
     const data = await Record.serializeAsync()
     if (SAVE_TO_LOCAL_STORAGE) {
-        window.localStorage.setItem(gameId.value, data)
+        saveLocal(gameId.value, data)
     }
     if (SAVE_TO_REMOTE) {
         await saveToRemote(gameId.value, data)
     }
 
-    Message.savegame.log(`Entities saved to local storage using ${Math.round(data.length / 1024)} kb.`)
+    Message.savegame.log(`Entities saved to local storage and remote using ${Math.round(data.length / 1024)} kb.`)
     Tracking.autosave()
 }
 
@@ -159,7 +187,7 @@ const load = async gameId => {
 
         if (data.game) {
             try {
-                Message.savegame.log('Savegame found on server')
+                Message.savegame.log('Savegame found on server', gameId)
                 return data.game
             } catch (e) {
                 Message.savegame.error('Error parsing savegame', e)
@@ -168,20 +196,25 @@ const load = async gameId => {
     }
 
     if (SAVE_TO_LOCAL_STORAGE && gameId) {
-        const data = window.localStorage.getItem(gameId)
+        const data = loadFromStorage(gameId)
 
         if (data) {
-            Message.savegame.log('Savegame found in local storage')
+            Message.savegame.log('Savegame found in local storage', gameId)
             return data
         }
     }
 
-    Message.savegame.warn('No savegame found')
+    Message.savegame.warn('No savegame found', gameId)
 }
 
 const derived = {
     gameData: Signal.state(
         gameId.listen,
+        Signal.combine({
+            id: Signal.through,
+            isRunning: Signal.source(isRunning.listen),
+        }),
+        Signal.select(({ id, isRunning }) => !isRunning ? id : null),
         Signal.await(load),
     )
 }
