@@ -9,3 +9,6 @@ export type Coordinates = {
   y: number
 }
 
+export interface HasCoordinates {
+  mapCoordinates: Coordinates
+}

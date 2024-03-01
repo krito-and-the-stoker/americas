@@ -307,13 +307,23 @@ const create = colony => {
   }
 
   if (colony.waterMap) {
+    const calculateProfile = Layout.borderProfile(
+      ({ x, y, shape }) => Layout.canPutTriangle(colony.waterMap, x, y, shape) && !Layout.canPutTriangle(colony.layout, x, y, shape)
+    )
     Layout.iterate(colony.waterMap).forEach(({ x, y, shape }) => {
       let triangles = []
       if (shape > 0 && shape < 5) {
-        triangles = [Water[shape - 1]]
+        const profile = calculateProfile({ x, y, shape })
+        const candidates = Water.filter(entry => entry.border === profile)
+        triangles = [candidates[shape - 1]]
       }
       if (shape === 5) {
-        triangles = [Water[0], Water[2]]
+        const profile1 = calculateProfile({ x, y, shape: 1 })
+        const candidates1 = Water.filter(entry => entry.border === profile1)
+
+        const profile2 = calculateProfile({ x, y, shape: 3 })
+        const candidates2 = Water.filter(entry => entry.border === profile2)
+        triangles = [candidates1[0], candidates2[2]]
       }
 
       triangles.forEach(triangle => {

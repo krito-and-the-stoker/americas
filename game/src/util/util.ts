@@ -2,18 +2,15 @@ import 'util/polyfills'
 import Clone from 'clone'
 import * as PIXI from 'pixi.js'
 
-import type { Maybe, Function1, Function2, Coordinates } from 'util/types'
+import type { Maybe, Function1, Function2, Coordinates, HasCoordinates } from 'util/types'
 
 import Names from 'data/names.json'
 
 import LA from 'util/la'
 import Message from 'util/message'
 
-interface hasCoordinates {
-  mapCoordinates: Coordinates
-}
 
-interface Unit extends hasCoordinates{
+interface Unit extends HasCoordinates {
   radius: number
   properties: {
     radius: number
