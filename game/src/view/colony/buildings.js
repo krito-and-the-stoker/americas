@@ -392,7 +392,10 @@ const create = colony => {
     container.colonists.scale.set(zoomScale)
     container.water.scale.set(zoomScale)
 
-    containerCoords = LA.madd(containerCoords, dragFactor * (1 - deltaFactor) / zoomScale, LA.subtract(position, containerCoords))
+    const center = container.buildings.toLocal(position)
+    const offset = LA.multiply((1.0 - deltaFactor) * zoomScale, center)
+    containerCoords = LA.add(containerCoords, offset)
+
     container.buildings.position.x = containerCoords.x
     container.buildings.position.y = containerCoords.y
     container.colonists.position.x = containerCoords.x
