@@ -120,6 +120,7 @@ const getAll = type =>
   records.filter(record => record.type === type).map(record => record.entity)
 
 const get = id => records.find(record => record.id === id)
+const getReference = id => get(id)?.entity
 
 const revive = record => {
   if (record.entity) {
@@ -159,7 +160,6 @@ const dump = () => {
     entitiesLoaded,
     setGlobal,
     getGlobal,
-    save,
     resume,
     dump,
     getAll,
@@ -505,6 +505,7 @@ export default {
   unserialize,
   dump,
   getAll,
+  getReference,
   download,
   upload,
   state,

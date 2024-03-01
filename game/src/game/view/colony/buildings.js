@@ -395,8 +395,8 @@ const create = colony => {
       buildings.map(building => {
         const buildingView = createBuilding(colony, building)
         if (buildingView) {
-          buildingView.container.colonists.x = building.placement[0].position.x * WIDTH
-          buildingView.container.colonists.y = building.placement[0].position.y * HEIGHT
+          buildingView.container.colonists.x = building.placement[0]?.position.x * WIDTH || 0
+          buildingView.container.colonists.y = building.placement[0]?.position.y * HEIGHT || 0
           container.buildings.addChild(buildingView.container.building)
           container.colonists.addChild(buildingView.container.colonists)
 

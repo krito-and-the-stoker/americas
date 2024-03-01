@@ -4,6 +4,7 @@ import Units from 'data/units'
 import Util from 'util/util'
 import Events from 'util/events'
 import Message from 'util/message'
+import Record from 'util/record'
 
 import Buildings from 'entity/buildings'
 import Building from 'entity/building'
@@ -51,7 +52,7 @@ const createOptionAdd = (colony, name) => {
 
 const createOptionIncrease = building => {
   const colony = building.colony
-  const id = `increaseLevel-${building.name}`
+  const id = `increaseLevel-${building.referenceId}`
   const option = {
     id,
     progress: colony.construction[id]?.progress ?? 0,
@@ -59,7 +60,7 @@ const createOptionIncrease = building => {
     cost: Building.upgradeCost(building),
     construct: {
       action: 'increaseLevel',
-      building: building.name,
+      building: building.referenceId,
     }
   }
 
@@ -130,7 +131,7 @@ const construct = (colony, option) => {
       )
     },
     increaseLevel: () => {
-      const building = Building.get(colony, option.construct.building)
+      const building = Record.getReference(option.construct.building)
       Building.update.level(building, building.level + 1)
       Colony.update.newBuildings(colony)
       Events.trigger('notification', {
@@ -139,7 +140,7 @@ const construct = (colony, option) => {
         building,
       })
       Message.colony.log(
-        `${colony.name} has completed construction of ${Building.name(colony, option.construct.building)}.`
+        `${colony.name} has completed construction of ${Building.name(colony, building.name)}.`
       )
     },
     createUnit: () => {

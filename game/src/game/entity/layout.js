@@ -153,7 +153,6 @@ const landValueMap = (colony, building) => {
 }
 
 const removeBuilding = (colony, building) => {
-	console.log('remove building', colony, building, building.placement)
 	building.placement.forEach(placement => {
 		iterate(placement.triangle.shape).forEach(({ x, y, shape }) => {
 			removeTriangle(colony.layout, placement.position.x + x, placement.position.y + y, shape)
