@@ -6,6 +6,7 @@ import Util from 'util/util'
 import Record from 'util/record'
 import Message from 'util/message'
 import Events from 'util/events'
+import Binding from 'util/binding'
 
 import Colony from 'entity/colony'
 import Layout from 'entity/layout'
@@ -98,6 +99,14 @@ const canEmploy = (building, expert) => {
     .length < workspace(building)
 }
 
+const update = {
+  level: (building, level) => Binding.update(building, 'level', level)
+}
+
+const listen = {
+  level: (buliding, fn) => Binding.listen(building, 'level', fn)
+}
+
 
 const make = name => {
   const create = (colony, level = 1) => {
@@ -144,6 +153,7 @@ const make = name => {
     upgradeCost,
     workspace,
     isInteractive,
+    update,
   }
 }
 

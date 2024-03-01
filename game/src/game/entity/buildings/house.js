@@ -1,11 +1,14 @@
 import Triangles from 'data/triangles'
 import BuildingFactory from './factory'
 
-import Util from 'util/util'
-import Record from 'util/record'
 import Time from 'timeline/time'
 
+import Util from 'util/util'
+import Record from 'util/record'
+import Binding from 'util/binding'
+
 import Layout from 'entity/layout'
+import Colony from 'entity/colony'
 
 import Produce from 'task/colony/produce'
 
@@ -20,11 +23,7 @@ const create = (colony, level) => {
     triangles: Triangles.house,
   }
 
-  building.placement = [
-    Layout.placeBuilding(colony, building),
-    Layout.placeBuilding(colony, building),
-    Layout.placeBuilding(colony, building),
-  ]
+  building.placement = []
   building.destroy = initialize(building)
 
   Record.add('building', building)
@@ -33,7 +32,19 @@ const create = (colony, level) => {
 
 const initialize = building => {
 	return [
-		Time.schedule(Produce.create(building.colony, 'housing', building.level))
+    listen.level(building, level => [
+		  level > 0 && Time.schedule(Produce.create(building.colony, 'housing', building.level)),
+      level => {
+        const colony = building.colony
+        Layout.removeBuilding(colony, building)
+        building.placement = [
+          Layout.placeBuilding(colony, building),
+          Layout.placeBuilding(colony, building),
+          Layout.placeBuilding(colony, building),
+        ]
+        Colony.update.newBuildings(colony)
+      }
+    ])
 	]
 }
 
@@ -53,8 +64,14 @@ const load = building => {
 }
 
 const isInteractive = () => false
-const display = () => 'Houses'
-const upgradeDisplay = () => 'House'
+const display = building => {
+  if (building?.level === 0) {
+    return 'Camp'
+  }
+
+  return 'Houses'
+}
+const upgradeDisplay = () => 'Houses'
 const cost = () => ({
 	wood: 25,
 	tools: 5
@@ -65,6 +82,13 @@ const upgradeCost = () => ({
 })
 const workspace = () => 0
 
+const update = {
+  level: (building, value) => Binding.update(building, 'level', value)
+}
+
+const listen = {
+  level: (building, fn) => Binding.listen(building, 'level', fn)
+}
 
 export default {
 	load,
@@ -77,4 +101,5 @@ export default {
   cost,
   upgradeCost,
   workspace,
+  update,
 }

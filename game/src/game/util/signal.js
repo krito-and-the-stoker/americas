@@ -145,7 +145,7 @@ const equality = (equals = isEqualBasic) => {
   }
 
   return (value, resolve) => {
-    if (!equals(lastValue, value)) {
+    if (!equals || !equals(lastValue, value)) {
       return [
         rememberLastValue(value),
         resolve(value),

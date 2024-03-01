@@ -131,7 +131,7 @@ const construct = (colony, option) => {
     },
     increaseLevel: () => {
       const building = Building.get(colony, option.construct.building)
-      building.level = Building.level(colony, option.construct.building) + 1
+      Building.update.level(building, building.level + 1)
       Colony.update.newBuildings(colony)
       Events.trigger('notification', {
         type: 'construction',

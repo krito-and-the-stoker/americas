@@ -41,7 +41,7 @@ function DefaultSummary() {
 		Signal.select(screen => screen?.params?.colony),
 	)
 
-	const [colony, productionSummary, construction] = Signal.create(
+	const [colony, productionSummary, [cost, progressPercentage, display]] = Signal.create(
 		colonySignal,
 		[
 			Signal.through,
@@ -55,16 +55,19 @@ function DefaultSummary() {
 					Colony.listen.construction,
 					Colony.listen.constructionTarget,
 				]),
-				Signal.select(([colony]) => colony && Colony.currentConstruction(colony)),
+				Signal.select(([colony]) => colony && Colony.currentConstruction(colony), false),
+				Signal.select([
+					construction => construction.cost,
+					construction => {
+						const costSum = Util.sum(Object.values(construction.cost ?? [])) || 1
+						return 100 * construction.progress / costSum
+					},
+					construction => construction.display,
+				])
 			)
 		]
 	)
 
-
-	const costSum = () => Util.sum(Object.values(construction()?.cost ?? []))
-	const cost = () => construction()?.cost
-	const progressPercentage = () => 100 * construction()?.progress / (costSum() || 1)
-	const display = () => construction()?.display
 
 	const [bells, colonists] = Signal.create(
 		colonySignal,

@@ -32,6 +32,9 @@ const upgradeDisplay = building => Buildings[building.name].upgradeDisplay(build
 const upgradeCost = building => Buildings[building.name].upgradeCost(building)
 const canEmploy = (building, expert) => Buildings[building.name]?.canEmploy && Buildings[building.name]?.canEmploy(building, expert)
 
+const update = {
+  level: (building, value) => Buildings[building.name].update.level(building, value)
+}
 
 export default {
   get,
@@ -45,4 +48,5 @@ export default {
   cost,
   upgradeCost,
   workspace,
+  update,
 }

@@ -67,6 +67,33 @@ const putTriangle = (layout, x, y, shape) => {
 	}
 }
 
+// assumes that the shape IS present
+const removeTriangle = (layout, x, y, shape) => {
+	if (shape > 0) {
+		if (shape === 5) {
+			set(layout, x, y, 0)
+		} else {
+			const haveShape = get(layout, x, y)
+			if (haveShape !== 5) {
+				set(layout, x, y, 0)
+			} else {
+				if (shape === 1) {
+					set(layout, x, y, 3)
+				}
+				if (shape === 2) {
+					set(layout, x, y, 4)
+				}
+				if (shape === 3) {
+					set(layout, x, y, 1)
+				}
+				if (shape === 4) {
+					set(layout, x, y, 2)
+				}
+			}
+		}
+	}
+}
+
 const iterate = layout => layout.flatMap((inner, y) => inner.map((shape, x) => ({ shape, x, y })))
 
 const canPutLayout = (baseLayout, testLayout, offsetX, offsetY) => {
@@ -123,6 +150,15 @@ const landValueMap = (colony, building) => {
 	})
 
 	return landValue
+}
+
+const removeBuilding = (colony, building) => {
+	console.log('remove building', colony, building, building.placement)
+	building.placement.forEach(placement => {
+		iterate(placement.triangle.shape).forEach(({ x, y, shape }) => {
+			removeTriangle(colony.layout, placement.position.x + x, placement.position.y + y, shape)
+		})
+	})
 }
 
 const placeBuilding = (colony, building) => {
@@ -281,5 +317,5 @@ const placeWater = colony => {
 
 
 export default {
-	create, load, save, iterate, placeBuilding, placeWater
+	create, load, save, iterate, removeBuilding, placeBuilding, placeWater
 }
