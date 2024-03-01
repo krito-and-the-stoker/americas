@@ -1,9 +1,14 @@
-const gulp = require('gulp')
-const tap = require('gulp-tap');
-const sass = require('gulp-sass')(require('sass'))
-const path = require('path')
-const fs = require('fs')
-const browserSync = require('browser-sync').create()
+import gulp from 'gulp'
+import tap from 'gulp-tap'
+import gulpSass from 'gulp-sass'
+import * as dartSass from 'sass'
+import path from 'path'
+import { deleteSync } from 'del'
+import fs from 'fs'
+import browserSync from 'browser-sync'
+
+const sass = gulpSass(dartSass)
+
 
 function swallowError (error) {
 	console.log(error.toString())
@@ -54,7 +59,12 @@ gulp.task('templates', () => {
         });
 });
 
-gulp.task('build', gulp.series(gulp.parallel(['templates', 'sass', 'images'])))
+gulp.task('clean', done => {
+    deleteSync(['dist']);
+    done()
+})
+
+gulp.task('build', gulp.series(gulp.parallel(['clean', 'templates', 'sass', 'images'])))
 
 gulp.task('watch', () => {
 	gulp.watch('scss/**/*.scss', gulp.series('sass'))
@@ -62,4 +72,4 @@ gulp.task('watch', () => {
 	gulp.watch('templates/**/*', gulp.series('templates'))
 })
 
-gulp.task('default', gulp.series('build', 'serve', 'watch'))
+gulp.task('default', gulp.series('clean', 'serve', 'build', 'watch'))

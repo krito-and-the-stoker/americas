@@ -8,7 +8,6 @@ const paths = Object.freeze({
   undiscovered: 'images/undiscovered.jpg',
   colonyWoodBackground: 'images/colony-screen/wood-background.jpg',
   goodsBackground: 'images/goods-background.jpg',
-  buildings: 'images/colony-screen/buildings.png',
   triangles: 'images/buildings/main.png',
   help: 'images/help.jpg',
   welcome: 'images/welcome.png',

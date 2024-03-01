@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "license": "MIT",
   "repository": "git@github.com:krito-and-the-stoker/americas.git",
+  "type": "module",
   "scripts": {
     "build": "gulp build --production",
     "dev": "gulp",
@@ -12,6 +13,7 @@
     "climate": "gulp climate"
   },
   "dependencies": {
+    "del": "^7.1.0",
     "gulp-tap": "^2.0.0"
   },
   "devDependencies": {

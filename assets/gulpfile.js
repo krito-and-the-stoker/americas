@@ -1,1 +1,1 @@
-require('./gulp/build.js')
+import './gulp/build.js'
