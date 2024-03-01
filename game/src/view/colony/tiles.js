@@ -291,11 +291,17 @@ const create = (colony, originalDimensions) => {
     }
   })
 
-  container.tiles.position.x = originalDimensions.x - 450
-  container.tiles.position.y = originalDimensions.y - 450 - 121
+  // container.tiles.position.x = originalDimensions.x - 450
+  // container.tiles.position.y = originalDimensions.y - 450 - 121
+  // container.tiles.scale.set(450 / (3 * TILE_SIZE))
+  // container.colonists.position.x = originalDimensions.x - 450
+  // container.colonists.position.y = originalDimensions.y - 450 - 121
+  // container.colonists.scale.set(450 / (3 * TILE_SIZE))
+  container.tiles.position.x = 0
+  container.tiles.position.y = 0
   container.tiles.scale.set(450 / (3 * TILE_SIZE))
-  container.colonists.position.x = originalDimensions.x - 450
-  container.colonists.position.y = originalDimensions.y - 450 - 121
+  container.colonists.position.x = 0
+  container.colonists.position.y = 0
   container.colonists.scale.set(450 / (3 * TILE_SIZE))
 
   const unsubscribe = [unsubscribeTiles, unsubscribeCenter]

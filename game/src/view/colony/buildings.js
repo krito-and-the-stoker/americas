@@ -407,6 +407,16 @@ const create = colony => {
 
   let zoomScale = 1.0
   let minZoom = 0
+  const updateMinPosition = () => {
+    const colonyDimensions = {
+      x: Layout.dimensions(colony.layout).x * WIDTH,
+      y: Layout.dimensions(colony.layout).y * HEIGHT,
+    }
+    minPosition = {
+      x: -colonyDimensions.x * zoomScale + 1920.0,
+      y: -colonyDimensions.y * zoomScale + 1080.0,
+    }
+  }
   RenderView.updateWhenResized(({ dimensions }) => {
     const scaleX = dimensions.x / originalDimensions.x
     const scaleY = dimensions.y / originalDimensions.y
@@ -419,18 +429,8 @@ const create = colony => {
       y: Layout.dimensions(colony.layout).y * HEIGHT,
     }
     minZoom = Math.max(width / colonyDimensions.x, height / colonyDimensions.y) / scale
-    console.log(colonyDimensions, width, height, scale, minZoom)
+    updateMinPosition()
   })
-  const updateMinPosition = () => {
-    const colonyDimensions = {
-      x: Layout.dimensions(colony.layout).x * WIDTH,
-      y: Layout.dimensions(colony.layout).y * HEIGHT,
-    }
-    minPosition = {
-      x: -colonyDimensions.x * zoomScale + 1920.0,
-      y: -colonyDimensions.y * zoomScale + 1080.0,
-    }
-  }
 
   const ZOOM_FACTOR = 0.001
   const handleWheel = ({ delta, position }) => {

@@ -25,28 +25,28 @@ const create = (colony, closeScreen, originalDimensions) => {
 
   const shipPositions = [
     {
-      x: 0,
-      y: 24,
+      x: 1920 - 128,
+      y: 1080 - 121 - 24 - 128,
       taken: false,
     },
     {
-      x: 128,
-      y: 24,
+      x: 1920 - 2 * 128,
+      y: 1080 - 121 - 24 - 128,
       taken: false,
     },
     {
-      x: 256,
-      y: 24,
+      x: 1920 - 3 * 128,
+      y: 1080 - 121 - 24 - 128,
       taken: false,
     },
     {
-      x: 3 * 128,
-      y: 24,
+      x: 1920 - 4 * 128,
+      y: 1080 - 121 - 24 - 128,
       taken: false,
     },
     {
-      x: 512,
-      y: 24,
+      x: 1920 - 5 * 128,
+      y: 1080 - 121 - 24 - 128,
       taken: false,
     },
   ]
