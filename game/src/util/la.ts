@@ -1,94 +1,101 @@
+import type { Coordinates, Function1 } from 'util/types'
 import Util from 'util/util'
 
-const add = (v, w) => ({
+type Line = {
+  point1: Coordinates
+  point2: Coordinates
+}
+
+
+const add = (v: Coordinates, w: Coordinates) => ({
   x: v.x + w.x,
   y: v.y + w.y,
 })
 
-const madd = (v, m, w) => ({
+const madd = (v: Coordinates, m: number, w: Coordinates) => ({
   x: v.x + m * w.x,
   y: v.y + m * w.y,
 })
 
-const mmadd = (l, v, m, w) => ({
+const mmadd = (l, v: Coordinates, m: number, w: Coordinates) => ({
   x: l * v.x + m * w.x,
   y: l * v.y + m * w.y,
 })
 
-const lerp = (v, w, lambda) => ({
+const lerp = (v: Coordinates, w: Coordinates, lambda: number) => ({
   x: lambda * v.x + (1.0 - lambda) * w.x,
   y: lambda * v.y + (1.0 - lambda) * w.y,
 })
 
-const multiply = (m, v) => ({
+const multiply = (m: number, v: Coordinates) => ({
   x: m * v.x,
   y: m * v.y,
 })
 
-const subtract = (v, w) => ({
+const subtract = (v: Coordinates, w: Coordinates) => ({
   x: v.x - w.x,
   y: v.y - w.y,
 })
 
-const normalize = v => ({
+const normalize = (v: Coordinates) => ({
   x: v.x / distance(v),
   y: v.y / distance(v),
 })
 
-const normalizeManhatten = v => ({
+const normalizeManhatten = (v: Coordinates) => ({
   x: v.x / distanceManhatten(v),
   y: v.y / distanceManhatten(v),
 })
 
-const rotate = (alpha, v = { x: 1, y: 0 }) => ({
+const rotate = (alpha: number, v: Coordinates = { x: 1, y: 0 }) => ({
   x: Math.cos(alpha) * v.x - Math.sin(alpha) * v.y,
   y: Math.sin(alpha) * v.x + Math.cos(alpha) * v.y,
 })
 
-const rotate90 = v => ({
+const rotate90 = (v: Coordinates) => ({
   x: -v.y,
   y: v.x,
 })
 
-const product = (v, w = v) => v.x * w.x + v.y * w.y
+const product = (v: Coordinates, w: Coordinates = v) => v.x * w.x + v.y * w.y
 const vector = (x = 0, y = x) => ({ x, y })
 
-const piecewise = (v, fn) => ({
+const piecewise = <T>(v: Coordinates, fn: Function1<number, T>) => ({
   x: fn(v.x),
   y: fn(v.y),
 })
 
-const round = v => piecewise(v, Math.round)
+const round = (v: Coordinates) => piecewise(v, Math.round)
 
-const factorize = (v, n1, n2) => ({
+const factorize = (v:Coordinates, n1: Coordinates, n2: Coordinates) => ({
   x: product(v, n1),
   y: product(v, n2),
 })
 
-const sqDistance = (v, w = { x: 0, y: 0 }) => product(subtract(w, v))
-const distance = (v, w) => Math.sqrt(sqDistance(v, w))
+const sqDistance = (v: Coordinates, w: Coordinates = { x: 0, y: 0 }) => product(subtract(w, v))
+const distance = (v: Coordinates, w?: Coordinates) => Math.sqrt(sqDistance(v, w))
 
-const distanceManhatten = (v, w = { x: 0, y: 0 }) => {
+const distanceManhatten = (v: Coordinates, w: Coordinates = { x: 0, y: 0 }) => {
   const delta = subtract(v, w)
   return Math.max(Math.abs(delta.x), Math.abs(delta.y))
 }
 
-const random = (x, y) => ({
+const random = (x: number, y: number) => ({
   x: Math.random() * x,
   y: Math.random() * y,
 })
 
-const min = (...args) => ({
+const min = (...args: Coordinates[]) => ({
   x: Math.min(...args.map(v => v.x)),
   y: Math.min(...args.map(v => v.y)),
 })
 
-const max = (...args) => ({
+const max = (...args: Coordinates[]) => ({
   x: Math.max(...args.map(v => v.x)),
   y: Math.max(...args.map(v => v.y)),
 })
 
-const intersect = (line1, line2) => {
+const intersect = (line1: Line, line2: Line) => {
   const normal1 = rotate90(subtract(line1.point1, line1.point2))
   const offset1 = product(line1.point1, normal1)
   const normal2 = rotate90(subtract(line2.point1, line2.point2))
@@ -101,7 +108,7 @@ const intersect = (line1, line2) => {
   )
 }
 
-const vectorProduct = (v, ...args) => ({
+const vectorProduct = (v: number[], ...args: Coordinates[]) => ({
   x: Util.sum(v.map((a, i) => a * args[i].x)),
   y: Util.sum(v.map((a, i) => a * args[i].y)),
 })

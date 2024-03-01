@@ -26,7 +26,8 @@
     "paths": {
       "data/*": ["./src/data/*"],
       "util/*": ["./src/util/*"],
-      "entity/*": ["./src/entity/*"]
+      "entity/*": ["./src/entity/*"],
+      "binding/*": ["./src/binding/*"]
     },
     "allowJs": true
   },

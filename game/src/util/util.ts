@@ -2,15 +2,12 @@ import 'util/polyfills'
 import Clone from 'clone'
 import * as PIXI from 'pixi.js'
 
+import type { Maybe, Function1, Function2, Coordinates } from 'util/types'
+
 import Names from 'data/names.json'
 
 import LA from 'util/la'
 import Message from 'util/message'
-
-type Coordinates = {
-  x: number
-  y: number
-}
 
 interface hasCoordinates {
   mapCoordinates: Coordinates
@@ -23,15 +20,12 @@ interface Unit extends hasCoordinates{
   }
 }
 
-type Function1<A, R> = (value: A) => R
-type Function2<A, B, R> = (first: A, second: B) => R
 type RGBColors = {
   r: number
   g: number
   b: number
 }
 
-type Maybe<T> = T | null
 
 const distance = LA.distance
 const inBattleDistance = (unit: Unit, other: Unit) =>
