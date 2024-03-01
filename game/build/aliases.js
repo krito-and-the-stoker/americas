@@ -18,7 +18,7 @@ const directories = [
 ]
 const aliases = directories
   .map(dir => ({
-    [dir]: path.resolve(__dirname, `../src/game/${dir}`),
+    [dir]: path.resolve(__dirname, `../src/${dir}`),
   }))
   .reduce((all, one) => ({ ...all, ...one }), {})
 

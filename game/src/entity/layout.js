@@ -1,3 +1,4 @@
+// @ts-check
 import Triangles from 'data/triangles'
 import Util from 'util/util'
 import LA from 'util/la'
@@ -11,7 +12,7 @@ const WATER_REACH = 8
 
 const create = () => {
 	// SIZE_X * SIZE_Y array of zeros
-	return Array(SIZE_Y).fill().map(() => (Array(SIZE_X).fill(0)))
+	return Array(SIZE_Y).fill(0).map(() => (Array(SIZE_X).fill(0)))
 }
 
 const load = data => data
