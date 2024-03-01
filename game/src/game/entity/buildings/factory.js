@@ -100,10 +100,10 @@ const canEmploy = (building, expert) => {
 
 
 const make = name => {
-  const create = colony => {
+  const create = (colony, level = 1) => {
     const building = {
       name,
-      level: 1,
+      level,
       colony,
       width: BuildingData[name].width,
       height: 1,

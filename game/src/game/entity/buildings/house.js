@@ -10,10 +10,10 @@ import Layout from 'entity/layout'
 import Produce from 'task/colony/produce'
 
 
-const create = colony => {
+const create = (colony, level) => {
   const building = {
     name: 'house',
-    level: 1,
+    level,
     colony,
     width: 1,
     height: 1,
@@ -33,7 +33,7 @@ const create = colony => {
 
 const initialize = building => {
 	return [
-		Time.schedule(Produce.create(building.colony, 'housing', 1))
+		Time.schedule(Produce.create(building.colony, 'housing', building.level))
 	]
 }
 
@@ -49,9 +49,7 @@ const load = building => {
 
   Record.entitiesLoaded(() => initialize(building))
 
-  return {
-    ...building,
-  }
+  return building
 }
 
 const isInteractive = () => false

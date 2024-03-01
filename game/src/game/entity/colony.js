@@ -167,6 +167,12 @@ const initialize = colony => {
     Time.schedule(Promote.create(colony)),
     Time.schedule(SortByPower.create(colony)),
     listen.colonists(colony, colonists =>
+      listen.newBuildings(colony, newBuildings => {
+        if (colonists.length > newBuildings.filter(building => building.name === 'house').length) {
+          addBuilding(colony, 'house', 0)
+        }
+      })),
+    listen.colonists(colony, colonists =>
       listen.bells(
         colony,
         Binding.map(
@@ -298,8 +304,8 @@ const disband = colony => {
   Record.remove(colony)
 }
 
-const addBuilding = (colony, name) => {
-  const building = Buildings[name]?.create(colony)  
+const addBuilding = (colony, name, level = 1) => {
+  const building = Buildings[name]?.create(colony, level)
   colony.newBuildings.push(building)
   update.newBuildings(colony)
 }

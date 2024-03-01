@@ -4,10 +4,11 @@ import Dialog from 'view/ui/dialog'
 import Message from 'util/message'
 import Tracking from 'util/tracking'
 
+// const THROW_ERROR = window.location.hostname === 'localhost'
+const THROW_ERROR = false
 
 let sending = Promise.resolve()
 const show = error => {
-    console.error('Captured error', error)
     Dialog.open('error.general', {
       error: error.message,
       reload: async () => {
@@ -42,21 +43,32 @@ const send = error => {
     ])
 }
 
-const core = error => {
+const handle = error => {
     show(error)
     send(error)
-
-    throw error
 }
 
-const draw = error => {
-    show(error)
-    send(error)
+const initialize = () => {
+    const errorHandleCallback = e => {
+        e.preventDefault()
+        if (e.error) {
+            console.error(e.error)
+            handle(e.error)
+            return
+        }
+        if (e.reason) {
+            console.error(e.reason)
+            handle(e.reason)
+            return
+        }
 
-    throw error
+        console.error('Captured undefined error event', e)
+    }
+
+    window.addEventListener('error', errorHandleCallback)
+    window.addEventListener('unhandledrejection', errorHandleCallback)
 }
-
 
 export default {
-    core, draw
+    initialize
 }

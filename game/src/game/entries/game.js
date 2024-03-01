@@ -53,17 +53,8 @@ const initialize = () => {
   const loop = t => {
     const deltaTime = Math.min(t - timeStamp, 150)
     timeStamp = t
-    try {
-      Time.advance(deltaTime)
-    } catch (err) {
-      ErrorDisplay.core(err)
-    }
-
-    try {
-      RenderView.onDraw()
-    } catch (err) {
-      ErrorDisplay.draw(err)
-    }
+    Time.advance(deltaTime)
+    RenderView.onDraw()
     requestAnimationFrame(loop)
   }
 
@@ -126,139 +117,128 @@ const preload = (clickResume) => {
 }
 
 const start = async () => {
-  try {
-    if (!loadingResources) {
-      preload()
-    }
-
-    Savegame.start()
-
-    await nextFrame()
-
-    Owner.initialize()
-
-    // MapEntity.create({ data: americaSmallMap })
-    MapEntity.create({ data: americaLargeMap })
-
-    await nextFrame()
-
-    AssmebleMap.initialize()
-
-    await nextFrame()
-
-    await loadingResources
-
-    RenderView.initialize()
-
-    await nextFrame()
-    MapView.initialize()
-    await nextFrame()
-    Tween.initialize()
-    await nextFrame()
-    PathFinder.initialize()
-    await nextFrame()
-
-    Europe.initialize()
-    Treasure.initialize()
-    Market.initialize()
-    await nextFrame()
-    Tribe.createFromMap(MapEntity.get())
-    await nextFrame()
-
-    AutosaveView.initialize()
-    Overlay.initialize()
-    Dialog.initialize()
-
-    // start game!
-    // const caravel = americaSmall()
-    const caravel = americaLarge()
-
-    await nextFrame()
-    MapView.zoomBy(1 / 0.35, null, 0)
-    MapView.zoomBy(1 / 0.35, null, 100)
-    setTimeout(async () => {
-      Message.initialize.log('Starting game...')
-      MapView.zoomBy(0.35, null, 3000)
-    }, 100)
-
-    setTimeout(() => {
-      Background.get().layer.show()
-      Foreground.get().layer.show()
-    }, 750)
-
-    setTimeout(() => {
-      Input.initialize()
-      Dialog.open('welcome', {
-        caravel,
-        select: () => UnitMapView.select(caravel)
-      })
-    }, 3500)
-
-    FullscreenEvents.initialize()
-
-    await nextFrame()
-    initialize()
-  } catch (err) {
-    Error.capture(err)
-    Dialog.open('error.initialize')
+  ErrorDisplay.initialize()
+  if (!loadingResources) {
+    preload()
   }
+
+  Savegame.start()
+
+  await nextFrame()
+
+  Owner.initialize()
+
+  // MapEntity.create({ data: americaSmallMap })
+  MapEntity.create({ data: americaLargeMap })
+
+  await nextFrame()
+
+  AssmebleMap.initialize()
+
+  await nextFrame()
+
+  await loadingResources
+
+  RenderView.initialize()
+
+  await nextFrame()
+  MapView.initialize()
+  await nextFrame()
+  Tween.initialize()
+  await nextFrame()
+  PathFinder.initialize()
+  await nextFrame()
+
+  Europe.initialize()
+  Treasure.initialize()
+  Market.initialize()
+  await nextFrame()
+  Tribe.createFromMap(MapEntity.get())
+  await nextFrame()
+
+  AutosaveView.initialize()
+  Overlay.initialize()
+  Dialog.initialize()
+
+  // start game!
+  // const caravel = americaSmall()
+  const caravel = americaLarge()
+
+  await nextFrame()
+  MapView.zoomBy(1 / 0.35, null, 0)
+  MapView.zoomBy(1 / 0.35, null, 100)
+  setTimeout(async () => {
+    Message.initialize.log('Starting game...')
+    MapView.zoomBy(0.35, null, 3000)
+  }, 100)
+
+  setTimeout(() => {
+    Background.get().layer.show()
+    Foreground.get().layer.show()
+  }, 750)
+
+  setTimeout(() => {
+    Input.initialize()
+    Dialog.open('welcome', {
+      caravel,
+      select: () => UnitMapView.select(caravel)
+    })
+  }, 3500)
+
+  FullscreenEvents.initialize()
+
+  await nextFrame()
+  initialize()
+
 }
 
 const load = async () => {
-  try {
-    if (!loadingResources) {
-      preload()
-    }
-
-    await loadingResources
-
-    await nextFrame()
-    RenderView.initialize()
-
-    await nextFrame()
-    Tween.initialize()
-
-    MapView.initialize()
-    await nextFrame()
-
-    // for no apparent reason the layers are not available inside TreasureView
-    Europe.initialize()
-    Treasure.initialize()
-    await nextFrame()
-    Message.initialize.log('Restoring game state...')
-    await nextFrame()
-    Record.resume(Savegame.derived.gameData.value, () => AssmebleMap.initialize())
-    await nextFrame()
-    AutosaveView.initialize()
-    Dialog.initialize()
-
-    MapView.zoomBy(0.7, null, 100)
-    Message.initialize.log('Starting game...')
-
-    setTimeout(() => {
-      Background.get().layer.show()
-      Foreground.get().layer.show()
-      Overlay.initialize()
-    }, 750)
-
-    setTimeout(() => {
-      Input.initialize()
-    }, 750)
-
-    FullscreenEvents.initialize()
-
-    if (RESUME_GAME_PAUSED) {
-      Time.togglePause()
-    }
-    initialize()
-  } catch (err) {
-    Error.capture(err)
-    if (Record.getGlobal('revision') !== Version.revision) {
-      Dialog.open('error.load')
-    } else {
-      Dialog.open('error.initialize')
-    }
+  ErrorDisplay.initialize()
+  if (!loadingResources) {
+    preload()
   }
+
+  await loadingResources
+
+  await nextFrame()
+  RenderView.initialize()
+
+  await nextFrame()
+  Tween.initialize()
+
+  MapView.initialize()
+  await nextFrame()
+
+  // for no apparent reason the layers are not available inside TreasureView
+  Europe.initialize()
+  Treasure.initialize()
+  await nextFrame()
+  Message.initialize.log('Restoring game state...')
+  await nextFrame()
+  Record.resume(Savegame.derived.gameData.value, () => AssmebleMap.initialize())
+  await nextFrame()
+  AutosaveView.initialize()
+  Dialog.initialize()
+
+  MapView.zoomBy(0.7, null, 100)
+  Message.initialize.log('Starting game...')
+
+  setTimeout(() => {
+    Background.get().layer.show()
+    Foreground.get().layer.show()
+    Overlay.initialize()
+  }, 750)
+
+  setTimeout(() => {
+    Input.initialize()
+  }, 750)
+
+  FullscreenEvents.initialize()
+
+  if (RESUME_GAME_PAUSED) {
+    Time.togglePause()
+  }
+  initialize()
 }
 
 const save = Savegame.save

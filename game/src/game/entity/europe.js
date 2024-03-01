@@ -19,8 +19,8 @@ import Storage from 'entity/storage'
 import Market from 'entity/market'
 
 // for immigration at the docks of europe
-const INITIAL_CROSSES_NEEDED = 8
-const CROSSES_COST_IMPROVE = 3
+const INITIAL_CROSSES_NEEDED = 4
+const CROSSES_COST_IMPROVE = 1
 
 const basePool = [
   { unit: 'settler', name: 'Petty Criminals', expert: 'criminal' },
