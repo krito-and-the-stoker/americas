@@ -83,12 +83,12 @@ const display = building => {
 }
 const upgradeDisplay = () => 'Houses'
 const cost = () => ({
-	// wood: 25,
-	// tools: 5
-	wood: 5
+	wood: 25,
+	tools: 5,
 })
 const upgradeCost = () => ({
-	wood: 5
+	wood: 25,
+	tools: 5,
 })
 const workspace = () => 0
 
