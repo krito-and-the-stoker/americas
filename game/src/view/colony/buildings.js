@@ -307,8 +307,11 @@ const create = colony => {
   }
 
   if (colony.waterMap) {
+    const isLand = ({ x, y, shape }) => Layout.canPutTriangle(colony.waterMap, x, y, shape)
+    const hasBuildingOrWater = ({ x, y, shape }) => !Layout.canPutTriangle(colony.layout, x, y, shape)
     const calculateProfile = Layout.borderProfile(
-      ({ x, y, shape }) => Layout.canPutTriangle(colony.waterMap, x, y, shape) && !Layout.canPutTriangle(colony.layout, x, y, shape)
+      iterator => iterator.some(isLand)
+        && iterator.every(hasBuildingOrWater)
     )
     Layout.iterate(colony.waterMap).forEach(({ x, y, shape }) => {
       let triangles = []

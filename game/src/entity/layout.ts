@@ -6,9 +6,9 @@ import LA from 'util/la'
 import Tile from 'entity/tile'
 import Colony from 'entity/colony'
 
-const SIZE_X = 20
-const SIZE_Y = 20
-const WATER_REACH = 8
+const SIZE_X = 40
+const SIZE_Y = 40
+const WATER_REACH = 15
 
 type ShapeMap = number[][]
 type ShapeIterator = { x: number, y: number, shape: number }
@@ -344,7 +344,7 @@ const decodeBorder = (border: number) => ({
 	z: border & 4,
 })
 
-const borderProfile = (testFn: Function1<ShapeIterator, boolean>) => ({ x, y, shape }: ShapeIterator) => {
+const borderProfile = (testFn: Function1<ShapeIterator[], boolean>) => ({ x, y, shape }: ShapeIterator) => {
 	if (shape === 1) {
 		const xx = [
 			{ x: x - 1, y, shape: 3 },
@@ -360,9 +360,9 @@ const borderProfile = (testFn: Function1<ShapeIterator, boolean>) => ({ x, y, sh
 			{ x, y: y - 1, shape: 5 },
 		]
 		return encodeBorder(
-			xx.some(testFn),
-			yy.some(testFn),
-			zz.some(testFn),
+			testFn(xx),
+			testFn(yy),
+			testFn(zz),
 		)
 	}
 	if (shape === 2) {
@@ -380,9 +380,9 @@ const borderProfile = (testFn: Function1<ShapeIterator, boolean>) => ({ x, y, sh
 			{ x: x - 1, y, shape: 5 },
 		]
 		return encodeBorder(
-			xx.some(testFn),
-			yy.some(testFn),
-			zz.some(testFn),
+			testFn(xx),
+			testFn(yy),
+			testFn(zz),
 		)
 	}
 	if (shape === 3) {
@@ -400,29 +400,29 @@ const borderProfile = (testFn: Function1<ShapeIterator, boolean>) => ({ x, y, sh
 			{ x, y: y + 1, shape: 5 },
 		]
 		return encodeBorder(
-			xx.some(testFn),
-			yy.some(testFn),
-			zz.some(testFn),
+			testFn(xx),
+			testFn(yy),
+			testFn(zz),
 		)
 	}
 	if (shape === 4) {
 		const xx = [
-			{ x, y: y + 1, shape: 1 },
-			{ x, y: y + 1, shape: 4 },
-			{ x, y: y + 1, shape: 5 },
+			{ x, y: y - 1, shape: 1 },
+			{ x, y: y - 1, shape: 4 },
+			{ x, y: y - 1, shape: 5 },
 		]
 		const yy = [
 			{ x, y, shape: 2 },
 		]
 		const zz = [
-			{ x, y: y + 1, shape: 1 },
-			{ x, y: y + 1, shape: 2 },
-			{ x, y: y + 1, shape: 5 },
+			{ x: x + 1, y, shape: 1 },
+			{ x: x + 1, y, shape: 2 },
+			{ x: x + 1, y, shape: 5 },
 		]
 		return encodeBorder(
-			xx.some(testFn),
-			yy.some(testFn),
-			zz.some(testFn),
+			testFn(xx),
+			testFn(yy),
+			testFn(zz),
 		)
 	}
 
@@ -439,6 +439,7 @@ export default {
 	placeBuilding,
 	placeWater,
 	canPutTriangle,
+	canPutLayout,
 	encodeBorder,
 	decodeBorder,
 	borderProfile,
