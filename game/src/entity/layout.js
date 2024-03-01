@@ -1,5 +1,3 @@
-// @ts-check
-import Triangles from 'data/triangles'
 import Util from 'util/util'
 import LA from 'util/la'
 

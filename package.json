@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "@types/clone": "^2.1.4"
+  }
+}

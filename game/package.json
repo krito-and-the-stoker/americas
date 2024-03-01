@@ -19,10 +19,12 @@
     "normalize-wheel": "^1.0.1",
     "pixi.js": "^7.4.0",
     "snabbdom": "^0.7.4",
-    "uuid": "^3.3.2",
-    "solid-js": "^1.8.15"
+    "solid-js": "^1.8.15",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "@types/clone": "^2.1.4",
+    "@types/pixi.js": "^5.0.0",
     "sass": "^1.70.0",
     "seed-random": "^2.2.0",
     "typescript": "^5.2.2",
