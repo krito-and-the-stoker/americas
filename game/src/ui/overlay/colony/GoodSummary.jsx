@@ -84,7 +84,7 @@ function GoodSummary() {
 					Signal.select(data => data.good)
 				),
 			}),
-			Signal.select(({ unit, storage, good }) => ({ unit, goods: storage[good] }))
+			Signal.select(({ unit, storage, good }) => ({ unit, goods: storage ? storage[good] : 0 }))
 		),
 		Signal.select({			
 			support: items => Util.sum(items.map(item => -item.goods)),
