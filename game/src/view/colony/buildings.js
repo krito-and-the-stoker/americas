@@ -359,13 +359,13 @@ const create = colony => {
   }
 
   let initialCoords = { x: 0, y: 0 }
-  let containerCoords = { x: 0, y: 0 }
   let dragFactor = 1
   RenderView.updateWhenResized(({ dimensions }) => {
     dragFactor = 1920.0 / dimensions.x
   })
 
 
+  let containerCoords = { x: 0, y: 0 }
   let minPosition = { x: 0, y: 0 }
   const sanitizePosition = newPosition => {
     if (newPosition.x > 0) {
@@ -384,7 +384,6 @@ const create = colony => {
 
     return newPosition
   }
-
 
   const dragStart = (coords) => {
     initialCoords = coords
@@ -417,10 +416,11 @@ const create = colony => {
       y: -colonyDimensions.y * zoomScale + 1080.0,
     }
   }
+  let scale = 1.0
   RenderView.updateWhenResized(({ dimensions }) => {
     const scaleX = dimensions.x / originalDimensions.x
     const scaleY = dimensions.y / originalDimensions.y
-    const scale = 0.9 * Math.min(scaleX, scaleY)
+    scale = 0.9 * Math.min(scaleX, scaleY)
 
     const width = 1920.0 * scale
     const height = 1080.0 * scale
@@ -431,6 +431,24 @@ const create = colony => {
     minZoom = Math.max(width / colonyDimensions.x, height / colonyDimensions.y) / scale
     updateMinPosition()
   })
+
+  const firstBuilding = colony.newBuildings.find(
+    building => building.placement[0] && building.placement[0].position
+  )
+  if (firstBuilding) {
+    containerCoords.x = -firstBuilding.placement[0].position.x * WIDTH * 0.5 / scale
+    containerCoords.y = -firstBuilding.placement[0].position.y * HEIGHT * 0.5 / scale
+
+    containerCoords = sanitizePosition(containerCoords)
+
+    container.buildings.position.x = containerCoords.x
+    container.buildings.position.y = containerCoords.y
+    container.colonists.position.x = containerCoords.x
+    container.colonists.position.y = containerCoords.y
+    container.water.position.x = containerCoords.x
+    container.water.position.y = containerCoords.y
+  }
+
 
   const ZOOM_FACTOR = 0.001
   const handleWheel = ({ delta, position }) => {
