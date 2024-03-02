@@ -4,7 +4,7 @@
 
 What would you like to *construct*?
 
-[repeat newBuildings]
+[repeat upgradeBuildings]
 	[answer action:{.start}]
 		[grid columns:2]
 			[cell] **{.display}** []
@@ -13,7 +13,7 @@ What would you like to *construct*?
 	[]
 []
 
-[repeat upgradeBuildings]
+[repeat newBuildings]
 	[answer action:{.start}]
 		[grid columns:2]
 			[cell] **{.display}** []
