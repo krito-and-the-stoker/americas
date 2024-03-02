@@ -17,6 +17,17 @@ services:
       - assets
     command: npm run dev
 
+  type-check:
+    build:
+      context: ./game
+      dockerfile: type-check.Dockerfile
+    volumes:
+      - ./game:/app/game
+      - game-dist:/app/game/dist
+      - game-modules:/app/game/node_modules/
+    command: /bin/bash -c 'script -q -c "npm run type-check:watch" /dev/null'
+    # command: npm run type-check:watch
+
   wiki:
     build:
       context: ./wiki

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "type-check:watch": "tsc --noEmit -p tsconfig.json --composite false --watch --preserveWatchOutput"
   },
   "dependencies": {
     "@solid-primitives/keyboard": "^1.2.6",
