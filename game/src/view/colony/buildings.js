@@ -417,7 +417,11 @@ const create = colony => {
     }
   }
   let scale = 1.0
-  RenderView.updateWhenResized(({ dimensions }) => {
+  let dimensions = {
+    ...originalDimensions
+  }
+  RenderView.updateWhenResized(renderView => {
+    dimensions = renderView.dimensions
     const scaleX = dimensions.x / originalDimensions.x
     const scaleY = dimensions.y / originalDimensions.y
     scale = 0.9 * Math.min(scaleX, scaleY)
@@ -436,8 +440,8 @@ const create = colony => {
     building => building.placement[0] && building.placement[0].position
   )
   if (firstBuilding) {
-    containerCoords.x = -firstBuilding.placement[0].position.x * WIDTH * 0.5 / scale
-    containerCoords.y = -firstBuilding.placement[0].position.y * HEIGHT * 0.5 / scale
+    containerCoords.x = 0.5 * originalDimensions.x - firstBuilding.placement[0].position.x * WIDTH
+    containerCoords.y = 0.5 * originalDimensions.y - firstBuilding.placement[0].position.y * HEIGHT
 
     containerCoords = sanitizePosition(containerCoords)
 
