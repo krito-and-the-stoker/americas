@@ -135,7 +135,7 @@ const minDistance = (many: Coordinates[], one: Coordinates ) =>
     min(many, other => distance(one, other)) ?? one,
     one
   )
-const entityDistance = (one: hasCoordinates, other: hasCoordinates) => distance(one.mapCoordinates, other.mapCoordinates)
+const entityDistance = (one: HasCoordinates, other: HasCoordinates) => distance(one.mapCoordinates, other.mapCoordinates)
 
 function min<T>(many: T[]): Maybe<T>
 function min<T>(many: T[], fn: Function1<T, number>): Maybe<T>
