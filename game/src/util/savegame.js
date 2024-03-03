@@ -8,6 +8,7 @@ import Binding from 'util/binding'
 
 const SAVE_TO_LOCAL_STORAGE = true
 const SAVE_TO_REMOTE = true
+const AUTOSAVE_INTERVAL = 5 * 60 * 1000 // autosave every 5 minutes
 
 
 const gameId = Signal.basic(null)
@@ -15,13 +16,22 @@ const gamesToSync = Signal.basic(JSON.parse(window.localStorage.getItem('needsSy
 const lastSaveId = Signal.basic(window.localStorage.getItem('lastSaveId'))
 const isRunning = Signal.basic(false)
 const gamesInStorage = Signal.basic(Object.keys(window.localStorage).filter(key => key.startsWith('game-')))
+const autosaveInterval = Signal.basic(parseInt(window.localStorage.getItem('autosaveInterval')) || AUTOSAVE_INTERVAL)
+const lastSaveTime = Signal.basic(null)
 
 const update = {
     isRunning: isRunning.update,
+    autosaveInterval: autosaveInterval.update,
+}
+
+const listen = {
+    autosaveInterval: autosaveInterval.listen,
+    lastSaveTime: lastSaveTime.listen,
 }
 
 const state = {
     get gameId() { return gameId.value },
+    get autosaveInterval() { return autosaveInterval.value },
 }
 
 const initialize = async clickResume => {
@@ -52,8 +62,23 @@ const initialize = async clickResume => {
     })
 
     lastSaveId.listen(id => {
-        window.localStorage.setItem('lastSaveId', id || '')
+        window.localStorage.setItem('lastSaveId', id || 0)
     })
+    autosaveInterval.listen(interval => {
+        window.localStorage.setItem('autosaveInterval', interval)
+    })
+
+    isRunning.listen(value =>
+        value && autosaveInterval.listen(interval => {
+            if (typeof interval !== 'number') {
+                return
+            }
+
+            const clearId = setInterval(autosave, interval)
+            return () => {
+                clearInterval(clearId)
+            }
+        }))
 
 
     if (SAVE_TO_REMOTE) {
@@ -147,21 +172,30 @@ const save = (savegame = null) => {
         }
     }
 
+    lastSaveTime.update(Date.now())
+
     Message.savegame.log(`Entities saved to local storage using ${Math.round(data.length / 1024)} kb.`)
     Events.trigger('save')
 }
 
-const autosave = async () => {
+const asyncSave = async () => {
     Message.savegame.log('Saving...', gameId.value)
     const data = await Record.serializeAsync()
     if (SAVE_TO_LOCAL_STORAGE) {
+        Message.savegame.log('Saving to local storage...')
         saveLocal(gameId.value, data)
     }
     if (SAVE_TO_REMOTE) {
+        Message.savegame.log('Saving to remote...')
         await saveToRemote(gameId.value, data)
     }
 
+    lastSaveTime.update(Date.now())
     Message.savegame.log(`Entities saved to local storage and remote using ${Math.round(data.length / 1024)} kb.`)
+}
+
+const autosave = async () => {
+    await asyncSave()
     Tracking.autosave()
 }
 
@@ -216,6 +250,11 @@ const derived = {
         }),
         Signal.select(({ id, isRunning }) => !isRunning ? id : null),
         Signal.await(load),
+    ),
+    name: Signal.state(
+        gameId.listen,
+        Signal.select(id => id?.split('--')[1]),
+        Signal.select(name => name && name[0].toUpperCase() + name.slice(1)),
     )
 }
 
@@ -224,8 +263,10 @@ export default {
     start,
     derived,
     update,
+    listen,
     state,
     initialize,
     save,
+    asyncSave,
     autosave,
 }

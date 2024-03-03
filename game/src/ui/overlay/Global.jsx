@@ -4,12 +4,15 @@ import { useKeyDownEvent } from "@solid-primitives/keyboard";
 import style from './Global.module.scss'
 
 import Signal from 'util/signal'
+import SaveGame from 'util/savegame'
+import TimeView from 'util/timeView'
 import Time from 'timeline/time'
 import Treasure from 'entity/treasure'
 import Europe from 'view/europe'
 import Foreground from 'render/foreground'
 
 import GameIcon from 'ui/components/GameIcon'
+import { init } from 'snabbdom';
 
 function findClosestIndex(arr, target) {
   let closestIndex = 0; // Start with the first element as the closest
@@ -85,9 +88,75 @@ function Global() {
 	  }
 	});
 
+	const gameName = Signal.create(SaveGame.derived.name.listen)
+	const [isSaving, setIsSaving] = createSignal(false)
+	const saveGame = async event => {
+		event.preventDefault()
+
+		if (isSaving()) {
+			return
+		}
+
+		setIsSaving(true)
+		await SaveGame.asyncSave()
+		setIsSaving(false)
+	}
+
+	const SIXTY_SECONDS = 60 * 1000
+	const intervalValues = {
+		SIXTY_SECONDS,
+		FIVE_MINUTES: 5 * SIXTY_SECONDS,
+		TEN_MINUTES: 10 * SIXTY_SECONDS,
+		THIRTY_MINUTES: 30 * SIXTY_SECONDS,
+		DEFAULT: 5 * SIXTY_SECONDS
+	}
+	let initialInterval = 'DEFAULT'
+	for(const [key, value] of Object.entries(intervalValues)) {
+		if (value === SaveGame.state.autosaveInterval) {
+			initialInterval = key
+			break
+		}
+	}
+	const [interval, setInterval] = createSignal(initialInterval)
+	const updateInterval = event => {
+		setInterval(event.target.value)
+		const value = intervalValues[event.target.value] || intervalValues.DEFAULT
+		SaveGame.update.autosaveInterval(value)
+	}
+
+	const nowTime = Signal.basic(Date.now())
+	const lastSaveTime = Signal.create(
+		Signal.combine({
+			lastTime: Signal.source(SaveGame.listen.lastSaveTime),
+			nowTime: Signal.source(nowTime.listen),
+		}),
+		Signal.select(({ lastTime, nowTime }) => lastTime > 0 ? nowTime - lastTime : null),
+		Signal.select(
+			timeDiff => timeDiff && TimeView.describe(timeDiff, () => { nowTime.update(Date.now()) })
+		)
+	)
+
 
 	return (
 		<div class={style.main}>
+			<div class={style.save}>
+				<div>Game Name: {gameName()}</div>
+				<div>
+					<span>Autosave Interval:</span>
+					<select value={interval()} onChange={updateInterval} class={style.interval}>
+						<option value="SIXTY_SECONDS">60 seconds</option>
+						<option value="FIVE_MINUTES">5 minutes</option>
+						<option value="TEN_MINUTES">10 minutes</option>
+						<option value="THIRTY_MINUTES">30 minutes</option>
+					</select>
+				</div>
+				<div>
+					<a onClick={saveGame} classList={{[style.saveLink]: true, disabled: isSaving() }}>Save Game</a>
+					<Show when={lastSaveTime()}>
+						<span> - Saved {lastSaveTime()}</span>
+					</Show>
+				</div>
+			</div>
 			<div>{month()} {dayOfMonth()}, A.D. {year()}</div>
 			<div class={style.speed}>
 				Speed:

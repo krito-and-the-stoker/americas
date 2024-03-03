@@ -283,80 +283,89 @@ const serialize = () => {
 }
 
 const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve))
-const serializeAsync = () =>
-  new Promise(async resolve => {
-    setGlobal('revision', Version.revision)
-    tileDictionary = {}
-    tileLookup = []
-
-    const data = {
-      entities: records.map(saveSingleRecord),
-      time: Time.save(),
-      tiles: tiles.map(Tile.serializableCopy),
-      europe: Europe.save(),
-      treasure: Treasure.save(),
-      market: Market.save(),
-      globals,
-    }
-    await nextFrame()
-
-    if (autosaveInProgress) {
-      return
-    }
-    autosaveInProgress = true
-
-    if (USE_WEBWORKER && window.Worker) {
-      if (!worker) {
-        throw new Error('Worker disabled for vite build')
-        // worker = new Worker(new URL('entries/worker.js', import.meta.url))
-      }
-
-      worker.onmessage = e => {
-        autosaveInProgress = false
-        resolve(e.data)
-      }
-
-      worker.postMessage('clear')
-      worker.postMessage({
-        entities: data.entities,
-        time: data.time,
-        europe: data.europe,
-        market: data.market,
-        treasure: data.treasure,
-        globals: data.globals,
-      })
-
-      const CHUNK_SIZE = 5000
-      await Util.range(Math.ceil(data.tiles.length / CHUNK_SIZE)).reduce(
-        (wait, i) =>
-          wait
-            .then(() => {
-              worker.postMessage({
-                tiles: data.tiles.slice(
-                  CHUNK_SIZE * i,
-                  Math.min((i + 1) * CHUNK_SIZE),
-                  data.tiles.length
-                ),
-              })
-            })
-            .then(nextFrame),
-        nextFrame()
-      )
-      await nextFrame()
-      worker.postMessage('save')
-    } else {
-      await nextFrame()
-      data.tiles = tiles.map(saveSingleTile)
-      await nextFrame()
-      data.tiles = data.tiles.map(getTileLookup)
-      await nextFrame()
-      ;(data.game = 'americas'), (data.revision = Version.revision)
-      ;(data.tileLookup = tileLookup), await nextFrame()
-      const content = JSON.stringify(data)
-      await nextFrame()
-      resolve(content)
-    }
+let asyncSerializePromise = null
+const serializeAsync = () => {
+  if (asyncSerializePromise) {
+    return asyncSerializePromise
+  }
+  asyncSerializePromise = new Promise(resolve => {
+    asyncSerializePromise = null
+    doSerializeAsync().then(resolve)
   })
+
+  return asyncSerializePromise
+}
+const doSerializeAsync = async () => {
+  setGlobal('revision', Version.revision)
+  tileDictionary = {}
+  tileLookup = []
+
+  const data = {
+    entities: records.map(saveSingleRecord),
+    time: Time.save(),
+    tiles: tiles.map(Tile.serializableCopy),
+    europe: Europe.save(),
+    treasure: Treasure.save(),
+    market: Market.save(),
+    globals,
+  }
+  await nextFrame()
+
+  autosaveInProgress = true
+
+  if (USE_WEBWORKER && window.Worker) {
+    if (!worker) {
+      throw new Error('Worker disabled for vite build')
+      // worker = new Worker(new URL('entries/worker.js', import.meta.url))
+    }
+
+    worker.onmessage = e => {
+      autosaveInProgress = false
+      resolve(e.data)
+    }
+
+    worker.postMessage('clear')
+    worker.postMessage({
+      entities: data.entities,
+      time: data.time,
+      europe: data.europe,
+      market: data.market,
+      treasure: data.treasure,
+      globals: data.globals,
+    })
+
+    const CHUNK_SIZE = 5000
+    await Util.range(Math.ceil(data.tiles.length / CHUNK_SIZE)).reduce(
+      (wait, i) =>
+        wait
+          .then(() => {
+            worker.postMessage({
+              tiles: data.tiles.slice(
+                CHUNK_SIZE * i,
+                Math.min((i + 1) * CHUNK_SIZE),
+                data.tiles.length
+              ),
+            })
+          })
+          .then(nextFrame),
+      nextFrame()
+    )
+    await nextFrame()
+    worker.postMessage('save')
+  } else {
+    await nextFrame()
+    data.tiles = tiles.map(saveSingleTile)
+    await nextFrame()
+    data.tiles = data.tiles.map(getTileLookup)
+    await nextFrame()
+    data.game = 'americas'
+    data.revision = Version.revision
+    data.tileLookup = tileLookup
+    autosaveInProgress = false
+    return JSON.stringify(data)
+  }
+}
+
 
 
 const dereferenceTile = ref => (ref ? tiles[ref.tileIndex] : null)
