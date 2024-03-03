@@ -2,7 +2,6 @@ package game
 
 import (
     "math/rand"
-    "time"
 )
 
 var names = []string{
@@ -110,7 +109,6 @@ var names = []string{
 
 // picks a random name
 func pickName() string {
-    rand.Seed(time.Now().UnixNano())
     randomIndex := rand.Intn(len(names))
 
     return names[randomIndex]

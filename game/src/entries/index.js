@@ -53,7 +53,6 @@ const disableButtons = () => {
 }
 
 const prepareGame = () => {
-  window.addEventListener('beforeunload', () => game.save())
   setTimeout(() => {
     document.querySelector('.loading').classList.add('hidden')
   }, 750)

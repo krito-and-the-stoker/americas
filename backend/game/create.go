@@ -12,6 +12,7 @@ import (
 
 type CreateData struct {
     UserId      string `json:"userId"`
+    Data        string `json:"data"`
 }
 
 type CreateResponse struct {
@@ -40,6 +41,7 @@ func (service *GameService) CreateGame(w http.ResponseWriter, r *http.Request) {
     game.Name = pickName()
     game.Version = SAVEGAME_VERSION
     game.UserId = data.UserId
+    game.Savegame = data.Data
     game.Id = fmt.Sprintf("v%d--%s--%s", game.Version, slugify(game.Name), uuid.NewV4().String())
 
     _, err = service.Collection.InsertOne(r.Context(), game)

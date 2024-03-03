@@ -16,17 +16,20 @@ const gamesToSync = Signal.basic(JSON.parse(window.localStorage.getItem('needsSy
 const lastSaveId = Signal.basic(window.localStorage.getItem('lastSaveId'))
 const isRunning = Signal.basic(false)
 const gamesInStorage = Signal.basic(Object.keys(window.localStorage).filter(key => key.startsWith('game-')))
-const autosaveInterval = Signal.basic(parseInt(window.localStorage.getItem('autosaveInterval') ?? '') || AUTOSAVE_INTERVAL)
+const autosaveInterval = Signal.basic(parseInt(window.localStorage.getItem('autosaveInterval') ?? `${AUTOSAVE_INTERVAL}`) ?? AUTOSAVE_INTERVAL)
 const lastSaveTime = Signal.basic(null)
+const saveOnExit = Signal.basic(JSON.parse(window.localStorage.getItem('saveOnExit') ?? 'true'))
 
 const update = {
     isRunning: isRunning.update,
     autosaveInterval: autosaveInterval.update,
+    saveOnExit: saveOnExit.update,
 }
 
 const listen = {
     autosaveInterval: autosaveInterval.listen,
     lastSaveTime: lastSaveTime.listen,
+    saveOnExit: saveOnExit.listen,
 }
 
 const state = {
@@ -38,12 +41,20 @@ const initialize = async (clickResume: FunctionVoid) => {
     setGameIdFromUrl()
     window.addEventListener('popstate', () => {
         if (isRunning.value) {
-            save()
+            if (saveOnExit.value) {
+                save()
+            }
             window.location.reload()
         } else {
             setGameIdFromUrl()
         }
     })
+    window.addEventListener('beforeunload', () => {
+        if (isRunning.value && saveOnExit.value) {
+            save()
+        }
+    })
+
 
     derived.gameData.listen((data:string) => {
         if (data) {
@@ -67,16 +78,18 @@ const initialize = async (clickResume: FunctionVoid) => {
     autosaveInterval.listen((interval: number) => {
         window.localStorage.setItem('autosaveInterval', `${interval}`)
     })
+    saveOnExit.listen((value: boolean) => {
+        window.localStorage.setItem('saveOnExit', `${value}`)
+    })
 
     isRunning.listen((value: boolean) =>
         value && autosaveInterval.listen((interval: number) => {
-            if (typeof interval !== 'number') {
-                return
-            }
-
-            const clearId = setInterval(autosave, interval)
-            return () => {
-                clearInterval(clearId)
+            console.log('setting interval', interval)
+            if (typeof interval === 'number' && interval > 0) {
+                const clearId = setInterval(autosave, interval)
+                return () => {
+                    clearInterval(clearId)
+                }
             }
         }))
 
@@ -123,6 +136,26 @@ const start = async () => {
     }
 }
 
+const duplicate = async () => {
+    const data = await Record.serializeAsync()
+    const result = await fetch('/api/game/create', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId: Tracking.getUserId(), data })
+    })
+    const response = await result.json()
+
+    if (data) {
+        if (response.redirect) {
+            window.location.reload()
+            window.open(response.redirect, '_blank')
+        }
+    }
+
+}
+
 const saveToRemote = async (id: string, data: string) => {
     const body = JSON.stringify({
         id,
@@ -137,7 +170,7 @@ const saveToRemote = async (id: string, data: string) => {
         body,
     })
 
-    Message.savegame.log('Synced savegame to server')
+    Message.savegame.log('Synced savegame to server', id)
 }
 
 const saveLocal = (id: string, data: string) => {
@@ -261,6 +294,7 @@ const derived = {
 
 export default {
     start,
+    duplicate,
     derived,
     update,
     listen,

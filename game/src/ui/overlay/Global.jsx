@@ -104,6 +104,7 @@ function Global() {
 
 	const SIXTY_SECONDS = 60 * 1000
 	const intervalValues = {
+		NEVER: 0,
 		SIXTY_SECONDS,
 		FIVE_MINUTES: 5 * SIXTY_SECONDS,
 		TEN_MINUTES: 10 * SIXTY_SECONDS,
@@ -120,7 +121,7 @@ function Global() {
 	const [interval, setInterval] = createSignal(initialInterval)
 	const updateInterval = event => {
 		setInterval(event.target.value)
-		const value = intervalValues[event.target.value] || intervalValues.DEFAULT
+		const value = intervalValues[event.target.value] ?? intervalValues.DEFAULT
 		SaveGame.update.autosaveInterval(value)
 	}
 
@@ -136,14 +137,23 @@ function Global() {
 		)
 	)
 
+	const saveOnExit = Signal.create(SaveGame.listen.saveOnExit)
+	const updateSaveOnExit = event => {
+		SaveGame.update.saveOnExit(event.target.checked)
+	}
+
 
 	return (
 		<div class={style.main}>
 			<div class={style.save}>
-				<div>Game Name: {gameName()}</div>
+				<div>
+					<span>Game {gameName()} - </span>
+					<a onClick={SaveGame.duplicate} class={style.link}>Duplicate</a>
+				</div>
 				<div>
 					<span>Autosave Interval:</span>
 					<select value={interval()} onChange={updateInterval} class={style.interval}>
+						<option value="NEVER">Never</option>
 						<option value="SIXTY_SECONDS">60 seconds</option>
 						<option value="FIVE_MINUTES">5 minutes</option>
 						<option value="TEN_MINUTES">10 minutes</option>
@@ -151,7 +161,13 @@ function Global() {
 					</select>
 				</div>
 				<div>
-					<a onClick={saveGame} classList={{[style.saveLink]: true, disabled: isSaving() }}>Save Game</a>
+					<div>
+						<span>Save on exit:</span>
+						<input type="checkbox" checked={saveOnExit()} onChange={updateSaveOnExit} />
+					</div>
+				</div>
+				<div>
+					<a onClick={saveGame} classList={{[style.link]: true, disabled: isSaving() }}>Save</a>
 					<Show when={lastSaveTime()}>
 						<span> - Saved {lastSaveTime()}</span>
 					</Show>
