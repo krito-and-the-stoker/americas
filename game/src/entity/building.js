@@ -28,6 +28,8 @@ const save = building => {
   return Buildings[building.name].save(building)
 }
 
+const isInteractive = building => Buildings[building.name].isInteractive(building)
+
 const upgradeDisplay = building => Buildings[building.name].upgradeDisplay(building)
 const upgradeCost = building => Buildings[building.name].upgradeCost(building)
 const canEmploy = (building, expert) => Buildings[building.name]?.canEmploy && Buildings[building.name]?.canEmploy(building, expert)
@@ -48,5 +50,6 @@ export default {
   cost,
   upgradeCost,
   workspace,
+  isInteractive,
   update,
 }

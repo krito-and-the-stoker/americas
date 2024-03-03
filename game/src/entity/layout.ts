@@ -10,8 +10,8 @@ const SIZE_X = 40
 const SIZE_Y = 40
 const WATER_REACH = 15
 
-type ShapeMap = number[][]
-type ShapeIterator = { x: number, y: number, shape: number }
+export type ShapeMap = number[][]
+export type ShapeIterator = { x: number, y: number, shape: number }
 
 interface Colony extends HasCoordinates {
 	name: string

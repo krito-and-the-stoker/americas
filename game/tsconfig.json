@@ -27,7 +27,11 @@
       "data/*": ["./src/data/*"],
       "util/*": ["./src/util/*"],
       "entity/*": ["./src/entity/*"],
-      "binding/*": ["./src/binding/*"]
+      "binding/*": ["./src/binding/*"],
+      "view/*": ["./src/view/*"],
+      "render/*": ["./src/render/*"],
+      "input/*": ["./src/input/*"],
+      "interaction/*": ["./src/interaction/*"]
     },
     "allowJs": true
   },

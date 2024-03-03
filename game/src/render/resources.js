@@ -4,6 +4,7 @@ import Message from 'util/message'
 const paths = Object.freeze({
   map: 'images/map.png',
   // colonyBackground: 'images/colony-screen/background.jpg',
+  colonyBackground: 'images/buildings/colony-background.png',
   europeBackground: 'images/europe.jpg',
   undiscovered: 'images/undiscovered.jpg',
   colonyWoodBackground: 'images/colony-screen/wood-background.jpg',

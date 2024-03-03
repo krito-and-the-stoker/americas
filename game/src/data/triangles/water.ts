@@ -1,5 +1,16 @@
 import Layout from 'entity/layout'
 
+type WaterView = {
+	position: {
+		x: number
+		y: number
+	}
+	width: number
+	height: number
+	shape: number[][]
+	border: number
+}
+
 const properties = {
 	width: 1,
 	height: 1,
@@ -13,7 +24,7 @@ const move = (entry: Record<string, any>, x: number, y: number, extra = {}) => (
 		y: entry.position.y + y,
 	},
 	...extra,
-})
+}) as WaterView
 
 const base = [{
 	...properties,
@@ -47,7 +58,7 @@ const base = [{
 	},
 	shape: [[4]],
 	border: 0,
-}]
+}] as WaterView[]
 
 
 export default [
