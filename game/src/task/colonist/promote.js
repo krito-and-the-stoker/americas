@@ -39,6 +39,8 @@ const create = colony => {
 		      colonist,
 		      colony: colonist.colony,
 		    })
+		    colonist.state.isPromoting = false
+		    Colonist.update.state(colonist)
 		  }
 
 		  Colonist.update.promotion(colonist)

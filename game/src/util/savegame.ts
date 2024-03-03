@@ -3,8 +3,8 @@ import Tracking from 'util/tracking'
 import Message from 'util/message'
 import Events from 'util/events'
 import Signal from 'util/signal'
-import Binding from 'util/binding'
 
+import { FunctionVoid } from 'util/types'
 
 const SAVE_TO_LOCAL_STORAGE = true
 const SAVE_TO_REMOTE = true
@@ -16,7 +16,7 @@ const gamesToSync = Signal.basic(JSON.parse(window.localStorage.getItem('needsSy
 const lastSaveId = Signal.basic(window.localStorage.getItem('lastSaveId'))
 const isRunning = Signal.basic(false)
 const gamesInStorage = Signal.basic(Object.keys(window.localStorage).filter(key => key.startsWith('game-')))
-const autosaveInterval = Signal.basic(parseInt(window.localStorage.getItem('autosaveInterval')) || AUTOSAVE_INTERVAL)
+const autosaveInterval = Signal.basic(parseInt(window.localStorage.getItem('autosaveInterval') ?? '') || AUTOSAVE_INTERVAL)
 const lastSaveTime = Signal.basic(null)
 
 const update = {
@@ -34,7 +34,7 @@ const state = {
     get autosaveInterval() { return autosaveInterval.value },
 }
 
-const initialize = async clickResume => {
+const initialize = async (clickResume: FunctionVoid) => {
     setGameIdFromUrl()
     window.addEventListener('popstate', () => {
         if (isRunning.value) {
@@ -45,7 +45,7 @@ const initialize = async clickResume => {
         }
     })
 
-    derived.gameData.listen(data => {
+    derived.gameData.listen((data:string) => {
         if (data) {
             document.querySelector('.load')?.addEventListener('click', clickResume)
             document.querySelector('.load')?.classList.remove('disabled')
@@ -56,20 +56,20 @@ const initialize = async clickResume => {
         }
     })
 
-    gamesToSync.listen(items => {
+    gamesToSync.listen((items: string[]) => {
         const newValue = items || []
         window.localStorage.setItem('needsSync', JSON.stringify(newValue))
     })
 
-    lastSaveId.listen(id => {
-        window.localStorage.setItem('lastSaveId', id || 0)
+    lastSaveId.listen((id: string) => {
+        window.localStorage.setItem('lastSaveId', id || '')
     })
-    autosaveInterval.listen(interval => {
-        window.localStorage.setItem('autosaveInterval', interval)
+    autosaveInterval.listen((interval: number) => {
+        window.localStorage.setItem('autosaveInterval', `${interval}`)
     })
 
-    isRunning.listen(value =>
-        value && autosaveInterval.listen(interval => {
+    isRunning.listen((value: boolean) =>
+        value && autosaveInterval.listen((interval: number) => {
             if (typeof interval !== 'number') {
                 return
             }
@@ -83,17 +83,17 @@ const initialize = async clickResume => {
 
     if (SAVE_TO_REMOTE) {
         await Promise.all(
-            gamesToSync.value.map(id => {
+            gamesToSync.value.map((id: string) => {
                 const data = loadFromStorage(id)
                 if (data) {
                     return saveToRemote(id, data).then(() => {
-                        gamesToSync.update(gamesToSync.value.filter(item => item !== id))
+                        gamesToSync.update(gamesToSync.value.filter((item: string) => item !== id))
                     }).catch(e => {
                         Message.savegame.error('Could not sync to server', id, e)
                     })
                 } else {
                     Message.savegame.error('Could not sync to server, no data found for', id)
-                    gamesToSync.update(gamesToSync.value.filter(item => item !== id))
+                    gamesToSync.update(gamesToSync.value.filter((item: string) => item !== id))
                 }
             })
         )
@@ -123,13 +123,13 @@ const start = async () => {
     }
 }
 
-const saveToRemote = async (id, data) => {
+const saveToRemote = async (id: string, data: string) => {
     const body = JSON.stringify({
-        id: gameId.value,
+        id,
         game: data,
     })
 
-    const result = await fetch('/api/game/save', {
+    await fetch('/api/game/save', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -140,16 +140,16 @@ const saveToRemote = async (id, data) => {
     Message.savegame.log('Synced savegame to server')
 }
 
-const saveLocal = (id, data) => {
+const saveLocal = (id: string, data: string) => {
     const key = `game-${id}`
     try {
         window.localStorage.setItem(key, data)
     } catch(e) {
         Message.savegame.log('Could not save to local storage, removing other games and retry')
-        const doNotDelete = gamesToSync.value.map(otherId => `game-${otherId}`)
+        const doNotDelete = gamesToSync.value.map((otherId: string) => `game-${otherId}`)
         gamesInStorage.value
-            .filter(key => !doNotDelete.includes(key))
-            .forEach(key => window.localStorage.removeItem(key))
+            .filter((key: string) => !doNotDelete.includes(key))
+            .forEach((key: string) => window.localStorage.removeItem(key))
 
         window.localStorage.setItem(key, data)
     }
@@ -158,7 +158,7 @@ const saveLocal = (id, data) => {
     lastSaveId.update(id)
 }
 
-const loadFromStorage = id => {
+const loadFromStorage = (id: string) => {
     return window.localStorage.getItem(`game-${id}`)
 }
 
@@ -200,7 +200,7 @@ const autosave = async () => {
 }
 
 
-const load = async gameId => {
+const load = async (gameId: string) => {
     if (!gameId) {
         return undefined
     }
@@ -248,13 +248,13 @@ const derived = {
             id: Signal.through,
             isRunning: Signal.source(isRunning.listen),
         }),
-        Signal.select(({ id, isRunning }) => !isRunning ? id : null),
+        Signal.select(({ id, isRunning }: any) => !isRunning ? id : null),
         Signal.await(load),
     ),
     name: Signal.state(
         gameId.listen,
-        Signal.select(id => id?.split('--')[1]),
-        Signal.select(name => name && name[0].toUpperCase() + name.slice(1)),
+        Signal.select((id: string) => id?.split('--')[1]),
+        Signal.select((name: string) => name && name[0].toUpperCase() + name.slice(1)),
     )
 }
 

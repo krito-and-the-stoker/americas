@@ -1,3 +1,4 @@
+export type FunctionVoid = () => {}
 export type Function0<R> = () => R
 export type Function1<A, R> = (value: A) => R
 export type Function2<A, B, R> = (first: A, second: B) => R

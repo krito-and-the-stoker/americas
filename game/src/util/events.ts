@@ -15,7 +15,7 @@ const init = (name: string): void => {
 }
 
 
-const trigger = <T>(name: string, arg: T): void => {
+const trigger = <T>(name: string, arg?: T): void => {
   Message.event.log(`Event ${name}`, arg);
   listeners[name]?.forEach(fn => fn(arg));
 }
