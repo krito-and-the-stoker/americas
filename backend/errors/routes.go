@@ -44,6 +44,10 @@ func (service *ErrorService) Handle(w http.ResponseWriter, r *http.Request) {
     switch {
         case strings.HasPrefix(r.URL.Path, service.Prefix + "create"):
             service.CreateError(w, r)
+        case strings.HasPrefix(r.URL.Path, service.Prefix + "list"):
+            service.ListErrors(w, r)
+        case strings.HasPrefix(r.URL.Path, service.Prefix + "get/{gameId}"):
+            service.GetError(w, r)
         default:
             http.NotFound(w, r)
     }

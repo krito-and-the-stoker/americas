@@ -41,10 +41,10 @@ func (es *EventService) HandleSummary(w http.ResponseWriter, r *http.Request) {
 
     // Count by UserID
     groupByUserID := bson.D{
-        {"$group", bson.D{
-            {"_id", "$userid"},
-            {"count", bson.D{
-                {"$sum", 1},
+        {Key: "$group", Value: bson.D{
+            {Key: "_id", Value: "$userid"},
+            {Key: "count", Value: bson.D{
+                {Key: "$sum", Value: 1},
             }},
         }},
     }
@@ -67,10 +67,10 @@ func (es *EventService) HandleSummary(w http.ResponseWriter, r *http.Request) {
     }
     // Count by Name
     groupByName := bson.D{
-        {"$group", bson.D{
-            {"_id", "$name"},
-            {"count", bson.D{
-                {"$sum", 1},
+        {Key: "$group", Value: bson.D{
+            {Key: "_id", Value: "$name"},
+            {Key: "count", Value: bson.D{
+                {Key: "$sum", Value: 1},
             }},
         }},
     }
@@ -88,14 +88,14 @@ func (es *EventService) HandleSummary(w http.ResponseWriter, r *http.Request) {
 
     // Count by Day
     groupByDay := bson.D{
-        {"$group", bson.D{
-            {"_id", bson.D{
-                {"$dateToString", bson.D{
-                    {"format", "%Y-%m-%d"},
-                    {"date", "$timestamp"},
+        {Key: "$group", Value: bson.D{
+            {Key: "_id", Value: bson.D{
+                {Key: "$dateToString", Value: bson.D{
+                    {Key: "format", Value: "%Y-%m-%d"},
+                    {Key: "date", Value: "$timestamp"},
                 }},
             }},
-            {"count", bson.D{{"$sum", 1}}},
+            {Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},
         }},
     }
     cursor, err = es.Collection.Aggregate(r.Context(), mongo.Pipeline{groupByDay})
@@ -112,19 +112,19 @@ func (es *EventService) HandleSummary(w http.ResponseWriter, r *http.Request) {
 
     // Count by City
     countByCity := bson.D{
-        {"$group", bson.D{
-            {"_id", bson.D{
-                {"$ifNull", bson.A{
-                    bson.D{{"$concat", bson.A{
-                        bson.D{{"$ifNull", bson.A{"$location.city", ""}}},
+        {Key: "$group", Value: bson.D{
+            {Key: "_id", Value: bson.D{
+                {Key: "$ifNull", Value: bson.A{
+                    bson.D{{Key: "$concat", Value: bson.A{
+                        bson.D{{Key: "$ifNull", Value: bson.A{"$location.city", ""}}},
                         ", ",
-                        bson.D{{"$ifNull", bson.A{"$location.country", "Unknown"}}},
+                        bson.D{{Key: "$ifNull", Value: bson.A{"$location.country", "Unknown"}}},
                     }}},
                     "Unknown",
                 }},
             }},
-            {"count", bson.D{
-                {"$sum", 1},
+            {Key: "count", Value: bson.D{
+                {Key: "$sum", Value: 1},
             }},
         }},
     }
