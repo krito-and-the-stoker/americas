@@ -3,7 +3,6 @@ package errors
 
 import(
     "log"
-    "github.com/gorilla/mux"
     "net/http"
     "encoding/json"
     "go.mongodb.org/mongo-driver/bson"
@@ -15,11 +14,10 @@ type GetResponse struct {
 }
 
 func (service *ErrorService) GetError(w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)
-    gameId := vars["gameId"]
+    gameId := ""
 
     if gameId == "" {
-        http.Error(w, "userId is required", http.StatusBadRequest)
+        http.Error(w, "gameId is required", http.StatusBadRequest)
         return
     }
 

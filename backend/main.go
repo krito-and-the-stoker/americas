@@ -41,19 +41,20 @@ func main() {
 
     log.Println("Connected to MongoDB!")
 
+    mux := http.NewServeMux()
 
     gameCollection := client.Database(databaseName).Collection("games")
     gameService := game.NewGameService(gameCollection, "/api/game")
-    http.HandleFunc(gameService.Prefix, gameService.Handle)
+    mux.HandleFunc(gameService.Prefix, gameService.Handle)
 
     eventCollection := client.Database(databaseName).Collection("events")
     trackingService := tracking.NewEventService(eventCollection, "/api/events")
-    http.HandleFunc(trackingService.Prefix, trackingService.Handle)
+    mux.HandleFunc(trackingService.Prefix, trackingService.Handle)
 
     errorCollection := client.Database(databaseName).Collection("errors")
     errorService := errors.NewErrorService(errorCollection, "/api/error")
-    http.HandleFunc(errorService.Prefix, errorService.Handle)
+    mux.HandleFunc(errorService.Prefix, errorService.Handle)
 
     log.Println("Server is starting...")
-    log.Fatal(http.ListenAndServe(":8080", nil))
+    log.Fatal(http.ListenAndServe(":8080", mux))
 }
