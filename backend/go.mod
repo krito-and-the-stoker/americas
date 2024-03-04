@@ -3,7 +3,6 @@ module backend
 go 1.22.0
 
 require (
-	github.com/gorilla/mux v1.8.1
 	github.com/satori/go.uuid v1.2.0
 	go.mongodb.org/mongo-driver v1.14.0
 	golang.org/x/text v0.14.0

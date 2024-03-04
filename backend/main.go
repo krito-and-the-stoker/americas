@@ -52,8 +52,7 @@ func main() {
     mux.HandleFunc(trackingService.Prefix, trackingService.Handle)
 
     errorCollection := client.Database(databaseName).Collection("errors")
-    errorService := errors.NewErrorService(errorCollection, "/api/error")
-    mux.HandleFunc(errorService.Prefix, errorService.Handle)
+    errors.Handle(errorCollection, "/api/error", mux)
 
     log.Println("Server is starting...")
     log.Fatal(http.ListenAndServe(":8080", mux))
