@@ -9,6 +9,7 @@ type RawErrorItem = {
 }
 
 type DisplayErrorItem = {
+    id: string
     name: string
     version: string
     message: string
@@ -27,6 +28,7 @@ async function fetchErrors() {
     return data.errors as RawErrorItem[]
 }
 
+
 function ErrorList() {
     const [errors] = createResource(fetchErrors)
 
@@ -36,6 +38,7 @@ function ErrorList() {
             (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
         )
     const displayErrors  = () => sortedErrors()!.map((error) => ({
+            id: error.id,
             name: capitalize(error.gameid.split('--')[1]) ?? 'Unnamed',
             version: error.version,
             message: error.message,
@@ -52,6 +55,7 @@ function ErrorList() {
                         <th>Version</th>
                         <th>Message</th>
                         <th>Time</th>
+                        <th>Inspect</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -62,6 +66,7 @@ function ErrorList() {
                             <td>{error.version}</td>
                             <td>{error.message}</td>
                             <td>{error.time}</td>
+                            <td><a href={`/errors/${error.id}`}>Inspect</a></td>
                         </tr>
                     )}
                     </For>
