@@ -1,6 +1,6 @@
 import { createResource, For } from 'solid-js'
 
-type ErrorItem = {
+type RawErrorItem = {
     id: string
     version: string
     message: string
@@ -8,20 +8,39 @@ type ErrorItem = {
     timestamp: string
 }
 
+type DisplayErrorItem = {
+    name: string
+    version: string
+    message: string
+    time: string
+}
+
+function capitalize(s: string | undefined) {
+    return s && (s.charAt(0).toUpperCase() + s.slice(1))
+        .replace(/-([a-z])/g, (_, c) => ' ' + c.toUpperCase())
+}
+
 async function fetchErrors() {
     const response = await fetch('/api/error/list')
     const data = await response.json()
 
-    return data.errors as ErrorItem[]
+    return data.errors as RawErrorItem[]
 }
 
 function ErrorList() {
     const [errors] = createResource(fetchErrors)
+
     const sortedErrors = () => errors.loading
         ? []
         : [...errors()!].sort(
             (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
         )
+    const displayErrors  = () => sortedErrors()!.map((error) => ({
+            name: capitalize(error.gameid.split('--')[1]) ?? 'Unnamed',
+            version: error.version,
+            message: error.message,
+            time: new Date(error.timestamp).toLocaleString(),
+        })) as DisplayErrorItem[]
 
     return (
         <>
@@ -29,22 +48,20 @@ function ErrorList() {
             <table>
                 <thead>
                     <tr>
-                        <th>Id</th>
+                        <th>Name</th>
                         <th>Version</th>
                         <th>Message</th>
-                        <th>Game ID</th>
-                        <th>Timestamp</th>
+                        <th>Time</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <For each={sortedErrors()}>
+                    <For each={displayErrors()}>
                     {(error) => (
                         <tr>
-                            <td>{error.id}</td>
+                            <td>{error.name}</td>
                             <td>{error.version}</td>
                             <td>{error.message}</td>
-                            <td>{error.gameid}</td>
-                            <td>{error.timestamp}</td>
+                            <td>{error.time}</td>
                         </tr>
                     )}
                     </For>
