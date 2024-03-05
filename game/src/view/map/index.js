@@ -283,7 +283,10 @@ const initialize = () => {
           Dialog.open('unit.goto.europe', {
             unit: selectedUnit,
             sail: () => {
-              Command.scheduleInstead(GoTo.create({ unit: selectedUnit, europe: true }))
+              Commander.scheduleInstead(
+                selectedUnit.commander,
+                GoTo.create({ unit: selectedUnit, europe: true })
+              )
             }
           })
         }
