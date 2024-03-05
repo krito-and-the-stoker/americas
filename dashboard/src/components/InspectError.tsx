@@ -50,7 +50,7 @@ function InspectError(props: any) {
                 disabled={isOpening()}>
                 Open Game
             </button>
-            <Show wehn={isOpening()}><div>Loading game...</div></Show>
+            <Show when={isOpening()}><div>Loading game...</div></Show>
         </div>
         <div>
             <a class="underline" href="/errors">Back to Error List</a>
