@@ -46,9 +46,9 @@ function ErrorList() {
         })) as DisplayErrorItem[]
 
     return (
-        <div class="container">
-            <h1>Error List</h1>
-            <table>
+        <div class="mx-auto max-w-6xl">
+            <h1 class="mb-4 mt-6 text-4xl font-extrabold leading-none dark:text-white">Error List</h1>
+            <table class="w-full">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -63,10 +63,10 @@ function ErrorList() {
                     {(error) => (
                         <tr>
                             <td>{error.name}</td>
-                            <td>{error.version}</td>
+                            <td class="text-center">{error.version}</td>
                             <td>{error.message}</td>
                             <td>{error.time}</td>
-                            <td><a href={`/errors/${error.id}`}>Inspect</a></td>
+                            <td><a class="underline" href={`/errors/${error.id}`}>Inspect</a></td>
                         </tr>
                     )}
                     </For>
