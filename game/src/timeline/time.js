@@ -199,6 +199,10 @@ const update = {
   dayOfMonth: value => Binding.update(time, 'dayOfMonth', value),
 }
 
+const state = {
+  get paused() { return time.paused },
+}
+
 const schedule = e => {
   const task = {
     ...e,
@@ -245,6 +249,7 @@ export default {
   advance,
   season,
   listen,
+  state,
   update,
   schedule,
   togglePause,

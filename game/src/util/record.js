@@ -288,9 +288,9 @@ const serializeAsync = () => {
   if (asyncSerializePromise) {
     return asyncSerializePromise
   }
-  asyncSerializePromise = new Promise(resolve => {
+  asyncSerializePromise = doSerializeAsync().then(x => {
     asyncSerializePromise = null
-    doSerializeAsync().then(resolve)
+    return x
   })
 
   return asyncSerializePromise

@@ -31,7 +31,8 @@
       "view/*": ["./src/view/*"],
       "render/*": ["./src/render/*"],
       "input/*": ["./src/input/*"],
-      "interaction/*": ["./src/interaction/*"]
+      "interaction/*": ["./src/interaction/*"],
+      "timeline/*": ["./src/timeline/*"]
     },
     "allowJs": true
   },

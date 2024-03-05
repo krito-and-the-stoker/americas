@@ -4,6 +4,8 @@ import Message from 'util/message'
 import Events from 'util/events'
 import Signal from 'util/signal'
 
+import Time from 'timeline/time'
+
 import { FunctionVoid } from 'util/types'
 
 const SAVE_TO_LOCAL_STORAGE = true
@@ -149,7 +151,9 @@ const duplicate = async () => {
 
     if (response?.redirect) {
         window.open(response.redirect, '_blank')
-        window.location.reload()
+        if (!Time.state.paused) {
+            Time.pause()
+        }
     }
 }
 
