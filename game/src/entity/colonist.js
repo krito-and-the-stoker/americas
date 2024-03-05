@@ -76,7 +76,9 @@ const listen = {
   promotion: (colonist, fn) => Binding.listen(colonist, 'promotion', fn),
   beingEducated: (colonist, fn) => Binding.listen(colonist, 'beingEducated', fn),
   expert: (colonist, fn) => Unit.listen.expert(colonist.unit, fn), // legacy, will be removed
+  consumptionBreakdown: (colonist, fn) => Binding.listen(colonist, 'consumptionBreakdown', fn),
 }
+
 const update = {
   work: (colonist, value) => Binding.update(colonist, 'work', value),
   state: (colonist, value) => Binding.update(colonist, 'state', value),
@@ -85,6 +87,7 @@ const update = {
   promotion: (colonist, value) => Binding.update(colonist, 'promotion', value),
   beingEducated: (colonist, value) => Binding.update(colonist, 'beingEducated', value),
   expert: (colonist, value) => Unit.update.expert(colonist.unit, value), // legacy, will be removed
+  consumptionBreakdown: (colonist, value) => Binding.update(colonist, 'consumptionBreakdown', value),
 }
 
 const initialize = colonist => {
@@ -95,6 +98,12 @@ const initialize = colonist => {
   // that can always be displayed
   colonist.productionSummary = Storage.createWithProduction()
   colonist.consumptionSummary = Storage.createWithProduction()
+
+  colonist.consumptionBreakdown = {
+    want: {},
+    has: {},
+    state: {}
+  }
 
   return [
     listen.unit(colonist, unit => {
@@ -125,7 +134,7 @@ const create = unit => {
       noLuxury: false,
       isPromoting: false,
       hasBonus: false,
-    }
+    },
   }
 
   colonist.storage = Storage.create()

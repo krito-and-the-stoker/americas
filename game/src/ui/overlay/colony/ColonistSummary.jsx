@@ -44,9 +44,13 @@ function ColonistSummary() {
 		Storage.listen
 	)
 
-	const state = Signal.create(
+	const colonistSignal = Signal.chain(
 		Hover.listen.data,
 		Signal.select(data => data?.colonist),
+	)
+
+	const state = Signal.create(
+		colonistSignal,
 		Colonist.listen.state,
 		Signal.select({
 			noFood: state => state.noFood,
@@ -56,6 +60,19 @@ function ColonistSummary() {
 			hasBonus: state => state.hasBonus,
 		})
 	)
+
+	const breakdown = Signal.create(
+		colonistSignal,
+		Colonist.listen.consumptionBreakdown,
+		Signal.select({
+			food: breakdown => breakdown.has.food,
+			wood: breakdown => breakdown.has.wood,
+			luxury: breakdown => breakdown.has.luxury,
+			bonus: breakdown => breakdown.has.bonus,
+			promotion: breakdown => breakdown.has.promotion,
+		})
+	)
+
 
 	const promotionProgress = Signal.create(
 		Hover.listen.data,
@@ -105,11 +122,26 @@ function ColonistSummary() {
 			<div class={styles.icon}><GameIcon unit={unit()} scale={2} /></div>
 			<div class={styles.state}>
 				<div class={styles.power}>Power {Math.round(10 * Colonist.power(colonist()))}</div>
-				<Show when={state.noFood()}><div>No Food</div></Show>
-				<Show when={state.noWood()}><div>No Wood</div></Show>
-				<Show when={state.noLuxury()}><div>No Luxury</div></Show>
-				<Show when={state.isPromoting()}><div>Promoting {promotionProgress()}%</div></Show>
-				<Show when={state.hasBonus()}><div>Bonus</div></Show>
+				<Show when={state.noFood()}><div class={styles.stateTag}>
+					<span>No Food</span>
+					<Show when={breakdown.food()}><ProductionGoods scale={0.5} goods={breakdown.food()} /></Show>
+				</div></Show>
+				<Show when={state.noWood()}><div class={styles.stateTag}>
+					<span>No Wood</span>
+					<Show when={breakdown.wood()}><ProductionGoods scale={0.5} goods={breakdown.wood()} /></Show>
+				</div></Show>
+				<Show when={state.noLuxury()}><div class={styles.stateTag}>
+					<span>No Luxury</span>
+					<Show when={breakdown.luxury()}><ProductionGoods scale={0.5} goods={breakdown.luxury()} /></Show>
+				</div></Show>
+				<Show when={state.isPromoting()}><div class={styles.stateTag}>
+					<span>Promoting {promotionProgress()}%</span>
+					<Show when={breakdown.promotion()}><ProductionGoods scale={0.5} goods={breakdown.promotion()} /></Show>
+				</div></Show>
+				<Show when={state.hasBonus()}><div class={styles.stateTag}>
+					<span>Bonus</span>
+					<Show when={breakdown.bonus()}><ProductionGoods scale={0.5} goods={breakdown.bonus()} /></Show>
+				</div></Show>
 			</div>
 		</div>
 		<Show when={hasEntries(productionOutput())}>

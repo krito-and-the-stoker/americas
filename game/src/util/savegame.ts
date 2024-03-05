@@ -86,7 +86,6 @@ const initialize = async (clickResume: FunctionVoid) => {
 
     isRunning.listen((value: boolean) =>
         value && autosaveInterval.listen((interval: number) => {
-            console.log('setting interval', interval)
             if (typeof interval === 'number' && interval > 0) {
                 const clearId = setInterval(autosave, interval)
                 return () => {

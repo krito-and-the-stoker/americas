@@ -83,10 +83,7 @@ const clear = storage => {
 }
 
 const clearWithProduction = storage => {
-  goods(storage).forEach(({ good }) => {
-    storage[good] = 0
-  })
-  productions(storage).forEach(({ good }) => {
+  packs(storage).forEach(({ good }) => {
     storage[good] = 0
   })
 }
@@ -101,6 +98,7 @@ const productions = storage =>
     good,
     amount: storage[good] || 0,
   }))
+const packs = storage => [...goods(storage), ...productions(storage)]
 
 const save = storage => Object.values(Goods.types).map(good => [good, storage[good]])
 const load = data => Util.makeObject(data)
@@ -120,6 +118,7 @@ export default {
   maximum,
   goods,
   productions,
+  packs,
   clear,
   clearWithProduction,
   equals,
