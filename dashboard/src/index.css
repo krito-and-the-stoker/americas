@@ -7,3 +7,16 @@ body {
   font-family: 'Roboto', sans-serif;
   font-weight: lighter;
 }
+
+.m-top {
+  margin-top: 20px;
+}
+
+.container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+a, a:visited {
+  color: white;
+}

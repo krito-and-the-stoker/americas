@@ -46,7 +46,7 @@ function ErrorList() {
         })) as DisplayErrorItem[]
 
     return (
-        <>
+        <div class="container">
             <h1>Error List</h1>
             <table>
                 <thead>
@@ -72,7 +72,7 @@ function ErrorList() {
                     </For>
                 </tbody>
             </table>
-        </>
+        </div>
     )
 }
 

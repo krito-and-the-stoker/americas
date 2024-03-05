@@ -34,10 +34,13 @@ async function openGame(id: string) {
 
 
 function InspectError(props: any) {
-    return <>
+    return <div class="container">
         <h1>Error ID: {props.params.id}</h1>
-        <button onClick={() => openGame(props.params.id)}>Open Game</button>
-    </>
+        <div><button onClick={() => openGame(props.params.id)}>Open Game</button></div>
+        <div class="m-top">
+            <a href="/errors">Back to Error List</a>
+        </div>
+    </div>
 }
 
 export default InspectError
