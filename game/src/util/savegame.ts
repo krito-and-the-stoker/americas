@@ -137,7 +137,7 @@ const start = async () => {
 }
 
 const duplicate = async () => {
-    const data = await Record.serializeAsync()
+    const data = Record.serialize()
     const result = await fetch('/api/game/create', {
         method: 'POST',
         headers: {
@@ -147,13 +147,10 @@ const duplicate = async () => {
     })
     const response = await result.json()
 
-    if (data) {
-        if (response.redirect) {
-            window.location.reload()
-            window.open(response.redirect, '_blank')
-        }
+    if (response?.redirect) {
+        window.open(response.redirect, '_blank')
+        window.location.reload()
     }
-
 }
 
 const saveToRemote = async (id: string, data: string) => {
@@ -248,9 +245,6 @@ const load = async (gameId: string) => {
         })
 
         const data = await result.json()
-        if (data.userId) {
-            Tracking.updateUserId(data.userId)
-        }
 
         if (data.game) {
             try {
