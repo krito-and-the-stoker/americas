@@ -17,13 +17,13 @@ const lineOptions = {
   aspectRatio: 5,
 }
 
-const _ = {
-  pageview: 'rgb(37, 150, 190)',
-  newgame: 'rgb(70, 250, 217)',
-  resume: 'rgb(36, 179, 121)',
-  autosave: 'rgb(250, 226, 108)',
-  error: 'rgb(175, 38, 38)',
-}
+// const _ = {
+//   pageview: 'rgb(37, 150, 190)',
+//   newgame: 'rgb(70, 250, 217)',
+//   resume: 'rgb(36, 179, 121)',
+//   autosave: 'rgb(250, 226, 108)',
+//   error: 'rgb(175, 38, 38)',
+// }
 
 
 function Timeline() {
