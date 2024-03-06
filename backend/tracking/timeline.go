@@ -13,7 +13,7 @@ import (
 
 type EventCount struct {
 	PageView int32 `json:"PageView"`
-	StartGame int32 `json:"StartGame"`
+	NewGame int32 `json:"NewGame"`
 	ResumeGame int32 `json:"ResumeGame"`
 	AutoSave int32 `json:"AutoSave"`
 	Error int32 `json:"Error"`
@@ -48,14 +48,14 @@ func (es *EventService) HandleTimeline(w http.ResponseWriter, r *http.Request) {
 	        {Key: "PageView", Value: bson.D{{Key: "$sum", Value: bson.D{{Key: "$cond", Value: bson.A{
 	            bson.D{{Key: "$eq", Value: bson.A{"$name", "PageView"}}},
 	            1, 0}}}}}},
-	        {Key: "StartGame", Value: bson.D{{Key: "$sum", Value: bson.D{{Key: "$cond", Value: bson.A{
-	            bson.D{{Key: "$eq", Value: bson.A{"$name", "StartGame"}}},
+	        {Key: "NewGame", Value: bson.D{{Key: "$sum", Value: bson.D{{Key: "$cond", Value: bson.A{
+	            bson.D{{Key: "$eq", Value: bson.A{"$name", "NewGame"}}},
 	            1, 0}}}}}},
 	        {Key: "ResumeGame", Value: bson.D{{Key: "$sum", Value: bson.D{{Key: "$cond", Value: bson.A{
 	            bson.D{{Key: "$eq", Value: bson.A{"$name", "ResumeGame"}}},
 	            1, 0}}}}}},
 	        {Key: "AutoSave", Value: bson.D{{Key: "$sum", Value: bson.D{{Key: "$cond", Value: bson.A{
-	            bson.D{{Key: "$eq", Value: bson.A{"$name", "AutoSave"}}},
+	            bson.D{{Key: "$eq", Value: bson.A{"$name", "Autosave"}}},
 	            1, 0}}}}}},
 	        {Key: "Error", Value: bson.D{{Key: "$sum", Value: bson.D{{Key: "$cond", Value: bson.A{
 	            bson.D{{Key: "$eq", Value: bson.A{"$name", "Error"}}},
@@ -88,7 +88,7 @@ func (es *EventService) HandleTimeline(w http.ResponseWriter, r *http.Request) {
 	    // Create an EventCount object for the current day
 	    eventCount := EventCount{
 	        PageView:   dayResult["PageView"].(int32),
-	        StartGame:  dayResult["StartGame"].(int32),
+	        NewGame:  dayResult["NewGame"].(int32),
 	        ResumeGame: dayResult["ResumeGame"].(int32),
 	        AutoSave:   dayResult["AutoSave"].(int32),
 	        Error:      dayResult["Error"].(int32),

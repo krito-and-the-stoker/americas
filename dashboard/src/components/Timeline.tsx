@@ -17,6 +17,13 @@ const lineOptions = {
   aspectRatio: 5,
 }
 
+const _ = {
+  pageview: 'rgb(37, 150, 190)',
+  newgame: 'rgb(70, 250, 217)',
+  resume: 'rgb(36, 179, 121)',
+  autosave: 'rgb(250, 226, 108)',
+  error: 'rgb(175, 38, 38)',
+}
 
 
 function Timeline() {
@@ -43,36 +50,36 @@ function Timeline() {
                 {
                     label: 'Page Views',
                     data: Object.values(counts).map(count => count.PageView),
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(37, 150, 190, 0.5)',
+                    borderColor: 'rgba(37, 150, 190, 1)',
                     borderWidth: 1,
                 },
                 {
                     label: 'New Games',
                     data: Object.values(counts).map(count => count.NewGame),
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(70, 250, 217, 0.5)',
+                    borderColor: 'rgba(70, 250, 217, 1)',
                     borderWidth: 1,
                 },
                 {
                     label: 'Resume Games',
                     data: Object.values(counts).map(count => count.ResumeGame),
-                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(36, 179, 121, 0.5)',
+                    borderColor: 'rgba(36, 179, 121, 1)',
                     borderWidth: 1,
                 },
                 {
                     label: 'Auto Saves',
                     data: Object.values(counts).map(count => count.AutoSave),
-                    backgroundColor: 'rgba(153, 102, 255, 0.5)',
-                    borderColor: 'rgba(153, 102, 255, 1)',
+                    backgroundColor: 'rgba(250, 226, 108, 0.5)',
+                    borderColor: 'rgba(250, 226, 108, 1)',
                     borderWidth: 1,
                 },
                 {
                     label: 'Errors',
                     data: Object.values(counts).map(count => count.Error),
-                    backgroundColor: 'rgba(255, 206, 86, 0.5)',
-                    borderColor: 'rgba(255, 206, 86, 1)',
+                    backgroundColor: 'rgba(175, 38, 38, 0.5)',
+                    borderColor: 'rgba(175, 38, 38, 1)',
                     borderWidth: 1,
                 }
             ]
