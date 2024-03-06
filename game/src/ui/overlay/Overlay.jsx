@@ -6,7 +6,6 @@ import Unit from './Unit'
 import Hints from './Hints'
 import Colony from './colony'
 
-
 function OverlayComponent() {
 	return <Show when={Overlay.isVisible()}>
 		<Colony />
