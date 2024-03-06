@@ -46,15 +46,17 @@ const create = (colony: ColonyEntity, container: ContainerArgument) => {
   let containerCoords = { x: 0, y: 0 }
   let minPosition = { x: 0, y: 0 }
   const sanitizePosition = (newPosition: Coordinates) => {
-    if (newPosition.x > 0) {
-      newPosition.x = 0
+    const minX = -Triangles.WIDTH
+    const minY = -Triangles.HEIGHT
+    if (newPosition.x > minX) {
+      newPosition.x = minX
     }
     if (newPosition.x < minPosition.x) {
       newPosition.x = minPosition.x
     }
 
-    if (newPosition.y > 0) {
-      newPosition.y = 0
+    if (newPosition.y > minY) {
+      newPosition.y = minY
     }
     if (newPosition.y < minPosition.y) {
       newPosition.y = minPosition.y
@@ -86,8 +88,8 @@ const create = (colony: ColonyEntity, container: ContainerArgument) => {
   let minZoom = 0
   const updateMinPosition = () => {
     const colonyDimensions = {
-      x: Layout.dimensions(colony.layout).x * Triangles.WIDTH,
-      y: Layout.dimensions(colony.layout).y * Triangles.HEIGHT,
+      x: (Layout.dimensions(colony.layout).x - 1) * Triangles.WIDTH,
+      y: (Layout.dimensions(colony.layout).y - 1) * Triangles.HEIGHT,
     }
     minPosition = {
       x: -colonyDimensions.x * zoomScale + 1920.0,

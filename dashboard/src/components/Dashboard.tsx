@@ -1,36 +1,37 @@
-import 'chart.js/auto';
-import { createResource, Switch, Match } from 'solid-js';
-import { Bar, Pie, Line } from 'solid-chartjs';
+import 'chart.js/auto'
+import { createResource, Switch, Match } from 'solid-js'
+import { Bar, Pie } from 'solid-chartjs'
+import Timeline from './Timeline'
 
 const options = {
   aspectRatio: 1,
-};
+}
 
 const lineOptions = {
   aspectRatio: 5,
-};
+}
 
 const Dashboard = () => {
   const [data] = createResource(async () => {
     try {      
-      const res = await fetch('/api/events/summary');
-      return await res.json();
+      const res = await fetch('/api/events/summary')
+      return await res.json()
     } catch(e) {
-      console.error(e);
+      console.error(e)
     }
-  });
+  })
 
 
-  const numberOfUsers = () => Object.keys(data().countByUserID).length;
+  const numberOfUsers = () => Object.keys(data().countByUserID).length
   const userActivityData = () => {
-    const buckets: number[] = [];
+    const buckets: number[] = []
     Object.values(data().countByUserID).forEach(count => {
-      const bucket = Math.floor(Math.log2(count as number));
+      const bucket = Math.floor(Math.log2(count as number))
       if (!buckets[bucket]) {
-        buckets[bucket] = 0;
+        buckets[bucket] = 0
       }
-      buckets[bucket]++;
-    });
+      buckets[bucket]++
+    })
 
     return {
       labels: Object.keys(buckets).map(exp => Number(exp) ? `Users with ${Math.pow(2, Number(exp))} - ${Math.pow(2, Number(exp) + 1) - 1} Events` : '1 Event'),
@@ -41,12 +42,12 @@ const Dashboard = () => {
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1,
       }]
-    };
-  };
+    }
+  }
 
   const eventsAndUserData = () => {
-    const events = data().totalCount;
-    const users = numberOfUsers();
+    const events = data().totalCount
+    const users = numberOfUsers()
     return {
       labels: [`${events} Events`, `${users} Users`],
       datasets: [{
@@ -56,8 +57,8 @@ const Dashboard = () => {
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1,
       }]
-    };
-  };
+    }
+  }
 
   const eventTypeData = () => {
     const sortedData = [
@@ -96,8 +97,8 @@ const Dashboard = () => {
         backgroundColor: backgroundColors,
         hoverBackgroundColor: backgroundColors
       }]
-    };
-  };
+    }
+  }
 
   const cityData = () => {
     const dataByCity = data().countByCity as { [key: string]: number }
@@ -117,23 +118,9 @@ const Dashboard = () => {
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1,
       }]
-    };
-  };
+    }
+  }
 
-  const eventsPerDay = () => {
-    return {
-      labels: Object.keys(data().countByDay),
-      datasets: [
-        {
-          label: 'Events per Day',
-          data: Object.values(data().countByDay),
-          fill: false,
-          borderColor: 'rgb(75, 192, 192)',
-          tension: 0.1
-        }
-      ]
-    };
-  };
 
   return (
     <div>
@@ -193,17 +180,12 @@ const Dashboard = () => {
                 <Bar data={cityData()} options={lineOptions} />
               </div>
             </div>
-            <div class="row">
-              <div class="chart-full">
-                <h3>Timeline</h3>
-                <Line data={eventsPerDay()} options={lineOptions} />
-              </div>
-            </div>
+            <Timeline />
           </div>
         </Match>
       </Switch>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

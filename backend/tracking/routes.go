@@ -3,7 +3,6 @@ package tracking
 import (
     "time"
     "strings"
-    "log"
     "net/http"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -12,7 +11,6 @@ import (
 // EventService provides an interface to handle events
 type EventService struct {
     Collection *mongo.Collection
-    Prefix string
 }
 
 
@@ -30,29 +28,18 @@ type Event struct {
     Location  GeoLocation `json:"location"`
 }
 
-func NewEventService(collection *mongo.Collection, prefix string) *EventService {
+func Handle(collection *mongo.Collection, prefix string, mux *http.ServeMux) {
     // Ensure the prefix ends with a slash
     if !strings.HasSuffix(prefix, "/") {
         prefix += "/"
     }
 
-    return &EventService{
+    es := EventService{
         Collection: collection,
-        Prefix:     prefix,
     }
+
+    mux.HandleFunc("POST " + prefix + "create", es.CreateEvent)
+    mux.HandleFunc("GET " + prefix + "summary", es.HandleSummary)
+    mux.HandleFunc("GET " + prefix + "timeline", es.HandleTimeline)
 }
 
-func (es *EventService) Handle(w http.ResponseWriter, r *http.Request) {
-    log.Println("Requested: ", r.URL.Path)
-    switch {
-        case strings.HasPrefix(r.URL.Path, es.Prefix + "create"):
-            es.HandleEvent(w, r)
-        case strings.HasPrefix(r.URL.Path, es.Prefix + "summary"):
-            es.HandleSummary(w, r)
-        // case strings.HasPrefix(r.URL.Path, es.Prefix + "report"):
-        //     es.HandleReport(w, r)
-        default:
-            // Handle unknown path or return a 404 error
-            http.NotFound(w, r)
-    }
-}

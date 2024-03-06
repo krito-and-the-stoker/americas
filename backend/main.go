@@ -50,9 +50,7 @@ func main() {
     gameService := game.NewGameService(gameCollection, "/api/game")
     mux.HandleFunc(gameService.Prefix, gameService.Handle)
 
-    trackingService := tracking.NewEventService(eventCollection, "/api/events")
-    mux.HandleFunc(trackingService.Prefix, trackingService.Handle)
-
+    tracking.Handle(eventCollection, "/api/events/", mux)
     errors.Handle(errorCollection, "/api/error", mux)
 
 
