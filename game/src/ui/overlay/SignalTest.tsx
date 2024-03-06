@@ -18,10 +18,12 @@ function SignalTest() {
     const aSignal = Signal.createSolid(
         Signal.chain(
             Signal.emit(obj),
+            Signal.log('Emitted object'),
             // Signal.key('a')
             Signal.chain(
                 // Signal.select(value => value.b),
                 Signal.key('b'),
+                Signal.log('b is:'),
                 Signal.key('test')
             )
         )
@@ -41,31 +43,23 @@ function SignalTest() {
     }, 5000)
 
     const anotherCounter = Signal.createSolid(
-        Signal.chain(
-            counter.listen,
-            Signal.select(value => value * 2),
-            Signal.chain(
-                Signal.select(value => -value),
-                Signal.select(value => value * 2),
-                Signal.select(value => value)
-            )
-        )
+        counter.listen,
+        Signal.select(value => value * 2),
+        Signal.select(value => -value),
+        Signal.select(value => value * 2),
+        Signal.select(value => value)
     )
 
     const signal = Signal.createSolid(
-        Signal.chain(
-            counter.listen,
-            Signal.chain(
-                Signal.select(value => Math.pow(value, 2)),
-                Signal.select(value => -value)
-            )
-        )
+        counter.listen,
+        Signal.select(value => Math.pow(value, 2)),
+        Signal.select(value => -value)
     )
 
     return <div class={style.main}>
         <h1>Hallo</h1>
-        <div>Signal: <p>{signal()}</p><p>{aSignal()}</p></div>
-        <div>ChainX: <p>{anotherCounter()}</p></div>
+        <div>Signal: <span>{signal()}</span> More:<span>{aSignal()}</span></div>
+        <div>ChainX: <span>{anotherCounter()}</span></div>
     </div>
 }
 
