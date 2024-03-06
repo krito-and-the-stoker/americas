@@ -1,5 +1,5 @@
 import { Bar } from 'solid-chartjs';
-import { createEffect, createResource  } from 'solid-js';
+import { createResource  } from 'solid-js';
 
 type EventCounts = {
     PageView: number
