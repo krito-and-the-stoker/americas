@@ -41,5 +41,6 @@ func Handle(collection *mongo.Collection, prefix string, mux *http.ServeMux) {
     mux.HandleFunc("POST " + prefix + "create", es.CreateEvent)
     mux.HandleFunc("GET " + prefix + "summary", es.HandleSummary)
     mux.HandleFunc("GET " + prefix + "timeline", es.HandleTimeline)
+    mux.HandleFunc("GET " + prefix + "cities", es.HandleCities)
 }
 

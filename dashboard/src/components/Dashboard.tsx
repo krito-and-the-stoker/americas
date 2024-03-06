@@ -2,13 +2,10 @@ import 'chart.js/auto'
 import { createResource, Switch, Match } from 'solid-js'
 import { Bar, Pie } from 'solid-chartjs'
 import Timeline from './Timeline'
+import CityBar from './CityBar'
 
 const options = {
   aspectRatio: 1,
-}
-
-const lineOptions = {
-  aspectRatio: 5,
 }
 
 const Dashboard = () => {
@@ -100,26 +97,6 @@ const Dashboard = () => {
     }
   }
 
-  const cityData = () => {
-    const dataByCity = data().countByCity as { [key: string]: number }
-    const baseData = [...Object.entries(dataByCity)
-      .filter(([key, _]) => !!key)
-      .sort(([_, a], [__, b]) => b - a)]
-
-    const labels = baseData.map(([key]) => key)
-    const dd = baseData.map(([_, value]) => value)
-
-    return {
-      labels,
-      datasets: [{
-        label: 'Number of events',
-        data: dd,
-        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1,
-      }]
-    }
-  }
 
 
   return (
@@ -174,12 +151,7 @@ const Dashboard = () => {
                 <Pie data={eventTypeData()} options={options} />
               </div>
             </div>
-            <div class="row">
-              <div class="chart-full">
-                <h3>Cities</h3>
-                <Bar data={cityData()} options={lineOptions} />
-              </div>
-            </div>
+            <CityBar />
             <Timeline />
           </div>
         </Match>
