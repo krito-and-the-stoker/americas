@@ -2,6 +2,7 @@ import Signal from 'util/signal-ts'
 // @ts-ignore
 import style from  './SignalTest.module.scss'
 
+const wait = (ms: number) => (x: number) => new Promise<number>(resolve => setTimeout(() => resolve(x), Math.random()*ms))
 
 function SignalTest() {
     const obj = {
@@ -11,19 +12,17 @@ function SignalTest() {
             more: 'test'
         }
     }
-    const listen1 = Signal.objectListener(obj, 'a')
+    // const listen1 = Signal.objectListener(obj, 'a')
     obj.a = 7
-    listen1(value => console.log('listen1', value))
+    // listen1(value => console.log('listen1', value))
 
     const aSignal = Signal.createSolid(
         Signal.chain(
             Signal.emit(obj),
-            Signal.log('Emitted object'),
             // Signal.key('a')
             Signal.chain(
                 // Signal.select(value => value.b),
                 Signal.key('b'),
-                Signal.log('b is:'),
                 Signal.key('test')
             )
         )
@@ -34,13 +33,27 @@ function SignalTest() {
         counter.update(counter.value + 1)
         obj.a = Math.random()
         obj.b.test += '!'
-    }, 1000)
+    }, 500)
     setInterval(() => {
         obj.b = {
             test: 'Neuer Test: ' + Math.floor(100 * Math.random()),
             more: 'no way'
         }
     }, 5000)
+
+    const moreCounting = Signal.createSolid(
+        counter.listen,
+        // Signal.log('I am early'),
+        Signal.await(wait(500), 'queue'),
+        // Signal.log('pos'),
+    )
+    Signal.createSolid(
+        counter.listen,
+        // Signal.log('I am early'),
+        Signal.select(value => - value),
+        Signal.await(wait(500), 'queue'),
+        // Signal.log('neg'),
+    )
 
     const anotherCounter = Signal.createSolid(
         counter.listen,
@@ -60,6 +73,7 @@ function SignalTest() {
         <h1>Hallo</h1>
         <div>Signal: <span>{signal()}</span> More:<span>{aSignal()}</span></div>
         <div>ChainX: <span>{anotherCounter()}</span></div>
+        <div>More Counting: <span>{moreCounting()}</span></div>
     </div>
 }
 

@@ -4,7 +4,6 @@ import type { Accessor } from 'solid-js'
 import Util from 'util/util'
 
 type Function1<A, R = void> = (arg: A) => R
-type FunctionVoid = () => void
 
 
 type Executable<Func> = void | null | undefined | Func | Executable<Func>[]
@@ -116,23 +115,58 @@ function effect<V>(sideEffect: EffectFn<V>): Listen<V, V> {
 // log the signal at any point
 const log = <V>(message?: string) => effect<V>(value => console.log(message ?? 'Signal.log:', value))
 
-function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>): Listen<To, From> {
+type AsyncStrategy = 'cancel' | 'pass' | 'queue'
+function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, strategy: AsyncStrategy = 'cancel'): Listen<To, From> {
+  let state = {
+    queue: [] as Promise<void>[],
+  }
+  const rememberState = (value: typeof state) => {
+    state = {
+      queue: []
+    }
+    return (final: boolean) => {
+      if (!final) {
+        state = value
+      }
+    }
+  }
+
   return (resolve: EffectFn<To>, parameter: From) => {
     let nextCleanup: CleanupExec = null
     let shouldResolve = true
     const cleanup = (final: boolean) => {
       Util.execute(nextCleanup, final)
       nextCleanup = null
-      shouldResolve = false
+
+      if (final || strategy === 'cancel') {
+        shouldResolve = false
+        state.queue = []
+      }
     }
 
-    asyncFunction(parameter).then(result => {
+    const resolveToNextStage = (result: To) => {
       if (shouldResolve) {
         nextCleanup = resolve(result)
       }
-    })
+    }
 
-    return cleanup
+    const promise = asyncFunction(parameter)
+    if (strategy === 'queue') {
+      const bindState = state
+      const waitingPromise = Promise.all(state.queue)
+        .then(() => promise.then(resolveToNextStage))
+        .finally(() => {
+          bindState.queue = bindState.queue.filter(p => p !== waitingPromise)
+        })
+      state.queue.push(waitingPromise)
+    } else {
+      promise.then(resolveToNextStage)
+    }
+
+    return [
+      cleanup,
+      rememberState(state),
+    ]
   }
 }
 
