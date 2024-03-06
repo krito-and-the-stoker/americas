@@ -9,11 +9,6 @@ import (
 )
 
 func (es *EventService) HandleReport(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	// Define a slice to hold the results
 	var events []Event
 

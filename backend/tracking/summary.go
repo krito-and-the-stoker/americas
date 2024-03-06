@@ -20,11 +20,6 @@ type CountResult struct {
 
 // HandleSummary handles the route for counting events
 func (es *EventService) HandleSummary(w http.ResponseWriter, r *http.Request) {
-    if r.Method != "GET" {
-        http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
-        return
-    }
-
     // Total count
     totalCount, err := es.Collection.CountDocuments(r.Context(), bson.D{})
     if err != nil {

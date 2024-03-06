@@ -4,7 +4,7 @@ import (
     "encoding/json"
     "net/http"
     "log"
-    // "time"
+    "time"
 
     "go.mongodb.org/mongo-driver/mongo"
     "go.mongodb.org/mongo-driver/bson"
@@ -26,19 +26,14 @@ type TimelineResult struct {
 
 // HandleSummary handles the route for counting events
 func (es *EventService) HandleTimeline(w http.ResponseWriter, r *http.Request) {
-    if r.Method != "GET" {
-        http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
-        return
-    }
-
-	// now := time.Now()
-	// thirtyDaysAgo := now.AddDate(0, 0, -30)
+	now := time.Now()
+	_ = now.AddDate(0, 0, -30)
 
     // Count by Day
 	groupByDay := bson.D{
 	    // {Key: "$match", Value: bson.D{
 	    //     {Key: "timestamp", Value: bson.D{
-	    //         {Key: "$gte", Value: thirtyDaysAgo},
+	    //         {Key: "$gte", Value: primitive.NewDateTimeFromTime(thirtyDaysAgo)},
 	    //     }},
 	    // }},
 	    {Key: "$group", Value: bson.D{
@@ -87,7 +82,7 @@ func (es *EventService) HandleTimeline(w http.ResponseWriter, r *http.Request) {
 	    _id := dayResult["_id"].(primitive.M) // or bson.M if you prefer
 		date, ok := _id["date"].(string)
 		if !ok {
-		    log.Fatal("date is not a string")
+		    http.Error(w, "Error parsing date", http.StatusInternalServerError)
 		}
 
 	    // Create an EventCount object for the current day

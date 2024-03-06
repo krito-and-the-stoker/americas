@@ -47,11 +47,6 @@ func FetchLocation(ip string) (GeoLocation, error) {
 
 // HandleEvent is responsible for handling the /event route
 func (es *EventService) CreateEvent(w http.ResponseWriter, r *http.Request) {
-    if r.Method != "POST" {
-        http.Error(w, "Only POST method is allowed", http.StatusMethodNotAllowed)
-        return
-    }
-
     var event Event
     err := json.NewDecoder(r.Body).Decode(&event)
     if err != nil {
