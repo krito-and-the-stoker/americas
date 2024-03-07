@@ -39,15 +39,18 @@ const update = <O extends Object, Key extends keyof O>(instance: O, key: Key | n
       return
     }
     instance[key] = value
+  } else {
+    // trigger update
+    instance[key] = instance[key]
   }
 }
 
 const applyUpdate = () => {
-  console.log('not needed anymore')
+  // console.log('not needed anymore')
 }
 
 const applyAllUpdates = () => {
-  console.log('not needed anymore')
+  // console.log('not needed anymore')
 }
 
 const stdEquality = <T>(a: T, b: T) => a === b

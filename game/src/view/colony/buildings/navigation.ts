@@ -112,7 +112,7 @@ const create = (colony: ColonyEntity, container: ContainerArgument) => {
       x: Layout.dimensions(colony.layout).x * Triangles.WIDTH,
       y: Layout.dimensions(colony.layout).y * Triangles.HEIGHT,
     }
-    minZoom = Math.max(width / colonyDimensions.x, height / colonyDimensions.y) / scale
+    minZoom = Math.max(width / (colonyDimensions.x - 2*Triangles.WIDTH), height / (colonyDimensions.y - 2*Triangles.HEIGHT)) / scale
     updateMinPosition()
   })
 
