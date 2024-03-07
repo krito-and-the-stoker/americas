@@ -92,7 +92,9 @@ function SignalTest() {
     }
     const derivedInput = Signal.createSolid(
         Signal.fromSolid(input).listen,
-        Signal.select(value => value + '!')
+        Signal.select(value => value + '!'),
+        Signal.log('hi'),
+        Signal.effect(value => { obj.b.test = value })
     )
 
     return <div class={style.main}>
