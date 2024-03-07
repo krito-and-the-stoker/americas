@@ -2,11 +2,11 @@ import Signal from 'util/signal-ts'
 // @ts-ignore
 import style from  './SignalTest.module.scss'
 
-import Util from 'util/util'
+// import Util from 'util/util'
 
 
 function wait<T>(ms: number){
-    return (x: T) => new Promise<T>(resolve => setTimeout(() => resolve(x), Math.random()*ms))
+    return (x: T) => new Promise<T>(resolve => { console.log('Promise start', x); setTimeout(() => resolve(x), Math.random()*ms) })
 }
 
 function SignalTest() {
@@ -35,10 +35,12 @@ function SignalTest() {
 
     const counter = Signal.primitive(0)
     setInterval(() => {
-        counter.update(counter.value + 1)
+        if (counter.value < 10) {
+            counter.update(counter.value + 1)
+        }
         obj.a = Math.random()
         obj.b.test += '!'
-    }, 500)
+    }, 100)
     setInterval(() => {
         obj.b = {
             test: 'Neuer Test: ' + Math.floor(100 * Math.random()),
@@ -48,33 +50,32 @@ function SignalTest() {
 
     const moreCounting = Signal.createSolid(
         counter.listen,
-        // Signal.log('I am early'),
-        Signal.await(wait(500), 'queue'),
-        // Signal.log('pos'),
+        Signal.log('Pushing to queue'),
+        Signal.await(wait(500), 'order'),
+        Signal.log('Promise resolved'),
     )
     Signal.createSolid(
         counter.listen,
         // Signal.log('I am early'),
         Signal.select(value => - value),
-        Signal.await(wait(500), 'queue'),
         // Signal.log('neg'),
     )
-    Signal.createSolid(
-        counter.listen,
-        Signal.collect(
-            Signal.log('collecter'),
-            Signal.if(values => values.length >= 3),
-            Signal.select(values => Util.sum(values))
-        ),
-        Signal.log('values')
-    )
+    // Signal.createSolid(
+    //     counter.listen,
+    //     Signal.await(wait(500), 'queue'),
+    //     Signal.collect(
+    //         Signal.if(values => values.length >= 3),
+    //         Signal.select(values => Util.sum(values))
+    //     ),
+    //     Signal.effect(counter.update),
+    // )
 
     const anotherCounter = Signal.createSolid(
         counter.listen,
         Signal.select(value => value * 2),
         Signal.select(value => -value),
         Signal.select(value => value * 2),
-        Signal.select(value => value)
+        Signal.select(value => value),
     )
 
     const signal = Signal.createSolid(

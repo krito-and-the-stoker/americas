@@ -115,7 +115,7 @@ function effect<V>(sideEffect: EffectFn<V>): Listen<V, V> {
 // log the signal at any point
 const log = <V>(message?: string) => effect<V>(value => console.log(message ?? 'Signal.log:', value))
 
-type AsyncStrategy = 'cancel' | 'pass' | 'queue'
+type AsyncStrategy = 'cancel' | 'pass' | 'queue' | 'order'
 function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, strategy: AsyncStrategy = 'cancel'): Listen<To, From> {
   let state = {
     queue: [] as Promise<void>[],
@@ -150,8 +150,19 @@ function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, strategy
       }
     }
 
-    const promise = asyncFunction(parameter)
     if (strategy === 'queue') {
+      const bindState = state
+      const waitingPromise = Promise.all(state.queue)
+        .then(() => asyncFunction(parameter))
+        .then(resolveToNextStage)
+        .finally(() => {
+          bindState.queue = bindState.queue.filter(p => p !== waitingPromise)
+        })
+      state.queue.push(waitingPromise)
+    }
+
+    if (strategy === 'order') {
+      const promise = asyncFunction(parameter)
       const bindState = state
       const waitingPromise = Promise.all(state.queue)
         .then(() => promise.then(resolveToNextStage))
@@ -159,7 +170,10 @@ function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, strategy
           bindState.queue = bindState.queue.filter(p => p !== waitingPromise)
         })
       state.queue.push(waitingPromise)
-    } else {
+    }
+
+    if (strategy === 'pass' || strategy === 'cancel') {
+      const promise = asyncFunction(parameter)
       promise.then(resolveToNextStage)
     }
 
