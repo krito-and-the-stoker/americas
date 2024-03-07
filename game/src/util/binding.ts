@@ -21,11 +21,14 @@ const listen = <O extends Object, Key extends keyof O>(instance: O, key: Key | n
 const update = <O extends Object, Key extends keyof O>(instance: O, key: Key | null | undefined, value: O[Key]) => {
   if (key === null || key === undefined) {
     if (listeners.get(instance)) {
-      if (value === undefined) {
-        const primitive = listeners.get(instance)!
-        primitive.update(primitive.value)
+      const primitive = listeners.get(instance)!
+      if (value !== undefined) {
+        if (primitive.value === value) {
+          return
+        }
+        primitive.update(value)
       } else {
-        listeners.get(instance)!.update(value)
+        primitive.update(primitive.value)
       }
     }
 
@@ -36,9 +39,6 @@ const update = <O extends Object, Key extends keyof O>(instance: O, key: Key | n
       return
     }
     instance[key] = value
-  } else {
-    // trigger update without changing the value
-    // instance[key] = instance[key]
   }
 }
 

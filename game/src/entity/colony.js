@@ -99,7 +99,7 @@ const update = {
 const tories = colony => {
   const colonists = colony.colonists.length
   const administrators = colony.colonists.filter(
-    colonist => colonist.work.type === 'Building' && colonist.work.building?.name === 'townhall'
+    colonist => colonist.work?.type === 'Building' && colonist.work.building?.name === 'townhall'
   ).length
 
   const percentage = Math.max(
