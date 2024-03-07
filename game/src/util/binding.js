@@ -1,5 +1,3 @@
-import { createSignal, onCleanup } from 'solid-js'
-import { createStore, reconcile } from 'solid-js/store'
 import Util from 'util/util'
 
 const create = (instance, key) => {
@@ -83,11 +81,6 @@ const applyAllUpdates = () => {
   }
 }
 
-const hasListener = (instance, key) => {
-  const listeners = listenerKey(key)
-  return instance[listeners] && instance[listeners].length > 0
-}
-
 const listenerKey = key => (key ? `${key}Listeners` : 'listeners')
 
 const map = (mapping, fn, equals = (a, b) => a === b) => {
@@ -116,8 +109,6 @@ const map = (mapping, fn, equals = (a, b) => a === b) => {
 export default {
   update,
   listen,
-  hasListener,
-  listenerKey,
   map,
   applyUpdate,
   applyAllUpdates,
