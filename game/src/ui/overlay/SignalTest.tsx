@@ -46,6 +46,24 @@ function SignalTest() {
         }
     }, 5000)
 
+    const multiplication = Signal.createSolid(
+        Signal.combine(
+            counter.listen,
+            Signal.chain(
+                Signal.emit(obj),
+                Signal.key('a')
+            ),
+            Signal.emit('welt')
+        ),
+        Signal.effect(([_, __, greeting]) => console.log('hi', greeting)),
+        Signal.select(([a, b]) => a * b),
+        Signal.collect(
+            Signal.gate(values => values.length === 10)
+        ),
+        Signal.log('collection'),
+        Signal.select(values => values.join(', '))
+    )
+
     const moreCounting = Signal.createSolid(
         counter.listen,
         // Signal.log('Pushing to queue'),
@@ -105,6 +123,7 @@ function SignalTest() {
         <div>More Counting: <span>{moreCounting()}</span></div>
         <div><input value={input()} onInput={updateInput} /></div>
         <div>{characters()}</div>
+        <div>{multiplication()}</div>
     </div>
 }
 

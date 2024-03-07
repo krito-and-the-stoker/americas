@@ -2,6 +2,7 @@ import type { EffectFn, Listen } from 'util/signal/types'
 import { chain } from './chain'
 
 interface CollectCall {
+  <V1>(): Listen<V1[], V1>
   <V1, V2>(listen1: Listen<V2, V1[]>): Listen<V2, V1>
   <V1, V2, V3>(listen1: Listen<V2, V1[]>, listen2: Listen<V3, V2>): Listen<V3, V1>
   <V1, V2, V3, V4>(listen1: Listen<V2, V1[]>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>): Listen<V4, V1>
@@ -16,8 +17,10 @@ interface CollectCall {
 type CollectState<V> = {
   values: V[]
 }
-export const collect: CollectCall = (listen1: Listen<any, any[]>, ...additionalListeners: Listen<any, any>[]) => {
-  const listen = chain(listen1, ...additionalListeners)
+export const collect: CollectCall = (listen1?: Listen<any, any[]>, ...additionalListeners: Listen<any, any>[]) => {
+  const listen = listen1
+    ? chain(listen1, ...additionalListeners)
+    : (resolve: EffectFn<any[]>, value: any) => resolve([value])
   let state: CollectState<any> = {
     values: []
   }

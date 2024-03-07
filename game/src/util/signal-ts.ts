@@ -8,6 +8,7 @@ import { awaitFn } from 'util/signal/async'
 import { createSolid, fromSolid } from 'util/signal/solid'
 import { collect } from 'util/signal/collect'
 import { each } from 'util/signal/each'
+import { combine } from 'util/signal/combine'
 
 
 
@@ -43,6 +44,7 @@ export default {
   createSolid,
   fromSolid,
   each,
+  combine,
 }
 
 
