@@ -1,6 +1,7 @@
 import type { EffectFn, ListenerDescription, CleanupExec, BasicSignal } from 'util/signal/types'
 import Util from 'util/util'
 
+const ASYNC_UPDATES = true
 
 export const primitive = <V>(initialValue: V): BasicSignal<V> => {
   let currentValue = initialValue
@@ -23,10 +24,19 @@ export const primitive = <V>(initialValue: V): BasicSignal<V> => {
 
   const update = (newValue: V) => {
     currentValue = newValue
-    listeners.forEach(listener => {
-      Util.execute(listener.cleanup)
-      listener.cleanup = listener.fn(currentValue)
-    })
+    if (ASYNC_UPDATES) {
+      setTimeout(() => {
+        listeners.forEach(listener => {
+          Util.execute(listener.cleanup)
+          listener.cleanup = listener.fn(currentValue)
+        })
+      })
+    } else {
+      listeners.forEach(listener => {
+        Util.execute(listener.cleanup)
+        listener.cleanup = listener.fn(currentValue)
+      })
+    }
   }
 
   return {
