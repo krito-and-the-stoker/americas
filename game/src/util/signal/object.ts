@@ -1,14 +1,14 @@
 import type { EffectFn, Listen, BasicSignal } from 'util/signal/types'
 import { primitive } from './primitive'
 
-export function key<O extends object, Key extends keyof O>(key: Key): Listen<O[Key], O> {
+export function key<O extends Object, Key extends keyof O>(key: Key): Listen<O[Key], O> {
   return (fn: EffectFn<O[Key]>, obj: O) => {
     return objectListener(obj, key)(fn)
   }
 }
 
 
-export function objectListener<O extends object, Key extends keyof O>(obj: O, key: Key): Listen<O[Key]> {
+export function objectListener<O extends Object, Key extends keyof O>(obj: O, key: Key): Listen<O[Key]> {
     // Check if the signal storage exists; if not, create it
     if (!obj.hasOwnProperty('__signals__')) {
         Object.defineProperty(obj, '__signals__', {

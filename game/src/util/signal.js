@@ -128,7 +128,7 @@ const selectSimple = expand(mapping => {
       return value()
     }
 
-    return resolve(value !== undefined ? mapping(value) : value)
+    return resolve((value !== undefined && value !== null) ? mapping(value) : value)
   }
 })
 
@@ -216,6 +216,10 @@ const log = effect(value => console.log('Signal.log:', value))
 // )
 const each = passArgumentsToChain(listenerWithInput => {
   return (input, resolve) => {
+    if (!input) {
+      return resolve(input)
+    }
+
     const values = []
     let updateReady = false
     let pendingCleanup = null
