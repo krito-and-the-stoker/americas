@@ -7,7 +7,7 @@ import { createSignal } from 'solid-js'
 
 
 function wait<T>(ms: number){
-    return (x: T) => new Promise<T>(resolve => { console.log('Promise start', x); setTimeout(() => resolve(x), Math.random()*ms) })
+    return (x: T) => new Promise<T>(resolve => { setTimeout(() => resolve(x), Math.random()*ms) })
 }
 
 function SignalTest() {
@@ -18,9 +18,6 @@ function SignalTest() {
             more: 'test'
         }
     }
-    // const listen1 = Signal.objectListener(obj, 'a')
-    obj.a = 7
-    // listen1(value => console.log('listen1', value))
 
     const aSignal = Signal.createSolid(
         Signal.chain(
@@ -51,9 +48,9 @@ function SignalTest() {
 
     const moreCounting = Signal.createSolid(
         counter.listen,
-        Signal.log('Pushing to queue'),
+        // Signal.log('Pushing to queue'),
         Signal.await(wait(500), 'order'),
-        Signal.log('Promise resolved'),
+        // Signal.log('Promise resolved'),
     )
     Signal.createSolid(
         counter.listen,
@@ -90,11 +87,15 @@ function SignalTest() {
         const target = e.target as HTMLInputElement
         setInput(target.value)
     }
-    const derivedInput = Signal.createSolid(
+
+    const characters = Signal.createSolid(
         Signal.fromSolid(input).listen,
-        Signal.select(value => value + '!'),
-        Signal.log('hi'),
-        Signal.effect(value => { obj.b.test = value })
+        Signal.select(value => value.split('')),
+        Signal.each(
+            Signal.select(value => value + ' '),
+            Signal.await(wait(1000), 'cancel'),
+        ),
+        Signal.select(value => value.join('')),
     )
 
     return <div class={style.main}>
@@ -103,7 +104,7 @@ function SignalTest() {
         <div>ChainX: <span>{anotherCounter()}</span></div>
         <div>More Counting: <span>{moreCounting()}</span></div>
         <div><input value={input()} onInput={updateInput} /></div>
-        <div>{derivedInput()}</div>
+        <div>{characters()}</div>
     </div>
 }
 

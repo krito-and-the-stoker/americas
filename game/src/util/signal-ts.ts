@@ -1,12 +1,13 @@
 import type { EffectFn, Listen, Function1 } from 'util/signal/types'
 
 import { chain } from 'util/signal/chain'
-import { primitive } from './signal/primitive'
-import { key, objectListener } from './signal/object'
-import { log, effect } from './signal/effect'
-import { awaitFn } from './signal/async'
-import { createSolid, fromSolid } from './signal/solid'
-import { collect } from './signal/collect'
+import { primitive } from 'util/signal/primitive'
+import { key } from 'util/signal/object'
+import { log, effect } from 'util/signal/effect'
+import { awaitFn } from 'util/signal/async'
+import { createSolid, fromSolid } from 'util/signal/solid'
+import { collect } from 'util/signal/collect'
+import { each } from 'util/signal/each'
 
 
 
@@ -30,7 +31,6 @@ function select<From, To>(mapping: Function1<From, To>): Listen<To, From> {
 
 export default {
   primitive,
-  objectListener,
   key,
   emit,
   select,
@@ -42,6 +42,7 @@ export default {
   chain,
   createSolid,
   fromSolid,
+  each,
 }
 
 
