@@ -1,6 +1,7 @@
 import Signal from 'util/signal-ts'
 // @ts-ignore
 import style from  './SignalTest.module.scss'
+import { createSignal } from 'solid-js'
 
 // import Util from 'util/util'
 
@@ -64,7 +65,7 @@ function SignalTest() {
     //     counter.listen,
     //     Signal.await(wait(500), 'queue'),
     //     Signal.collect(
-    //         Signal.if(values => values.length >= 3),
+    //         Signal.gate(values => values.length >= 3),
     //         Signal.select(values => Util.sum(values))
     //     ),
     //     Signal.effect(counter.update),
@@ -84,11 +85,23 @@ function SignalTest() {
         Signal.select(value => -value)
     )
 
+    const [input, setInput] = createSignal('')
+    const updateInput = (e: Event) => {
+        const target = e.target as HTMLInputElement
+        setInput(target.value)
+    }
+    const derivedInput = Signal.createSolid(
+        Signal.fromSolid(input).listen,
+        Signal.select(value => value + '!')
+    )
+
     return <div class={style.main}>
         <h1>Hallo</h1>
         <div>Signal: <span>{signal()}</span> More:<span>{aSignal()}</span></div>
         <div>ChainX: <span>{anotherCounter()}</span></div>
         <div>More Counting: <span>{moreCounting()}</span></div>
+        <div><input value={input()} onInput={updateInput} /></div>
+        <div>{derivedInput()}</div>
     </div>
 }
 
