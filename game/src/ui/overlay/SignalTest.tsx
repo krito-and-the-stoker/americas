@@ -2,7 +2,12 @@ import Signal from 'util/signal-ts'
 // @ts-ignore
 import style from  './SignalTest.module.scss'
 
-const wait = (ms: number) => (x: number) => new Promise<number>(resolve => setTimeout(() => resolve(x), Math.random()*ms))
+import Util from 'util/util'
+
+
+function wait<T>(ms: number){
+    return (x: T) => new Promise<T>(resolve => setTimeout(() => resolve(x), Math.random()*ms))
+}
 
 function SignalTest() {
     const obj = {
@@ -53,6 +58,15 @@ function SignalTest() {
         Signal.select(value => - value),
         Signal.await(wait(500), 'queue'),
         // Signal.log('neg'),
+    )
+    Signal.createSolid(
+        counter.listen,
+        Signal.collect(
+            Signal.log('collecter'),
+            Signal.if(values => values.length >= 3),
+            Signal.select(values => Util.sum(values))
+        ),
+        Signal.log('values')
     )
 
     const anotherCounter = Signal.createSolid(
