@@ -97,7 +97,6 @@ const yearAndMonth = someTime => {
 let lowPrioDeltaTime = 0
 const advance = deltaTime => {
   if (time.paused) {
-    Binding.applyAllUpdates()
     return
   }
   currentTime += deltaTime * time.scale
@@ -157,8 +156,6 @@ const advance = deltaTime => {
   if (dayOfMonth !== time.dayOfMonth) {
     update.dayOfMonth(dayOfMonth)
   }
-
-  Binding.applyAllUpdates()
 }
 
 let lastCurve = 0

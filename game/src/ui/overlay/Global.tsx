@@ -1,20 +1,19 @@
 import { createSignal, createEffect } from 'solid-js'
-import { useKeyDownEvent } from "@solid-primitives/keyboard";
+import { createShortcut } from "@solid-primitives/keyboard";
 
 import style from './Global.module.scss'
 
 import Time from 'timeline/time'
 
-import Signal from 'util/signal'
+import Signal from 'util/signal-ts'
 import Treasure from 'entity/treasure'
 import Europe from 'view/europe'
 import Foreground from 'render/foreground'
 
 import Save from 'ui/overlay/Save'
 import GameIcon from 'ui/components/GameIcon'
-import { init } from 'snabbdom';
 
-function findClosestIndex(arr, target) {
+function findClosestIndex(arr: number[], target: number) {
   let closestIndex = 0; // Start with the first element as the closest
   let smallestDifference = Math.abs(target - arr[0]); // Calculate the initial difference
 
@@ -43,51 +42,23 @@ function Global() {
 		Time.update.scale(scale)
 	})
 
-	const paused = Signal.create(Time.listen.paused)
-	const year = Signal.create(Time.listen.year)
-	const month = Signal.create(Time.listen.month)
-	const dayOfMonth = Signal.create(Time.listen.dayOfMonth)
-	const screen = Signal.create(Foreground.listen.screen)
+	const paused = Signal.createSolid<boolean>(Time.listen.paused)
+	const year = Signal.createSolid<number>(Time.listen.year)
+	const month = Signal.createSolid<string>(Time.listen.month)
+	const dayOfMonth = Signal.createSolid<string>(Time.listen.dayOfMonth)
+	const screen = Signal.createSolid<any>(Foreground.listen.screen)
 
-	const treasure = Signal.create(Treasure.listen.amount)
+	const treasure = Signal.createSolid<number>(Treasure.listen.amount)
 
-	const isEurope = () => screen()?.params?.name === 'europe'
 	const hasOpenScreen = () => !!screen()
 	const toggleScreen = () => hasOpenScreen() ? Foreground.closeScreen() : Europe.open()
 
-	const keyboardMap = {
-		'1': () => {
-			setSpeed(1)
-		},
-		'2': () => {
-			setSpeed(2)
-		},
-		'3': () => {
-			setSpeed(3)
-		},
-		'4': () => {
-			setSpeed(4)
-		},
-		'5': () => {
-			setSpeed(5)
-		},
-		' ': () => {
-		  Time.togglePause()
-		}
-	}
-	const keyDownEvent = useKeyDownEvent();
-	createEffect(() => {
-	  const e = keyDownEvent();
-
-	  if (e) {
-	  	const keyHandler = keyboardMap[e.key]
-	  	if (keyboardMap[e.key]) {
-	  		keyHandler()
-		    e.preventDefault();
-	  	}
-	  }
-	});
-
+	createShortcut(['1'], () => setSpeed(1))
+	createShortcut(['2'], () => setSpeed(2))
+	createShortcut(['3'], () => setSpeed(3))
+	createShortcut(['4'], () => setSpeed(4))
+	createShortcut(['5'], () => setSpeed(5))
+	createShortcut([' '], () => Time.togglePause())
 
 
 	return (
@@ -97,11 +68,11 @@ function Global() {
 			<div class={style.speed}>
 				Speed:
 				<span class={style.pause} onClick={() => Time.togglePause()}>{paused() ? '>' : '||'}</span>
-				<span onClick={() => setSpeed(1)} class={speed() === 1 ? style.selected : null}>1</span>
-				<span onClick={() => setSpeed(2)} class={speed() === 2 ? style.selected : null}>2</span>
-				<span onClick={() => setSpeed(3)} class={speed() === 3 ? style.selected : null}>3</span>
-				<span onClick={() => setSpeed(4)} class={speed() === 4 ? style.selected : null}>4</span>
-				<span onClick={() => setSpeed(5)} class={speed() === 5 ? style.selected : null}>5</span>
+				<span onClick={() => setSpeed(1)} class={speed() === 1 ? style.selected : undefined}>1</span>
+				<span onClick={() => setSpeed(2)} class={speed() === 2 ? style.selected : undefined}>2</span>
+				<span onClick={() => setSpeed(3)} class={speed() === 3 ? style.selected : undefined}>3</span>
+				<span onClick={() => setSpeed(4)} class={speed() === 4 ? style.selected : undefined}>4</span>
+				<span onClick={() => setSpeed(5)} class={speed() === 5 ? style.selected : undefined}>5</span>
 			</div>
 			<div>Treasure: {Math.round(treasure())}<GameIcon icon="gold" scale={0.8} /></div>
 			<div class={style.europe} onClick={toggleScreen}>view {hasOpenScreen() ? 'Americas' : 'Europe'}</div>

@@ -44,6 +44,9 @@ export const primitive = <V>(initialValue: V): BasicSignal<V> => {
     update,
     get value() {
       return currentValue
+    },
+    set value(value) {
+      update(value)
     }
   }
 }

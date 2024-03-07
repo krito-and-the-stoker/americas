@@ -45,14 +45,6 @@ const update = <O extends Object, Key extends keyof O>(instance: O, key: Key | n
   }
 }
 
-const applyUpdate = () => {
-  // console.log('not needed anymore')
-}
-
-const applyAllUpdates = () => {
-  // console.log('not needed anymore')
-}
-
 const stdEquality = <T>(a: T, b: T) => a === b
 const map = <From, To>(mapping: Function1<From, To>, fn: Function1<To, CleanupExec>, _: Function2<To, To, boolean> = stdEquality) => {
   return (value: From) => fn(mapping(value))
@@ -63,6 +55,4 @@ export default {
   update,
   listen,
   map,
-  applyUpdate,
-  applyAllUpdates,
 }
