@@ -1,5 +1,15 @@
-import type { Coordinates, Function1 } from 'util/types'
+import type { Function1 } from 'util/types'
 import Util from 'util/util'
+
+export type Coordinates = {
+  x: number
+  y: number
+}
+
+export interface HasCoordinates {
+  mapCoordinates: Coordinates
+}
+
 
 type Line = {
   point1: Coordinates

@@ -33,7 +33,8 @@
       "input/*": ["./src/input/*"],
       "interaction/*": ["./src/interaction/*"],
       "timeline/*": ["./src/timeline/*"],
-      "ui/*": ["./src/ui/*"]
+      "ui/*": ["./src/ui/*"],
+      "command/*": ["./src/command/*"]
     },
     "allowJs": true
   },

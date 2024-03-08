@@ -1,8 +1,9 @@
-import { createEffect, createComputed, Show } from 'solid-js'
+import type { Maybe, Function1 } from 'util/types'
+import type { Coordinates } from 'util/la'
+import { Show, For } from 'solid-js'
 
-import Signal from 'util/signal'
+import Signal from 'util/signal-ts'
 import Record from 'util/record'
-import Util from 'util/util'
 
 import Storage from 'entity/storage'
 import Tile from 'entity/tile'
@@ -28,9 +29,43 @@ import GameIcon from 'ui/components/GameIcon'
 
 import styles from './Unit.module.scss'
 
+type CommandInfo = {
+  id: string
+  display: string
+}
+type TileEntity = {
+  colony: ColonyEntity
+  settlement: boolean
+  road: boolean
+  forest: boolean
+  plowed: boolean
+}
+type CommanderEntity = {}
+type StorageEntity = {}
+type ColonyEntity = {
+  name: string
+}
+type UnitEntity = {
+  passengers: UnitEntity[]
+  domain: string
+  commander: CommanderEntity
+  command: CommandInfo
+  storage: StorageEntity
+  equipment: StorageEntity
+  treasure: number | null
+  mapCoordinates: Coordinates
+  tile: TileEntity
+  properties: {
+    cost?: number
+    speed?: number
+    canFound?: boolean
+    canTerraform?: boolean
+    cargo?: number
 
-const handleGoTo = unit => {
-  const area = Unit.area(unit)
+  }
+}
+
+const handleGoTo = (unit: UnitEntity) => {
   const colonies = Record.getAll('colony')
     .filter(colony => Colony.isReachable(colony, unit))
     .map(colony => ({
@@ -59,73 +94,109 @@ const handleGoTo = unit => {
 }
 
 
-const foundColony = unit =>
+const foundColony = (unit: UnitEntity) =>
   Commander.scheduleInstead(unit.commander, Found.create({ unit }))
-const assignTransport = unit =>
+const assignTransport = (unit: UnitEntity) =>
   Commander.scheduleInstead(unit.commander, TradeRoute.create({ unit }))
-const buildRoad = unit =>
+const buildRoad = (unit: UnitEntity) =>
   Commander.scheduleInstead(unit.commander, Road.create({ unit }))
-const cutForest = unit =>
+const cutForest = (unit: UnitEntity) =>
   Commander.scheduleInstead(unit.commander, CutForest.create({ unit }))
-const plow = unit =>
+const plow = (unit: UnitEntity) =>
   Commander.scheduleInstead(unit.commander, Plow.create({ unit }))
-const goTo = unit => handleGoTo(unit)
-const cancel = unit => Commander.clearSchedule(unit.commander)
+const goTo = (unit: UnitEntity) => handleGoTo(unit)
+const cancel = (unit: UnitEntity) => Commander.clearSchedule(unit.commander)
 
+type UnitView = {
+  unit?: UnitEntity
+}
 
 function UnitComponent() {
 	const unitListener = Signal.chain(
 		UnitMapView.listen.selectedView,
-		Signal.select(view => view?.unit)
+		Signal.select((view: UnitView) => view?.unit)
 	)
-	const unit = Signal.create(unitListener)
+	const unit = Signal.createSolid(unitListener)
 	const name = () => unit() && Unit.name(unit())
 
-	const [cargo, equipment] = Signal.create(
-		unitListener,
-		Signal.select([
-			unit => unit?.storage,
-			unit => unit?.equipment
-		]),
-		Storage.listen
-	)
+  const cargo = Signal.createSolid(
+    unitListener,
+    Signal.select(unit => unit?.storage),
+    Storage.signal
+  )
+  const equipment = Signal.createSolid(
+    unitListener,
+    Signal.select(unit => unit?.equipment),
+    Storage.signal
+  )
 
-	const [command, passengers, properties, tile, [supplyColony, coords]] = Signal.create(
-		unitListener,
-		[
-			Unit.listen.command,
-			Unit.listen.passengers,
-			Unit.listen.properties,
-			Unit.listen.tile,
-			Signal.chain(
-				Unit.listen.mapCoordinates,
-				Signal.select([
-					coords => Tile.supportingColony(Tile.closest(coords)),
-					coords => coords
-				])
-			)
-		]
-	)
+  const command = Signal.createSolid(
+    unitListener,
+    Signal.key('command')
+  )
 
-	const strength = () => coords() && equipment() && Unit.strength(unit()).toFixed(2)
-	const speed = () => properties() && equipment() && Unit.speed(unit()).toFixed(2)
-	const cost = () => properties()?.cost ? properties().cost.toFixed(0) : 0
+  const passengers = Signal.createSolid(
+    unitListener,
+    Signal.key('passengers')
+  )
+
+  const propertySignal = Signal.chain(
+    unitListener,
+    Signal.key('properties'),
+  )
+  const properties = Signal.createSolid(propertySignal)
+  const cost = Signal.createSolid(
+    propertySignal,
+    Signal.key('cost'),
+    Signal.select(cost => cost?.toFixed(0) ?? '')
+  )
+  const speed = Signal.createSolid(
+    propertySignal,
+    Signal.key('speed'),
+    Signal.select(speed => speed?.toFixed(2) ?? '')
+  )
+  const strength = Signal.createSolid(
+    unitListener,
+    Signal.combine(
+      Signal.through(),
+      Signal.key('mapCoordinates'),
+      Signal.chain(
+        Signal.select(unit => unit?.equipment),
+        Storage.signal
+      )
+    ),
+    Signal.select(([unit]) => unit && Unit.strength(unit).toFixed(2) as string)
+  )
+
+  const tile = Signal.createSolid(
+    unitListener,
+    Signal.key('tile')
+  )
+
+  const coords = Signal.createSolid(
+    unitListener,
+    Signal.key('mapCoordinates')
+  )
+
+  const supplyColony = Signal.createSolid(
+    unitListener,
+    Signal.key('mapCoordinates'),
+    Signal.select(coords => coords && Tile.supportingColony(Tile.closest(coords)) as Maybe<ColonyEntity>)
+  )
+
+
 	const treasure = () => unit()?.treasure
 
-	const screen = Signal.create(Foreground.listen.screen)
+	const screen = Signal.createSolid(Foreground.listen.screen)
 	const isVisible = () => !screen() && !!unit()
 
 	const supplyFragment = () => supplyColony()
-		? <>Supplies from <b>{supplyColony().name}</b></>
+		? <>Supplies from <b>{supplyColony()?.name}</b></>
 		: <>No external supplies</>
 
-	const supplyColonyText = () => supplyColony()
-    ? `Supplies from ${supplyColony().name}`
-    : 'No external supplies'
+  const center = () => { if (coords()) { MapView.centerAt(coords()!, 350) } }
 
-  const center = () => MapView.centerAt(coords(), 350)
-
-  const isPioneering = () => ['cutForest', 'plow', 'road'].includes(command()?.id)
+  const isPioneering = () => ['cutForest', 'plow', 'road'].includes(command()?.id ?? '')
   const isTrading = () => command()?.id === 'tradeRoute'
   const isMoving = () => !tile()
 
@@ -137,7 +208,7 @@ function UnitComponent() {
     !isPioneering()
   const canGoto = () => !isPioneering()
   const canAssignTransport = () =>
-    properties()?.cargo > 0 && passengers()?.length === 0 && !isPioneering() && !isTrading()
+    properties()?.cargo! > 0 && passengers()?.length === 0 && !isPioneering() && !isTrading()
   const canPioneer = () =>
   	properties()?.canTerraform &&
   	!isMoving() &&
@@ -158,7 +229,7 @@ function UnitComponent() {
     cutForest: 'Cancel Cutting Forest',
     plow: 'Cancel Plow',
     tradeRoute: 'Cancel Automatic Transport',
-  })[command()?.id]
+  })[command()?.id ?? '']
 
 
   const commands = () => [
@@ -169,7 +240,7 @@ function UnitComponent() {
     canBuildRoad() && ['Build Road', buildRoad],
     canCutForest() && ['Cut Forest', cutForest],
     cancelCommandName() && [cancelCommandName(), cancel],
-  ].filter(x => !!x)
+  ].filter(x => !!x) as [string, Function1<UnitEntity>][]
 
 
 	return (
@@ -177,7 +248,7 @@ function UnitComponent() {
 			<div class={styles.main}>
 				<div class={styles.commands}>
 					<For each={commands()}>
-						{([text, action]) => <div onClick={() => action(unit())}>{text}</div>}
+						{([text, action]) => <div onClick={() => unit() && action(unit()!)}>{text}</div>}
 					</For>
 				</div>
 				<div onClick={center} class={styles.name}>{name()}</div>
@@ -197,7 +268,7 @@ function UnitComponent() {
 				<div class={styles.cargo}>
 					<StorageGoods goods={cargo()} />
 				</div>
-				<Show when={passengers()?.length > 0}>
+				<Show when={passengers()?.length! > 0}>
 					<div class={styles.passengers}>
 						<For each={passengers()}>
 							{passenger => <div class={styles.passenger}><GameIcon unit={passenger} scale={2} /></div>}

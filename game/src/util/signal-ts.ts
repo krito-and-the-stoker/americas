@@ -30,6 +30,10 @@ function select<From, To>(mapping: Function1<From, To>): Listen<To, From> {
   return (fn: EffectFn<To>, value: From) => fn(mapping(value))
 }
 
+function through<V>(): Listen<V, V> {
+  return (fn: EffectFn<V>, parameter: V) => fn(parameter)
+}
+
 
 
 export default {
@@ -40,6 +44,7 @@ export default {
   select,
   effect,
   collect,
+  through,
   log,
   await: awaitFn,
   gate,

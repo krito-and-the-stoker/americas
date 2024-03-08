@@ -24,6 +24,7 @@ const equals = (some, other) =>
     .filter(key => key !== 'listeners')
     .every(key => Math.round(some[key]) === Math.round(other[key]))
 const listen = (storage, fn) => Binding.listen(storage, null, fn)
+const signal = (fn, storage) => listen(storage, fn)
 const create = () => Goods.types.reduce((obj, name) => ({ ...obj, [name]: 0 }), {})
 const createWithProduction = () =>
   Goods.types.concat(Goods.productions).reduce((obj, name) => ({ ...obj, [name]: 0 }), {})
@@ -105,6 +106,7 @@ export default {
   create,
   createWithProduction,
   listen,
+  signal,
   update,
   split,
   transfer,
