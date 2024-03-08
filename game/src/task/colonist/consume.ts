@@ -1,3 +1,4 @@
+import type { ColonyEntity } from 'entity/colony'
 import ColonistData from 'data/colonists.json'
 
 import Time from 'timeline/time'
@@ -47,15 +48,6 @@ interface ColonistEntity {
   unit: UnitEntity
 }
 
-
-interface ColonyEntity {
-  colonists: ColonistEntity[]
-  productionRecord: StorageEntity
-  storage: StorageEntity
-  bells: number
-  housing: number
-  crosses: number
-}
 
 type Pack = {
   good: string

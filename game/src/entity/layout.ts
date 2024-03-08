@@ -1,4 +1,7 @@
-import type { HasCoordinates, Coordinates, Function1 } from 'util/types'
+import type { Function1 } from 'util/types'
+import type { Coordinates } from 'util/la'
+import type { ColonyEntity } from 'entity/colony'
+import type { BuildingEntity } from 'view/colony/buildings'
 
 import Util from 'util/util'
 import LA from 'util/la'
@@ -12,23 +15,6 @@ const WATER_REACH = 15
 
 export type ShapeMap = number[][]
 export type ShapeIterator = { x: number, y: number, shape: number }
-
-interface Colony extends HasCoordinates {
-	name: string
-	waterMap: ShapeMap
-	layout: ShapeMap
-	newBuildings: Building[]
-}
-
-interface Building {
-	name: string
-	level: number
-	placement: any[]
-	triangles: {
-		level: any[]
-	}
-}
-
 
 
 const create = (): ShapeMap => {
@@ -136,7 +122,7 @@ const putLayout = (baseLayout: ShapeMap, testLayout: ShapeMap, offsetX: number =
 }
 
 // building is currently not used, but most likely it will be
-const landValueMap = (colony: Colony, _: Building) => {
+const landValueMap = (colony: ColonyEntity, _: BuildingEntity) => {
 	const landValue = create()
 
 	// fixed good value at center
@@ -179,7 +165,7 @@ const landValueMap = (colony: Colony, _: Building) => {
 	return landValue
 }
 
-const removeBuilding = (colony: Colony, building: Building) => {
+const removeBuilding = (colony: ColonyEntity, building: BuildingEntity) => {
 	building.placement.forEach(placement => {
 		iterate(placement.triangle.shape).forEach(({ x, y, shape }) => {
 			removeTriangle(colony.layout, placement.position.x + x, placement.position.y + y, shape)
@@ -187,7 +173,7 @@ const removeBuilding = (colony: Colony, building: Building) => {
 	})
 }
 
-const placeBuilding = (colony: Colony, building: Building) => {
+const placeBuilding = (colony: ColonyEntity, building: BuildingEntity) => {
 	const landValue = iterate(landValueMap(colony, building)).sort((a, b) => b.shape - a.shape)
 	const triangles = building.triangles.level[building.level]
 
@@ -209,7 +195,7 @@ const placeBuilding = (colony: Colony, building: Building) => {
 }
 
 
-const placeWater = (colony: Colony) => {
+const placeWater = (colony: ColonyEntity) => {
 	const surrounding = Tile.diagonalNeighbors(Colony.tile(colony))
 		.filter(tile => tile.domain === 'sea')
 		.map(tile => LA.subtract(tile.mapCoordinates, colony.mapCoordinates))

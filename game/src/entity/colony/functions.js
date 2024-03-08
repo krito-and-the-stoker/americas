@@ -35,6 +35,8 @@ import TransferCrosses from 'task/europe/transferCrosses'
 import UnjoinColony from 'interaction/unjoinColony'
 import LeaveColony from 'interaction/leaveColony'
 
+import { listen, listenEach, update } from './binding'
+
 const getColonyName = () => {
   if (!Record.getGlobal('colonyNames')) {
     Record.setGlobal('colonyNames', Colony.names)
@@ -57,44 +59,6 @@ const currentConstruction = colony =>
   colony.constructionTarget
     ? colony.construction[colony.constructionTarget]
     : colony.construction.none
-
-const add = {
-  unit: (colony, unit) => Member.add(colony, 'units', unit),
-  colonist: (colony, colonist) => Member.add(colony, 'colonists', colonist),
-}
-
-const remove = {
-  unit: unit => Member.remove(unit.colony, 'units', unit),
-  colonist: colonist => Member.remove(colonist.colony, 'colonists', colonist),
-}
-
-const listen = {
-  units: (colony, fn) => Binding.listen(colony, 'units', fn),
-  colonists: (colony, fn) => Binding.listen(colony, 'colonists', fn),
-  construction: (colony, fn) => Binding.listen(colony, 'construction', fn),
-  constructionTarget: (colony, fn) => Binding.listen(colony, 'constructionTarget', fn),
-  bells: (colony, fn) => Binding.listen(colony, 'bells', fn),
-  growth: (colony, fn) => Binding.listen(colony, 'growth', fn),
-  newBuildings: (colony, fn) => Binding.listen(colony, 'newBuildings', fn),
-  productionBonus: (colony, fn) => Binding.listen(colony, 'productionBonus', fn),
-  supportedUnits: (colony, fn) => Binding.listen(colony, 'supportedUnits', fn),
-}
-
-const listenEach = {
-  units: (colony, fn) => Member.listenEach(colony, 'units', fn),
-}
-
-const update = {
-  construction: (colony, value) => Binding.update(colony, 'construction', value),
-  constructionTarget: (colony, value) => Binding.update(colony, 'constructionTarget', value),
-  newBuildings: (colony, value) => Binding.update(colony, 'newBuildings', value),
-  bells: (colony, value) => Binding.update(colony, 'bells', colony.bells + value),
-  crosses: (colony, value) => Binding.update(colony, 'crosses', colony.crosses + value),
-  housing: (colony, value) => Binding.update(colony, 'housing', colony.housing + value),
-  growth: (colony, value) => Binding.update(colony, 'growth', colony.growth + value),
-  productionBonus: (colony, value) => Binding.update(colony, 'productionBonus', value),
-  supportedUnits: (colony, value) => Binding.update(colony, 'supportedUnits', value),
-}
 
 const tories = colony => {
   const colonists = colony.colonists.length
@@ -245,41 +209,6 @@ const canFillEquipment = (colony, unit) => {
   return true
 }
 
-const create = (coords, owner) => {
-  const colony = {
-    name: getColonyName(),
-    type: 'colony',
-    owner: owner || Owner.player(),
-    units: [],
-    colonists: [],
-    mapCoordinates: { ...coords },
-    productionBonus: 0,
-    bells: 0,
-    crosses: 0,
-    housing: 0,
-    growth: 0,
-    supportedUnits: [],
-    construction: Construction.create(),
-    constructionTarget: null,
-
-    // yeah
-    newBuildings: [],
-    layout: Layout.create(),
-  }
-  colony.storage = Storage.create()
-  colony.trade = Storage.create()
-
-  colony.waterMap = Layout.placeWater(colony)
-  colony.newBuildings.push(Buildings.carpenters.create(colony))
-
-  const tile = MapEntity.tile(coords)
-  Tile.update.colony(tile, colony)
-
-  initialize(colony)
-
-  Record.add('colony', colony)
-  return colony
-}
 
 const protection = colony =>
   (Util.max(
@@ -384,25 +313,22 @@ const isReachable = (colony, unit) =>
   )
 
 export default {
-  add,
   canFillEquipment,
   coastalDirection,
-  create,
   addBuilding,
   currentConstruction,
   defender,
   disband,
   expertLevel,
   isCoastal,
-  listen,
   listenEach,
   load,
   tile,
   protection,
   rebels,
-  remove,
   save,
   tories,
   isReachable,
-  update,
+  initialize,
+  getColonyName,
 }

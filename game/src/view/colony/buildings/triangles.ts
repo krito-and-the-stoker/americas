@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import type { Coordinates } from 'util/types'
+import type { Coordinates } from 'util/la'
 
 import Layout from 'entity/layout'
 

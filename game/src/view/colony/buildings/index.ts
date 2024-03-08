@@ -1,3 +1,5 @@
+import type { ColonyEntity } from 'entity/colony'
+import type { Placement } from 'view/colony/buildings/triangles'
 import * as PIXI from 'pixi.js'
 
 import Util from 'util/util'
@@ -13,20 +15,16 @@ import Triangles from 'view/colony/buildings/triangles'
 import BuildingView from 'view/colony/buildings/building'
 import Navigation from 'view/colony/buildings/navigation'
 
-import type { Placement } from 'view/colony/buildings/triangles'
 
-
-export interface ColonyEntity {
-  disbanded: boolean
-  newBuildings: BuildingEntity[]
-  waterMap: any
-  layout: any
-}
 
 export interface BuildingEntity {
   name: string
   placement: Placement[]
   colony: ColonyEntity
+  level: number
+  triangles: {
+    level: any[]
+  }
 }
 
 

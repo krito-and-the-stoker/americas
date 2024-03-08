@@ -2,7 +2,9 @@ import type { EffectFn, Listen, BasicSignal } from 'util/signal/types'
 import type { Maybe } from 'util/types'
 import { primitive } from './primitive'
 
-export function key<O extends Object, Key extends keyof O>(key: Key): Listen<Maybe<O[Key]>, Maybe<O>> {
+export function key<O extends Object, Key extends keyof O>(key: Key): Listen<O[Key], O>
+export function key<O extends Maybe<Object>, Key extends keyof O>(key: Key): Listen<Maybe<O[Key]>, Maybe<O>>
+export function key<O extends Maybe<Object>, Key extends keyof O>(key: Key): Listen<Maybe<O[Key]>, Maybe<O>> {
     return (fn: EffectFn<Maybe<O[Key]>>, obj: Maybe<O>) => {
         if (!obj) {
             return fn(undefined)

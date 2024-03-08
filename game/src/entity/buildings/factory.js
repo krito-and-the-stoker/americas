@@ -117,6 +117,7 @@ const make = name => {
       width: BuildingData[name].width,
       height: 1,
       triangles: Triangles[name] || Triangles.empty,
+      placement: [],
     }
 
     building.placement = [Layout.placeBuilding(colony, building)]

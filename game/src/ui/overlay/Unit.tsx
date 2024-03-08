@@ -1,5 +1,6 @@
 import type { Maybe, Function1 } from 'util/types'
 import type { Coordinates } from 'util/la'
+import type { ColonyEntity } from 'entity/colony'
 import { Show, For } from 'solid-js'
 
 import Signal from 'util/signal-ts'
@@ -42,9 +43,7 @@ type TileEntity = {
 }
 type CommanderEntity = {}
 type StorageEntity = {}
-type ColonyEntity = {
-  name: string
-}
+
 type UnitEntity = {
   passengers: UnitEntity[]
   domain: string
