@@ -1,9 +1,9 @@
-import { createEffect, createSignal, Show, Switch, Match } from 'solid-js'
+import { createSignal, Show, Switch, Match } from 'solid-js'
 
 import Layout from 'entity/layout'
-import Colony from 'entity/colony'
+import Colony, { ColonyEntity } from 'entity/colony'
 
-import Signal from 'util/signal'
+import Signal from 'util/signal-ts'
 import Hover from 'input/hover'
 import Foreground from 'render/foreground'
 
@@ -14,28 +14,32 @@ import GoodSummary from 'ui/overlay/colony/GoodSummary'
 
 import styles from './index.module.scss'
 
-const wait = input => new Promise(resolve => setTimeout(() => resolve(input), 1000))
-const race = input => new Promise(resolve => setTimeout(() => resolve(input), 1000 * Math.random()))
+type HoverData = {
+	type: string
+	data: any
+}
 
 function ColonyComponent() {
-	const colony = Signal.create(
+	const colony = Signal.createSolid(
 		Foreground.listen.screen,
-		Signal.select(screen => screen?.params?.colony),
+		Signal.select((screen: any) => screen?.params?.colony as ColonyEntity | undefined),
 	)
 
 	const name = () => colony()?.name
 
-	const hover = Signal.create(Hover.listen.data)
+	const hover = Signal.createSolid<HoverData>(Hover.listen.data)
 	const [isInside, setIsInside] = createSignal(false)
 
-	const reflow = colony => {
+	const reflow = (colony: ColonyEntity) => {
 		console.log(colony.newBuildings)
 		colony.layout = Layout.create()
 		colony.waterMap = Layout.placeWater(colony)
 		const buildings = colony.newBuildings
 		colony.newBuildings = []
 		for (const building of buildings) {
-			building.placement = building.placement.map(() => Layout.placeBuilding(colony, building))
+			building.placement = building.placement
+				.map(() => Layout.placeBuilding(colony, building)!)
+				.filter(x => !!x)
 			colony.newBuildings.push(building)
 		}
 
@@ -45,7 +49,7 @@ function ColonyComponent() {
 
 	return <Show when={colony()}>
 		<div class={styles.debug}>
-			<a onClick={() => reflow(colony())}>Reflow buildings</a>
+			<a onClick={() => reflow(colony()!)}>Reflow buildings</a>
 		</div>
 		<div class={styles.name}>{name()}</div>
 		<div
