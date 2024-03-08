@@ -1,16 +1,16 @@
-import { createSignal, createEffect, Switch, Match } from 'solid-js'
+import { createSignal, Switch, Match } from 'solid-js'
 
-import Signal from 'util/signal'
+import Signal from 'util/signal-ts'
 import SaveGame from 'util/savegame'
 import TimeView from 'util/timeView'
 
 import style from './Save.module.scss'
 
 function Save() {
-    const gameName = Signal.create(SaveGame.derived.name.listen)
+    const gameName = Signal.createSolid(SaveGame.derived.name.listen)
 
     const [isSaving, setIsSaving] = createSignal(false)
-    const saveGame = async event => {
+    const saveGame = async (event: Event) => {
         event.preventDefault()
 
         if (isSaving()) {
@@ -38,7 +38,7 @@ function Save() {
         TEN_MINUTES: 10 * SIXTY_SECONDS,
         THIRTY_MINUTES: 30 * SIXTY_SECONDS,
         DEFAULT: 5 * SIXTY_SECONDS
-    }
+    } as Record<string, number>
     let initialInterval = 'DEFAULT'
     for(const [key, value] of Object.entries(intervalValues)) {
         if (value === SaveGame.state.autosaveInterval) {
@@ -47,27 +47,33 @@ function Save() {
         }
     }
     const [interval, setInterval] = createSignal(initialInterval)
-    const updateInterval = event => {
-        setInterval(event.target.value)
-        const value = intervalValues[event.target.value] ?? intervalValues.DEFAULT
-        SaveGame.update.autosaveInterval(value)
+    const updateInterval = (event: Event) => {
+        if (event.target) {
+            const target = event.target as HTMLSelectElement
+            setInterval(target.value)
+            const value = intervalValues[target.value] ?? intervalValues.DEFAULT
+            SaveGame.update.autosaveInterval(value)
+        }
     }
 
-    const nowTime = Signal.basic(Date.now())
-    const lastSaveTime = Signal.create(
-        Signal.combine({
-            lastTime: Signal.source(SaveGame.listen.lastSaveTime),
-            nowTime: Signal.source(nowTime.listen),
-        }),
-        Signal.select(({ lastTime, nowTime }) => lastTime > 0 ? nowTime - lastTime : null),
+    const nowTime = Signal.primitive(Date.now())
+    const lastSaveTime = Signal.createSolid(
+        Signal.combine(
+            SaveGame.listen.lastSaveTime,
+            nowTime.listen,
+        ),
+        Signal.select(([ lastTime, nowTime ]) => lastTime! > 0 ? nowTime - lastTime! : null),
         Signal.select(
             timeDiff => timeDiff && TimeView.describe(timeDiff, () => { nowTime.update(Date.now()) })
         )
     )
 
-    const saveOnExit = Signal.create(SaveGame.listen.saveOnExit)
-    const updateSaveOnExit = event => {
-        SaveGame.update.saveOnExit(event.target.checked)
+    const saveOnExit = Signal.createSolid(SaveGame.listen.saveOnExit)
+    const updateSaveOnExit = (event: Event) => {
+        const target = event.target as HTMLInputElement
+        if (target) {
+            SaveGame.update.saveOnExit(target.checked)
+        }
     }
 
 

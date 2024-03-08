@@ -1,4 +1,4 @@
-type FunctionVoid = () => {}
+import type { FunctionVoid } from 'util/types'
 type RefreshFn = FunctionVoid
 
 const describe = (milliseconds: number, refresh?: RefreshFn): string => {

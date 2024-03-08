@@ -1,7 +1,6 @@
-export type Function1<A, R = void> = (arg: A) => R
+import { FunctionVoid, Function1, Falsy } from 'util/types'
 
-
-export type Executable<Func> = void | null | undefined | Func | Executable<Func>[]
+export type Executable<Func> = void | Falsy | Func | Executable<Func>[]
 
 
 export type CleanupExec = Executable<Function1<boolean, void>>
@@ -17,11 +16,13 @@ export type BasicSignal<V> = {
   listen: Listen<V>
   update: Update<V>
   value: V
+  disconnect: FunctionVoid
 }
 
 export type BasicComputed<V> = {
   listen: Listen<V>
   value: V
+  disconnect: FunctionVoid
 }
 
 export type AsyncStrategy = 'cancel' | 'pass' | 'queue' | 'order'

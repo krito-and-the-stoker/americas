@@ -1,7 +1,8 @@
-import type { EffectFn, Listen, Function1 } from 'util/signal/types'
+import type { EffectFn, Listen } from 'util/signal/types'
+import type { Function1 } from 'util/types'
 
 import { chain } from 'util/signal/chain'
-import { primitive } from 'util/signal/primitive'
+import { primitive, connect } from 'util/signal/primitive'
 import { key } from 'util/signal/object'
 import { log, effect } from 'util/signal/effect'
 import { awaitFn } from 'util/signal/async'
@@ -30,8 +31,10 @@ function select<From, To>(mapping: Function1<From, To>): Listen<To, From> {
 }
 
 
+
 export default {
   primitive,
+  connect,
   key,
   emit,
   select,

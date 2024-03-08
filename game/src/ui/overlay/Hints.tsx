@@ -1,20 +1,20 @@
-import { createEffect, For, Show } from 'solid-js'
+import { For, Show } from 'solid-js'
 
 import Hints from 'input/hints'
 import Foreground from 'render/foreground'
 
-import Signal from 'util/signal'
+import Signal from 'util/signal-ts'
 
 import style from './Hints.module.scss'
 
 
 function HintsComponent() {
-	const hints	= Signal.create(Hints.listen)
-	const screen = Signal.create(Foreground.listen.screen)
+	const hints	= Signal.createSolid(Hints.listen)
+	const screen = Signal.createSolid<any>(Foreground.listen.screen)
 	const isEurope = () => screen()?.params?.name === 'europe'
 
 	const hasHints = () => hints()?.length > 0
-	const format = action => action[0].toUpperCase() + action.slice(1)
+	const format = (action: string) => action[0].toUpperCase() + action.slice(1)
 
 	return <Show when={hasHints() && !isEurope()}>
 		<div class={style.main}>

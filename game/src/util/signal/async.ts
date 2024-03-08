@@ -1,4 +1,6 @@
-import type { EffectFn, Listen, Function1, AsyncStrategy, CleanupExec } from 'util/signal/types'
+import type { EffectFn, Listen, AsyncStrategy, CleanupExec } from 'util/signal/types'
+import type { Function1 } from 'util/types'
+
 import Util from 'util/util'
 
 export function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, strategy: AsyncStrategy = 'cancel'): Listen<To, From> {
