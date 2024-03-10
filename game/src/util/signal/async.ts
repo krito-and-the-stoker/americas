@@ -3,7 +3,7 @@ import type { Function1 } from 'util/types'
 
 import Util from 'util/util'
 
-export function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, strategy: AsyncStrategy = 'cancel'): Listen<To | Error, From> {
+export function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, strategy: AsyncStrategy = 'discard'): Listen<To | Error, From> {
   let state = {
     queue: [] as Promise<void>[],
   }
@@ -25,7 +25,7 @@ export function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, s
       Util.execute(nextCleanup, final)
       nextCleanup = null
 
-      if (final || strategy === 'cancel') {
+      if (final || strategy === 'discard') {
         shouldResolve = false
         state.queue = []
       }
@@ -67,7 +67,7 @@ export function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, s
       state.queue.push(waitingPromise)
     }
 
-    if (strategy === 'pass' || strategy === 'cancel') {
+    if (strategy === 'pass' || strategy === 'discard') {
       const promise = asyncFunction(parameter)
       promise.then(resolveToNextStage).catch(resolveErrorToNextStage)
     }

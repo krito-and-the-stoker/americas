@@ -8,9 +8,26 @@ import { createSolid, fromSolid } from 'util/signal/solid'
 import { collect } from 'util/signal/collect'
 import { each } from 'util/signal/each'
 import { combine } from 'util/signal/combine'
-import { assert, assertHasValue }  from 'util/signal/assert'
+import { assert,
+  assertHasValue,
+  isNothing,
+  isNotNothing,
+  isNumber,
+  isArray,
+  isBoolean,
+  isString,
+  isFunction,
+  isObject,
+  isError,
+  isNotNumber,
+  isNotArray,
+  isNotBoolean,
+  isNotString,
+  isNotFunction,
+  isNotObject,
+  isNotError,
+}  from 'util/signal/assert'
 import { catchFn } from 'util/signal/catch'
-
 
 
 
@@ -34,5 +51,21 @@ export default {
   assertHasValue,
   assert,
   catch: catchFn,
+  isNothing,
+  isNotNothing,
+  isNumber,
+  isArray,
+  isBoolean,
+  isString,
+  isFunction,
+  isObject,
+  isError,
+  isNotNumber,
+  isNotArray,
+  isNotBoolean,
+  isNotString,
+  isNotFunction,
+  isNotObject,
+  isNotError,
 }
 

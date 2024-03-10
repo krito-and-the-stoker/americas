@@ -21,8 +21,6 @@ function SignalTest() {
     }
 
     const input = Signal.fromSolid(inputValue)
-    const assertError = Signal.assert((value): value is Error => value instanceof Error)
-
 
     const isString = (x: any): x is string => typeof x === 'string'
     const test = Signal.createSolid(
@@ -30,15 +28,16 @@ function SignalTest() {
         Signal.select(x => x ? x : undefined),
         Signal.catch(
             Signal.select(x => x!.split('').join('')),
-            Signal.assert(isString)(),
+            Signal.select(x => Math.random() > 0.5 ? x : x.length),
+            Signal.assert(isString, 'Value is not a string')(),
             Signal.log(),
             Signal.select(s => s.length),
-            Signal.await(maybeFail)
         ),
-        assertError(
+        Signal.await(maybeFail),
+        Signal.isError(
             Signal.select(error => `Error: ${error.message}`)
         ),
-        Signal.log('after catch'),
+        // Signal.log('after catch'),
         Signal.select(x => `${x}`)
     )
 
