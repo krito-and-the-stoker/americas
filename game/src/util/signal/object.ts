@@ -7,7 +7,7 @@ export function key<O extends Maybe<Object>, Key extends keyof O>(key: Key): Lis
 export function key<O extends Maybe<Object>, Key extends keyof O>(key: Key): Listen<Maybe<O[Key]>, Maybe<O>> {
     return (fn: EffectFn<Maybe<O[Key]>>, obj: Maybe<O>) => {
         if (!obj) {
-            return fn(undefined)
+            return fn(obj as undefined | null)
         }
         return objectListener(obj, key)(fn)
     }
