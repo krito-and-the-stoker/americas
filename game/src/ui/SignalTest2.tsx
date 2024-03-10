@@ -29,15 +29,15 @@ function SignalTest() {
         Signal.catch(
             Signal.select(x => x!.split('').join('')),
             Signal.select(x => Math.random() > 0.5 ? x : x.length),
-            Signal.assert(isString, 'Value is not a string')(),
+            Signal.assert.create(isString, 'Value is not a string')(),
             Signal.log(),
             Signal.select(s => s.length),
         ),
         Signal.await(maybeFail),
-        Signal.isError(
+        Signal.assert.isError(
             Signal.select(error => `Error: ${error.message}`)
         ),
-        // Signal.log('after catch'),
+        Signal.log('after catch'),
         Signal.select(x => `${x}`)
     )
 
