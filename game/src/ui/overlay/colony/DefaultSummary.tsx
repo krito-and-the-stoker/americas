@@ -1,4 +1,3 @@
-import type { Maybe } from 'util/types'
 import type { ColonyEntity } from 'entity/colony'
 import { Show, For } from 'solid-js'
 
@@ -93,8 +92,8 @@ function DefaultSummary() {
 
   const supportedUnits = Signal.createSolid(
   	colonyChain,
-  	Signal.key('supportedUnits'),
   	Signal.assertHasValue(
+	  	Signal.key('supportedUnits'),
 	  	Signal.each(
 	  		Signal.combine(
 	  			Signal.through(),
@@ -116,8 +115,8 @@ function DefaultSummary() {
 
   const hasConstructors = Signal.createSolid(
   	colonyChain,
-  	Signal.key('colonists'),
   	Signal.assertHasValue(
+	  	Signal.key('colonists'),
 	  	Signal.each(
 	  		Signal.key('work')
 	  	),

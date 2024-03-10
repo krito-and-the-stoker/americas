@@ -3,7 +3,7 @@ import type { Function1 } from 'util/types'
 
 import Util from 'util/util'
 
-export function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, strategy: AsyncStrategy = 'cancel'): Listen<To, From> {
+export function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, strategy: AsyncStrategy = 'cancel'): Listen<To | Error, From> {
   let state = {
     queue: [] as Promise<void>[],
   }
@@ -18,7 +18,7 @@ export function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, s
     }
   }
 
-  return (resolve: EffectFn<To>, parameter: From) => {
+  return (resolve: EffectFn<To | Error>, parameter: From) => {
     let nextCleanup: CleanupExec = null
     let shouldResolve = true
     const cleanup = (final: boolean) => {
@@ -37,11 +37,18 @@ export function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, s
       }
     }
 
+    const resolveErrorToNextStage = (error: Error) => {
+      if (shouldResolve) {
+        nextCleanup = resolve(error)
+      }
+    }
+
     if (strategy === 'queue') {
       const bindState = state
       const waitingPromise = Promise.all(state.queue)
         .then(() => asyncFunction(parameter))
         .then(resolveToNextStage)
+        .catch(resolveErrorToNextStage)
         .finally(() => {
           bindState.queue = bindState.queue.filter(p => p !== waitingPromise)
         })
@@ -53,6 +60,7 @@ export function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, s
       const bindState = state
       const waitingPromise = Promise.all(state.queue)
         .then(() => promise.then(resolveToNextStage))
+        .catch(resolveErrorToNextStage)
         .finally(() => {
           bindState.queue = bindState.queue.filter(p => p !== waitingPromise)
         })
@@ -61,7 +69,7 @@ export function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, s
 
     if (strategy === 'pass' || strategy === 'cancel') {
       const promise = asyncFunction(parameter)
-      promise.then(resolveToNextStage)
+      promise.then(resolveToNextStage).catch(resolveErrorToNextStage)
     }
 
     return [

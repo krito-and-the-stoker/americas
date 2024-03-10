@@ -41,7 +41,7 @@ export const assertHasValue: AssertHasValueCall = (listen1?: Listen<unknown, Non
 }
 
 interface AssertCall<Range, Condition extends Range> {
-    <V extends Range>(): Listen<V, V>
+    <V extends Range>(): Listen<Condition, V>
     <V1 extends Range, V2>(listen1: Listen<V2, Condition>): Listen<V2 | Except<Range, Condition>, V1>
     <V1 extends Range, V2, V3>(listen1: Listen<V2, Condition>, listen2: Listen<V3, V2>): Listen<V3 | Except<Range, Condition>, V1>
     <V1 extends Range, V2, V3, V4>(listen1: Listen<V2, Condition>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>): Listen<V4 | Except<Range, Condition>, V1>
@@ -56,7 +56,7 @@ interface AssertCall<Range, Condition extends Range> {
 }
 
 type ConditionFunction<Range, Condition extends Range> = (value: Range) => value is Condition
-export const assert = <Range, Condition extends Range>(condition: ConditionFunction<Range, Condition>): AssertCall<Range, Condition> => (listen1?: Listen<unknown, Condition>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown | Except<Range, Condition>, unknown> => {
+export const assert = <Range, Condition extends Range>(condition: ConditionFunction<Range, Condition>): AssertCall<Range, Condition> => (listen1?: Listen<any, Condition>, ...additionalListeners: Listen<any, any>[]): Listen<any | Except<Range, Condition>, any> => {
     if (!listen1) {
         return (resolve, value) => {
             if (!condition(value as any)) {
@@ -76,15 +76,6 @@ export const assert = <Range, Condition extends Range>(condition: ConditionFunct
     }
 }
 
-// type ConditionFunction<Range, Condition extends Range> = (value: Range) => value is Condition
-// export const assert = <Range, Condition extends Range>(condition: ConditionFunction<Range, Condition>) => <From extends Range, To>(listen: Listen<To, Condition>): Listen<To | Except<Range, Condition>, From> => {
-//     return (resolve, value) => {
-//         if (condition(value)) {
-//             return listen(resolve, value)
-//         }
-
-//         return resolve(value as any)
-//     }
-// }
+export const assertError = assert((value): value is Error => value instanceof Error)
 
 // export const assertHasValue = assert((value): value is NonNullable<any> => value !== undefined && value !== null)

@@ -9,7 +9,7 @@ import { collect } from 'util/signal/collect'
 import { each } from 'util/signal/each'
 import { combine } from 'util/signal/combine'
 import { assert, assertHasValue }  from 'util/signal/assert'
-
+import { catchFn } from 'util/signal/catch'
 
 
 
@@ -32,6 +32,7 @@ export default {
   each,
   combine,
   assertHasValue,
-  assert
+  assert,
+  catch: catchFn,
 }
 

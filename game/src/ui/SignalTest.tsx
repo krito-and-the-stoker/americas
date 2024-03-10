@@ -19,6 +19,7 @@ function SignalTest() {
         }
     }
 
+
     const aSignal = Signal.createSolid(
         Signal.chain(
             Signal.emit(obj),
