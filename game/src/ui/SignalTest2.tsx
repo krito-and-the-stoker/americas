@@ -22,17 +22,31 @@ function SignalTest() {
 
     const input = Signal.fromSolid(inputValue)
 
+    Signal.createSolid(
+        Signal.emit(Math.random() > 0.5 ? 1 : undefined),
+        // Signal.select(x => x ? x + 1 : null),
+        Signal.assert.not.isNothing(
+            Signal.select(x => [2*x + 5]),
+            // Signal.select(x => x.map(x => x - 1)),
+        ),
+        Signal.select(x => x ? x.length : '0')
+    )
+
     const isString = (x: any): x is string => typeof x === 'string'
     const test = Signal.createSolid(
         input.listen,
-        Signal.select(x => x ? x : undefined),
+        Signal.select(x => x ? `${x}` : undefined),
+        Signal.assert.isNothing(
+            Signal.select(x => x),
+            Signal.select(() => null)
+        ),
         // Signal.assert.isNothing(
         //     Signal.select(() => '0')
         // ),
         Signal.catch(
             Signal.select(x => x!.split('').join('')),
             Signal.select(x => Math.random() > 0.75 ? x : x.length),
-            Signal.assert.create(isString, 'Value is not a string')(),
+            Signal.assert.create(isString, 'Value must be a string')(),
             Signal.log('inside catch'),
             Signal.select(s => s.length),
         ),
