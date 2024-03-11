@@ -26,6 +26,9 @@ function SignalTest() {
     const test = Signal.createSolid(
         input.listen,
         Signal.select(x => x ? x : undefined),
+        Signal.assert.isNothing(
+            Signal.select(() => '0')
+        ),
         Signal.catch(
             Signal.select(x => x!.split('').join('')),
             Signal.select(x => Math.random() > 0.5 ? x : x.length),
@@ -33,12 +36,13 @@ function SignalTest() {
             Signal.log(),
             Signal.select(s => s.length),
         ),
+        Signal.assert.not.isError(),
         Signal.await(maybeFail),
         Signal.assert.isError(
             Signal.select(error => `Error: ${error.message}`)
         ),
         Signal.log('after catch'),
-        Signal.select(x => `${x}`)
+        // Signal.select(x => `${x}`)
     )
 
     return <div class={style.main}>

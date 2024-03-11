@@ -9,6 +9,7 @@ import { collect } from 'util/signal/collect'
 import { each } from 'util/signal/each'
 import { combine } from 'util/signal/combine'
 import { assert as createAssert,
+  assertNot as createAssertNot,
   assertHasValue,
   isNothing,
   isNotNothing,
@@ -39,14 +40,17 @@ const assert = {
   isFunction,
   isObject,
   isError,
-  isNotNumber,
-  isNotArray,
-  isNotBoolean,
-  isNotString,
-  isNotFunction,
-  isNotObject,
-  isNotError,
   create: createAssert,
+  not: {
+    isNumber: isNotNumber,
+    isArray: isNotArray,
+    isBoolean: isNotBoolean,
+    isString: isNotString,
+    isFunction: isNotFunction,
+    isObject: isNotObject,
+    isError: isNotError,
+    create: createAssertNot,
+  }
 }
 
 
