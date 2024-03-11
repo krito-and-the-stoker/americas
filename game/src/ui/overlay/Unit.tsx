@@ -59,12 +59,15 @@ export type UnitEntity = {
   mapCoordinates: Coordinates
   tile: TileEntity
   colonist?: ColonistEntity
+  expert: string
   properties: {
     cost?: number
     speed?: number
     canFound?: boolean
     canTerraform?: boolean
+    needsFood?: boolean
     cargo?: number
+    equipment?: StorageEntity
 
   }
 }
@@ -235,6 +238,7 @@ function UnitComponent() {
     cutForest: 'Cancel Cutting Forest',
     plow: 'Cancel Plow',
     tradeRoute: 'Cancel Automatic Transport',
+    road: 'Cancel Building Road',
   })[command()?.id ?? '']
 
 

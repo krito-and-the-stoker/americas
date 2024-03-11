@@ -46,7 +46,7 @@ const displayName = (good: string) => {
 function GoodSummary() {
 	const goodChain = Signal.chain(
 		Hover.listen.data,
-		Signal.select((data: HoverData) => data.good)
+		Signal.select((data: HoverData) => data?.good)
 	)
 	const good = Signal.createSolid(
 		goodChain,
