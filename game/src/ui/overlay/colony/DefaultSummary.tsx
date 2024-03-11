@@ -74,12 +74,14 @@ function DefaultSummary() {
 
 	const integrationChain = Signal.chain(
 		colonyChain,
-		Signal.combine(
-			Signal.through(),
-			Signal.key('bells'),
-			Signal.key('colonists')
+		Signal.assert.not.isNothing(
+			Signal.combine(
+				Signal.through(),
+				Signal.key('bells'),
+				Signal.key('colonists')
+			),
+			Signal.select(([colony]) => colony)
 		),
-		Signal.select(([colony]) => colony)
 	)
 	const rebels = Signal.createSolid(
 		integrationChain,
@@ -92,7 +94,7 @@ function DefaultSummary() {
 
   const supportedUnits = Signal.createSolid(
   	colonyChain,
-  	Signal.assertHasValue(
+  	Signal.assert.not.isNothing(
 	  	Signal.key('supportedUnits'),
 	  	Signal.each(
 	  		Signal.combine(
@@ -115,7 +117,7 @@ function DefaultSummary() {
 
   const hasConstructors = Signal.createSolid(
   	colonyChain,
-  	Signal.assertHasValue(
+  	Signal.assert.not.isNothing(
 	  	Signal.key('colonists'),
 	  	Signal.each(
 	  		Signal.key('work')

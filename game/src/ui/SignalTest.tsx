@@ -69,6 +69,7 @@ function SignalTest() {
         counter.listen,
         // Signal.log('Pushing to queue'),
         Signal.await(wait(500), 'order'),
+        Signal.assert.not.isError()
         // Signal.log('Promise resolved'),
     )
     Signal.createSolid(
@@ -112,7 +113,7 @@ function SignalTest() {
         Signal.select(value => value.split('')),
         Signal.each(
             Signal.select(value => value + ' '),
-            Signal.await(wait(1000), 'cancel'),
+            Signal.await(wait(1000), 'discard'),
         ),
         Signal.select(value => value.join('')),
     )

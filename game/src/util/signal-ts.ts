@@ -8,9 +8,9 @@ import { createSolid, fromSolid } from 'util/signal/solid'
 import { collect } from 'util/signal/collect'
 import { each } from 'util/signal/each'
 import { combine } from 'util/signal/combine'
+import { maybe } from 'util/signal/maybe'
 import { assert as createAssert,
   assertNot as createAssertNot,
-  assertHasValue,
   isNothing,
   isNotNothing,
   isNumber,
@@ -32,7 +32,6 @@ import { catchFn } from 'util/signal/catch'
 
 const assert = {
   isNothing,
-  isNotNothing,
   isNumber,
   isArray,
   isBoolean,
@@ -42,6 +41,7 @@ const assert = {
   isError,
   create: createAssert,
   not: {
+    isNothing: isNotNothing,
     isNumber: isNotNumber,
     isArray: isNotArray,
     isBoolean: isNotBoolean,
@@ -52,7 +52,6 @@ const assert = {
     create: createAssertNot,
   }
 }
-
 
 export default {
   primitive,
@@ -71,8 +70,8 @@ export default {
   fromSolid,
   each,
   combine,
-  assertHasValue,
   assert,
+  maybe,
   catch: catchFn,
 }
 

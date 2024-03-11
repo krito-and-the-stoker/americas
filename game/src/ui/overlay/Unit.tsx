@@ -131,55 +131,57 @@ function UnitComponent() {
 
   const command = Signal.createSolid(
     unitListener,
-    Signal.key('command')
+    Signal.maybe.key('command')
   )
 
   const passengers = Signal.createSolid(
     unitListener,
-    Signal.key('passengers')
+    Signal.maybe.key('passengers')
   )
 
   const propertySignal = Signal.chain(
     unitListener,
-    Signal.key('properties'),
+    Signal.maybe.key('properties'),
   )
   const properties = Signal.createSolid(propertySignal)
   const cost = Signal.createSolid(
     propertySignal,
-    Signal.key('cost'),
+    Signal.maybe.key('cost'),
     Signal.select(cost => cost?.toFixed(0) ?? '')
   )
   const speed = Signal.createSolid(
     propertySignal,
-    Signal.key('speed'),
+    Signal.maybe.key('speed'),
     Signal.select(speed => speed?.toFixed(2) ?? '')
   )
   const strength = Signal.createSolid(
     unitListener,
-    Signal.combine(
-      Signal.through(),
-      Signal.key('mapCoordinates'),
-      Signal.chain(
-        Signal.select(unit => unit?.equipment),
-        Storage.signal
-      )
-    ),
-    Signal.select(([unit]) => unit && Unit.strength(unit).toFixed(2) as string)
+    Signal.assert.not.isNothing(
+      Signal.combine(
+        Signal.through(),
+        Signal.key('mapCoordinates'),
+        Signal.chain(
+          Signal.select(unit => unit?.equipment),
+          Storage.signal
+        )
+      ),
+      Signal.select(([unit]) => unit && Unit.strength(unit).toFixed(2) as string)
+    )
   )
 
   const tile = Signal.createSolid(
     unitListener,
-    Signal.key('tile')
+    Signal.maybe.key('tile')
   )
 
   const coords = Signal.createSolid(
     unitListener,
-    Signal.key('mapCoordinates')
+    Signal.maybe.key('mapCoordinates')
   )
 
   const supplyColony = Signal.createSolid(
     unitListener,
-    Signal.key('mapCoordinates'),
+    Signal.maybe.key('mapCoordinates'),
     Signal.select(coords => coords && Tile.supportingColony(Tile.closest(coords)) as Maybe<ColonyEntity>)
   )
 

@@ -78,17 +78,17 @@ export const assert = <Range, Condition extends Range>(condition: ConditionFunct
 
 interface AssertNotCall<Range, Condition extends Range> {
     <V extends Range>(): Listen<Exclude<V, Condition>, V>
-    <V1 extends Range, V2>(listen1: Listen<V2, Exclude<V1, Condition>>): Listen<V2, V1 | Condition>
-    <V1 extends Range, V2, V3>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>): Listen<V3, V1 | Condition>
-    <V1 extends Range, V2, V3, V4>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>): Listen<V4, V1 | Condition>
-    <V1 extends Range, V2, V3, V4, V5>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>): Listen<V5, V1 | Condition>
-    <V1 extends Range, V2, V3, V4, V5, V6>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>): Listen<V6, V1 | Condition>
-    <V1 extends Range, V2, V3, V4, V5, V6, V7>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>): Listen<V7, V1 | Condition>
-    <V1 extends Range, V2, V3, V4, V5, V6, V7, V8>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>): Listen<V8, V1 | Condition>
-    <V1 extends Range, V2, V3, V4, V5, V6, V7, V8, V9>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>): Listen<V9, V1 | Condition>
-    <V1 extends Range, V2, V3, V4, V5, V6, V7, V8, V9, V10>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<V10, V9>): Listen<V10, V1 | Condition>
+    <V1 extends Range, V2>(listen1: Listen<V2, Exclude<V1, Condition>>): Listen<V2 | Exclude<Condition, V1>, V1 | Condition>
+    <V1 extends Range, V2, V3>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>): Listen<V3 | Exclude<Condition, V1>, V1 | Condition>
+    <V1 extends Range, V2, V3, V4>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>): Listen<V4 | Exclude<Condition, V1>, V1 | Condition>
+    <V1 extends Range, V2, V3, V4, V5>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>): Listen<V5 | Exclude<Condition, V1>, V1 | Condition>
+    <V1 extends Range, V2, V3, V4, V5, V6>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>): Listen<V6 | Exclude<Condition, V1>, V1 | Condition>
+    <V1 extends Range, V2, V3, V4, V5, V6, V7>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>): Listen<V7 | Exclude<Condition, V1>, V1 | Condition>
+    <V1 extends Range, V2, V3, V4, V5, V6, V7, V8>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>): Listen<V8 | Exclude<Condition, V1>, V1 | Condition>
+    <V1 extends Range, V2, V3, V4, V5, V6, V7, V8, V9>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>): Listen<V9 | Exclude<Condition, V1>, V1 | Condition>
+    <V1 extends Range, V2, V3, V4, V5, V6, V7, V8, V9, V10>(listen1: Listen<V2, Exclude<V1, Condition>>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<V10, V9>): Listen<V10 | Exclude<Condition, V1>, V1 | Condition>
 
-    (listen1: Listen<unknown, Condition>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown | Except<Range, Condition>, unknown>
+    (listen1: Listen<unknown, Condition>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown | Exclude<Condition, unknown>, unknown | Condition>
 }
 
 export const assertNot = <Range, Condition extends Range>(condition: ConditionFunction<Range, Condition>, message?: string): AssertNotCall<Range, Condition> => (listen1?: Listen<any, Condition>, ...additionalListeners: Listen<any, any>[]): Listen<any | Except<Range, Condition>, any> => {
