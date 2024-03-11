@@ -13,9 +13,9 @@ import Layout from 'entity/layout'
 
 import { add, listen, listenEach, update, remove } from 'entity/colony/binding'
 import Fn from 'entity/colony/functions'
+import { UnitEntity } from 'ui/overlay/Unit'
 
 type OwnerEntity = any
-type UnitEntity = any
 type ColonistEntity = any
 type StorageEntity = any
 type LayoutEntity = number[][]

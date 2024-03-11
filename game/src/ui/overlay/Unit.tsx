@@ -43,17 +43,22 @@ type TileEntity = {
 }
 type CommanderEntity = {}
 type StorageEntity = {}
+type ColonistEntity = {
+  colony?: ColonyEntity
+}
 
-type UnitEntity = {
+export type UnitEntity = {
   passengers: UnitEntity[]
   domain: string
   commander: CommanderEntity
   command: CommandInfo
   storage: StorageEntity
   equipment: StorageEntity
+  consumptionSummary: StorageEntity
   treasure: number | null
   mapCoordinates: Coordinates
   tile: TileEntity
+  colonist?: ColonistEntity
   properties: {
     cost?: number
     speed?: number

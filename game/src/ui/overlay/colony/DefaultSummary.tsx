@@ -16,7 +16,7 @@ import GameIcon from 'ui/components/GameIcon'
 
 import styles from './DefaultSummary.module.scss'
 
-function openConstructionDialog(colony:ColonyEntity) {
+function openConstructionDialog(colony: ColonyEntity) {
   const options = Construction.options(colony)
 
   const prepareOption = (option: any) => ({
@@ -101,7 +101,8 @@ function DefaultSummary() {
 	  			Signal.through(),
 	  			Signal.chain(
 	  				Signal.key('colonist'),
-	  				Signal.key('colony')
+	  				Signal.maybe.key('colony'),
+	  				Signal.select(colony => !!colony)
 	  			),
 	  			Signal.chain(
 	  				Signal.select(unit => unit?.consumptionSummary),
@@ -109,7 +110,7 @@ function DefaultSummary() {
 	  				Signal.select(storage => (!!storage && Util.sum(Storage.goods(storage).map(pack => pack.amount))) || 0)
 	  			)
 	  		),
-	  		Signal.select(([unit, colony, consumption]) => ({ unit, show: !colony && consumption < 0 })),
+	  		Signal.select(([unit, hasColony, consumption]) => ({ unit, show: !hasColony && consumption < 0 })),
 	  	),
   	),
   	Signal.select(entries => entries?.filter(entry => entry.show).map(entry => entry.unit) ?? [])
