@@ -120,14 +120,14 @@ export const isFunction = assert((value): value is Function => typeof value === 
 export const isObject = assert((value): value is object => typeof value === 'object', 'Value is not an object')
 export const isError = assert((value): value is Error => value instanceof Error, 'Value is not an error')
 
-export const isNotNothing = assertNot((value): value is undefined | null => value === undefined || value === null, 'Value is not nothing')
-export const isNotNumber = assertNot((value): value is number => typeof value === 'number', 'Value is not a number')
-export const isNotArray = assertNot((value): value is any[] => Array.isArray(value), 'Value is not an array')
-export const isNotBoolean = assertNot((value): value is boolean => typeof value === 'boolean', 'Value is not a boolean')
-export const isNotString = assertNot((value): value is string => typeof value === 'string', 'Value is not a string')
-export const isNotFunction = assertNot((value): value is Function => typeof value === 'function', 'Value is not a function')
-export const isNotObject = assertNot((value): value is object => typeof value === 'object', 'Value is not an object')
-export const isNotError = assertNot((value): value is Error => value instanceof Error, 'Value is not an error')
+export const isNotNothing = assertNot((value): value is undefined | null => value === undefined || value === null, 'Value is nothing')
+export const isNotNumber = assertNot((value): value is number => typeof value === 'number', 'Value is a number')
+export const isNotArray = assertNot((value): value is any[] => Array.isArray(value), 'Value is an array')
+export const isNotBoolean = assertNot((value): value is boolean => typeof value === 'boolean', 'Value is a boolean')
+export const isNotString = assertNot((value): value is string => typeof value === 'string', 'Value is a string')
+export const isNotFunction = assertNot((value): value is Function => typeof value === 'function', 'Value is a function')
+export const isNotObject = assertNot((value): value is object => typeof value === 'object', 'Value is an object')
+export const isNotError = assertNot((value): value is Error => value instanceof Error, 'Value is an error')
 
 
 // export const assertHasValue = assert((value): value is NonNullable<any> => value !== undefined && value !== null)

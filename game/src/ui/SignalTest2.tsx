@@ -5,8 +5,8 @@ import { createSignal } from 'solid-js'
 
 // import Util from 'util/util'
 async function maybeFail<T>(x: T): Promise<T> {
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    if (Math.random() < 0.5) {
+    await new Promise(resolve => setTimeout(resolve, 100))
+    if (Math.random() < 0.25) {
         throw new Error('Random error')
     }
 
@@ -26,17 +26,17 @@ function SignalTest() {
     const test = Signal.createSolid(
         input.listen,
         Signal.select(x => x ? x : undefined),
-        Signal.assert.isNothing(
-            Signal.select(() => '0')
-        ),
+        // Signal.assert.isNothing(
+        //     Signal.select(() => '0')
+        // ),
         Signal.catch(
             Signal.select(x => x!.split('').join('')),
-            Signal.select(x => Math.random() > 0.5 ? x : x.length),
+            Signal.select(x => Math.random() > 0.75 ? x : x.length),
             Signal.assert.create(isString, 'Value is not a string')(),
-            Signal.log(),
+            Signal.log('inside catch'),
             Signal.select(s => s.length),
         ),
-        Signal.assert.not.isError(),
+        // Signal.assert.not.isError(),
         Signal.await(maybeFail),
         Signal.assert.isError(
             Signal.select(error => `Error: ${error.message}`)

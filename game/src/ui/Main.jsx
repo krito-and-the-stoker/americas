@@ -8,7 +8,7 @@ function Main() {
   return <>
     <Overlay />
     <Dialog />
-    <SignalTest2 />
+    {/*<SignalTest2 />*/}
   </>
 }
 
