@@ -1,6 +1,7 @@
 import type { ColonyEntity } from 'entity/colony'
 import type { Function1 } from 'util/types'
 import type { UnitEntity } from '../Unit'
+import type { ColonistEntity } from './ColonistSummary'
 
 import { For, Show } from 'solid-js'
 
@@ -22,12 +23,6 @@ type StorageEntity = {
 	[key: string]: number
 }
 
-type ColonistEntity = {
-	unit: UnitEntity
-	storage: StorageEntity
-	consumptionSummary: StorageEntity
-	productionSummary: StorageEntity
-}
 
 type HoverData = {
 	good?: string
@@ -148,7 +143,7 @@ function GoodSummary() {
 	const amount = Signal.createSolid(
 		colonyChain,
 		Signal.assert.not.isNothing(
-			Signal.key('storage'),
+			Signal.select(colony => colony.storage),
 			Signal.combine(
 				Storage.signal,
 				goodChain
