@@ -14,13 +14,13 @@ const AUTOSAVE_INTERVAL = 5 * 60 * 1000 // autosave every 5 minutes
 
 
 const gameId = Signal.primitive<string | null>(null)
-const gamesToSync = Signal.primitive(JSON.parse(window.localStorage.getItem('needsSync') || '[]'))
+const gamesToSync = Signal.primitive<string[]>(JSON.parse(window.localStorage.getItem('needsSync') || '[]'))
 const lastSaveId = Signal.primitive(window.localStorage.getItem('lastSaveId'))
 const isRunning = Signal.primitive(false)
 const gamesInStorage = Signal.primitive(Object.keys(window.localStorage).filter(key => key.startsWith('game-')))
 const autosaveInterval = Signal.primitive(parseInt(window.localStorage.getItem('autosaveInterval') ?? `${AUTOSAVE_INTERVAL}`) ?? AUTOSAVE_INTERVAL)
 const lastSaveTime = Signal.primitive<number | null>(null)
-const saveOnExit = Signal.primitive(JSON.parse(window.localStorage.getItem('saveOnExit') ?? 'true'))
+const saveOnExit = Signal.primitive<boolean>(JSON.parse(window.localStorage.getItem('saveOnExit') ?? 'true'))
 
 const update = {
     isRunning: isRunning.update,
@@ -247,34 +247,48 @@ const load = async (gameId: Maybe<string>): Promise<Maybe<string>> => {
         return undefined
     }
 
-    if (SAVE_TO_REMOTE && gameId && !gamesToSync.value.includes(gameId)) {
-        const result = await fetch('/api/game/load', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ id: gameId })
-        })
+    let error = []
 
-        const data = await result.json()
+    try {
+        if (SAVE_TO_REMOTE && gameId && !gamesToSync.value.includes(gameId)) {
+            const result = await fetch('/api/game/load', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: gameId })
+            })
 
-        if (data.game) {
-            try {
-                Message.savegame.log('Savegame found on server', gameId)
-                return data.game
-            } catch (e) {
-                Message.savegame.error('Error parsing savegame', e)
+            const data = await result.json()
+
+            if (data.game) {
+                try {
+                    Message.savegame.log('Savegame found on server', gameId)
+                    return data.game
+                } catch (e) {
+                    Message.savegame.error('Error parsing savegame', e)
+                }
             }
         }
+    } catch(e) {
+        error.push(e)
     }
 
-    if (SAVE_TO_LOCAL_STORAGE && gameId) {
-        const data = loadFromStorage(gameId)
+    try {
+        if (SAVE_TO_LOCAL_STORAGE && gameId) {
+            const data = loadFromStorage(gameId)
 
-        if (data) {
-            Message.savegame.log('Savegame found in local storage', gameId)
-            return data
+            if (data) {
+                Message.savegame.log('Savegame found in local storage', gameId)
+                return data
+            }
         }
+    } catch(e) {
+        error.push(e)
+    }
+
+    if (error.length) {
+        throw error
     }
 
     Message.savegame.warn('No savegame found', gameId)
@@ -286,8 +300,13 @@ const derived = {
             gameId.listen,
             isRunning.listen
         ),
-        Signal.select(([ id, isRunning ]) => !isRunning ? id : null),
+        Signal.gate(([_, isRunning]) => !isRunning),
+        Signal.select(([id]) => id),
         Signal.await(load),
+        Signal.assert.isError(
+            Signal.effect(error => Message.savegame.error('Failed to load game data:', error)),
+            Signal.select(() => null)
+        )
     ),
     name: Signal.connect(
         gameId.listen,
