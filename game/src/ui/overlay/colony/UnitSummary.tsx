@@ -34,7 +34,7 @@ function UnitSummary() {
 		unitChain,
 		Signal.assert.not.isNothing(
 			Signal.combine(
-				Signal.through(),
+				Signal.select(),
 				Signal.maybe.key('properties'),
 				Signal.maybe.key('expert'),
 			),

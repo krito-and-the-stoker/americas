@@ -29,6 +29,7 @@ const maybeSelect = <V1, Filter extends V1 & (null | undefined), From extends Ex
 export const maybe = {
   key: maybeKey,
   select: maybeSelect,
+  // chain: isNotNothing,
   // effect,
   // await: awaitFn,
   // each,

@@ -52,7 +52,14 @@ function DefaultSummary() {
 
 	const constructionChain = Signal.chain(
 		colonyChain,
-		Signal.select(colony => colony && Colony.currentConstruction(colony)),
+		Signal.assert.not.isNothing(
+			Signal.combine(
+				Signal.select(),
+				Signal.key('constructionTarget'),
+				Signal.key('construction')
+			),
+			Signal.select(([colony]) => Colony.currentConstruction(colony)),
+		)
 	)
 	const cost = Signal.createSolid(
 		constructionChain,
@@ -76,7 +83,7 @@ function DefaultSummary() {
 		colonyChain,
 		Signal.assert.not.isNothing(
 			Signal.combine(
-				Signal.through(),
+				Signal.select(),
 				Signal.key('bells'),
 				Signal.key('colonists')
 			),
@@ -98,7 +105,7 @@ function DefaultSummary() {
 	  	Signal.key('supportedUnits'),
 	  	Signal.each(
 	  		Signal.combine(
-	  			Signal.through(),
+	  			Signal.select(),
 	  			Signal.chain(
 	  				Signal.key('colonist'),
 	  				Signal.maybe.key('colony'),

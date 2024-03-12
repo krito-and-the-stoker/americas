@@ -14,10 +14,17 @@ export function gate <V>(condition: Function1<V, boolean>): Listen<V, V> {
   }
 }
 
-export function select<From, To>(mapping: Function1<From, To>): Listen<To, From> {
-  return (fn: EffectFn<To>, value: From) => fn(mapping(value))
-}
 
 export function through<V>(): Listen<V, V> {
   return (fn: EffectFn<V>, parameter: V) => fn(parameter)
+}
+
+export function select<V>(): Listen<V, V>
+export function select<From, To>(mapping: Function1<From, To>): Listen<To, From>
+export function select<From, To>(mapping?: Function1<From, To>): Listen<To, From> {
+  if (mapping) {
+    return (fn: EffectFn<To>, value: From) => fn(mapping(value))
+  }
+
+  return through() as any
 }

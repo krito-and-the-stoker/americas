@@ -119,54 +119,70 @@ type UnitView = {
 }
 
 function UnitComponent() {
-	const unitListener = Signal.chain(
+	const unitChain = Signal.chain(
 		UnitMapView.listen.selectedView,
 		Signal.select((view: UnitView) => view?.unit)
 	)
-	const unit = Signal.createSolid(unitListener)
+	const unit = Signal.createSolid(unitChain)
 	const name = () => unit() && Unit.name(unit())
 
   const cargo = Signal.createSolid(
-    unitListener,
+    unitChain,
     Signal.select(unit => unit?.storage),
     Storage.signal
   )
   const equipment = Signal.createSolid(
-    unitListener,
+    unitChain,
     Signal.select(unit => unit?.equipment),
     Storage.signal
   )
 
   const command = Signal.createSolid(
-    unitListener,
+    unitChain,
     Signal.maybe.key('command')
   )
 
   const passengers = Signal.createSolid(
-    unitListener,
+    unitChain,
     Signal.maybe.key('passengers')
   )
 
-  const propertySignal = Signal.chain(
-    unitListener,
+  const propertyChain = Signal.chain(
+    unitChain,
     Signal.maybe.key('properties'),
   )
-  const properties = Signal.createSolid(propertySignal)
+  const properties = Signal.createSolid(propertyChain)
   const cost = Signal.createSolid(
-    propertySignal,
+    propertyChain,
     Signal.maybe.key('cost'),
     Signal.select(cost => cost?.toFixed(0) ?? '')
   )
+
+  const speedChain = Signal.chain(
+    Signal.select<UnitEntity>(),
+    Signal.combine(
+      Signal.select(),
+      Signal.key('properties'),
+      Signal.chain(
+        Signal.select(unit => unit.equipment),
+        Storage.signal,
+      )
+    ),
+    Signal.select(([unit]) => Unit.speed(unit) as number)
+  )
   const speed = Signal.createSolid(
-    propertySignal,
-    Signal.maybe.key('speed'),
+    unitChain,
+    Signal.assert.not.isNothing(
+      speedChain
+    ),
     Signal.select(speed => speed?.toFixed(2) ?? '')
   )
+
   const strength = Signal.createSolid(
-    unitListener,
+    unitChain,
     Signal.assert.not.isNothing(
       Signal.combine(
-        Signal.through(),
+        Signal.select(),
         Signal.key('mapCoordinates'),
         Signal.chain(
           Signal.select(unit => unit?.equipment),
@@ -178,17 +194,17 @@ function UnitComponent() {
   )
 
   const tile = Signal.createSolid(
-    unitListener,
+    unitChain,
     Signal.maybe.key('tile')
   )
 
   const coords = Signal.createSolid(
-    unitListener,
+    unitChain,
     Signal.maybe.key('mapCoordinates')
   )
 
   const supplyColony = Signal.createSolid(
-    unitListener,
+    unitChain,
     Signal.maybe.key('mapCoordinates'),
     Signal.select(coords => coords && Tile.supportingColony(Tile.closest(coords)) as Maybe<ColonyEntity>)
   )

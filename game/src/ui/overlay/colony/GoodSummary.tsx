@@ -59,7 +59,7 @@ function GoodSummary() {
 			Signal.key('colonists'),
 			Signal.each(
 				Signal.combine(
-					Signal.through(),
+					Signal.select(),
 					Signal.chain(
 						Signal.select(storageMapping),
 						Storage.signal
@@ -142,7 +142,7 @@ function GoodSummary() {
 			Signal.key('supportedUnits'),
 			Signal.each(
 				Signal.combine(
-					Signal.through(),
+					Signal.select(),
 					Signal.chain(
 						Signal.select((unit: UnitEntity) => unit.consumptionSummary),
 						Storage.signal,
