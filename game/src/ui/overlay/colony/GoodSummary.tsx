@@ -50,7 +50,7 @@ function GoodSummary() {
 
 	const colonyChain = Signal.chain(
 		Foreground.listen.screen,
-		Signal.select((screen: Screen) => screen.params?.colony),
+		Signal.select((screen: Screen) => screen?.params?.colony),
 	)
 
 	const storageChain = (storageMapping: Function1<ColonistEntity, StorageEntity>) => Signal.chain(
@@ -74,39 +74,66 @@ function GoodSummary() {
 		)
 	)
 
+	function filterPositiveGoods<T extends { goods: number }>(items: T[]) {
+		return items.filter(item => item.goods > 0)
+	}
+	function filterNegativeGoods<T extends { goods: number }>(items: T[]) {
+		return items.filter(item => item.goods < 0)
+	}
+	function selectUnits<T extends { colonist: ColonistEntity }>(items: T[]) {
+		return items.map(item => item.colonist.unit)
+	}
+	function invertGoods<T extends { goods: number }>(items: T[]) {
+		return items.map(item => ({
+			...item,
+			goods: -item.goods
+		}))
+	}
+
 	const production = Signal.createSolid(
 		storageChain(colonist => colonist.productionSummary),
-		Signal.select(items => items?.filter(item => item.goods > 0)),
-		Signal.select(items => items ? Util.sum(items?.map(item => item.goods)) : 0)
+		Signal.maybe.select(filterPositiveGoods),
+		Signal.maybe.select(items => items.map(item => item.goods)),
+		Signal.maybe.select(Util.sum),
+		Signal.select(x => x ?? 0)
 	)
 
 	const producers = Signal.createSolid(
 		storageChain(colonist => colonist.productionSummary),
-		Signal.select(items => items?.filter(item => item.goods > 0)),
-		Signal.select(items => items?.map(item => item.colonist.unit) ?? [])
+		Signal.maybe.select(filterPositiveGoods),
+		Signal.maybe.select(selectUnits),
+		Signal.select(units => units ?? [])
 	)
 
 	const manufacturing = Signal.createSolid(
 		storageChain(colonist => colonist.productionSummary),
-		Signal.select(items => items?.filter(item => item.goods < 0)),
-		Signal.select(items => items ? Util.sum(items?.map(item => -item.goods)) : 0)
+		Signal.maybe.select(invertGoods),
+		Signal.maybe.select(filterPositiveGoods),
+		Signal.maybe.select(items => items.map(item => item.goods)),
+		Signal.maybe.select(Util.sum),
+		Signal.select(x => x ?? 0)
 	)
 
 	const manufacturers = Signal.createSolid(
 		storageChain(colonist => colonist.productionSummary),
-		Signal.select(items => items?.filter(item => item.goods < 0)),
-		Signal.select(items => items?.map(item => item.colonist.unit) ?? [])
+		Signal.maybe.select(filterNegativeGoods),
+		Signal.maybe.select(selectUnits),
+		Signal.select(units => units ?? [])
 	)
 
 	const consumption = Signal.createSolid(
 		storageChain(colonist => colonist.consumptionSummary),
-		Signal.select(items => items ? Util.sum(items.map(item => -item.goods)) : 0),
+		Signal.maybe.select(invertGoods),
+		Signal.maybe.select(items => items.map(item => item.goods)),
+		Signal.maybe.select(Util.sum),
+		Signal.select(x => x ?? 0)
 	)
 
 	const consumers = Signal.createSolid(
 		storageChain(colonist => colonist.consumptionSummary),
-		Signal.select(items => items?.filter(item => item.goods < 0)),
-		Signal.select(items => items?.map(item => item.colonist.unit) ?? [])
+		Signal.maybe.select(filterNegativeGoods),
+		Signal.maybe.select(selectUnits),
+		Signal.select(units => units ?? [])
 	)
 
 	const supportChain = Signal.chain(

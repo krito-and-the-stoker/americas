@@ -21,4 +21,3 @@ export function select<From, To>(mapping: Function1<From, To>): Listen<To, From>
 export function through<V>(): Listen<V, V> {
   return (fn: EffectFn<V>, parameter: V) => fn(parameter)
 }
-

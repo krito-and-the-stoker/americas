@@ -76,8 +76,8 @@ function UnitSummary() {
 		Signal.combine(
 			Signal.chain(
 				equipmentChain,
-				Signal.select(x => x ?? {}),
-				Signal.select(sumAmounts)
+				Signal.maybe.select(sumAmounts),
+				Signal.select(x => x ?? 0)
 			),
 			Signal.chain(
 				Signal.combine(
@@ -86,8 +86,7 @@ function UnitSummary() {
 						Signal.assert.not.isNothing(
 							Signal.key('properties'),
 							Signal.key('equipment'),
-							Signal.select(x => x ?? {}),
-							Signal.select(sumAmounts)
+							Signal.maybe.select(sumAmounts)
 						),
 						Signal.select(x => x ?? 0),
 					),
@@ -119,8 +118,8 @@ function UnitSummary() {
 		Signal.combine(
 			Signal.chain(
 				cargoChain,
-				Signal.select(x => x ?? {}),
-				Signal.select(sumAmounts)
+				Signal.maybe.select(sumAmounts),
+				Signal.select(x => x ?? 0)
 			),
 			Signal.chain(
 				unitChain,
