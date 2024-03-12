@@ -90,6 +90,11 @@ function ColonistSummary() {
 		Signal.select<unknown, StorageEntity>(x => (x as StorageEntity) ?? {})
 	)
 
+	const roundQuantities = (obj: StorageEntity) => Object.fromEntries(
+		Object.entries(obj)
+			.map(([good, amount]) => ([good, Math.round(amount)]))
+	)
+
 	const filterPositive = (obj: StorageEntity) => Object.fromEntries(
 		Object.entries(obj)
 			.filter(([_, amount]) => amount > 0)
@@ -106,17 +111,20 @@ function ColonistSummary() {
 
 	const productionOutput = Signal.createSolid(
 		storageListener(colonist => colonist.productionSummary),
-		Signal.select(filterPositive)
+		Signal.select(roundQuantities),
+		Signal.select(filterPositive),
 	)
 
 	const productionInput = Signal.createSolid(
 		storageListener(colonist => colonist.productionSummary),
+		Signal.select(roundQuantities),
 		Signal.select(invertQuantities),
 		Signal.select(filterPositive)
 	)
 
 	const positiveConsumption = Signal.createSolid(
 		storageListener(colonist => colonist.consumptionSummary),
+		Signal.select(roundQuantities),
 		Signal.select(filterNotZero),
 		Signal.select(invertQuantities),
 	)
