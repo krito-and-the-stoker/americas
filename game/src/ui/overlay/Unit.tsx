@@ -31,281 +31,281 @@ import GameIcon from 'ui/components/GameIcon'
 import styles from './Unit.module.scss'
 
 type CommandInfo = {
-  id: string
-  display: string
+    id: string
+    display: string
 }
 type TileEntity = {
-  colony: ColonyEntity
-  settlement: boolean
-  road: boolean
-  forest: boolean
-  plowed: boolean
+    colony: ColonyEntity
+    settlement: boolean
+    road: boolean
+    forest: boolean
+    plowed: boolean
 }
 type CommanderEntity = {}
 type StorageEntity = {}
 type ColonistEntity = {
-  colony?: ColonyEntity
+    colony?: ColonyEntity
 }
 
 export type UnitEntity = {
-  passengers: UnitEntity[]
-  domain: string
-  commander: CommanderEntity
-  command: CommandInfo
-  storage: StorageEntity
-  equipment: StorageEntity
-  consumptionSummary: StorageEntity
-  treasure: number | null
-  mapCoordinates: Coordinates
-  tile: TileEntity
-  colonist?: ColonistEntity
-  expert: string
-  properties: {
-    cost?: number
-    speed?: number
-    canFound?: boolean
-    canTerraform?: boolean
-    needsFood?: boolean
-    cargo?: number
-    equipment?: StorageEntity
+    passengers: UnitEntity[]
+    domain: string
+    commander: CommanderEntity
+    command: CommandInfo
+    storage: StorageEntity
+    equipment: StorageEntity
+    consumptionSummary: StorageEntity
+    treasure: number | null
+    mapCoordinates: Coordinates
+    tile: TileEntity
+    colonist?: ColonistEntity
+    expert: string
+    properties: {
+        cost?: number
+        speed?: number
+        canFound?: boolean
+        canTerraform?: boolean
+        needsFood?: boolean
+        cargo?: number
+        equipment?: StorageEntity
 
-  }
+    }
 }
 
 const handleGoTo = (unit: UnitEntity) => {
-  const colonies = Record.getAll('colony')
-    .filter(colony => Colony.isReachable(colony, unit))
-    .map(colony => ({
-      ...colony,
-      size: colony.colonists.length,
-      action: () => {
-        Commander.scheduleInstead(unit.commander, GoTo.create({ unit, colony }))
-      }
-    }))
+    const colonies = Record.getAll('colony')
+        .filter(colony => Colony.isReachable(colony, unit))
+        .map(colony => ({
+            ...colony,
+            size: colony.colonists.length,
+            action: () => {
+                Commander.scheduleInstead(unit.commander, GoTo.create({ unit, colony }))
+            }
+        }))
 
-  if (unit.domain === 'sea') {
-    Dialog.open('unit.goto.sea', {
-      colonies,
-      homeport: {
-        name: 'London',
-        action: () => {
-          Commander.scheduleInstead(unit.commander, GoTo.create({ unit, europe: true }))
-        }
-      }
-    })
-  } else {
-    Dialog.open('unit.goto.land', {
-      colonies
-    })
-  }
+    if (unit.domain === 'sea') {
+        Dialog.open('unit.goto.sea', {
+            colonies,
+            homeport: {
+                name: 'London',
+                action: () => {
+                    Commander.scheduleInstead(unit.commander, GoTo.create({ unit, europe: true }))
+                }
+            }
+        })
+    } else {
+        Dialog.open('unit.goto.land', {
+            colonies
+        })
+    }
 }
 
 
 const foundColony = (unit: UnitEntity) =>
-  Commander.scheduleInstead(unit.commander, Found.create({ unit }))
+    Commander.scheduleInstead(unit.commander, Found.create({ unit }))
 const assignTransport = (unit: UnitEntity) =>
-  Commander.scheduleInstead(unit.commander, TradeRoute.create({ unit }))
+    Commander.scheduleInstead(unit.commander, TradeRoute.create({ unit }))
 const buildRoad = (unit: UnitEntity) =>
-  Commander.scheduleInstead(unit.commander, Road.create({ unit }))
+    Commander.scheduleInstead(unit.commander, Road.create({ unit }))
 const cutForest = (unit: UnitEntity) =>
-  Commander.scheduleInstead(unit.commander, CutForest.create({ unit }))
+    Commander.scheduleInstead(unit.commander, CutForest.create({ unit }))
 const plow = (unit: UnitEntity) =>
-  Commander.scheduleInstead(unit.commander, Plow.create({ unit }))
+    Commander.scheduleInstead(unit.commander, Plow.create({ unit }))
 const goTo = (unit: UnitEntity) => handleGoTo(unit)
 const cancel = (unit: UnitEntity) => Commander.clearSchedule(unit.commander)
 
 type UnitView = {
-  unit?: UnitEntity
+    unit?: UnitEntity
 }
 
 function UnitComponent() {
-	const unitChain = Signal.chain(
-		UnitMapView.listen.selectedView,
-		Signal.select((view: UnitView) => view?.unit)
-	)
-	const unit = Signal.createSolid(unitChain)
-	const name = () => unit() && Unit.name(unit())
-
-  const cargo = Signal.createSolid(
-    unitChain,
-    Signal.select(unit => unit?.storage),
-    Storage.signal
-  )
-  const equipment = Signal.createSolid(
-    unitChain,
-    Signal.select(unit => unit?.equipment),
-    Storage.signal
-  )
-
-  const command = Signal.createSolid(
-    unitChain,
-    Signal.maybe.key('command')
-  )
-
-  const passengers = Signal.createSolid(
-    unitChain,
-    Signal.maybe.key('passengers')
-  )
-
-  const propertyChain = Signal.chain(
-    unitChain,
-    Signal.maybe.key('properties'),
-  )
-  const properties = Signal.createSolid(propertyChain)
-  const cost = Signal.createSolid(
-    propertyChain,
-    Signal.maybe.key('cost'),
-    Signal.select(cost => cost?.toFixed(0) ?? '')
-  )
-
-  const speedChain = Signal.chain(
-    Signal.select<UnitEntity>(),
-    Signal.combine(
-      Signal.select(),
-      Signal.key('properties'),
-      Signal.chain(
-        Signal.select(unit => unit.equipment),
-        Storage.signal,
-      )
-    ),
-    Signal.select(([unit]) => Unit.speed(unit) as number)
-  )
-  const speed = Signal.createSolid(
-    unitChain,
-    Signal.assert.not.isNothing(
-      speedChain
-    ),
-    Signal.select(speed => speed?.toFixed(2) ?? '')
-  )
-
-  const strength = Signal.createSolid(
-    unitChain,
-    Signal.assert.not.isNothing(
-      Signal.combine(
-        Signal.select(),
-        Signal.key('mapCoordinates'),
-        Signal.chain(
-          Signal.select(unit => unit?.equipment),
-          Storage.signal
-        )
-      ),
-      Signal.select(([unit]) => unit && Unit.strength(unit).toFixed(2) as string)
+    const unitChain = Signal.chain(
+        UnitMapView.listen.selectedView,
+        Signal.select((view: UnitView) => view?.unit)
     )
-  )
+    const unit = Signal.createSolid(unitChain)
+    const name = () => unit() && Unit.name(unit())
 
-  const tile = Signal.createSolid(
-    unitChain,
-    Signal.maybe.key('tile')
-  )
+    const cargo = Signal.createSolid(
+        unitChain,
+        Signal.select(unit => unit?.storage),
+        Storage.signal
+    )
+    const equipment = Signal.createSolid(
+        unitChain,
+        Signal.select(unit => unit?.equipment),
+        Storage.signal
+    )
 
-  const coords = Signal.createSolid(
-    unitChain,
-    Signal.maybe.key('mapCoordinates')
-  )
+    const command = Signal.createSolid(
+        unitChain,
+        Signal.maybe.key('command')
+    )
 
-  const supplyColony = Signal.createSolid(
-    unitChain,
-    Signal.maybe.key('mapCoordinates'),
-    Signal.select(coords => coords && Tile.supportingColony(Tile.closest(coords)) as Maybe<ColonyEntity>)
-  )
+    const passengers = Signal.createSolid(
+        unitChain,
+        Signal.maybe.key('passengers')
+    )
+
+    const propertyChain = Signal.chain(
+        unitChain,
+        Signal.maybe.key('properties'),
+    )
+    const properties = Signal.createSolid(propertyChain)
+    const cost = Signal.createSolid(
+        propertyChain,
+        Signal.maybe.key('cost'),
+        Signal.select(cost => cost?.toFixed(0) ?? '')
+    )
+
+    const speedChain = Signal.chain(
+        Signal.select<UnitEntity>(),
+        Signal.combine(
+            Signal.select(),
+            Signal.key('properties'),
+            Signal.chain(
+                Signal.select(unit => unit.equipment),
+                Storage.signal,
+            )
+        ),
+        Signal.select(([unit]) => Unit.speed(unit) as number)
+    )
+    const speed = Signal.createSolid(
+        unitChain,
+        Signal.assert.not.isNothing(
+            speedChain
+        ),
+        Signal.select(speed => speed?.toFixed(2) ?? '')
+    )
+
+    const strength = Signal.createSolid(
+        unitChain,
+        Signal.assert.not.isNothing(
+            Signal.combine(
+                Signal.select(),
+                Signal.key('mapCoordinates'),
+                Signal.chain(
+                    Signal.select(unit => unit?.equipment),
+                    Storage.signal
+                )
+            ),
+            Signal.select(([unit]) => unit && Unit.strength(unit).toFixed(2) as string)
+        )
+    )
+
+    const tile = Signal.createSolid(
+        unitChain,
+        Signal.maybe.key('tile')
+    )
+
+    const coords = Signal.createSolid(
+        unitChain,
+        Signal.maybe.key('mapCoordinates')
+    )
+
+    const supplyColony = Signal.createSolid(
+        unitChain,
+        Signal.maybe.key('mapCoordinates'),
+        Signal.select(coords => coords && Tile.supportingColony(Tile.closest(coords)) as Maybe<ColonyEntity>)
+    )
 
 
-	const treasure = () => unit()?.treasure
+    const treasure = () => unit()?.treasure
 
-	const screen = Signal.createSolid(Foreground.listen.screen)
-	const isVisible = () => !screen() && !!unit()
+    const screen = Signal.createSolid(Foreground.listen.screen)
+    const isVisible = () => !screen() && !!unit()
 
-	const supplyFragment = () => supplyColony()
-		? <>Supplies from <b>{supplyColony()?.name}</b></>
-		: <>No external supplies</>
+    const supplyFragment = () => supplyColony()
+        ? <>Supplies from <b>{supplyColony()?.name}</b></>
+        : <>No external supplies</>
 
-  const center = () => { if (coords()) { MapView.centerAt(coords()!, 350) } }
+    const center = () => { if (coords()) { MapView.centerAt(coords()!, 350) } }
 
-  const isPioneering = () => ['cutForest', 'plow', 'road'].includes(command()?.id ?? '')
-  const isTrading = () => command()?.id === 'tradeRoute'
-  const isMoving = () => !tile()
+    const isPioneering = () => ['cutForest', 'plow', 'road'].includes(command()?.id ?? '')
+    const isTrading = () => command()?.id === 'tradeRoute'
+    const isMoving = () => !tile()
 
-  const canFoundColony = () =>
-    properties()?.canFound &&
-    !isMoving() &&
-    !Tile.radius(tile()).some(tile => tile.colony) &&
-    !tile()?.settlement &&
-    !isPioneering()
-  const canGoto = () => !isPioneering()
-  const canAssignTransport = () =>
-    properties()?.cargo! > 0 && passengers()?.length === 0 && !isPioneering() && !isTrading()
-  const canPioneer = () =>
-  	properties()?.canTerraform &&
-  	!isMoving() &&
-  	!isPioneering()
-  	!tile()?.settlement
-  const canBuildRoad = () =>
-  	canPioneer() &&
-  	!tile()?.road
-  const canPlow = () =>
-  	canPioneer() &&
-  	!tile()?.forest &&
-  	!tile()?.plowed
-  const canCutForest = () =>
-  	canPioneer() &&
-  	tile()?.forest
+    const canFoundColony = () =>
+        properties()?.canFound &&
+        !isMoving() &&
+        !Tile.radius(tile()).some(tile => tile.colony) &&
+        !tile()?.settlement &&
+        !isPioneering()
+    const canGoto = () => !isPioneering()
+    const canAssignTransport = () =>
+        properties()?.cargo! > 0 && passengers()?.length === 0 && !isPioneering() && !isTrading()
+    const canPioneer = () =>
+        properties()?.canTerraform &&
+        !isMoving() &&
+        !isPioneering()
+        !tile()?.settlement
+    const canBuildRoad = () =>
+        canPioneer() &&
+        !tile()?.road
+    const canPlow = () =>
+        canPioneer() &&
+        !tile()?.forest &&
+        !tile()?.plowed
+    const canCutForest = () =>
+        canPioneer() &&
+        tile()?.forest
 
-  const cancelCommandName = () => ({
-    cutForest: 'Cancel Cutting Forest',
-    plow: 'Cancel Plow',
-    tradeRoute: 'Cancel Automatic Transport',
-    road: 'Cancel Building Road',
-  })[command()?.id ?? '']
-
-
-  const commands = () => [
-    canFoundColony() && ['Found Colony', foundColony],
-    canGoto() && ['Go to', goTo],
-    canAssignTransport() && ['Assign Automatic Transport', assignTransport],
-    canPlow() && ['Build Farm', plow],
-    canBuildRoad() && ['Build Road', buildRoad],
-    canCutForest() && ['Cut Forest', cutForest],
-    cancelCommandName() && [cancelCommandName(), cancel],
-  ].filter(x => !!x) as [string, Function1<UnitEntity>][]
+    const cancelCommandName = () => ({
+        cutForest: 'Cancel Cutting Forest',
+        plow: 'Cancel Plow',
+        tradeRoute: 'Cancel Automatic Transport',
+        road: 'Cancel Building Road',
+    })[command()?.id ?? '']
 
 
-	return (
-		<Show when={isVisible()}>
-			<div class={styles.main}>
-				<div class={styles.commands}>
-					<For each={commands()}>
-						{([text, action]) => <div onClick={() => unit() && action(unit()!)}>{text}</div>}
-					</For>
-				</div>
-				<div onClick={center} class={styles.name}>{name()}</div>
-				<div class={styles.command}><i>{command()?.display}</i></div>
-				<div class={styles.properties}>
-					<span><GameIcon icon="go" scale="0.75" />{speed()}</span>
-					<span><GameIcon icon="combat" scale="0.75" />{strength()}</span>
-					<Show when={cost()}>
-						<span><GameIcon icon="gold" scale="0.75" />{cost()}</span>
-					</Show>
-				</div>
-				<Show when={treasure()}>
-					<div class={styles.treasure}>
-						<b>{treasure()}</b><GameIcon icon="gold" />
-					</div>
-				</Show>
-				<div class={styles.cargo}>
-					<StorageGoods goods={cargo()} />
-				</div>
-				<Show when={passengers()?.length! > 0}>
-					<div class={styles.passengers}>
-						<For each={passengers()}>
-							{passenger => <div class={styles.passenger}><GameIcon unit={passenger} scale={2} /></div>}
-						</For>
-					</div>
-				</Show>
-				<div class={styles.supply}>{supplyFragment()}</div>
-				<div class={styles.equipment}><StorageGoods goods={equipment()} /></div>
-			</div>
-		</Show>
-	)
+    const commands = () => [
+        canFoundColony() && ['Found Colony', foundColony],
+        canGoto() && ['Go to', goTo],
+        canAssignTransport() && ['Assign Automatic Transport', assignTransport],
+        canPlow() && ['Build Farm', plow],
+        canBuildRoad() && ['Build Road', buildRoad],
+        canCutForest() && ['Cut Forest', cutForest],
+        cancelCommandName() && [cancelCommandName(), cancel],
+    ].filter(x => !!x) as [string, Function1<UnitEntity>][]
+
+
+    return (
+        <Show when={isVisible()}>
+            <div class={styles.main}>
+                <div class={styles.commands}>
+                    <For each={commands()}>
+                        {([text, action]) => <div onClick={() => unit() && action(unit()!)}>{text}</div>}
+                    </For>
+                </div>
+                <div onClick={center} class={styles.name}>{name()}</div>
+                <div class={styles.command}><i>{command()?.display}</i></div>
+                <div class={styles.properties}>
+                    <span><GameIcon icon="go" scale="0.75" />{speed()}</span>
+                    <span><GameIcon icon="combat" scale="0.75" />{strength()}</span>
+                    <Show when={cost()}>
+                        <span><GameIcon icon="gold" scale="0.75" />{cost()}</span>
+                    </Show>
+                </div>
+                <Show when={treasure()}>
+                    <div class={styles.treasure}>
+                        <b>{treasure()}</b><GameIcon icon="gold" />
+                    </div>
+                </Show>
+                <div class={styles.cargo}>
+                    <StorageGoods goods={cargo()} />
+                </div>
+                <Show when={passengers()?.length! > 0}>
+                    <div class={styles.passengers}>
+                        <For each={passengers()}>
+                            {passenger => <div class={styles.passenger}><GameIcon unit={passenger} scale={2} /></div>}
+                        </For>
+                    </div>
+                </Show>
+                <div class={styles.supply}>{supplyFragment()}</div>
+                <div class={styles.equipment}><StorageGoods goods={equipment()} /></div>
+            </div>
+        </Show>
+    )
 }
 
 export default UnitComponent
