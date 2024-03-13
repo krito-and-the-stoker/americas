@@ -1,4 +1,5 @@
 import type { ColonyEntity } from 'entity/colony'
+import type { ColonistEntity } from 'ui/overlay/colony/ColonistSummary'
 import ColonistData from 'data/colonists.json'
 
 import Time from 'timeline/time'
@@ -11,41 +12,12 @@ import Storage from 'entity/storage'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
-interface State {
+type State = {
   noFood: boolean
   noWood: boolean
   noLuxury: boolean
   isPromoting: boolean
   hasBonus: boolean
-}
-
-
-interface StorageEntity {
-  [key: string]: number
-}
-interface UnitEntity {
-  expert: string
-}
-
-type NeedsObject<T> = {
-  food: T
-  wood: T
-  luxury: T
-  bonus: T
-  promotion: T
-}
-
-interface ColonistEntity {
-  state: State
-  storage: StorageEntity
-  consumptionRecord: StorageEntity
-  colony: ColonyEntity
-  consumptionBreakdown: {
-    want: NeedsObject<StorageEntity>
-    has: NeedsObject<StorageEntity>
-    state: NeedsObject<boolean>
-  }
-  unit: UnitEntity
 }
 
 
@@ -77,7 +49,7 @@ const takeFromStorage = (colonist: ColonistEntity, pack: Pack, scale: number) =>
     const transferAmount = Math.min(want, has)
     if (transferAmount > 0) {
       Storage.update(colonist.storage, { good, amount: -transferAmount })
-      Storage.update(colonist.colony.productionRecord, {
+      Storage.update(colonist.colony!.productionRecord, {
         good,
         amount: -transferAmount / scale,
       })
@@ -87,7 +59,7 @@ const takeFromStorage = (colonist: ColonistEntity, pack: Pack, scale: number) =>
       })
     }
   } else {
-    const colony = colonist.colony
+    const colony = colonist.colony!
     // take a little bit less so we do not produce rounding artefacts
     const want = 0.99 * scale * amount
     const has = colony[good as 'bells' | 'housing' | 'crosses']

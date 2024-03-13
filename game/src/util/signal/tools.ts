@@ -1,17 +1,21 @@
 import type { EffectFn, Listen } from 'util/signal/types'
 import type { Function1 } from 'util/types'
 
-export function emit<V>(value: V) {
+export function emit<V>(value: V): Listen<V, void> {
   return (fn: EffectFn<V>) => fn(value)
 }
 
 
-export function gate <V>(condition: Function1<V, boolean>): Listen<V, V> {
+export function gate<V>(condition: Function1<V, boolean>): Listen<V, V> {
   return (resolve: EffectFn<V>, value: V) => {
     if (condition(value)) {
       return resolve(value)
     }
   }
+}
+
+export function stop<V>(): Listen<never, V> {
+  return () => {}
 }
 
 

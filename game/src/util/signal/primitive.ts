@@ -52,7 +52,7 @@ export const connect: ConnectCall = (listen1: Listen<any, any>, ...additionalLis
 }
 
 
-export const primitive = <V>(initialValue: V): BasicSignal<V> => {
+export const create = <V>(initialValue: V): BasicSignal<V> => {
   let disconnected = false
   let currentValue = initialValue
   let listeners: ListenerDescription<V>[] = []

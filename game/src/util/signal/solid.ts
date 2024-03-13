@@ -4,7 +4,7 @@ import type { Accessor } from 'solid-js'
 import Util from 'util/util'
 
 import type { Listen, BasicComputed } from 'util/signal/types'
-import { primitive } from './primitive'
+import { create } from './primitive'
 import { chain } from './chain'
 
 
@@ -35,7 +35,7 @@ export const createSolid: CreateCall = (listen1: Listen<any, void>, ...args: Lis
 }
 
 export const fromSolid = <V>(signal: Accessor<V>): BasicComputed<V> => {
-  const base = primitive(signal())
+  const base = create(signal())
 
   createEffect(() => {
     base.update(signal())

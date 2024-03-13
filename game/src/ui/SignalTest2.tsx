@@ -59,6 +59,14 @@ function SignalTest() {
         // Signal.select(x => `${x}`)
     )
 
+    Signal.createSolid(
+        Signal.emit(Math.random() > 0.5 ? 'hi' : 1),
+        Signal.assert.isNumber(
+            Signal.stop()
+        ),
+        Signal.select()
+    )
+
     return <div class={style.main}>
         <h1>Hallo</h1>
         <div>

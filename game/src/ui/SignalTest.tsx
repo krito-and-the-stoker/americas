@@ -32,7 +32,7 @@ function SignalTest() {
         )
     )
 
-    const counter = Signal.primitive(0)
+    const counter = Signal.primitive.create(0)
     setInterval(() => {
         if (counter.value < 10) {
             counter.update(counter.value + 1)

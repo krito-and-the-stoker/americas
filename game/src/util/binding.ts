@@ -1,7 +1,7 @@
 import { BasicSignal, CleanupExec } from "./signal/types"
 import { objectListener } from "./signal/object"
 import type { Function1, Function2 } from 'util/types'
-import { primitive } from "./signal/primitive"
+import * as primitive from "./signal/primitive"
 
 const listeners = new Map<Object, BasicSignal<unknown>>()
 const listen = <O extends Object, Key extends keyof O>(instance: O, key: Key | null | undefined, fn: Function1<O[Key], CleanupExec>) => {
@@ -11,7 +11,7 @@ const listen = <O extends Object, Key extends keyof O>(instance: O, key: Key | n
   }
   if (key === null || key === undefined) {
     if (!listeners.get(instance)) {
-      listeners.set(instance, primitive(instance) as BasicSignal<unknown>)
+      listeners.set(instance, primitive.create(instance) as BasicSignal<unknown>)
     }
     return listeners.get(instance)!.listen(fn as Function1<unknown, CleanupExec>)
   }

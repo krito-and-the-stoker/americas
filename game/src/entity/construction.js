@@ -16,7 +16,7 @@ const create = () => {
     none: {
       progress: 0,
       cost: {},
-      name: 'No construction',
+      display: 'No construction',
     },
   }
 }

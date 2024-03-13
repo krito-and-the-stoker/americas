@@ -1,5 +1,6 @@
 import Colony from 'data/colony'
 
+import Signal from 'util/signal-ts'
 import Util from 'util/util'
 import Record from 'util/record'
 import Binding from 'util/binding'
@@ -35,6 +36,9 @@ import TransferCrosses from 'task/europe/transferCrosses'
 import UnjoinColony from 'interaction/unjoinColony'
 import LeaveColony from 'interaction/leaveColony'
 
+import chain from './chain'
+import initialize from './initialize'
+
 import { listen, listenEach, update } from './binding'
 
 const getColonyName = () => {
@@ -47,50 +51,6 @@ const getColonyName = () => {
   Record.setGlobal('colonyNames', colonyNames)
   return name
 }
-
-const isCoastal = colony => {
-  const center = tile(colony)
-  return Tile.radius(center).some(tile => tile.domain === 'sea')
-}
-
-const defender = colony => colony.colonists[colony.colonists.length - 1].unit
-
-const currentConstruction = colony =>
-  colony.constructionTarget
-    ? colony.construction[colony.constructionTarget]
-    : colony.construction.none
-
-const tories = colony => {
-  const colonists = colony.colonists.length
-  const administrators = colony.colonists.filter(
-    colonist => colonist.work?.type === 'Building' && colonist.work.building?.name === 'townhall'
-  ).length
-
-  const percentage = Math.max(
-    0,
-    Math.round(
-      100 -
-        (100.0 * administrators) / colonists -
-        Math.min(100, colony.bells / (colonists + 1))
-    )
-  )
-  const number = Math.max(0, Math.round((colonists * percentage) / 100))
-
-  return {
-    percentage,
-    number,
-  }
-}
-
-const rebels = colony => {
-  const tt = tories(colony)
-  return {
-    percentage: 100 - tt.percentage,
-    number: colony.colonists.length - tt.number,
-  }
-}
-
-const tile = colony => MapEntity.tile(colony.mapCoordinates)
 
 const expertLevel = {
   farmer: 1,
@@ -115,89 +75,6 @@ const expertLevel = {
 const canTeach = (colony, expert) =>
   expert && expertLevel[expert] && expertLevel[expert] <= Building.level(colony, 'school')
 
-const initialize = colony => {
-  colony.productionSummary = Storage.createWithProduction()
-  colony.productionRecord = Storage.createWithProduction()
-  const tile = MapEntity.tile(colony.mapCoordinates)
-
-  if (tile.harvestedBy === colony) {
-    Tile.update.harvestedBy(tile, null)
-  }
-
-  colony.destroy = [
-    () => colony.newBuildings.forEach(building => Util.execute(building.destroy)),
-    Time.schedule(FillStorage.create(colony)),
-    Time.schedule(Consume.create(colony)),
-    Time.schedule(Promote.create(colony)),
-    Time.schedule(SortByPower.create(colony)),
-    listen.colonists(colony, colonists =>
-      listen.newBuildings(colony, newBuildings => {
-        if (colonists.length > newBuildings.filter(building => building.name === 'house').length) {
-          addBuilding(colony, 'house', 0)
-        }
-      })),
-    listen.colonists(colony, colonists =>
-      listen.bells(
-        colony,
-        Binding.map(
-          () => rebels(colony).number,
-          rebelColonists => Time.schedule(Bells.create(colony, 'bells', rebelColonists))
-        )
-      )
-    ),
-    listenEach.units(colony, (unit, added) => {
-      if (added && unit.treasure) {
-        Events.trigger('notification', {
-          type: 'treasure',
-          colony,
-          unit,
-        })
-      }
-    }),
-    Time.schedule(TeachingSummary.create(colony)),
-    Time.schedule(TransferCrosses.create(colony)),
-    listen.construction(colony, () => {
-      const construction = currentConstruction(colony)
-      if (!construction) {
-        // repair
-        Construction.start(colony, null)
-        return
-      }
-      if (
-        construction.progress > 0 &&
-        construction.progress >= Util.sum(Object.values(construction.cost))
-      ) {
-        Construction.construct(colony, construction)
-      }
-    }),
-    listen.growth(colony, growth => {
-      if (growth > 1000) {
-        const unit = Unit.create('settler', colony.mapCoordinates, colony.owner)
-        const parents = Util.choose(colony.colonists)
-        Unit.update.expert(unit, parents.expert)
-        Events.trigger('notification', { type: 'born', colony, unit })
-        colony.growth = 0
-      }
-    }),
-    Time.schedule(VirtualGoods.create(colony)),
-    Time.schedule(ProductionSummary.create(colony)),
-    listen.colonists(colony, colonists =>
-      colonists.map(colonist =>
-        Colonist.listen.work(colonist, () =>
-          listen.bells(colony, () => {
-            const bonus =
-              Math.floor(rebels(colony).percentage / 50.0) -
-              Math.floor(tories(colony).number / 10.0)
-
-            if (colony.productionBonus !== bonus) {
-              update.productionBonus(colony, bonus)
-            }
-          })
-        )
-      )
-    ),
-  ]
-}
 
 const canFillEquipment = (colony, unit) => {
   if (unit.properties.repair) {
@@ -209,16 +86,6 @@ const canFillEquipment = (colony, unit) => {
   return true
 }
 
-
-const protection = colony =>
-  (Util.max(
-    colony.units
-      .filter(unit => unit.domain === 'land')
-      .filter(unit => !unit.colonist || !unit.colonist.colony)
-      .map(unit => Unit.strength(unit) - 1)
-  ) +
-    1) *
-  (Building.level(colony, 'fortifications') + 1)
 
 const disband = colony => {
   colony.disbanded = true
@@ -288,24 +155,6 @@ const load = colony => {
   return colony
 }
 
-const coastalDirection = colony => {
-  const center = MapEntity.tile(colony.mapCoordinates)
-  const winner = Tile.diagonalNeighbors(center)
-    .filter(neighbor => neighbor.coast)
-    .map(neighbor => ({
-      score:
-        Tile.diagonalNeighbors(neighbor).filter(
-          nn => nn.coast && Tile.diagonalNeighbors(center).includes(nn)
-        ).length + 1,
-      tile: neighbor,
-    }))
-    .reduce((winner, { tile, score }) => (winner.score > score ? winner : { tile, score }), {
-      score: 0,
-    })
-
-  return winner.score > 0 ? Tile.neighborString(center, winner.tile) : null
-}
-
 const isReachable = (colony, unit) =>
   Tile.closest(colony.mapCoordinates)?.area[unit.properties.travelType] === Unit.area(unit) ||
   Tile.diagonalNeighbors(MapEntity.tile(colony.mapCoordinates)).some(
@@ -314,21 +163,12 @@ const isReachable = (colony, unit) =>
 
 export default {
   canFillEquipment,
-  coastalDirection,
   addBuilding,
-  currentConstruction,
-  defender,
   disband,
   expertLevel,
-  isCoastal,
   listenEach,
   load,
-  tile,
-  protection,
-  rebels,
   save,
-  tories,
   isReachable,
-  initialize,
   getColonyName,
 }

@@ -56,13 +56,16 @@ function Save() {
         }
     }
 
-    const nowTime = Signal.primitive(Date.now())
+    const nowTime = Signal.primitive.create(Date.now())
     const lastSaveTime = Signal.createSolid(
         Signal.combine(
-            SaveGame.listen.lastSaveTime,
+            Signal.chain(
+                SaveGame.listen.lastSaveTime,
+                Signal.select(t => t ?? 0)
+            ),
             nowTime.listen,
         ),
-        Signal.select(([ lastTime, nowTime ]) => lastTime! > 0 ? nowTime - lastTime! : null),
+        Signal.select(([ lastTime, nowTime ]) => lastTime > 0 ? nowTime - lastTime : null),
         Signal.select(
             timeDiff => timeDiff && TimeView.describe(timeDiff, () => { nowTime.update(Date.now()) })
         )

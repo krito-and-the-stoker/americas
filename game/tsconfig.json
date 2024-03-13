@@ -34,7 +34,8 @@
       "interaction/*": ["./src/interaction/*"],
       "timeline/*": ["./src/timeline/*"],
       "ui/*": ["./src/ui/*"],
-      "command/*": ["./src/command/*"]
+      "command/*": ["./src/command/*"],
+      "task/*": ["./src/task/*"],
     },
     "allowJs": true
   },

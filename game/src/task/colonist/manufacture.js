@@ -1,4 +1,5 @@
 import Util from 'util/util'
+import Signal from 'util/signal-ts'
 
 import Time from 'timeline/time'
 
@@ -65,7 +66,10 @@ const create = (colony, building, colonist) => {
 
     // construction only
     if (production.type === 'construction') {
-      const construction = Colony.currentConstruction(colony)
+      const construction = Signal.evaluate(
+        Signal.emit(colony),
+        Colony.chain.currentConstruction
+      )
       const totalCost = Util.sum(Object.values(construction.cost))
       if (totalCost > 0) {
         // the factor with which we can produce

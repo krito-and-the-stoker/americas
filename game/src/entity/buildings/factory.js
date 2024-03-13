@@ -118,11 +118,12 @@ const make = name => {
       height: 1,
       triangles: Triangles[name] || Triangles.empty,
       placement: [],
+      destroy: null,
     }
 
     building.placement = [Layout.placeBuilding(colony, building)]
 
-    initialize(building)
+    building.destroy = initialize(building)
 
     Record.add('building', building)
     return building

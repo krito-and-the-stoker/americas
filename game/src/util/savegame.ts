@@ -13,14 +13,14 @@ const SAVE_TO_REMOTE = true
 const AUTOSAVE_INTERVAL = 5 * 60 * 1000 // autosave every 5 minutes
 
 
-const gameId = Signal.primitive<string | null>(null)
-const gamesToSync = Signal.primitive<string[]>(JSON.parse(window.localStorage.getItem('needsSync') || '[]'))
-const lastSaveId = Signal.primitive(window.localStorage.getItem('lastSaveId'))
-const isRunning = Signal.primitive(false)
-const gamesInStorage = Signal.primitive(Object.keys(window.localStorage).filter(key => key.startsWith('game-')))
-const autosaveInterval = Signal.primitive(parseInt(window.localStorage.getItem('autosaveInterval') ?? `${AUTOSAVE_INTERVAL}`) ?? AUTOSAVE_INTERVAL)
-const lastSaveTime = Signal.primitive<number | null>(null)
-const saveOnExit = Signal.primitive<boolean>(JSON.parse(window.localStorage.getItem('saveOnExit') ?? 'true'))
+const gameId = Signal.primitive.create<string | null>(null)
+const gamesToSync = Signal.primitive.create<string[]>(JSON.parse(window.localStorage.getItem('needsSync') || '[]'))
+const lastSaveId = Signal.primitive.create(window.localStorage.getItem('lastSaveId'))
+const isRunning = Signal.primitive.create(false)
+const gamesInStorage = Signal.primitive.create(Object.keys(window.localStorage).filter(key => key.startsWith('game-')))
+const autosaveInterval = Signal.primitive.create(parseInt(window.localStorage.getItem('autosaveInterval') ?? `${AUTOSAVE_INTERVAL}`) ?? AUTOSAVE_INTERVAL)
+const lastSaveTime = Signal.primitive.create<number | null>(null)
+const saveOnExit = Signal.primitive.create<boolean>(JSON.parse(window.localStorage.getItem('saveOnExit') ?? 'true'))
 
 const update = {
     isRunning: isRunning.update,
@@ -295,7 +295,7 @@ const load = async (gameId: Maybe<string>): Promise<Maybe<string>> => {
 }
 
 const derived = {
-    gameData: Signal.connect(
+    gameData: Signal.primitive.connect(
         Signal.combine(
             gameId.listen,
             isRunning.listen
@@ -308,7 +308,7 @@ const derived = {
             Signal.select(() => null)
         )
     ),
-    name: Signal.connect(
+    name: Signal.primitive.connect(
         gameId.listen,
         Signal.select(id => id?.split('--')[1]),
         Signal.select(name => name && name[0].toUpperCase() + name.slice(1)),

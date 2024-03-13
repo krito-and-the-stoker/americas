@@ -1,4 +1,7 @@
 import type { Function1 } from 'util/types'
+import type { BuildingEntity } from 'view/colony/buildings'
+import type { UnitEntity } from '../Unit'
+import type { ColonyEntity } from 'entity/colony'
 
 import { Show } from 'solid-js'
 
@@ -15,17 +18,38 @@ import StorageGoods from 'ui/components/StorageGoods'
 import GameIcon from 'ui/components/GameIcon'
 import styles from './ColonistSummary.module.scss'
 
-import { UnitEntity } from '../Unit'
 
 type StorageEntity = {
 	[key: string]: number
 }
 
+type ColonistWork = {
+  type: 'Building'
+  building: BuildingEntity
+}
+
+type BreakdownObject<T> = {
+  food: T
+  wood: T
+  luxury: T
+  bonus: T
+  promotion: T
+}
+
+type ConsumptionBreakdown = {
+	has: BreakdownObject<StorageEntity>,
+	want: BreakdownObject<StorageEntity>,
+	state: BreakdownObject<boolean>
+}
+
 export type ColonistEntity = {
+  work?: ColonistWork
 	unit: UnitEntity
 	storage: StorageEntity
+	colony?: ColonyEntity
 	consumptionSummary: StorageEntity
 	productionSummary: StorageEntity
+	consumptionRecord: StorageEntity
 	state: {
 		noFood: boolean
 		noWood: boolean
@@ -33,15 +57,7 @@ export type ColonistEntity = {
 		isPromoting: boolean
 		hasBonus: boolean
 	},
-	consumptionBreakdown: {
-		has: {
-			food: StorageEntity
-			wood: StorageEntity
-			luxury: StorageEntity
-			bonus: StorageEntity
-			promotion: StorageEntity
-		}
-	},
+	consumptionBreakdown: ConsumptionBreakdown
 	promotion: {
 		target: string
 		progress: {

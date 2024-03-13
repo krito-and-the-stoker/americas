@@ -1,5 +1,9 @@
+import type { ColonistEntity } from 'ui/overlay/colony/ColonistSummary'
 import type { BuildingEntity } from 'view/colony/buildings'
 import type { Coordinates } from 'util/la'
+import type { UnitEntity } from 'ui/overlay/Unit'
+import type { CleanupExec } from 'util/signal/types'
+
 import Record from 'util/record'
 
 import MapEntity from 'entity/map'
@@ -13,13 +17,22 @@ import Layout from 'entity/layout'
 
 import { add, listen, listenEach, update, remove } from 'entity/colony/binding'
 import Fn from 'entity/colony/functions'
-import { UnitEntity } from 'ui/overlay/Unit'
+import chain from 'entity/colony/chain'
+import initialize from 'entity/colony/initialize'
 
-type OwnerEntity = any
-type ColonistEntity = any
-type StorageEntity = any
+type OwnerEntity = {}
+
+type StorageEntity = {}
 type LayoutEntity = number[][]
-type ConstructionEntity = any | null
+type ConstructionTarget = {
+  progress: number
+  cost: StorageEntity,
+  display: string
+}
+type ConstructionEntity = {
+  [key: string]: ConstructionTarget | undefined
+  none: ConstructionTarget
+}
 
 
 
@@ -40,13 +53,14 @@ export type ColonyEntity = {
   growth: number
   supportedUnits: UnitEntity[]
   construction: ConstructionEntity
-  constructionTarget: ConstructionEntity
+  constructionTarget: string | null
   newBuildings: BuildingEntity[]
   layout: LayoutEntity
 
   productionRecord: StorageEntity
   productionSummary: StorageEntity
   disbanded: boolean
+  destroy: CleanupExec
 }
 
 
@@ -79,7 +93,8 @@ const create = (coords: Coordinates, owner: OwnerEntity) => {
 
     productionRecord: Storage.createWithProduction(),
     productionSummary: Storage.createWithProduction(),
-    disbanded: false
+    disbanded: false,
+    destroy: null
   }
   colony.waterMap = Layout.placeWater(colony)
   colony.newBuildings.push(Buildings.carpenters.create(colony))
@@ -87,7 +102,7 @@ const create = (coords: Coordinates, owner: OwnerEntity) => {
   const tile = MapEntity.tile(coords)
   Tile.update.colony(tile, colony)
 
-  Fn.initialize(colony)
+  initialize(colony)
 
   Record.add('colony', colony)
   return colony
@@ -98,21 +113,14 @@ export default {
   create,
   listen,
   listenEach,
+  chain,
   remove,
   update,
   canFillEquipment: Fn.canFillEquipment,
-  coastalDirection: Fn.coastalDirection,
   addBuilding: Fn.addBuilding,
-  currentConstruction: Fn.currentConstruction,
-  defender: Fn.defender,
   disband: Fn.disband,
   expertLevel: Fn.expertLevel,
-  isCoastal: Fn.isCoastal,
   load: Fn.load,
-  tile: Fn.tile,
-  protection: Fn.protection,
-  rebels: Fn.rebels,
   save: Fn.save,
-  tories: Fn.tories,
   isReachable: Fn.isReachable,
 }

@@ -1,7 +1,7 @@
 import type { ColonyEntity } from 'entity/colony'
 import type { Function1 } from 'util/types'
 import type { UnitEntity } from '../Unit'
-import type { ColonistEntity } from './ColonistSummary'
+import type { ColonistEntity } from 'ui/overlay/colony/ColonistSummary'
 
 import { For, Show } from 'solid-js'
 
@@ -59,16 +59,17 @@ function GoodSummary() {
 			Signal.key('colonists'),
 			Signal.each(
 				Signal.combine(
-					Signal.select(),
+					Signal.select<ColonistEntity>(),
 					Signal.chain(
 						Signal.select(storageMapping),
-						Storage.signal
+						Storage.signal,
+						Signal.select<StorageEntity>()
 					),
 					goodChain
 				),
 				Signal.select(([colonist, storage, good]) => ({
-					colonist: colonist as ColonistEntity,
-					goods: good ? (storage as StorageEntity)[good] : 0
+					colonist: colonist,
+					goods: good ? storage[good] : 0
 				}))
 			),
 		)

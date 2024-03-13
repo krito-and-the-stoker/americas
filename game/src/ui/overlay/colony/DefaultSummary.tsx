@@ -53,12 +53,7 @@ function DefaultSummary() {
 	const constructionChain = Signal.chain(
 		colonyChain,
 		Signal.assert.not.isNothing(
-			Signal.combine(
-				Signal.select(),
-				Signal.key('constructionTarget'),
-				Signal.key('construction')
-			),
-			Signal.select(([colony]) => Colony.currentConstruction(colony)),
+			Colony.chain.currentConstruction
 		)
 	)
 	const cost = Signal.createSolid(
@@ -71,7 +66,8 @@ function DefaultSummary() {
 		Signal.select(construction => {
 			const costSum = Util.sum(Object.values(construction?.cost ?? {})) || 1
 			return 100 * (construction?.progress ?? 0) / costSum
-		})
+		}),
+		Signal.select(progress => Math.floor(progress))
 	)
 
 	const display = Signal.createSolid(
@@ -79,24 +75,31 @@ function DefaultSummary() {
 		Signal.select(construction => construction?.display)
 	)
 
-	const integrationChain = Signal.chain(
+	const rebelNumber = Signal.createSolid(
 		colonyChain,
 		Signal.assert.not.isNothing(
-			Signal.combine(
-				Signal.select(),
-				Signal.key('bells'),
-				Signal.key('colonists')
-			),
-			Signal.select(([colony]) => colony)
-		),
+			Colony.chain.rebels
+		)
 	)
-	const rebels = Signal.createSolid(
-		integrationChain,
-		Signal.select((colony) => !!colony && Colony.rebels(colony) || undefined)
+	const rebelPercentage = Signal.createSolid(
+		colonyChain,
+		Signal.assert.not.isNothing(
+			Colony.chain.rebelPercentage
+		)
 	)
-	const tories = Signal.createSolid(
-		integrationChain,
-		Signal.select((colony) => !!colony && Colony.tories(colony) || undefined)
+
+	const toryNumber = Signal.createSolid(
+		colonyChain,
+		Signal.assert.not.isNothing(
+			Colony.chain.tories
+		)
+	)
+
+	const toryPercentage = Signal.createSolid(
+		colonyChain,
+		Signal.assert.not.isNothing(
+			Colony.chain.toryPercentage
+		)
 	)
 
   const supportedUnits = Signal.createSolid(
@@ -133,7 +136,7 @@ function DefaultSummary() {
   	),
   	Signal.select(
   		works => !!works && works.filter(
-  			work => work.type === 'Building' && work.building?.name === 'carpenters'
+  			work => work?.type === 'Building' && work.building?.name === 'carpenters'
 			).length > 0
   	)
   )
@@ -147,16 +150,16 @@ function DefaultSummary() {
 				<Show when={display()} fallback={<i>None</i>}>
 					<span><i>{display()}</i></span>
 					<StorageGoods goods={cost()} />
-					<span>{progressPercentage()?.toFixed(0)}%</span>
+					<span>{progressPercentage()}%</span>
 				</Show>
 			</div>
 		</Show>
 		<div class={styles.colonists}>
-			<div classList={{[styles.green]: rebels()?.percentage! >= 50}}>
-				<i>Integrated</i> {rebels()?.percentage}% ({rebels()?.number} Colonists)
+			<div classList={{[styles.green]: rebelPercentage()! >= 50}}>
+				<i>Integrated</i> {rebelPercentage()}% ({rebelNumber()} Colonists)
 			</div>
-			<div classList={{[styles.red]: tories()?.number! >= 10}}>
-				<i>Unorganized</i> {tories()?.percentage}% ({tories()?.number} Colonists)
+			<div classList={{[styles.red]: toryNumber()! >= 10}}>
+				<i>Unorganized</i> {toryPercentage()}% ({toryNumber()} Colonists)
 			</div>
 		</div>
 		<Show when={supportedUnits()?.length > 0}>
