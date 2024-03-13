@@ -47,9 +47,9 @@ export default (colony: ColonyEntity) => {
     Signal.connect(
       Signal.emit(colony),
       Signal.combine(
-        Signal.key('colonists'),
+        Signal.listen.key('colonists'),
         Signal.chain(
-          Signal.key('newBuildings'),
+          Signal.listen.key('newBuildings'),
           Signal.select(buildings => buildings.filter(building => building.name === 'house')),
           Signal.select(buildings => buildings.length)
         )
@@ -99,7 +99,7 @@ export default (colony: ColonyEntity) => {
 
     Signal.connect(
       Signal.emit(colony),
-      Signal.key('growth'),
+      Signal.listen.key('growth'),
       Signal.gate(growth => growth >= 1000),
       Signal.effect(() => {
         const unit = Unit.create('settler', colony.mapCoordinates, colony.owner)

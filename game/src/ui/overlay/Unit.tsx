@@ -139,22 +139,22 @@ function UnitComponent() {
 
     const command = Signal.createSolid(
         unitChain,
-        Signal.maybe.key('command')
+        Signal.maybe.listen.key('command')
     )
 
     const passengers = Signal.createSolid(
         unitChain,
-        Signal.maybe.key('passengers')
+        Signal.maybe.listen.key('passengers')
     )
 
     const propertyChain = Signal.chain(
         unitChain,
-        Signal.maybe.key('properties'),
+        Signal.maybe.listen.key('properties'),
     )
     const properties = Signal.createSolid(propertyChain)
     const cost = Signal.createSolid(
         propertyChain,
-        Signal.maybe.key('cost'),
+        Signal.maybe.listen.key('cost'),
         Signal.select(cost => cost?.toFixed(0) ?? '')
     )
 
@@ -162,7 +162,7 @@ function UnitComponent() {
         Signal.select<UnitEntity>(),
         Signal.combine(
             Signal.select(),
-            Signal.key('properties'),
+            Signal.listen.key('properties'),
             Signal.chain(
                 Signal.select(unit => unit.equipment),
                 Storage.signal,
@@ -183,7 +183,7 @@ function UnitComponent() {
         Signal.assert.not.isNothing(
             Signal.combine(
                 Signal.select(),
-                Signal.key('mapCoordinates'),
+                Signal.listen.key('mapCoordinates'),
                 Signal.chain(
                     Signal.select(unit => unit?.equipment),
                     Storage.signal
@@ -195,17 +195,17 @@ function UnitComponent() {
 
     const tile = Signal.createSolid(
         unitChain,
-        Signal.maybe.key('tile')
+        Signal.maybe.listen.key('tile')
     )
 
     const coords = Signal.createSolid(
         unitChain,
-        Signal.maybe.key('mapCoordinates')
+        Signal.maybe.listen.key('mapCoordinates')
     )
 
     const supplyColony = Signal.createSolid(
         unitChain,
-        Signal.maybe.key('mapCoordinates'),
+        Signal.maybe.listen.key('mapCoordinates'),
         Signal.select(coords => coords && Tile.supportingColony(Tile.closest(coords)) as Maybe<ColonyEntity>)
     )
 

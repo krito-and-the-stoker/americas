@@ -67,6 +67,43 @@ function SignalTest() {
         Signal.select()
     )
 
+    const data = {
+        a: [1, 2, 3],
+        b: {
+            hello: 'world',
+            array: ['I', 'am', 'an', 'array']
+        }
+    }
+    // @ts-expect-error
+    window.data = data
+
+    Signal.connect(
+        Signal.emit(data),
+        Signal.combine(
+            Signal.chain(
+                Signal.listen.key('a'),
+                Signal.log('a'),
+                Signal.each(
+                    Signal.log('a.each')
+                )
+            ),
+            Signal.chain(
+                Signal.listen.key('b'),
+                Signal.log('b'),
+                Signal.combine(
+                    Signal.chain(
+                        Signal.listen.key('array'),
+                        Signal.log('b.array'),
+                    ),
+                    Signal.chain(
+                        Signal.listen.key('hello'),
+                        Signal.log('b.hello')
+                    )
+                )
+            )
+        ),
+    )
+
     return <div class={style.main}>
         <h1>Hallo</h1>
         <div>

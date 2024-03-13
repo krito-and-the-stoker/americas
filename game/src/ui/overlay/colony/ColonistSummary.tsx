@@ -79,14 +79,14 @@ function ColonistSummary() {
 
     const unitChain = Signal.chain(
         colonistChain,
-        Signal.maybe.key('unit')
+        Signal.maybe.listen.key('unit')
     )
     const unit = Signal.createSolid(unitChain)
 
     const propertyChain = Signal.chain(
         colonistChain,
-        Signal.maybe.key('unit'),
-        Signal.maybe.key('properties')
+        Signal.maybe.listen.key('unit'),
+        Signal.maybe.listen.key('properties')
     )
 
     const name = Signal.createSolid(
@@ -151,7 +151,7 @@ function ColonistSummary() {
 
     const stateChain = Signal.chain(
         colonistChain,
-        Signal.maybe.key('state')
+        Signal.maybe.listen.key('state')
     )
 
     const state = {
@@ -164,8 +164,8 @@ function ColonistSummary() {
 
     const breakdownChain = Signal.chain(
         colonistChain,
-        Signal.maybe.key('consumptionBreakdown'),
-        Signal.maybe.key('has')
+        Signal.maybe.listen.key('consumptionBreakdown'),
+        Signal.maybe.listen.key('has')
     )
 
     const breakdown = {
@@ -178,7 +178,7 @@ function ColonistSummary() {
 
     const promotionProgress = Signal.createSolid(
         colonistChain,
-        Signal.maybe.key('promotion'),
+        Signal.maybe.listen.key('promotion'),
         Signal.select(promotion =>
             promotion?.target &&
             promotion?.progress &&

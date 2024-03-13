@@ -105,13 +105,13 @@ function DefaultSummary() {
     const supportedUnits = Signal.createSolid(
         colonyChain,
         Signal.assert.not.isNothing(
-            Signal.key('supportedUnits'),
+            Signal.listen.key('supportedUnits'),
             Signal.each(
                 Signal.combine(
                     Signal.select(),
                     Signal.chain(
-                        Signal.key('colonist'),
-                        Signal.maybe.key('colony'),
+                        Signal.listen.key('colonist'),
+                        Signal.maybe.listen.key('colony'),
                         Signal.select(colony => !!colony)
                     ),
                     Signal.chain(
@@ -129,9 +129,9 @@ function DefaultSummary() {
     const hasConstructors = Signal.createSolid(
         colonyChain,
         Signal.assert.not.isNothing(
-            Signal.key('colonists'),
+            Signal.listen.key('colonists'),
             Signal.each(
-                Signal.key('work')
+                Signal.listen.key('work')
             ),
         ),
         Signal.select(

@@ -8,7 +8,7 @@ import { createSolid, fromSolid } from 'util/signal/solid'
 import { collect } from 'util/signal/collect'
 import { each } from 'util/signal/each'
 import { combine } from 'util/signal/combine'
-import { maybe } from 'util/signal/maybe'
+import { maybeKey, maybeSelect } from 'util/signal/maybe'
 import { connect, evaluate, firstValue } from 'util/signal/connect'
 import { assert as createAssert,
   assertNot as createAssertNot,
@@ -54,9 +54,23 @@ const assert = {
   }
 }
 
+const maybe = {
+  select: maybeSelect,
+  listen: {
+    key: maybeKey
+  }
+}
+
+const listen = {
+  key,
+  // maybe: {
+  //   key: maybeKey,
+  // }
+}
+
 export default {
   primitive,
-  key,
+  listen,
   connect,
   evaluate,
   firstValue,

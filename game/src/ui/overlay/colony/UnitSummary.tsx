@@ -35,8 +35,8 @@ function UnitSummary() {
 		Signal.assert.not.isNothing(
 			Signal.combine(
 				Signal.select(),
-				Signal.maybe.key('properties'),
-				Signal.maybe.key('expert'),
+				Signal.maybe.listen.key('properties'),
+				Signal.maybe.listen.key('expert'),
 			),
 			Signal.select(([unit]) => Unit.name(unit) as string)
 		),
@@ -84,8 +84,8 @@ function UnitSummary() {
 					Signal.chain(
 						unitChain,
 						Signal.assert.not.isNothing(
-							Signal.key('properties'),
-							Signal.key('equipment'),
+							Signal.listen.key('properties'),
+							Signal.listen.key('equipment'),
 							Signal.maybe.select(sumAmounts)
 						),
 						Signal.select(x => x ?? 0),
@@ -93,7 +93,7 @@ function UnitSummary() {
 					Signal.chain(
 						unitChain,
 						Signal.assert.not.isNothing(
-							Signal.key('properties'),
+							Signal.listen.key('properties'),
 							Signal.select(properties => properties.needsFood ? 20 : 0)
 						),
 						Signal.select(x => x ?? 0)
@@ -124,8 +124,8 @@ function UnitSummary() {
 			Signal.chain(
 				unitChain,
 				Signal.assert.not.isNothing(
-					Signal.key('properties'),
-					Signal.key('cargo'),
+					Signal.listen.key('properties'),
+					Signal.listen.key('cargo'),
 				)
 			)
 		),

@@ -23,15 +23,15 @@ const isCoastal = Signal.chain(
 
 const defender = Signal.chain(
   Signal.select<ColonyEntity>(),
-  Signal.key('colonists'),
+  Signal.listen.key('colonists'),
   Signal.select(colonists => colonists[colonists.length - 1].unit)
 )
 
 const currentConstruction = Signal.chain(
   Signal.select<ColonyEntity>(),
   Signal.combine(
-    Signal.key('constructionTarget'),
-    Signal.key('construction')
+    Signal.listen.key('constructionTarget'),
+    Signal.listen.key('construction')
   ),
   Signal.select(([target, construction]) => target ? construction[target] ?? construction.none : construction.none),
 )
@@ -40,17 +40,17 @@ const toryPercentage = Signal.chain(
   Signal.select<ColonyEntity>(),
   Signal.combine(
     Signal.chain(
-      Signal.key('colonists'),
+      Signal.listen.key('colonists'),
       Signal.select(colonists => colonists.filter(
         colonist => colonist.work?.type === 'Building' && colonist.work.building?.name === 'townhall'
       )),
       Signal.select(administrators => administrators.length)
     ),
     Signal.chain(
-      Signal.key('colonists'),
+      Signal.listen.key('colonists'),
       Signal.select(colonists => colonists.length)
     ),
-    Signal.key('bells')
+    Signal.listen.key('bells')
   ),
   Signal.select(([administrators, colonists, bells]) => Math.max(
     0,
@@ -65,7 +65,7 @@ const toryPercentage = Signal.chain(
 const tories = Signal.chain(
   Signal.combine(
     toryPercentage,
-    Signal.key('colonists')
+    Signal.listen.key('colonists')
   ),
   Signal.select(([percentage, colonists]) => Math.max(0, Math.round((colonists.length * percentage) / 100)))
 )
@@ -78,7 +78,7 @@ const rebelPercentage = Signal.chain(
 const rebels = Signal.chain(
   Signal.combine(
     rebelPercentage,
-    Signal.key('colonists')
+    Signal.listen.key('colonists')
   ),
   Signal.select(([percentage, colonists]) => Math.max(0, Math.round((colonists.length * percentage) / 100)))
 )
@@ -87,13 +87,13 @@ const protection = Signal.chain(
   Signal.select<ColonyEntity>(),
   Signal.combine(
     Signal.chain(
-      Signal.key('newBuildings'),
+      Signal.listen.key('newBuildings'),
       Signal.select(buildings => buildings.find(b => b.name === 'fortifications')),
       Signal.select(building => building?.level ?? 0),
       Signal.select(level => level + 1)
     ),
     Signal.chain(
-      Signal.key('units'),
+      Signal.listen.key('units'),
       Signal.select(units => units
         .filter(unit => unit.domain === 'land')
       ),
@@ -101,8 +101,8 @@ const protection = Signal.chain(
         Signal.combine(
           Signal.select(),
           Signal.chain(
-            Signal.key('colonist'),
-            Signal.maybe.key('colony'),
+            Signal.listen.key('colonist'),
+            Signal.maybe.listen.key('colony'),
             Signal.select(colony => !colony)
           )
         )

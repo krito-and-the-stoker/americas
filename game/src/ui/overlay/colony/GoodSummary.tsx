@@ -56,7 +56,7 @@ function GoodSummary() {
 	const storageChain = (storageMapping: Function1<ColonistEntity, StorageEntity>) => Signal.chain(
 		colonyChain,
 		Signal.assert.not.isNothing(
-			Signal.key('colonists'),
+			Signal.listen.key('colonists'),
 			Signal.each(
 				Signal.combine(
 					Signal.select<ColonistEntity>(),
@@ -140,7 +140,7 @@ function GoodSummary() {
 	const supportChain = Signal.chain(
 		colonyChain,
 		Signal.assert.not.isNothing(
-			Signal.key('supportedUnits'),
+			Signal.listen.key('supportedUnits'),
 			Signal.each(
 				Signal.combine(
 					Signal.select(),
@@ -183,7 +183,7 @@ function GoodSummary() {
 	const reserve = Signal.createSolid(
 		colonyChain,
 		Signal.assert.not.isNothing(
-			Signal.key('colonists'),
+			Signal.listen.key('colonists'),
 			Signal.each(
 				Signal.select((colonist: ColonistEntity) => colonist.storage),
 				Signal.combine(

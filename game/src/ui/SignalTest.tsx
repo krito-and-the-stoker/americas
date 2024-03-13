@@ -23,11 +23,11 @@ function SignalTest() {
     const aSignal = Signal.createSolid(
         Signal.chain(
             Signal.emit(obj),
-            // Signal.key('a')
+            // Signal.listen.key('a')
             Signal.chain(
                 // Signal.select(value => value.b),
-                Signal.key('b'),
-                Signal.key('test')
+                Signal.listen.key('b'),
+                Signal.listen.key('test')
             )
         )
     )
@@ -52,7 +52,7 @@ function SignalTest() {
             counter.listen,
             Signal.chain(
                 Signal.emit(obj),
-                Signal.key('a')
+                Signal.listen.key('a')
             ),
             Signal.emit('welt')
         ),
