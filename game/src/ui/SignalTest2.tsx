@@ -104,6 +104,26 @@ function SignalTest() {
         ),
     )
 
+    const disconnect = Signal.connect(
+        Signal.listen.event('click'),
+        Signal.select(event => event.target),
+        Signal.assert.isNothing(
+            Signal.log('found nothing'),
+            Signal.stop()
+        ),
+        Signal.log('new target'),
+        Signal.listen.event('mousemove'),
+        // Signal.assert.isNothing(
+        //     Signal.log('we found nothing!'),
+        //     Signal.stop()
+        // ),
+        Signal.select(event => [event.clientX, event.clientY]),
+        Signal.log('move')
+    )
+
+    // @ts-ignore
+    window.disconnect = disconnect
+
     return <div class={style.main}>
         <h1>Hallo</h1>
         <div>

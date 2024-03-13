@@ -24,7 +24,7 @@ export const assert = <Range, Condition extends Range>(condition: ConditionFunct
                 throw new Error(`Assertion failed: ${message}` ?? 'Assertion failed')
             }
 
-            resolve(value)
+            return resolve(value)
         }
     }
     const listen = chain(listen1 as any, ...additionalListeners)
@@ -60,7 +60,7 @@ export const assertNot = <Range, Condition extends Range>(condition: ConditionFu
                 throw new Error(`Assertion failed: ${message}` ?? 'Assertion failed')
             }
 
-            resolve(value)
+            return resolve(value)
         }
     }
     const listen = chain(listen1 as any, ...additionalListeners)

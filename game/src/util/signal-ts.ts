@@ -10,6 +10,7 @@ import { each } from 'util/signal/each'
 import { combine } from 'util/signal/combine'
 import { maybeKey, maybeSelect } from 'util/signal/maybe'
 import { connect, evaluate, firstValue } from 'util/signal/connect'
+import { listenToEvent } from 'util/signal/event'
 import { assert as createAssert,
   assertNot as createAssertNot,
   isNothing,
@@ -63,6 +64,7 @@ const maybe = {
 
 const listen = {
   key,
+  event: listenToEvent,
   // maybe: {
   //   key: maybeKey,
   // }
