@@ -90,8 +90,8 @@ export default (colony: ColonyEntity) => {
         Signal.effect(() => Construction.start(colony, null)),
         Signal.stop()
       ),
-      Signal.gate(construction => construction.progress > 0),
-      Signal.gate(construction => construction.progress >= Util.sum(Object.values(construction.cost))),
+      Signal.passIf(construction => construction.progress > 0),
+      Signal.passIf(construction => construction.progress >= Util.sum(Object.values(construction.cost))),
       Signal.effect(construction => {
         Construction.construct(colony, construction)
       })
@@ -100,7 +100,7 @@ export default (colony: ColonyEntity) => {
     Signal.connect(
       Signal.emit(colony),
       Signal.listen.key('growth'),
-      Signal.gate(growth => growth >= 1000),
+      Signal.passIf(growth => growth >= 1000),
       Signal.effect(() => {
         const unit = Unit.create('settler', colony.mapCoordinates, colony.owner)
         const parents = Util.choose(colony.colonists)

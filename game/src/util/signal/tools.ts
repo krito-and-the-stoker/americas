@@ -50,9 +50,16 @@ export function emit<V>(value: V): Listen<V, void> {
 }
 
 
-export function gate<V>(condition: Function1<V, boolean>): Listen<V, V> {
+export function passIf<V>(condition: Function1<V, boolean>): Listen<V, V> {
   return (resolve: EffectFn<V>, value: V) => {
     if (condition(value)) {
+      return resolve(value)
+    }
+  }
+}
+export function stopIf<V>(condition: Function1<V, boolean>): Listen<V, V> {
+  return (resolve: EffectFn<V>, value: V) => {
+    if (!condition(value)) {
       return resolve(value)
     }
   }

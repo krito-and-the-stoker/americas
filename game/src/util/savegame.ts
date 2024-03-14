@@ -300,7 +300,7 @@ const derived = {
             gameId.listen,
             isRunning.listen
         ),
-        Signal.gate(([_, isRunning]) => !isRunning),
+        Signal.passIf(([_, isRunning]) => !isRunning),
         Signal.select(([id]) => id),
         Signal.await(load),
         Signal.assert.isError(

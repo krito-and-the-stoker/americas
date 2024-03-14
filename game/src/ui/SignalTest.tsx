@@ -59,7 +59,7 @@ function SignalTest() {
         Signal.effect(([_, __, greeting]) => console.log('hi', greeting)),
         Signal.select(([a, b]) => a * b),
         Signal.collect(
-            Signal.gate(values => values.length === 10)
+            Signal.passIf(values => values.length === 10)
         ),
         Signal.log('collection'),
         Signal.select(values => values.join(', '))
@@ -82,7 +82,7 @@ function SignalTest() {
     //     counter.listen,
     //     Signal.await(wait(500), 'queue'),
     //     Signal.collect(
-    //         Signal.gate(values => values.length >= 3),
+    //         Signal.passIf(values => values.length >= 3),
     //         Signal.select(values => Util.sum(values))
     //     ),
     //     Signal.effect(counter.update),
