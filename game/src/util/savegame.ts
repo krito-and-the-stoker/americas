@@ -302,7 +302,7 @@ const derived = {
         ),
         Signal.passIf(([_, isRunning]) => !isRunning),
         Signal.select(([id]) => id),
-        Signal.await(load),
+        Signal.await.latest(Signal.select(load)),
         Signal.assert.isError(
             Signal.effect(error => Message.savegame.error('Failed to load game data:', error)),
             Signal.select(() => null)

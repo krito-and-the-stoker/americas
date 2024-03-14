@@ -52,7 +52,7 @@ function SignalTest() {
             Signal.select(s => s.length),
         ),
         // Signal.assert.not.isError(),
-        Signal.await(maybeFail),
+        Signal.await.latest(Signal.select(maybeFail)),
         Signal.assert.isError(
             Signal.select(error => `Error: ${error.message}`)
         ),
@@ -139,7 +139,7 @@ function SignalTest() {
         Signal.assert.isNothing(Signal.stop()),
         Signal.log('before queue'),
         // Signal.count(),
-        Signal.async.queue(
+       Signal.await.queue(
             Signal.select(input => input && `Input: ${input}`),
             // Signal.select(x => `count: ${x}`),
             Signal.log('input'),
@@ -155,7 +155,7 @@ function SignalTest() {
     const disconnect = Signal.connect(
         chain,
         // Signal.fromSolid(inputValue).listen,
-        // Signal.async.through(
+        // Signal.await.through(
         //     Signal.select(resolveOnButton)
         // ),
         Signal.count(),

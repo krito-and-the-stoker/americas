@@ -1,5 +1,4 @@
-import type { EffectFn, Listen, AsyncStrategy, CleanupExec } from 'util/signal/types'
-import type { Function1 } from 'util/types'
+import type { Listen, CleanupExec } from 'util/signal/types'
 import { chain } from 'util/signal/chain'
 import { createState } from 'util/signal/tools'
 
@@ -7,21 +6,21 @@ import Util from 'util/util'
 
 
 interface AwaitCall {
-  <V1, V2>(listen1: Listen<Promise<V2>, V1>): Listen<V2, V1>
-  <V1, V2, V3>(listen1: Listen<V2, V1>, listen2: Listen<Promise<V3>, V2>): Listen<V3, V1>
-  <V1, V2, V3, V4>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<Promise<V4>, V3>): Listen<V4, V1>
-  <V1, V2, V3, V4, V5>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<Promise<V5>, V4>): Listen<V5, V1>
-  <V1, V2, V3, V4, V5, V6>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<Promise<V6>, V5>): Listen<V6, V1>
-  <V1, V2, V3, V4, V5, V6, V7>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<Promise<V7>, V6>): Listen<V7, V1>
-  <V1, V2, V3, V4, V5, V6, V7, V8>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<Promise<V8>, V7>): Listen<V8, V1>
-  <V1, V2, V3, V4, V5, V6, V7, V8, V9>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<Promise<V9>, V8>): Listen<V9, V1>
-  <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<Promise<V10>, V9>): Listen<V10, V1>
+  <V1, V2>(listen1: Listen<Promise<V2>, V1>): Listen<V2 | Error, V1>
+  <V1, V2, V3>(listen1: Listen<V2, V1>, listen2: Listen<Promise<V3>, V2>): Listen<V3 | Error, V1>
+  <V1, V2, V3, V4>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<Promise<V4>, V3>): Listen<V4 | Error, V1>
+  <V1, V2, V3, V4, V5>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<Promise<V5>, V4>): Listen<V5 | Error, V1>
+  <V1, V2, V3, V4, V5, V6>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<Promise<V6>, V5>): Listen<V6 | Error, V1>
+  <V1, V2, V3, V4, V5, V6, V7>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<Promise<V7>, V6>): Listen<V7 | Error, V1>
+  <V1, V2, V3, V4, V5, V6, V7, V8>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<Promise<V8>, V7>): Listen<V8 | Error, V1>
+  <V1, V2, V3, V4, V5, V6, V7, V8, V9>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<Promise<V9>, V8>): Listen<V9 | Error, V1>
+  <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<Promise<V10>, V9>): Listen<V10 | Error, V1>
 
-  (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown, unknown>
+  (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown | Error, unknown>
 }
 
 
-export const awaitThrough: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown, unknown> => {
+export const awaitThrough: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown | Error, unknown> => {
     const state = createState(() => ({ isActive: true, cleanupNext: null as CleanupExec }))
     const listen = chain(listen1, ...additionalListeners)
 
@@ -44,6 +43,11 @@ export const awaitThrough: AwaitCall = (listen1: Listen<unknown, unknown>, ...ad
                     Util.execute(privateState.cleanupNext)
                     privateState.cleanupNext = next(value)
                 }
+            }).catch(error => {
+                if (privateState.isActive) {
+                    Util.execute(privateState.cleanupNext)
+                    privateState.cleanupNext = next(error)
+                }
             })
             }, value)
 
@@ -57,7 +61,7 @@ export const awaitThrough: AwaitCall = (listen1: Listen<unknown, unknown>, ...ad
 export const awaitLatest: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown, unknown> => {
     const listen = chain(listen1, ...additionalListeners)
 
-    return (resolve, value) => {
+    return (next, parameter) => {
         let cleanupInner: CleanupExec
         let cleanupResolve: CleanupExec
         let isActive = true
@@ -72,10 +76,15 @@ export const awaitLatest: AwaitCall = (listen1: Listen<unknown, unknown>, ...add
             (promise as Promise<unknown>).then(value => {
                 if (isActive) {
                     Util.execute(cleanupResolve)
-                    cleanupResolve = resolve(value)
+                    cleanupResolve = next(value)
+                }
+            }).catch(error => {
+                if (isActive) {
+                    Util.execute(cleanupResolve)
+                    cleanupResolve = next(error)
                 }
             })
-            }, value)
+            }, parameter)
 
         return cleanupFunction
     }
@@ -105,6 +114,12 @@ export const awaitOrder: AwaitCall = (listen1: Listen<unknown, unknown>, ...addi
                     if (privateState.isActive) {
                         Util.execute(privateState.cleanupNext)
                         privateState.cleanupNext = next(result)
+                    }
+                })
+                .catch(error => {
+                    if (privateState.isActive) {
+                        Util.execute(privateState.cleanupNext)
+                        privateState.cleanupNext = next(error)
                     }
                 })
                 // // .catch(resolveErrorToNextStage)
@@ -142,12 +157,20 @@ export const awaitQueue: AwaitCall = (listen1: Listen<unknown, unknown>, ...addi
             .then(() => new Promise(resolve => {
                 Util.execute(cleanupInner, false)
                 cleanupInner = listen(promise => resolve(promise), parameter)
-            })).then(promise => promise).then(value => {
+            }))
+            .then(promise => promise).then(value => {
                 if (privateState.isActive) {
                     Util.execute(privateState.cleanupNext, false)
                     privateState.cleanupNext = next(value)
                 }
-            }).finally(() => {
+            })
+            .catch(error => {
+                if (privateState.isActive) {
+                    Util.execute(privateState.cleanupNext, false)
+                    privateState.cleanupNext = next(error)
+                }
+            })
+            .finally(() => {
                 privateState.queue = privateState.queue.filter(p => p !== waitingPromise)
             })
         privateState.queue.push(waitingPromise)
@@ -159,80 +182,4 @@ export const awaitQueue: AwaitCall = (listen1: Listen<unknown, unknown>, ...addi
     }
 }
 
-
-export function awaitFn<From, To>(asyncFunction: Function1<From, Promise<To>>, strategy: AsyncStrategy = 'discard'): Listen<To | Error, From> {
-    let state = {
-        queue: [] as Promise<void>[],
-    }
-    const rememberState = (value: typeof state) => {
-        state = {
-            queue: []
-        }
-        return (final: boolean) => {
-            if (!final) {
-                state = value
-            }
-        }
-    }
-
-    return (resolve: EffectFn<To | Error>, parameter: From) => {
-        let nextCleanup: CleanupExec = null
-        let shouldResolve = true
-        const cleanup = (final: boolean) => {
-            Util.execute(nextCleanup, final)
-            nextCleanup = null
-
-            if (final || strategy === 'discard') {
-                shouldResolve = false
-                state.queue = []
-            }
-        }
-
-        const resolveToNextStage = (result: To) => {
-            if (shouldResolve) {
-                nextCleanup = resolve(result)
-            }
-        }
-
-        const resolveErrorToNextStage = (error: Error) => {
-            if (shouldResolve) {
-                nextCleanup = resolve(error)
-            }
-        }
-
-        if (strategy === 'queue') {
-            const bindState = state
-            const waitingPromise = Promise.all(state.queue)
-                .then(() => asyncFunction(parameter))
-                .then(resolveToNextStage)
-                .catch(resolveErrorToNextStage)
-                .finally(() => {
-                    bindState.queue = bindState.queue.filter(p => p !== waitingPromise)
-                })
-            state.queue.push(waitingPromise)
-        }
-
-        if (strategy === 'order') {
-            const promise = asyncFunction(parameter)
-            const bindState = state
-            const waitingPromise = Promise.all(state.queue)
-                .then(() => promise.then(resolveToNextStage))
-                .catch(resolveErrorToNextStage)
-                .finally(() => {
-                    bindState.queue = bindState.queue.filter(p => p !== waitingPromise)
-                })
-            state.queue.push(waitingPromise)
-        }
-
-        if (strategy === 'pass' || strategy === 'discard') {
-            const promise = asyncFunction(parameter)
-            promise.then(resolveToNextStage).catch(resolveErrorToNextStage)
-        }
-
-        return [
-            cleanup,
-            rememberState(state),
-        ]
-    }
-}
 

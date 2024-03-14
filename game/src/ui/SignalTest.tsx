@@ -68,7 +68,9 @@ function SignalTest() {
     const moreCounting = Signal.createSolid(
         counter.listen,
         // Signal.log('Pushing to queue'),
-        Signal.await(wait(500), 'order'),
+        Signal.await.order(
+            Signal.select(wait(500))
+        ),
         Signal.assert.not.isError()
         // Signal.log('Promise resolved'),
     )
@@ -113,7 +115,9 @@ function SignalTest() {
         Signal.select(value => value.split('')),
         Signal.each(
             Signal.select(value => value + ' '),
-            Signal.await(wait(1000), 'discard'),
+            Signal.await.latest(
+                Signal.select(wait(1000)),
+            )
         ),
         Signal.select(value => value.join('')),
     )

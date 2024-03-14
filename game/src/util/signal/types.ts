@@ -25,4 +25,3 @@ export type BasicComputed<V> = {
   disconnect: FunctionVoid
 }
 
-export type AsyncStrategy = 'discard' | 'pass' | 'queue' | 'order'
