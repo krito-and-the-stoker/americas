@@ -138,8 +138,10 @@ function SignalTest() {
         Signal.select(x => x || undefined),
         Signal.assert.isNothing(Signal.stop()),
         Signal.log('before queue'),
-        Signal.async.through(
+        // Signal.count(),
+        Signal.async.queue(
             Signal.select(input => input && `Input: ${input}`),
+            // Signal.select(x => `count: ${x}`),
             Signal.log('input'),
             Signal.assert.isNothing(
                 Signal.stop()
@@ -148,10 +150,15 @@ function SignalTest() {
             // Signal.select(url => fetch(url)),
             // Signal.select(response => response.json())
         ),
-        // Signal.log('result')
+        Signal.log('result')
     )
     const disconnect = Signal.connect(
         chain,
+        // Signal.fromSolid(inputValue).listen,
+        // Signal.async.through(
+        //     Signal.select(resolveOnButton)
+        // ),
+        Signal.count(),
         Signal.log('chain 1')
     )
     // Signal.connect(

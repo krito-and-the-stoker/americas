@@ -1,38 +1,9 @@
 import type { EffectFn, Listen, AsyncStrategy, CleanupExec } from 'util/signal/types'
-import type { Function0, Function1 } from 'util/types'
+import type { Function1 } from 'util/types'
 import { chain } from 'util/signal/chain'
+import { createState } from 'util/signal/tools'
 
 import Util from 'util/util'
-
-const createState = <T>(maker: Function0<T>) => {
-    let sharedState: T | null = null
-
-    const read = (): T => {
-        if (!sharedState) {
-            sharedState = maker()
-        }
-        return sharedState
-    }
-
-    const write = (privateState?: T) => {
-        const boundState = privateState ?? read()
-        sharedState = null
-
-        // this is how the state preservation works:
-        // it will bound and then the destructor, which is invoked
-        // every time before the next run, will restore the state
-        return (final: boolean) => {
-            if (!final) {
-                sharedState = boundState
-            }
-        }
-    }
-
-    return {
-        read,
-        write
-    }
-}
 
 
 interface AwaitCall {
@@ -51,12 +22,11 @@ interface AwaitCall {
 
 
 export const awaitThrough: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown, unknown> => {
-    const state = createState<{ isActive: boolean }>(() => ({ isActive: true }))
+    const state = createState(() => ({ isActive: true, cleanupNext: null as CleanupExec }))
     const listen = chain(listen1, ...additionalListeners)
 
-    return (resolve, value) => {
+    return (next, value) => {
         let cleanupInner: CleanupExec
-        let cleanupResolve: CleanupExec
 
         const privateState = state.read()
         const cleanupFunction = (final: boolean = false) => {
@@ -65,14 +35,14 @@ export const awaitThrough: AwaitCall = (listen1: Listen<unknown, unknown>, ...ad
             }
 
             Util.execute(cleanupInner, final)
-            Util.execute(cleanupResolve, final)
+            Util.execute(privateState.cleanupNext, final)
         }
 
         cleanupInner = listen(promise => {
             (promise as Promise<unknown>).then(value => {
                 if (privateState.isActive) {
-                    Util.execute(cleanupResolve)
-                    cleanupResolve = resolve(value)
+                    Util.execute(privateState.cleanupNext)
+                    privateState.cleanupNext = next(value)
                 }
             })
             }, value)
@@ -112,21 +82,20 @@ export const awaitLatest: AwaitCall = (listen1: Listen<unknown, unknown>, ...add
 }
 
 export const awaitOrder: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown, unknown> => {
-    const state = createState(() => ({ queue: [] as Promise<void>[], isActive: true }))
+    const state = createState(() => ({ queue: [] as Promise<void>[], isActive: true, cleanupNext: null as CleanupExec }))
     const listen = chain(listen1, ...additionalListeners)
 
-    return (resolve, value) => {
+    return (next, value) => {
         let cleanupInner: CleanupExec
-        let cleanupResolve: CleanupExec
         const privateState = state.read()
 
         const cleanupFunction = (final: boolean = false) => {
             if (final) {
                 privateState.isActive = false
+                Util.execute(privateState.cleanupNext, final)
             }
 
             Util.execute(cleanupInner, final)
-            Util.execute(cleanupResolve, final)
         }
 
         cleanupInner = listen(promise => {
@@ -134,8 +103,8 @@ export const awaitOrder: AwaitCall = (listen1: Listen<unknown, unknown>, ...addi
                 .then(() => promise)
                 .then(result => {
                     if (privateState.isActive) {
-                        Util.execute(cleanupResolve)
-                        cleanupResolve = resolve(result)
+                        Util.execute(privateState.cleanupNext)
+                        privateState.cleanupNext = next(result)
                     }
                 })
                 // // .catch(resolveErrorToNextStage)
@@ -153,12 +122,11 @@ export const awaitOrder: AwaitCall = (listen1: Listen<unknown, unknown>, ...addi
 }
 
 export const awaitQueue: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown, unknown> => {
-    const state = createState(() => ({ queue: [] as Promise<void>[], isActive: true }))
+    const state = createState(() => ({ queue: [] as Promise<void>[], isActive: true, cleanupNext: null as CleanupExec }))
     const listen = chain(listen1, ...additionalListeners)
 
     return (next, parameter) => {
         let cleanupInner: CleanupExec
-        let cleanupResolve: CleanupExec
         const privateState = state.read()
 
         const cleanupFunction = (final: boolean = false) => {
@@ -167,7 +135,7 @@ export const awaitQueue: AwaitCall = (listen1: Listen<unknown, unknown>, ...addi
                 Util.execute(cleanupInner, final)
             }
 
-            Util.execute(cleanupResolve, final)
+            Util.execute(privateState.cleanupNext, final)
         }
 
         const waitingPromise = Promise.all(privateState.queue)
@@ -176,8 +144,8 @@ export const awaitQueue: AwaitCall = (listen1: Listen<unknown, unknown>, ...addi
                 cleanupInner = listen(promise => resolve(promise), parameter)
             })).then(promise => promise).then(value => {
                 if (privateState.isActive) {
-                    Util.execute(cleanupResolve)
-                    cleanupResolve = next(value)
+                    Util.execute(privateState.cleanupNext, false)
+                    privateState.cleanupNext = next(value)
                 }
             }).finally(() => {
                 privateState.queue = privateState.queue.filter(p => p !== waitingPromise)

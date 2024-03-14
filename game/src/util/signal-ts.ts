@@ -1,4 +1,4 @@
-import { emit, select, gate, stop } from 'util/signal/tools'
+import { emit, select, gate, stop, count } from 'util/signal/tools'
 import { chain } from 'util/signal/chain'
 import * as primitive from 'util/signal/primitive'
 import { key } from 'util/signal/object'
@@ -89,6 +89,7 @@ export default {
   effect,
   collect,
   log,
+  count,
   stop,
   async,
   await: awaitFn,
