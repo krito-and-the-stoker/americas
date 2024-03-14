@@ -50,7 +50,6 @@ interface AwaitCall {
 }
 
 
-
 export const awaitThrough: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown, unknown> => {
     const state = createState<{ isActive: boolean }>(() => ({ isActive: true }))
     const listen = chain(listen1, ...additionalListeners)
@@ -112,7 +111,7 @@ export const awaitLatest: AwaitCall = (listen1: Listen<unknown, unknown>, ...add
     }
 }
 
-export const awaitOrdered: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown, unknown> => {
+export const awaitOrder: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown, unknown> => {
     const state = createState(() => ({ queue: [] as Promise<void>[], isActive: true }))
     const listen = chain(listen1, ...additionalListeners)
 
@@ -144,14 +143,46 @@ export const awaitOrdered: AwaitCall = (listen1: Listen<unknown, unknown>, ...ad
                     privateState.queue = privateState.queue.filter(p => p !== waitingPromise)
                 })
             privateState.queue.push(waitingPromise)
-
-            // (promise as Promise<unknown>).then(value => {
-            //     if (privateState.isActive) {
-            //         Util.execute(cleanupResolve)
-            //         cleanupResolve = resolve(value)
-            //     }
-            // })
             }, value)
+
+        return [
+            cleanupFunction,
+            state.write(),
+        ]
+    }
+}
+
+export const awaitQueue: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown, unknown> => {
+    const state = createState(() => ({ queue: [] as Promise<void>[], isActive: true }))
+    const listen = chain(listen1, ...additionalListeners)
+
+    return (next, parameter) => {
+        let cleanupInner: CleanupExec
+        let cleanupResolve: CleanupExec
+        const privateState = state.read()
+
+        const cleanupFunction = (final: boolean = false) => {
+            if (final) {
+                privateState.isActive = false
+                Util.execute(cleanupInner, final)
+            }
+
+            Util.execute(cleanupResolve, final)
+        }
+
+        const waitingPromise = Promise.all(privateState.queue)
+            .then(() => new Promise(resolve => {
+                Util.execute(cleanupInner, false)
+                cleanupInner = listen(promise => resolve(promise), parameter)
+            })).then(promise => promise).then(value => {
+                if (privateState.isActive) {
+                    Util.execute(cleanupResolve)
+                    cleanupResolve = next(value)
+                }
+            }).finally(() => {
+                privateState.queue = privateState.queue.filter(p => p !== waitingPromise)
+            })
+        privateState.queue.push(waitingPromise)
 
         return [
             cleanupFunction,
