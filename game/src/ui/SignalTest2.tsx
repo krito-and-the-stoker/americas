@@ -2,6 +2,7 @@ import Signal from 'util/signal-ts'
 // @ts-ignore
 import style from  './SignalTest.module.scss'
 import { createSignal } from 'solid-js'
+import Util from 'util/util'
 
 // import Util from 'util/util'
 async function maybeFail<T>(x: T): Promise<T> {
@@ -104,21 +105,50 @@ function SignalTest() {
         ),
     )
 
-    const disconnect = Signal.connect(
-        Signal.listen.event('click'),
-        Signal.select(event => event.target),
-        Signal.assert.isNothing(
-            Signal.log('found nothing'),
-            Signal.stop()
+    // const disconnect = Signal.connect(
+    //     Signal.listen.event('click'),
+    //     Signal.select(event => event.target),
+    //     Signal.assert.isNothing(
+    //         Signal.log('found nothing'),
+    //         Signal.stop()
+    //     ),
+    //     Signal.log('new target'),
+    //     Signal.listen.event('mousemove'),
+    //     // Signal.assert.isNothing(
+    //     //     Signal.log('we found nothing!'),
+    //     //     Signal.stop()
+    //     // ),
+    //     Signal.select(event => [event.clientX, event.clientY]),
+    //     Signal.log('move')
+    // )
+    let resolves: Function[] = []
+    const resolveNext = () => {
+        const resolve = Util.choose(resolves)
+        resolves = resolves.filter(r => r !== resolve)
+        if (resolve) {
+            resolve()
+        }
+    }
+    const resolveOnButton = (x: string) => new Promise(resolve => { resolves.push(() => resolve(x)) })
+    // const wait = (ms: number, value: string) => new Promise<string>(resolve => setTimeout(() => resolve(value), ms))
+    const chain = Signal.chain(
+        Signal.fromSolid(inputValue).listen,
+        // Signal.emit('hi'),
+        Signal.log('url'),
+        Signal.async.last(
+            // Signal.select(url => wait(Math.random()*1000, url)),
+            Signal.select(resolveOnButton),
+            // Signal.select(url => fetch(url)),
+            // Signal.select(response => response.json())
         ),
-        Signal.log('new target'),
-        Signal.listen.event('mousemove'),
-        // Signal.assert.isNothing(
-        //     Signal.log('we found nothing!'),
-        //     Signal.stop()
-        // ),
-        Signal.select(event => [event.clientX, event.clientY]),
-        Signal.log('move')
+    )
+    const disconnect = Signal.connect(
+        chain,
+        Signal.log('chain 1')
+    )
+    Signal.connect(
+        chain,
+        Signal.log('chain 2')
     )
 
     // @ts-ignore
@@ -130,6 +160,7 @@ function SignalTest() {
             String Length: {test()}
         </div>
         <input value={inputValue()} onInput={receiveInput} />
+        <button onClick={resolveNext}>resolve!</button>
     </div>
 }
 

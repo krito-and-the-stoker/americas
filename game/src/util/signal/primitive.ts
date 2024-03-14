@@ -69,7 +69,7 @@ export const create = <V>(initialValue: V): BasicSignal<V> => {
     listeners.push(listener)
 
     return () => {
-      Util.execute(listener.cleanup)
+      Util.execute(listener.cleanup, true)
       listener.cleanup = null
       listeners = listeners.filter(other => other !== listener)
     }

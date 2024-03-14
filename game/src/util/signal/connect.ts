@@ -20,7 +20,7 @@ interface ConnectCall {
 export const connect: ConnectCall = (listen1: Listen<any, any>, ...additionalListeners: Listen<any, any>[]): FunctionVoid => {
   const chained = chain(listen1, ...additionalListeners) as Listen<any, void>
   const unsubscribe = chained(() => {})
-  return () => { Util.execute(unsubscribe) }
+  return () => { Util.execute(unsubscribe, true) }
 }
 
 interface EvaluateCall {
