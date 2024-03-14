@@ -48,7 +48,7 @@ function SignalTest() {
             Signal.select(x => x!.split('').join('')),
             Signal.select(x => Math.random() > 0.75 ? x : x.length),
             Signal.assert.create(isString, 'Value must be a string')(),
-            Signal.log('inside catch'),
+            // Signal.log('inside catch'),
             Signal.select(s => s.length),
         ),
         // Signal.assert.not.isError(),
@@ -56,7 +56,7 @@ function SignalTest() {
         Signal.assert.isError(
             Signal.select(error => `Error: ${error.message}`)
         ),
-        Signal.log('after catch'),
+        // Signal.log('after catch'),
         // Signal.select(x => `${x}`)
     )
 
@@ -129,27 +129,34 @@ function SignalTest() {
             resolve()
         }
     }
-    const resolveOnButton = (x: string) => new Promise(resolve => { resolves.push(() => resolve(x)) })
+    const resolveOnButton = (x: string) => new Promise<string>(resolve => { resolves.push(() => resolve(x)) })
     // const wait = (ms: number, value: string) => new Promise<string>(resolve => setTimeout(() => resolve(value), ms))
     const chain = Signal.chain(
         Signal.fromSolid(inputValue).listen,
         // Signal.emit('hi'),
-        Signal.log('url'),
-        Signal.async.last(
+        // Signal.log('url'),
+        Signal.select(x => x || undefined),
+        Signal.log('input'),
+        Signal.async.ordered(
+            Signal.select(input => input && `Input: ${input}`),
             // Signal.select(url => wait(Math.random()*1000, url)),
+            Signal.assert.isNothing(
+                Signal.stop()
+            ),
             Signal.select(resolveOnButton),
             // Signal.select(url => fetch(url)),
             // Signal.select(response => response.json())
         ),
+        Signal.log('result')
     )
     const disconnect = Signal.connect(
         chain,
         Signal.log('chain 1')
     )
-    Signal.connect(
-        chain,
-        Signal.log('chain 2')
-    )
+    // Signal.connect(
+    //     chain,
+    //     Signal.log('chain 2')
+    // )
 
     // @ts-ignore
     window.disconnect = disconnect

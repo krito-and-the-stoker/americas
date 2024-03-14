@@ -3,7 +3,7 @@ import { chain } from 'util/signal/chain'
 import * as primitive from 'util/signal/primitive'
 import { key } from 'util/signal/object'
 import { log, effect } from 'util/signal/effect'
-import { awaitFn, awaitPass, awaitLast } from 'util/signal/async'
+import { awaitFn, awaitThrough, awaitLatest, awaitOrdered } from 'util/signal/async'
 import { createSolid, fromSolid } from 'util/signal/solid'
 import { collect } from 'util/signal/collect'
 import { each } from 'util/signal/each'
@@ -64,8 +64,9 @@ const maybe = {
 
 // rename: await
 const async = {
-  pass: awaitPass, // rename: all
-  last: awaitLast, // rename: latest
+  through: awaitThrough, // TODO: Find a better verb
+  latest: awaitLatest,
+  ordered: awaitOrdered,
 }
 
 const listen = {
