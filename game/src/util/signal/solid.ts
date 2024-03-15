@@ -52,3 +52,14 @@ export const fromSolid = <V>(signal: Accessor<V>): BasicComputed<V> => {
    }
   }
 }
+
+export const listenSolid = <V>(signal: Accessor<V>) => {
+  const base = create(signal())
+
+  createEffect(() => {
+    base.update(signal())
+  })
+
+  return base.listen
+}
+

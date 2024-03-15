@@ -40,11 +40,11 @@ function DefaultSummary() {
         Signal.select((screen: any) => screen?.params?.colony as ColonyEntity | undefined)
     )
 
-    const colony = Signal.createSolid(
+    const colony = Signal.solid.create(
         colonyChain
     )
 
-    const productionSummary = Signal.createSolid(
+    const productionSummary = Signal.solid.create(
         colonyChain,
         Signal.select(colony => colony && colony.productionSummary),
         Storage.signal
@@ -56,12 +56,12 @@ function DefaultSummary() {
             Colony.chain.currentConstruction
         )
     )
-    const cost = Signal.createSolid(
+    const cost = Signal.solid.create(
         constructionChain,
         Signal.select(construction => construction?.cost)
     )
 
-    const progressPercentage = Signal.createSolid(
+    const progressPercentage = Signal.solid.create(
         constructionChain,
         Signal.select(construction => {
             const costSum = Util.sum(Object.values(construction?.cost ?? {})) || 1
@@ -70,39 +70,39 @@ function DefaultSummary() {
         Signal.select(progress => Math.floor(progress))
     )
 
-    const display = Signal.createSolid(
+    const display = Signal.solid.create(
         constructionChain,
         Signal.select(construction => construction?.display)
     )
 
-    const rebelNumber = Signal.createSolid(
+    const rebelNumber = Signal.solid.create(
         colonyChain,
         Signal.assert.not.isNothing(
             Colony.chain.rebels
         )
     )
-    const rebelPercentage = Signal.createSolid(
+    const rebelPercentage = Signal.solid.create(
         colonyChain,
         Signal.assert.not.isNothing(
             Colony.chain.rebelPercentage
         )
     )
 
-    const toryNumber = Signal.createSolid(
+    const toryNumber = Signal.solid.create(
         colonyChain,
         Signal.assert.not.isNothing(
             Colony.chain.tories
         )
     )
 
-    const toryPercentage = Signal.createSolid(
+    const toryPercentage = Signal.solid.create(
         colonyChain,
         Signal.assert.not.isNothing(
             Colony.chain.toryPercentage
         )
     )
 
-    const supportedUnits = Signal.createSolid(
+    const supportedUnits = Signal.solid.create(
         colonyChain,
         Signal.assert.not.isNothing(
             Signal.listen.key('supportedUnits'),
@@ -126,7 +126,7 @@ function DefaultSummary() {
         Signal.select(entries => entries?.filter(entry => entry.show).map(entry => entry.unit) ?? [])
     )
 
-    const hasConstructors = Signal.createSolid(
+    const hasConstructors = Signal.solid.create(
         colonyChain,
         Signal.assert.not.isNothing(
             Signal.listen.key('colonists'),

@@ -21,9 +21,9 @@ function SignalTest() {
         setInputValue(target.value)
     }
 
-    const input = Signal.fromSolid(inputValue)
+    const input = Signal.primitive.fromSolid(inputValue)
 
-    Signal.createSolid(
+    Signal.solid.create(
         Signal.emit(Math.random() > 0.5 ? 1 : undefined),
         // Signal.select(x => x ? x + 1 : null),
         Signal.assert.not.isNothing(
@@ -34,7 +34,7 @@ function SignalTest() {
     )
 
     const isString = (x: any): x is string => typeof x === 'string'
-    const test = Signal.createSolid(
+    const test = Signal.solid.create(
         input.listen,
         Signal.select(x => x ? `${x}` : undefined),
         Signal.assert.isNothing(
@@ -60,7 +60,7 @@ function SignalTest() {
         // Signal.select(x => `${x}`)
     )
 
-    Signal.createSolid(
+    Signal.solid.create(
         Signal.emit(Math.random() > 0.5 ? 'hi' : 1),
         Signal.assert.isNumber(
             Signal.stop()
@@ -142,8 +142,8 @@ function SignalTest() {
     }
     const resolveOnButton = (x: string) => new Promise<string>(resolve => { resolves.push(() => resolve(x)) })
     // const wait = (ms: number, value: string) => new Promise<string>(resolve => setTimeout(() => resolve(value), ms))
-    const chain = Signal.chain(
-        Signal.fromSolid(inputValue).listen,
+    Signal.chain(
+        Signal.solid.listen(inputValue),
         // Signal.emit('hi'),
         // Signal.log('url'),
         Signal.select(x => x || undefined),
@@ -165,7 +165,7 @@ function SignalTest() {
     )
     Signal.connect(
         // chain,
-        Signal.fromSolid(inputValue).listen,
+        Signal.solid.listen(inputValue),
         // Signal.buffer(10),
         // Signal.passIf(x => x.length === 10),
         Signal.sideChain(Signal.count()),

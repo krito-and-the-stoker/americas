@@ -1,10 +1,10 @@
 import { emit, select, stopIf, stop, passIf, count } from 'util/signal/tools'
 import { chain, sideChain } from 'util/signal/chain'
-import * as primitive from 'util/signal/primitive'
+import { connect as connectPrimitive, create as createPrimitive } from 'util/signal/primitive'
 import { key } from 'util/signal/object'
 import { log, effect } from 'util/signal/effect'
 import { awaitParallel, awaitLatest, awaitOrder, awaitQueue, awaitBlock } from 'util/signal/async'
-import { createSolid, fromSolid } from 'util/signal/solid'
+import { createSolid, fromSolid, listenSolid } from 'util/signal/solid'
 import { collect, buffer, window } from 'util/signal/collect'
 import { each } from 'util/signal/each'
 import { combine } from 'util/signal/combine'
@@ -62,6 +62,12 @@ const maybe = {
   }
 }
 
+const primitive = {
+  create: createPrimitive,
+  connect: connectPrimitive,
+  fromSolid
+}
+
 const awaitFns = {
   parallel: awaitParallel,
   latest: awaitLatest,
@@ -73,17 +79,29 @@ const awaitFns = {
 const listen = {
   key,
   event: listenToEvent,
-  // maybe: {
-  //   key: maybeKey,
-  // }
+  // solid: listenSolid,
+}
+
+const solid = {
+  create: createSolid,
+  listen: listenSolid,
 }
 
 export default {
+  // namespces
   primitive,
   listen,
+  await: awaitFns,
+  assert,
+  maybe,
+  solid,
+
+  // connectors
   connect,
   evaluate,
   firstValue,
+
+  // parts
   emit,
   select,
   effect,
@@ -93,17 +111,12 @@ export default {
   log,
   count,
   stop,
-  await: awaitFns,
   stopIf,
   passIf,
   chain,
   sideChain,
-  createSolid,
-  fromSolid,
   each,
   combine,
-  assert,
-  maybe,
   catch: catchFn,
 }
 

@@ -75,13 +75,13 @@ function ColonistSummary() {
         Hover.listen.data,
         Signal.select((data: HoverData) => data?.colonist)
     )
-    const colonist = Signal.createSolid(colonistChain)
+    const colonist = Signal.solid.create(colonistChain)
 
     const unitChain = Signal.chain(
         colonistChain,
         Signal.maybe.listen.key('unit')
     )
-    const unit = Signal.createSolid(unitChain)
+    const unit = Signal.solid.create(unitChain)
 
     const propertyChain = Signal.chain(
         colonistChain,
@@ -89,7 +89,7 @@ function ColonistSummary() {
         Signal.maybe.listen.key('properties')
     )
 
-    const name = Signal.createSolid(
+    const name = Signal.solid.create(
         Signal.combine(
             unitChain,
             propertyChain,
@@ -125,27 +125,27 @@ function ColonistSummary() {
     )
 
 
-    const productionOutput = Signal.createSolid(
+    const productionOutput = Signal.solid.create(
         storageListener(colonist => colonist.productionSummary),
         Signal.select(roundQuantities),
         Signal.select(filterPositive),
     )
 
-    const productionInput = Signal.createSolid(
+    const productionInput = Signal.solid.create(
         storageListener(colonist => colonist.productionSummary),
         Signal.select(roundQuantities),
         Signal.select(invertQuantities),
         Signal.select(filterPositive)
     )
 
-    const positiveConsumption = Signal.createSolid(
+    const positiveConsumption = Signal.solid.create(
         storageListener(colonist => colonist.consumptionSummary),
         Signal.select(roundQuantities),
         Signal.select(filterNotZero),
         Signal.select(invertQuantities),
     )
 
-    const storage = Signal.createSolid(
+    const storage = Signal.solid.create(
         storageListener(colonist => colonist.storage)
     )
 
@@ -155,11 +155,11 @@ function ColonistSummary() {
     )
 
     const state = {
-        noWood: Signal.createSolid(stateChain, Signal.select(state => state?.noWood)),
-        noFood: Signal.createSolid(stateChain, Signal.select(state => state?.noFood)),
-        noLuxury: Signal.createSolid(stateChain, Signal.select(state => state?.noLuxury)),
-        isPromoting: Signal.createSolid(stateChain, Signal.select(state => state?.isPromoting)),
-        hasBonus: Signal.createSolid(stateChain, Signal.select(state => state?.hasBonus)),
+        noWood: Signal.solid.create(stateChain, Signal.select(state => state?.noWood)),
+        noFood: Signal.solid.create(stateChain, Signal.select(state => state?.noFood)),
+        noLuxury: Signal.solid.create(stateChain, Signal.select(state => state?.noLuxury)),
+        isPromoting: Signal.solid.create(stateChain, Signal.select(state => state?.isPromoting)),
+        hasBonus: Signal.solid.create(stateChain, Signal.select(state => state?.hasBonus)),
     }
 
     const breakdownChain = Signal.chain(
@@ -169,14 +169,14 @@ function ColonistSummary() {
     )
 
     const breakdown = {
-        food: Signal.createSolid(breakdownChain, Signal.select(has => has?.food)),
-        wood: Signal.createSolid(breakdownChain, Signal.select(has => has?.wood)),
-        luxury: Signal.createSolid(breakdownChain, Signal.select(has => has?.luxury)),
-        bonus: Signal.createSolid(breakdownChain, Signal.select(has => has?.bonus)),
-        promotion: Signal.createSolid(breakdownChain, Signal.select(has => has?.promotion)),
+        food: Signal.solid.create(breakdownChain, Signal.select(has => has?.food)),
+        wood: Signal.solid.create(breakdownChain, Signal.select(has => has?.wood)),
+        luxury: Signal.solid.create(breakdownChain, Signal.select(has => has?.luxury)),
+        bonus: Signal.solid.create(breakdownChain, Signal.select(has => has?.bonus)),
+        promotion: Signal.solid.create(breakdownChain, Signal.select(has => has?.promotion)),
     }
 
-    const promotionProgress = Signal.createSolid(
+    const promotionProgress = Signal.solid.create(
         colonistChain,
         Signal.maybe.listen.key('promotion'),
         Signal.select(promotion =>

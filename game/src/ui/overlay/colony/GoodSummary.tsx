@@ -43,7 +43,7 @@ function GoodSummary() {
 		Hover.listen.data,
 		Signal.select((data: HoverData) => data?.good)
 	)
-	const good = Signal.createSolid(
+	const good = Signal.solid.create(
 		goodChain,
 		Signal.select(x => x ?? '')
 	)
@@ -91,7 +91,7 @@ function GoodSummary() {
 		}))
 	}
 
-	const production = Signal.createSolid(
+	const production = Signal.solid.create(
 		storageChain(colonist => colonist.productionSummary),
 		Signal.maybe.select(filterPositiveGoods),
 		Signal.maybe.select(items => items.map(item => item.goods)),
@@ -99,14 +99,14 @@ function GoodSummary() {
 		Signal.select(x => x ?? 0)
 	)
 
-	const producers = Signal.createSolid(
+	const producers = Signal.solid.create(
 		storageChain(colonist => colonist.productionSummary),
 		Signal.maybe.select(filterPositiveGoods),
 		Signal.maybe.select(selectUnits),
 		Signal.select(units => units ?? [])
 	)
 
-	const manufacturing = Signal.createSolid(
+	const manufacturing = Signal.solid.create(
 		storageChain(colonist => colonist.productionSummary),
 		Signal.maybe.select(invertGoods),
 		Signal.maybe.select(filterPositiveGoods),
@@ -115,14 +115,14 @@ function GoodSummary() {
 		Signal.select(x => x ?? 0)
 	)
 
-	const manufacturers = Signal.createSolid(
+	const manufacturers = Signal.solid.create(
 		storageChain(colonist => colonist.productionSummary),
 		Signal.maybe.select(filterNegativeGoods),
 		Signal.maybe.select(selectUnits),
 		Signal.select(units => units ?? [])
 	)
 
-	const consumption = Signal.createSolid(
+	const consumption = Signal.solid.create(
 		storageChain(colonist => colonist.consumptionSummary),
 		Signal.maybe.select(invertGoods),
 		Signal.maybe.select(items => items.map(item => item.goods)),
@@ -130,7 +130,7 @@ function GoodSummary() {
 		Signal.select(x => x ?? 0)
 	)
 
-	const consumers = Signal.createSolid(
+	const consumers = Signal.solid.create(
 		storageChain(colonist => colonist.consumptionSummary),
 		Signal.maybe.select(filterNegativeGoods),
 		Signal.maybe.select(selectUnits),
@@ -158,17 +158,17 @@ function GoodSummary() {
 		)
 	)
 
-	const support = Signal.createSolid(
+	const support = Signal.solid.create(
 		supportChain,
 		Signal.select(items => items ? Util.sum(items.map(item => -item.goods)) : 0)
 	)
 
-	const supported = Signal.createSolid(
+	const supported = Signal.solid.create(
 		supportChain,
 		Signal.select(items => items?.filter(item => item.goods < 0).map(item => item.unit) ?? [])
 	)
 
-	const amount = Signal.createSolid(
+	const amount = Signal.solid.create(
 		colonyChain,
 		Signal.assert.not.isNothing(
 			Signal.select(colony => colony.storage),
@@ -180,7 +180,7 @@ function GoodSummary() {
 		)
 	)
 
-	const reserve = Signal.createSolid(
+	const reserve = Signal.solid.create(
 		colonyChain,
 		Signal.assert.not.isNothing(
 			Signal.listen.key('colonists'),

@@ -9,8 +9,8 @@ import style from './Hints.module.scss'
 
 
 function HintsComponent() {
-	const hints	= Signal.createSolid(Hints.listen)
-	const screen = Signal.createSolid<any>(Foreground.listen.screen)
+	const hints	= Signal.solid.create(Hints.listen)
+	const screen = Signal.solid.create<any>(Foreground.listen.screen)
 	const isEurope = () => screen()?.params?.name === 'europe'
 
 	const hasHints = () => hints()?.length > 0

@@ -123,26 +123,26 @@ function UnitComponent() {
         UnitMapView.listen.selectedView,
         Signal.select((view: UnitView) => view?.unit)
     )
-    const unit = Signal.createSolid(unitChain)
+    const unit = Signal.solid.create(unitChain)
     const name = () => unit() && Unit.name(unit())
 
-    const cargo = Signal.createSolid(
+    const cargo = Signal.solid.create(
         unitChain,
         Signal.select(unit => unit?.storage),
         Storage.signal
     )
-    const equipment = Signal.createSolid(
+    const equipment = Signal.solid.create(
         unitChain,
         Signal.select(unit => unit?.equipment),
         Storage.signal
     )
 
-    const command = Signal.createSolid(
+    const command = Signal.solid.create(
         unitChain,
         Signal.maybe.listen.key('command')
     )
 
-    const passengers = Signal.createSolid(
+    const passengers = Signal.solid.create(
         unitChain,
         Signal.maybe.listen.key('passengers')
     )
@@ -151,8 +151,8 @@ function UnitComponent() {
         unitChain,
         Signal.maybe.listen.key('properties'),
     )
-    const properties = Signal.createSolid(propertyChain)
-    const cost = Signal.createSolid(
+    const properties = Signal.solid.create(propertyChain)
+    const cost = Signal.solid.create(
         propertyChain,
         Signal.maybe.listen.key('cost'),
         Signal.select(cost => cost?.toFixed(0) ?? '')
@@ -170,7 +170,7 @@ function UnitComponent() {
         ),
         Signal.select(([unit]) => Unit.speed(unit) as number)
     )
-    const speed = Signal.createSolid(
+    const speed = Signal.solid.create(
         unitChain,
         Signal.assert.not.isNothing(
             speedChain
@@ -178,7 +178,7 @@ function UnitComponent() {
         Signal.select(speed => speed?.toFixed(2) ?? '')
     )
 
-    const strength = Signal.createSolid(
+    const strength = Signal.solid.create(
         unitChain,
         Signal.assert.not.isNothing(
             Signal.combine(
@@ -193,17 +193,17 @@ function UnitComponent() {
         )
     )
 
-    const tile = Signal.createSolid(
+    const tile = Signal.solid.create(
         unitChain,
         Signal.maybe.listen.key('tile')
     )
 
-    const coords = Signal.createSolid(
+    const coords = Signal.solid.create(
         unitChain,
         Signal.maybe.listen.key('mapCoordinates')
     )
 
-    const supplyColony = Signal.createSolid(
+    const supplyColony = Signal.solid.create(
         unitChain,
         Signal.maybe.listen.key('mapCoordinates'),
         Signal.select(coords => coords && Tile.supportingColony(Tile.closest(coords)) as Maybe<ColonyEntity>)
@@ -212,7 +212,7 @@ function UnitComponent() {
 
     const treasure = () => unit()?.treasure
 
-    const screen = Signal.createSolid(Foreground.listen.screen)
+    const screen = Signal.solid.create(Foreground.listen.screen)
     const isVisible = () => !screen() && !!unit()
 
     const supplyFragment = () => supplyColony()

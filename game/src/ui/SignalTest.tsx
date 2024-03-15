@@ -20,7 +20,7 @@ function SignalTest() {
     }
 
 
-    const aSignal = Signal.createSolid(
+    const aSignal = Signal.solid.create(
         Signal.chain(
             Signal.emit(obj),
             // Signal.listen.key('a')
@@ -47,7 +47,7 @@ function SignalTest() {
         }
     }, 5000)
 
-    const multiplication = Signal.createSolid(
+    const multiplication = Signal.solid.create(
         Signal.combine(
             counter.listen,
             Signal.chain(
@@ -69,7 +69,7 @@ function SignalTest() {
         Signal.select(values => values.join(', '))
     )
 
-    const moreCounting = Signal.createSolid(
+    const moreCounting = Signal.solid.create(
         counter.listen,
         // Signal.log('Pushing to queue'),
         Signal.await.order(
@@ -78,13 +78,13 @@ function SignalTest() {
         Signal.assert.not.isError()
         // Signal.log('Promise resolved'),
     )
-    Signal.createSolid(
+    Signal.solid.create(
         counter.listen,
         // Signal.log('I am early'),
         Signal.select(value => - value),
         // Signal.log('neg'),
     )
-    // Signal.createSolid(
+    // Signal.solid.create(
     //     counter.listen,
     //     Signal.await(wait(500), 'queue'),
     //     Signal.collect(
@@ -94,7 +94,7 @@ function SignalTest() {
     //     Signal.effect(counter.update),
     // )
 
-    const anotherCounter = Signal.createSolid(
+    const anotherCounter = Signal.solid.create(
         counter.listen,
         Signal.select(value => value * 2),
         Signal.select(value => -value),
@@ -102,7 +102,7 @@ function SignalTest() {
         Signal.select(value => value),
     )
 
-    const signal = Signal.createSolid(
+    const signal = Signal.solid.create(
         counter.listen,
         Signal.select(value => Math.pow(value, 2)),
         Signal.select(value => -value)
@@ -114,8 +114,8 @@ function SignalTest() {
         setInput(target.value)
     }
 
-    const characters = Signal.createSolid(
-        Signal.fromSolid(input).listen,
+    const characters = Signal.solid.create(
+        Signal.solid.listen(input),
         Signal.select(value => value.split('')),
         Signal.each(
             Signal.select(value => value + ' '),

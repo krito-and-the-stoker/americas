@@ -20,14 +20,14 @@ type HoverData = {
 }
 
 function ColonyComponent() {
-	const colony = Signal.createSolid(
+	const colony = Signal.solid.create(
 		Foreground.listen.screen,
 		Signal.select((screen: any) => screen?.params?.colony as ColonyEntity | undefined),
 	)
 
 	const name = () => colony()?.name
 
-	const hover = Signal.createSolid<HoverData>(Hover.listen.data)
+	const hover = Signal.solid.create<HoverData>(Hover.listen.data)
 	const [isInside, setIsInside] = createSignal(false)
 
 	const reflow = (colony: ColonyEntity) => {

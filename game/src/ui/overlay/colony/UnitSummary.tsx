@@ -28,9 +28,9 @@ function UnitSummary() {
 		Signal.select((data: HoverData) => data?.unit)
 	)
 
-	const unit = Signal.createSolid(unitChain)
+	const unit = Signal.solid.create(unitChain)
 
-	const name = Signal.createSolid(
+	const name = Signal.solid.create(
 		unitChain,
 		Signal.assert.not.isNothing(
 			Signal.combine(
@@ -52,7 +52,7 @@ function UnitSummary() {
 	)
 	const sumAmounts = (obj: StorageEntity) => Util.sum(Object.entries(obj).map(([_, amount]) => amount))
 
-	const consumption = Signal.createSolid(
+	const consumption = Signal.solid.create(
 		unitChain,
 		Signal.assert.not.isNothing(
 			Signal.select(unit => unit.consumptionSummary),
@@ -71,8 +71,8 @@ function UnitSummary() {
 		),
 	)
 
-	const equipment = Signal.createSolid(equipmentChain)
-	const equipmentPercentage = Signal.createSolid(
+	const equipment = Signal.solid.create(equipmentChain)
+	const equipmentPercentage = Signal.solid.create(
 		Signal.combine(
 			Signal.chain(
 				equipmentChain,
@@ -113,8 +113,8 @@ function UnitSummary() {
 			Signal.select(filterPositive)
 		)
 	)
-	const cargo = Signal.createSolid(cargoChain)
-	const cargoPercentage = Signal.createSolid(
+	const cargo = Signal.solid.create(cargoChain)
+	const cargoPercentage = Signal.solid.create(
 		Signal.combine(
 			Signal.chain(
 				cargoChain,

@@ -7,7 +7,7 @@ import TimeView from 'util/timeView'
 import style from './Save.module.scss'
 
 function Save() {
-    const gameName = Signal.createSolid(SaveGame.derived.name.listen)
+    const gameName = Signal.solid.create(SaveGame.derived.name.listen)
 
     const [isSaving, setIsSaving] = createSignal(false)
     const saveGame = async (event: Event) => {
@@ -57,7 +57,7 @@ function Save() {
     }
 
     const nowTime = Signal.primitive.create(Date.now())
-    const lastSaveTime = Signal.createSolid(
+    const lastSaveTime = Signal.solid.create(
         Signal.combine(
             Signal.chain(
                 SaveGame.listen.lastSaveTime,
@@ -71,7 +71,7 @@ function Save() {
         )
     )
 
-    const saveOnExit = Signal.createSolid(SaveGame.listen.saveOnExit)
+    const saveOnExit = Signal.solid.create(SaveGame.listen.saveOnExit)
     const updateSaveOnExit = (event: Event) => {
         const target = event.target as HTMLInputElement
         if (target) {
