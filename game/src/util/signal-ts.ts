@@ -11,10 +11,10 @@ import { combine } from 'util/signal/combine'
 import { maybeKey, maybeSelect } from 'util/signal/maybe'
 import { connect, evaluate, firstValue } from 'util/signal/connect'
 import { listenToEvent } from 'util/signal/event'
+import { merge } from 'util/signal/merge'
 import { assert as createAssert,
   assertNot as createAssertNot,
   isNothing,
-  isNotNothing,
   isNumber,
   isArray,
   isBoolean,
@@ -22,6 +22,7 @@ import { assert as createAssert,
   isFunction,
   isObject,
   isError,
+  isNotNothing,
   isNotNumber,
   isNotArray,
   isNotBoolean,
@@ -65,7 +66,6 @@ const maybe = {
 const primitive = {
   create: createPrimitive,
   connect: connectPrimitive,
-  fromSolid
 }
 
 const awaitFns = {
@@ -79,12 +79,12 @@ const awaitFns = {
 const listen = {
   key,
   event: listenToEvent,
-  // solid: listenSolid,
 }
 
 const solid = {
   create: createSolid,
   listen: listenSolid,
+  primitive: fromSolid,
 }
 
 export default {
@@ -101,22 +101,35 @@ export default {
   evaluate,
   firstValue,
 
-  // parts
+  // essentials
   emit,
   select,
   effect,
   collect,
-  buffer,
-  window,
-  log,
   count,
   stop,
   stopIf,
   passIf,
-  chain,
-  sideChain,
-  each,
-  combine,
   catch: catchFn,
+  chain,
+  combine,
+  each,
+  merge,
+  // missing:
+  // if
+  // ifNot
+  // while
+  // cache
+
+  // candy
+  log,
+  buffer,
+  window,
+  sideChain,
+  // missing:
+  // debounce
+  // throttle
+  // interval
+  // passIfChanged
 }
 

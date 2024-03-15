@@ -21,7 +21,7 @@ function SignalTest() {
         setInputValue(target.value)
     }
 
-    const input = Signal.primitive.fromSolid(inputValue)
+    const input = Signal.solid.primitive(inputValue)
 
     Signal.solid.create(
         Signal.emit(Math.random() > 0.5 ? 1 : undefined),
@@ -181,6 +181,20 @@ function SignalTest() {
     //     chain,
     //     Signal.log('chain 2')
     // )
+    let emitter = Signal.primitive.create('Reset Word')
+    setInterval(() => emitter.update('Reset Word'), 1000)
+
+    Signal.connect(
+        Signal.merge(
+            Signal.chain(
+                Signal.listen.event('keypress'),
+                Signal.select(event => event.key),
+                Signal.collect((keys, key) => key === ' ' ? key : keys + key, ''),
+            ),
+            emitter.listen,
+        ),
+        Signal.log('word')
+    )
 
     // @ts-ignore
     window.disconnect = disconnect

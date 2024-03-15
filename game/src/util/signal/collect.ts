@@ -4,12 +4,12 @@ import type { Listen } from 'util/signal/types'
 import { createState } from 'util/signal/tools'
 
 
-export function collect<V>(keep: Function2<V, V[], V[]>): Listen<V[], V> {
-  const state = createState(() => ({ collection: [] as V[] }))
+export function collect<V1, V2>(keep: Function2<V2, V1, V2>, initial: V2): Listen<V2, V1> {
+  const state = createState(() => ({ collection: initial as V2 }))
 
   return (next, parameter) => {
     const privateState = state.read()
-    privateState.collection = keep(parameter, privateState.collection)
+    privateState.collection = keep(privateState.collection, parameter)
 
 
     return [
@@ -20,18 +20,18 @@ export function collect<V>(keep: Function2<V, V[], V[]>): Listen<V[], V> {
 }
 
 
-export const buffer = <V>(size: number) => collect<V>((value, collection) => {
+export const buffer = <V>(size: number) => collect<V, V[]>((collection, value) => {
   collection.push(value)
   if (collection.length > size) {
     return [value]
   }
   return collection
-})
+}, [])
 
-export const window = <V>(size: number) => collect<V>((value, collection) => {
+export const window = <V>(size: number) => collect<V, V[]>((collection, value) => {
   collection.push(value)
   if (collection.length > size) {
     collection = collection.slice(-size)
   }
   return collection
-})
+}, [])
