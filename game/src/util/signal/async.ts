@@ -15,12 +15,14 @@ interface AwaitCall {
   <V1, V2, V3, V4, V5, V6, V7, V8>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<Promise<V8>, V7>): Listen<V8 | Error, V1>
   <V1, V2, V3, V4, V5, V6, V7, V8, V9>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<Promise<V9>, V8>): Listen<V9 | Error, V1>
   <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<Promise<V10>, V9>): Listen<V10 | Error, V1>
+  <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<V10, V9>, listen10: Listen<Promise<V11>, V10>): Listen<V11 | Error, V1>
+    <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<V10, V9>, listen10: Listen<V11, V10>, listen11: Listen<Promise<V12>, V11>): Listen<V12 | Error, V1>
 
   (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown | Error, unknown>
 }
 
 
-export const awaitThrough: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown | Error, unknown> => {
+export const awaitParallel: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown | Error, unknown> => {
     const state = createState(() => ({ isActive: true, cleanupNext: null as CleanupExec }))
     const listen = chain(listen1, ...additionalListeners)
 
@@ -63,25 +65,25 @@ export const awaitLatest: AwaitCall = (listen1: Listen<unknown, unknown>, ...add
 
     return (next, parameter) => {
         let cleanupInner: CleanupExec
-        let cleanupResolve: CleanupExec
+        let cleanupNext: CleanupExec
         let isActive = true
 
         const cleanupFunction = (final: boolean = false) => {
             isActive = false
             Util.execute(cleanupInner, final)
-            Util.execute(cleanupResolve, final)
+            Util.execute(cleanupNext, final)
         }
 
         cleanupInner = listen(promise => {
             (promise as Promise<unknown>).then(value => {
                 if (isActive) {
-                    Util.execute(cleanupResolve)
-                    cleanupResolve = next(value)
+                    Util.execute(cleanupNext)
+                    cleanupNext = next(value)
                 }
             }).catch(error => {
                 if (isActive) {
-                    Util.execute(cleanupResolve)
-                    cleanupResolve = next(error)
+                    Util.execute(cleanupNext)
+                    cleanupNext = next(error)
                 }
             })
             }, parameter)
@@ -178,6 +180,54 @@ export const awaitQueue: AwaitCall = (listen1: Listen<unknown, unknown>, ...addi
         return [
             cleanupFunction,
             state.write(),
+        ]
+    }
+}
+
+export const awaitBlock: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown, unknown> => {
+    const listen = chain(listen1, ...additionalListeners) as Listen<Promise<unknown>, unknown>
+    const state = createState(() => ({ isBlocking: false, cleanupNext: null as CleanupExec }))
+
+    return (next, parameter) => {
+        const privateState = state.read()
+        if (privateState.isBlocking) {
+            return state.write()
+        }
+
+        let isActive = true
+        let cleanupInner: CleanupExec
+
+        const cleanupFunction = (final: boolean = false) => {
+            if (final) {
+                isActive = false
+                privateState.isBlocking = false
+                console.log('final cleanupNext', final)
+                Util.execute(privateState.cleanupNext, final)
+            }
+
+            Util.execute(cleanupInner, final)
+        }
+
+        cleanupInner = listen((promise: Promise<unknown>) => {
+            privateState.isBlocking = true
+            promise.then(value => {
+                if (isActive) {
+                    Util.execute(privateState.cleanupNext)
+                    privateState.cleanupNext = next(value)
+                }
+            }).catch(error => {
+                if (isActive) {
+                    Util.execute(privateState.cleanupNext)
+                    privateState.cleanupNext = next(error)
+                }
+            }).finally(() => {
+                privateState.isBlocking = false
+            })
+            }, parameter)
+
+        return [
+            state.write(),
+            cleanupFunction
         ]
     }
 }

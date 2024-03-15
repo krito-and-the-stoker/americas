@@ -1,11 +1,11 @@
 import { emit, select, stopIf, stop, passIf, count } from 'util/signal/tools'
-import { chain } from 'util/signal/chain'
+import { chain, sideChain } from 'util/signal/chain'
 import * as primitive from 'util/signal/primitive'
 import { key } from 'util/signal/object'
 import { log, effect } from 'util/signal/effect'
-import { awaitThrough, awaitLatest, awaitOrder, awaitQueue } from 'util/signal/async'
+import { awaitParallel, awaitLatest, awaitOrder, awaitQueue, awaitBlock } from 'util/signal/async'
 import { createSolid, fromSolid } from 'util/signal/solid'
-import { collect } from 'util/signal/collect'
+import { collect, buffer, window } from 'util/signal/collect'
 import { each } from 'util/signal/each'
 import { combine } from 'util/signal/combine'
 import { maybeKey, maybeSelect } from 'util/signal/maybe'
@@ -62,12 +62,12 @@ const maybe = {
   }
 }
 
-// rename: await
 const awaitFns = {
-  through: awaitThrough, // TODO: Find a better verb
+  parallel: awaitParallel,
   latest: awaitLatest,
   order: awaitOrder,
   queue: awaitQueue,
+  block: awaitBlock,
 }
 
 const listen = {
@@ -88,6 +88,8 @@ export default {
   select,
   effect,
   collect,
+  buffer,
+  window,
   log,
   count,
   stop,
@@ -95,6 +97,7 @@ export default {
   stopIf,
   passIf,
   chain,
+  sideChain,
   createSolid,
   fromSolid,
   each,

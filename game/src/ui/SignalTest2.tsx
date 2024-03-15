@@ -105,22 +105,33 @@ function SignalTest() {
         ),
     )
 
-    // const disconnect = Signal.connect(
-    //     Signal.listen.event('click'),
-    //     Signal.select(event => event.target),
-    //     Signal.assert.isNothing(
-    //         Signal.log('found nothing'),
-    //         Signal.stop()
-    //     ),
-    //     Signal.log('new target'),
-    //     Signal.listen.event('mousemove'),
-    //     // Signal.assert.isNothing(
-    //     //     Signal.log('we found nothing!'),
-    //     //     Signal.stop()
-    //     // ),
-    //     Signal.select(event => [event.clientX, event.clientY]),
-    //     Signal.log('move')
-    // )
+    function wait<T>(ms: number) {
+        return (value: T) => new Promise<T>(resolve => setTimeout(() => resolve(value), ms))
+    }
+
+    const disconnect = Signal.connect(
+        Signal.listen.event('click'),
+        Signal.select(event => event.target),
+        Signal.assert.isNothing(
+            Signal.log('found nothing'),
+            Signal.stop()
+        ),
+        // Signal.log('new target'),
+        Signal.listen.event('mousemove'),
+        Signal.await.block(
+            Signal.select(wait(200)),
+        ),
+        Signal.assert.not.isError(),
+        // Signal.assert.isNothing(
+        //     Signal.log('we found nothing!'),
+        //     Signal.stop()
+        // ),
+        Signal.select(event => [event.clientX, event.clientY]),
+        Signal.select(([x, y]) => `(${x}, ${y})`),
+        Signal.window(5),
+        Signal.select(x => [x[0], x[4]].join(' -> ')),
+        Signal.log('move'),
+    )
     let resolves: Function[] = []
     const resolveNext = () => {
         const resolve = Util.choose(resolves)
@@ -152,13 +163,18 @@ function SignalTest() {
         ),
         Signal.log('result')
     )
-    const disconnect = Signal.connect(
-        chain,
-        // Signal.fromSolid(inputValue).listen,
+    Signal.connect(
+        // chain,
+        Signal.fromSolid(inputValue).listen,
+        // Signal.buffer(10),
+        // Signal.passIf(x => x.length === 10),
+        Signal.sideChain(Signal.count()),
+        // Signal.passIf(([_, index]) => index % 2 === 0),
+        // Signal.select(([char]) => char),
         // Signal.await.through(
         //     Signal.select(resolveOnButton)
         // ),
-        Signal.count(),
+        // Signal.count(),
         Signal.log('chain 1')
     )
     // Signal.connect(

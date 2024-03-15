@@ -59,8 +59,12 @@ function SignalTest() {
         Signal.effect(([_, __, greeting]) => console.log('hi', greeting)),
         Signal.select(([a, b]) => a * b),
         Signal.collect(
-            Signal.passIf(values => values.length === 10)
+            (value, collection) => {
+                collection.push(value)
+                return collection
+            }
         ),
+        Signal.passIf(values => values.length === 10),
         Signal.log('collection'),
         Signal.select(values => values.join(', '))
     )

@@ -19,7 +19,7 @@ export const listenToEvent = <Target extends HasAddEventListener | void, EventNa
         return [
             // @ts-expect-error
             () => (target as HasAddEventListener ?? window).removeEventListener(event, listener),
-            () => Util.execute(cleanup)
+            (final: boolean) => Util.execute(cleanup, final)
         ]
     }
 }
