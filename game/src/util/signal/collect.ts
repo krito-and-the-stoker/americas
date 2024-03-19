@@ -1,10 +1,10 @@
 import type { Function2 } from 'util/types'
-import type { Listen } from 'util/signal/types'
+import type { Chain } from 'util/signal/types'
 
 import { createState } from 'util/signal/tools'
 
 
-export function collect<V1, V2>(keep: Function2<V2, V1, V2>, initial: V2): Listen<V2, V1> {
+export function collect<V1, V2>(keep: Function2<V2, V1, V2>, initial: V2): Chain<V1, V2> {
   const state = createState(() => ({ collection: initial as V2 }))
 
   return (next, parameter) => {

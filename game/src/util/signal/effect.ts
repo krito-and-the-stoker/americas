@@ -1,8 +1,8 @@
-import type { EffectFn, Listen } from 'util/signal/types'
+import type { NextFn, Chain } from 'util/signal/types'
 
 
-export function effect<V>(sideEffect: EffectFn<V>): Listen<V, V> {
-  return (resolve: EffectFn<V>, parameter: V) => {
+export function effect<V>(sideEffect: NextFn<V>): Chain<V> {
+  return (resolve: NextFn<V>, parameter: V) => {
     return [
       sideEffect(parameter),
       resolve(parameter),

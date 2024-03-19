@@ -1,15 +1,15 @@
-import type { EffectFn, Listen, BasicSignal } from 'util/signal/types'
+import type { NextFn, ConnectedChain, BasicSignal } from 'util/signal/types'
 import * as primitive from './primitive'
 import { observableArray } from './array'
 
-export function key<O extends Object, Key extends keyof O>(key: Key): Listen<O[Key], O> {
-    return (resolve: EffectFn<O[Key]>, obj: O) => {
-        return objectListener(obj, key)(resolve)
+export function key<O extends Object, Key extends keyof O>(key: Key): ConnectedChain<O, O[Key]> {
+    return (next: NextFn<O[Key]>, obj: O) => {
+        return objectListener(obj, key)(next)
     }
 }
 
 
-export function objectListener<O extends Object, Key extends keyof O>(obj: O, key: Key): Listen<O[Key]> {
+export function objectListener<O extends Object, Key extends keyof O>(obj: O, key: Key): ConnectedChain<void, O[Key]> {
     // Check if the signal storage exists; if not, create it
     if (!obj.hasOwnProperty('__signals__')) {
         Object.defineProperty(obj, '__signals__', {

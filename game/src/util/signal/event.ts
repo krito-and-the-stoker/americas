@@ -1,4 +1,4 @@
-import { CleanupExec, Listen } from './types'
+import { CleanupExec, Chain } from './types'
 import Util from 'util/util'
 
 interface HasAddEventListener {
@@ -6,7 +6,7 @@ interface HasAddEventListener {
 }
 
 
-export const listenToEvent = <Target extends HasAddEventListener | void, EventName extends EventList['name']>(event: EventName): Listen<InferEventType<EventName>, Target> => {
+export const listenToEvent = <Target extends HasAddEventListener | void, EventName extends EventList['name']>(event: EventName): Chain<Target, InferEventType<EventName>> => {
     return (resolve, target) => {
         let cleanup: CleanupExec
         const listener = (e: any) => {

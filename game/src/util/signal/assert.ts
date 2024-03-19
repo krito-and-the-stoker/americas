@@ -1,79 +1,79 @@
-import { Listen, EffectFn } from "./types"
+import { Chain, NextFn, Context } from "./types"
 import { chain } from 'util/signal/chain'
 
 interface AssertCall<Range, Condition extends Range> {
-    <V extends Range>(): Listen<Condition, V>
-    <V1 extends Range, InnerFrom extends Condition & V1, V2>(listen1: Listen<V2, InnerFrom>): Listen<V2 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Condition & V1, V2, V3>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>): Listen<V3 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Condition & V1, V2, V3, V4>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>): Listen<V4 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Condition & V1, V2, V3, V4, V5>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>): Listen<V5 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Condition & V1, V2, V3, V4, V5, V6>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>): Listen<V6 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Condition & V1, V2, V3, V4, V5, V6, V7>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>): Listen<V7 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Condition & V1, V2, V3, V4, V5, V6, V7, V8>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>): Listen<V8 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Condition & V1, V2, V3, V4, V5, V6, V7, V8, V9>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>): Listen<V9 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Condition & V1, V2, V3, V4, V5, V6, V7, V8, V9, V10>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<V10, V9>): Listen<V10 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Condition & V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<V10, V9>, listen10: Listen<V11, V10>): Listen<V11 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Condition & V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<V10, V9>, listen10: Listen<V11, V10>, listen11: Listen<V12, V11>): Listen<V12 | Exclude<V1, InnerFrom>, InnerFrom | V1>
+    <V extends Range>(): Chain<V, Condition>
+    <V1 extends Range, InnerFrom extends Condition & V1, V2>(element1: Chain<InnerFrom, V2>): Chain<V1 | InnerFrom, V2 | Exclude<V1, InnerFrom>>
+    <V1 extends Range, Innerfrom extends Condition & V1, V2, V3>(element1: Chain<Innerfrom, V2>, element2: Chain<V2, V3>): Chain<V1 | Innerfrom, V3 | Exclude<V1, Innerfrom>>
+    <V1 extends Range, Innerfrom extends Condition & V1, V2, V3, V4>(element1: Chain<Innerfrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>): Chain<V1 | Innerfrom, V4 | Exclude<V1, Innerfrom>>
+    <V1 extends Range, Innerfrom extends Condition & V1, V2, V3, V4, V5>(element1: Chain<Innerfrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>): Chain<V1 | Innerfrom, V5 | Exclude<V1, Innerfrom>>
+    <V1 extends Range, Innerfrom extends Condition & V1, V2, V3, V4, V5, V6>(element1: Chain<Innerfrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>, element5: Chain<V5, V6>): Chain<V1 | Innerfrom, V6 | Exclude<V1, Innerfrom>>
+    <V1 extends Range, Innerfrom extends Condition & V1, V2, V3, V4, V5, V6, V7>(element1: Chain<Innerfrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>, element5: Chain<V5, V6>, element6: Chain<V6, V7>): Chain<V1 | Innerfrom, V7 | Exclude<V1, Innerfrom>>
+    <V1 extends Range, Innerfrom extends Condition & V1, V2, V3, V4, V5, V6, V7, V8>(element1: Chain<Innerfrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>, element5: Chain<V5, V6>, element6: Chain<V6, V7>, element7: Chain<V7, V8>): Chain<V1 | Innerfrom, V8 | Exclude<V1, Innerfrom>>
+    <V1 extends Range, Innerfrom extends Condition & V1, V2, V3, V4, V5, V6, V7, V8, V9>(element1: Chain<Innerfrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>, element5: Chain<V5, V6>, element6: Chain<V6, V7>, element7: Chain<V7, V8>, element8: Chain<V8, V9>): Chain<V1 | Innerfrom, V9 | Exclude<V1, Innerfrom>>
+    <V1 extends Range, Innerfrom extends Condition & V1, V2, V3, V4, V5, V6, V7, V8, V9, V10>(element1: Chain<Innerfrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>, element5: Chain<V5, V6>, element6: Chain<V6, V7>, element7: Chain<V7, V8>, element8: Chain<V8, V9>, element9: Chain<V9, V10>): Chain<V1 | Innerfrom, V10 | Exclude<V1, Innerfrom>>
+    <V1 extends Range, Innerfrom extends Condition & V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11>(element1: Chain<Innerfrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>, element5: Chain<V5, V6>, element6: Chain<V6, V7>, element7: Chain<V7, V8>, element8: Chain<V8, V9>, element9: Chain<V9, V10>, element10: Chain<V10, V11>): Chain<V1 | Innerfrom, V11 | Exclude<V1, Innerfrom>>
+    <V1 extends Range, Innerfrom extends Condition & V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12>(element1: Chain<Innerfrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>, element5: Chain<V5, V6>, element6: Chain<V6, V7>, element7: Chain<V7, V8>, element8: Chain<V8, V9>, element9: Chain<V9, V10>, element10: Chain<V10, V11>, element11: Chain<V11, V12>): Chain<V1 | Innerfrom, V12 | Exclude<V1, Innerfrom>>
 
-    (listen1: Listen<unknown, Condition>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown | Exclude<Range, Condition>, unknown>
+    (first: Chain<unknown, Condition>, ...elements: Chain<unknown, unknown>[]): Chain<unknown, unknown | Exclude<Range, Condition>>
 }
 
 type ConditionFunction<Range, Condition extends Range> = (value: Range) => value is Condition
-export const assert = <Range, Condition extends Range>(condition: ConditionFunction<Range, Condition>, message?: string): AssertCall<Range, Condition> => (listen1?: Listen<any, Condition>, ...additionalListeners: Listen<any, any>[]): Listen<any | Exclude<Range, Condition>, any> => {
+export const assert = <Range, Condition extends Range>(condition: ConditionFunction<Range, Condition>, message?: string): AssertCall<Range, Condition> => (listen1?: Chain<Condition, any>, ...additionalListeners: Chain<any, any>[]): Chain<any, any | Exclude<Range, Condition>> => {
     if (!listen1) {
-        return (resolve, value) => {
-            if (!condition(value as any)) {
+        return (next, parameter) => {
+            if (!condition(parameter as any)) {
                 throw new Error(`Assertion failed: ${message}` ?? 'Assertion failed')
             }
 
-            return resolve(value)
+            return next(parameter)
         }
     }
     const listen = chain(listen1 as any, ...additionalListeners)
-    return (resolve, value) => {
-        if (condition(value as any)) {
-            return listen(resolve, value)
+    return (next, parameter, context) => {
+        if (condition(parameter as any)) {
+            return listen(next, parameter, context)
         }
 
-        return resolve(value as any)
+        return next(parameter as any)
     }
 }
 
 
 interface AssertNotCall<Range, Condition extends Range> {
-    <V extends Range>(): Listen<Exclude<V, Condition>, V>
-    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2>(listen1: Listen<V2, InnerFrom>): Listen<V2 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>): Listen<V3 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>): Listen<V4 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>): Listen<V5 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5, V6>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>): Listen<V6 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5, V6, V7>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>): Listen<V7 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5, V6, V7, V8>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>): Listen<V8 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5, V6, V7, V8, V9>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>): Listen<V9 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5, V6, V7, V8, V9, V10>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<V10, V9>): Listen<V10 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<V10, V9>, listen10: Listen<V11, V10>): Listen<V11 | Exclude<V1, InnerFrom>, InnerFrom | V1>
-    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12>(listen1: Listen<V2, InnerFrom>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<V10, V9>, listen10: Listen<V11, V10>, listen11: Listen<V12, V11>): Listen<V12 | Exclude<V1, InnerFrom>, InnerFrom | V1>
+    <V extends Range>(): Chain<V, Exclude<V, Condition>>
+    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2>(element1: Chain<InnerFrom, V2>): Chain<V1 | InnerFrom, V2 | Exclude<V1, InnerFrom>>
+    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3>(element1: Chain<InnerFrom, V2>, element2: Chain<V2, V3>): Chain<V1 | InnerFrom, V3 | Exclude<V1, InnerFrom>>
+    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4>(element1: Chain<InnerFrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>): Chain<V1 | InnerFrom, V4 | Exclude<V1, InnerFrom>>
+    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5>(element1: Chain<InnerFrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>): Chain<V1 | InnerFrom, V5 | Exclude<V1, InnerFrom>>
+    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5, V6>(element1: Chain<InnerFrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>, element5: Chain<V5, V6>): Chain<V1 | InnerFrom, V6 | Exclude<V1, InnerFrom>>
+    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5, V6, V7>(element1: Chain<InnerFrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>, element5: Chain<V5, V6>, element6: Chain<V6, V7>): Chain<V1 | InnerFrom, V7 | Exclude<V1, InnerFrom>>
+    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5, V6, V7, V8>(element1: Chain<InnerFrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>, element5: Chain<V5, V6>, element6: Chain<V6, V7>, element7: Chain<V7, V8>): Chain<V1 | InnerFrom, V8 | Exclude<V1, InnerFrom>>
+    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5, V6, V7, V8, V9>(element1: Chain<InnerFrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>, element5: Chain<V5, V6>, element6: Chain<V6, V7>, element7: Chain<V7, V8>, element8: Chain<V8, V9>): Chain<V1 | InnerFrom, V9 | Exclude<V1, InnerFrom>>
+    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5, V6, V7, V8, V9, V10>(element1: Chain<InnerFrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>, element5: Chain<V5, V6>, element6: Chain<V6, V7>, element7: Chain<V7, V8>, element8: Chain<V8, V9>, element9: Chain<V9, V10>): Chain<V1 | InnerFrom, V10 | Exclude<V1, InnerFrom>>
+    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11>(element1: Chain<InnerFrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>, element5: Chain<V5, V6>, element6: Chain<V6, V7>, element7: Chain<V7, V8>, element8: Chain<V8, V9>, element9: Chain<V9, V10>, element10: Chain<V10, V11>): Chain<V1 | InnerFrom, V11 | Exclude<V1, InnerFrom>>
+    <V1 extends Range, InnerFrom extends Exclude<V1, Condition>, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12>(element1: Chain<InnerFrom, V2>, element2: Chain<V2, V3>, element3: Chain<V3, V4>, element4: Chain<V4, V5>, element5: Chain<V5, V6>, element6: Chain<V6, V7>, element7: Chain<V7, V8>, element8: Chain<V8, V9>, element9: Chain<V9, V10>, element10: Chain<V10, V11>, element11: Chain<V11, V12>): Chain<V1 | InnerFrom, V12 | Exclude<V1, InnerFrom>>
 
-    (listen1: Listen<unknown, Condition>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown | Exclude<unknown, Condition>, unknown>
+    (first: Chain<Condition, unknown>, ...elements: Chain<unknown, unknown>[]): Chain<unknown, unknown | Exclude<Range, Condition>>
 }
 
-export const assertNot = <Range, Condition extends Range>(condition: ConditionFunction<Range, Condition>, message?: string): AssertNotCall<Range, Condition> => (listen1?: Listen<unknown, Condition>, ...additionalListeners: Listen<unknown, unknown>[]) => {
+export const assertNot = <Range, Condition extends Range>(condition: ConditionFunction<Range, Condition>, message?: string): AssertNotCall<Range, Condition> => (listen1?: Chain<Condition, unknown>, ...additionalListeners: Chain<unknown, unknown>[]) => {
     if (!listen1) {
-        return (resolve: EffectFn<unknown>, value: unknown) => {
-            if (condition(value as any)) {
+        return (next: NextFn<unknown>, parameter: unknown) => {
+            if (condition(parameter as any)) {
                 throw new Error(`Assertion failed: ${message}` ?? 'Assertion failed')
             }
 
-            return resolve(value)
+            return next(parameter)
         }
     }
     const listen = chain(listen1 as any, ...additionalListeners)
-    return (resolve: EffectFn<unknown>, value: unknown) => {
-        if (!condition(value as any)) {
-            return listen(resolve, value)
+    return (next: NextFn<unknown>, parameter: unknown, context: Context) => {
+        if (!condition(parameter as any)) {
+            return listen(next, parameter, context)
         }
 
-        return resolve(value as any)
+        return next(parameter as any)
     }
 }
 

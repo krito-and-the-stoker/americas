@@ -4,24 +4,31 @@ export type Executable<Func> = void | Falsy | Func | Executable<Func>[]
 
 
 export type CleanupExec = Executable<Function1<boolean, void>>
-export type EffectFn<V> = (value: V) => CleanupExec
-export type Listen<V, P = void> = (resolve: EffectFn<V>, parameter: P) => CleanupExec
 export type Update<V> = (value: V) => void
+
 export type ListenerDescription<V> = {
   cleanup: CleanupExec,
-  fn: EffectFn<V>
+  fn: NextFn<V>
 }
 
+
 export type BasicSignal<V> = {
-  listen: Listen<V>
+  listen: ConnectedChain<void, V>
   update: Update<V>
   value: V
   disconnect: FunctionVoid
 }
 
 export type BasicComputed<V> = {
-  listen: Listen<V>
+  listen: ConnectedChain<void, V>
   value: V
   disconnect: FunctionVoid
 }
 
+
+export type NextFn<V> = (value: V) => CleanupExec
+export type Context = {
+  [key: string]: any
+}
+export type Chain<From, To = From> = (next: NextFn<To>, parameter: From, context: Context) => CleanupExec
+export type ConnectedChain<From, To> = (next: NextFn<To>, parameter: From) => CleanupExec

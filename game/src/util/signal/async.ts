@@ -1,4 +1,4 @@
-import type { Listen, CleanupExec } from 'util/signal/types'
+import type { Chain, CleanupExec } from 'util/signal/types'
 import { chain } from 'util/signal/chain'
 import { createState } from 'util/signal/tools'
 
@@ -6,27 +6,36 @@ import Util from 'util/util'
 
 
 interface AwaitCall {
-  <V1, V2>(listen1: Listen<Promise<V2>, V1>): Listen<V2 | Error, V1>
-  <V1, V2, V3>(listen1: Listen<V2, V1>, listen2: Listen<Promise<V3>, V2>): Listen<V3 | Error, V1>
-  <V1, V2, V3, V4>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<Promise<V4>, V3>): Listen<V4 | Error, V1>
-  <V1, V2, V3, V4, V5>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<Promise<V5>, V4>): Listen<V5 | Error, V1>
-  <V1, V2, V3, V4, V5, V6>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<Promise<V6>, V5>): Listen<V6 | Error, V1>
-  <V1, V2, V3, V4, V5, V6, V7>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<Promise<V7>, V6>): Listen<V7 | Error, V1>
-  <V1, V2, V3, V4, V5, V6, V7, V8>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<Promise<V8>, V7>): Listen<V8 | Error, V1>
-  <V1, V2, V3, V4, V5, V6, V7, V8, V9>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<Promise<V9>, V8>): Listen<V9 | Error, V1>
-  <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<Promise<V10>, V9>): Listen<V10 | Error, V1>
-  <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<V10, V9>, listen10: Listen<Promise<V11>, V10>): Listen<V11 | Error, V1>
-    <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12>(listen1: Listen<V2, V1>, listen2: Listen<V3, V2>, listen3: Listen<V4, V3>, listen4: Listen<V5, V4>, listen5: Listen<V6, V5>, listen6: Listen<V7, V6>, listen7: Listen<V8, V7>, listen8: Listen<V9, V8>, listen9: Listen<V10, V9>, listen10: Listen<V11, V10>, listen11: Listen<Promise<V12>, V11>): Listen<V12 | Error, V1>
+    <V1, V2>(listen1: Chain<V1, Promise<V2>>): Chain<V1, V2 | Error>
+    <V1, V2, V3>(listen1: Chain<V1, V2>, listen2: Chain<V2, Promise<V3>>): Chain<V1, V3 | Error>
+    <V1, V2, V3, V4>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, Promise<V4>>): Chain<V1, V4 | Error>
+    <V1, V2, V3, V4, V5>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, Promise<V5>>): Chain<V1, V5 | Error>
+    <V1, V2, V3, V4, V5, V6>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, V5>, listen5: Chain<V5, Promise<V6>>): Chain<V1, V6 | Error>
+    <V1, V2, V3, V4, V5, V6, V7>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, V5>, listen5: Chain<V5, V6>, listen6: Chain<V6, Promise<V7>>): Chain<V1, V7 | Error>
+    <V1, V2, V3, V4, V5, V6, V7, V8>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, V5>, listen5: Chain<V5, V6>, listen6: Chain<V6, V7>, listen7: Chain<V7, Promise<V8>>): Chain<V1, V8 | Error>
+    <V1, V2, V3, V4, V5, V6, V7, V8, V9>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, V5>, listen5: Chain<V5, V6>, listen6: Chain<V6, V7>, listen7: Chain<V7, V8>, listen8: Chain<V8, Promise<V9>>): Chain<V1, V9 | Error>
+    <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, V5>, listen5: Chain<V5, V6>, listen6: Chain<V6, V7>, listen7: Chain<V7, V8>, listen8: Chain<V8, V9>, listen9: Chain<V9, Promise<V10>>): Chain<V1, V10 | Error>
+    <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, V5>, listen5: Chain<V5, V6>, listen6: Chain<V6, V7>, listen7: Chain<V7, V8>, listen8: Chain<V8, V9>, listen9: Chain<V9, V10>, listen10: Chain<V10, Promise<V11>>): Chain<V1, V11 | Error>
+    <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, V5>, listen5: Chain<V5, V6>, listen6: Chain<V6, V7>, listen7: Chain<V7, V8>, listen8: Chain<V8, V9>, listen9: Chain<V9, V10>, listen10: Chain<V10, V11>, listen11: Chain<V11, Promise<V12>>): Chain<V1, V12 | Error>
+    <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, V5>, listen5: Chain<V5, V6>, listen6: Chain<V6, V7>, listen7: Chain<V7, V8>, listen8: Chain<V8, V9>, listen9: Chain<V9, V10>, listen10: Chain<V10, V11>, listen11: Chain<V11, V12>, listen12: Chain<V12, Promise<V13>>): Chain<V1, V13 | Error>
+    <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, V5>, listen5: Chain<V5, V6>, listen6: Chain<V6, V7>, listen7: Chain<V7, V8>, listen8: Chain<V8, V9>, listen9: Chain<V9, V10>, listen10: Chain<V10, V11>, listen11: Chain<V11, V12>, listen12: Chain<V12, V13>, listen13: Chain<V13, Promise<V14>>): Chain<V1, V14 | Error>
+    <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, V5>, listen5: Chain<V5, V6>, listen6: Chain<V6, V7>, listen7: Chain<V7, V8>, listen8: Chain<V8, V9>, listen9: Chain<V9, V10>, listen10: Chain<V10, V11>, listen11: Chain<V11, V12>, listen12: Chain<V12, V13>, listen13: Chain<V13, V14>, listen14: Chain<V14, Promise<V15>>): Chain<V1, V15 | Error>
+    <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15, V16>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, V5>, listen5: Chain<V5, V6>, listen6: Chain<V6, V7>, listen7: Chain<V7, V8>, listen8: Chain<V8, V9>, listen9: Chain<V9, V10>, listen10: Chain<V10, V11>, listen11: Chain<V11, V12>, listen12: Chain<V12, V13>, listen13: Chain<V13, V14>, listen14: Chain<V14, V15>, listen15: Chain<V15, Promise<V16>>): Chain<V1, V16 | Error>
+    <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15, V16, V17>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, V5>, listen5: Chain<V5, V6>, listen6: Chain<V6, V7>, listen7: Chain<V7, V8>, listen8: Chain<V8, V9>, listen9: Chain<V9, V10>, listen10: Chain<V10, V11>, listen11: Chain<V11, V12>, listen12: Chain<V12, V13>, listen13: Chain<V13, V14>, listen14: Chain<V14, V15>, listen15: Chain<V15, V16>, listen16: Chain<V16, Promise<V17>>): Chain<V1, V17 | Error>
+    <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15, V16, V17, V18>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, V5>, listen5: Chain<V5, V6>, listen6: Chain<V6, V7>, listen7: Chain<V7, V8>, listen8: Chain<V8, V9>, listen9: Chain<V9, V10>, listen10: Chain<V10, V11>, listen11: Chain<V11, V12>, listen12: Chain<V12, V13>, listen13: Chain<V13, V14>, listen14: Chain<V14, V15>, listen15: Chain<V15, V16>, listen16: Chain<V16, V17>, listen17: Chain<V17, Promise<V18>>): Chain<V1, V18 | Error>
+    <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15, V16, V17, V18, V19>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, V5>, listen5: Chain<V5, V6>, listen6: Chain<V6, V7>, listen7: Chain<V7, V8>, listen8: Chain<V8, V9>, listen9: Chain<V9, V10>, listen10: Chain<V10, V11>, listen11: Chain<V11, V12>, listen12: Chain<V12, V13>, listen13: Chain<V13, V14>, listen14: Chain<V14, V15>, listen15: Chain<V15, V16>, listen16: Chain<V16, V17>, listen17: Chain<V17, V18>, listen18: Chain<V18, Promise<V19>>): Chain<V1, V19 | Error>
+    <V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15, V16, V17, V18, V19, V20>(listen1: Chain<V1, V2>, listen2: Chain<V2, V3>, listen3: Chain<V3, V4>, listen4: Chain<V4, V5>, listen5: Chain<V5, V6>, listen6: Chain<V6, V7>, listen7: Chain<V7, V8>, listen8: Chain<V8, V9>, listen9: Chain<V9, V10>, listen10: Chain<V10, V11>, listen11: Chain<V11, V12>, listen12: Chain<V12, V13>, listen13: Chain<V13, V14>, listen14: Chain<V14, V15>, listen15: Chain<V15, V16>, listen16: Chain<V16, V17>, listen17: Chain<V17, V18>, listen18: Chain<V18, V19>, listen19: Chain<V19, Promise<V20>>): Chain<V1, V20 | Error>
 
-  (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown | Error, unknown>
+
+    (first: Chain<unknown, unknown>, ...elements: Chain<unknown, unknown>[]): Chain<unknown | Error, unknown>
 }
 
 
-export const awaitParallel: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown | Error, unknown> => {
+export const awaitParallel: AwaitCall = (listen1: Chain<unknown, unknown>, ...additionalListeners: Chain<unknown, unknown>[]): Chain<unknown, unknown | Error> => {
     const state = createState(() => ({ isActive: true, cleanupNext: null as CleanupExec }))
     const listen = chain(listen1, ...additionalListeners)
 
-    return (next, value) => {
+    return (next, value, context) => {
         let cleanupInner: CleanupExec
 
         const privateState = state.read()
@@ -51,7 +60,7 @@ export const awaitParallel: AwaitCall = (listen1: Listen<unknown, unknown>, ...a
                     privateState.cleanupNext = next(error)
                 }
             })
-            }, value)
+            }, value, context)
 
         return [
             cleanupFunction,
@@ -60,10 +69,10 @@ export const awaitParallel: AwaitCall = (listen1: Listen<unknown, unknown>, ...a
     }
 }
 
-export const awaitLatest: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown, unknown> => {
+export const awaitLatest: AwaitCall = (listen1: Chain<unknown, unknown>, ...additionalListeners: Chain<unknown, unknown>[]): Chain<unknown, unknown> => {
     const listen = chain(listen1, ...additionalListeners)
 
-    return (next, parameter) => {
+    return (next, parameter, context) => {
         let cleanupInner: CleanupExec
         let cleanupNext: CleanupExec
         let isActive = true
@@ -86,17 +95,17 @@ export const awaitLatest: AwaitCall = (listen1: Listen<unknown, unknown>, ...add
                     cleanupNext = next(error)
                 }
             })
-            }, parameter)
+            }, parameter, context)
 
         return cleanupFunction
     }
 }
 
-export const awaitOrder: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown, unknown> => {
+export const awaitOrder: AwaitCall = (listen1: Chain<unknown, unknown>, ...additionalListeners: Chain<unknown, unknown>[]): Chain<unknown, unknown> => {
     const state = createState(() => ({ queue: [] as Promise<void>[], isActive: true, cleanupNext: null as CleanupExec }))
     const listen = chain(listen1, ...additionalListeners)
 
-    return (next, value) => {
+    return (next, value, context) => {
         let cleanupInner: CleanupExec
         const privateState = state.read()
 
@@ -129,7 +138,7 @@ export const awaitOrder: AwaitCall = (listen1: Listen<unknown, unknown>, ...addi
                     privateState.queue = privateState.queue.filter(p => p !== waitingPromise)
                 })
             privateState.queue.push(waitingPromise)
-            }, value)
+            }, value, context)
 
         return [
             cleanupFunction,
@@ -138,11 +147,11 @@ export const awaitOrder: AwaitCall = (listen1: Listen<unknown, unknown>, ...addi
     }
 }
 
-export const awaitQueue: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown, unknown> => {
+export const awaitQueue: AwaitCall = (listen1: Chain<unknown, unknown>, ...additionalListeners: Chain<unknown, unknown>[]): Chain<unknown, unknown> => {
     const state = createState(() => ({ queue: [] as Promise<void>[], isActive: true, cleanupNext: null as CleanupExec }))
     const listen = chain(listen1, ...additionalListeners)
 
-    return (next, parameter) => {
+    return (next, parameter, context) => {
         let cleanupInner: CleanupExec
         const privateState = state.read()
 
@@ -158,7 +167,7 @@ export const awaitQueue: AwaitCall = (listen1: Listen<unknown, unknown>, ...addi
         const waitingPromise = Promise.all(privateState.queue)
             .then(() => new Promise(resolve => {
                 Util.execute(cleanupInner, false)
-                cleanupInner = listen(promise => resolve(promise), parameter)
+                cleanupInner = listen(promise => resolve(promise), parameter, context)
             }))
             .then(promise => promise).then(value => {
                 if (privateState.isActive) {
@@ -184,11 +193,11 @@ export const awaitQueue: AwaitCall = (listen1: Listen<unknown, unknown>, ...addi
     }
 }
 
-export const awaitBlock: AwaitCall = (listen1: Listen<unknown, unknown>, ...additionalListeners: Listen<unknown, unknown>[]): Listen<unknown, unknown> => {
-    const listen = chain(listen1, ...additionalListeners) as Listen<Promise<unknown>, unknown>
+export const awaitBlock: AwaitCall = (listen1: Chain<unknown, unknown>, ...additionalListeners: Chain<unknown, unknown>[]): Chain<unknown, unknown> => {
+    const listen = chain(listen1, ...additionalListeners) as Chain<unknown, Promise<unknown>>
     const state = createState(() => ({ isBlocking: false, cleanupNext: null as CleanupExec }))
 
-    return (next, parameter) => {
+    return (next, parameter, context) => {
         const privateState = state.read()
         if (privateState.isBlocking) {
             return state.write()
@@ -223,7 +232,7 @@ export const awaitBlock: AwaitCall = (listen1: Listen<unknown, unknown>, ...addi
             }).finally(() => {
                 privateState.isBlocking = false
             })
-            }, parameter)
+            }, parameter, context)
 
         return [
             state.write(),

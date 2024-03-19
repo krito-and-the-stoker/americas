@@ -78,7 +78,7 @@ function SignalTest() {
     // @ts-expect-error
     window.data = data
 
-    Signal.connect(
+    Signal.chain(
         Signal.emit(data),
         Signal.combine(
             Signal.chain(
@@ -119,7 +119,7 @@ function SignalTest() {
         // Signal.log('new target'),
         Signal.listen.event('mousemove'),
         Signal.await.block(
-            Signal.select(wait(200)),
+            Signal.select(wait(20000)),
         ),
         Signal.assert.not.isError(),
         // Signal.assert.isNothing(
@@ -163,12 +163,12 @@ function SignalTest() {
         ),
         Signal.log('result')
     )
-    Signal.connect(
+    Signal.chain(
         // chain,
         Signal.solid.listen(inputValue),
         // Signal.buffer(10),
         // Signal.passIf(x => x.length === 10),
-        Signal.sideChain(Signal.count()),
+        // Signal.sidechain(Signal.count()),
         // Signal.passIf(([_, index]) => index % 2 === 0),
         // Signal.select(([char]) => char),
         // Signal.await.through(
@@ -177,23 +177,63 @@ function SignalTest() {
         // Signal.count(),
         Signal.log('chain 1')
     )
+
     // Signal.connect(
     //     chain,
     //     Signal.log('chain 2')
     // )
-    let emitter = Signal.primitive.create('Reset Word')
-    setInterval(() => emitter.update('Reset Word'), 1000)
+    let emitter = Signal.primitive.create(0)
+    setInterval(() => emitter.update(Math.random()), 1000)
 
     Signal.connect(
+        emitter.listen,
+        Signal.log('emitter'),
+        Signal.passIf(x => x > 0.5),
+        Signal.chain(
+            Signal.count(),
+            // Signal.select(x => -x),
+        ),
+        Signal.log('count'),
+    )
+
+    function passIfChanged<V>() {
+        return Signal.chain(
+            Signal.select<V>(),
+            Signal.sidechain(
+                Signal.collect((lastValue, value) => ([value, lastValue[0]]), [] as V[]),
+                Signal.log('last, current'),
+                Signal.passIf(([lastValue, value]) => lastValue !== value),
+            ),
+            Signal.select(([x]) => x)
+        )
+    }
+
+    Signal.chain(
         Signal.merge(
             Signal.chain(
                 Signal.listen.event('keypress'),
                 Signal.select(event => event.key),
                 Signal.collect((keys, key) => key === ' ' ? key : keys + key, ''),
             ),
-            emitter.listen,
+            // emitter.listen,
         ),
-        Signal.log('word')
+        Signal.select(word => `'${word}'`),
+        Signal.log('Duplicate Word'),
+        passIfChanged(),
+        Signal.log('Unique Word')
+    )
+
+    Signal.chain(
+        emitter.listen,
+        Signal.select(() => Math.random()),
+        Signal.passIf(x => x > 0.5),
+        Signal.select(x => x.toFixed(2)),
+        Signal.effect(x => {
+            console.log('do', x)
+            return () => {
+                console.log('undo', x)
+            }
+        })
     )
 
     // @ts-ignore

@@ -1,5 +1,5 @@
 import { emit, select, stopIf, stop, passIf, count } from 'util/signal/tools'
-import { chain, sideChain } from 'util/signal/chain'
+import { chain, sidechain } from 'util/signal/chain'
 import { connect as connectPrimitive, create as createPrimitive } from 'util/signal/primitive'
 import { key } from 'util/signal/object'
 import { log, effect } from 'util/signal/effect'
@@ -125,7 +125,7 @@ export default {
   log,
   buffer,
   window,
-  sideChain,
+  sidechain,
   // missing:
   // debounce
   // throttle
