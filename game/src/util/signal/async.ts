@@ -1,6 +1,5 @@
 import type { Chain, CleanupExec } from 'util/signal/types'
 import { chain } from 'util/signal/chain'
-import { createState } from 'util/signal/tools'
 
 import Util from 'util/util'
 
@@ -32,40 +31,41 @@ interface AwaitCall {
 
 
 export const awaitParallel: AwaitCall = (listen1: Chain<unknown, unknown>, ...additionalListeners: Chain<unknown, unknown>[]): Chain<unknown, unknown | Error> => {
-    const state = createState(() => ({ isActive: true, cleanupNext: null as CleanupExec }))
     const listen = chain(listen1, ...additionalListeners)
 
     return (next, value, context) => {
         let cleanupInner: CleanupExec
 
-        const privateState = state.read()
+        if (!context.isInitialized) {
+            context.isActive = true
+            context.cleanupNext = null
+            context.inner = {}
+            context.isInitialized = true
+        }
         const cleanupFunction = (final: boolean = false) => {
             if (final) {
-                privateState.isActive = false
+                context.isActive = false
             }
 
             Util.execute(cleanupInner, final)
-            Util.execute(privateState.cleanupNext, final)
+            Util.execute(context.cleanupNext, final)
         }
 
         cleanupInner = listen(promise => {
             (promise as Promise<unknown>).then(value => {
-                if (privateState.isActive) {
-                    Util.execute(privateState.cleanupNext)
-                    privateState.cleanupNext = next(value)
+                if (context.isActive) {
+                    Util.execute(context.cleanupNext)
+                    context.cleanupNext = next(value)
                 }
             }).catch(error => {
-                if (privateState.isActive) {
-                    Util.execute(privateState.cleanupNext)
-                    privateState.cleanupNext = next(error)
+                if (context.isActive) {
+                    Util.execute(context.cleanupNext)
+                    context.cleanupNext = next(error)
                 }
             })
-            }, value, context)
+            }, value, context.inner)
 
-        return [
-            cleanupFunction,
-            state.write()
-        ]
+        return cleanupFunction
     }
 }
 
@@ -102,105 +102,114 @@ export const awaitLatest: AwaitCall = (listen1: Chain<unknown, unknown>, ...addi
 }
 
 export const awaitOrder: AwaitCall = (listen1: Chain<unknown, unknown>, ...additionalListeners: Chain<unknown, unknown>[]): Chain<unknown, unknown> => {
-    const state = createState(() => ({ queue: [] as Promise<void>[], isActive: true, cleanupNext: null as CleanupExec }))
     const listen = chain(listen1, ...additionalListeners)
 
     return (next, value, context) => {
         let cleanupInner: CleanupExec
-        const privateState = state.read()
+        if (!context.isInitialized) {
+            context.queue = []
+            context.isActive = true
+            context.cleanupNext = null
+            context.inner = {}
+            context.isInitialized = true
+        }
 
         const cleanupFunction = (final: boolean = false) => {
             if (final) {
-                privateState.isActive = false
-                Util.execute(privateState.cleanupNext, final)
+                context.isActive = false
+                Util.execute(context.cleanupNext, final)
             }
 
             Util.execute(cleanupInner, final)
         }
 
         cleanupInner = listen(promise => {
-            const waitingPromise = Promise.all(privateState.queue)
+            const waitingPromise = Promise.all(context.queue)
                 .then(() => promise)
                 .then(result => {
-                    if (privateState.isActive) {
-                        Util.execute(privateState.cleanupNext)
-                        privateState.cleanupNext = next(result)
+                    if (context.isActive) {
+                        Util.execute(context.cleanupNext)
+                        context.cleanupNext = next(result)
                     }
                 })
                 .catch(error => {
-                    if (privateState.isActive) {
-                        Util.execute(privateState.cleanupNext)
-                        privateState.cleanupNext = next(error)
+                    if (context.isActive) {
+                        Util.execute(context.cleanupNext)
+                        context.cleanupNext = next(error)
                     }
                 })
                 // // .catch(resolveErrorToNextStage)
                 .finally(() => {
-                    privateState.queue = privateState.queue.filter(p => p !== waitingPromise)
+                    context.queue = context.queue.filter((p: Promise<unknown>) => p !== waitingPromise)
                 })
-            privateState.queue.push(waitingPromise)
-            }, value, context)
+            context.queue.push(waitingPromise)
+            }, value, context.inner)
 
-        return [
-            cleanupFunction,
-            state.write(),
-        ]
+        return cleanupFunction
     }
 }
 
 export const awaitQueue: AwaitCall = (listen1: Chain<unknown, unknown>, ...additionalListeners: Chain<unknown, unknown>[]): Chain<unknown, unknown> => {
-    const state = createState(() => ({ queue: [] as Promise<void>[], isActive: true, cleanupNext: null as CleanupExec }))
     const listen = chain(listen1, ...additionalListeners)
 
     return (next, parameter, context) => {
         let cleanupInner: CleanupExec
-        const privateState = state.read()
+        if (!context.isInitialized) {
+            context.queue = []
+            context.isActive = true
+            context.cleanupNext = null
+            context.inner = {}
+            context.isInitialized = true
+        }
 
         const cleanupFunction = (final: boolean = false) => {
             if (final) {
-                privateState.isActive = false
+                context.isActive = false
                 Util.execute(cleanupInner, final)
             }
 
-            Util.execute(privateState.cleanupNext, final)
+            Util.execute(context.cleanupNext, final)
         }
 
-        const waitingPromise = Promise.all(privateState.queue)
+        const waitingPromise = Promise.all(context.queue)
             .then(() => new Promise(resolve => {
                 Util.execute(cleanupInner, false)
-                cleanupInner = listen(promise => resolve(promise), parameter, context)
+                cleanupInner = listen(promise => resolve(promise), parameter, context.inner)
             }))
             .then(promise => promise).then(value => {
-                if (privateState.isActive) {
-                    Util.execute(privateState.cleanupNext, false)
-                    privateState.cleanupNext = next(value)
+                if (context.isActive) {
+                    Util.execute(context.cleanupNext, false)
+                    context.cleanupNext = next(value)
                 }
             })
             .catch(error => {
-                if (privateState.isActive) {
-                    Util.execute(privateState.cleanupNext, false)
-                    privateState.cleanupNext = next(error)
+                if (context.isActive) {
+                    Util.execute(context.cleanupNext, false)
+                    context.cleanupNext = next(error)
                 }
             })
             .finally(() => {
-                privateState.queue = privateState.queue.filter(p => p !== waitingPromise)
+                context.queue = context.queue.filter((p: Promise<unknown>) => p !== waitingPromise)
             })
-        privateState.queue.push(waitingPromise)
+        context.queue.push(waitingPromise)
 
-        return [
-            cleanupFunction,
-            state.write(),
-        ]
+        return cleanupFunction
     }
 }
 
 export const awaitBlock: AwaitCall = (listen1: Chain<unknown, unknown>, ...additionalListeners: Chain<unknown, unknown>[]): Chain<unknown, unknown> => {
     const listen = chain(listen1, ...additionalListeners) as Chain<unknown, Promise<unknown>>
-    const state = createState(() => ({ isBlocking: false, cleanupNext: null as CleanupExec }))
 
     return (next, parameter, context) => {
-        const privateState = state.read()
-        if (privateState.isBlocking) {
-            return state.write()
+        if (!context.isInitialized) {
+            context.isBlocking = false
+            context.cleanupNext = null
+            context.inner = {}
+            context.isInitialized = true
+        }
+
+        if (context.isBlocking) {
+            return
         }
 
         let isActive = true
@@ -209,35 +218,32 @@ export const awaitBlock: AwaitCall = (listen1: Chain<unknown, unknown>, ...addit
         const cleanupFunction = (final: boolean = false) => {
             if (final) {
                 isActive = false
-                privateState.isBlocking = false
+                context.isBlocking = false
                 console.log('final cleanupNext', final)
-                Util.execute(privateState.cleanupNext, final)
+                Util.execute(context.cleanupNext, final)
             }
 
             Util.execute(cleanupInner, final)
         }
 
         cleanupInner = listen((promise: Promise<unknown>) => {
-            privateState.isBlocking = true
+            context.isBlocking = true
             promise.then(value => {
                 if (isActive) {
-                    Util.execute(privateState.cleanupNext)
-                    privateState.cleanupNext = next(value)
+                    Util.execute(context.cleanupNext)
+                    context.cleanupNext = next(value)
                 }
             }).catch(error => {
                 if (isActive) {
-                    Util.execute(privateState.cleanupNext)
-                    privateState.cleanupNext = next(error)
+                    Util.execute(context.cleanupNext)
+                    context.cleanupNext = next(error)
                 }
             }).finally(() => {
-                privateState.isBlocking = false
+                context.isBlocking = false
             })
-            }, parameter, context)
+            }, parameter, context.inner)
 
-        return [
-            state.write(),
-            cleanupFunction
-        ]
+        return cleanupFunction
     }
 }
 

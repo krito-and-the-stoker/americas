@@ -1,4 +1,4 @@
-import type { Chain, NextFn } from 'util/signal/types'
+import type { Chain, ConnectedChain, NextFn } from 'util/signal/types'
 
 interface ChainCall {
   <V1, V2>(element1: Chain<V1, V2>): Chain<V1, V2>
@@ -24,12 +24,32 @@ interface ChainCall {
   (first: Chain<unknown, unknown>, ...elements: Chain<unknown, unknown>[]): Chain<unknown, unknown>
 }
 
-export const chain: ChainCall = (first: Chain<unknown, unknown>, ...elements: Chain<unknown, unknown>[]): Chain<unknown, unknown> => {
-  return elements.reduce(
-    (chained, element) => (next, param, context) => chained(intermediate => element(next, intermediate, context), param, context),
-    first
-  )
+export const chain: ChainCall = (
+  first: Chain<unknown, unknown>,
+  ...elements: Chain<unknown, unknown>[]
+): Chain<unknown, unknown> => {
+  return (next, param, context) => {
+    for(let i = 0; i < elements.length + 1; i++) {
+      if (!context[`${i}`]) {
+        context[`${i}`] = {}
+      }
+    }
+
+    const chainedFunction = elements.reduce(
+      (chained: ConnectedChain<unknown, unknown>, element: Chain<unknown, unknown>, index) => {
+      return (nextInner, paramInner) => {
+        return chained(
+          (intermediate) => element(nextInner, intermediate, context[`${index + 1}`]),
+          paramInner,
+        )
+      }
+    }, (nextInner, paramInner) => first(nextInner, paramInner, context[0]))
+
+    // Execute the chained function with the initial next, param, and context
+    return chainedFunction(next, param)
+  }
 }
+
 
 
 interface SideChainCall {

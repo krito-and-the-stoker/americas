@@ -132,6 +132,7 @@ function SignalTest() {
         Signal.select(x => [x[0], x[4]].join(' -> ')),
         Signal.log('move'),
     )
+
     let resolves: Function[] = []
     const resolveNext = () => {
         const resolve = Util.choose(resolves)
@@ -191,7 +192,10 @@ function SignalTest() {
         Signal.passIf(x => x > 0.5),
         Signal.chain(
             Signal.count(),
-            // Signal.select(x => -x),
+            Signal.select(x => -x),
+        ),
+        Signal.sidechain(
+            Signal.count(),
         ),
         Signal.log('count'),
     )

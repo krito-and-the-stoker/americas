@@ -1,35 +1,6 @@
 import type { NextFn, Chain } from 'util/signal/types'
-import type { Function0, Function1 } from 'util/types'
+import type { Function1 } from 'util/types'
 
-export const createState = <T>(maker: Function0<T>) => {
-    let sharedState: T | null = null
-
-    const read = (): T => {
-        if (!sharedState) {
-            sharedState = maker()
-        }
-        return sharedState
-    }
-
-    const write = (privateState?: T) => {
-        const boundState = privateState ?? read()
-        sharedState = null
-
-        // this is how the state preservation works:
-        // it will bound and then the destructor, which is invoked
-        // every time before the next run, will restore the state
-        return (final: boolean) => {
-            if (!final) {
-                sharedState = boundState
-            }
-        }
-    }
-
-    return {
-        read,
-        write
-    }
-}
 
 export function count<V>(): Chain<V, number> {
   return (next, _, context) => {
