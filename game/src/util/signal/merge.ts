@@ -25,6 +25,11 @@ export function merge<From, To1, To2, To3, To4, To5, To6, To7, To8, To9, To10, T
 
 export function merge <From, To>(...elements: Chain<unknown, any>[]): Chain<From, To> {
     return (next, parameter, context) => {
-        return elements.map(listen => listen(next, parameter, context))
+        for(let i = 0; i < elements.length; i++) {
+            if (!context[i]) {
+                context[i] = {}
+            }
+        }
+        return elements.map((listen, i) => listen(next, parameter, context[i]))
     }
 }

@@ -19,6 +19,12 @@ export function combine<From, To>(...listens: Chain<From, To>[]): Chain<From, To
     }
 
     return (resolve: NextFn<To[]>, parameter: From, context: any) => {
+        for(let i = 0; i < listens.length; i++) {
+            if (!context[i]) {
+                context[i] = {}
+            }
+        }
+
         const values: To[] = []
         let updateReady = false
         let pendingCleanup: CleanupExec = null
@@ -41,7 +47,7 @@ export function combine<From, To>(...listens: Chain<From, To>[]): Chain<From, To
             ]
         }
 
-        const unsubscribe = listens.map((listener, i) => listener(value => updateItem(value, i), parameter, context))
+        const unsubscribe = listens.map((listener, i) => listener(value => updateItem(value, i), parameter, context[i]))
         updateReady = true
         pendingCleanup = resolve(values)
 

@@ -119,7 +119,7 @@ function SignalTest() {
         // Signal.log('new target'),
         Signal.listen.event('mousemove'),
         Signal.await.block(
-            Signal.select(wait(20000)),
+            Signal.select(wait(200)),
         ),
         Signal.assert.not.isError(),
         // Signal.assert.isNothing(
@@ -164,18 +164,18 @@ function SignalTest() {
         ),
         Signal.log('result')
     )
-    Signal.chain(
+    Signal.connect(
         // chain,
         Signal.solid.listen(inputValue),
-        // Signal.buffer(10),
-        // Signal.passIf(x => x.length === 10),
-        // Signal.sidechain(Signal.count()),
-        // Signal.passIf(([_, index]) => index % 2 === 0),
-        // Signal.select(([char]) => char),
-        // Signal.await.through(
-        //     Signal.select(resolveOnButton)
-        // ),
-        // Signal.count(),
+        Signal.buffer(10),
+        Signal.passIf(x => x.length === 10),
+        Signal.sidechain(Signal.count()),
+        Signal.passIf(([_, index]) => index % 2 === 0),
+        Signal.select(([chars]) => chars.join('')),
+        Signal.await.parallel(
+            Signal.select(resolveOnButton)
+        ),
+        Signal.count(),
         Signal.log('chain 1')
     )
 
@@ -186,7 +186,7 @@ function SignalTest() {
     let emitter = Signal.primitive.create(0)
     setInterval(() => emitter.update(Math.random()), 1000)
 
-    Signal.connect(
+    Signal.chain(
         emitter.listen,
         Signal.log('emitter'),
         Signal.passIf(x => x > 0.5),

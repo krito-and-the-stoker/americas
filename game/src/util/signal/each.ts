@@ -36,6 +36,11 @@ export const each: EachCall = (listen1?: Chain<any, any>, ...additionalListeners
     if (!parameters) {
       return resolve(parameters)
     }
+    for(let i = 0; i < parameters.length; i++) {
+      if (!context[i]) {
+        context[i] = {}
+      }
+    }
 
     const values: any[] = []
     let updateReady = false
@@ -60,7 +65,7 @@ export const each: EachCall = (listen1?: Chain<any, any>, ...additionalListeners
       ]
     }
 
-    const unsubscribe = parameters.map((item: any, i: number) => listen((value: any) => updateItem(value, i), item, context))
+    const unsubscribe = parameters.map((item: any, i: number) => listen((value: any) => updateItem(value, i), item, context[i]))
     updateReady = true
     pendingCleanup = resolve(values)
 
