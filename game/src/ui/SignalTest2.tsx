@@ -110,6 +110,7 @@ function SignalTest() {
     }
 
     const disconnect = Signal.connect(
+        Signal.stop(),
         Signal.listen.event('click'),
         Signal.select(event => event.target),
         Signal.assert.isNothing(
@@ -143,7 +144,7 @@ function SignalTest() {
     }
     const resolveOnButton = (x: string) => new Promise<string>(resolve => { resolves.push(() => resolve(x)) })
     // const wait = (ms: number, value: string) => new Promise<string>(resolve => setTimeout(() => resolve(value), ms))
-    Signal.chain(
+    Signal.connect(
         Signal.solid.listen(inputValue),
         // Signal.emit('hi'),
         // Signal.log('url'),
@@ -152,7 +153,7 @@ function SignalTest() {
         Signal.log('before queue'),
         // Signal.count(),
        Signal.await.queue(
-            Signal.select(input => input && `Input: ${input}`),
+            // Signal.select(input => input && `Input: ${input}`),
             // Signal.select(x => `count: ${x}`),
             Signal.log('input'),
             Signal.assert.isNothing(
@@ -164,7 +165,7 @@ function SignalTest() {
         ),
         Signal.log('result')
     )
-    Signal.connect(
+    Signal.chain(
         // chain,
         Signal.solid.listen(inputValue),
         Signal.buffer(10),
