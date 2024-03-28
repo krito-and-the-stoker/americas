@@ -5,7 +5,7 @@ import type { BuildingEntity } from 'view/colony/buildings'
 
 import Util from 'util/util'
 import LA from 'util/la'
-import Signal from 'signal-chain'
+import $ from 'signal-chain'
 
 import Tile from 'entity/tile'
 import Colony from 'entity/colony'
@@ -197,7 +197,7 @@ const placeBuilding = (colony: ColonyEntity, building: BuildingEntity) => {
 
 
 const placeWater = (colony: ColonyEntity) => {
-	const center = Signal.evaluate.sync(Signal.emit(colony), Colony.chain.tile)
+	const center = $.evaluate.sync($.emit(colony), Colony.chain.tile)
 	const surrounding = Tile.diagonalNeighbors(center)
 		.filter(tile => tile.domain === 'sea')
 		.map(tile => LA.subtract(tile.mapCoordinates, colony.mapCoordinates))

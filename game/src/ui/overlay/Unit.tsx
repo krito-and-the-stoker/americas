@@ -3,7 +3,7 @@ import type { Coordinates } from 'util/la'
 import type { ColonyEntity } from 'entity/colony'
 import { Show, For } from 'solid-js'
 
-import Signal from 'signal-chain-solid'
+import $ from 'signal-chain-solid'
 import Record from 'util/record'
 
 import Storage from 'entity/storage'
@@ -119,100 +119,100 @@ type UnitView = {
 }
 
 function UnitComponent() {
-    const unitChain = Signal.chain(
+    const unitChain = $.chain(
         UnitMapView.listen.selectedView,
-        Signal.select((view: UnitView) => view?.unit)
+        $.select((view: UnitView) => view?.unit)
     )
-    const unit = Signal.solid.create(unitChain)
+    const unit = $.solid.create(unitChain)
     const name = () => unit() && Unit.name(unit())
 
-    const cargo = Signal.solid.create(
+    const cargo = $.solid.create(
         unitChain,
-        Signal.select(unit => unit?.storage),
+        $.select(unit => unit?.storage),
         Storage.signal
     )
-    const equipment = Signal.solid.create(
+    const equipment = $.solid.create(
         unitChain,
-        Signal.select(unit => unit?.equipment),
+        $.select(unit => unit?.equipment),
         Storage.signal
     )
 
-    const command = Signal.solid.create(
+    const command = $.solid.create(
         unitChain,
-        Signal.maybe.listen.key('command')
+        $.maybe.listen.key('command')
     )
 
-    const passengers = Signal.solid.create(
+    const passengers = $.solid.create(
         unitChain,
-        Signal.maybe.listen.key('passengers')
+        $.maybe.listen.key('passengers')
     )
 
-    const propertyChain = Signal.chain(
+    const propertyChain = $.chain(
         unitChain,
-        Signal.maybe.listen.key('properties'),
+        $.maybe.listen.key('properties'),
     )
-    const properties = Signal.solid.create(propertyChain)
-    const cost = Signal.solid.create(
+    const properties = $.solid.create(propertyChain)
+    const cost = $.solid.create(
         propertyChain,
-        Signal.maybe.listen.key('cost'),
-        Signal.select(cost => cost?.toFixed(0) ?? '')
+        $.maybe.listen.key('cost'),
+        $.select(cost => cost?.toFixed(0) ?? '')
     )
 
-    const speedChain = Signal.chain(
-        Signal.select<UnitEntity>(),
-        Signal.combine(
-            Signal.select(),
-            Signal.listen.key('properties'),
-            Signal.chain(
-                Signal.select(unit => unit.equipment),
+    const speedChain = $.chain(
+        $.select<UnitEntity>(),
+        $.combine(
+            $.select(),
+            $.listen.key('properties'),
+            $.chain(
+                $.select(unit => unit.equipment),
                 Storage.signal,
             )
         ),
-        Signal.select(([unit]) => Unit.speed(unit) as number)
+        $.select(([unit]) => Unit.speed(unit) as number)
     )
-    const speed = Signal.solid.create(
+    const speed = $.solid.create(
         unitChain,
-        Signal.assert.not.isNothing(
+        $.assert.not.isNothing(
             speedChain
         ),
-        Signal.select(speed => speed?.toFixed(2) ?? '')
+        $.select(speed => speed?.toFixed(2) ?? '')
     )
 
-    const strength = Signal.solid.create(
+    const strength = $.solid.create(
         unitChain,
-        Signal.assert.not.isNothing(
-            Signal.combine(
-                Signal.select(),
-                Signal.listen.key('mapCoordinates'),
-                Signal.chain(
-                    Signal.select(unit => unit?.equipment),
+        $.assert.not.isNothing(
+            $.combine(
+                $.select(),
+                $.listen.key('mapCoordinates'),
+                $.chain(
+                    $.select(unit => unit?.equipment),
                     Storage.signal
                 )
             ),
-            Signal.select(([unit]) => unit && Unit.strength(unit).toFixed(2) as string)
+            $.select(([unit]) => unit && Unit.strength(unit).toFixed(2) as string)
         )
     )
 
-    const tile = Signal.solid.create(
+    const tile = $.solid.create(
         unitChain,
-        Signal.maybe.listen.key('tile')
+        $.maybe.listen.key('tile')
     )
 
-    const coords = Signal.solid.create(
+    const coords = $.solid.create(
         unitChain,
-        Signal.maybe.listen.key('mapCoordinates')
+        $.maybe.listen.key('mapCoordinates')
     )
 
-    const supplyColony = Signal.solid.create(
+    const supplyColony = $.solid.create(
         unitChain,
-        Signal.maybe.listen.key('mapCoordinates'),
-        Signal.select(coords => coords && Tile.supportingColony(Tile.closest(coords)) as Maybe<ColonyEntity>)
+        $.maybe.listen.key('mapCoordinates'),
+        $.select(coords => coords && Tile.supportingColony(Tile.closest(coords)) as Maybe<ColonyEntity>)
     )
 
 
     const treasure = () => unit()?.treasure
 
-    const screen = Signal.solid.create(Foreground.listen.screen)
+    const screen = $.solid.create(Foreground.listen.screen)
     const isVisible = () => !screen() && !!unit()
 
     const supplyFragment = () => supplyColony()

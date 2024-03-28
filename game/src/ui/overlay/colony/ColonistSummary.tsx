@@ -5,7 +5,7 @@ import type { ColonyEntity } from 'entity/colony'
 
 import { Show } from 'solid-js'
 
-import Signal from 'signal-chain-solid'
+import $ from 'signal-chain-solid'
 
 import Storage from 'entity/storage'
 import Colonist from 'entity/colonist'
@@ -71,39 +71,39 @@ type HoverData = {
 }
 
 function ColonistSummary() {
-    const colonistChain = Signal.chain(
+    const colonistChain = $.chain(
         Hover.listen.data,
-        Signal.select((data: HoverData) => data?.colonist)
+        $.select((data: HoverData) => data?.colonist)
     )
-    const colonist = Signal.solid.create(colonistChain)
+    const colonist = $.solid.create(colonistChain)
 
-    const unitChain = Signal.chain(
+    const unitChain = $.chain(
         colonistChain,
-        Signal.maybe.listen.key('unit')
+        $.maybe.listen.key('unit')
     )
-    const unit = Signal.solid.create(unitChain)
+    const unit = $.solid.create(unitChain)
 
-    const propertyChain = Signal.chain(
+    const propertyChain = $.chain(
         colonistChain,
-        Signal.maybe.listen.key('unit'),
-        Signal.maybe.listen.key('properties')
+        $.maybe.listen.key('unit'),
+        $.maybe.listen.key('properties')
     )
 
-    const name = Signal.solid.create(
-        Signal.combine(
+    const name = $.solid.create(
+        $.combine(
             unitChain,
             propertyChain,
         ),
-        Signal.select(([unit]) => unit && Unit.name(unit) as string)
+        $.select(([unit]) => unit && Unit.name(unit) as string)
     )
 
-    const storageListener = (selectStorage: Function1<ColonistEntity, StorageEntity>) => Signal.chain(
+    const storageListener = (selectStorage: Function1<ColonistEntity, StorageEntity>) => $.chain(
         colonistChain,
-        Signal.assert.not.isNothing(
-            Signal.select(selectStorage),
+        $.assert.not.isNothing(
+            $.select(selectStorage),
             Storage.signal
         ),
-        Signal.select<unknown, StorageEntity>(x => (x as StorageEntity) ?? {})
+        $.select<unknown, StorageEntity>(x => (x as StorageEntity) ?? {})
     )
 
     const roundQuantities = (obj: StorageEntity) => Object.fromEntries(
@@ -125,65 +125,65 @@ function ColonistSummary() {
     )
 
 
-    const productionOutput = Signal.solid.create(
+    const productionOutput = $.solid.create(
         storageListener(colonist => colonist.productionSummary),
-        Signal.select(roundQuantities),
-        Signal.select(filterPositive),
+        $.select(roundQuantities),
+        $.select(filterPositive),
     )
 
-    const productionInput = Signal.solid.create(
+    const productionInput = $.solid.create(
         storageListener(colonist => colonist.productionSummary),
-        Signal.select(roundQuantities),
-        Signal.select(invertQuantities),
-        Signal.select(filterPositive)
+        $.select(roundQuantities),
+        $.select(invertQuantities),
+        $.select(filterPositive)
     )
 
-    const positiveConsumption = Signal.solid.create(
+    const positiveConsumption = $.solid.create(
         storageListener(colonist => colonist.consumptionSummary),
-        Signal.select(roundQuantities),
-        Signal.select(filterNotZero),
-        Signal.select(invertQuantities),
+        $.select(roundQuantities),
+        $.select(filterNotZero),
+        $.select(invertQuantities),
     )
 
-    const storage = Signal.solid.create(
+    const storage = $.solid.create(
         storageListener(colonist => colonist.storage)
     )
 
-    const stateChain = Signal.chain(
+    const stateChain = $.chain(
         colonistChain,
-        Signal.maybe.listen.key('state')
+        $.maybe.listen.key('state')
     )
 
     const state = {
-        noWood: Signal.solid.create(stateChain, Signal.select(state => state?.noWood)),
-        noFood: Signal.solid.create(stateChain, Signal.select(state => state?.noFood)),
-        noLuxury: Signal.solid.create(stateChain, Signal.select(state => state?.noLuxury)),
-        isPromoting: Signal.solid.create(stateChain, Signal.select(state => state?.isPromoting)),
-        hasBonus: Signal.solid.create(stateChain, Signal.select(state => state?.hasBonus)),
+        noWood: $.solid.create(stateChain, $.select(state => state?.noWood)),
+        noFood: $.solid.create(stateChain, $.select(state => state?.noFood)),
+        noLuxury: $.solid.create(stateChain, $.select(state => state?.noLuxury)),
+        isPromoting: $.solid.create(stateChain, $.select(state => state?.isPromoting)),
+        hasBonus: $.solid.create(stateChain, $.select(state => state?.hasBonus)),
     }
 
-    const breakdownChain = Signal.chain(
+    const breakdownChain = $.chain(
         colonistChain,
-        Signal.maybe.listen.key('consumptionBreakdown'),
-        Signal.maybe.listen.key('has')
+        $.maybe.listen.key('consumptionBreakdown'),
+        $.maybe.listen.key('has')
     )
 
     const breakdown = {
-        food: Signal.solid.create(breakdownChain, Signal.select(has => has?.food)),
-        wood: Signal.solid.create(breakdownChain, Signal.select(has => has?.wood)),
-        luxury: Signal.solid.create(breakdownChain, Signal.select(has => has?.luxury)),
-        bonus: Signal.solid.create(breakdownChain, Signal.select(has => has?.bonus)),
-        promotion: Signal.solid.create(breakdownChain, Signal.select(has => has?.promotion)),
+        food: $.solid.create(breakdownChain, $.select(has => has?.food)),
+        wood: $.solid.create(breakdownChain, $.select(has => has?.wood)),
+        luxury: $.solid.create(breakdownChain, $.select(has => has?.luxury)),
+        bonus: $.solid.create(breakdownChain, $.select(has => has?.bonus)),
+        promotion: $.solid.create(breakdownChain, $.select(has => has?.promotion)),
     }
 
-    const promotionProgress = Signal.solid.create(
+    const promotionProgress = $.solid.create(
         colonistChain,
-        Signal.maybe.listen.key('promotion'),
-        Signal.select(promotion =>
+        $.maybe.listen.key('promotion'),
+        $.select(promotion =>
             promotion?.target &&
             promotion?.progress &&
             promotion.progress[promotion.target]),
-        Signal.select(progress => progress ? Math.floor(100 * progress) : 0)
+        $.select(progress => progress ? Math.floor(100 * progress) : 0)
     )
 
 

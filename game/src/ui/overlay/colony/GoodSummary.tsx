@@ -5,7 +5,7 @@ import type { ColonistEntity } from 'ui/overlay/colony/ColonistSummary'
 
 import { For, Show } from 'solid-js'
 
-import Signal from 'signal-chain-solid'
+import $ from 'signal-chain-solid'
 import Util from 'util/util'
 
 import Hover from 'input/hover'
@@ -39,35 +39,35 @@ const displayName = (good: string) => {
 }
 
 function GoodSummary() {
-	const goodChain = Signal.chain(
+	const goodChain = $.chain(
 		Hover.listen.data,
-		Signal.select((data: HoverData) => data?.good)
+		$.select((data: HoverData) => data?.good)
 	)
-	const good = Signal.solid.create(
+	const good = $.solid.create(
 		goodChain,
-		Signal.select(x => x ?? '')
+		$.select(x => x ?? '')
 	)
 
-	const colonyChain = Signal.chain(
+	const colonyChain = $.chain(
 		Foreground.listen.screen,
-		Signal.select((screen: Screen) => screen?.params?.colony),
+		$.select((screen: Screen) => screen?.params?.colony),
 	)
 
-	const storageChain = (storageMapping: Function1<ColonistEntity, StorageEntity>) => Signal.chain(
+	const storageChain = (storageMapping: Function1<ColonistEntity, StorageEntity>) => $.chain(
 		colonyChain,
-		Signal.assert.not.isNothing(
-			Signal.listen.key('colonists'),
-			Signal.each(
-				Signal.combine(
-					Signal.select<ColonistEntity>(),
-					Signal.chain(
-						Signal.select(storageMapping),
+		$.assert.not.isNothing(
+			$.listen.key('colonists'),
+			$.each(
+				$.combine(
+					$.select<ColonistEntity>(),
+					$.chain(
+						$.select(storageMapping),
 						Storage.signal,
-						Signal.select<StorageEntity>()
+						$.select<StorageEntity>()
 					),
 					goodChain
 				),
-				Signal.select(([colonist, storage, good]) => ({
+				$.select(([colonist, storage, good]) => ({
 					colonist: colonist,
 					goods: good ? storage[good] : 0
 				}))
@@ -91,66 +91,66 @@ function GoodSummary() {
 		}))
 	}
 
-	const production = Signal.solid.create(
+	const production = $.solid.create(
 		storageChain(colonist => colonist.productionSummary),
-		Signal.maybe.select(filterPositiveGoods),
-		Signal.maybe.select(items => items.map(item => item.goods)),
-		Signal.maybe.select(Util.sum),
-		Signal.select(x => x ?? 0)
+		$.maybe.select(filterPositiveGoods),
+		$.maybe.select(items => items.map(item => item.goods)),
+		$.maybe.select(Util.sum),
+		$.select(x => x ?? 0)
 	)
 
-	const producers = Signal.solid.create(
+	const producers = $.solid.create(
 		storageChain(colonist => colonist.productionSummary),
-		Signal.maybe.select(filterPositiveGoods),
-		Signal.maybe.select(selectUnits),
-		Signal.select(units => units ?? [])
+		$.maybe.select(filterPositiveGoods),
+		$.maybe.select(selectUnits),
+		$.select(units => units ?? [])
 	)
 
-	const manufacturing = Signal.solid.create(
+	const manufacturing = $.solid.create(
 		storageChain(colonist => colonist.productionSummary),
-		Signal.maybe.select(invertGoods),
-		Signal.maybe.select(filterPositiveGoods),
-		Signal.maybe.select(items => items.map(item => item.goods)),
-		Signal.maybe.select(Util.sum),
-		Signal.select(x => x ?? 0)
+		$.maybe.select(invertGoods),
+		$.maybe.select(filterPositiveGoods),
+		$.maybe.select(items => items.map(item => item.goods)),
+		$.maybe.select(Util.sum),
+		$.select(x => x ?? 0)
 	)
 
-	const manufacturers = Signal.solid.create(
+	const manufacturers = $.solid.create(
 		storageChain(colonist => colonist.productionSummary),
-		Signal.maybe.select(filterNegativeGoods),
-		Signal.maybe.select(selectUnits),
-		Signal.select(units => units ?? [])
+		$.maybe.select(filterNegativeGoods),
+		$.maybe.select(selectUnits),
+		$.select(units => units ?? [])
 	)
 
-	const consumption = Signal.solid.create(
+	const consumption = $.solid.create(
 		storageChain(colonist => colonist.consumptionSummary),
-		Signal.maybe.select(invertGoods),
-		Signal.maybe.select(items => items.map(item => item.goods)),
-		Signal.maybe.select(Util.sum),
-		Signal.select(x => x ?? 0)
+		$.maybe.select(invertGoods),
+		$.maybe.select(items => items.map(item => item.goods)),
+		$.maybe.select(Util.sum),
+		$.select(x => x ?? 0)
 	)
 
-	const consumers = Signal.solid.create(
+	const consumers = $.solid.create(
 		storageChain(colonist => colonist.consumptionSummary),
-		Signal.maybe.select(filterNegativeGoods),
-		Signal.maybe.select(selectUnits),
-		Signal.select(units => units ?? [])
+		$.maybe.select(filterNegativeGoods),
+		$.maybe.select(selectUnits),
+		$.select(units => units ?? [])
 	)
 
-	const supportChain = Signal.chain(
+	const supportChain = $.chain(
 		colonyChain,
-		Signal.assert.not.isNothing(
-			Signal.listen.key('supportedUnits'),
-			Signal.each(
-				Signal.combine(
-					Signal.select(),
-					Signal.chain(
-						Signal.select((unit: UnitEntity) => unit.consumptionSummary),
+		$.assert.not.isNothing(
+			$.listen.key('supportedUnits'),
+			$.each(
+				$.combine(
+					$.select(),
+					$.chain(
+						$.select((unit: UnitEntity) => unit.consumptionSummary),
 						Storage.signal,
 					),
 					goodChain,
 				),
-				Signal.select(([unit, storage, good]) => ({
+				$.select(([unit, storage, good]) => ({
 					unit: unit as UnitEntity,
 					goods: good ? (storage as StorageEntity)[good] : 0
 				}))
@@ -158,44 +158,44 @@ function GoodSummary() {
 		)
 	)
 
-	const support = Signal.solid.create(
+	const support = $.solid.create(
 		supportChain,
-		Signal.select(items => items ? Util.sum(items.map(item => -item.goods)) : 0)
+		$.select(items => items ? Util.sum(items.map(item => -item.goods)) : 0)
 	)
 
-	const supported = Signal.solid.create(
+	const supported = $.solid.create(
 		supportChain,
-		Signal.select(items => items?.filter(item => item.goods < 0).map(item => item.unit) ?? [])
+		$.select(items => items?.filter(item => item.goods < 0).map(item => item.unit) ?? [])
 	)
 
-	const amount = Signal.solid.create(
+	const amount = $.solid.create(
 		colonyChain,
-		Signal.assert.not.isNothing(
-			Signal.select(colony => colony.storage),
-			Signal.combine(
+		$.assert.not.isNothing(
+			$.select(colony => colony.storage),
+			$.combine(
 				Storage.signal,
 				goodChain
 			),
-			Signal.select(([storage, good]) => good ? Math.round((storage as StorageEntity)[good]) : undefined)
+			$.select(([storage, good]) => good ? Math.round((storage as StorageEntity)[good]) : undefined)
 		)
 	)
 
-	const reserve = Signal.solid.create(
+	const reserve = $.solid.create(
 		colonyChain,
-		Signal.assert.not.isNothing(
-			Signal.listen.key('colonists'),
-			Signal.each(
-				Signal.select((colonist: ColonistEntity) => colonist.storage),
-				Signal.combine(
+		$.assert.not.isNothing(
+			$.listen.key('colonists'),
+			$.each(
+				$.select((colonist: ColonistEntity) => colonist.storage),
+				$.combine(
 					Storage.signal,
 					goodChain
 				),
-				Signal.select(([storage, good]) => good ? (storage as StorageEntity)[good] : 0)
+				$.select(([storage, good]) => good ? (storage as StorageEntity)[good] : 0)
 			),
-			Signal.select(Util.sum),
-			Signal.select(Math.round)
+			$.select(Util.sum),
+			$.select(Math.round)
 		),
-		Signal.select(x => x ?? 0)
+		$.select(x => x ?? 0)
 	)
 
 

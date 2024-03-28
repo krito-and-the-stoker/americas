@@ -1,5 +1,5 @@
 import Util from 'util/util'
-import Signal from 'signal-chain'
+import $ from 'signal-chain'
 
 import Time from 'timeline/time'
 
@@ -66,8 +66,8 @@ const create = (colony, building, colonist) => {
 
     // construction only
     if (production.type === 'construction') {
-      const construction = Signal.evaluate.sync(
-        Signal.emit(colony),
+      const construction = $.evaluate.sync(
+        $.emit(colony),
         Colony.chain.currentConstruction
       )
       const totalCost = Util.sum(Object.values(construction.cost))

@@ -3,7 +3,7 @@ import { createSignal, Show, Switch, Match } from 'solid-js'
 import Layout from 'entity/layout'
 import Colony, { ColonyEntity } from 'entity/colony'
 
-import Signal from 'signal-chain-solid'
+import $ from 'signal-chain-solid'
 import Hover from 'input/hover'
 import Foreground from 'render/foreground'
 
@@ -20,14 +20,14 @@ type HoverData = {
 }
 
 function ColonyComponent() {
-	const colony = Signal.solid.create(
+	const colony = $.solid.create(
 		Foreground.listen.screen,
-		Signal.select((screen: any) => screen?.params?.colony as ColonyEntity | undefined),
+		$.select((screen: any) => screen?.params?.colony as ColonyEntity | undefined),
 	)
 
 	const name = () => colony()?.name
 
-	const hover = Signal.solid.create<HoverData>(Hover.listen.data)
+	const hover = $.solid.create<HoverData>(Hover.listen.data)
 	const [isInside, setIsInside] = createSignal(false)
 
 	const reflow = (colony: ColonyEntity) => {

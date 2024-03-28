@@ -2,7 +2,7 @@ import Record from 'util/record'
 import Tracking from 'util/tracking'
 import Message from 'util/message'
 import Events from 'util/events'
-import Signal from 'signal-chain'
+import $ from 'signal-chain'
 
 import Time from 'timeline/time'
 
@@ -13,14 +13,14 @@ const SAVE_TO_REMOTE = true
 const AUTOSAVE_INTERVAL = 5 * 60 * 1000 // autosave every 5 minutes
 
 
-const gameId = Signal.primitive.create<string | null>(null)
-const gamesToSync = Signal.primitive.create<string[]>(JSON.parse(window.localStorage.getItem('needsSync') || '[]'))
-const lastSaveId = Signal.primitive.create(window.localStorage.getItem('lastSaveId'))
-const isRunning = Signal.primitive.create(false)
-const gamesInStorage = Signal.primitive.create(Object.keys(window.localStorage).filter(key => key.startsWith('game-')))
-const autosaveInterval = Signal.primitive.create(parseInt(window.localStorage.getItem('autosaveInterval') ?? `${AUTOSAVE_INTERVAL}`) ?? AUTOSAVE_INTERVAL)
-const lastSaveTime = Signal.primitive.create<number | null>(null)
-const saveOnExit = Signal.primitive.create<boolean>(JSON.parse(window.localStorage.getItem('saveOnExit') ?? 'true'))
+const gameId = $.primitive.create<string | null>(null)
+const gamesToSync = $.primitive.create<string[]>(JSON.parse(window.localStorage.getItem('needsSync') || '[]'))
+const lastSaveId = $.primitive.create(window.localStorage.getItem('lastSaveId'))
+const isRunning = $.primitive.create(false)
+const gamesInStorage = $.primitive.create(Object.keys(window.localStorage).filter(key => key.startsWith('game-')))
+const autosaveInterval = $.primitive.create(parseInt(window.localStorage.getItem('autosaveInterval') ?? `${AUTOSAVE_INTERVAL}`) ?? AUTOSAVE_INTERVAL)
+const lastSaveTime = $.primitive.create<number | null>(null)
+const saveOnExit = $.primitive.create<boolean>(JSON.parse(window.localStorage.getItem('saveOnExit') ?? 'true'))
 
 const update = {
     isRunning: isRunning.update,
@@ -295,23 +295,23 @@ const load = async (gameId: Maybe<string>): Promise<Maybe<string>> => {
 }
 
 const derived = {
-    gameData: Signal.primitive.connect(
-        Signal.combine(
+    gameData: $.primitive.connect(
+        $.combine(
             gameId.listen,
             isRunning.listen
         ),
-        Signal.passIf(([_, isRunning]) => !isRunning),
-        Signal.select(([id]) => id),
-        Signal.await.latest(Signal.select(load)),
-        Signal.assert.isError(
-            Signal.effect(error => Message.savegame.error('Failed to load game data:', error)),
-            Signal.select(() => null)
+        $.passIf(([_, isRunning]) => !isRunning),
+        $.select(([id]) => id),
+        $.await.latest($.select(load)),
+        $.assert.isError(
+            $.effect(error => Message.savegame.error('Failed to load game data:', error)),
+            $.select(() => null)
         )
     ),
-    name: Signal.primitive.connect(
+    name: $.primitive.connect(
         gameId.listen,
-        Signal.select(id => id?.split('--')[1]),
-        Signal.select(name => name && name[0].toUpperCase() + name.slice(1)),
+        $.select(id => id?.split('--')[1]),
+        $.select(name => name && name[0].toUpperCase() + name.slice(1)),
     )
 }
 

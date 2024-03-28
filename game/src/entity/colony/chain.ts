@@ -1,4 +1,4 @@
-import Signal from 'signal-chain'
+import $ from 'signal-chain'
 
 import type { ColonyEntity } from '.'
 
@@ -11,48 +11,48 @@ import Tile from 'entity/tile'
 type TileEntity = {}
 
 
-const tile = Signal.chain(
-  Signal.select<ColonyEntity>(),
-  Signal.select(colony => MapEntity.tile(colony.mapCoordinates) as TileEntity)
+const tile = $.chain(
+  $.select<ColonyEntity>(),
+  $.select(colony => MapEntity.tile(colony.mapCoordinates) as TileEntity)
 )
 
-const isCoastal = Signal.chain(
+const isCoastal = $.chain(
   tile,
-  Signal.select(center => Tile.radius(center).some(tile => tile.domain === 'sea'))
+  $.select(center => Tile.radius(center).some(tile => tile.domain === 'sea'))
 )
 
-const defender = Signal.chain(
-  Signal.select<ColonyEntity>(),
-  Signal.listen.key('colonists'),
-  Signal.select(colonists => colonists[colonists.length - 1].unit)
+const defender = $.chain(
+  $.select<ColonyEntity>(),
+  $.listen.key('colonists'),
+  $.select(colonists => colonists[colonists.length - 1].unit)
 )
 
-const currentConstruction = Signal.chain(
-  Signal.select<ColonyEntity>(),
-  Signal.combine(
-    Signal.listen.key('constructionTarget'),
-    Signal.listen.key('construction')
+const currentConstruction = $.chain(
+  $.select<ColonyEntity>(),
+  $.combine(
+    $.listen.key('constructionTarget'),
+    $.listen.key('construction')
   ),
-  Signal.select(([target, construction]) => target ? construction[target] ?? construction.none : construction.none),
+  $.select(([target, construction]) => target ? construction[target] ?? construction.none : construction.none),
 )
 
-const toryPercentage = Signal.chain(
-  Signal.select<ColonyEntity>(),
-  Signal.combine(
-    Signal.chain(
-      Signal.listen.key('colonists'),
-      Signal.select(colonists => colonists.filter(
+const toryPercentage = $.chain(
+  $.select<ColonyEntity>(),
+  $.combine(
+    $.chain(
+      $.listen.key('colonists'),
+      $.select(colonists => colonists.filter(
         colonist => colonist.work?.type === 'Building' && colonist.work.building?.name === 'townhall'
       )),
-      Signal.select(administrators => administrators.length)
+      $.select(administrators => administrators.length)
     ),
-    Signal.chain(
-      Signal.listen.key('colonists'),
-      Signal.select(colonists => colonists.length)
+    $.chain(
+      $.listen.key('colonists'),
+      $.select(colonists => colonists.length)
     ),
-    Signal.listen.key('bells')
+    $.listen.key('bells')
   ),
-  Signal.select(([administrators, colonists, bells]) => Math.max(
+  $.select(([administrators, colonists, bells]) => Math.max(
     0,
     Math.round(
       100 -
@@ -62,68 +62,68 @@ const toryPercentage = Signal.chain(
   ))
 )
 
-const tories = Signal.chain(
-  Signal.combine(
+const tories = $.chain(
+  $.combine(
     toryPercentage,
-    Signal.listen.key('colonists')
+    $.listen.key('colonists')
   ),
-  Signal.select(([percentage, colonists]) => Math.max(0, Math.round((colonists.length * percentage) / 100)))
+  $.select(([percentage, colonists]) => Math.max(0, Math.round((colonists.length * percentage) / 100)))
 )
 
-const rebelPercentage = Signal.chain(
+const rebelPercentage = $.chain(
   toryPercentage,
-  Signal.select(percentage => 100 - percentage)
+  $.select(percentage => 100 - percentage)
 )
 
-const rebels = Signal.chain(
-  Signal.combine(
+const rebels = $.chain(
+  $.combine(
     rebelPercentage,
-    Signal.listen.key('colonists')
+    $.listen.key('colonists')
   ),
-  Signal.select(([percentage, colonists]) => Math.max(0, Math.round((colonists.length * percentage) / 100)))
+  $.select(([percentage, colonists]) => Math.max(0, Math.round((colonists.length * percentage) / 100)))
 )
 
-const protection = Signal.chain(
-  Signal.select<ColonyEntity>(),
-  Signal.combine(
-    Signal.chain(
-      Signal.listen.key('newBuildings'),
-      Signal.select(buildings => buildings.find(b => b.name === 'fortifications')),
-      Signal.select(building => building?.level ?? 0),
-      Signal.select(level => level + 1)
+const protection = $.chain(
+  $.select<ColonyEntity>(),
+  $.combine(
+    $.chain(
+      $.listen.key('newBuildings'),
+      $.select(buildings => buildings.find(b => b.name === 'fortifications')),
+      $.select(building => building?.level ?? 0),
+      $.select(level => level + 1)
     ),
-    Signal.chain(
-      Signal.listen.key('units'),
-      Signal.select(units => units
+    $.chain(
+      $.listen.key('units'),
+      $.select(units => units
         .filter(unit => unit.domain === 'land')
       ),
-      Signal.each(
-        Signal.combine(
-          Signal.select(),
-          Signal.chain(
-            Signal.listen.key('colonist'),
-            Signal.maybe.listen.key('colony'),
-            Signal.select(colony => !colony)
+      $.each(
+        $.combine(
+          $.select(),
+          $.chain(
+            $.listen.key('colonist'),
+            $.maybe.listen.key('colony'),
+            $.select(colony => !colony)
           )
         )
       ),
-      Signal.select(units => units.filter(([_, isNotInColony]) => isNotInColony)),
-      Signal.select(units => units.map(([unit]) => Unit.strength(unit) as number - 1)),
-      Signal.select(strengths => Util.max(strengths)),
-      Signal.select(maxStrength => (maxStrength ?? 0) + 1)
+      $.select(units => units.filter(([_, isNotInColony]) => isNotInColony)),
+      $.select(units => units.map(([unit]) => Unit.strength(unit) as number - 1)),
+      $.select(strengths => Util.max(strengths)),
+      $.select(maxStrength => (maxStrength ?? 0) + 1)
     )
   ),
-  Signal.select(([fortifications, maxStrength]) => fortifications * maxStrength)
+  $.select(([fortifications, maxStrength]) => fortifications * maxStrength)
 )
 
 
-const coastalDirection = Signal.chain(
+const coastalDirection = $.chain(
   tile,
-  Signal.combine(
-    Signal.select(),
-    Signal.chain(
-      Signal.select(center => Tile.diagonalNeighbors(center)),
-      Signal.select(neighbors => neighbors
+  $.combine(
+    $.select(),
+    $.chain(
+      $.select(center => Tile.diagonalNeighbors(center)),
+      $.select(neighbors => neighbors
         .filter(neighbor => neighbor.coast)
         .map(neighbor => ({
           score: Tile.diagonalNeighbors(neighbor).filter(
@@ -135,7 +135,7 @@ const coastalDirection = Signal.chain(
       ),
     )
   ),
-  Signal.select(([center, winner]) => winner.score > 0 ? Tile.neighborString(center, winner.tile) : null)
+  $.select(([center, winner]) => winner.score > 0 ? Tile.neighborString(center, winner.tile) : null)
 )
 
 export default {

@@ -1,6 +1,6 @@
 import { Show } from 'solid-js'
 import Util from 'util/util'
-import Signal from 'signal-chain-solid'
+import $ from 'signal-chain-solid'
 
 import Storage from 'entity/storage'
 import Unit from 'entity/unit'
@@ -23,22 +23,22 @@ type StorageEntity = {
 }
 
 function UnitSummary() {
-	const unitChain = Signal.chain(
+	const unitChain = $.chain(
 		Hover.listen.data,
-		Signal.select((data: HoverData) => data?.unit)
+		$.select((data: HoverData) => data?.unit)
 	)
 
-	const unit = Signal.solid.create(unitChain)
+	const unit = $.solid.create(unitChain)
 
-	const name = Signal.solid.create(
+	const name = $.solid.create(
 		unitChain,
-		Signal.assert.not.isNothing(
-			Signal.combine(
-				Signal.select(),
-				Signal.maybe.listen.key('properties'),
-				Signal.maybe.listen.key('expert'),
+		$.assert.not.isNothing(
+			$.combine(
+				$.select(),
+				$.maybe.listen.key('properties'),
+				$.maybe.listen.key('expert'),
 			),
-			Signal.select(([unit]) => Unit.name(unit) as string)
+			$.select(([unit]) => Unit.name(unit) as string)
 		),
 	)
 
@@ -52,84 +52,84 @@ function UnitSummary() {
 	)
 	const sumAmounts = (obj: StorageEntity) => Util.sum(Object.entries(obj).map(([_, amount]) => amount))
 
-	const consumption = Signal.solid.create(
+	const consumption = $.solid.create(
 		unitChain,
-		Signal.assert.not.isNothing(
-			Signal.select(unit => unit.consumptionSummary),
+		$.assert.not.isNothing(
+			$.select(unit => unit.consumptionSummary),
 			Storage.signal,
-			Signal.select(invertQuantities),
-			Signal.select(filterPositive),
+			$.select(invertQuantities),
+			$.select(filterPositive),
 		)
 	)
 
-	const equipmentChain = Signal.chain(
+	const equipmentChain = $.chain(
 		unitChain,
-		Signal.assert.not.isNothing(
-			Signal.select(unit => unit.equipment),
+		$.assert.not.isNothing(
+			$.select(unit => unit.equipment),
 			Storage.signal,
-			Signal.select(filterPositive)
+			$.select(filterPositive)
 		),
 	)
 
-	const equipment = Signal.solid.create(equipmentChain)
-	const equipmentPercentage = Signal.solid.create(
-		Signal.combine(
-			Signal.chain(
+	const equipment = $.solid.create(equipmentChain)
+	const equipmentPercentage = $.solid.create(
+		$.combine(
+			$.chain(
 				equipmentChain,
-				Signal.maybe.select(sumAmounts),
-				Signal.select(x => x ?? 0)
+				$.maybe.select(sumAmounts),
+				$.select(x => x ?? 0)
 			),
-			Signal.chain(
-				Signal.combine(
-					Signal.chain(
+			$.chain(
+				$.combine(
+					$.chain(
 						unitChain,
-						Signal.assert.not.isNothing(
-							Signal.listen.key('properties'),
-							Signal.listen.key('equipment'),
-							Signal.maybe.select(sumAmounts)
+						$.assert.not.isNothing(
+							$.listen.key('properties'),
+							$.listen.key('equipment'),
+							$.maybe.select(sumAmounts)
 						),
-						Signal.select(x => x ?? 0),
+						$.select(x => x ?? 0),
 					),
-					Signal.chain(
+					$.chain(
 						unitChain,
-						Signal.assert.not.isNothing(
-							Signal.listen.key('properties'),
-							Signal.select(properties => properties.needsFood ? 20 : 0)
+						$.assert.not.isNothing(
+							$.listen.key('properties'),
+							$.select(properties => properties.needsFood ? 20 : 0)
 						),
-						Signal.select(x => x ?? 0)
+						$.select(x => x ?? 0)
 					),
 				),
-				Signal.select(([equipment, food]) => equipment + food),
+				$.select(([equipment, food]) => equipment + food),
 			)
 		),
-		Signal.select(([has, need]) => need ? 100.0 * has / need : 0)
+		$.select(([has, need]) => need ? 100.0 * has / need : 0)
 	)
 
-	const cargoChain = Signal.chain(
+	const cargoChain = $.chain(
 		unitChain,
-		Signal.assert.not.isNothing(
-			Signal.select(unit => unit.storage),
+		$.assert.not.isNothing(
+			$.select(unit => unit.storage),
 			Storage.signal,
-			Signal.select(filterPositive)
+			$.select(filterPositive)
 		)
 	)
-	const cargo = Signal.solid.create(cargoChain)
-	const cargoPercentage = Signal.solid.create(
-		Signal.combine(
-			Signal.chain(
+	const cargo = $.solid.create(cargoChain)
+	const cargoPercentage = $.solid.create(
+		$.combine(
+			$.chain(
 				cargoChain,
-				Signal.maybe.select(sumAmounts),
-				Signal.select(x => x ?? 0)
+				$.maybe.select(sumAmounts),
+				$.select(x => x ?? 0)
 			),
-			Signal.chain(
+			$.chain(
 				unitChain,
-				Signal.assert.not.isNothing(
-					Signal.listen.key('properties'),
-					Signal.listen.key('cargo'),
+				$.assert.not.isNothing(
+					$.listen.key('properties'),
+					$.listen.key('cargo'),
 				)
 			)
 		),
-		Signal.select(([has, capacity]) => capacity ? 100.0 * has / capacity : 0)
+		$.select(([has, capacity]) => capacity ? 100.0 * has / capacity : 0)
 	)
 
 

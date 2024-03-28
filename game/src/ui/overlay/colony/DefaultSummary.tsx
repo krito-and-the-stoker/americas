@@ -8,7 +8,7 @@ import Colony from 'entity/colony'
 import Construction from 'entity/construction'
 
 import Foreground from 'render/foreground'
-import Signal from 'signal-chain-solid'
+import $ from 'signal-chain-solid'
 import Dialog from 'view/ui/dialog'
 import ProductionGoods from 'ui/components/ProductionGoods'
 import StorageGoods from 'ui/components/StorageGoods'
@@ -35,106 +35,106 @@ function openConstructionDialog(colony: ColonyEntity) {
 }
 
 function DefaultSummary() {
-    const colonyChain = Signal.chain(
+    const colonyChain = $.chain(
         Foreground.listen.screen,
-        Signal.select((screen: any) => screen?.params?.colony as ColonyEntity | undefined)
+        $.select((screen: any) => screen?.params?.colony as ColonyEntity | undefined)
     )
 
-    const colony = Signal.solid.create(
+    const colony = $.solid.create(
         colonyChain
     )
 
-    const productionSummary = Signal.solid.create(
+    const productionSummary = $.solid.create(
         colonyChain,
-        Signal.select(colony => colony && colony.productionSummary),
+        $.select(colony => colony && colony.productionSummary),
         Storage.signal
     )
 
-    const constructionChain = Signal.chain(
+    const constructionChain = $.chain(
         colonyChain,
-        Signal.assert.not.isNothing(
+        $.assert.not.isNothing(
             Colony.chain.currentConstruction
         )
     )
-    const cost = Signal.solid.create(
+    const cost = $.solid.create(
         constructionChain,
-        Signal.select(construction => construction?.cost)
+        $.select(construction => construction?.cost)
     )
 
-    const progressPercentage = Signal.solid.create(
+    const progressPercentage = $.solid.create(
         constructionChain,
-        Signal.select(construction => {
+        $.select(construction => {
             const costSum = Util.sum(Object.values(construction?.cost ?? {})) || 1
             return 100 * (construction?.progress ?? 0) / costSum
         }),
-        Signal.select(progress => Math.floor(progress))
+        $.select(progress => Math.floor(progress))
     )
 
-    const display = Signal.solid.create(
+    const display = $.solid.create(
         constructionChain,
-        Signal.select(construction => construction?.display)
+        $.select(construction => construction?.display)
     )
 
-    const rebelNumber = Signal.solid.create(
+    const rebelNumber = $.solid.create(
         colonyChain,
-        Signal.assert.not.isNothing(
+        $.assert.not.isNothing(
             Colony.chain.rebels
         )
     )
-    const rebelPercentage = Signal.solid.create(
+    const rebelPercentage = $.solid.create(
         colonyChain,
-        Signal.assert.not.isNothing(
+        $.assert.not.isNothing(
             Colony.chain.rebelPercentage
         )
     )
 
-    const toryNumber = Signal.solid.create(
+    const toryNumber = $.solid.create(
         colonyChain,
-        Signal.assert.not.isNothing(
+        $.assert.not.isNothing(
             Colony.chain.tories
         )
     )
 
-    const toryPercentage = Signal.solid.create(
+    const toryPercentage = $.solid.create(
         colonyChain,
-        Signal.assert.not.isNothing(
+        $.assert.not.isNothing(
             Colony.chain.toryPercentage
         )
     )
 
-    const supportedUnits = Signal.solid.create(
+    const supportedUnits = $.solid.create(
         colonyChain,
-        Signal.assert.not.isNothing(
-            Signal.listen.key('supportedUnits'),
-            Signal.each(
-                Signal.combine(
-                    Signal.select(),
-                    Signal.chain(
-                        Signal.listen.key('colonist'),
-                        Signal.maybe.listen.key('colony'),
-                        Signal.select(colony => !!colony)
+        $.assert.not.isNothing(
+            $.listen.key('supportedUnits'),
+            $.each(
+                $.combine(
+                    $.select(),
+                    $.chain(
+                        $.listen.key('colonist'),
+                        $.maybe.listen.key('colony'),
+                        $.select(colony => !!colony)
                     ),
-                    Signal.chain(
-                        Signal.select(unit => unit?.consumptionSummary),
+                    $.chain(
+                        $.select(unit => unit?.consumptionSummary),
                         Storage.signal,
-                        Signal.select(storage => (!!storage && Util.sum(Storage.goods(storage).map(pack => pack.amount))) || 0)
+                        $.select(storage => (!!storage && Util.sum(Storage.goods(storage).map(pack => pack.amount))) || 0)
                     )
                 ),
-                Signal.select(([unit, hasColony, consumption]) => ({ unit, show: !hasColony && consumption < 0 })),
+                $.select(([unit, hasColony, consumption]) => ({ unit, show: !hasColony && consumption < 0 })),
             ),
         ),
-        Signal.select(entries => entries?.filter(entry => entry.show).map(entry => entry.unit) ?? [])
+        $.select(entries => entries?.filter(entry => entry.show).map(entry => entry.unit) ?? [])
     )
 
-    const hasConstructors = Signal.solid.create(
+    const hasConstructors = $.solid.create(
         colonyChain,
-        Signal.assert.not.isNothing(
-            Signal.listen.key('colonists'),
-            Signal.each(
-                Signal.listen.key('work')
+        $.assert.not.isNothing(
+            $.listen.key('colonists'),
+            $.each(
+                $.listen.key('work')
             ),
         ),
-        Signal.select(
+        $.select(
             works => !!works && works.filter(
                 work => work?.type === 'Building' && work.building?.name === 'carpenters'
             ).length > 0

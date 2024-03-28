@@ -3,14 +3,14 @@ import { For, Show } from 'solid-js'
 import Hints from 'input/hints'
 import Foreground from 'render/foreground'
 
-import Signal from 'signal-chain-solid'
+import $ from 'signal-chain-solid'
 
 import style from './Hints.module.scss'
 
 
 function HintsComponent() {
-	const hints	= Signal.solid.create(Hints.listen)
-	const screen = Signal.solid.create<any>(Foreground.listen.screen)
+	const hints	= $.solid.create(Hints.listen)
+	const screen = $.solid.create<any>(Foreground.listen.screen)
 	const isEurope = () => screen()?.params?.name === 'europe'
 
 	const hasHints = () => hints()?.length > 0

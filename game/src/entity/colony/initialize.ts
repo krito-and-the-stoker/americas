@@ -1,6 +1,6 @@
 import type { ColonyEntity } from "."
 
-import Signal from 'signal-chain'
+import $ from 'signal-chain'
 import Util from 'util/util'
 import Events from 'util/events'
 
@@ -44,27 +44,27 @@ export default (colony: ColonyEntity) => {
     Time.schedule(Promote.create(colony)),
     Time.schedule(SortByPower.create(colony)),
 
-    Signal.connect(
-      Signal.emit(colony),
-      Signal.combine(
-        Signal.listen.key('colonists'),
-        Signal.chain(
-          Signal.listen.key('newBuildings'),
-          Signal.select(buildings => buildings.filter(building => building.name === 'house')),
-          Signal.select(buildings => buildings.length)
+    $.connect(
+      $.emit(colony),
+      $.combine(
+        $.listen.key('colonists'),
+        $.chain(
+          $.listen.key('newBuildings'),
+          $.select(buildings => buildings.filter(building => building.name === 'house')),
+          $.select(buildings => buildings.length)
         )
       ),
-      Signal.effect(([colonists, houses]) => {
+      $.effect(([colonists, houses]) => {
         if (colonists.length > houses) {
           Fn.addBuilding(colony, 'house', 0)
         }
       })
     ),
 
-    Signal.connect(
-      Signal.emit(colony),
+    $.connect(
+      $.emit(colony),
       chain.rebels,
-      Signal.effect(rebels =>
+      $.effect(rebels =>
         Time.schedule(Bells.create(colony, 'bells', rebels))
       )
     ),
@@ -83,25 +83,25 @@ export default (colony: ColonyEntity) => {
     Time.schedule(TeachingSummary.create(colony)),
     Time.schedule(TransferCrosses.create(colony)),
 
-    Signal.connect(
-      Signal.emit(colony),
+    $.connect(
+      $.emit(colony),
       chain.currentConstruction,
-      Signal.assert.isNothing(
-        Signal.effect(() => Construction.start(colony, null)),
-        Signal.stop()
+      $.assert.isNothing(
+        $.effect(() => Construction.start(colony, null)),
+        $.stop()
       ),
-      Signal.passIf(construction => construction.progress > 0),
-      Signal.passIf(construction => construction.progress >= Util.sum(Object.values(construction.cost))),
-      Signal.effect(construction => {
+      $.passIf(construction => construction.progress > 0),
+      $.passIf(construction => construction.progress >= Util.sum(Object.values(construction.cost))),
+      $.effect(construction => {
         Construction.construct(colony, construction)
       })
     ),
 
-    Signal.connect(
-      Signal.emit(colony),
-      Signal.listen.key('growth'),
-      Signal.passIf(growth => growth >= 1000),
-      Signal.effect(() => {
+    $.connect(
+      $.emit(colony),
+      $.listen.key('growth'),
+      $.passIf(growth => growth >= 1000),
+      $.effect(() => {
         const unit = Unit.create('settler', colony.mapCoordinates, colony.owner)
         const parents = Util.choose(colony.colonists)
         Unit.update.expert(unit, parents.unit.expert)
@@ -112,18 +112,18 @@ export default (colony: ColonyEntity) => {
 
     Time.schedule(VirtualGoods.create(colony)),
     Time.schedule(ProductionSummary.create(colony)),
-    Signal.connect(
-      Signal.emit(colony),
-      Signal.combine(
+    $.connect(
+      $.emit(colony),
+      $.combine(
         chain.rebelPercentage,
         chain.tories
       ),
-      Signal.select(
+      $.select(
         ([rebelPercentage, tories]) =>
           Math.floor(rebelPercentage / 50.0) -
           Math.floor(tories / 10.0)
       ),
-      Signal.effect(bonus => {
+      $.effect(bonus => {
         if (colony.productionBonus !== bonus) {
           update.productionBonus(colony, bonus)
         }

@@ -1,7 +1,7 @@
 import Util from 'util/util'
 import Message from 'util/message'
 import Events from 'util/events'
-import Signal from 'signal-chain'
+import $ from 'signal-chain'
 
 import Unit from 'entity/unit'
 import Storage from 'entity/storage'
@@ -20,7 +20,7 @@ export default (colony, raider) => {
     .filter(unit => unit.owner === colony.owner)
     .filter(unit => unit.domain === 'land')
   const defender =
-    Util.max(possibleDefenders, unit => Unit.strength(unit)) || Signal.evaluate.sync(Signal.emit(colony), Colony.chain.defender)
+    Util.max(possibleDefenders, unit => Unit.strength(unit)) || $.evaluate.sync($.emit(colony), Colony.chain.defender)
 
   // sometimes a defender dies
   if (!defender.properties.combat) {

@@ -5,7 +5,7 @@ import style from './Global.module.scss'
 
 import Time from 'timeline/time'
 
-import Signal from 'signal-chain-solid'
+import $ from 'signal-chain-solid'
 import Treasure from 'entity/treasure'
 import Europe from 'view/europe'
 import Foreground from 'render/foreground'
@@ -42,13 +42,13 @@ function Global() {
         Time.update.scale(scale)
     })
 
-    const paused = Signal.solid.create<boolean>(Time.listen.paused)
-    const year = Signal.solid.create<number>(Time.listen.year)
-    const month = Signal.solid.create<string>(Time.listen.month)
-    const dayOfMonth = Signal.solid.create<string>(Time.listen.dayOfMonth)
-    const screen = Signal.solid.create<any>(Foreground.listen.screen)
+    const paused = $.solid.create<boolean>(Time.listen.paused)
+    const year = $.solid.create<number>(Time.listen.year)
+    const month = $.solid.create<string>(Time.listen.month)
+    const dayOfMonth = $.solid.create<string>(Time.listen.dayOfMonth)
+    const screen = $.solid.create<any>(Foreground.listen.screen)
 
-    const treasure = Signal.solid.create<number>(Treasure.listen.amount)
+    const treasure = $.solid.create<number>(Treasure.listen.amount)
 
     const hasOpenScreen = () => !!screen()
     const toggleScreen = () => hasOpenScreen() ? Foreground.closeScreen() : Europe.open()

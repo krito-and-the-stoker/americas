@@ -1,13 +1,13 @@
 import { createSignal, Switch, Match } from 'solid-js'
 
-import Signal from 'signal-chain-solid'
+import $ from 'signal-chain-solid'
 import SaveGame from 'util/savegame'
 import TimeView from 'util/timeView'
 
 import style from './Save.module.scss'
 
 function Save() {
-    const gameName = Signal.solid.create(SaveGame.derived.name.listen)
+    const gameName = $.solid.create(SaveGame.derived.name.listen)
 
     const [isSaving, setIsSaving] = createSignal(false)
     const saveGame = async (event: Event) => {
@@ -56,22 +56,22 @@ function Save() {
         }
     }
 
-    const nowTime = Signal.primitive.create(Date.now())
-    const lastSaveTime = Signal.solid.create(
-        Signal.combine(
-            Signal.chain(
+    const nowTime = $.primitive.create(Date.now())
+    const lastSaveTime = $.solid.create(
+        $.combine(
+            $.chain(
                 SaveGame.listen.lastSaveTime,
-                Signal.select(t => t ?? 0)
+                $.select(t => t ?? 0)
             ),
             nowTime.listen,
         ),
-        Signal.select(([ lastTime, nowTime ]) => lastTime > 0 ? nowTime - lastTime : null),
-        Signal.select(
+        $.select(([ lastTime, nowTime ]) => lastTime > 0 ? nowTime - lastTime : null),
+        $.select(
             timeDiff => timeDiff && TimeView.describe(timeDiff, () => { nowTime.update(Date.now()) })
         )
     )
 
-    const saveOnExit = Signal.solid.create(SaveGame.listen.saveOnExit)
+    const saveOnExit = $.solid.create(SaveGame.listen.saveOnExit)
     const updateSaveOnExit = (event: Event) => {
         const target = event.target as HTMLInputElement
         if (target) {
