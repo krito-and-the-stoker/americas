@@ -5,7 +5,7 @@ import type { ColonyEntity } from 'entity/colony'
 
 import { Show } from 'solid-js'
 
-import Signal from 'util/signal-ts'
+import Signal from 'signal-chain-solid'
 
 import Storage from 'entity/storage'
 import Colonist from 'entity/colonist'

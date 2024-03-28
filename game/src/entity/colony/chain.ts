@@ -1,8 +1,8 @@
+import Signal from 'signal-chain'
+
 import type { ColonyEntity } from '.'
 
 import Util from 'util/util'
-import Signal from 'util/signal-ts'
-
 
 import Unit from 'entity/unit'
 import MapEntity from 'entity/map'

@@ -3,7 +3,7 @@ import { For, Show } from 'solid-js'
 import Hints from 'input/hints'
 import Foreground from 'render/foreground'
 
-import Signal from 'util/signal-ts'
+import Signal from 'signal-chain-solid'
 
 import style from './Hints.module.scss'
 

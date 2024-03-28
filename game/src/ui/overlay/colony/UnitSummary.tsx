@@ -1,6 +1,6 @@
 import { Show } from 'solid-js'
 import Util from 'util/util'
-import Signal from 'util/signal-ts'
+import Signal from 'signal-chain-solid'
 
 import Storage from 'entity/storage'
 import Unit from 'entity/unit'

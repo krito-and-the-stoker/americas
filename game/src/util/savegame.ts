@@ -2,7 +2,7 @@ import Record from 'util/record'
 import Tracking from 'util/tracking'
 import Message from 'util/message'
 import Events from 'util/events'
-import Signal from 'util/signal-ts'
+import Signal from 'signal-chain'
 
 import Time from 'timeline/time'
 

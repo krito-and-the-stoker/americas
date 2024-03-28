@@ -5,7 +5,7 @@ import type { ColonistEntity } from 'ui/overlay/colony/ColonistSummary'
 
 import { For, Show } from 'solid-js'
 
-import Signal from 'util/signal-ts'
+import Signal from 'signal-chain-solid'
 import Util from 'util/util'
 
 import Hover from 'input/hover'

@@ -1,9 +1,9 @@
-import { BasicSignal, CleanupExec } from "./signal/types"
-import { objectListener } from "./signal/object"
+import type { PrimitiveSignal, CleanupExec } from 'signal-chain'
+import $ from 'signal-chain'
 import type { Function1, Function2 } from 'util/types'
-import * as primitive from "./signal/primitive"
 
-const listeners = new Map<Object, BasicSignal<unknown>>()
+
+const listeners = new Map<Object, PrimitiveSignal<unknown>>()
 const listen = <O extends Object, Key extends keyof O>(instance: O, key: Key | null | undefined, fn: Function1<O[Key], CleanupExec>) => {
   if (!instance) {
     // @ts-ignore
@@ -11,11 +11,12 @@ const listen = <O extends Object, Key extends keyof O>(instance: O, key: Key | n
   }
   if (key === null || key === undefined) {
     if (!listeners.get(instance)) {
-      listeners.set(instance, primitive.create(instance) as BasicSignal<unknown>)
+      listeners.set(instance, $.primitive.create(instance) as PrimitiveSignal<unknown>)
     }
     return listeners.get(instance)!.listen(fn as Function1<unknown, CleanupExec>)
   }
-  return objectListener(instance, key)(fn)
+
+  return $.listen.key<O, Key>(key)(fn, instance)
 }
 
 const update = <O extends Object, Key extends keyof O>(instance: O, key: Key | null | undefined, value: O[Key]) => {
@@ -26,9 +27,9 @@ const update = <O extends Object, Key extends keyof O>(instance: O, key: Key | n
         if (primitive.value === value) {
           return
         }
-        primitive.update(value)
+        primitive.value = value
       } else {
-        primitive.update(primitive.value)
+        primitive.value = primitive.value
       }
     }
 

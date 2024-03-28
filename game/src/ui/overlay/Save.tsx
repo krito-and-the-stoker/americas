@@ -1,6 +1,6 @@
 import { createSignal, Switch, Match } from 'solid-js'
 
-import Signal from 'util/signal-ts'
+import Signal from 'signal-chain-solid'
 import SaveGame from 'util/savegame'
 import TimeView from 'util/timeView'
 

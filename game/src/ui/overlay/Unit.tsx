@@ -3,7 +3,7 @@ import type { Coordinates } from 'util/la'
 import type { ColonyEntity } from 'entity/colony'
 import { Show, For } from 'solid-js'
 
-import Signal from 'util/signal-ts'
+import Signal from 'signal-chain-solid'
 import Record from 'util/record'
 
 import Storage from 'entity/storage'

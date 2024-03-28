@@ -1,6 +1,6 @@
 import type { ColonyEntity } from "."
 
-import Signal from 'util/signal-ts'
+import Signal from 'signal-chain'
 import Util from 'util/util'
 import Events from 'util/events'
 

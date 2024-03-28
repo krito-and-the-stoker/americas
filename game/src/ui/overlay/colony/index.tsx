@@ -3,7 +3,7 @@ import { createSignal, Show, Switch, Match } from 'solid-js'
 import Layout from 'entity/layout'
 import Colony, { ColonyEntity } from 'entity/colony'
 
-import Signal from 'util/signal-ts'
+import Signal from 'signal-chain-solid'
 import Hover from 'input/hover'
 import Foreground from 'render/foreground'
 

@@ -1,7 +1,6 @@
 import Member from 'util/member'
 import Binding from 'util/binding'
-import { CleanupExec } from 'util/signal/types'
-import { Function1 } from 'util/types'
+import { Function1, CleanupExec } from 'util/types'
 
 
 type Hint = {

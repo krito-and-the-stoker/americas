@@ -1,6 +1,6 @@
 import Colony from 'data/colony'
 
-import Signal from 'util/signal-ts'
+import Signal from 'signal-chain'
 import Util from 'util/util'
 import Record from 'util/record'
 import Binding from 'util/binding'

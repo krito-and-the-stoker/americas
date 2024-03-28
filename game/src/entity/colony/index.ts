@@ -2,7 +2,7 @@ import type { ColonistEntity } from 'ui/overlay/colony/ColonistSummary'
 import type { BuildingEntity } from 'view/colony/buildings'
 import type { Coordinates } from 'util/la'
 import type { UnitEntity } from 'ui/overlay/Unit'
-import type { CleanupExec } from 'util/signal/types'
+import type { CleanupExec } from 'util/types'
 
 import Record from 'util/record'
 

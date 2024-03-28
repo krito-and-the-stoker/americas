@@ -5,7 +5,7 @@ import style from './Global.module.scss'
 
 import Time from 'timeline/time'
 
-import Signal from 'util/signal-ts'
+import Signal from 'signal-chain-solid'
 import Treasure from 'entity/treasure'
 import Europe from 'view/europe'
 import Foreground from 'render/foreground'

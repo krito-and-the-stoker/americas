@@ -8,7 +8,7 @@ import Colony from 'entity/colony'
 import Construction from 'entity/construction'
 
 import Foreground from 'render/foreground'
-import Signal from 'util/signal-ts'
+import Signal from 'signal-chain-solid'
 import Dialog from 'view/ui/dialog'
 import ProductionGoods from 'ui/components/ProductionGoods'
 import StorageGoods from 'ui/components/StorageGoods'

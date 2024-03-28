@@ -1,5 +1,5 @@
 import Util from 'util/util'
-import Signal from 'util/signal-ts'
+import Signal from 'signal-chain'
 
 import Time from 'timeline/time'
 
@@ -66,7 +66,7 @@ const create = (colony, building, colonist) => {
 
     // construction only
     if (production.type === 'construction') {
-      const construction = Signal.evaluate(
+      const construction = Signal.evaluate.sync(
         Signal.emit(colony),
         Colony.chain.currentConstruction
       )
