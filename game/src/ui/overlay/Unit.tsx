@@ -172,7 +172,7 @@ function UnitComponent() {
     )
     const speed = $.solid.create(
         unitChain,
-        $.assert.not.isNothing(
+        $.type.not.isNothing(
             speedChain
         ),
         $.select(speed => speed?.toFixed(2) ?? '')
@@ -180,7 +180,7 @@ function UnitComponent() {
 
     const strength = $.solid.create(
         unitChain,
-        $.assert.not.isNothing(
+        $.type.not.isNothing(
             $.combine(
                 $.select(),
                 $.listen.key('mapCoordinates'),

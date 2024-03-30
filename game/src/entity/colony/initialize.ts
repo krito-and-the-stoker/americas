@@ -86,7 +86,7 @@ export default (colony: ColonyEntity) => {
     $.connect(
       $.emit(colony),
       chain.currentConstruction,
-      $.assert.isNothing(
+      $.type.isNothing(
         $.effect(() => Construction.start(colony, null)),
         $.stop()
       ),

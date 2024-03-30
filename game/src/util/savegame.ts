@@ -303,9 +303,9 @@ const derived = {
         $.passIf(([_, isRunning]) => !isRunning),
         $.select(([id]) => id),
         $.await.latest($.select(load)),
-        $.assert.isError(
+        $.type.isError(
             $.effect(error => Message.savegame.error('Failed to load game data:', error)),
-            $.select(() => null)
+            $.emit(null)
         )
     ),
     name: $.primitive.connect(

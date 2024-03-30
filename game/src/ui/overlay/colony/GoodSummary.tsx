@@ -55,7 +55,7 @@ function GoodSummary() {
 
 	const storageChain = (storageMapping: Function1<ColonistEntity, StorageEntity>) => $.chain(
 		colonyChain,
-		$.assert.not.isNothing(
+		$.type.not.isNothing(
 			$.listen.key('colonists'),
 			$.each(
 				$.combine(
@@ -139,7 +139,7 @@ function GoodSummary() {
 
 	const supportChain = $.chain(
 		colonyChain,
-		$.assert.not.isNothing(
+		$.type.not.isNothing(
 			$.listen.key('supportedUnits'),
 			$.each(
 				$.combine(
@@ -170,7 +170,7 @@ function GoodSummary() {
 
 	const amount = $.solid.create(
 		colonyChain,
-		$.assert.not.isNothing(
+		$.type.not.isNothing(
 			$.select(colony => colony.storage),
 			$.combine(
 				Storage.signal,
@@ -182,7 +182,7 @@ function GoodSummary() {
 
 	const reserve = $.solid.create(
 		colonyChain,
-		$.assert.not.isNothing(
+		$.type.not.isNothing(
 			$.listen.key('colonists'),
 			$.each(
 				$.select((colonist: ColonistEntity) => colonist.storage),

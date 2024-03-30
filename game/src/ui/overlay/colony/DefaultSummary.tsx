@@ -52,7 +52,7 @@ function DefaultSummary() {
 
     const constructionChain = $.chain(
         colonyChain,
-        $.assert.not.isNothing(
+        $.type.not.isNothing(
             Colony.chain.currentConstruction
         )
     )
@@ -77,34 +77,34 @@ function DefaultSummary() {
 
     const rebelNumber = $.solid.create(
         colonyChain,
-        $.assert.not.isNothing(
+        $.type.not.isNothing(
             Colony.chain.rebels
         )
     )
     const rebelPercentage = $.solid.create(
         colonyChain,
-        $.assert.not.isNothing(
+        $.type.not.isNothing(
             Colony.chain.rebelPercentage
         )
     )
 
     const toryNumber = $.solid.create(
         colonyChain,
-        $.assert.not.isNothing(
+        $.type.not.isNothing(
             Colony.chain.tories
         )
     )
 
     const toryPercentage = $.solid.create(
         colonyChain,
-        $.assert.not.isNothing(
+        $.type.not.isNothing(
             Colony.chain.toryPercentage
         )
     )
 
     const supportedUnits = $.solid.create(
         colonyChain,
-        $.assert.not.isNothing(
+        $.type.not.isNothing(
             $.listen.key('supportedUnits'),
             $.each(
                 $.combine(
@@ -128,7 +128,7 @@ function DefaultSummary() {
 
     const hasConstructors = $.solid.create(
         colonyChain,
-        $.assert.not.isNothing(
+        $.type.not.isNothing(
             $.listen.key('colonists'),
             $.each(
                 $.listen.key('work')

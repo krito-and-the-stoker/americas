@@ -32,7 +32,7 @@ function UnitSummary() {
 
 	const name = $.solid.create(
 		unitChain,
-		$.assert.not.isNothing(
+		$.type.not.isNothing(
 			$.combine(
 				$.select(),
 				$.maybe.listen.key('properties'),
@@ -54,7 +54,7 @@ function UnitSummary() {
 
 	const consumption = $.solid.create(
 		unitChain,
-		$.assert.not.isNothing(
+		$.type.not.isNothing(
 			$.select(unit => unit.consumptionSummary),
 			Storage.signal,
 			$.select(invertQuantities),
@@ -64,7 +64,7 @@ function UnitSummary() {
 
 	const equipmentChain = $.chain(
 		unitChain,
-		$.assert.not.isNothing(
+		$.type.not.isNothing(
 			$.select(unit => unit.equipment),
 			Storage.signal,
 			$.select(filterPositive)
@@ -83,7 +83,7 @@ function UnitSummary() {
 				$.combine(
 					$.chain(
 						unitChain,
-						$.assert.not.isNothing(
+						$.type.not.isNothing(
 							$.listen.key('properties'),
 							$.listen.key('equipment'),
 							$.maybe.select(sumAmounts)
@@ -92,7 +92,7 @@ function UnitSummary() {
 					),
 					$.chain(
 						unitChain,
-						$.assert.not.isNothing(
+						$.type.not.isNothing(
 							$.listen.key('properties'),
 							$.select(properties => properties.needsFood ? 20 : 0)
 						),
@@ -107,7 +107,7 @@ function UnitSummary() {
 
 	const cargoChain = $.chain(
 		unitChain,
-		$.assert.not.isNothing(
+		$.type.not.isNothing(
 			$.select(unit => unit.storage),
 			Storage.signal,
 			$.select(filterPositive)
@@ -123,7 +123,7 @@ function UnitSummary() {
 			),
 			$.chain(
 				unitChain,
-				$.assert.not.isNothing(
+				$.type.not.isNothing(
 					$.listen.key('properties'),
 					$.listen.key('cargo'),
 				)

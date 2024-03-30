@@ -99,7 +99,7 @@ function ColonistSummary() {
 
     const storageListener = (selectStorage: Function1<ColonistEntity, StorageEntity>) => $.chain(
         colonistChain,
-        $.assert.not.isNothing(
+        $.type.not.isNothing(
             $.select(selectStorage),
             Storage.signal
         ),
