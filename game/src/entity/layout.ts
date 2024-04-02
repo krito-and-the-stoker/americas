@@ -197,7 +197,7 @@ const placeBuilding = (colony: ColonyEntity, building: BuildingEntity) => {
 
 
 const placeWater = (colony: ColonyEntity) => {
-	const center = $.evaluate.sync($.emit(colony), Colony.chain.tile)
+	const center = $.evaluate($.emit(colony), Colony.chain.tile)
 	const surrounding = Tile.diagonalNeighbors(center)
 		.filter(tile => tile.domain === 'sea')
 		.map(tile => LA.subtract(tile.mapCoordinates, colony.mapCoordinates))

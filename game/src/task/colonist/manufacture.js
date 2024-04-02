@@ -66,7 +66,7 @@ const create = (colony, building, colonist) => {
 
     // construction only
     if (production.type === 'construction') {
-      const construction = $.evaluate.sync(
+      const construction = $.evaluate(
         $.emit(colony),
         Colony.chain.currentConstruction
       )

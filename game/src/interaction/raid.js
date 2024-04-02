@@ -20,7 +20,7 @@ export default (colony, raider) => {
     .filter(unit => unit.owner === colony.owner)
     .filter(unit => unit.domain === 'land')
   const defender =
-    Util.max(possibleDefenders, unit => Unit.strength(unit)) || $.evaluate.sync($.emit(colony), Colony.chain.defender)
+    Util.max(possibleDefenders, unit => Unit.strength(unit)) || $.evaluate($.emit(colony), Colony.chain.defender)
 
   // sometimes a defender dies
   if (!defender.properties.combat) {
