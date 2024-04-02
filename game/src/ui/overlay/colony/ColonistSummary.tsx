@@ -19,13 +19,14 @@ import GameIcon from 'ui/components/GameIcon'
 import styles from './ColonistSummary.module.scss'
 
 
-type StorageEntity = {
+export type StorageEntity = {
     [key: string]: number
 }
 
 type ColonistWork = {
     type: 'Building'
     building: BuildingEntity
+    position: number
 }
 
 type BreakdownObject<T> = {

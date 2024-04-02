@@ -25,6 +25,7 @@ export const listen = {
 
 export const listenEach = {
   units: (colony, fn) => Member.listenEach(colony, 'units', fn),
+  colonists: (colony, fn) => Member.listenEach(colony, 'colonists', fn),
 }
 
 export const update = {
