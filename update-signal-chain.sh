@@ -1,4 +1,4 @@
-!#/bin/bash
+#!/bin/bash
 
 cd game
 npm install signal-chain@latest signal-chain-solid@latest
