@@ -1,6 +1,6 @@
 import $ from 'signal-chain'
 
-import type { ColonyEntity } from '.'
+import type { ColonyEntity } from './types'
 
 import Util from 'util/util'
 

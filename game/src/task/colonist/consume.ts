@@ -1,5 +1,5 @@
-import type { ColonyEntity } from 'entity/colony'
-import type { ColonistEntity } from 'ui/overlay/colony/ColonistSummary'
+import type { ColonyEntity } from 'entity/colony/types'
+import type { ColonistEntity } from 'entity/colonist/types'
 import ColonistData from 'data/colonists.json'
 
 import Time from 'timeline/time'

@@ -19,7 +19,7 @@ import Triangles from 'view/colony/buildings/triangles'
 
 
 import type { Placement } from 'view/colony/buildings/triangles'
-import type { ColonyEntity } from 'entity/colony'
+import type { ColonyEntity } from 'entity/colony/types'
 import type { BuildingEntity } from '.'
 
 

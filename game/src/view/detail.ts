@@ -1,4 +1,4 @@
-import { ColonistEntity } from 'ui/overlay/colony/ColonistSummary'
+import { ColonistEntity } from 'entity/colonist/types'
 
 type BaseViewDescription = {
     id: number

@@ -22,7 +22,7 @@ import ProductionView from 'view/production'
 import Triangles from 'view/colony/buildings/triangles'
 
 import type { BuildingEntity  } from 'view/colony/buildings'
-import type { ColonistEntity, StorageEntity } from 'ui/overlay/colony/ColonistSummary'
+import { ColonistEntity, StorageEntity } from 'entity/colonist/types'
 
 
 const createOne = (building: BuildingEntity, colonist: ColonistEntity, container: PIXI.Container) => {

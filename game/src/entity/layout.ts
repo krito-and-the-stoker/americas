@@ -1,6 +1,6 @@
 import type { Function1 } from 'util/types'
 import type { Coordinates } from 'util/la'
-import type { ColonyEntity } from 'entity/colony'
+import type { ColonyEntity } from 'entity/colony/types'
 import type { BuildingEntity } from 'view/colony/buildings'
 
 import Util from 'util/util'

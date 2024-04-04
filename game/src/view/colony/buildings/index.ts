@@ -1,4 +1,4 @@
-import type { ColonyEntity } from 'entity/colony'
+import type { ColonyEntity } from 'entity/colony/types'
 import type { Placement } from 'view/colony/buildings/triangles'
 import type { CleanupExec } from 'util/types'
 import * as PIXI from 'pixi.js'

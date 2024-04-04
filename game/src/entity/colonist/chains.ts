@@ -1,0 +1,167 @@
+import $ from 'signal-chain'
+import type { ColonistEntity, StorageEntity } from './types'
+import { UnitEntity } from 'ui/overlay/Unit'
+import { Function1 } from 'util/types'
+
+import Storage from 'entity/storage'
+
+import ColonistData from 'data/colonists.json'
+import GoodsData from 'data/goods.json'
+import BuildingData from 'data/buildings.json'
+
+const unitName = $.chain(
+    $.select<UnitEntity>(),
+    $.combine(
+        $.listen.key('expert'),
+        $.listen.key('properties'),
+    ),
+    $.select(([expert, properties]) => expert && properties.name[expert] || properties.name.default)
+)
+
+export const name = $.chain(
+    $.select<ColonistEntity>(),
+    $.listen.key('unit'),
+    unitName
+)
+
+export const profession = $.chain(
+    $.select<ColonistEntity>(),
+    $.listen.key('work'),
+    $.type.not.isNothing(
+        $.select(work => {
+            if (work.type === 'Building') {
+                if (work.building.name === 'school') {
+                    return 'teacher'
+                }
+
+                // @ts-expect-error impossible to teach typescript this lookup
+                return GoodsData[BuildingData[work.building.name].production.good].expert as string
+            }
+
+            // @ts-expect-error lookup
+            let currentProfession: string = GoodsData[work.good].expert
+            if (currentProfession === 'farmer' && work.tile.domain === 'sea') {
+                currentProfession = 'fisher'
+            }
+
+            return currentProfession
+        })
+    ),
+    $.select(profession => profession ?? 'settler')
+)
+
+export const expert = $.chain(
+    $.select<ColonistEntity>(),
+    $.listen.key('unit'),
+    $.listen.key('expert')
+)
+
+export const power = $.chain(
+    $.select<ColonistEntity>(),
+    $.combine(
+        profession,
+        $.listen.key('mood'),
+        $.listen.key('power'),
+        expert
+    ),
+    $.select(([profession, mood, power, expert]) => {
+        return 10 * Math.max((
+            mood +
+            power +
+            (expert === profession ? 1 : 0) +
+            // @ts-expect-error lookup
+            (ColonistData[profession] || ColonistData.default).power +
+            // @ts-expect-error lookup
+            (ColonistData[expert] || ColonistData.default).power
+        ), 0)
+    })
+)
+
+const storageListener = (selectStorage: Function1<ColonistEntity, StorageEntity>) => $.chain(
+    $.select<ColonistEntity>(),
+    $.type.not.isNothing(
+        $.select(selectStorage),
+        Storage.signal
+    ),
+    $.select<unknown, StorageEntity>(x => (x as StorageEntity) ?? {})
+)
+
+const roundQuantities = (obj: StorageEntity) => Object.fromEntries(
+    Object.entries(obj)
+        .map(([good, amount]) => ([good, Math.round(amount)]))
+)
+
+const filterPositive = (obj: StorageEntity) => Object.fromEntries(
+    Object.entries(obj)
+        .filter(([_, amount]) => amount > 0)
+)
+const filterNotZero = (obj: StorageEntity) => Object.fromEntries(
+    Object.entries(obj)
+        .filter(([_, amount]) => amount !== 0)
+)
+const invertQuantities = (obj: StorageEntity) => Object.fromEntries(
+    Object.entries(obj)
+        .map(([good, amount]) => ([good, -amount]))
+)
+
+
+export const productionOutput = $.chain(
+    storageListener(colonist => colonist.productionSummary),
+    $.select(roundQuantities),
+    $.select(filterPositive),
+)
+
+export const productionInput = $.chain(
+    storageListener(colonist => colonist.productionSummary),
+    $.select(roundQuantities),
+    $.select(invertQuantities),
+    $.select(filterPositive)
+)
+
+export const positiveConsumption = $.chain(
+    storageListener(colonist => colonist.consumptionSummary),
+    $.select(roundQuantities),
+    $.select(filterNotZero),
+    $.select(invertQuantities),
+)
+
+export const storage = $.chain(
+    storageListener(colonist => colonist.storage)
+)
+
+export const promotionProgress = $.chain(
+    $.select<ColonistEntity>(),
+    $.maybe.listen.key('promotion'),
+    $.select(promotion =>
+        promotion?.target &&
+        promotion?.progress &&
+        promotion.progress[promotion.target]),
+    $.select(progress => progress ? Math.floor(100 * progress) : 0)
+)
+
+const stateChain = $.chain(
+    $.select<ColonistEntity>(),
+    $.maybe.listen.key('state')
+)
+
+export const state = {
+    noWood: $.chain(stateChain, $.select(state => state?.noWood)),
+    noFood: $.chain(stateChain, $.select(state => state?.noFood)),
+    noLuxury: $.chain(stateChain, $.select(state => state?.noLuxury)),
+    isPromoting: $.chain(stateChain, $.select(state => state?.isPromoting)),
+    hasBonus: $.chain(stateChain, $.select(state => state?.hasBonus)),
+}
+
+const breakdownChain = $.chain(
+    $.select<ColonistEntity>(),
+    $.maybe.listen.key('consumptionBreakdown'),
+    $.maybe.listen.key('has')
+)
+
+export const breakdown = {
+    food: $.chain(breakdownChain, $.select(has => has?.food)),
+    wood: $.chain(breakdownChain, $.select(has => has?.wood)),
+    luxury: $.chain(breakdownChain, $.select(has => has?.luxury)),
+    bonus: $.chain(breakdownChain, $.select(has => has?.bonus)),
+    promotion: $.chain(breakdownChain, $.select(has => has?.promotion)),
+}

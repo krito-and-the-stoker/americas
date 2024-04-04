@@ -1,6 +1,6 @@
 import type { Maybe, Function1 } from 'util/types'
 import type { Coordinates } from 'util/la'
-import type { ColonyEntity } from 'entity/colony'
+import type { ColonyEntity } from 'entity/colony/types'
 import { Show, For } from 'solid-js'
 
 import $ from 'signal-chain-solid'

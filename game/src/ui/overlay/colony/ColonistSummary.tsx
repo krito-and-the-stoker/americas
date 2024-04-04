@@ -1,15 +1,10 @@
-import type { Function1 } from 'util/types'
-import type { BuildingEntity } from 'view/colony/buildings'
-import type { UnitEntity } from '../Unit'
-import type { ColonyEntity } from 'entity/colony'
+import type { ColonistEntity, StorageEntity } from 'entity/colonist/types'
 
 import { Show } from 'solid-js'
 
 import $ from 'signal-chain-solid'
 
-import Storage from 'entity/storage'
 import Colonist from 'entity/colonist'
-import Unit from 'entity/unit'
 
 import Hover from 'input/hover'
 
@@ -19,187 +14,55 @@ import GameIcon from 'ui/components/GameIcon'
 import styles from './ColonistSummary.module.scss'
 
 
-export type StorageEntity = {
-    [key: string]: number
-}
-
-export type TileEntity = {
-    domain: 'sea' | 'land'
-}
-
-export type ColonistWork = {
-    type: 'Building'
-    building: BuildingEntity
-    position: number
-} | {
-    type: 'Field',
-    good: string
-    tile: TileEntity
-}
-
-type BreakdownObject<T> = {
-    food: T
-    wood: T
-    luxury: T
-    bonus: T
-    promotion: T
-}
-
-type ConsumptionBreakdown = {
-    has: BreakdownObject<StorageEntity>,
-    want: BreakdownObject<StorageEntity>,
-    state: BreakdownObject<boolean>
-}
-
-export type ColonistEntity = {
-    work?: ColonistWork
-    unit: UnitEntity
-    storage: StorageEntity
-    colony?: ColonyEntity
-    consumptionSummary: StorageEntity
-    productionSummary: StorageEntity
-    consumptionRecord: StorageEntity
-    state: {
-        noFood: boolean
-        noWood: boolean
-        noLuxury: boolean
-        isPromoting: boolean
-        hasBonus: boolean
-    },
-    consumptionBreakdown: ConsumptionBreakdown
-    promotion: {
-        target: string
-        progress: {
-            [key: string]: number
-        }
-    }
-    mood: number
-    power: number
-    referenceId: number
-}
-
 type HoverData = {
     colonist?: ColonistEntity
 }
 
 function ColonistSummary() {
-    const colonistChain = $.chain(
+    const colonist = $.chain(
         Hover.listen.data,
         $.select((data: HoverData) => data?.colonist)
     )
-    const colonist = $.solid.create(colonistChain)
 
-    const unitChain = $.chain(
-        colonistChain,
+    const unit = $.solid.create(
+        colonist,
         $.maybe.listen.key('unit')
     )
-    const unit = $.solid.create(unitChain)
 
-    const propertyChain = $.chain(
-        colonistChain,
-        $.maybe.listen.key('unit'),
-        $.maybe.listen.key('properties')
-    )
+    const name = $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.name))
 
-    const name = $.solid.create(
-        $.combine(
-            unitChain,
-            propertyChain,
-        ),
-        $.select(([unit]) => unit && Unit.name(unit) as string)
-    )
-
-    const storageListener = (selectStorage: Function1<ColonistEntity, StorageEntity>) => $.chain(
-        colonistChain,
+    const power = $.solid.create(
+        colonist,
         $.type.not.isNothing(
-            $.select(selectStorage),
-            Storage.signal
-        ),
-        $.select<unknown, StorageEntity>(x => (x as StorageEntity) ?? {})
-    )
-
-    const roundQuantities = (obj: StorageEntity) => Object.fromEntries(
-        Object.entries(obj)
-            .map(([good, amount]) => ([good, Math.round(amount)]))
-    )
-
-    const filterPositive = (obj: StorageEntity) => Object.fromEntries(
-        Object.entries(obj)
-            .filter(([_, amount]) => amount > 0)
-    )
-    const filterNotZero = (obj: StorageEntity) => Object.fromEntries(
-        Object.entries(obj)
-            .filter(([_, amount]) => amount !== 0)
-    )
-    const invertQuantities = (obj: StorageEntity) => Object.fromEntries(
-        Object.entries(obj)
-            .map(([good, amount]) => ([good, -amount]))
-    )
-
-
-    const productionOutput = $.solid.create(
-        storageListener(colonist => colonist.productionSummary),
-        $.select(roundQuantities),
-        $.select(filterPositive),
-    )
-
-    const productionInput = $.solid.create(
-        storageListener(colonist => colonist.productionSummary),
-        $.select(roundQuantities),
-        $.select(invertQuantities),
-        $.select(filterPositive)
-    )
-
-    const positiveConsumption = $.solid.create(
-        storageListener(colonist => colonist.consumptionSummary),
-        $.select(roundQuantities),
-        $.select(filterNotZero),
-        $.select(invertQuantities),
-    )
-
-    const storage = $.solid.create(
-        storageListener(colonist => colonist.storage)
-    )
-
-    const stateChain = $.chain(
-        colonistChain,
-        $.maybe.listen.key('state')
+            Colonist.chain.power,
+            $.select(power => power.toFixed(0))
+        )
     )
 
     const state = {
-        noWood: $.solid.create(stateChain, $.select(state => state?.noWood)),
-        noFood: $.solid.create(stateChain, $.select(state => state?.noFood)),
-        noLuxury: $.solid.create(stateChain, $.select(state => state?.noLuxury)),
-        isPromoting: $.solid.create(stateChain, $.select(state => state?.isPromoting)),
-        hasBonus: $.solid.create(stateChain, $.select(state => state?.hasBonus)),
+        noWood: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.state.noWood)),
+        noFood: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.state.noFood)),
+        noLuxury: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.state.noLuxury)),
+        isPromoting: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.state.isPromoting)),
+        hasBonus: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.state.hasBonus)),
     }
-
-    const breakdownChain = $.chain(
-        colonistChain,
-        $.maybe.listen.key('consumptionBreakdown'),
-        $.maybe.listen.key('has')
-    )
 
     const breakdown = {
-        food: $.solid.create(breakdownChain, $.select(has => has?.food)),
-        wood: $.solid.create(breakdownChain, $.select(has => has?.wood)),
-        luxury: $.solid.create(breakdownChain, $.select(has => has?.luxury)),
-        bonus: $.solid.create(breakdownChain, $.select(has => has?.bonus)),
-        promotion: $.solid.create(breakdownChain, $.select(has => has?.promotion)),
+        food: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.breakdown.food)),
+        wood: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.breakdown.wood)),
+        luxury: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.breakdown.luxury)),
+        bonus: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.breakdown.bonus)),
+        promotion: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.breakdown.promotion)),
     }
 
-    const promotionProgress = $.solid.create(
-        colonistChain,
-        $.maybe.listen.key('promotion'),
-        $.select(promotion =>
-            promotion?.target &&
-            promotion?.progress &&
-            promotion.progress[promotion.target]),
-        $.select(progress => progress ? Math.floor(100 * progress) : 0)
-    )
+    const promotionProgress = $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.promotionProgress))
 
+    const hasEntries = (obj: StorageEntity | undefined) => obj && Object.keys(obj).length > 0
 
-    const hasEntries = (obj: StorageEntity) => obj && Object.keys(obj).length > 0
+    const productionOutput = $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.productionOutput))
+    const productionInput = $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.productionInput))
+    const positiveConsumption = $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.positiveConsumption))
+    const storage = $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.storage))
 
 
     return <>
@@ -207,7 +70,7 @@ function ColonistSummary() {
         <div class={styles.colonist}>
             <div class={styles.icon}><GameIcon unit={unit()} scale={2} /></div>
             <div class={styles.state}>
-                <div class={styles.power}>Power {Math.round(10 * Colonist.power(colonist()))}</div>
+                <div class={styles.power}>Power {power()}</div>
                 <Show when={state.noFood()}><div class={styles.stateTag}>
                     <span>No Food</span>
                     <Show when={breakdown.food()}><ProductionGoods scale={0.5} goods={breakdown.food()} /></Show>

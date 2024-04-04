@@ -9,7 +9,7 @@ import Resources from 'render/resources'
 
 import type { ShapeIterator } from 'entity/layout'
 import type { TriangleView } from './triangles'
-import type { ColonyEntity } from 'entity/colony'
+import type { ColonyEntity } from 'entity/colony/types'
 
 
 const create = (colony: ColonyEntity): PIXI.Sprite[] => {

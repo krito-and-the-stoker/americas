@@ -9,8 +9,8 @@ import Layout from 'entity/layout'
 import RenderView from 'render/view'
 
 import Triangles from 'view/colony/buildings/triangles'
-import { Coordinates } from 'util/la'
-import { ColonyEntity } from 'entity/colony'
+import type { Coordinates } from 'util/la'
+import type { ColonyEntity } from 'entity/colony/types'
 
 
 

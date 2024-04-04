@@ -1,7 +1,8 @@
 import { createSignal, Show, Switch, Match } from 'solid-js'
 
 import Layout from 'entity/layout'
-import Colony, { ColonyEntity } from 'entity/colony'
+import Colony from 'entity/colony'
+import type { ColonyEntity } from 'entity/colony/types'
 
 import $ from 'signal-chain-solid'
 import Hover from 'input/hover'

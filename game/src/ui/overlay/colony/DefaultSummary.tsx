@@ -1,4 +1,4 @@
-import type { ColonyEntity } from 'entity/colony'
+import type { ColonyEntity } from 'entity/colony/types'
 import { Show, For } from 'solid-js'
 
 import Util from 'util/util'

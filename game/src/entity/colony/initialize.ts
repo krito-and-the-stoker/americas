@@ -1,4 +1,4 @@
-import type { ColonyEntity } from "."
+import type { ColonyEntity } from "./types"
 
 import $ from 'signal-chain'
 import Util from 'util/util'

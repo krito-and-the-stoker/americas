@@ -1,7 +1,8 @@
-import type { ColonyEntity } from 'entity/colony'
+import type { ColonyEntity } from 'entity/colony/types'
 import type { Function1 } from 'util/types'
 import type { UnitEntity } from '../Unit'
-import type { ColonistEntity } from 'ui/overlay/colony/ColonistSummary'
+import { ColonistEntity } from 'entity/colonist/types'
+
 
 import { For, Show } from 'solid-js'
 
