@@ -33,10 +33,6 @@ const create = colonist => {
   return sprite
 }
 
-const createDetailView = colonist => {
-  return null
-}
-
 const tint = colonist => {
   if (colonist.state.noFood) {    
     return 0xff6666
@@ -60,4 +56,4 @@ const tint = colonist => {
   return 0xffffff
 }
 
-export default { create, tint, createDetailView }
+export default { create, tint }

@@ -1,11 +1,12 @@
 import Dialog from './Dialog'
 import Overlay from './overlay/Overlay'
+import DetailView from './DetailView'
 
-import styles from './Main.module.scss'
 
 function Main() {
   return <>
     <Overlay />
+    <DetailView />
     <Dialog />
   </>
 }

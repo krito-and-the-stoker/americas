@@ -68,6 +68,10 @@ export type UnitEntity = {
         needsFood?: boolean
         cargo?: number
         equipment?: StorageEntity
+        name: {
+            default: string
+            [key: string]: string
+        }
 
     }
 }

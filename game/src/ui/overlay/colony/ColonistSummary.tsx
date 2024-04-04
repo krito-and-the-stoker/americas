@@ -23,10 +23,18 @@ export type StorageEntity = {
     [key: string]: number
 }
 
-type ColonistWork = {
+export type TileEntity = {
+    domain: 'sea' | 'land'
+}
+
+export type ColonistWork = {
     type: 'Building'
     building: BuildingEntity
     position: number
+} | {
+    type: 'Field',
+    good: string
+    tile: TileEntity
 }
 
 type BreakdownObject<T> = {
@@ -65,6 +73,9 @@ export type ColonistEntity = {
             [key: string]: number
         }
     }
+    mood: number
+    power: number
+    referenceId: number
 }
 
 type HoverData = {

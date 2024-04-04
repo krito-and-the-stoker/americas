@@ -15,6 +15,7 @@ import Production from 'entity/production'
 
 import Resources from 'render/resources'
 import ColonistView from 'view/colony/colonist'
+import DetailView from 'view/detail'
 
 import ProductionView from 'view/production'
 
@@ -26,7 +27,7 @@ import type { ColonistEntity, StorageEntity } from 'ui/overlay/colony/ColonistSu
 
 const createOne = (building: BuildingEntity, colonist: ColonistEntity, container: PIXI.Container) => {
   const work = colonist.work
-  if (work && work.building === building) {
+  if (work && work.type === 'Building' && work.building === building) {
     const position = {
       x:
         (work.position * 92) /
@@ -104,7 +105,7 @@ const createOne = (building: BuildingEntity, colonist: ColonistEntity, container
       unsubscribeEducation,
       Click.on(
         colonistSprite,
-        () => ColonistView.createDetailView(colonist),
+        () => DetailView.Colonist.open(colonist),
         'View details'
       ),
       Hover.track(
@@ -126,7 +127,7 @@ const create = (building: BuildingEntity, container: PIXI.Container) => {
     colony, (colonist: ColonistEntity) => $.connect(
       $.emit(colonist),
       $.listen.key('work'),
-      $.passIf(work => work?.building === building),
+      $.passIf(work => work?.type === 'Building'),
       $.effect(() => {
         return createOne(building, colonist, container)
       })

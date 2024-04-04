@@ -24,6 +24,7 @@ import Resources from 'render/resources'
 import ProductionView from 'view/production'
 
 import ColonistView from 'view/colony/colonist'
+import DetailView from 'view/detail'
 
 import Icon from 'view/ui/icon'
 import Context from 'view/ui/context'
@@ -161,7 +162,7 @@ const create = (colony, originalDimensions) => {
           drawEducation(),
           Click.on(
             sprite,
-            () => ColonistView.createDetailView(colonist),
+            () => DetailView.Colonist.open(colonist),
             'View colonist details'
           ),
           Hover.track(
