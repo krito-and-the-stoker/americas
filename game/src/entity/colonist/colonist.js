@@ -21,6 +21,8 @@ import ProductionSummary from 'task/colony/productionSummary'
 
 import UnjoinColony from 'interaction/unjoinColony'
 
+import { listen, update } from './binding'
+
 const beginFieldWork = (colonist, tile, good) => {
   stopWorking(colonist)
   const colony = colonist.colony
@@ -66,28 +68,6 @@ const stopWorking = colonist => {
     }
   }
   update.work(colonist, null)
-}
-
-const listen = {
-  work: (colonist, fn) => Binding.listen(colonist, 'work', fn),
-  state: (colonist, fn) => Binding.listen(colonist, 'state', fn),
-  colony: (colonist, fn) => Binding.listen(colonist, 'colony', fn),
-  unit: (colonist, fn) => Binding.listen(colonist, 'unit', fn),
-  promotion: (colonist, fn) => Binding.listen(colonist, 'promotion', fn),
-  beingEducated: (colonist, fn) => Binding.listen(colonist, 'beingEducated', fn),
-  expert: (colonist, fn) => Unit.listen.expert(colonist.unit, fn), // legacy, will be removed
-  consumptionBreakdown: (colonist, fn) => Binding.listen(colonist, 'consumptionBreakdown', fn),
-}
-
-const update = {
-  work: (colonist, value) => Binding.update(colonist, 'work', value),
-  state: (colonist, value) => Binding.update(colonist, 'state', value),
-  colony: (colonist, value) => Binding.update(colonist, 'colony', value),
-  unit: (colonist, value) => Binding.update(colonist, 'unit', value),
-  promotion: (colonist, value) => Binding.update(colonist, 'promotion', value),
-  beingEducated: (colonist, value) => Binding.update(colonist, 'beingEducated', value),
-  expert: (colonist, value) => Unit.update.expert(colonist.unit, value), // legacy, will be removed
-  consumptionBreakdown: (colonist, value) => Binding.update(colonist, 'consumptionBreakdown', value),
 }
 
 const initialize = colonist => {
@@ -144,84 +124,6 @@ const create = unit => {
   return colonist
 }
 
-const expertName = colonist => Units.settler.name[colonist.unit.expert] || 'Settler'
-const professionName = profession => Units.settler.name[profession] || 'Settler'
-
-const power = colonist => {
-  if (colonist.unit.expert === 'slave') {
-    return 0
-  }
-
-  const currentProfession = profession(colonist)
-  return Math.max((
-    colonist.mood +
-    colonist.power +
-    (colonist.unit.expert === currentProfession ? 1 : 0) +
-    (Colonists[currentProfession] || Colonists.default).power +
-    (Colonists[colonist.unit.expert] || Colonists.default).power
-  ), 0)
-}
-
-const profession = colonist => {
-  if (!colonist.work) {
-    return 'settler'
-  }
-
-  if (colonist.work.building?.name === 'school') {
-    return 'teacher'
-  }
-
-  let currentProfession =
-    colonist.work.type === 'Field'
-      ? Goods[colonist.work.good].expert
-      : Goods[Buildings[colonist.work.building.name].production.good].expert
-  if (currentProfession === 'farmer' && colonist.work.tile.domain === 'sea') {
-    currentProfession = 'fisher'
-  }
-
-  return currentProfession
-}
-
-const canPromote = colonist => {
-  const properties = Colonists[colonist.unit.expert] || Colonists.default
-  if (['criminal', 'servant'].includes(colonist.unit.expert)) {
-    return true
-  }
-
-  return properties.promote?.includes(profession(colonist))
-}
-
-const promotionTarget = colonist => {
-  if (colonist.unit.expert === 'servant') {
-    return 'settler'
-  }
-  if (colonist.unit.expert === 'criminal') {
-    return 'servant'
-  }
-
-  return profession(colonist)
-}
-
-const needsForPromotion = promotionTarget => {
-  const properties = Colonists[promotionTarget] || Colonists.default
-  const luxury = properties?.consumption?.luxury
-  const promotion = properties?.consumption?.promotion
-
-  return {
-    ...luxury,
-    ...promotion,
-  }
-}
-
-
-const production = colonist => {
-  return colonist.work.type === 'Building'
-    ? Production.production(colonist.colony, colonist.work.building, colonist)
-    : {
-        good: colonist.work.good,
-        amount: Tile.production(colonist.work.tile, colonist.work.good, colonist),
-      }
-}
 
 const disband = colonist => {
   if (colonist.colony) {
@@ -313,14 +215,4 @@ export default {
   beginFieldWork,
   beginColonyWork,
   stopWorking,
-  power,
-  profession,
-  expertName,
-  professionName,
-  production,
-  listen,
-  update,
-  canPromote,
-  promotionTarget,
-  needsForPromotion,
 }

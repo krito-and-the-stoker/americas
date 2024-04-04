@@ -8,6 +8,7 @@ import Storage from 'entity/storage'
 import ColonistData from 'data/colonists.json'
 import GoodsData from 'data/goods.json'
 import BuildingData from 'data/buildings.json'
+import UnitsData from 'data/units.json'
 
 const unitName = $.chain(
     $.select<UnitEntity>(),
@@ -50,10 +51,23 @@ export const profession = $.chain(
     $.select(profession => profession ?? 'settler')
 )
 
+export const professionName = $.chain(
+    profession,
+    // @ts-expect-error lookup
+    $.select(profession => UnitsData.settler.name[profession] as string || 'Settler')
+)
+
 export const expert = $.chain(
     $.select<ColonistEntity>(),
     $.listen.key('unit'),
     $.listen.key('expert')
+)
+
+
+export const expertName = $.chain(
+    expert,
+    // @ts-expect-error lookup
+    $.select(colonist => UnitsData.settler.name[colonist.unit.expert] as string || 'Settler')
 )
 
 export const power = $.chain(
@@ -165,3 +179,50 @@ export const breakdown = {
     bonus: $.chain(breakdownChain, $.select(has => has?.bonus)),
     promotion: $.chain(breakdownChain, $.select(has => has?.promotion)),
 }
+
+
+export const canPromote = $.chain(
+    $.combine(
+        expert,
+        profession
+    ),
+    $.select(([expert, profession]) => expert !== profession)
+)
+
+export const promotionTarget = $.chain(
+    $.combine(
+        expert,
+        profession
+    ),
+    $.select(([expert, profession]) => {
+        if (expert === 'servant') {
+            return 'settler'
+        }
+        if (expert === 'criminal') {
+            return 'servant'
+        }
+
+        return profession
+    })
+)
+
+type ColonistDescription = {
+    consumption: {
+        luxury?: StorageEntity
+        promotion?: StorageEntity
+    }
+}
+
+export const needsForPromotion = $.chain(
+    // @ts-expect-error lookup
+    $.select<string, ColonistDescription>(promotionTarget => ColonistData[promotionTarget] || ColonistData.default),
+    $.select(description => {
+        const luxury = description?.consumption?.luxury
+        const promotion = description?.consumption?.promotion
+
+        return {
+            ...luxury,
+            ...promotion,
+        }
+    })
+)

@@ -104,7 +104,7 @@ const create = (colony: ColonyEntity) => {
         wood: consumption.wood,
         luxury: consumption.luxury,
         bonus: consumption.bonus,
-        promotion: Colonist.canPromote(colonist) && Colonist.needsForPromotion(target),
+        promotion: Colonist.canPromote(colonist) && Colonist.needsForPromotion(target) || {},
       }
 
       const oldState = { ...colonist.state }

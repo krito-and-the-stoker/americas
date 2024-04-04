@@ -29,40 +29,40 @@ function ColonistSummary() {
         $.maybe.listen.key('unit')
     )
 
-    const name = $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.name))
+    const name = $.solid.create(colonist, $.maybe.chain(Colonist.chain.name))
 
     const power = $.solid.create(
         colonist,
-        $.type.not.isNothing(
+        $.maybe.chain(
             Colonist.chain.power,
             $.select(power => power.toFixed(0))
         )
     )
 
     const state = {
-        noWood: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.state.noWood)),
-        noFood: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.state.noFood)),
-        noLuxury: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.state.noLuxury)),
-        isPromoting: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.state.isPromoting)),
-        hasBonus: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.state.hasBonus)),
+        noWood: $.solid.create(colonist, $.maybe.chain(Colonist.chain.state.noWood)),
+        noFood: $.solid.create(colonist, $.maybe.chain(Colonist.chain.state.noFood)),
+        noLuxury: $.solid.create(colonist, $.maybe.chain(Colonist.chain.state.noLuxury)),
+        isPromoting: $.solid.create(colonist, $.maybe.chain(Colonist.chain.state.isPromoting)),
+        hasBonus: $.solid.create(colonist, $.maybe.chain(Colonist.chain.state.hasBonus)),
     }
 
     const breakdown = {
-        food: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.breakdown.food)),
-        wood: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.breakdown.wood)),
-        luxury: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.breakdown.luxury)),
-        bonus: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.breakdown.bonus)),
-        promotion: $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.breakdown.promotion)),
+        food: $.solid.create(colonist, $.maybe.chain(Colonist.chain.breakdown.food)),
+        wood: $.solid.create(colonist, $.maybe.chain(Colonist.chain.breakdown.wood)),
+        luxury: $.solid.create(colonist, $.maybe.chain(Colonist.chain.breakdown.luxury)),
+        bonus: $.solid.create(colonist, $.maybe.chain(Colonist.chain.breakdown.bonus)),
+        promotion: $.solid.create(colonist, $.maybe.chain(Colonist.chain.breakdown.promotion)),
     }
 
-    const promotionProgress = $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.promotionProgress))
+    const promotionProgress = $.solid.create(colonist, $.maybe.chain(Colonist.chain.promotionProgress))
 
     const hasEntries = (obj: StorageEntity | undefined) => obj && Object.keys(obj).length > 0
 
-    const productionOutput = $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.productionOutput))
-    const productionInput = $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.productionInput))
-    const positiveConsumption = $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.positiveConsumption))
-    const storage = $.solid.create(colonist, $.type.not.isNothing(Colonist.chain.storage))
+    const productionOutput = $.solid.create(colonist, $.maybe.chain(Colonist.chain.productionOutput))
+    const productionInput = $.solid.create(colonist, $.maybe.chain(Colonist.chain.productionInput))
+    const positiveConsumption = $.solid.create(colonist, $.maybe.chain(Colonist.chain.positiveConsumption))
+    const storage = $.solid.create(colonist, $.maybe.chain(Colonist.chain.storage))
 
 
     return <>
