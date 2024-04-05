@@ -807,6 +807,7 @@ export default {
   decideCoastTerrain,
   decideCoastalSea,
   diagonalNeighbors,
+  neighbors,
   radius,
   movementCost,
   unitMovementCost,

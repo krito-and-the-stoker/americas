@@ -127,6 +127,11 @@ const goTo = (unit, target) => {
 
 const isMoving = unit => unit.tile !== unit.movement.target
 
+
+const candiscoverNeighbors = tile => tile.domain === 'sea' || (
+  !tile.forest && !tile.mountain && !tile.hills
+)
+
 const initialize = unit => {
   Util.execute(unit.destroy)
 
@@ -216,13 +221,33 @@ const initialize = unit => {
           unit,
           Binding.map(
             coords => Tile.closest(coords),
-            tile => {
-              if (!tile) {
+            center => {
+              if (!center) {
                 Message.unit.warn('tile is null, this should not be', unit)
                 return
               }
-              Tile.discover(tile, unit.owner)
-              Tile.diagonalNeighbors(tile).forEach(other => Tile.discover(other, unit.owner))
+              if (properties.discoverRange === 1) {
+                Tile.discover(center, unit.owner)
+                Tile.diagonalNeighbors(center).forEach(other => setTimeout(
+                  () =>Tile.discover(other, unit.owner),
+                  Math.random() * 2000
+                ))
+              }
+              if (properties.discoverRange >= 2) {
+                Tile.discover(center, unit.owner)
+                const tiles = Util.flatten(Tile.diagonalNeighbors(center).map(
+                  neighbor => candiscoverNeighbors(neighbor) ? [neighbor, ...Tile.neighbors(neighbor)] : [neighbor]
+                )).filter(Util.unique)
+
+                tiles.forEach(tile => setTimeout(
+                  () =>Tile.discover(tile, unit.owner),
+                  Math.random() * 2000
+                ))
+
+                if (properties.discoverRange > 2) {
+                  console.warn('discover range > 2 not implemented yet')
+                }
+              }
             }
           )
         )
