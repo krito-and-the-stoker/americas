@@ -27,7 +27,7 @@
 - Missionare: Wenn keine weitere inhaltliche Idee da ist, erstmal keine Missionare
 ### Balancing
 - (done) In Kolonie Experten weniger teuer
-- Schiffe größerer Sichtradius (2ter Ring bei Meerfeldern)
+- (done) Schiffe größerer Sichtradius (2ter Ring bei Meerfeldern)
 ### Karten
 - Fehlerlinien fix, Lucky Shot
 - Fisch Bonus-Resourcen
