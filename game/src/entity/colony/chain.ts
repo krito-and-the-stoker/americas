@@ -52,7 +52,7 @@ const toryPercentage = $.chain(
     ),
     $.listen.key('bells')
   ),
-  $.select(([administrators, colonists, bells]) => Math.max(
+  $.select(([administrators, colonists, bells]) => colonists && Math.max(
     0,
     Math.round(
       100 -

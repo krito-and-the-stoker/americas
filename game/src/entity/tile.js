@@ -583,6 +583,7 @@ const production = (tile, resource, colonist = null) => {
     base += colonist.colony.productionBonus
   }
 
+
   const modifiers = ['coast', 'plowed', 'river', 'road']
   let result = modifiers.reduce(
     (result, name) =>
