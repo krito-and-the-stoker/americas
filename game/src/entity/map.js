@@ -108,7 +108,7 @@ const create = ({ data }) => {
 
   const medianTiles = preparedTiles.map(tile => {
     const bonus =
-      Math.random() < Tile.BONUS_CHANCE && tile.name !== 'sea lane' && tile.name !== 'ocean'
+      Math.random() < Tile.BONUS_CHANCE && tile.name !== 'sea lane'
     if (!Tile.TERRAIN_NAMES.includes(tile.name)) {
       return {
         ...tile,

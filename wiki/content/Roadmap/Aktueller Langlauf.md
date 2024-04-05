@@ -30,7 +30,7 @@
 - (done) Schiffe größerer Sichtradius (2ter Ring bei Meerfeldern)
 ### Karten
 - Fehlerlinien fix, Lucky Shot
-- Fisch Bonus-Resourcen
+- (done) Fisch Bonus-Resourcen
 ### Sound
 Was ist mit Sound?
 

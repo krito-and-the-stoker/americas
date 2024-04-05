@@ -107,6 +107,10 @@ const initialize = tile => {
     updateTile(tile)
   }
 
+  if (tile.bonus && diagonalNeighbors2(tile).every(other => other.domain === 'sea')) {
+    tile.bonus = false
+  }
+
   listen.settlement(tile, updateTreeVariation)
   listen.colony(tile, updateTreeVariation)
 }
@@ -361,6 +365,23 @@ const diagonalNeighbors = tile => {
     Message.tile.warn('tile has no vertical neighbors', tile)
   }
   return result.filter(n => n)
+}
+const diagonalNeighbors2 = tile => {
+  let result = diagonalNeighbors(tile)
+  if (up(tile)) {
+    result = result.concat(diagonalNeighbors(up(tile)))
+  }
+  if (down(tile)) {
+    result = result.concat(diagonalNeighbors(down(tile)))
+  }
+  if (left(tile)) {
+    result = result.concat(diagonalNeighbors(left(tile)))
+  }
+  if (right(tile)) {
+    result = result.concat(diagonalNeighbors(right(tile)))
+  }
+
+  return result.filter(n => !!n).filter(Util.unique)
 }
 const radius = tile => diagonalNeighbors(tile).concat([tile])
 
