@@ -17,7 +17,7 @@ function ProductionGoods(props) {
 			{good => <span classList={{[styles.red]: props.goods[good] < 0, [styles.entry]: true}}>
 				<For each={Array(Math.min(20, Math.abs(Math.round(props.goods[good])))).fill()}>
 					{() =>
-						<span class={styles.good} style={{ 'margin-right': `-${Math.round(20 / scale())}px` }}>
+						<span class={styles.good} style={{ 'margin-right': `-${Math.round(17 / scale())}px` }}>
 							<GameIcon good={good} scale={scale()} />
 						</span>
 					}

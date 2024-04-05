@@ -52,9 +52,8 @@ export const profession = $.chain(
 )
 
 export const professionName = $.chain(
-    profession,
     // @ts-expect-error lookup
-    $.select(profession => UnitsData.settler.name[profession] as string || 'Settler')
+    $.select<string>(profession => UnitsData.settler.name[profession] as string || 'Settler')
 )
 
 export const expert = $.chain(

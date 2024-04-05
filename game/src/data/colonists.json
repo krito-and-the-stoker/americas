@@ -156,7 +156,7 @@
         "wood": 1
       },
       "luxury": {
-        "cloth": 1,
+        "cotton": 1,
         "tobacco": 1,
         "housing": 1
       },
@@ -203,7 +203,7 @@
         "wood": 1
       },
       "luxury": {
-        "coats": 1,
+        "cotton": 1,
         "sugar": 1,
         "housing": 1
       },
@@ -251,7 +251,7 @@
       },
       "luxury": {
         "furs": 1,
-        "rum": 1,
+        "tobacco": 1,
         "housing": 1
       },
       "bonus": {
@@ -298,7 +298,7 @@
         "wood": 1
       },
       "luxury": {
-        "cigars": 1,
+        "tobacco": 1,
         "cotton": 1,
         "housing": 1
       },
@@ -398,7 +398,7 @@
       "luxury": {
         "tools": 1,
         "cotton": 1,
-        "coats": 1,
+        "furs": 1,
         "housing": 1
       },
       "bonus": {
@@ -420,7 +420,7 @@
       },
       "luxury": {
         "tools": 1,
-        "cloth": 1,
+        "tobacco": 1,
         "furs": 1,
         "housing": 1
       },
@@ -444,7 +444,7 @@
       "luxury": {
         "tools": 1,
         "cotton": 1,
-        "coats": 1,
+        "sugar": 1,
         "housing": 1
       },
       "bonus": {
@@ -465,7 +465,6 @@
         "wood": 1
       },
       "luxury": {
-        "coats": 1,
         "cloth": 1,
         "tobacco": 1,
         "sugar": 1,
@@ -492,7 +491,6 @@
         "wood": 1
       },
       "luxury": {
-        "coats": 1,
         "cloth": 1,
         "cigars": 1,
         "rum": 1,

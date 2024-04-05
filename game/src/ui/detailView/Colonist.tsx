@@ -20,6 +20,17 @@ function ColonistDetail(colonistEntity: ColonistEntity) {
         $.select(power => power.toFixed(0))
     )
 
+    const promotionTarget = $.solid.create(
+        colonist,
+        Colonist.chain.promotionTarget,
+        Colonist.chain.professionName
+    )
+
+    const canPromote = $.solid.create(
+        colonist,
+        Colonist.chain.canPromote
+    )
+
     const state = {
         noWood: $.solid.create(colonist, Colonist.chain.state.noWood),
         noFood: $.solid.create(colonist, Colonist.chain.state.noFood),
@@ -38,7 +49,7 @@ function ColonistDetail(colonistEntity: ColonistEntity) {
 
     const promotionProgress = $.solid.create(colonist, Colonist.chain.promotionProgress)
 
-    const hasEntries = (obj: StorageEntity) => Object.keys(obj).length > 0
+    const hasEntries = (obj: StorageEntity | undefined) => obj && Object.keys(obj).length > 0
 
     const productionOutput = $.solid.create(colonist, Colonist.chain.productionOutput)
     const productionInput = $.solid.create(colonist, Colonist.chain.productionInput)
@@ -51,24 +62,25 @@ function ColonistDetail(colonistEntity: ColonistEntity) {
             <div class={styles.icon}><GameIcon unit={colonistEntity.unit} scale={2} /></div>
             <div class={styles.state}>
                 <div class={styles.power}>Power {power()}</div>
-                <Show when={state.noFood()}><div class={styles.stateTag}>
-                    <span>No Food</span>
+                <Show when={hasEntries(breakdown.food())}><div class={styles.stateTag}>
+                    <span classList={{ [styles.has]: !state.noFood(), [styles.missing]: state.noFood() }}>Food</span>
                     <Show when={breakdown.food()}><ProductionGoods scale={0.5} goods={breakdown.food()} /></Show>
                 </div></Show>
-                <Show when={state.noWood()}><div class={styles.stateTag}>
-                    <span>No Wood</span>
+                <Show when={hasEntries(breakdown.wood())}><div class={styles.stateTag}>
+                    <span classList={{ [styles.has]: !state.noWood(), [styles.missing]: state.noWood() }}>Wood</span>
                     <Show when={breakdown.wood()}><ProductionGoods scale={0.5} goods={breakdown.wood()} /></Show>
                 </div></Show>
-                <Show when={state.noLuxury()}><div class={styles.stateTag}>
-                    <span>No Luxury</span>
+                <Show when={hasEntries(breakdown.luxury())}><div class={styles.stateTag} classList={{ [styles.inactive]: state.noLuxury()}}>
+                    <span classList={{ [styles.has]: !state.noLuxury(), [styles.missing]: state.noLuxury() }}>Luxury</span>
                     <Show when={breakdown.luxury()}><ProductionGoods scale={0.5} goods={breakdown.luxury()} /></Show>
                 </div></Show>
-                <Show when={state.isPromoting()}><div class={styles.stateTag}>
-                    <span>Promoting {promotionProgress()}%</span>
+                <Show when={canPromote() && hasEntries(breakdown.promotion())}><div class={styles.stateTag} classList={{ [styles.inactive]: !state.isPromoting() }}>
+                    <span classList={{ [styles.has]: state.isPromoting() }}>Promoting {promotionProgress()}%</span>
                     <Show when={breakdown.promotion()}><ProductionGoods scale={0.5} goods={breakdown.promotion()} /></Show>
+                    <span> -&gt; {promotionTarget()}</span>
                 </div></Show>
-                <Show when={state.hasBonus()}><div class={styles.stateTag}>
-                    <span>Bonus</span>
+                <Show when={hasEntries(breakdown.bonus())}><div class={styles.stateTag} classList={{ [styles.inactive]: !state.hasBonus() }}>
+                    <span classList={{ [styles.has]: state.hasBonus() }}>Bonus</span>
                     <Show when={breakdown.bonus()}><ProductionGoods scale={0.5} goods={breakdown.bonus()} /></Show>
                 </div></Show>
             </div>

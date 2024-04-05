@@ -8,7 +8,7 @@ import Storage from 'entity/storage'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const STORAGE_PER_POWER = 1.0 / 10 // 1 storage factor for every 10 power
-const MAXIMUM_TRANSFER = 20 // a colonist can not get transfer more goods per production cycle
+const MAXIMUM_TRANSFER = 5 // a colonist can not get transfer more goods per production cycle
 
 const needForGood = (needDescription, good) => needDescription ? needDescription[good] || 0 : 0
 
@@ -31,7 +31,7 @@ const create = colony => {
 
       // 10 * Colonist.power is the power the colonist has,
       // the function is factored down for no good reason
-      const storageFactor = 2 * scale + STORAGE_PER_POWER * 10 * Colonist.power(colonist)
+      const storageFactor = 2 * scale + STORAGE_PER_POWER * Colonist.power(colonist)
 
       const target = good => storageFactor * (
         needForGood(foodNeeds, good) +
