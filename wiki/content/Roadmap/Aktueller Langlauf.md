@@ -1,11 +1,11 @@
 ### Kolonie
+- (done) Colonisteninfos on Click
+- (done) Promotion: jeder kann alles werden
+- (done) Bildungsgebäude rauswerfen
 - Neue Gebäudestruktur (Dreicke) fertigstellen
 - Construction-Queue
-- Gebäudeinfos & Optionen on Click
-- Colonisteninfos on Click
 - Mehrfachbaubare Gebäude überdenken und UI anpassen
-- Promotion: jeder kann alles werden
-- Bildungsgebäude rauswerfen
+- Gebäudeinfos & Optionen on Click
 ### Gamestart
 - Schwierigkeitsgrad
 - Audienz beim King
@@ -26,7 +26,7 @@
 - Kriegszustände werden automatisch ausgelöst wenn die Stimmung zu schlecht ist
 - Missionare: Wenn keine weitere inhaltliche Idee da ist, erstmal keine Missionare
 ### Balancing
-- In Kolonie Experten weniger teuer
+- (done) In Kolonie Experten weniger teuer
 - Schiffe größerer Sichtradius (2ter Ring bei Meerfeldern)
 ### Karten
 - Fehlerlinien fix, Lucky Shot
