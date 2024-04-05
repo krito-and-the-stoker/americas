@@ -40,8 +40,8 @@ export const create = (coords: Coordinates, owner: OwnerEntity) => {
     newBuildings: [],
     layout: Layout.create(),
 
-    storage: Storage.create,
-    trade: Storage.create,
+    storage: Storage.create(),
+    trade: Storage.create(),
 
     waterMap: Layout.create(),
 
