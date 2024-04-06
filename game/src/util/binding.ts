@@ -2,6 +2,11 @@ import type { PrimitiveSignal, CleanupExec } from 'signal-chain'
 import $ from 'signal-chain'
 import type { Function1, Function2 } from 'util/types'
 
+$.config({
+  update: 'timeout',
+  batch: true
+})
+
 
 const listeners = new Map<Object, PrimitiveSignal<unknown>>()
 const listen = <O extends Object, Key extends keyof O>(instance: O, key: Key | null | undefined, fn: Function1<O[Key], CleanupExec>) => {

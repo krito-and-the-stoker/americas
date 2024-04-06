@@ -116,7 +116,6 @@ const protection = $.unique.chain(
   $.select(([fortifications, maxStrength]) => fortifications * maxStrength)
 )
 
-
 const coastalDirection = $.unique.chain(
   tile,
   $.combine(
