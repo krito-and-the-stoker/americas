@@ -11,23 +11,23 @@ import Tile from 'entity/tile'
 type TileEntity = {}
 
 
-const tile = $.uniqueValue(
+const tile = $.unique.chain(
   $.select<ColonyEntity>(),
   $.select(colony => MapEntity.tile(colony.mapCoordinates) as TileEntity)
 )
 
-const isCoastal = $.uniqueValue(
+const isCoastal = $.unique.chain(
   tile,
   $.select(center => Tile.radius(center).some(tile => tile.domain === 'sea'))
 )
 
-const defender = $.uniqueValue(
+const defender = $.unique.chain(
   $.select<ColonyEntity>(),
   $.listen.key('colonists'),
   $.select(colonists => colonists[colonists.length - 1].unit)
 )
 
-const currentConstruction = $.uniqueValue(
+const currentConstruction = $.chain(
   $.select<ColonyEntity>(),
   $.combine(
     $.listen.key('constructionTarget'),
@@ -36,7 +36,7 @@ const currentConstruction = $.uniqueValue(
   $.select(([target, construction]) => target ? construction[target] ?? construction.none : construction.none),
 )
 
-const toryPercentage = $.uniqueValue(
+const toryPercentage = $.unique.chain(
   $.select<ColonyEntity>(),
   $.combine(
     $.chain(
@@ -62,7 +62,7 @@ const toryPercentage = $.uniqueValue(
   )),
 )
 
-const tories = $.uniqueValue(
+const tories = $.unique.chain(
   $.combine(
     toryPercentage,
     $.listen.key('colonists')
@@ -70,12 +70,12 @@ const tories = $.uniqueValue(
   $.select(([percentage, colonists]) => Math.max(0, Math.round((colonists.length * percentage) / 100))),
 )
 
-const rebelPercentage = $.uniqueValue(
+const rebelPercentage = $.unique.chain(
   toryPercentage,
   $.select(percentage => 100 - percentage),
 )
 
-const rebels = $.uniqueValue(
+const rebels = $.unique.chain(
   $.combine(
     rebelPercentage,
     $.listen.key('colonists')
@@ -83,7 +83,7 @@ const rebels = $.uniqueValue(
   $.select(([percentage, colonists]) => Math.max(0, Math.round((colonists.length * percentage) / 100))),
 )
 
-const protection = $.uniqueValue(
+const protection = $.unique.chain(
   $.select<ColonyEntity>(),
   $.combine(
     $.chain(
@@ -117,7 +117,7 @@ const protection = $.uniqueValue(
 )
 
 
-const coastalDirection = $.uniqueValue(
+const coastalDirection = $.unique.chain(
   tile,
   $.combine(
     $.select(),

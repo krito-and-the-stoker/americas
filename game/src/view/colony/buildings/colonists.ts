@@ -64,7 +64,7 @@ const createOne = (building: BuildingEntity, colonist: ColonistEntity, container
         Storage.signal,
         $.select<StorageEntity, number>(storage => storage[production.good] ?? production.amount),
         $.select(amount => Math.round(amount)),
-        $.passUnique(),
+        $.unique.pass(),
       )
 
       unsubscribeProduction = [

@@ -10,7 +10,7 @@ import GoodsData from 'data/goods.json'
 import BuildingData from 'data/buildings.json'
 import UnitsData from 'data/units.json'
 
-const unitName = $.uniqueValue(
+const unitName = $.unique.chain(
     $.select<UnitEntity>(),
     $.combine(
         $.listen.key('expert'),
@@ -19,13 +19,13 @@ const unitName = $.uniqueValue(
     $.select(([expert, properties]) => expert && properties.name[expert] || properties.name.default)
 )
 
-export const name = $.uniqueValue(
+export const name = $.unique.chain(
     $.select<ColonistEntity>(),
     $.listen.key('unit'),
     unitName
 )
 
-export const profession = $.uniqueValue(
+export const profession = $.unique.chain(
     $.select<ColonistEntity>(),
     $.listen.key('work'),
     $.type.not.isNothing(
@@ -51,25 +51,25 @@ export const profession = $.uniqueValue(
     $.select(profession => profession ?? 'settler')
 )
 
-export const professionName = $.uniqueValue(
+export const professionName = $.unique.chain(
     // @ts-expect-error lookup
     $.select<string>(profession => UnitsData.settler.name[profession] as string || 'Settler')
 )
 
-export const expert = $.uniqueValue(
+export const expert = $.unique.chain(
     $.select<ColonistEntity>(),
     $.listen.key('unit'),
     $.listen.key('expert')
 )
 
 
-export const expertName = $.uniqueValue(
+export const expertName = $.unique.chain(
     expert,
     // @ts-expect-error lookup
     $.select(colonist => UnitsData.settler.name[colonist.unit.expert] as string || 'Settler')
 )
 
-export const power = $.uniqueValue(
+export const power = $.unique.chain(
     $.select<ColonistEntity>(),
     $.combine(
         profession,
@@ -118,31 +118,31 @@ const invertQuantities = (obj: StorageEntity) => Object.fromEntries(
 )
 
 
-export const productionOutput = $.uniqueValue(
+export const productionOutput = $.unique.chain(
     storageListener(colonist => colonist.productionSummary),
     $.select(roundQuantities),
     $.select(filterPositive),
 )
 
-export const productionInput = $.uniqueValue(
+export const productionInput = $.unique.chain(
     storageListener(colonist => colonist.productionSummary),
     $.select(roundQuantities),
     $.select(invertQuantities),
     $.select(filterPositive)
 )
 
-export const positiveConsumption = $.uniqueValue(
+export const positiveConsumption = $.unique.chain(
     storageListener(colonist => colonist.consumptionSummary),
     $.select(roundQuantities),
     $.select(filterNotZero),
     $.select(invertQuantities),
 )
 
-export const storage = $.uniqueValue(
+export const storage = $.unique.chain(
     storageListener(colonist => colonist.storage)
 )
 
-export const promotionProgress = $.uniqueValue(
+export const promotionProgress = $.unique.chain(
     $.select<ColonistEntity>(),
     $.maybe.listen.key('promotion'),
     $.select(promotion =>
@@ -152,7 +152,7 @@ export const promotionProgress = $.uniqueValue(
     $.select(progress => progress ? Math.floor(100 * progress) : 0)
 )
 
-const stateChain = $.uniqueValue(
+const stateChain = $.unique.chain(
     $.select<ColonistEntity>(),
     $.maybe.listen.key('state')
 )
@@ -165,7 +165,7 @@ export const state = {
     hasBonus: $.chain(stateChain, $.select(state => state?.hasBonus)),
 }
 
-const breakdownChain = $.uniqueValue(
+const breakdownChain = $.unique.chain(
     $.select<ColonistEntity>(),
     $.maybe.listen.key('consumptionBreakdown'),
     $.maybe.listen.key('has')
@@ -180,7 +180,7 @@ export const breakdown = {
 }
 
 
-export const canPromote = $.uniqueValue(
+export const canPromote = $.unique.chain(
     $.combine(
         expert,
         profession
@@ -188,7 +188,7 @@ export const canPromote = $.uniqueValue(
     $.select(([expert, profession]) => expert !== profession)
 )
 
-export const promotionTarget = $.uniqueValue(
+export const promotionTarget = $.unique.chain(
     $.combine(
         expert,
         profession
@@ -212,7 +212,7 @@ type ColonistDescription = {
     }
 }
 
-export const needsForPromotion = $.uniqueValue(
+export const needsForPromotion = $.unique.chain(
     // @ts-expect-error lookup
     $.select<string, ColonistDescription>(promotionTarget => ColonistData[promotionTarget] || ColonistData.default),
     $.select(description => {
