@@ -10,7 +10,7 @@ import GoodsData from 'data/goods.json'
 import BuildingData from 'data/buildings.json'
 import UnitsData from 'data/units.json'
 
-const unitName = $.chain(
+const unitName = $.uniqueValue(
     $.select<UnitEntity>(),
     $.combine(
         $.listen.key('expert'),
@@ -19,13 +19,13 @@ const unitName = $.chain(
     $.select(([expert, properties]) => expert && properties.name[expert] || properties.name.default)
 )
 
-export const name = $.chain(
+export const name = $.uniqueValue(
     $.select<ColonistEntity>(),
     $.listen.key('unit'),
     unitName
 )
 
-export const profession = $.chain(
+export const profession = $.uniqueValue(
     $.select<ColonistEntity>(),
     $.listen.key('work'),
     $.type.not.isNothing(
@@ -51,25 +51,25 @@ export const profession = $.chain(
     $.select(profession => profession ?? 'settler')
 )
 
-export const professionName = $.chain(
+export const professionName = $.uniqueValue(
     // @ts-expect-error lookup
     $.select<string>(profession => UnitsData.settler.name[profession] as string || 'Settler')
 )
 
-export const expert = $.chain(
+export const expert = $.uniqueValue(
     $.select<ColonistEntity>(),
     $.listen.key('unit'),
     $.listen.key('expert')
 )
 
 
-export const expertName = $.chain(
+export const expertName = $.uniqueValue(
     expert,
     // @ts-expect-error lookup
     $.select(colonist => UnitsData.settler.name[colonist.unit.expert] as string || 'Settler')
 )
 
-export const power = $.chain(
+export const power = $.uniqueValue(
     $.select<ColonistEntity>(),
     $.combine(
         profession,
@@ -118,31 +118,31 @@ const invertQuantities = (obj: StorageEntity) => Object.fromEntries(
 )
 
 
-export const productionOutput = $.chain(
+export const productionOutput = $.uniqueValue(
     storageListener(colonist => colonist.productionSummary),
     $.select(roundQuantities),
     $.select(filterPositive),
 )
 
-export const productionInput = $.chain(
+export const productionInput = $.uniqueValue(
     storageListener(colonist => colonist.productionSummary),
     $.select(roundQuantities),
     $.select(invertQuantities),
     $.select(filterPositive)
 )
 
-export const positiveConsumption = $.chain(
+export const positiveConsumption = $.uniqueValue(
     storageListener(colonist => colonist.consumptionSummary),
     $.select(roundQuantities),
     $.select(filterNotZero),
     $.select(invertQuantities),
 )
 
-export const storage = $.chain(
+export const storage = $.uniqueValue(
     storageListener(colonist => colonist.storage)
 )
 
-export const promotionProgress = $.chain(
+export const promotionProgress = $.uniqueValue(
     $.select<ColonistEntity>(),
     $.maybe.listen.key('promotion'),
     $.select(promotion =>
@@ -152,7 +152,7 @@ export const promotionProgress = $.chain(
     $.select(progress => progress ? Math.floor(100 * progress) : 0)
 )
 
-const stateChain = $.chain(
+const stateChain = $.uniqueValue(
     $.select<ColonistEntity>(),
     $.maybe.listen.key('state')
 )
@@ -165,7 +165,7 @@ export const state = {
     hasBonus: $.chain(stateChain, $.select(state => state?.hasBonus)),
 }
 
-const breakdownChain = $.chain(
+const breakdownChain = $.uniqueValue(
     $.select<ColonistEntity>(),
     $.maybe.listen.key('consumptionBreakdown'),
     $.maybe.listen.key('has')
@@ -180,7 +180,7 @@ export const breakdown = {
 }
 
 
-export const canPromote = $.chain(
+export const canPromote = $.uniqueValue(
     $.combine(
         expert,
         profession
@@ -188,7 +188,7 @@ export const canPromote = $.chain(
     $.select(([expert, profession]) => expert !== profession)
 )
 
-export const promotionTarget = $.chain(
+export const promotionTarget = $.uniqueValue(
     $.combine(
         expert,
         profession
@@ -212,7 +212,7 @@ type ColonistDescription = {
     }
 }
 
-export const needsForPromotion = $.chain(
+export const needsForPromotion = $.uniqueValue(
     // @ts-expect-error lookup
     $.select<string, ColonistDescription>(promotionTarget => ColonistData[promotionTarget] || ColonistData.default),
     $.select(description => {
