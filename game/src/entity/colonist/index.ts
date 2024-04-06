@@ -1,20 +1,21 @@
 import $ from 'signal-chain'
 
-import JSFunctions from './colonist'
+import Actions from './actions'
 import { listen, update } from './binding'
 
 import * as chain from './chains'
-
+import { create } from './colonist'
 
 export default {
-    create: JSFunctions.create,
-    save: JSFunctions.save,
-    load: JSFunctions.load,
+    create,
 
-    disband: JSFunctions.disband,
-    beginFieldWork: JSFunctions.beginFieldWork,
-    beginColonyWork: JSFunctions.beginColonyWork,
-    stopWorking: JSFunctions.stopWorking,
+    save: Actions.save,
+    load: Actions.load,
+
+    disband: Actions.disband,
+    beginFieldWork: Actions.beginFieldWork,
+    beginColonyWork: Actions.beginColonyWork,
+    stopWorking: Actions.stopWorking,
     power: $.function(chain.power),
 
     profession: $.function(chain.profession),

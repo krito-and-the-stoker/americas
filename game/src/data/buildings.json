@@ -132,7 +132,7 @@
 		}, {
 			"wood": 250,
 			"tools": 100,
-			"cloth": 50
+			"cloth": 25
 		}],
 		"width": 2,
 		"workspace": 3,
@@ -266,7 +266,7 @@
 		}, {
 			"wood": 350,
 			"tools": 200,
-			"silver": 50
+			"silver": 25
 		}],
 		"production": {
 			"good": "crosses",
@@ -327,7 +327,6 @@
 	"customhouse": {
 		"frame": [null, null],
 		"population": [0, 1],
-		"width": 1,
 		"name": ["House", "Custom House"],
 		"width": 1,
 		"workspace": 0,

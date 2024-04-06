@@ -22,6 +22,7 @@ import ProductionSummary from 'task/colony/productionSummary'
 import UnjoinColony from 'interaction/unjoinColony'
 
 import { listen, update } from './binding'
+import { initialize } from './colonist'
 
 const beginFieldWork = (colonist, tile, good) => {
   stopWorking(colonist)
@@ -70,59 +71,6 @@ const stopWorking = colonist => {
   update.work(colonist, null)
 }
 
-const initialize = colonist => {
-  // the record will be used to record during production and consumption
-  colonist.productionRecord = Storage.createWithProduction()
-  colonist.consumptionRecord = Storage.createWithProduction()
-  // the summary is a snapshot created at a reasonable time
-  // that can always be displayed
-  colonist.productionSummary = Storage.createWithProduction()
-  colonist.consumptionSummary = Storage.createWithProduction()
-
-  colonist.consumptionBreakdown = {
-    want: {},
-    has: {},
-    state: {}
-  }
-
-  return [
-    listen.unit(colonist, unit => {
-      if (!unit) {
-        disband(colonist)
-      }
-    }),
-    Time.schedule(ProductionSummary.create(colonist)),
-  ]
-}
-
-const create = unit => {
-  const colonist = {
-    type: 'colonist',
-    unit,
-    education: {
-      profession: null,
-      progress: 0,
-    },
-    promotion: {},
-    power: Math.random(),
-    mood: 0,
-    work: null,
-    beingEducated: false,
-    state: {
-      noFood: false,
-      noWood: false,
-      noLuxury: false,
-      isPromoting: false,
-      hasBonus: false,
-    },
-  }
-
-  colonist.storage = Storage.create()
-  colonist.destroy = initialize(colonist)
-
-  Record.add('colonist', colonist)
-  return colonist
-}
 
 
 const disband = colonist => {
@@ -208,10 +156,9 @@ const load = colonist => {
 }
 
 export default {
-  create,
-  disband,
   save,
   load,
+  disband,
   beginFieldWork,
   beginColonyWork,
   stopWorking,

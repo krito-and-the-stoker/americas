@@ -1,6 +1,7 @@
 import type { UnitEntity } from 'ui/overlay/Unit'
 import type { ColonyEntity } from 'entity/colony/types'
 import type { BuildingEntity } from 'view/colony/buildings'
+import { CleanupExec } from 'signal-chain'
 
 export type StorageEntity = {
     [key: string]: number
@@ -42,6 +43,7 @@ export type ColonistEntity = {
     consumptionSummary: StorageEntity
     productionSummary: StorageEntity
     consumptionRecord: StorageEntity
+    productionRecord: StorageEntity
     state: {
         noFood: boolean
         noWood: boolean
@@ -59,4 +61,5 @@ export type ColonistEntity = {
     mood: number
     power: number
     referenceId: number
+    destroy: CleanupExec
 }

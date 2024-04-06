@@ -59,7 +59,7 @@ const toryPercentage = $.chain(
         (100.0 * administrators) / colonists -
         Math.min(100, bells / (colonists + 1))
     )
-  ))
+  )),
 )
 
 const tories = $.chain(
@@ -67,12 +67,12 @@ const tories = $.chain(
     toryPercentage,
     $.listen.key('colonists')
   ),
-  $.select(([percentage, colonists]) => Math.max(0, Math.round((colonists.length * percentage) / 100)))
+  $.select(([percentage, colonists]) => Math.max(0, Math.round((colonists.length * percentage) / 100))),
 )
 
 const rebelPercentage = $.chain(
   toryPercentage,
-  $.select(percentage => 100 - percentage)
+  $.select(percentage => 100 - percentage),
 )
 
 const rebels = $.chain(
@@ -80,7 +80,7 @@ const rebels = $.chain(
     rebelPercentage,
     $.listen.key('colonists')
   ),
-  $.select(([percentage, colonists]) => Math.max(0, Math.round((colonists.length * percentage) / 100)))
+  $.select(([percentage, colonists]) => Math.max(0, Math.round((colonists.length * percentage) / 100))),
 )
 
 const protection = $.chain(
