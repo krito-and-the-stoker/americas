@@ -63,8 +63,7 @@ const createOne = (building: BuildingEntity, colonist: ColonistEntity, container
         $.select(colonist => colonist.productionSummary),
         Storage.signal,
         $.select<StorageEntity, number>(storage => storage[production.good] ?? production.amount),
-        $.select(amount => Math.round(amount)),
-        $.unique.pass(),
+        $.unique.select(amount => Math.round(amount)),
       )
 
       unsubscribeProduction = [
@@ -96,8 +95,10 @@ const createOne = (building: BuildingEntity, colonist: ColonistEntity, container
       colonistSprite.tint = ColonistView.tint(colonist)
     })
 
+    console.log('draw colonist', colonist.referenceId)
     return [
       () => {
+        console.log('removed colonist', colonist.referenceId)
         container.removeChild(colonistSprite)
       },
       unsubscribeProduction,
@@ -126,10 +127,15 @@ const create = (building: BuildingEntity, container: PIXI.Container) => {
   const unsubscribeColonists = Colony.listenEach.colonists(
     colony, (colonist: ColonistEntity) => $.connect(
       $.emit(colonist),
-      $.listen.key('work'),
-      $.passIf(work => work?.type === 'Building'),
-      $.effect(() => {
-        return createOne(building, colonist, container)
+      $.combine(
+        Colonist.chain.expert,
+        $.listen.key('work')
+      ),
+      $.select(([_, work]) => work),
+      $.effect(work => {
+        if (work?.type === 'Building' && work?.building === building) {
+          return createOne(building, colonist, container)
+        }
       })
     )
   )
