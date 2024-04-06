@@ -35,8 +35,8 @@ function ColonistSummary() {
         colonist,
         $.maybe.chain(
             Colonist.chain.power,
-            $.select(power => power.toFixed(0))
-        )
+            $.select(power => power.toFixed(0)),
+        ),
     )
 
     const state = {
