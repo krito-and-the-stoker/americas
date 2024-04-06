@@ -11,23 +11,23 @@ import Tile from 'entity/tile'
 type TileEntity = {}
 
 
-const tile = $.chain(
+const tile = $.uniqueValue(
   $.select<ColonyEntity>(),
   $.select(colony => MapEntity.tile(colony.mapCoordinates) as TileEntity)
 )
 
-const isCoastal = $.chain(
+const isCoastal = $.uniqueValue(
   tile,
   $.select(center => Tile.radius(center).some(tile => tile.domain === 'sea'))
 )
 
-const defender = $.chain(
+const defender = $.uniqueValue(
   $.select<ColonyEntity>(),
   $.listen.key('colonists'),
   $.select(colonists => colonists[colonists.length - 1].unit)
 )
 
-const currentConstruction = $.chain(
+const currentConstruction = $.uniqueValue(
   $.select<ColonyEntity>(),
   $.combine(
     $.listen.key('constructionTarget'),
@@ -36,7 +36,7 @@ const currentConstruction = $.chain(
   $.select(([target, construction]) => target ? construction[target] ?? construction.none : construction.none),
 )
 
-const toryPercentage = $.chain(
+const toryPercentage = $.uniqueValue(
   $.select<ColonyEntity>(),
   $.combine(
     $.chain(
@@ -62,7 +62,7 @@ const toryPercentage = $.chain(
   )),
 )
 
-const tories = $.chain(
+const tories = $.uniqueValue(
   $.combine(
     toryPercentage,
     $.listen.key('colonists')
@@ -70,12 +70,12 @@ const tories = $.chain(
   $.select(([percentage, colonists]) => Math.max(0, Math.round((colonists.length * percentage) / 100))),
 )
 
-const rebelPercentage = $.chain(
+const rebelPercentage = $.uniqueValue(
   toryPercentage,
   $.select(percentage => 100 - percentage),
 )
 
-const rebels = $.chain(
+const rebels = $.uniqueValue(
   $.combine(
     rebelPercentage,
     $.listen.key('colonists')
@@ -83,7 +83,7 @@ const rebels = $.chain(
   $.select(([percentage, colonists]) => Math.max(0, Math.round((colonists.length * percentage) / 100))),
 )
 
-const protection = $.chain(
+const protection = $.uniqueValue(
   $.select<ColonyEntity>(),
   $.combine(
     $.chain(
@@ -117,7 +117,7 @@ const protection = $.chain(
 )
 
 
-const coastalDirection = $.chain(
+const coastalDirection = $.uniqueValue(
   tile,
   $.combine(
     $.select(),

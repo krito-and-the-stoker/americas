@@ -25,7 +25,6 @@ function openConstructionDialog(colony: ColonyEntity) {
         percentage: Math.floor((100 * option.progress) / Util.sum(Object.values(option.cost))),
     })
 
-    console.log(options)
     Dialog.open('colony.construction', {
         newBuildings: options.newBuildings.map(prepareOption),
         upgradeBuildings: options.upgradeBuildings.map(prepareOption),

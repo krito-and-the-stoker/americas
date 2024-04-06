@@ -37,15 +37,8 @@ export default (colony: ColonyEntity) => {
     Tile.update.harvestedBy(tile, null)
   }
 
-  const rebels = $.primitive.connect(
-    $.emit(colony),
-    chain.rebels,
-    $.passUnique()
-  )
 
   colony.destroy = [
-    rebels.disconnect,
-
     () => colony.newBuildings.forEach(building => Util.execute(building.destroy)),
     Time.schedule(FillStorage.create(colony)),
     Time.schedule(Consume.create(colony)),
@@ -70,7 +63,8 @@ export default (colony: ColonyEntity) => {
     ),
 
     $.connect(
-      rebels.listen,
+      $.emit(colony),
+      chain.rebels,
       $.effect(rebels =>
         Time.schedule(Bells.create(colony, rebels))
       )
