@@ -19,8 +19,8 @@
     "is-mobile": "^2.2.2",
     "normalize-wheel": "^1.0.1",
     "pixi.js": "^7.4.0",
-    "signal-chain": "^0.11.5",
-    "signal-chain-solid": "^0.2.16",
+    "signal-chain": "^0.11.6",
+    "signal-chain-solid": "^0.2.17",
     "snabbdom": "^0.7.4",
     "solid-js": "^1.8.15",
     "uuid": "^3.3.2"
