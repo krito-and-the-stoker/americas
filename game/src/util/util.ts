@@ -14,7 +14,7 @@ import Message from 'util/message'
 interface Unit extends HasCoordinates {
   radius: number
   properties: {
-    radius: number
+    radius?: number
   }
 }
 
@@ -31,7 +31,7 @@ const inBattleDistance = (unit: Unit, other: Unit) =>
 const inDistance = (unit: Unit, other: Unit) =>
   distance(unit.mapCoordinates, other.mapCoordinates) < 0.5 * unit.radius
 const inRaidDistance = (unit: Unit, other: Unit) =>
-  distance(unit.mapCoordinates, other.mapCoordinates) < 0.25 * unit.properties.radius
+  distance(unit.mapCoordinates, other.mapCoordinates) < 0.25 * (unit.properties.radius ?? 0)
 const inMoveDistance = (unit: Unit, other: Unit) => LA.distanceManhatten(unit.mapCoordinates, other.mapCoordinates) <= 1
 
 const isArray = Array.isArray

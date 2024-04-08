@@ -36,6 +36,7 @@
       "ui/*": ["./src/ui/*"],
       "command/*": ["./src/command/*"],
       "task/*": ["./src/task/*"],
+      "ai/*": ["./src/ai/*"],
     },
     "allowJs": true
   },

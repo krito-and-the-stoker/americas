@@ -1,6 +1,6 @@
 import type { ColonyEntity } from 'entity/colony/types'
 import type { Function1 } from 'util/types'
-import type { UnitEntity } from '../Unit'
+import { UnitEntity } from 'entity/unit/types'
 import { ColonistEntity } from 'entity/colonist/types'
 
 

@@ -1,4 +1,4 @@
-import type { UnitEntity } from 'ui/overlay/Unit'
+import { UnitEntity } from 'entity/unit/types'
 import type { ColonyEntity } from 'entity/colony/types'
 import type { BuildingEntity } from 'view/colony/buildings'
 import { CleanupExec } from 'signal-chain'

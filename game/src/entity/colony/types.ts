@@ -1,7 +1,7 @@
 import type { Coordinates } from 'util/la'
 import { ColonistEntity } from 'entity/colonist/types'
 import type { BuildingEntity } from 'view/colony/buildings'
-import type { UnitEntity } from 'ui/overlay/Unit'
+import { UnitEntity } from 'entity/unit/types'
 import type { CleanupExec } from 'util/types'
 
 

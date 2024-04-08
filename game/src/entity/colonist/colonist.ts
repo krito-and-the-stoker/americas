@@ -1,7 +1,7 @@
 import $ from 'signal-chain'
 
 import type { ColonistEntity } from "./types"
-import type { UnitEntity } from "ui/overlay/Unit"
+import { UnitEntity } from 'entity/unit/types'
 
 import Record from 'util/record'
 import Time from 'timeline/time'

@@ -1,6 +1,6 @@
 import $ from 'signal-chain'
 import type { ColonistEntity, StorageEntity } from './types'
-import { UnitEntity } from 'ui/overlay/Unit'
+import { UnitEntity } from 'entity/unit/types'
 import { Function1 } from 'util/types'
 
 import Storage from 'entity/storage'

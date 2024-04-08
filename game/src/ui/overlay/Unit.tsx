@@ -1,5 +1,4 @@
 import type { Maybe, Function1 } from 'util/types'
-import type { Coordinates } from 'util/la'
 import type { ColonyEntity } from 'entity/colony/types'
 import { Show, For } from 'solid-js'
 
@@ -30,51 +29,8 @@ import GameIcon from 'ui/components/GameIcon'
 
 import styles from './Unit.module.scss'
 
-type CommandInfo = {
-    id: string
-    display: string
-}
-type TileEntity = {
-    colony: ColonyEntity
-    settlement: boolean
-    road: boolean
-    forest: boolean
-    plowed: boolean
-}
-type CommanderEntity = {}
-type StorageEntity = {}
-type ColonistEntity = {
-    colony?: ColonyEntity
-}
+import type { UnitEntity } from 'entity/unit/types'
 
-export type UnitEntity = {
-    passengers: UnitEntity[]
-    domain: string
-    commander: CommanderEntity
-    command: CommandInfo
-    storage: StorageEntity
-    equipment: StorageEntity
-    consumptionSummary: StorageEntity
-    treasure: number | null
-    mapCoordinates: Coordinates
-    tile: TileEntity
-    colonist?: ColonistEntity
-    expert: string
-    properties: {
-        cost?: number
-        speed?: number
-        canFound?: boolean
-        canTerraform?: boolean
-        needsFood?: boolean
-        cargo?: number
-        equipment?: StorageEntity
-        name: {
-            default: string
-            [key: string]: string
-        }
-
-    }
-}
 
 const handleGoTo = (unit: UnitEntity) => {
     const colonies = Record.getAll('colony')
@@ -128,7 +84,7 @@ function UnitComponent() {
         $.select((view: UnitView) => view?.unit)
     )
     const unit = $.solid.create(unitChain)
-    const name = () => unit() && Unit.name(unit())
+    const name = $.solid.create(unitChain, $.maybe.chain(Unit.chain.name))
 
     const cargo = $.solid.create(
         unitChain,

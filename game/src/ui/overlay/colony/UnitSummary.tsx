@@ -12,7 +12,7 @@ import StorageGoods from 'ui/components/StorageGoods'
 import GameIcon from 'ui/components/GameIcon'
 
 import styles from './UnitSummary.module.scss'
-import { UnitEntity } from '../Unit'
+import { UnitEntity } from 'entity/unit/types'
 
 type HoverData = {
 	unit?: UnitEntity
