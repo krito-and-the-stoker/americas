@@ -490,13 +490,12 @@
         "wood": 1
       },
       "luxury": {
-        "cloth": 1,
         "cigars": 1,
         "rum": 1,
         "housing": 1
       },
       "bonus": {
-        "cigars": 1,
+        "coats": 1,
         "housing": 1
       }
     },
