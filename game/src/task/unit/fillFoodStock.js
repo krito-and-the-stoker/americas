@@ -7,6 +7,7 @@ import Unit from 'entity/unit'
 import Tile from 'entity/tile'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
+const IN_FIELD_FACTOR = 1
 const IN_COLONY_FACTOR = 10
 
 const create = (unit, colony) => {
@@ -31,7 +32,7 @@ const create = (unit, colony) => {
     }
 
     // unscale only communicates lost food instead of all food that is moved towards another storage
-    const unscale = amount => Math.min(foodCost, amount / (deltaTime * PRODUCTION_BASE_FACTOR))
+    const unscale = amount => amount / (deltaTime * PRODUCTION_BASE_FACTOR)
     const foodCost = Unit.FOOD_COST
 
     let desiredAmount
@@ -40,31 +41,30 @@ const create = (unit, colony) => {
       desiredAmount = IN_COLONY_FACTOR * foodCost * deltaTime * PRODUCTION_BASE_FACTOR
     } else {
       // as unit in the field next to colony, replenish only what is eaten
-      desiredAmount = foodCost * deltaTime * PRODUCTION_BASE_FACTOR
+      desiredAmount = IN_FIELD_FACTOR * foodCost * deltaTime * PRODUCTION_BASE_FACTOR
     }
 
     // in any case dont take more than the unit food capacity
     desiredAmount = Math.min(desiredAmount, Unit.UNIT_FOOD_CAPACITY - unit.equipment.food)
     const scaledAmount = Math.min(desiredAmount, colony.storage.food)
-    if (colony.storage.food + colony.storage.horses > 0) {
-      // take the food you want
-      let foodAmount = Util.clamp(scaledAmount, 0, colony.storage.food)
 
+    if (scaledAmount > 0) {
+      // take the food you want
       Storage.update(unit.equipment, {
         good: 'food',
         amount: scaledAmount,
       })
       Storage.update(colony.storage, {
         good: 'food',
-        amount: -foodAmount,
+        amount: -scaledAmount,
       })
       Storage.update(colony.productionRecord, {
         good: 'food',
-        amount: -unscale(foodAmount),
+        amount: -unscale(scaledAmount),
       })
       Storage.update(unit.consumptionRecord, {
         good: 'food',
-        amount: -unscale(foodAmount),
+        amount: -unscale(scaledAmount),
       })
     }
 
@@ -73,7 +73,8 @@ const create = (unit, colony) => {
 
   return {
     update,
-    sort: 6,
+    sort: 2,
+    lane: 'unit'
   }
 }
 

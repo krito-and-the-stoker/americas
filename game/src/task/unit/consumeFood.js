@@ -38,7 +38,8 @@ const create = unit => {
 
   return {
     update,
-    sort: 3,
+    sort: 1,
+    lane: 'unit'
   }
 }
 

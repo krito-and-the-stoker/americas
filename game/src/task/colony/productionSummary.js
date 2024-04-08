@@ -20,6 +20,7 @@ const create = colonyOrColonistOrUnit => {
   return {
     update,
     sort: 5,
+    lane: 'colonist'
   }
 }
 

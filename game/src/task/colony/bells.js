@@ -29,6 +29,7 @@ const create = (colony, amount) => {
   return {
     update,
     sort: 4,
+    lane: 'colonist'
   }
 }
 

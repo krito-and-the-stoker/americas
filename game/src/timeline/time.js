@@ -22,9 +22,13 @@ const POWER_TRANSFER_BASE_TIME = 30 * YEAR
 
 const LOW_PRIORITY_DELTA_TIME = 750
 
+const Lanes = {
+  colonist: 6,
+  unit: 2
+}
+
 let currentTime = 0
 let scheduled = []
-let prioritized = []
 
 const months = [
   'January',
@@ -94,67 +98,71 @@ const yearAndMonth = someTime => {
   }
 }
 
-let lowPrioDeltaTime = 0
+let currentAdvance = 0
 const advance = deltaTime => {
   if (time.paused) {
     return
   }
+  currentAdvance++
   currentTime += deltaTime * time.scale
-
-  lowPrioDeltaTime += deltaTime * time.scale
   const highPrioDeltaTime = deltaTime * time.scale
 
-  const tasks = (lowPrioDeltaTime >= LOW_PRIORITY_DELTA_TIME ? scheduled : prioritized).filter(
-    e => {
+  for (let i = 0; i < scheduled.length; i++) {
+    const e = scheduled[i]
+
+    if (e.cleanup) {
+      continue
+    }
+
+    if (e.priority || currentTime - e.offset > LOW_PRIORITY_DELTA_TIME) {
+      const lowPrioDeltaTime = currentTime - e.offset
+      e.offset = currentTime
+
       if (!e.started && e.init) {
         e.alive = e.init(currentTime)
         e.started = true
       } else {
         e.alive = true
       }
-      return e.started || !e.init
-    }
-  )
 
-  tasks
-    .filter(
-      e =>
-        !e.alive ||
-        !e.update ||
-        !e.update(currentTime, e.priority ? highPrioDeltaTime : lowPrioDeltaTime)
-    )
-    .forEach(e => {
-      if (e.finished) {
-        e.finished()
+      if (!e.alive) {
+        continue
       }
-      e.cleanup = true
-    })
 
-  scheduled
-    .filter(e => e.willStop)
-    .forEach(e => {
+      if (!e.alive || !e.update || !e.update(currentTime, e.priority ? highPrioDeltaTime : lowPrioDeltaTime)) {
+        if (e.finished) {
+          e.finished()
+        }
+        e.cleanup = true
+      }
+    }
+  }
+
+  for (let i = 0; i < scheduled.length; i++) {
+    const e = scheduled[i]
+    if (e.willStop) {
       if (e.stopped) {
         e.stopped()
       }
       e.cleanup = true
-    })
-
-  scheduled = scheduled.filter(e => !e.cleanup)
-  prioritized = prioritized.filter(e => !e.cleanup)
-
-  if (lowPrioDeltaTime >= LOW_PRIORITY_DELTA_TIME) {
-    lowPrioDeltaTime = 0
+    }
   }
 
-  update.timeOfYear((currentTime % YEAR) / YEAR)
-  update.year(Math.floor(startYear + currentTime / YEAR))
-  if (Math.floor(12 * time.timeOfYear) !== time.monthNumber) {
-    time.monthNumber = Math.floor(12 * time.timeOfYear)
-    update.month(months[time.monthNumber])
+  if (currentAdvance % 100 === 0) {
+    scheduled = scheduled.filter(e => !e.cleanup)
   }
-  const dayOfMonth = Math.ceil(((12 * time.timeOfYear) % 1) * daysInMonth[time.month])
-  if (dayOfMonth !== time.dayOfMonth) {
-    update.dayOfMonth(dayOfMonth)
+
+  if (currentAdvance % 20 === 0) {
+    update.timeOfYear((currentTime % YEAR) / YEAR)
+    update.year(Math.floor(startYear + currentTime / YEAR))
+    if (Math.floor(12 * time.timeOfYear) !== time.monthNumber) {
+      time.monthNumber = Math.floor(12 * time.timeOfYear)
+      update.month(months[time.monthNumber])
+    }
+    const dayOfMonth = Math.ceil(((12 * time.timeOfYear) % 1) * daysInMonth[time.month])
+    if (dayOfMonth !== time.dayOfMonth) {
+      update.dayOfMonth(dayOfMonth)
+    }
   }
 }
 
@@ -206,16 +214,15 @@ const schedule = e => {
     started: false,
     cleanup: false,
     willStop: false,
-    sort: e.sort || 10,
   }
 
+  // sort by lane with offset
+  task.offset = (task.lane && task.sort)
+    ? (task.sort - 1 + Math.random()) * LOW_PRIORITY_DELTA_TIME / Lanes[task.lane]
+    : Math.round(Math.random() * LOW_PRIORITY_DELTA_TIME)
+
+  task.offset += LOW_PRIORITY_DELTA_TIME * Math.floor(currentTime / LOW_PRIORITY_DELTA_TIME)
   scheduled.push(task)
-  if (task.priority) {
-    prioritized.push(task)
-  }
-
-  scheduled = scheduled.sort((a, b) => a.sort - b.sort)
-  prioritized = prioritized.sort((a, b) => a.sort - b.sort)
 
   const stop = () => {
     task.willStop = true
@@ -239,7 +246,6 @@ const load = data => {
   currentTime = data.currentTime
   update.scale(data.scale || 1)
   scheduled = []
-  prioritized = []
 }
 
 export default {

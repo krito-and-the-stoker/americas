@@ -147,6 +147,7 @@ const create = (colony, building, colonist) => {
   return {
     update,
     sort: 3,
+    lane: 'colonist',
   }
 }
 

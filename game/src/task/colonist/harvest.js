@@ -55,6 +55,7 @@ const create = (colony, tile, good, colonist) => {
     update,
     finished,
     sort: 1,
+    lane: 'colonist',
   }
 }
 

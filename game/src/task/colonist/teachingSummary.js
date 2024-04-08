@@ -25,7 +25,6 @@ const create = colony => {
   }
 
   return {
-    sort: 8,
     update,
   }
 }

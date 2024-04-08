@@ -149,6 +149,7 @@ const create = (colony: ColonyEntity) => {
   return {
     update,
     sort: 4,
+    lane: 'colonist',
   }
 }
 
