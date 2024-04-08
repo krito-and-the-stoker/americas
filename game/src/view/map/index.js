@@ -97,26 +97,22 @@ const update = {
   supportOverlayColoring: value => Binding.update(state, 'supportOverlayColoring', value),
 }
 
-const hideForest = () => {
-  update.forestVisibility(false)
+const setForestVisibility = value => {
+  update.forestVisibility(value)
   MapEntity.get()
-    .tiles.filter(tile => tile.forest)
+    .tiles.filter(tile => tile.forest && tile.discovered())
     .forEach(tile => Tile.update.tile(tile))
   Background.render()
+}
+
+const hideForest = () => {
+  setForestVisibility(false)
 }
 const showForest = () => {
-  update.forestVisibility(true)
-  MapEntity.get()
-    .tiles.filter(tile => tile.forest)
-    .forEach(tile => Tile.update.tile(tile))
-  Background.render()
+  setForestVisibility(true)
 }
 const toggleForestVisibility = () => {
-  update.forestVisibility(!state.forestVisibility)
-  MapEntity.get()
-    .tiles.filter(tile => tile.forest)
-    .forEach(tile => Tile.update.tile(tile))
-  Background.render()
+  setForestVisibility(!state.forestVisibility)
 }
 const isForestVisible = () => state.forestVisibility
 

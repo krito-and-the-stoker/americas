@@ -22,7 +22,7 @@ const create = unit => {
   container.addChild(sprite)
 
   const unsubscribeDrag =
-    unit.command.id !== 'tradeRoute' &&
+    unit.command?.id !== 'tradeRoute' &&
     Drag.makeDragTarget(
       sprite,
       args => {
@@ -124,7 +124,7 @@ const create = unit => {
           storageIndex.y += 1
         }
         const unsubscribeDrag =
-          unit.command.id !== 'tradeRoute' &&
+          unit.command?.id !== 'tradeRoute' &&
           Drag.makeDraggable(
             view.sprite,
             { good: pack.good, amount: pack.amount, unit },

@@ -95,10 +95,8 @@ const createOne = (building: BuildingEntity, colonist: ColonistEntity, container
       colonistSprite.tint = ColonistView.tint(colonist)
     })
 
-    console.log('draw colonist', colonist.referenceId)
     return [
       () => {
-        console.log('removed colonist', colonist.referenceId)
         container.removeChild(colonistSprite)
       },
       unsubscribeProduction,
