@@ -1,6 +1,10 @@
 import type { PrimitiveSignal, CleanupExec } from 'signal-chain'
 import $ from 'signal-chain'
+
 import type { Function1, Function2 } from 'util/types'
+
+import Util from 'util/util'
+
 
 $.config({
   update: 'timeout',
@@ -54,13 +58,20 @@ const update = <O extends Object, Key extends keyof O>(instance: O, key: Key | n
 const stdEquality = <T>(a: T, b: T) => a === b
 const map = <From, To>(mapping: Function1<From, To>, fn: Function1<To, CleanupExec>, equals: Function2<To, To, boolean> = stdEquality) => {
   let last: To
+  let cleanup: CleanupExec
+
+  const finalCleanup = (final?: boolean) => final && Util.execute(cleanup, true)
 
   return (value: From) => {
     const mapped = mapping(value)
     if (!equals(mapped, last)) {
       last = mapped
-      return fn(mapped)
+
+      Util.execute(cleanup)
+      cleanup = fn(mapped)
     }
+
+    return finalCleanup
   }
 }
 
