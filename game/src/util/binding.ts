@@ -52,8 +52,16 @@ const update = <O extends Object, Key extends keyof O>(instance: O, key: Key | n
 }
 
 const stdEquality = <T>(a: T, b: T) => a === b
-const map = <From, To>(mapping: Function1<From, To>, fn: Function1<To, CleanupExec>, _: Function2<To, To, boolean> = stdEquality) => {
-  return (value: From) => fn(mapping(value))
+const map = <From, To>(mapping: Function1<From, To>, fn: Function1<To, CleanupExec>, equals: Function2<To, To, boolean> = stdEquality) => {
+  let last: To
+
+  return (value: From) => {
+    const mapped = mapping(value)
+    if (!equals(mapped, last)) {
+      last = mapped
+      return fn(mapped)
+    }
+  }
 }
 
 
