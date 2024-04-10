@@ -22,7 +22,6 @@ import Construction from 'entity/construction'
 import Buildings from 'entity/buildings'
 import Layout from 'entity/layout'
 
-import Harvest from 'task/colonist/harvest'
 import Bells from 'task/colony/bells'
 import FillStorage from 'task/colonist/fillStorage'
 import Consume from 'task/colonist/consume'

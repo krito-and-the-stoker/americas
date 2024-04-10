@@ -1,4 +1,5 @@
 import Binding from 'util/binding'
+import Util from 'util/util'
 
 const DAY = 750
 const WEEK = 7 * DAY
@@ -21,11 +22,6 @@ const CARGO_BASE_TRADE_TIME = 2 * DAY
 const POWER_TRANSFER_BASE_TIME = 30 * YEAR
 
 const LOW_PRIORITY_DELTA_TIME = 750
-
-const Lanes = {
-  colonist: 6,
-  unit: 2
-}
 
 let currentTime = 0
 let scheduled = []
@@ -208,31 +204,30 @@ const state = {
   get paused() { return time.paused },
 }
 
-const schedule = e => {
-  const task = {
-    ...e,
-    started: false,
-    cleanup: false,
-    willStop: false,
+const schedule = (...args) => {
+  const offset = currentTime + Math.random() * LOW_PRIORITY_DELTA_TIME
+  const stopFns = []
+  for (const e of args) {
+    const task = {
+      ...e,
+      started: false,
+      cleanup: false,
+      willStop: false,
+    }
+
+    task.offset = offset
+    scheduled.push(task)
+
+    stopFns.push(() => {
+      task.willStop = true
+    })
+
+    if (e.scheduled) {
+      e.scheduled()
+    }
   }
 
-  // sort by lane with offset
-  task.offset = (task.lane && task.sort)
-    ? (task.sort - 1 + Math.random()) * LOW_PRIORITY_DELTA_TIME / Lanes[task.lane]
-    : Math.round(Math.random() * LOW_PRIORITY_DELTA_TIME)
-
-  task.offset += LOW_PRIORITY_DELTA_TIME * Math.floor(currentTime / LOW_PRIORITY_DELTA_TIME)
-  scheduled.push(task)
-
-  const stop = () => {
-    task.willStop = true
-  }
-
-  if (e.scheduled) {
-    e.scheduled()
-  }
-
-  return stop
+  return () => Util.execute(stopFns)
 }
 
 const save = () => {

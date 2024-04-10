@@ -5,8 +5,9 @@ import Colony from 'entity/colony'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
-const create = (colony, amount) => {
+const create = (colony) => {
   const update = (currentTime, deltaTime) => {
+    const amount = Colony.rebels(colony)
     const scaledAmount = deltaTime * amount * PRODUCTION_BASE_FACTOR
 
     // bells must not become negative

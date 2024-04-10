@@ -8,43 +8,34 @@ import Unit from 'entity/unit'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
-const create = (colony, tile, good, colonist) => {
-  if (tile.harvestedBy && colonist) {
-    return {}
-  }
-
-  if (!colonist) {
-    console.log('harvesting for colony not supported anymore', colony.name)
-    return {}
-  }
-
-  let production = 0
-  let unscaledProduction = 0
-  const calculate = () =>
-    Tile.listen.tile(tile, () =>
-      Colony.listen.productionBonus(colony, () => {
-        return Colonist.listen.state(colonist, state => {
-          unscaledProduction = Tile.production(tile, good, colonist)
-          production = unscaledProduction * PRODUCTION_BASE_FACTOR
-        })
-      })
-    )
-
-  const unsubscribe = colonist ? Unit.listen.expert(colonist.unit, calculate) : calculate()
-  Tile.update.harvestedBy(tile, colonist)
-  
+const create = (colony) => {
   const update = (currentTime, deltaTime) => {
-    const amount = deltaTime * production
-    Storage.update(colonist.storage, { good, amount })
-    Storage.update(colony.productionRecord, {
-      good,
-      amount: unscaledProduction,
-    })
-    Storage.update(colonist.productionRecord, {
-      good,
-      amount: unscaledProduction,
-    })
+    colony.colonists.forEach(colonist => {
+      if (colonist.work && colonist.work.type === 'Field') {
+        const tile = colonist.work.tile
+        const good = colonist.work.good
 
+        if (tile.harvestedBy && colonist && tile.harvestedBy !== colonist) {
+          console.warn('tile already harvested by', tile.harvestedBy)
+          return
+        }
+
+        // consider caching these values, as they do not change frequently
+        const unscaledProduction = Tile.production(tile, good, colonist)
+        const production = unscaledProduction * PRODUCTION_BASE_FACTOR
+
+        const amount = deltaTime * production
+        Storage.update(colonist.storage, { good, amount })
+        Storage.update(colony.productionRecord, {
+          good,
+          amount: unscaledProduction,
+        })
+        Storage.update(colonist.productionRecord, {
+          good,
+          amount: unscaledProduction,
+        })
+      }
+    })
 
     return true
   }

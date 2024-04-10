@@ -21,6 +21,9 @@ import VirtualGoods from 'task/colony/virtualGoods'
 import ProductionSummary from 'task/colony/productionSummary'
 import TeachingSummary from 'task/colonist/teachingSummary'
 import TransferCrosses from 'task/europe/transferCrosses'
+import Produce from 'task/colony/produce'
+import Manufacture from 'task/colonist/manufacture'
+import Harvest from 'task/colonist/harvest'
 
 import chain from './chain'
 
@@ -40,10 +43,22 @@ export default (colony: ColonyEntity) => {
 
   colony.destroy = [
     () => colony.newBuildings.forEach(building => Util.execute(building.destroy)),
-    Time.schedule(FillStorage.create(colony)),
-    Time.schedule(Consume.create(colony)),
-    Time.schedule(Promote.create(colony)),
-    Time.schedule(SortByPower.create(colony)),
+
+    Time.schedule(SortByPower.create(colony)), // 1
+    Time.schedule(Promote.create(colony)), // 4
+    Time.schedule(TeachingSummary.create(colony)),
+
+    Time.schedule(
+      TransferCrosses.create(colony),
+      VirtualGoods.create(colony),
+      Harvest.create(colony),
+      Produce.create(colony, 'housing'),
+      FillStorage.create(colony),
+      Manufacture.create(colony),
+      Consume.create(colony),
+      Bells.create(colony),
+      ProductionSummary.create(colony),
+    ),
 
     $.connect(
       $.emit(colony),
@@ -62,14 +77,6 @@ export default (colony: ColonyEntity) => {
       })
     ),
 
-    $.connect(
-      $.emit(colony),
-      chain.rebels,
-      $.effect(rebels =>
-        Time.schedule(Bells.create(colony, rebels))
-      )
-    ),
-
     // TODO: Implement with signals
     listenEach.units(colony, (unit: any, added: boolean) => {
       if (added && unit.treasure) {
@@ -80,9 +87,6 @@ export default (colony: ColonyEntity) => {
         })
       }
     }),
-
-    Time.schedule(TeachingSummary.create(colony)),
-    Time.schedule(TransferCrosses.create(colony)),
 
     $.connect(
       $.emit(colony),
@@ -111,8 +115,6 @@ export default (colony: ColonyEntity) => {
       })
     ),
 
-    Time.schedule(VirtualGoods.create(colony)),
-    Time.schedule(ProductionSummary.create(colony)),
     $.connect(
       $.emit(colony),
       $.combine(

@@ -11,9 +11,10 @@ import Building from 'entity/building'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
-const create = (colony, good, amount) => {
-  if (['bells', 'housing', 'crosses'].includes(good)) {
+const create = (colony, good) => {
+  if (['housing'].includes(good)) {
     const update = (currentTime, deltaTime) => {
+      const amount = Colony.housing(colony)
       const scale = deltaTime * PRODUCTION_BASE_FACTOR
 
       Colony.update[good](colony, amount * scale)
@@ -31,7 +32,7 @@ const create = (colony, good, amount) => {
       lane: 'colonist'
     }
   } else {
-    console.warn('cannot produce good:', colony, good, amount)
+    console.warn('cannot produce good:', colony, good)
   }
 
   return {

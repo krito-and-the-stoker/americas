@@ -32,7 +32,6 @@ const create = (colony, level = 1) => {
 
 const initialize = building => {
 	return [
-		listen.level(building, level => level > 0 && Time.schedule(Produce.create(building.colony, 'housing', building.level))),
 		listen.level(building, level => {
 			if (building.placement.length === 0) {
 				const colony = building.colony

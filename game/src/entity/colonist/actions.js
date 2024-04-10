@@ -15,10 +15,6 @@ import Storage from 'entity/storage'
 
 import Time from 'timeline/time'
 
-import Harvest from 'task/colonist/harvest'
-import Manufacture from 'task/colonist/manufacture'
-import ProductionSummary from 'task/colony/productionSummary'
-
 import UnjoinColony from 'interaction/unjoinColony'
 
 import { listen, update } from './binding'
@@ -27,13 +23,13 @@ import { initialize } from './colonist'
 const beginFieldWork = (colonist, tile, good) => {
   stopWorking(colonist)
   const colony = colonist.colony
-  const stop = Time.schedule(Harvest.create(colony, tile, good, colonist))
+  Tile.update.harvestedBy(tile, colonist)
 
   update.work(colonist, {
     type: 'Field',
     tile,
     good,
-    stop,
+    stop: null,
   })
 }
 
@@ -49,15 +45,11 @@ const beginColonyWork = (colonist, building) => {
     )
     .find(() => true)
 
-  const stop =
-    building.name === 'school'
-      ? null
-      : Time.schedule(Manufacture.create(colonist.colony, building, colonist))
   update.work(colonist, {
     type: 'Building',
     building,
     position,
-    stop,
+    stop: null,
   })
 }
 
@@ -137,17 +129,8 @@ const load = colonist => {
     if (colonist.work) {
       if (colonist.work.type === 'Field') {
         colonist.work.tile = Record.dereferenceTile(colonist.work.tile)
-        Tile.update.harvestedBy(colonist.work.tile, null)
-        colonist.work.stop = Time.schedule(
-          Harvest.create(colonist.colony, colonist.work.tile, colonist.work.good, colonist)
-        )
-      }
-      if (colonist.work.type === 'Building') {
-        if (colonist.work.building.name !== 'school') {
-          colonist.work.stop = Time.schedule(
-            Manufacture.create(colonist.colony, colonist.work.building, colonist)
-          )
-        }
+        Tile.update.harvestedBy(colonist.work.tile, colonist)
+        colonist.work.stop = null
       }
     }
   })

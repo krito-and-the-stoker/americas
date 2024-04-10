@@ -1,3 +1,5 @@
+import $ from 'signal-chain'
+
 import chain from 'entity/colony/chain'
 import { add, listen, listenEach, update, remove } from 'entity/colony/binding'
 import { create } from './colony'
@@ -11,6 +13,10 @@ export default {
   chain,
   remove,
   update,
+
+  rebels: $.computed(chain.rebels),
+  housing: $.computed(chain.housing),
+
   canFillEquipment: Fn.canFillEquipment,
   addBuilding: Fn.addBuilding,
   disband: Fn.disband,

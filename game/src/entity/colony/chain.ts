@@ -137,6 +137,15 @@ const coastalDirection = $.unique.chain(
   $.select(([center, winner]) => winner.score > 0 ? Tile.neighborString(center, winner.tile) : null)
 )
 
+const housing = $.unique.chain(
+  $.select<ColonyEntity>(),
+  $.listen.key('newBuildings'),
+  $.select(buildings => {
+    const levels = buildings.filter(building => building.name === 'house').map(building => building.level)
+    return Util.sum(levels)
+  })
+)
+
 export default {
   // unused
   coastalDirection,
@@ -151,4 +160,5 @@ export default {
   rebelPercentage,
   tories,
   toryPercentage,
+  housing,
 }
