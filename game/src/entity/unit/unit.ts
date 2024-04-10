@@ -140,7 +140,7 @@ export const initialize = (unit: UnitEntity) => {
       $.emit(unit.commander.state),
       $.listen.key('info'),
       $.effect(info => {
-        update.command(info)
+        unit.command = info ? { ...info } : null
       })
     ),
 
