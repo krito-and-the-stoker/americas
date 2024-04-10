@@ -125,9 +125,6 @@ const canDiscoverNeighbors = (tile: TileEntity) => tile.domain === 'sea' || (
 export const initialize = (unit: UnitEntity) => {
   Util.execute(unit.destroy)
 
-  unit.consumptionRecord = Storage.createWithProduction()
-  unit.consumptionSummary = Storage.createWithProduction()
-
   if (unit.tile) {
     Tile.discover(unit.tile, unit.owner)
     Tile.diagonalNeighbors(unit.tile).forEach(other => Tile.discover(other, unit.owner))

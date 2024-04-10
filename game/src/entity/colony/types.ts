@@ -7,7 +7,9 @@ import type { CleanupExec } from 'util/types'
 
 export type OwnerEntity = {}
 
-type StorageEntity = {}
+type StorageEntity = {
+  [key: string]: number
+}
 type LayoutEntity = number[][]
 type ConstructionTarget = {
   progress: number

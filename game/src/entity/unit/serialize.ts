@@ -50,6 +50,10 @@ const load = (unit: any): UnitEntity => {
   unit.movement = {
     target: Record.dereferenceTile(unit.movement.target),
   }
+
+  unit.consumptionRecord = Storage.createWithProduction()
+  unit.consumptionSummary = Storage.createWithProduction()
+
   Record.dereferenceLazy(unit.colony, (colony: ColonyEntity) => (unit.colony = colony))
   Record.dereferenceLazy(unit.colonist, (colonist: ColonistEntity) => (unit.colonist = colonist))
   Record.dereferenceLazy(unit.vehicle, (vehicle: ColonyEntity) => (unit.vehicle = vehicle))

@@ -1,5 +1,3 @@
-import $ from 'signal-chain'
-
 import {
   create,
   disband,
@@ -35,6 +33,18 @@ import {
 
 import * as chain from './chain'
 
+import {
+  overWeight,
+  speed,
+  additionalEquipment,
+  isIdle,
+  isMoving,
+  hasCapacity,
+  area,
+  strength,
+  name
+} from './functions'
+
 export default {
   create,
   disband,
@@ -52,15 +62,15 @@ export default {
 
   chain,
 
-  overWeight: $.function(chain.overWeight),
-  speed: $.function(chain.speed),
-  additionalEquipment: $.function(chain.additionalEquipment),
-  isIdle: $.function(chain.isIdle),
-  isMoving: $.function(chain.isMoving),
-  hasCapacity: $.function(chain.hasCapacity),
-  area: $.function(chain.area),
-  strength: $.function(chain.strength),
-  name: $.function(chain.name),
+  overWeight,
+  speed,
+  additionalEquipment,
+  isIdle,
+  isMoving,
+  hasCapacity,
+  area,
+  strength,
+  name,
 
   listen,
   add,
