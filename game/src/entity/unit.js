@@ -68,7 +68,11 @@ const create = (name, coords, owner) => {
       movement: {
         target: MapEntity.tile(coords),
       },
+
+      consumptionRecord: Storage.createWithProduction(),
+      consumptionSummary: Storage.createWithProduction(),
     }
+
     unit.storage = Storage.create()
     unit.equipment = Storage.create()
     unit.commander = Commander.create({ keep: true, unit })
@@ -134,9 +138,6 @@ const candiscoverNeighbors = tile => tile.domain === 'sea' || (
 
 const initialize = unit => {
   Util.execute(unit.destroy)
-
-  unit.consumptionRecord = Storage.createWithProduction()
-  unit.consumptionSummary = Storage.createWithProduction()
 
   if (unit.tile) {
     Tile.discover(unit.tile, unit.owner)
@@ -585,6 +586,10 @@ const load = unit => {
   unit.movement = {
     target: Record.dereferenceTile(unit.movement.target),
   }
+
+  unit.consumptionRecord = Storage.createWithProduction()
+  unit.consumptionSummary = Storage.createWithProduction()
+
   Record.dereferenceLazy(unit.colony, colony => (unit.colony = colony))
   Record.dereferenceLazy(unit.colonist, colonist => (unit.colonist = colonist))
   Record.dereferenceLazy(unit.vehicle, vehicle => (unit.vehicle = vehicle))

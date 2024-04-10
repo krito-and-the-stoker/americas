@@ -19,8 +19,6 @@ const create = colony => {
 
   return {
     update,
-    sort: 1,
-    lane: 'colonist'
   }
 }
 

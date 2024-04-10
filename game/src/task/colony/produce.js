@@ -28,8 +28,6 @@ const create = (colony, good) => {
 
     return {
       update,
-      sort: 2,
-      lane: 'colonist'
     }
   } else {
     console.warn('cannot produce good:', colony, good)

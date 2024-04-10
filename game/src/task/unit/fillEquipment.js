@@ -80,8 +80,6 @@ const create = (unit, colony) => {
 
   return {
     update,
-    sort: 2,
-    lane: 'unit'
   }
 }
 

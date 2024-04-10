@@ -163,16 +163,6 @@ const updateRadius = view => {
   view.circle.scale.set(0.5 * view.unit.radius)
 }
 
-const createFoodDeclineMapping = () => {
-  let lastFood = null
-  return storage => {
-    const result = lastFood && lastFood > storage.food
-    lastFood = storage.food
-
-    return result
-  }
-}
-
 const updateVisibility = view => (visibleOnMap(view) ? show(view) : hide(view))
 const visibleOnMap = view =>
   (view === state.selectedView || !view.unit.colony) &&
@@ -239,8 +229,10 @@ const initialize = () => {
         properties =>
           properties.needsFood &&
           Storage.listen(
-            unit.equipment,
-            Binding.map(createFoodDeclineMapping(), decline => {
+            unit.consumptionSummary,
+            // .99 to avoid rounding errors, do not touch summary.food in case its undefined
+            Binding.map(summary => summary.food > - 0.99 * Unit.FOOD_COST, decline => {
+              // has not consumed enough external food
               if (decline) {
                 const icon = Resources.sprite('map', {
                   frame: Goods.food.id,

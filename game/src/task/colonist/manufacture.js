@@ -151,8 +151,6 @@ const create = (colony) => {
 
   return {
     update,
-    sort: 3,
-    lane: 'colonist',
   }
 }
 
