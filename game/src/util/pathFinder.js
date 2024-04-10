@@ -19,7 +19,7 @@ const tile = (...args) => MapEntity.tile(...args)
 
 const caching = {
   keyFn: (coords1, coords2, unit) =>
-    `${coords1.x}x${coords1.y}x${coords2.x}x${coords2.y}x${unit.domain}`,
+    `${coords1.x}x${coords1.y}x${coords2.x}x${coords2.y}x${unit.domain}x${unit.properties.travelType}`,
   initFn: wipeCache => {
     MapEntity.get()
       .tiles.filter(tile => tile.domain === 'land')
@@ -30,7 +30,15 @@ const caching = {
         Tile.listen.forest(tile, () => {
           wipeCache(key => key.indexOf('xsea') >= 0)
         })
-        Tile.listen.colony(tile, () => wipeCache())
+
+        // Tile.listen.colony(tile, () => wipeCache())
+        // do not wipe cache when building colony.
+        // this is only wrong in the edge case
+        // when a new colony opens a path through land
+        // which we should not allow anyway (weird behaviour)
+        Tile.listen.colony(tile, () => {
+          wipeCache(key => key.indexOf('xsea') >= 0)
+        })
       })
   },
 }
@@ -277,30 +285,31 @@ const getNode = (coords, prev, cost) => {
 
   return nodePool[k]
 }
+
 const key = ({ coords }) => `${coords.x}/${coords.y}`
+const add = (list, node) => {
+  list[key(node)] = node.needle
+}
+const remove = (list, node) => {
+  list[key(node)] = undefined
+}
+const has = (list, node) => list[key(node)]
+
+const constructPath = node => {
+  const path = [node]
+  while (node.prev !== node) {
+    node = node.prev
+    path.push(node)
+  }
+
+  return path.reverse()
+}
+
 const runDijksrta = (startCoordinates, isTarget, getNeighbors, getCost, minimumEstimate) => {
   const heap = createHeap()
   let node = getNode(startCoordinates)
   node.prev = node
   node.cost = 0
-
-  const add = (list, node) => {
-    list[key(node)] = node.needle
-  }
-  const remove = (list, node) => {
-    list[key(node)] = undefined
-  }
-  const has = (list, node) => list[key(node)]
-
-  const constructPath = node => {
-    const path = [node]
-    while (node.prev !== node) {
-      node = node.prev
-      path.push(node)
-    }
-
-    return path.reverse()
-  }
 
   const explored = {}
   const frontier = {}

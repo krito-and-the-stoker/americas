@@ -3,6 +3,9 @@ import type { ColonyEntity } from "./types"
 import $ from 'signal-chain'
 import Util from 'util/util'
 import Events from 'util/events'
+import Record from 'util/record'
+import PathFinder from 'util/pathFinder'
+import Message from 'util/message'
 
 import Time from 'timeline/time'
 
@@ -30,6 +33,25 @@ import chain from './chain'
 import { listenEach, update } from './binding'
 
 import Fn from './functions'
+import { UnitEntity } from "entity/unit/types"
+
+const CACHE_WARM_RATE = 1.0
+const warmCache = (colony: ColonyEntity, cacheUnit: UnitEntity | null) => {
+  if (cacheUnit) {
+    const colonies = Record.getAll('colony')
+      .filter(other => other !== colony && Fn.isReachable(other, cacheUnit))
+    colonies.forEach(other => {
+      if (Math.random() < CACHE_WARM_RATE) {
+        PathFinder.distance(
+          colony.mapCoordinates,
+          other.mapCoordinates,
+          cacheUnit
+        )
+      }
+    })
+    Unit.disband(cacheUnit)
+  }
+}
 
 export default (colony: ColonyEntity) => {
   colony.productionSummary = Storage.createWithProduction()
@@ -40,6 +62,14 @@ export default (colony: ColonyEntity) => {
     Tile.update.harvestedBy(tile, null)
   }
 
+  // warm cache
+  Message.cache.log('Warming Cache for', colony.name)
+  const cacheCaravel = Unit.create('caravel', colony.mapCoordinates, colony.owner)
+  const cacheMerch = Unit.create('merchantman', colony.mapCoordinates, colony.owner)
+  // const cacheWagon = Unit.create('wagontrain', colony.mapCoordinates, colony.owner)
+  warmCache(colony, cacheCaravel)
+  warmCache(colony, cacheMerch)
+  // warmCache(colony, cacheWagon)
 
   colony.destroy = [
     () => colony.newBuildings.forEach(building => Util.execute(building.destroy)),

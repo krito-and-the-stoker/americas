@@ -21,7 +21,8 @@ const domains = {
   templates: false,
   savegame: true,
   tracking: false,
-  signal: true
+  signal: true,
+  cache: true,
 } as const;
 
 // Extract keys from `level` and `domains` objects where the value is `true`

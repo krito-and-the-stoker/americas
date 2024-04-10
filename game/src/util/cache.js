@@ -1,7 +1,11 @@
 import Util from 'util/util'
+import Message from 'util/message'
 
 const create = ({ initFn, keyFn, shouldCache, valueFn }) => {
   let cache = {}
+
+  let hits = 0
+  let misses = 0
 
   const wipeCache = keepKey => {
     const newCache = {}
@@ -22,10 +26,17 @@ const create = ({ initFn, keyFn, shouldCache, valueFn }) => {
       initialized = true
       Util.execute(initFn, wipeCache)
     }
+
+    if (hits + misses >= 1 && (hits + misses) % 1000 === 0) {
+      Message.cache.log('Cache Report\nSize', Object.keys(cache).length, 'Hits', hits, 'Misses', misses, 'Hit Rate', hits / (hits + misses))
+    }
+
     const key = keyFn(...args)
     if (cache[key]) {
+      hits++
       return cache[key]
     }
+    misses++
 
     const result = valueFn(...args)
     if (!shouldCache || shouldCache(result, ...args)) {

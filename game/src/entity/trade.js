@@ -1,6 +1,7 @@
 import Util from 'util/util'
 import PathFinder from 'util/pathFinder'
 import Record from 'util/record'
+import Message from 'util/message'
 
 import Storage from 'entity/storage'
 import Colony from 'entity/colony'
@@ -114,6 +115,8 @@ const match = transport => {
     name: 'London',
     type: 'europe',
   }
+
+  Message.cache.log('Matching trade routes for', transport.name, 'at', transport.mapCoordinates)
 
   // colonies in area
   const colonies = Record.getAll('colony')
