@@ -7,6 +7,7 @@ type EventCounts = {
     ResumeGame: number
     AutoSave: number
     Error: number
+    Users: number
 }
 
 type Timeline = {
@@ -48,6 +49,12 @@ function Timeline() {
             labels: Object.keys(counts),
             datasets: [
                 {
+                    label: 'Users',
+                    data: Object.values(counts).map(count => count.Users),
+                    backgroundColor: 'rgba(94, 21, 96, 0.5)',
+                    borderColor: 'rgba(94, 21, 96, 1)',
+                    borderWidth: 1,
+                },                {
                     label: 'Page Views',
                     data: Object.values(counts).map(count => count.PageView),
                     backgroundColor: 'rgba(37, 150, 190, 0.5)',

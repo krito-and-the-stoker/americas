@@ -17,6 +17,7 @@ type EventCount struct {
 	ResumeGame int32 `json:"ResumeGame"`
 	AutoSave int32 `json:"AutoSave"`
 	Error int32 `json:"Error"`
+	Users int32 `json:"Users"`
 }
 
 // CountResult represents the structure of our count results
@@ -26,16 +27,20 @@ type TimelineResult struct {
 
 // HandleSummary handles the route for counting events
 func (es *EventService) HandleTimeline(w http.ResponseWriter, r *http.Request) {
-	now := time.Now()
-	_ = now.AddDate(0, 0, -30)
+    now := time.Now()
+    thirtyDaysAgo := now.AddDate(0, 0, -ThirtyDays)
+
+    limitToThirtyDaysAgo := bson.D{
+        {Key: "$match", Value: bson.D{
+            {Key: "timestamp", Value: bson.D{
+                {Key: "$gte", Value: primitive.NewDateTimeFromTime(thirtyDaysAgo)},
+            }},
+        }},
+    }
 
     // Count by Day
 	groupByDay := bson.D{
-	    // {Key: "$match", Value: bson.D{
-	    //     {Key: "timestamp", Value: bson.D{
-	    //         {Key: "$gte", Value: primitive.NewDateTimeFromTime(thirtyDaysAgo)},
-	    //     }},
-	    // }},
+
 	    {Key: "$group", Value: bson.D{
 	        {Key: "_id", Value: bson.D{
 	            {Key: "date", Value: bson.D{
@@ -60,11 +65,28 @@ func (es *EventService) HandleTimeline(w http.ResponseWriter, r *http.Request) {
 	        {Key: "Error", Value: bson.D{{Key: "$sum", Value: bson.D{{Key: "$cond", Value: bson.A{
 	            bson.D{{Key: "$eq", Value: bson.A{"$name", "Error"}}},
 	            1, 0}}}}}},
+			{Key: "Users", Value: bson.D{{Key: "$addToSet", Value: "$userid"}}},
 	    }},
 	}
 
+    countUsers := bson.D{
+        {Key: "$project", Value: bson.D{
+            {Key: "PageView", Value: "$PageView"},
+            {Key: "NewGame", Value: "$NewGame"},
+            {Key: "ResumeGame", Value: "$ResumeGame"},
+            {Key: "AutoSave", Value: "$AutoSave"},
+            {Key: "Error", Value: "$Error"},
+            {Key: "Users", Value: bson.D{
+                {Key: "$size", Value: "$Users"},
+            }},
+        }},
+    }
 
-    cursor, err := es.Collection.Aggregate(r.Context(), mongo.Pipeline{groupByDay})
+    cursor, err := es.Collection.Aggregate(r.Context(), mongo.Pipeline{
+    	limitToThirtyDaysAgo,
+    	groupByDay,
+    	countUsers,
+   	})
     if err != nil {
         log.Fatal(err) // Or handle the error more gracefully
     }
@@ -92,6 +114,7 @@ func (es *EventService) HandleTimeline(w http.ResponseWriter, r *http.Request) {
 	        ResumeGame: dayResult["ResumeGame"].(int32),
 	        AutoSave:   dayResult["AutoSave"].(int32),
 	        Error:      dayResult["Error"].(int32),
+	        Users:		dayResult["Users"].(int32),
 	    }
 
 	    // Assign the EventCount object to the CountByDay map

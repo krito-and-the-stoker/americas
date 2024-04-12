@@ -28,6 +28,8 @@ type Event struct {
     Location  GeoLocation `json:"location"`
 }
 
+const ThirtyDays = 30
+
 func Handle(collection *mongo.Collection, prefix string, mux *http.ServeMux) {
     // Ensure the prefix ends with a slash
     if !strings.HasSuffix(prefix, "/") {

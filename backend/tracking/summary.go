@@ -1,12 +1,14 @@
 package tracking
 
 import (
-    "encoding/json"
-    "net/http"
-    "log"
+	"encoding/json"
+	"log"
+	"net/http"
+	"time"
 
-    "go.mongodb.org/mongo-driver/mongo"
-    "go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // CountResult represents the structure of our count results
@@ -20,19 +22,40 @@ type CountResult struct {
 
 // HandleSummary handles the route for counting events
 func (es *EventService) HandleSummary(w http.ResponseWriter, r *http.Request) {
-    // Total count
-    totalCount, err := es.Collection.CountDocuments(r.Context(), bson.D{})
-    if err != nil {
-        log.Fatal(err) // Or handle the error more gracefully
+    now := time.Now()
+    thirtyDaysAgo := now.AddDate(0, 0, -ThirtyDays)
+
+    limitToThirtyDaysAgo := bson.D{
+        {Key: "$match", Value: bson.D{
+            {Key: "timestamp", Value: bson.D{
+                {Key: "$gte", Value: primitive.NewDateTimeFromTime(thirtyDaysAgo)},
+            }},
+        }},
     }
 
     result := CountResult{
-        TotalCount:     int32(totalCount),
+        TotalCount:     0,
         CountByUserID:  make(map[string]int32),
         CountByName:    make(map[string]int32),
         CountByDay:     make(map[string]int32),
         CountByCity:    make(map[string]int32),
     }
+
+    // count all documents
+    count := bson.D{
+        {Key: "$count", Value: "count"},
+    }
+    // Total count
+    cursor, err := es.Collection.Aggregate(r.Context(), mongo.Pipeline{limitToThirtyDaysAgo, count})
+    if err != nil {
+        log.Fatal(err) // Or handle the error more gracefully
+    }
+
+    cursor.Next(r.Context())
+    if totalCount, found := cursor.Current.Lookup("count").Int32OK(); found {
+        result.TotalCount = totalCount
+    }
+
 
     // Count by UserID
     groupByUserID := bson.D{
@@ -43,7 +66,7 @@ func (es *EventService) HandleSummary(w http.ResponseWriter, r *http.Request) {
             }},
         }},
     }
-    cursor, err := es.Collection.Aggregate(r.Context(), mongo.Pipeline{groupByUserID})
+    cursor, err = es.Collection.Aggregate(r.Context(), mongo.Pipeline{limitToThirtyDaysAgo, groupByUserID})
     if err != nil {
         log.Fatal(err) // Or handle the error more gracefully
     }
@@ -69,7 +92,7 @@ func (es *EventService) HandleSummary(w http.ResponseWriter, r *http.Request) {
             }},
         }},
     }
-    cursor, err = es.Collection.Aggregate(r.Context(), mongo.Pipeline{groupByName})
+    cursor, err = es.Collection.Aggregate(r.Context(), mongo.Pipeline{limitToThirtyDaysAgo, groupByName})
     if err != nil {
         log.Fatal(err) // Or handle the error more gracefully
     }
@@ -93,7 +116,7 @@ func (es *EventService) HandleSummary(w http.ResponseWriter, r *http.Request) {
             {Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},
         }},
     }
-    cursor, err = es.Collection.Aggregate(r.Context(), mongo.Pipeline{groupByDay})
+    cursor, err = es.Collection.Aggregate(r.Context(), mongo.Pipeline{limitToThirtyDaysAgo, groupByDay})
     if err != nil {
         log.Fatal(err) // Or handle the error more gracefully
     }
@@ -124,7 +147,7 @@ func (es *EventService) HandleSummary(w http.ResponseWriter, r *http.Request) {
         }},
     }
 
-    cursor, err = es.Collection.Aggregate(r.Context(), mongo.Pipeline{countByCity})
+    cursor, err = es.Collection.Aggregate(r.Context(), mongo.Pipeline{limitToThirtyDaysAgo, countByCity})
     if err != nil {
         log.Fatal(err) // Or handle the error more gracefully
     }

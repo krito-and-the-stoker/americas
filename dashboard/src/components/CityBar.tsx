@@ -7,6 +7,7 @@ type EventCounts = {
     ResumeGame: number
     AutoSave: number
     Error: number
+    Users: number
 }
 
 type Cities = {
@@ -59,6 +60,13 @@ function CityBar() {
             labels: cities,
             datasets: [
                 {
+                    label: 'Users',
+                    data: baseData.map(entry => entry.count).map(count => count.Users),
+                    backgroundColor: 'rgba(94, 21, 96, 0.5)',
+                    borderColor: 'rgba(94, 21, 96, 1)',
+                    borderWidth: 1,
+                },
+                {
                     label: 'Page Views',
                     data: baseData.map(entry => entry.count).map(count => count.PageView),
                     backgroundColor: 'rgba(37, 150, 190, 0.5)',
@@ -92,7 +100,7 @@ function CityBar() {
                     backgroundColor: 'rgba(175, 38, 38, 0.5)',
                     borderColor: 'rgba(175, 38, 38, 1)',
                     borderWidth: 1,
-                }
+                },
             ]
         }
     }
