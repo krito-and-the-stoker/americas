@@ -46,7 +46,6 @@ const send = error => {
 const handle = error => {
     show(error)
     send(error)
-    Savegame.save()
 }
 
 const initialize = () => {

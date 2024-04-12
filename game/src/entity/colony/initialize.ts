@@ -28,6 +28,8 @@ import Produce from 'task/colony/produce'
 import Manufacture from 'task/colonist/manufacture'
 import Harvest from 'task/colonist/harvest'
 
+import LeaveColony from 'interaction/leaveColony'
+
 import chain from './chain'
 
 import { listenEach, update } from './binding'
@@ -49,6 +51,7 @@ const warmCache = (colony: ColonyEntity, cacheUnit: UnitEntity | null) => {
         )
       }
     })
+    LeaveColony(cacheUnit)
     Unit.disband(cacheUnit)
   }
 }
@@ -71,8 +74,10 @@ export default (colony: ColonyEntity) => {
   warmCache(colony, cacheMerch)
   // warmCache(colony, cacheWagon)
 
+
   colony.destroy = [
     () => colony.newBuildings.forEach(building => Util.execute(building.destroy)),
+
 
     Time.schedule(SortByPower.create(colony)), // 1
     Time.schedule(Promote.create(colony)), // 4
@@ -106,6 +111,7 @@ export default (colony: ColonyEntity) => {
         }
       })
     ),
+
 
     // TODO: Implement with signals
     listenEach.units(colony, (unit: any, added: boolean) => {
