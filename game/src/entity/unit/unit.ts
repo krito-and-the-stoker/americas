@@ -244,7 +244,7 @@ export const initialize = (unit: UnitEntity) => {
                 Tile.discover(center, unit.owner)
                 Tile.diagonalNeighbors(center).forEach(other => setTimeout(
                   () =>Tile.discover(other, unit.owner),
-                  Math.random() * 2000
+                  Math.random() * 500
                 ))
               }
               if (properties.discoverRange! >= 2) {
@@ -255,7 +255,7 @@ export const initialize = (unit: UnitEntity) => {
 
                 tiles.forEach(tile => setTimeout(
                   () =>Tile.discover(tile, unit.owner),
-                  Math.random() * 2000
+                  Math.random() * 500
                 ))
 
                 if (properties.discoverRange! > 2) {
