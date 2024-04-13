@@ -88,7 +88,7 @@ const rectangle = (index, margin = 0) => {
   const tilesPerRow = Math.floor(1024 / width)
   const row = Math.floor(index / tilesPerRow)
   const col = index % tilesPerRow
-  return new PIXI.Rectangle((width + 2*margin) * col, (height + 2*margin) * row, width + margin, height + margin)
+  return new PIXI.Rectangle((width + 2*margin) * col + margin, (height + 2*margin) * row + margin, width, height)
 }
 
 const texture = (name, options = {}) => {
