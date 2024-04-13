@@ -29,7 +29,7 @@
 - (done) In Kolonie Experten weniger teuer
 - (done) Schiffe größerer Sichtradius (2ter Ring bei Meerfeldern)
 ### Karten
-- Fehlerlinien fix, Lucky Shot
+- (pratially done) Fehlerlinien fix, Lucky Shot
 - (done) Fisch Bonus-Resourcen
 ### Sound
 Was ist mit Sound?
