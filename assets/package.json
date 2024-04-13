@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "del": "^7.1.0",
-    "gulp-tap": "^2.0.0"
+    "gulp-tap": "^2.0.0",
+    "sharp": "^0.33.3"
   },
   "devDependencies": {
     "browser-sync": "^2.27.5",

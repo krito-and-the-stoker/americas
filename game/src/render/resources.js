@@ -3,6 +3,7 @@ import Message from 'util/message'
 
 const paths = Object.freeze({
   map: 'images/map.png',
+  mapWithMargin: 'images/margin/map.png',
   // colonyBackground: 'images/colony-screen/background.jpg',
   colonyBackground: 'images/buildings/colony-background.png',
   europeBackground: 'images/europe.jpg',
@@ -81,13 +82,13 @@ const loadTexture = async path => {
 
 const numberOfAssets = () => offset + Object.keys(paths).length
 
-const rectangle = index => {
+const rectangle = (index, margin = 0) => {
   const width = 64
   const height = 64
   const tilesPerRow = Math.floor(1024 / width)
   const row = Math.floor(index / tilesPerRow)
   const col = index % tilesPerRow
-  return new PIXI.Rectangle(width * col, height * row, width, height)
+  return new PIXI.Rectangle((width + 2*margin) * col, (height + 2*margin) * row, width + margin, height + margin)
 }
 
 const texture = (name, options = {}) => {
@@ -96,7 +97,8 @@ const texture = (name, options = {}) => {
     return textures.white
   }
   if (options.frame || options.frame === 0) {
-    return new PIXI.Texture(textures[name], rectangle(options.frame))
+    const margin = name === 'mapWithMargin' ? 2 : 0
+    return new PIXI.Texture(textures[name], rectangle(options.frame, margin))
   }
   if (options.rectangle) {
     return new PIXI.Texture(textures[name], options.rectangle)

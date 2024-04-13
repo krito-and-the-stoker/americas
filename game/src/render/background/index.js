@@ -14,7 +14,7 @@ import Tile from 'entity/tile'
 import AssembleMap from './assemble'
 import TileCache from './tileCache'
 
-const MAX_TILES = 30000
+const MAX_TILES = 40000
 
 let numTiles = null
 let layer = null
@@ -96,7 +96,7 @@ const createSpriteFromFrames = (resource, frames) =>
     return sprite
   })
 
-const mapName = 'map'
+const mapName = 'mapWithMargin'
 const createSprite = frames => {
   return createSpriteFromFrames(mapName, frames)
 }

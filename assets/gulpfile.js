@@ -7,6 +7,8 @@ import { deleteSync } from 'del'
 import fs from 'fs'
 import browserSync from 'browser-sync'
 
+import mapMargin from './map-margin.js'
+
 const sass = gulpSass(dartSass)
 
 
@@ -37,6 +39,8 @@ gulp.task('serve', done => {
 
     done()
 })
+
+gulp.task('map-margin', mapMargin)
 
 
 gulp.task('templates', () => {
@@ -70,6 +74,7 @@ gulp.task('watch', () => {
     gulp.watch('scss/**/*.scss', gulp.series('sass'))
     gulp.watch('images/**/*', gulp.series('images'))
     gulp.watch('templates/**/*', gulp.series('templates'))
+    // gulp.watch('images/map.png', gulp.series('map-margin'))
 })
 
 gulp.task('default', gulp.series('clean', 'serve', 'build', 'watch'))
