@@ -4,7 +4,9 @@
 echo "Building frontend services..."
 docker compose build game dashboard wiki assets
 
-# Step 1 is complete as these services do not need to be stopped or started for a build.
+# Step 1 is complete now start them in order to propagate changes
+echo "Starting frontend services..."
+docker compose up -d game dashboard wiki assets
 
 # Step 2: Update the backend service with minimal downtime
 echo "Updating backend service..."
