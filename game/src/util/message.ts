@@ -68,7 +68,7 @@ const error = (domain: Domain) => (...args: any[]) => {
 const emptyFn = () => {}
 
 const levels = ['info', 'log', 'warn', 'error']
-const isEnabled = (level: string, base: string) => levels.indexOf(level) >= levels.indexOf(base)
+const isEnabled = (level: string, base: string) => levels.indexOf(level) < levels.indexOf(base)
 const domainFunctions = Object.fromEntries(Object.entries(domains).map(([domain, level]) => {
   const functions = {
     info: isEnabled(level, 'info') ? info(domain as Domain) : emptyFn,
