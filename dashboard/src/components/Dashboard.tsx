@@ -100,7 +100,7 @@ const Dashboard = () => {
 
 
   return (
-    <div class="w-screen mx-auto px-8 max-w-screen-xl">
+    <div class="w-screen mx-auto px-8 max-w-screen-2xl">
 
 
       <h1 class="mt-8 text-xl font-bold">Event Dashboard</h1>
