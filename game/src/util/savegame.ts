@@ -37,6 +37,7 @@ const listen = {
 const state = {
     get gameId() { return gameId.value },
     get autosaveInterval() { return autosaveInterval.value },
+    get saveOnExit() { return saveOnExit.value },
 }
 
 const initialize = async (clickResume: FunctionVoid) => {
@@ -162,15 +163,20 @@ const saveToRemote = async (id: string, data: string) => {
         game: data,
     })
 
-    await fetch('/api/game/save', {
+    const result = await fetch('/api/game/save', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body,
+    }).then(res => res.ok).catch(e => {
+        Message.savegame.error(e)
+        return false
     })
 
+
     Message.savegame.log('Synced savegame to server', id)
+    return result
 }
 
 const saveLocal = (id: string, data: string) => {
@@ -229,7 +235,18 @@ const asyncSave = async () => {
     }
     if (SAVE_TO_REMOTE) {
         Message.savegame.log('Saving to remote...')
-        await saveToRemote(gameId.value, data)
+        const neededSync = gamesToSync.value.includes(gameId.value)
+        const ok = await saveToRemote(gameId.value, data)
+
+        if (ok && neededSync) {
+            gamesToSync.update(gamesToSync.value.filter((item: string) => item !== gameId.value))
+        }
+        if (!ok && !neededSync) {
+            gamesToSync.update([...gamesToSync.value, gameId.value])
+        }
+
+        // if ok and not needed sync, it doesn't need sync now -> do nothing
+        // if not okay and needed sync, it still needs sync now -> do nothing
     }
 
     lastSaveTime.update(Date.now())

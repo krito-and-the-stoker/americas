@@ -22,7 +22,7 @@ const send = error => {
     const data = Record.serialize()
     const body = JSON.stringify({
         id: Savegame.state.gameId,
-        error: error.message,
+        error: `${error.message}\n${error.stack}`,
         game: data,
     })
 

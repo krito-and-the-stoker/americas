@@ -41,7 +41,7 @@ const trackEvent = async name => {
         throw new Error('Network response was not ok ' + response.statusText)
       }
     })
-    // .then(data => Message.tracking.log('Success:', data))
+    .then(data => Message.tracking.info('Success:', data))
     .catch(error => Message.tracking.error('Error:', error))
 }
 

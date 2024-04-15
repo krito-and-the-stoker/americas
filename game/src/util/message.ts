@@ -6,23 +6,23 @@ const level = {
 } as const;
 
 const domains = {
-  event: false,
-  command: false,
-  colony: false,
-  europe: false,
-  unit: false,
-  natives: false,
-  initialize: false,
-  tile: false,
-  owner: false,
-  record: false,
-  util: false,
-  tutorial: false,
-  templates: false,
-  savegame: false,
-  tracking: false,
-  signal: false,
-  cache: false,
+  event: 'warn',
+  command: 'warn',
+  colony: 'warn',
+  europe: 'warn',
+  unit: 'warn',
+  natives: 'warn',
+  initialize: 'warn',
+  tile: 'warn',
+  owner: 'warn',
+  record: 'warn',
+  util: 'warn',
+  tutorial: 'warn',
+  templates: 'warn',
+  savegame: 'warn',
+  tracking: 'warn',
+  signal: 'warn',
+  cache: 'warn',
 } as const;
 
 // Extract keys from `level` and `domains` objects where the value is `true`
@@ -67,17 +67,14 @@ const error = (domain: Domain) => (...args: any[]) => {
 
 const emptyFn = () => {}
 
-const domainFunctions = Object.fromEntries(Object.entries(domains).map(([domain, isEnabled]) => {
-  const functions = isEnabled ? {
-    info: info(domain as Domain),
-    log: log(domain as Domain),
-    warn: warn(domain as Domain),
-    error: error(domain as Domain),
-  } : {
-    info: emptyFn,
-    log: emptyFn,
-    warn: emptyFn,
-    error: error(domain as Domain),
+const levels = ['info', 'log', 'warn', 'error']
+const isEnabled = (level: string, base: string) => levels.indexOf(level) >= levels.indexOf(base)
+const domainFunctions = Object.fromEntries(Object.entries(domains).map(([domain, level]) => {
+  const functions = {
+    info: isEnabled(level, 'info') ? info(domain as Domain) : emptyFn,
+    log: isEnabled(level, 'log') ? log(domain as Domain) : emptyFn,
+    warn: isEnabled(level, 'warn') ? warn(domain as Domain) : emptyFn,
+    error: isEnabled(level, 'error') ? error(domain as Domain) : emptyFn,
   }
 
   return [domain as Domain, functions]

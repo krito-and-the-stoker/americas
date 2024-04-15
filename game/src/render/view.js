@@ -31,11 +31,17 @@ const getCenter = () => ({
   y: Background.get().layer.height / 2,
 })
 
-const updateMapCoords = ({ x, y }) => {
-  const coords = { x: Math.round(x), y: Math.round(y) }
-  Record.setGlobal('coords', coords)
-  Foreground.updateCoords(coords)
-  Background.updateCoords(coords)
+const updateMapCoords = (inputCoords) => {
+  const sanitizedCoords = inputCoords ?? Record.getGlobal('coords')
+  if (sanitizedCoords) {
+    const { x, y } = sanitizedCoords
+    const coords = { x: Math.round(x), y: Math.round(y) }
+    Record.setGlobal('coords', coords)
+    Foreground.updateCoords(coords)
+    Background.updateCoords(coords)
+  } else {
+    console.error('updateMapCoords called with invalid coords, unable to recover:', inputCoords, Record.getGlobal('coords'))
+  }
 }
 
 const updateScale = newScale => {
