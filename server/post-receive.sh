@@ -23,11 +23,12 @@ do
         # Get the commit message of the new revision
         commit_message=$(git log --format=%B -n 1 $newrev)
         echo "[$(date)] Live branch content copied to $target_directory. Commit message: '$commit_message'"
-        
-        # Execute any additional container update scripts in the background
+
+        # Copy the update-containers.sh script to parent directory
         cp $target_directory/server/update-containers.sh $target_directory/..
 
-        $target_directory/..
+        # Execute any additional container update scripts in the background
+        cd $target_directory/..
         ./update-containers.sh &
     fi
 done
