@@ -101,8 +101,10 @@ const initialize = async (clickResume: FunctionVoid) => {
             gamesToSync.value.map((id: string) => {
                 const data = loadFromStorage(id)
                 if (data) {
-                    return saveToRemote(id, data).then(() => {
-                        gamesToSync.update(gamesToSync.value.filter((item: string) => item !== id))
+                    return saveToRemote(id, data).then(ok => {
+                        if (ok) {
+                            gamesToSync.update(gamesToSync.value.filter((item: string) => item !== id))
+                        }
                     }).catch(e => {
                         Message.savegame.error('Could not sync to server', id, e)
                     })
