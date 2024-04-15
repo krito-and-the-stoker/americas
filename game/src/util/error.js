@@ -11,11 +11,20 @@ let sending = Promise.resolve()
 const show = error => {
     Dialog.open('error.general', {
       error: error.message,
+      saveOnExit: Savegame.state.saveOnExit,
       reload: async () => {
           await sending
           window.location.reload()
       }
     })
+}
+
+const unloadHandler = e => {
+    var confirmationMessage = 'Please wait until the data surrounding the error has been sent to the server.'
+
+    // Some browsers require setting the returnValue of the event
+    e.returnValue = confirmationMessage
+    return confirmationMessage
 }
 
 const send = error => {
@@ -26,6 +35,7 @@ const send = error => {
         game: data,
     })
 
+    window.addEventListener('beforeunload', unloadHandler)
     sending = Promise.all([
         fetch('/api/error/create', {
             method: 'POST',
@@ -39,8 +49,10 @@ const send = error => {
         .catch(e => {
             console.error('Could not send error to server', e)
         }),
-        Tracking.error()
-    ])
+        Tracking.error(),
+    ]).finally(() => {
+        window.removeEventListener('beforeunload', unloadHandler)
+    })
 }
 
 const handle = error => {

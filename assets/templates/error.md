@@ -6,12 +6,13 @@
 Maybe you can **continue** your game.
 Sometimes it helps to **reload** the page.
 
-If the error persists, please *try again later*. We have received a notification and will attempt to fix the problem.
+We have received a notification and will attempt to fix the problem.
 
 Error: *{error}*
 
-[if saveOnExit] If you reload the page, your game will automatically be *saved* and you can resume. []
+[if {saveOnExit}] If you reload the page, your game will automatically be *saved* and you can resume. []
 [if {not saveOnExit}] If you reload the page, your game will *not be saved*, unless you continue and tick the *save on exit* option on the top right panel. []
+
 
 [answer action:close] **Continue** []
 [answer action:reload] **Reload Page** []
