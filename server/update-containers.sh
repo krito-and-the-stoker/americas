@@ -12,4 +12,5 @@ echo "Build started on: $(date)"
 cp .env.backend $target_directory
 
 cd $target_directory
+
 ./iterative-build.sh
