@@ -93,12 +93,10 @@ function Timeline() {
         }
     }
 
-    return <div class="row">
-        <div class="chart-full">
-            <h3>Timeline</h3>
-            <Line data={eventData()} options={lineOptions} />
-        </div>
-    </div>
+    return <>
+        <h3>Timeline</h3>
+        <Line data={eventData()} options={lineOptions} />
+    </>
 }
 
 export default Timeline

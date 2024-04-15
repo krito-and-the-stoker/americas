@@ -106,12 +106,10 @@ function CityBar() {
     }
 
 
-    return <div class="row">
-        <div class="chart-full">
-            <h3>Locations</h3>
-            <Bar data={eventData()} options={lineOptions} />
-        </div>
-    </div>
+    return <>
+        <h3>Locations</h3>
+        <Bar data={eventData()} options={lineOptions} />
+    </>
 }
 
 export default CityBar

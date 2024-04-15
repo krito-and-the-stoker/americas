@@ -47,7 +47,8 @@ function ErrorList() {
 
     return (
         <div class="mx-auto max-w-6xl">
-            <h1 class="mb-4 mt-6 text-4xl font-extrabold leading-none dark:text-white">Error List</h1>
+            <h1 class="mt-6 text-4xl font-extrabold leading-none dark:text-white">Error List</h1>
+            <a class="text-sm underline mb-4 inline-block" href="/">View Dashboard</a>
             <table class="w-full">
                 <thead>
                     <tr>

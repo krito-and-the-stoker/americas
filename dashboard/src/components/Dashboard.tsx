@@ -100,62 +100,48 @@ const Dashboard = () => {
 
 
   return (
-    <div>
-      <style scoped>{`
-        .title {
-          width: 95vw;
-          margin: 50px auto;
-        }
-        .container {
-          width: 95vw;
-          margin: 0 auto;
-        }
-        .row {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-between;
-        }
-        .chart3rd {
-          width: calc(33% - 5vw);
-          margin-bottom: 5vw;
-        }
-        .chart-full {
-          width: calc(100% - 5vw);
-          margin-bottom: 5vw;
-        }
-      `}</style>
+    <div class="w-screen mx-auto px-8 max-w-screen-xl">
 
-      <h1 class="title">Event Dashboard</h1>
-      <Switch>
-        <Match when={data.loading}>
-          <div>Loading...</div>
-        </Match>
 
-        <Match when={data.error}>
-          <div>Error loading data</div>
-        </Match>
+      <h1 class="mt-8 text-xl font-bold">Event Dashboard</h1>
+      <a class="text-sm underline" href="/errors">View Errors</a>
 
-        <Match when={data()}>
-          <div class="container">
-            <div class="row">
-              <div class="chart3rd">
-                <h3>Total Events: {data().totalCount}</h3>
-                <Bar data={eventsAndUserData()} />
+      <div class="mt-6">
+        <Switch>
+          <Match when={data.loading}>
+            <div>Loading...</div>
+          </Match>
+
+          <Match when={data.error}>
+            <div>Error loading data</div>
+          </Match>
+
+          <Match when={data()}>
+            <div class="w-full">
+              <div class="grid grid-cols-3 gap-5">
+                <div class="col-span-1">
+                  <h3>Total Events: {data().totalCount}</h3>
+                  <Bar data={eventsAndUserData()} />
+                </div>
+                <div class="col-span-1">
+                  <h3>Total Users: {numberOfUsers()}</h3>
+                  <Bar data={userActivityData()} />
+                </div>
+                <div class="col-span-1">
+                  <h3>Event Types</h3>
+                  <Pie data={eventTypeData()} options={options} />
+                </div>
               </div>
-              <div class="chart3rd">
-                <h3>Total Users: {numberOfUsers()}</h3>
-                <Bar data={userActivityData()} />
+              <div class="col-span-3 my-5">
+                <CityBar />
               </div>
-              <div class="chart3rd">
-                <h3>Event Types</h3>
-                <Pie data={eventTypeData()} options={options} />
+              <div class="col-span-3 my-5">
+                <Timeline />
               </div>
             </div>
-            <CityBar />
-            <Timeline />
-          </div>
-        </Match>
-      </Switch>
+          </Match>
+        </Switch>
+      </div>
     </div>
   )
 }
