@@ -3,12 +3,12 @@
 - (done) Promotion: jeder kann alles werden
 - (done) Bildungsgebäude rauswerfen
 - Neue Gebäudestruktur (Dreicke) fertigstellen
-- Construction-Queue
+- Construction-Queue 
 - Mehrfachbaubare Gebäude überdenken und UI anpassen
 - Gebäudeinfos & Optionen on Click
 ### Gamestart
-- Schwierigkeitsgrad
-- Audienz beim King
+- (optional) Schwierigkeitsgrad
+- Intro Video (Erzählung, Stadtpanoramen, Armada etc)
 - 1 Startszenario:
     - Startposition(en)
     - Teile der Karte aufdecken?
@@ -34,5 +34,9 @@
 ### Sound
 Was ist mit Sound?
 
+### Schiffe
+Schiffe Benennungen und Grafiken korrekt zuordnen
+
+
 ### Optional
-- Kolonistengrafiken Update
+- (optional) Kolonistengrafiken Update
