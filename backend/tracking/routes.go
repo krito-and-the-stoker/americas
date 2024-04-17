@@ -44,5 +44,6 @@ func Handle(collection *mongo.Collection, prefix string, mux *http.ServeMux) {
     mux.HandleFunc("GET " + prefix + "summary", es.HandleSummary)
     mux.HandleFunc("GET " + prefix + "timeline", es.HandleTimeline)
     mux.HandleFunc("GET " + prefix + "cities", es.HandleCities)
+    mux.HandleFunc("GET " + prefix + "active", es.HandleActive)
 }
 
