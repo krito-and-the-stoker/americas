@@ -12,7 +12,7 @@ type DisplayErrorItem = {
     id: string
     name: string
     version: string
-    message: string
+    messageLines: string[]
     time: string
 }
 
@@ -41,7 +41,7 @@ function ErrorList() {
             id: error.id,
             name: capitalize(error.gameid.split('--')[1]) ?? 'Unnamed',
             version: error.version,
-            message: error.message,
+            messageLines: error.message.split('\n'),
             time: new Date(error.timestamp).toLocaleString(),
         })) as DisplayErrorItem[]
 
@@ -65,7 +65,13 @@ function ErrorList() {
                         <tr>
                             <td>{error.name}</td>
                             <td class="text-center">{error.version}</td>
-                            <td>{error.message}</td>
+                            <td>
+                                <For each={error.messageLines}>
+                                {(line) => (
+                                    <div>{line}</div>
+                                )}
+                                </For>
+                            </td>
                             <td>{error.time}</td>
                             <td><a class="underline" href={`/errors/${error.id}`}>Inspect</a></td>
                         </tr>
