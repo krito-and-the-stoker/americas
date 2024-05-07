@@ -15,7 +15,24 @@ type Timeline = {
 }
 
 const lineOptions = {
-  aspectRatio: 5,
+    aspectRatio: 5,
+    scales: {
+        y: {
+            type: 'linear',
+            display: true,
+            position: 'left',
+        },
+        y1: {
+            type: 'linear',
+            display: true,
+            position: 'right',
+
+            // grid line settings
+            grid: {
+                drawOnChartArea: false, // only want the grid lines for one axis to show up
+            },
+        },
+    },
 }
 
 // const _ = {
@@ -81,6 +98,7 @@ function Timeline() {
                     backgroundColor: 'rgba(250, 226, 108, 0.5)',
                     borderColor: 'rgba(250, 226, 108, 1)',
                     borderWidth: 1,
+                    yAxisID: 'y1',
                 },
                 {
                     label: 'Errors',
