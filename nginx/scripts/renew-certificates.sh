@@ -2,7 +2,7 @@
 
 # Configuration variables
 EMAIL="public@krito.de"
-WEBROOT_PATH="/var/www/certbot"
+WEBROOT_PATH="/usr/share/nginx/html"
 
 # Renewing the certificate
 certbot renew --webroot -w $WEBROOT_PATH --email $EMAIL --agree-tos --no-eff-email
