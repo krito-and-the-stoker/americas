@@ -181,7 +181,7 @@ const saveToRemote = async (id: string, data: string) => {
     return result
 }
 
-const saveLocal = (id: string, data: string) => {
+const saveLocal = (id: string, data: string): boolean => {
     const key = `game-${id}`
     try {
         window.localStorage.setItem(key, data)
@@ -192,11 +192,17 @@ const saveLocal = (id: string, data: string) => {
             .filter((key: string) => !doNotDelete.includes(key))
             .forEach((key: string) => window.localStorage.removeItem(key))
 
-        window.localStorage.setItem(key, data)
+        try {
+            window.localStorage.setItem(key, data)
+        } catch(e) {
+            return false
+        }
     }
 
     gamesInStorage.update([...gamesInStorage.value, key])
     lastSaveId.update(id)
+
+    return true
 }
 
 const loadFromStorage = (id: string) => {
@@ -211,7 +217,9 @@ const save = (savegame = null) => {
     }
     const data = savegame || Record.serialize()
     if (SAVE_TO_LOCAL_STORAGE) {
-        saveLocal(gameId.value, data)
+        if (!saveLocal(gameId.value, data)) {
+            Message.savegame.warn('Could not save to local storage.')
+        }
         if (SAVE_TO_REMOTE) {
             gamesToSync.update([...gamesToSync.value, gameId.value])
         }
@@ -233,7 +241,9 @@ const asyncSave = async () => {
     const data = await Record.serializeAsync()
     if (SAVE_TO_LOCAL_STORAGE) {
         Message.savegame.log('Saving to local storage...')
-        saveLocal(gameId.value, data)
+        if (!saveLocal(gameId.value, data)) {
+            Message.savegame.error('Could not save to local storage.')
+        }
     }
     if (SAVE_TO_REMOTE) {
         Message.savegame.log('Saving to remote...')
