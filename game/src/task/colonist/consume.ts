@@ -100,11 +100,12 @@ const create = (colony: ColonyEntity) => {
       const target = Colonist.promotionTarget(colonist)
 
       colonist.consumptionBreakdown.want = {
+        // this is the order of importance for consumption
         food: consumption.food,
         wood: consumption.wood,
         luxury: consumption.luxury,
-        bonus: consumption.bonus,
         promotion: Colonist.canPromote(colonist) && Colonist.needsForPromotion(target) || {},
+        bonus: consumption.bonus,
       }
 
       const oldState = { ...colonist.state }
