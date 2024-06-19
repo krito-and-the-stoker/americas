@@ -77,18 +77,18 @@ These buildings enable you to scale your manufacturing by having more workers an
 4 experts: 24 input -> 12 output
 ### Level 3
 These building enables you to scale manufacturing into industrial levels by having more workers and transferring the expert bonus from the overseer to all his workers.
-- rum factory: sugar -> rum
+- rum factory: sugar -> rum (no)
 - textile factory: cotton -> cloths
-- cigar factory: tobacco -> cigars
-- coat factory: fur -> coats
+- cigar factory: tobacco -> cigars (no)
+- coat factory: fur -> coats (?)
 - iron works: ore -> tools
 - gun factory: tools -> guns
 #### Jobs
-10 Workers: Manufactures 4 input goods into 2 output goods (Expert 6 - 3).
+10 Workers: Manufactures 4 input goods into 2 output goods (Expert 4 - 2).
 1 Overseer:
 - Required to generate output
 - Uses 5 wood and 5 tools
-- Transfers his expertise to all workers
+- Overseer needs to be an expert
 #### Maximum production
-1 expert and 10 workers: 60 input -> 30 output
+1 expert and 10 workers: 40 input -> 20 output
 
