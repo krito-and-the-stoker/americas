@@ -51,6 +51,13 @@ async function openGameLocal(id: string) {
     }
 }
 
+async function removeError(id: string) {
+    setIsOpening(true)
+    await fetch(`/api/error/delete/${id}`)
+    window.location.href = "/errors"
+    setIsOpening(false)
+}
+
 const [isOpening, setIsOpening] = createSignal(false)
 
 function InspectError(props: any) {
@@ -70,6 +77,13 @@ function InspectError(props: any) {
                 onClick={() => !isOpening() && openGameLocal(props.params.id)}
                 disabled={isOpening()}>
                 Open Game on localhost:3000
+            </button>
+            <button
+                class="bg-red-500 text-white font-bold py-2 px-4 rounded my-12 mx-2"
+                classList={{'opacity-50': isOpening(), 'cursor-not-allowed': isOpening(), 'hover:bg-red-700': !isOpening()}}
+                onClick={() => !isOpening() && removeError(props.params.id)}
+                disabled={isOpening()}>
+                Delete Error
             </button>
             <Show when={isOpening()}><div>Loading game...</div></Show>
         </div>

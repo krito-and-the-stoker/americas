@@ -38,4 +38,5 @@ func Handle(collection *mongo.Collection, prefix string, mux *http.ServeMux) {
     mux.HandleFunc("POST " + prefix + "create", service.CreateError)
     mux.HandleFunc("GET " + prefix + "list", service.ListErrors)
     mux.HandleFunc("GET " + prefix + "get/{id}", service.GetError)
+    mux.HandleFunc("GET " + prefix + "delete/{id}", service.DeleteError)
 }
