@@ -87,7 +87,6 @@ services:
       context: ./database
       dockerfile: backup.Dockerfile
     volumes:
-      - ./database/scripts:/scripts
       - ./database/backups:/backups
     env_file:
       - .env.backend
