@@ -62,6 +62,10 @@ export default Factory.commander(
 
     const init = () => {
       const targetTile = MapEntity.tile(coords)
+      if (!targetTile) {
+        console.warn('Could not find target tile', coords)
+        return false
+      }
 
       let displayName =
         (unit.domain === 'land' ? 'Travelling to ' : 'Navigating to ') +
@@ -73,6 +77,10 @@ export default Factory.commander(
 
     const finished = () => {
       const target = Tile.get(coords)
+      if (!target) {
+        console.warn('Could not find target tile', coords)
+        return false
+      }
 
       if (
         unit.domain === 'sea' &&
