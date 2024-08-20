@@ -81,6 +81,18 @@ services:
       - wiki
       - backend
 
+  backup:
+    build:
+      context: ./database
+      dockerfile: backup.Dockerfile
+    volumes:
+      - ./database/scripts:/scripts
+      - ./database/backups:/backups
+    env_file:
+      - .env.backend
+    depends_on:
+      - database
+
 volumes:
   mongo-data:
   game-dist:

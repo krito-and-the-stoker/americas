@@ -82,6 +82,18 @@ services:
       - backend
     restart: always
 
+  backup:
+    build:
+      context: ./database
+      dockerfile: backup.Dockerfile
+    volumes:
+      - ./database/scripts:/scripts
+      - ./database/backups:/backups
+    env_file:
+      - .env.backend
+    depends_on:
+      - database
+
 volumes:
   game-dist:
   dashboard-dist:
