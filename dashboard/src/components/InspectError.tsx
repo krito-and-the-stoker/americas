@@ -1,6 +1,7 @@
 import { createSignal, Show } from 'solid-js'
 
-const host = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://www.play-americas.com'
+// const host = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://www.play-americas.com'
+const host = 'http://localhost:3000' // always open on localhost
 
 async function fetchGameData(id: string) {
 
