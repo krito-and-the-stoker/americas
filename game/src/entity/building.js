@@ -1,6 +1,7 @@
 import Util from 'util/util'
 import Message from 'util/message'
 import Events from 'util/events'
+import Record from 'util/record'
 
 import Buildings from 'entity/buildings'
 import Colony from 'entity/colony'
@@ -28,6 +29,10 @@ const save = building => {
   return Buildings[building.name].save(building)
 }
 
+const disband = building => {
+  Record.remove(building)
+}
+
 const isInteractive = building => Buildings[building.name].isInteractive(building)
 
 const upgradeDisplay = building => Buildings[building.name].upgradeDisplay(building)
@@ -42,6 +47,7 @@ export default {
   get,
   save,
   load,
+  disband,
   level,
   canEmploy,
   name: display,

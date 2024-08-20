@@ -90,6 +90,7 @@ const disband = colony => {
   colony.disbanded = true
   colony.colonists.forEach(UnjoinColony)
   colony.units.forEach(LeaveColony)
+  colony.newBuildings.forEach(Building.disband)
   const tile = MapEntity.tile(colony.mapCoordinates)
   Tile.update.colony(tile, null)
   Tile.removeRoad(tile)
