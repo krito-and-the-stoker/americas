@@ -31,6 +31,11 @@ const create = (colony, level = 1) => {
 }
 
 const initialize = building => {
+	if (!building.colony.name) {
+		console.warn('Skipped dangling building', building, building.colony)
+		return
+	}
+
 	return [
 		listen.level(building, level => {
 			if (building.placement.length === 0) {
