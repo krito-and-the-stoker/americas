@@ -3,6 +3,7 @@ import { ColonyEntity, OwnerEntity } from './types'
 
 
 import Record from 'util/record'
+import LA from 'util/la'
 
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
@@ -26,7 +27,7 @@ export const create = (coords: Coordinates, owner: OwnerEntity) => {
     owner: owner || Owner.player(),
     units: [],
     colonists: [],
-    mapCoordinates: { ...coords },
+    mapCoordinates: LA.round(coords),
     productionBonus: 0,
     bells: 0,
     crosses: 0,
@@ -53,7 +54,7 @@ export const create = (coords: Coordinates, owner: OwnerEntity) => {
   colony.waterMap = Layout.placeWater(colony)
   colony.newBuildings.push(Buildings.carpenters.create(colony))
 
-  const tile = MapEntity.tile(coords)
+  const tile = MapEntity.tile(colony.mapCoordinates)
   Tile.update.colony(tile, colony)
 
   initialize(colony)
