@@ -47,7 +47,7 @@ const getColonyName = () => {
 
   let colonyNames = Record.getGlobal('colonyNames')
   if (colonyNames.length === 0) {
-    usedNames = Record.getAll('colony').map(colony => colony.name)
+    const usedNames = Record.getAll('colony').map(colony => colony.name)
     const newName = Colony.names.find(name => !usedNames.includes(name))
 
     if (!newName) {
