@@ -32,7 +32,6 @@ function ColonyComponent() {
 	const [isInside, setIsInside] = createSignal(false)
 
 	const reflow = (colony: ColonyEntity) => {
-		console.log(colony.newBuildings)
 		colony.layout = Layout.create()
 		colony.waterMap = Layout.placeWater(colony)
 		const buildings = colony.newBuildings
