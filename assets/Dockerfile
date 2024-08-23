@@ -12,7 +12,7 @@ ENV PATH $PATH:/node_modules/.bin
 COPY ./package*.json .
 
 # Install app dependencies
-RUN npm install
+RUN npm ci
 
 RUN rm -rf /dist
 RUN mkdir -p /dist
