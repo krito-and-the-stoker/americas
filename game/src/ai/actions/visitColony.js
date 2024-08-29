@@ -41,6 +41,10 @@ const commit = (tribe, state, colony) => {
   const good = Util.choose(['food', 'cotton', 'furs', 'tobacco', 'sugar', 'coats', 'cloth'])
   const amount = Math.ceil(5 + 15 * Math.random() + 20 * relation.trust)
 
+  if (!relation.colonies[colony.referenceId]) {
+    relation.colonies[colony.referenceId] = {}
+  }
+
   relation.colonies[colony.referenceId].visited = Time.now()
   Events.trigger('ui-dialog', {
     name: 'natives.visit_colony',
