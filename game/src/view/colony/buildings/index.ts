@@ -30,9 +30,15 @@ export interface BuildingEntity {
 }
 
 
+const originalDimensions = {
+  x: 1920.0,
+  y: 1080.0,
+}
+
 
 const create = (colony: ColonyEntity) => {
   const container = {
+    capture: new PIXI.Container(),
     background: new PIXI.Container(),
     buildings: new PIXI.Container(),
     colonists: new PIXI.Container(),
@@ -42,21 +48,16 @@ const create = (colony: ColonyEntity) => {
   const waterSprites = Water.create(colony)
   waterSprites.forEach(sprite => container.water.addChild(sprite))
 
-  // const background = Resources.sprite('colonyBackground')
-  const background = new PIXI.Graphics();
-  background.beginFill(0x43602a, 1); // light green
-  // background.beginFill(0x41492a, 1); // the dark green
-  // background.beginFill(0x838165, 1); // the grey of the buildings floor
-  background.drawRect(0, 0, 1920, 1080); // Change these values as needed
-  background.endFill();
-
-  container.background.addChild(background)
-
-  const ground = new PIXI.TilingSprite(Resources.texture('colonyBackground'), 1920, 1080)
+  const ground = new PIXI.TilingSprite(Resources.texture('colonyBackground'), 40 * 128, 40 * 64)
+  // const ground = new PIXI.TilingSprite(Resources.texture('colonyBackground'), 1920, 1080)
+  // ground.position.x = 0.15 * originalDimensions.x
+  // ground.position.y = 0.15 * originalDimensions.y
   container.background.addChild(ground)
 
   // capture click on background so we dont close the screen
-  const unsubscribeClick = Click.on(background)
+  // capture area will also be used for drag
+  container.capture.hitArea = new PIXI.Rectangle(0, 0, originalDimensions.x, originalDimensions.y)
+  const unsubscribeClick = Click.on(container.capture)
 
 
   const unsubscribe = [

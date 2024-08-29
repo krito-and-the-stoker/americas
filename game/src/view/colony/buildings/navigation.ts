@@ -30,17 +30,17 @@ interface ContainerArgument {
   water: PIXI.Container
 }
 
+const originalDimensions = {
+  x: 1920.0,
+  y: 1080.0,
+}
+
 
 const create = (colony: ColonyEntity, container: ContainerArgument) => {
-  const originalDimensions = {
-    x: container.background.width,
-    y: container.background.height,
-  }
-
   let initialCoords = { x: 0, y: 0 }
   let dragFactor = 1
   RenderView.updateWhenResized(({ dimensions }: Dimensions) => {
-    dragFactor = 1920.0 / dimensions.x
+    dragFactor = originalDimensions.y / dimensions.x
   })
 
   let containerCoords = { x: 0, y: 0 }
@@ -73,6 +73,8 @@ const create = (colony: ColonyEntity, container: ContainerArgument) => {
     const cursorDelta = LA.multiply(dragFactor, LA.subtract(coords, initialCoords))
     const newPosition = sanitizePosition(LA.add(containerCoords, cursorDelta))
 
+    container.background.position.x = newPosition.x
+    container.background.position.y = newPosition.y
     container.buildings.position.x = newPosition.x
     container.buildings.position.y = newPosition.y
     container.colonists.position.x = newPosition.x
@@ -92,8 +94,8 @@ const create = (colony: ColonyEntity, container: ContainerArgument) => {
       y: (Layout.dimensions(colony.layout).y - 1) * Triangles.HEIGHT,
     }
     minPosition = {
-      x: -colonyDimensions.x * zoomScale + 1920.0,
-      y: -colonyDimensions.y * zoomScale + 1080.0,
+      x: -colonyDimensions.x * zoomScale + originalDimensions.x,
+      y: -colonyDimensions.y * zoomScale + originalDimensions.y,
     }
   }
   let scale = 1.0
@@ -106,8 +108,8 @@ const create = (colony: ColonyEntity, container: ContainerArgument) => {
     const scaleY = dimensions.y / originalDimensions.y
     scale = 0.9 * Math.min(scaleX, scaleY)
 
-    const width = 1920.0 * scale
-    const height = 1080.0 * scale
+    const width = originalDimensions.x * scale
+    const height = originalDimensions.y * scale
     const colonyDimensions = {
       x: Layout.dimensions(colony.layout).x * Triangles.WIDTH,
       y: Layout.dimensions(colony.layout).y * Triangles.HEIGHT,
@@ -125,6 +127,8 @@ const create = (colony: ColonyEntity, container: ContainerArgument) => {
 
     containerCoords = sanitizePosition(containerCoords)
 
+    container.background.position.x = containerCoords.x
+    container.background.position.y = containerCoords.y
     container.buildings.position.x = containerCoords.x
     container.buildings.position.y = containerCoords.y
     container.colonists.position.x = containerCoords.x
@@ -142,6 +146,7 @@ const create = (colony: ColonyEntity, container: ContainerArgument) => {
     }
 
     zoomScale *= deltaFactor
+    container.background.scale.set(zoomScale)
     container.buildings.scale.set(zoomScale)
     container.colonists.scale.set(zoomScale)
     container.water.scale.set(zoomScale)
@@ -152,6 +157,8 @@ const create = (colony: ColonyEntity, container: ContainerArgument) => {
     containerCoords = LA.add(containerCoords, offset)
     containerCoords = sanitizePosition(containerCoords)
 
+    container.background.position.x = containerCoords.x
+    container.background.position.y = containerCoords.y
     container.buildings.position.x = containerCoords.x
     container.buildings.position.y = containerCoords.y
     container.colonists.position.x = containerCoords.x
@@ -162,7 +169,7 @@ const create = (colony: ColonyEntity, container: ContainerArgument) => {
 
   return [
     // @ts-ignore
-    Drag.on(container.background, dragStart, dragMove, dragEnd, { highlight: false }),
+    Drag.on(container.capture, dragStart, dragMove, dragEnd, { highlight: false }),
     Wheel.on(handleWheel),
   ]
 }

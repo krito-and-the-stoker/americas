@@ -7,13 +7,13 @@ import Drag from 'input/drag'
 import UnjoinColony from 'interaction/unjoinColony'
 import LoadUnitFromShipToColony from 'interaction/loadUnitFromShipToColony'
 
+const originalDimensions = {
+  x: 1920,
+  y: 1080,
+}
+
 const create = colony => {
   const container = new PIXI.Container()
-
-  const originalDimensions = {
-    x: 1920,
-    y: 1080,
-  }
 
   const leaveColonyZone = new PIXI.Container()
   leaveColonyZone.hitArea = new PIXI.Rectangle(
