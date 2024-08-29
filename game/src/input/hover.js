@@ -33,6 +33,8 @@ const track = (target, data) => {
   }
 
 
+  // PIXI bug?
+  // this may prevent underlying object not to receive events like click etc
   target.eventMode = 'static'
   target
     .on('mouseover', addTarget)

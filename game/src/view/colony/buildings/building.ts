@@ -94,7 +94,9 @@ const create = (colony: ColonyEntity, building: BuildingEntity) => {
           })
         }
       }, `Inspect ${Building.name(colony, building.name)}`)
-    const unsubscribeHover = Hover.track(sprite, { type: 'building', building })
+    // only interactive buildings can be hovered
+    const unsubscribeHover = Building.isInteractive(building)
+      && Hover.track(sprite, { type: 'building', building })
 
     return [
       unsubscribeDrag,
@@ -102,8 +104,6 @@ const create = (colony: ColonyEntity, building: BuildingEntity) => {
       unsubscribeHover,
     ]
   })
-
-
 
   const unsubscribe = [
     BuildingColonists.create(building, container.colonists),

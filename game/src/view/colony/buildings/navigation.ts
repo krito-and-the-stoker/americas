@@ -169,7 +169,7 @@ const create = (colony: ColonyEntity, container: ContainerArgument) => {
 
   return [
     // @ts-ignore
-    Drag.on(container.capture, dragStart, dragMove, dragEnd, { highlight: false }),
+    Drag.on(container.capture, dragStart, dragMove, dragEnd, { highlight: false, type: 'colony' }),
     Wheel.on(handleWheel),
   ]
 }

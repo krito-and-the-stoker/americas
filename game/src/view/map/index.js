@@ -249,7 +249,7 @@ const initialize = () => {
     initialCoords = null
   }
 
-  Drag.on(stage, start, move, end, { highlight: false })
+  Drag.on(stage, start, move, end, { highlight: false, type: 'map' })
   Secondary.on(stage, ({ coords, shiftKey }) => {
     if (!Foreground.hasOpenScreen()) {
       const selectedUnit = UnitView.selectedUnit()

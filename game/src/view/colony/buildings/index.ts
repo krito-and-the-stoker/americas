@@ -48,10 +48,9 @@ const create = (colony: ColonyEntity) => {
   const waterSprites = Water.create(colony)
   waterSprites.forEach(sprite => container.water.addChild(sprite))
 
+  // 40 * 128: colony.layout.length.x * TILE.WIDTH
+  // 40 * 64: colony.layout.length.y * TILE.HEIGHT
   const ground = new PIXI.TilingSprite(Resources.texture('colonyBackground'), 40 * 128, 40 * 64)
-  // const ground = new PIXI.TilingSprite(Resources.texture('colonyBackground'), 1920, 1080)
-  // ground.position.x = 0.15 * originalDimensions.x
-  // ground.position.y = 0.15 * originalDimensions.y
   container.background.addChild(ground)
 
   // capture click on background so we dont close the screen

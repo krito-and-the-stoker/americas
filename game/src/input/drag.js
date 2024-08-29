@@ -41,7 +41,9 @@ const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = 
         y: e.data.global.y,
       }
       if (Util.distance(initialCoords, coords) >= DRAG_DISTANCE) {
-        Input.clear()
+        // There should be only one drag, but somehow this is f'd up
+        // Input.clear()
+        Input.makeCold(target)
         Util.execute(onStart, initialCoords)
         inProgress = true
       }
@@ -64,6 +66,8 @@ const on = (target, onStart = null, onMove = null, onEnd = null, paramOptions = 
         x: e.data.global.x,
         y: e.data.global.y,
       })
+    } else {
+      Input.makeCold(target)
     }
   }
 
