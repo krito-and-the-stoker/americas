@@ -20,6 +20,7 @@ import Tribe from 'entity/tribe'
 import Owner from 'entity/owner'
 import Treasure from 'entity/treasure'
 import Tile from 'entity/tile'
+import Trade from 'entity/trade'
 
 import Meet from 'task/unit/meet'
 
@@ -216,6 +217,10 @@ const load = async () => {
   await nextFrame()
   AutosaveView.initialize()
   Dialog.initialize()
+
+  Message.initialize.log('Calculating distances on map...')
+  await nextFrame()
+  Trade.prewarm()
 
   MapView.zoomBy(0.7, null, 100)
   Message.initialize.log('Starting game...')

@@ -12,7 +12,7 @@ const domains = {
   europe: 'warn',
   unit: 'warn',
   natives: 'warn',
-  initialize: 'warn',
+  initialize: 'info',
   tile: 'warn',
   owner: 'warn',
   record: 'warn',
@@ -22,7 +22,7 @@ const domains = {
   savegame: 'warn',
   tracking: 'warn',
   signal: 'warn',
-  cache: 'info',
+  cache: 'warn',
 } as const;
 
 // Extract keys from `level` and `domains` objects where the value is `true`

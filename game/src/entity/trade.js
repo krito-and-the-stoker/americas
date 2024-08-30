@@ -192,7 +192,16 @@ const match = transport => {
   }
 }
 
+const prewarm = () => {
+  const colony = Record.getAll('colony')[0]
+  const unit = Record.getAll('unit')[0]
+  if (colony && unit) {
+    PathFinder.distance(colony.mapCoordinates, colony.mapCoordinates, unit)
+  }
+}
+
 export default {
+  prewarm,
   create,
   match,
   load,
