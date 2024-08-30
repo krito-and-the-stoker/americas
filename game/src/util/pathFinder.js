@@ -228,6 +228,9 @@ const warmCache = (colony, cacheUnit, colonies, cache) => {
   const isTarget = node => {
     const otherColony = tile(node.coords)?.colony
     if (otherColony) {
+      const key = caching.keyFn(colony.mapCoordinates, otherColony.mapCoordinates, cacheUnit)
+      cache[key] = node.cost
+
       found += 1
     }
 
