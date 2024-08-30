@@ -34,11 +34,13 @@ const print = (level: Level, domain: Domain, ...args: any[]) => {
   if (typeof document !== 'undefined') {
     const method = console[level as keyof Console] as Function;
     method?.(`${level} ${domain}:`, ...args);
-    // TODO: Display a few things in the intro log
-    // const logElement = document.querySelector('#log')
-    // if (logElement) {
-    //   logElement.innerHTML = text
-    // }
+
+    if (domain === 'initialize') {
+      const logElement = document.querySelector('#log')
+      if (logElement) {
+        logElement.innerHTML = args.map(arg => String(arg)).join(' ')
+      }
+    }
   }
 }
 

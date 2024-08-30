@@ -214,11 +214,12 @@ const load = async () => {
   Message.initialize.log('Restoring game state...')
   await nextFrame()
   Record.resume(Savegame.derived.gameData.value, () => AssmebleMap.initialize())
+  Message.initialize.log('Game loaded, initializing...')
   await nextFrame()
   AutosaveView.initialize()
   Dialog.initialize()
 
-  Message.initialize.log('Calculating distances on map...')
+  Message.initialize.log('Calculating distances...')
   await nextFrame()
   Trade.prewarm()
 
