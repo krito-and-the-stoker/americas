@@ -165,11 +165,17 @@ const load = colony => {
   return colony
 }
 
-const isReachable = (colony, unit) =>
-  Tile.closest(colony.mapCoordinates)?.area[unit.properties.travelType] === Unit.area(unit) ||
-  Tile.diagonalNeighbors(MapEntity.tile(colony.mapCoordinates)).some(
-    other => Tile.movementCost(other.mapCoordinates, colony.mapCoordinates, unit) !== Infinity
-  )
+const isReachable = (colony, unit) => {
+  const colonyArea = Tile.closest(colony.mapCoordinates)?.area[unit.properties.travelType]
+  if (colonyArea === Unit.area(unit)) {
+    return true
+  }
+
+  return Tile.diagonalNeighbors(MapEntity.tile(colony.mapCoordinates))
+    .some(
+      other => Tile.movementCost(other.mapCoordinates, colony.mapCoordinates, unit) !== Infinity && other.area[unit.properties.travelType] === Unit.area(unit)
+    )
+}
 
 export default {
   canFillEquipment,

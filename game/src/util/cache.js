@@ -23,8 +23,11 @@ const create = ({ initFn, keyFn, shouldCache, valueFn }) => {
 
   return (...args) => {
     if (!initialized) {
+      const initialCache = Util.execute(initFn, wipeCache)
+      if (initialCache) {
+        cache = initialCache
+      }
       initialized = true
-      Util.execute(initFn, wipeCache)
     }
 
     if (hits + misses >= 1 && (hits + misses) % 1000 === 0) {

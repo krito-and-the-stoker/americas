@@ -6,12 +6,16 @@ import Util from 'util/util'
 import Message from 'util/message'
 import LA from 'util/la'
 import Cache from 'util/cache'
+import Record from 'util/record'
 
 import Time from 'timeline/time'
 
 import MapEntity from 'entity/map'
 import Tile from 'entity/tile'
 import Unit from 'entity/unit'
+import Colony from 'entity/colony'
+
+import LeaveColony from 'interaction/leaveColony'
 
 const CANNOT_MOVE_COST = 500
 
@@ -216,8 +220,51 @@ const findNearColony = Cache.create({
   },
 })
 
+const warmCache = (colony, cacheUnit, colonies, cache) => {
+  const reachable = colonies.filter(other => Colony.isReachable(other, cacheUnit))
+
+  Message.cache.log('Warming Cache for', colony.name, 'looking for', reachable.length, 'matches')
+  let found = 0
+  const isTarget = node => {
+    const otherColony = tile(node.coords)?.colony
+    if (otherColony) {
+      found += 1
+    }
+
+    return found >= reachable.length
+  }
+
+  runDijksrta(
+    colony.mapCoordinates,
+    isTarget,
+    getNeighborsForUnit(cacheUnit),
+    getCostForUnit(cacheUnit),
+    () => 0 // no directed search
+  )
+
+  LeaveColony(cacheUnit)
+  Unit.disband(cacheUnit)
+}
+
 const distance = Cache.create({
-  ...caching,
+  keyFn: caching.keyFn,
+  initFn: wipeCache => {
+    caching.initFn(wipeCache)
+
+    const initialCache = {}
+    const colonies = Record.getAll('colony')
+    colonies.forEach(colony => {
+      const cacheCaravel = Unit.create('caravel', colony.mapCoordinates, colony.owner)
+      const cacheMerch = Unit.create('merchantman', colony.mapCoordinates, colony.owner)
+      const cacheWagon = Unit.create('wagontrain', colony.mapCoordinates, colony.owner)
+
+      warmCache(colony, cacheCaravel, colonies, initialCache)
+      warmCache(colony, cacheMerch, colonies, initialCache)
+      warmCache(colony, cacheWagon, colonies, initialCache)
+    })
+
+    return initialCache
+  },
   name: 'distance cache',
   valueFn: (fromCoords, toCoords, unit, max = CANNOT_MOVE_COST) => {
     const isTarget = node =>

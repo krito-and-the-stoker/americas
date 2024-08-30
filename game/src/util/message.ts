@@ -22,7 +22,7 @@ const domains = {
   savegame: 'warn',
   tracking: 'warn',
   signal: 'warn',
-  cache: 'warn',
+  cache: 'info',
 } as const;
 
 // Extract keys from `level` and `domains` objects where the value is `true`
