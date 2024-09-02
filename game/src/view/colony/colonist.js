@@ -41,12 +41,12 @@ const tint = colonist => {
     return 0xff8888
   }
 
-  if(colonist.state.noLuxury) {
-    return 0xffcc66
-  }
-
   if (colonist.state.isPromoting) {
     return 0xbbff99
+  }
+
+  if(colonist.state.noLuxury) {
+    return 0xffcc66
   }
 
   if(colonist.state.hasBonus) {
