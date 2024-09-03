@@ -421,7 +421,7 @@
       },
       "luxury": {
         "wood": 1,
-        "tools": 1,
+        "ore": 1,
         "housing": 1
       },
       "bonus": {

@@ -32,7 +32,7 @@
 			"ore":{
 				"base": 1,
 				"road": "+1",
-				"river": "+1",
+				"river": "+2",
 				"expert": "*2"
 			}
 		},
@@ -75,9 +75,9 @@
 				"expert": "+3"
 			},
 			"ore":{
-				"base": 0,
-				"road": "+1",
-				"river": "+1",		
+				"base": 1,
+				"road": "+2",
+				"river": "+2",
 				"expert": "*2"
 			}
 		},
@@ -167,9 +167,9 @@
 				"expert": "+3"
 			},
 			"ore":{
-				"base": 4,
+				"base": 6,
 				"road": "+2",
-				"river": "+2",
+				"river": "+3",
 				"resource": "+4",
 				"expert": "*2"
 			}
@@ -181,7 +181,7 @@
 				"river": "+1"
 			},
 			"ore":{
-				"base": 3,
+				"base": 4,
 				"resource": "+3"
 			}
 		}
@@ -201,9 +201,9 @@
 				"expert": "*2"
 			},
 			"ore":{
-				"base": 1,
-				"road": "+1",
-				"river": "+1",
+				"base": 2,
+				"road": "+2",
+				"river": "+2",
 				"resource": "+3",
 				"expert": "*2"
 			},
@@ -251,9 +251,9 @@
 				"expert": "+3"
 			},
 			"ore":{
-				"base": 0,
-				"road": "+1",
-				"river": "+1",
+				"base": 1,
+				"road": "+2",
+				"river": "+2",
 				"resource": "+3",
 				"expert": "*2"
 			},
@@ -279,7 +279,7 @@
 			"ore":{
 				"base": 3,
 				"road": "+2",
-				"river": "+1",
+				"river": "+3",
 				"expert": "*2"
 			},
 			"silver":{
@@ -533,8 +533,8 @@
 			},
 			"ore":{
 				"base": 1,
-				"road": "+1",
-				"river": "+1",
+				"road": "+2",
+				"river": "+2",
 				"resource": "+3",
 				"expert": "*2"
 			}
@@ -577,8 +577,8 @@
 			},
 			"ore":{
 				"base": 0,
-				"road": "+1",
-				"river": "+1",
+				"road": "+2",
+				"river": "+2",
 				"resource": "+3",
 				"expert": "*2"
 			}
@@ -602,9 +602,9 @@
 				"expert": "+3"
 			},
 			"ore":{
-				"base": 1,
-				"road": "+1",
-				"river": "+1",
+				"base": 2,
+				"road": "+2",
+				"river": "+2",
 				"resource": "+3",
 				"expert": "*2"
 			}
@@ -645,8 +645,8 @@
 			},
 			"ore":{
 				"base": 0,
-				"road": "+1",
-				"river": "+1",
+				"road": "+2",
+				"river": "+2",
 				"expert": "*2"
 			}
 		},
