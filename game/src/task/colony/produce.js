@@ -12,12 +12,20 @@ import Building from 'entity/building'
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 
 const create = (colony, good) => {
-  if (['housing'].includes(good)) {
+  if (['housing', 'horses'].includes(good)) {
     const update = (currentTime, deltaTime) => {
-      const amount = Colony.housing(colony)
       const scale = deltaTime * PRODUCTION_BASE_FACTOR
 
-      Colony.update[good](colony, amount * scale)
+      let amount = 0
+      if (good === 'housing') {
+        amount = Colony.housing(colony)
+        Colony.update.housing(colony, amount * scale)
+      }
+      if (good === 'horses') {
+        amount = Math.floor(colony.storage.horses / 50.0)
+        Storage.update(colony.storage, { good, amount: scale * amount })
+      }
+
       Storage.update(colony.productionRecord, {
         good,
         amount,

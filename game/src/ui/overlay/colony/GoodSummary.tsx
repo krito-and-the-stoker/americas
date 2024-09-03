@@ -46,7 +46,7 @@ function GoodSummary() {
 	)
 	const good = $.solid.create(
 		goodChain,
-		$.select(x => x ?? '')
+		$.select(x => x ?? ''),
 	)
 
 	const colonyChain = $.chain(
@@ -92,13 +92,29 @@ function GoodSummary() {
 		}))
 	}
 
-	const production = $.solid.create(
+	// aka passive production, for horses
+	const productionSummaryChain = $.chain(
+		colonyChain,
+		$.select(colony => colony?.productionSummary),
+		$.maybe.chain(
+			Storage.signal,
+			$.combine(
+				$.select<StorageEntity>(),
+				goodChain
+			),
+			$.select(([storage, good]) => good ? storage[good] : 0)
+		),
+		$.select(x => x ?? 0),
+	)
+
+	const productionChain = $.chain(
 		storageChain(colonist => colonist.productionSummary),
 		$.maybe.select(filterPositiveGoods),
 		$.maybe.select(items => items.map(item => item.goods)),
 		$.maybe.select(Util.sum),
 		$.select(x => x ?? 0)
 	)
+	const production = $.solid.create(productionChain)
 
 	const producers = $.solid.create(
 		storageChain(colonist => colonist.productionSummary),
@@ -107,7 +123,7 @@ function GoodSummary() {
 		$.select(units => units ?? [])
 	)
 
-	const manufacturing = $.solid.create(
+	const manufacturingChain = $.chain(
 		storageChain(colonist => colonist.productionSummary),
 		$.maybe.select(invertGoods),
 		$.maybe.select(filterPositiveGoods),
@@ -115,6 +131,7 @@ function GoodSummary() {
 		$.maybe.select(Util.sum),
 		$.select(x => x ?? 0)
 	)
+	const manufacturing = $.solid.create(manufacturingChain)
 
 	const manufacturers = $.solid.create(
 		storageChain(colonist => colonist.productionSummary),
@@ -123,13 +140,14 @@ function GoodSummary() {
 		$.select(units => units ?? [])
 	)
 
-	const consumption = $.solid.create(
+	const consumptionChain = $.chain(
 		storageChain(colonist => colonist.consumptionSummary),
 		$.maybe.select(invertGoods),
 		$.maybe.select(items => items.map(item => item.goods)),
 		$.maybe.select(Util.sum),
 		$.select(x => x ?? 0)
 	)
+	const consumption = $.solid.create(consumptionChain)
 
 	const consumers = $.solid.create(
 		storageChain(colonist => colonist.consumptionSummary),
@@ -157,6 +175,17 @@ function GoodSummary() {
 				}))
 			)
 		)
+	)
+
+	const growth = $.solid.create(
+		$.combine(
+			productionSummaryChain, // total amount
+			productionChain, // sum of colonists
+			manufacturingChain, // sum of colonists
+			consumptionChain // sum of colonists
+		),
+		$.select(([summary, production, manufacturing, consumption]) => summary - production + manufacturing + consumption),
+		$.select(Math.round),
 	)
 
 	const support = $.solid.create(
@@ -204,13 +233,17 @@ function GoodSummary() {
 		<div class={styles.title}>{displayName(good())}</div>
 		<div class={styles.summary}>
 			<div class={styles.amount}><b>{amount()}</b><GameIcon good={good()} /></div>
-			<div><ProductionGoods goods={{ [good()]: production() - manufacturing() - consumption() - support()}} /></div>
+			<div><ProductionGoods goods={{ [good()]: growth() + production() - manufacturing() - consumption() - support()}} /></div>
 		</div>
 		<Show when={reserve() > 0}>
 			<div>
 				<div class={styles.subtitle}>Personal Reserve</div>
 				<div class={styles.amount}>{reserve()}<GameIcon good={good()} /></div>
 			</div>
+		</Show>
+		<Show when={growth() > 0}>
+			<div class={styles.subtitle}>Growth</div>
+			<ProductionGoods goods={{ [good()]: growth() }} />
 		</Show>
 		<Show when={production() > 0}>
 			<div class={styles.subtitle}>Production</div>

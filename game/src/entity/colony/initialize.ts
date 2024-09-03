@@ -55,6 +55,7 @@ export default (colony: ColonyEntity) => {
       VirtualGoods.create(colony),
       Harvest.create(colony),
       Produce.create(colony, 'housing'),
+      Produce.create(colony, 'horses'),
       FillStorage.create(colony),
       Manufacture.create(colony),
       Consume.create(colony),
