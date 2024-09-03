@@ -80,7 +80,7 @@ function ColonistSummary() {
                     <Show when={breakdown.wood()}><ProductionGoods scale={0.5} goods={breakdown.wood()} /></Show>
                 </div></Show>
                 <Show when={state.noLuxury()}><div class={styles.stateTag}>
-                    <span>No Luxury</span>
+                    <span>No Expert</span>
                     <Show when={breakdown.luxury()}><ProductionGoods scale={0.5} goods={breakdown.luxury()} /></Show>
                 </div></Show>
                 <Show when={state.isPromoting()}><div class={styles.stateTag}>

@@ -71,7 +71,7 @@ function ColonistDetail(colonistEntity: ColonistEntity) {
                     <Show when={breakdown.wood()}><ProductionGoods scale={0.5} goods={breakdown.wood()} /></Show>
                 </div></Show>
                 <Show when={hasEntries(breakdown.luxury())}><div class={styles.stateTag} classList={{ [styles.inactive]: state.noLuxury()}}>
-                    <span classList={{ [styles.has]: !state.noLuxury(), [styles.missing]: state.noLuxury() }}>Luxury</span>
+                    <span classList={{ [styles.has]: !state.noLuxury(), [styles.missing]: state.noLuxury() }}>Expert</span>
                     <Show when={breakdown.luxury()}><ProductionGoods scale={0.5} goods={breakdown.luxury()} /></Show>
                 </div></Show>
                 <Show when={canPromote() && hasEntries(breakdown.promotion())}><div class={styles.stateTag} classList={{ [styles.inactive]: !state.isPromoting() }}>

@@ -11,7 +11,7 @@
         "wood": 1
       },
       "bonus": {
-        "housing": 1
+        "tools": 1
       },
       "promotion": {
         "crosses": 1
@@ -86,7 +86,7 @@
         "wood": 1
       },
       "luxury": {
-        "cotton": 1,
+        "horses": 1,
         "crosses": 1
       },
       "bonus": {
@@ -110,7 +110,7 @@
         "wood": 1
       },
       "luxury": {
-        "furs": 1,
+        "cloth": 1,
         "crosses": 1
       },
       "bonus": {
@@ -133,8 +133,9 @@
         "wood": 1
       },
       "luxury": {
-        "crosses": 1,
-        "cotton": 1
+        "ore": 1,
+        "wood": 1,
+        "crosses": 1
       },
       "bonus": {
         "housing": 1
@@ -156,8 +157,9 @@
         "wood": 1
       },
       "luxury": {
-        "cotton": 1,
-        "tobacco": 1,
+        "cloth": 1,
+        "wood": 1,
+        "ore": 1,
         "housing": 1
       },
       "bonus": {
@@ -180,8 +182,8 @@
         "wood": 1
       },
       "luxury": {
-        "crosses": 1,
-        "cotton": 1
+        "cigars": 1,
+        "crosses": 1
       },
       "bonus": {
         "housing": 1
@@ -203,8 +205,8 @@
         "wood": 1
       },
       "luxury": {
-        "cotton": 1,
-        "sugar": 1,
+        "cigars": 1,
+        "coats": 1,
         "housing": 1
       },
       "bonus": {
@@ -227,8 +229,7 @@
         "wood": 1
       },
       "luxury": {
-        "crosses": 1,
-        "furs": 1
+        "crosses": 1
       },
       "bonus": {
         "housing": 1
@@ -250,8 +251,8 @@
         "wood": 1
       },
       "luxury": {
-        "furs": 1,
-        "tobacco": 1,
+        "tools": 1,
+        "cotton": 1,
         "housing": 1
       },
       "bonus": {
@@ -275,8 +276,7 @@
         "wood": 1
       },
       "luxury": {
-        "cotton": 1,
-        "crosses": 1
+        "guns": 1
       },
       "bonus": {
         "housing": 1
@@ -298,8 +298,8 @@
         "wood": 1
       },
       "luxury": {
-        "tobacco": 1,
-        "cotton": 1,
+        "cloth": 1,
+        "guns": 1,
         "housing": 1
       },
       "bonus": {
@@ -323,7 +323,7 @@
         "wood": 1
       },
       "luxury": {
-        "furs": 1,
+        "tools": 1,
         "crosses": 1
       },
       "bonus": {
@@ -348,6 +348,7 @@
         "wood": 1
       },
       "luxury": {
+        "tools": 1,
         "crosses": 1
       },
       "bonus": {
@@ -372,6 +373,7 @@
         "wood": 1
       },
       "luxury": {
+        "tools": 1,
         "crosses": 1
       },
       "bonus": {
@@ -397,8 +399,7 @@
       },
       "luxury": {
         "tools": 1,
-        "cotton": 1,
-        "furs": 1,
+        "coats": 1,
         "housing": 1
       },
       "bonus": {
@@ -419,8 +420,8 @@
         "wood": 1
       },
       "luxury": {
-        "tobacco": 1,
-        "furs": 1,
+        "wood": 1,
+        "tools": 1,
         "housing": 1
       },
       "bonus": {
@@ -442,8 +443,7 @@
       },
       "luxury": {
         "tools": 1,
-        "cotton": 1,
-        "sugar": 1,
+        "wood": 1,
         "housing": 1
       },
       "bonus": {
@@ -464,14 +464,12 @@
         "wood": 1
       },
       "luxury": {
-        "cloth": 1,
-        "tobacco": 1,
-        "sugar": 1,
+        "coats": 1,
+        "rum": 1,
         "housing": 1
       },
       "bonus": {
-        "rum": 1,
-        "housing": 1
+        "silver": 1
       }
     },
     "promote": [
@@ -492,10 +490,11 @@
       "luxury": {
         "cigars": 1,
         "rum": 1,
+        "coats": 1,
         "housing": 1
       },
       "bonus": {
-        "coats": 1,
+        "crosses": 1,
         "housing": 1
       }
     },

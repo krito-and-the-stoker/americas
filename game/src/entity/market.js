@@ -59,7 +59,7 @@ const load = data => {
 
   if (!data) {
     console.warn('no market data found, initializing market instead')
-    initialize()
+    create()
     return
   }
 
@@ -74,7 +74,7 @@ const load = data => {
 }
 
 let unsubscribeMarketPrices = () => {}
-const initialize = () => {
+const create = () => {
   market.europe = Util.makeObject(
     Object.keys(Properties)
       .map(good => [
@@ -98,6 +98,8 @@ const initialize = () => {
   unsubscribeMarketPrices = Time.schedule(MarketPrice.create(market.europe))
 }
 
+window.market = create
+
 export default {
   buy,
   unbuy,
@@ -106,7 +108,7 @@ export default {
   bid,
   save,
   load,
-  initialize,
+  initialize: create,
   update,
   listen,
 }
