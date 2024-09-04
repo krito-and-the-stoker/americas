@@ -205,6 +205,12 @@ export const promotionTarget = $.unique.chain(
     })
 )
 
+export const workType = $.unique.chain(
+    $.select<ColonistEntity>(),
+    $.listen.key('work'),
+    $.maybe.listen.key('type')
+)
+
 type ColonistDescription = {
     consumption: {
         luxury?: StorageEntity

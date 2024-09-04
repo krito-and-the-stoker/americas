@@ -50,11 +50,22 @@ function ColonistDetail(colonistEntity: ColonistEntity) {
     const promotionProgress = $.solid.create(colonist, Colonist.chain.promotionProgress)
 
     const hasEntries = (obj: StorageEntity | undefined) => obj && Object.keys(obj).length > 0
+    const hasNonzeroEntries = (obj: StorageEntity | undefined) => hasEntries(obj) && Object.values(obj!).some(value => value !== 0)
 
     const productionOutput = $.solid.create(colonist, Colonist.chain.productionOutput)
     const productionInput = $.solid.create(colonist, Colonist.chain.productionInput)
     const positiveConsumption = $.solid.create(colonist, Colonist.chain.positiveConsumption)
     const storage = $.solid.create(colonist, Colonist.chain.storage)
+    const workType = $.chain(
+        colonist,
+        Colonist.chain.workType,
+        $.log('workType')
+    )
+    const noFoodDescription = $.solid.create(
+        workType,
+        $.maybe.select(type => type === 'Building' ? '-33%' : '-50%'),
+        $.maybe.select(percentage => `${percentage} production`)
+    )
 
     return <>
         <div class={styles.title}>{name()}</div>
@@ -65,27 +76,31 @@ function ColonistDetail(colonistEntity: ColonistEntity) {
                 <Show when={hasEntries(breakdown.food())}><div class={styles.stateTag}>
                     <span classList={{ [styles.has]: !state.noFood(), [styles.missing]: state.noFood() }}>Food</span>
                     <Show when={breakdown.food()}><ProductionGoods scale={0.5} goods={breakdown.food()} /></Show>
+                    <Show when={state.noFood()}><span class={styles.explanation}>({noFoodDescription()})</span></Show>
                 </div></Show>
                 <Show when={hasEntries(breakdown.wood())}><div class={styles.stateTag}>
                     <span classList={{ [styles.has]: !state.noWood(), [styles.missing]: state.noWood() }}>Wood</span>
                     <Show when={breakdown.wood()}><ProductionGoods scale={0.5} goods={breakdown.wood()} /></Show>
+                    <Show when={state.noWood()}><span class={styles.explanation}>(-2 Production)</span></Show>
                 </div></Show>
                 <Show when={hasEntries(breakdown.luxury())}><div class={styles.stateTag} classList={{ [styles.inactive]: state.noLuxury()}}>
                     <span classList={{ [styles.has]: !state.noLuxury(), [styles.missing]: state.noLuxury() }}>Expert</span>
                     <Show when={breakdown.luxury()}><ProductionGoods scale={0.5} goods={breakdown.luxury()} /></Show>
+                    <Show when={state.noLuxury()}><span class={styles.explanation}>No Expert bonus</span></Show>
                 </div></Show>
                 <Show when={canPromote() && hasEntries(breakdown.promotion())}><div class={styles.stateTag} classList={{ [styles.inactive]: !state.isPromoting() }}>
                     <span classList={{ [styles.has]: state.isPromoting() }}>Promoting {promotionProgress()}%</span>
                     <Show when={breakdown.promotion()}><ProductionGoods scale={0.5} goods={breakdown.promotion()} /></Show>
-                    <span> -&gt; {promotionTarget()}</span>
+                    <span>&nbsp;-&gt; {promotionTarget()}</span>
                 </div></Show>
                 <Show when={hasEntries(breakdown.bonus())}><div class={styles.stateTag} classList={{ [styles.inactive]: !state.hasBonus() }}>
                     <span classList={{ [styles.has]: state.hasBonus() }}>Bonus</span>
                     <Show when={breakdown.bonus()}><ProductionGoods scale={0.5} goods={breakdown.bonus()} /></Show>
+                    <Show when={state.hasBonus()}><span class={styles.explanation}>(+2 Production)</span></Show>
                 </div></Show>
             </div>
         </div>
-        <Show when={hasEntries(productionOutput())}>
+        <Show when={hasEntries(productionOutput())} fallback={<div class={styles.subtitle}>No Production</div>}>
             <div class={styles.subtitle}>{hasEntries(productionInput()) ? 'Manufacturing' : 'Production'}</div>
             <div class={styles.production}>
                 <ProductionGoods goods={productionInput()} />
@@ -93,16 +108,18 @@ function ColonistDetail(colonistEntity: ColonistEntity) {
                 <ProductionGoods goods={productionOutput()} />
             </div>
         </Show>
-        <Show when={hasEntries(positiveConsumption())} fallback={<div class={styles.subtitle}>No Consumption</div>}>
+        <Show when={hasEntries(positiveConsumption())}>
             <div class={styles.subtitle}>Consumption</div>
             <div class={styles.consumption}>
                 <ProductionGoods goods={positiveConsumption()} />
             </div>
         </Show>
-        <div class={styles.subtitle}>Personal Reserve</div>
-        <div class={styles.backup}>
-            <StorageGoods goods={storage()} />
-        </div>
+        <Show when={hasNonzeroEntries(storage())}>
+            <div class={styles.subtitle}>Personal Reserve</div>
+            <div class={styles.backup}>
+                <StorageGoods goods={storage()} />
+            </div>
+        </Show>
     </>
 }
 

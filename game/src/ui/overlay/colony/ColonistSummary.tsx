@@ -58,6 +58,7 @@ function ColonistSummary() {
     const promotionProgress = $.solid.create(colonist, $.maybe.chain(Colonist.chain.promotionProgress))
 
     const hasEntries = (obj: StorageEntity | undefined) => obj && Object.keys(obj).length > 0
+    const hasNonzeroEntries = (obj: StorageEntity | undefined) => hasEntries(obj) && Object.values(obj!).some(value => value !== 0)
 
     const productionOutput = $.solid.create(colonist, $.maybe.chain(Colonist.chain.productionOutput))
     const productionInput = $.solid.create(colonist, $.maybe.chain(Colonist.chain.productionInput))
@@ -93,7 +94,7 @@ function ColonistSummary() {
                 </div></Show>
             </div>
         </div>
-        <Show when={hasEntries(productionOutput())}>
+        <Show when={hasEntries(productionOutput())} fallback={<div class={styles.subtitle}>No Production</div>}>
             <div class={styles.subtitle}>{hasEntries(productionInput()) ? 'Manufacturing' : 'Production'}</div>
             <div class={styles.production}>
                 <ProductionGoods goods={productionInput()} />
@@ -101,16 +102,18 @@ function ColonistSummary() {
                 <ProductionGoods goods={productionOutput()} />
             </div>
         </Show>
-        <Show when={hasEntries(positiveConsumption())} fallback={<div class={styles.subtitle}>No Consumption</div>}>
+        <Show when={hasEntries(positiveConsumption())}>
             <div class={styles.subtitle}>Consumption</div>
             <div class={styles.consumption}>
                 <ProductionGoods goods={positiveConsumption()} />
             </div>
         </Show>
-        <div class={styles.subtitle}>Personal Reserve</div>
-        <div class={styles.backup}>
-            <StorageGoods goods={storage()} />
-        </div>
+        <Show when={hasNonzeroEntries(storage())}>
+            <div class={styles.subtitle}>Personal Reserve</div>
+            <div class={styles.backup}>
+                <StorageGoods goods={storage()} />
+            </div>
+        </Show>
     </>
 }
 
