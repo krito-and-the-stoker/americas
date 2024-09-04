@@ -205,7 +205,6 @@
         "wood": 1
       },
       "luxury": {
-        "cigars": 1,
         "coats": 1,
         "housing": 1
       },
@@ -299,7 +298,6 @@
       },
       "luxury": {
         "cloth": 1,
-        "guns": 1,
         "housing": 1
       },
       "bonus": {

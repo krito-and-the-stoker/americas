@@ -629,11 +629,11 @@ const production = (tile, resource, colonist = null) => {
 
   if (result > 0 && colonist) {
     if (colonist.state.hasBonus) {
-      result += 1
+      result += 2
     }
 
     if (colonist.state.noFood && resource !== 'food') {
-      result *= 0.33
+      result *= 0.333
       result = Math.ceil(result)
     }
     if (colonist.state.noWood && resource !== 'wood') {

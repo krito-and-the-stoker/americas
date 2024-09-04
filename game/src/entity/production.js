@@ -12,18 +12,19 @@ const production = (colony, building, colonist) => {
 
   let { amount, good } = Buildings[building.name].production(building, colonist)
   if (amount > 0) {
-    amount += colony.productionBonus
-  }
-  if (colonist.unit?.expert === 'criminal') {
-    amount -= 2
-  }
-  if (colonist.unit?.expert === 'servant') {
-    amount -= 1
-  }
+    if (colonist.unit?.expert === 'criminal') {
+      amount -= 2
+    }
+    if (colonist.unit?.expert === 'servant') {
+      amount -= 1
+    }
 
-  if (amount > 0) {
+    if (amount > 0) {
+      amount += colony.productionBonus
+    }
+
     if (colonist.state.hasBonus) {
-      amount += 1
+      amount += 2
     }
     if (colonist.state.noFood) {
       amount *= 0.5
