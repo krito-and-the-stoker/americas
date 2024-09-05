@@ -88,7 +88,7 @@
 		"workspace": 3,
 		"consumption": {
 			"good": "furs",
-			"factor": 2
+			"factor": 1
 		},
 		"production": {
 			"good": "coats",
