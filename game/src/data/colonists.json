@@ -440,7 +440,7 @@
         "wood": 1
       },
       "luxury": {
-        "tools": 1,
+        "ore": 1,
         "wood": 1,
         "housing": 1
       },
@@ -487,7 +487,6 @@
       },
       "luxury": {
         "cigars": 1,
-        "rum": 1,
         "coats": 1,
         "housing": 1
       },
