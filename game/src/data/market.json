@@ -29,7 +29,7 @@
 	},
 	"furs": {
 		"difference": 0,
-		"low": 40,
+		"low": 50,
 		"high": 60,
 		"consumption": 8,
 		"capacity": 100
@@ -94,7 +94,7 @@
 		"difference": 0,
 		"low": 5,
 		"high": 10,
-		"consumption": -10,
+		"consumption": -5,
 		"capacity": 1000
 	},
 	"tools": {
@@ -108,7 +108,7 @@
 		"difference": 0,
 		"low": 20,
 		"high": 25,
-		"consumption": -5,
+		"consumption": -1,
 		"capacity": 500
 	}
 }

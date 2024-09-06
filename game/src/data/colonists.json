@@ -110,8 +110,7 @@
         "wood": 1
       },
       "luxury": {
-        "cloth": 1,
-        "crosses": 1
+        "cloth": 1
       },
       "bonus": {
         "housing": 1
@@ -463,10 +462,10 @@
       },
       "luxury": {
         "coats": 1,
-        "rum": 1,
         "housing": 1
       },
       "bonus": {
+        "rum": 1,
         "silver": 1
       }
     },
@@ -486,12 +485,13 @@
         "wood": 1
       },
       "luxury": {
-        "cigars": 1,
+        "food": 1,
         "coats": 1,
-        "housing": 1
+        "crosses": 1
       },
       "bonus": {
-        "crosses": 1,
+        "cigars": 1,
+        "rum": 1,
         "housing": 1
       }
     },
