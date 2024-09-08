@@ -24,14 +24,14 @@
 		"difference": 0,
 		"low": 5,
 		"high": 10,
-		"consumption": 5,
+		"consumption": 3,
 		"capacity": 500
 	},
 	"furs": {
 		"difference": 0,
 		"low": 50,
 		"high": 60,
-		"consumption": 8,
+		"consumption": 6,
 		"capacity": 100
 	},
 	"wood": {
@@ -66,14 +66,14 @@
 		"difference": 0,
 		"low": 30,
 		"high": 40,
-		"consumption": 5,
+		"consumption": 3,
 		"capacity": 200
 	},
 	"cigars": {
 		"difference": 0,
 		"low": 70,
 		"high": 80,
-		"consumption": 3,
+		"consumption": 2,
 		"capacity": 100
 	},
 	"cloth": {
@@ -101,7 +101,7 @@
 		"difference": 0,
 		"low": 10,
 		"high": 15,
-		"consumption": -3,
+		"consumption": -2,
 		"capacity": 500
 	},
 	"guns": {

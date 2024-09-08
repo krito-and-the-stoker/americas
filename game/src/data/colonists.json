@@ -346,6 +346,7 @@
       },
       "luxury": {
         "tools": 1,
+        "wood": 2,
         "crosses": 1
       },
       "bonus": {
@@ -371,6 +372,7 @@
       },
       "luxury": {
         "tools": 1,
+        "wood": 2,
         "crosses": 1
       },
       "bonus": {
