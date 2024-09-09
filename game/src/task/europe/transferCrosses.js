@@ -11,6 +11,7 @@ const create = colony => {
       Europe.update.crosses(colony.crosses)
       Colony.update.crosses(colony, -colony.crosses)
     } else {
+      const crossProduction = 1 - Math.max(0, Europe.state.units.length - 1)
       Europe.update.crosses(deltaTime * PRODUCTION_BASE_FACTOR)
     }
 

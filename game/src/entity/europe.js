@@ -312,6 +312,7 @@ export default {
   has,
   listen,
   listenEach,
+  state: europe,
   update,
   save,
   load,
