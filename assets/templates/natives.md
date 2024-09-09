@@ -4,7 +4,7 @@
 
 Hello strange men from the sea.
 
-We are the **{tribe.name}** and live here in *{numSettlements} settlements*. We welcome you on our land. Would you like to join our *peace* ceremony?
+We are the **{tribe.name}** and live here. We welcome you on our land. Would you like to join our *peace* ceremony?
 
 [answer action:yes] yes []
 [answer action:no] no []

@@ -63,7 +63,7 @@ export default Factory.create(
           const amount = 10 + Math.random() * (unit.expert === 'pioneer' ? 90 : 50)
           Storage.update(colony.storage, { good: 'wood', amount })
         }
-        Events.trigger('notification', { type: 'terraforming', unit })
+        Events.trigger('notification', { type: 'terraforming', unit, terraform: 'clear forest' })
         Events.trigger('terraform')
       }
     }

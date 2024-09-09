@@ -20,7 +20,7 @@ Religous unrest has caused immigration from Europe. A new **{unitName}** is wait
 [coordinates: unit.mapCoordinates]
 [backdrop: notified]
 
-A **{unitName}** has arrived in the new world.
+A **{unitName}** arrived in the new world.
 
 
 ---dialog---
@@ -28,7 +28,7 @@ A **{unitName}** has arrived in the new world.
 [image: governor]
 [backdrop: notified]
 
-*{colony.name}* has finished the construction of a **{constructionName}**.
+*{colony.name}* finished the construction of a **{constructionName}**.
 
 
 ---dialog---
@@ -37,7 +37,7 @@ A **{unitName}** has arrived in the new world.
 [coordinates: unit.mapCoordinates]
 [backdrop: notified]
 
-A *{unitName}* has finished working on a **tile improvement**.
+A *{unitName}* finished working to **{terraform}** on a tile.
 
 
 
@@ -83,7 +83,7 @@ The food storage of *{colony.name}* is empty and the settlers are **starving**! 
 [coordinates: unit.mapCoordinates]
 [backdrop: notified]
 
-A {unitName} has died of starvation
+A {unitName} died of starvation
 
 
 ---dialog---
@@ -110,7 +110,7 @@ The storage of *{colony.name}* is **full**! Adding more goods will lead to loss.
 [coordinates: colony.mapCoordinates]
 [backdrop: notified]
 
-A **{unitName}** has arrived in *{colony.name}*
+A **{unitName}** arrived in *{colony.name}*
 
 
 ---dialog---
@@ -119,7 +119,7 @@ A **{unitName}** has arrived in *{colony.name}*
 [coordinates: unit.mapCoordinates]
 [backdrop: notified]
 
-A colonist has learned a *new profession* and is now considered a **{unitName}**.
+A colonist learned a *new profession* and is now considered a **{unitName}**.
 
 
 ---dialog---
@@ -170,7 +170,7 @@ A settlement of the *{settlement.tribe.name}* has been decimated tremendously.
 [coordinates: defender.mapCoordinates]
 [backdrop: notified]
 
-There has been a **fight**!
+There was a **fight**!
 
 
 ---dialog---
@@ -179,7 +179,7 @@ There has been a **fight**!
 [coordinates: colony.mapCoordinates]
 [backdrop: notified]
 
-There has been a **raid** in **{colony.name}**. The storage has been plundered and lots of goods are missing. Try protect your cities with *armed forces*. *Stockades and forts* are greatly effective to prevent such events.
+There was a **raid** in **{colony.name}**. The storage has been plundered and lots of goods are missing. Try protect your cities with *armed forces*. *Stockades and forts* are greatly effective to prevent such events.
 
 
 ---dialog---
@@ -188,7 +188,7 @@ There has been a **raid** in **{colony.name}**. The storage has been plundered a
 [coordinates: colony.mapCoordinates]
 [backdrop: close]
 
-The storage of **{colony.name}** has been **plundered**. **{amount}**[icon: good] are missing.
+The storage of **{colony.name}** was **plundered**. **{amount}**[icon: good] are missing.
 
 
 ---dialog---
@@ -197,5 +197,5 @@ The storage of **{colony.name}** has been **plundered**. **{amount}**[icon: good
 [coordinates: winner.mapCoordinates]
 [backdrop: close]
 
-A **{winnerName}** ({winnerStrength}) has defeated a **{loserName}** ({loserStrength}) in battle.
+A **{winnerName}** ({winnerStrength}) defeated a **{loserName}** ({loserStrength}) in battle.
 

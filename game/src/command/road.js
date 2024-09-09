@@ -51,7 +51,7 @@ export default Factory.create(
           amount: -Unit.TERRAFORM_TOOLS_CONSUMPTION,
         })
         Tile.constructRoad(unit.tile)
-        Events.trigger('notification', { type: 'terraforming', unit })
+        Events.trigger('notification', { type: 'terraforming', unit, terraform: 'build a road' })
         Events.trigger('terraform')
       }
     }

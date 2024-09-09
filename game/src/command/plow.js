@@ -57,7 +57,7 @@ export default Factory.create(
           amount: -Unit.TERRAFORM_TOOLS_CONSUMPTION,
         })
         Tile.plow(unit.tile)
-        Events.trigger('notification', { type: 'terraforming', unit })
+        Events.trigger('notification', { type: 'terraforming', unit, terraform: 'build a farm' })
         Events.trigger('terraform')
       }
     }
