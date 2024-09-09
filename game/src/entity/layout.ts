@@ -137,7 +137,8 @@ const landValueMap = (colony: ColonyEntity, _: BuildingEntity) => {
 			get(colony.waterMap, x - 1, y)! > 0,
 		].filter(x => !!x)
 
-		set(landValue, entry.x, entry.y, 0.1 * Math.random() * (neighbors.length + 1))
+		const nearBorderPenalty = x < 10 || y < 10 || x > SIZE_X - 10 || y > SIZE_Y - 10 ? 50 : 0
+		set(landValue, entry.x, entry.y, 0.1 * Math.random() * (neighbors.length + 1) - nearBorderPenalty)
 	})
 
 	colony.newBuildings.forEach(otherBuilding => {

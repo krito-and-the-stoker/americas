@@ -419,7 +419,7 @@ const tileMovementCost = (tile, travelType) => {
 
   const costTable = MovementCosts[travelType]
   if (!costTable) {
-    console.warn(`No Movmentcosts for travelType ${travelType}`)
+    console.warn(`No Movementcosts for travelType ${travelType}`)
     return Infinity
   }
 

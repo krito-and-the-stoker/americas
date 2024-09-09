@@ -103,10 +103,13 @@ const getNeighborsForSupply = () => node =>
     .map(tile => tile.mapCoordinates)
 const getNeighborsForTravelType = (tile, travelType) =>
   allNeighbors(tile.mapCoordinates).filter(
-    other =>
-      Tile.movementCost(tile.mapCoordinates, other.mapCoordinates, {
+    other => {
+      const cost = Tile.movementCost(tile.mapCoordinates, other.mapCoordinates, {
         properties: { travelType },
-      }) !== Infinity
+      })
+
+      return cost < Infinity
+    }
   )
 
 const getCostForUnit = unit => (n1, n2) => Tile.movementCost(n1.coords, n2.coords, unit)

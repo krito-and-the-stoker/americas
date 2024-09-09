@@ -154,6 +154,17 @@ const load = colony => {
   
   colony.newBuildings = colony.newBuildings.map(building => Record.dereference(building))
 
+  // Reflow buildings
+  if (false) {
+    colony.newBuildings.forEach(building => {
+      Layout.removeBuilding(colony, building)
+    })
+
+    colony.newBuildings.forEach(building => {
+      building.placement = [Layout.placeBuilding(colony, building)]
+    })
+  }
+
   colony.colonists.forEach((colonist, index) =>
     Record.dereferenceLazy(colonist, entity => (colony.colonists[index] = entity))
   )
