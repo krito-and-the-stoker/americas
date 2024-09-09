@@ -8,7 +8,10 @@ const MAX_PRICE = 200
 
 const consumptionFactor = () => 1.5 + 0.25 * Math.random()
 const log2 = Math.log(2)
-const consumption = (base, year) => base * Math.exp((log2 * (year - 1492)) / 50)
+// double consumption every x years
+const CONSUMPTION_DOUBLE_TIME = 50.0
+const CONSUMPTION_START_YEAR = 1607
+const consumption = (base, year) => base * Math.exp((log2 * (year - CONSUMPTION_START_YEAR)) / CONSUMPTION_DOUBLE_TIME)
 
 const create = market => {
   const update = (currentTime, deltaTime) => {
@@ -21,14 +24,22 @@ const create = market => {
           market[good].price += 1
         }
         market[good].storage += market[good].capacity
-        market[good].consumption /= consumptionFactor()
+        if (market[good].consumption > 0) {
+          market[good].consumption /= consumptionFactor()
+        } else {
+          market[good].consumption *= consumptionFactor()
+        }
       }
       if (market[good].storage > market[good].capacity) {
         if (market[good].price > MIN_PRICE) {
           market[good].price -= 1
         }
         market[good].storage -= market[good].capacity
-        market[good].consumption *= consumptionFactor()
+        if (market[good].consumption > 0) {
+          market[good].consumption *= consumptionFactor()
+        } else {
+          market[good].consumption /= consumptionFactor()
+        }
       }
     })
     Market.update.europe()
