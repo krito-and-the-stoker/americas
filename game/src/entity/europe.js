@@ -272,9 +272,7 @@ const initialize = () => {
             : basePool.concat(
                 Record.getAll('colonist')
                   .filter(
-                    colonist =>
-                      colonist.mood > 0 ||
-                      ['criminal', 'servant'].includes(colonist.unit.expert)
+                    colonist => !colonist.offTheMap
                   )
                   .filter(
                     colonist => (Colonists[colonist.unit.expert] || Colonists.default).europe
