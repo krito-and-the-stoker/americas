@@ -85,7 +85,6 @@
 		"speed": 10,
 		"cargo": 600,
 		"radius": 1,
-		"cost": 10,
 		"canExplore": true,
 		"discoverRange": 2,
 		"construction": {
