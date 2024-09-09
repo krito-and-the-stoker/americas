@@ -13,6 +13,18 @@ Where shall we go?
 
 
 ---dialog---
+[name: unit.goto.coast]
+[image: admiral]
+[backdrop: close]
+
+Where shall we go?
+
+[repeat colonies]
+  [answer action:{.action}] **{.name}** ({.size}) []
+[]
+
+
+---dialog---
 [name: unit.goto.land]
 [image: scout]
 [backdrop: close]

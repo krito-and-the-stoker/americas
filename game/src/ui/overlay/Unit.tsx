@@ -9,7 +9,6 @@ import Storage from 'entity/storage'
 import Tile from 'entity/tile'
 import Unit from 'entity/unit'
 import Colony from 'entity/colony'
-import Building from 'entity/building'
 
 import Commander from 'command/commander'
 import Found from 'command/found'
@@ -44,7 +43,7 @@ const handleGoTo = (unit: UnitEntity) => {
             }
         }))
 
-    if (unit.domain === 'sea') {
+    if (['sea', 'water'].includes(unit.properties.travelType)) {
         Dialog.open('unit.goto.sea', {
             colonies,
             homeport: {
@@ -53,6 +52,10 @@ const handleGoTo = (unit: UnitEntity) => {
                     Commander.scheduleInstead(unit.commander, GoTo.create({ unit, europe: true }))
                 }
             }
+        })
+    } else if (unit.properties.travelType === 'coast') {
+        Dialog.open('unit.goto.coast', {
+            colonies
         })
     } else {
         Dialog.open('unit.goto.land', {

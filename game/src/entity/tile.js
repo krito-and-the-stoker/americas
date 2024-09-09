@@ -437,6 +437,9 @@ const tileMovementCost = (tile, travelType) => {
       return costTable.colony
     }
   }
+  if (tile.domain === 'sea' && tile.coast && costTable.coast) {
+    return costTable.coast
+  }
   if (tile.domain === 'sea' && costTable.ocean) {
     return costTable.ocean
   }
@@ -471,7 +474,7 @@ const unitMovementCost = unit => {
   )
 }
 
-// TODO: this function is deprecated
+// TODO: this function is kind of deprecated... (its complicated)
 const movementCost = (fromCoords, toCoords, unit) => {
   const direction = LA.subtract(toCoords, fromCoords)
   const distance = LA.distanceManhatten(fromCoords, toCoords)
@@ -500,7 +503,7 @@ const movementCost = (fromCoords, toCoords, unit) => {
     return distance * costTable.river
   }
   // change domain with river
-  if (to.river && from.river && isNextTo(from, to) && costTable.river && costTable.ocean) {
+  if (to.river && from.river && isNextTo(from, to) && costTable.river && (costTable.ocean || costTable.coast)) {
     return distance * costTable.river
   }
   if (from.road && to.road && costTable.road) {
@@ -516,6 +519,9 @@ const movementCost = (fromCoords, toCoords, unit) => {
     if (from.domain === 'land' && costTable.colony) {
       return distance * costTable.colony
     }
+  }
+  if (to.domain === 'sea' && to.coast && costTable.coast) {
+    return distance * costTable.coast
   }
   if (to.domain === 'sea' && from.domain === 'sea' && costTable.ocean) {
     return distance * costTable.ocean

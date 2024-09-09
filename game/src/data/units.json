@@ -1,37 +1,10 @@
 {
-	"caravel": {
-		"frame": {
-			"default": 7
-		},
-		"name": {
-			"default": "Caravel"
-		},
-		"domain": "sea",
-		"travelType": "water",
-		"speed": 12,
-		"cargo": 200,
-		"combat": 1,
-		"radius": 1,
-		"canExplore": true,
-		"discoverRange": 2,
-		"construction": {
-			"buildings": {
-				"harbour": 2000
-			},
-			"cost": {
-				"wood": 150,
-				"tools": 50,
-				"cloth": 20
-			}
-		},
-		"equipment": {
-			"wood": 50,
-			"tools": 10,
-			"cloth": 10
-		},
-		"repair": {
-			"harbour": 1
-		}
+	"supplytrack": {
+		"travelType": "supply",
+		"range": 20
+	},
+	"airline": {
+		"travelType": "airline"
 	},
 	"carrack": {
 		"frame": {
@@ -67,79 +40,37 @@
 			"harbour": 1
 		}
 	},
-	"privateer": {
+	"sloop": {
 		"frame": {
-			"default": 8
+			"default": 9
 		},
 		"name": {
-			"default": "Privateer"
+			"default": "Sloop"
 		},
 		"domain": "sea",
-		"travelType": "sea",
-		"speed": 20,
-		"cargo": 250,
-		"combat": 4,
-		"support": 0.5,
-		"radius": 2,
+		"travelType": "coast",
+		"speed": 5,
+		"cargo": 400,
+		"radius": 1,
 		"canExplore": true,
-		"discoverRange": 2,
+		"discoverRange": 1,
 		"construction": {
 			"buildings": {
-				"harbour": 3000
+				"harbour": 1
 			},
 			"cost": {
-				"wood": 150,
-				"tools": 50,
-				"guns": 50,
-				"cloth": 50
+				"wood": 60,
+				"tools": 20,
+				"cloth": 10
 			}
 		},
 		"equipment": {
 			"wood": 50,
-			"tools": 25,
-			"guns": 25,
-			"cloth": 25
+			"tools": 10,
+			"cloth": 10
 		},
 		"repair": {
 			"harbour": 1
-		}
-	},
-	"frigate": {
-		"frame": {
-			"default": 8
-		},
-		"name": {
-			"default": "Frigate"
-		},
-		"domain": "sea",
-		"travelType": "sea",
-		"speed": 15,
-		"cargo": 350,
-		"combat": 10,
-		"support": 1,
-		"radius": 3,
-		"cost": 50,
-		"canExplore": true,
-		"discoverRange": 2,
-		"construction": {
-			"buildings": {
-				"harbour": 3000
-			},
-			"cost": {
-				"wood": 300,
-				"tools": 150,
-				"guns": 100,
-				"cloth": 50
-			}
-		},
-		"equipment": {
-			"wood": 100,
-			"tools": 75,
-			"guns": 50,
-			"cloth": 25
-		},
-		"repair": {
-			"harbour": 3
 		}
 	},
 	"merchantman": {
@@ -609,11 +540,113 @@
 		"discoverRange": 2,
 		"canAttack": true
 	},
-	"supplytrack": {
-		"travelType": "supply",
-		"range": 20
+	"caravel": {
+		"frame": {
+			"default": 7
+		},
+		"name": {
+			"default": "Caravel"
+		},
+		"domain": "sea",
+		"travelType": "water",
+		"speed": 12,
+		"cargo": 200,
+		"combat": 1,
+		"radius": 1,
+		"canExplore": true,
+		"discoverRange": 2,
+		"construction": {
+			"buildings": {
+				"harbour": 2000
+			},
+			"cost": {
+				"wood": 150,
+				"tools": 50,
+				"cloth": 20
+			}
+		},
+		"equipment": {
+			"wood": 50,
+			"tools": 10,
+			"cloth": 10
+		},
+		"repair": {
+			"harbour": 1
+		}
 	},
-	"airline": {
-		"travelType": "airline"
+	"privateer": {
+		"frame": {
+			"default": 8
+		},
+		"name": {
+			"default": "Privateer"
+		},
+		"domain": "sea",
+		"travelType": "sea",
+		"speed": 20,
+		"cargo": 250,
+		"combat": 4,
+		"support": 0.5,
+		"radius": 2,
+		"canExplore": true,
+		"discoverRange": 2,
+		"construction": {
+			"buildings": {
+				"harbour": 3000
+			},
+			"cost": {
+				"wood": 150,
+				"tools": 50,
+				"guns": 50,
+				"cloth": 50
+			}
+		},
+		"equipment": {
+			"wood": 50,
+			"tools": 25,
+			"guns": 25,
+			"cloth": 25
+		},
+		"repair": {
+			"harbour": 1
+		}
+	},
+	"frigate": {
+		"frame": {
+			"default": 8
+		},
+		"name": {
+			"default": "Frigate"
+		},
+		"domain": "sea",
+		"travelType": "sea",
+		"speed": 15,
+		"cargo": 350,
+		"combat": 10,
+		"support": 1,
+		"radius": 3,
+		"cost": 50,
+		"canExplore": true,
+		"discoverRange": 2,
+		"construction": {
+			"buildings": {
+				"harbour": 3000
+			},
+			"cost": {
+				"wood": 300,
+				"tools": 150,
+				"guns": 100,
+				"cloth": 50
+			}
+		},
+		"equipment": {
+			"wood": 100,
+			"tools": 75,
+			"guns": 50,
+			"cloth": 25
+		},
+		"repair": {
+			"harbour": 3
+		}
 	}
 }
