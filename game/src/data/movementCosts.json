@@ -11,8 +11,9 @@
 		"river": 2
 	},
 	"wagon": {
-		"river": 0.5,
-		"road": 0.49,
+		"river": 0.49,
+		"road": 0.5,
+		"halfRoad": 0.5,
 		"colony": 1
 	},
 	"foot": {

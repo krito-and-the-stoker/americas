@@ -18,12 +18,6 @@ const canLoad = ship =>
   ship.commander.state.currentCommand.type === 'load' ||
   ship.commander.state.currentCommand.type === 'unload'
 
-const canLoadTreasure = ship =>
-  (!ship.commander.state.currentCommand ||
-    ship.commander.state.currentCommand.type === 'load' ||
-    ship.commander.state.currentCommand.type === 'unload') &&
-  ship.properties.canTransportTreasure
-
 const inMoveDistance = (coords1, coords2) => LA.distanceManhatten(coords1, coords2) <= 1
 
 export default Factory.commander(

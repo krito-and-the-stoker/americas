@@ -76,6 +76,9 @@ export type UnitEntity = {
         promote?: string[]
         canExplore?: boolean
         discoverRange?: number
+        repair?: {
+            [key: string]: number
+        }
         name: {
             default: string
             [key: string]: string

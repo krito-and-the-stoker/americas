@@ -42,7 +42,7 @@
 		},
 		"domain": "sea",
 		"travelType": "sea",
-		"speed": 12,
+		"speed": 10,
 		"cargo": 200,
 		"combat": 1,
 		"radius": 1,
@@ -151,7 +151,6 @@
 		},
 		"domain": "sea",
 		"travelType": "sea",
-		"canTransportTreasure": true,
 		"speed": 10,
 		"cargo": 600,
 		"radius": 1,
@@ -210,7 +209,7 @@
 			"cloth": 25
 		},
 		"repair": {
-			"harbour": 2
+			"harbour": 1
 		}
 	},
 	"wagontrain": {

@@ -9,6 +9,7 @@ import Storage from 'entity/storage'
 import Tile from 'entity/tile'
 import Unit from 'entity/unit'
 import Colony from 'entity/colony'
+import Building from 'entity/building'
 
 import Commander from 'command/commander'
 import Found from 'command/found'
@@ -163,10 +164,40 @@ function UnitComponent() {
         $.maybe.listen.key('mapCoordinates')
     )
 
-    const supplyColony = $.solid.create(
+    const supplyColonyChain = $.chain(
         unitChain,
         $.maybe.listen.key('mapCoordinates'),
         $.select(coords => coords && Tile.supportingColony(Tile.closest(coords)) as Maybe<ColonyEntity>)
+    )
+    const supplyColonyName = $.solid.create(
+        supplyColonyChain,
+        $.maybe.select(colony => colony.name)
+    )
+
+    const canSupply = $.solid.create(
+        $.combine(
+            unitChain,
+            supplyColonyChain
+        ),
+        $.select(([unit, colony]) => {
+            if (!unit || !colony) {
+                return false
+            }
+
+            if (unit.properties.repair) {
+                return Object.entries(unit.properties.repair)
+                    .every(
+                        ([name, level]) => {
+                            return !!colony.newBuildings.find(
+                                building => building.name === name && building.level >= level
+                            )
+                        }
+                    )
+            }
+
+            return true
+        }),
+        $.select(x => !!x)
     )
 
 
@@ -175,8 +206,8 @@ function UnitComponent() {
     const screen = $.solid.create(Foreground.listen.screen)
     const isVisible = () => !screen() && !!unit()
 
-    const supplyFragment = () => supplyColony()
-        ? <>Supplies from <b>{supplyColony()?.name}</b></>
+    const supplyFragment = () => canSupply()
+        ? <>Supplies from <b>{supplyColonyName()}</b></>
         : <>No external supplies</>
 
     const center = () => { if (coords()) { MapView.centerAt(coords()!, 350) } }

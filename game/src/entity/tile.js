@@ -714,6 +714,8 @@ const description = (tile, owner) => {
       return `${tile.colony.name}`
     } else if (tile.settlement) {
       displayName = `${tile.settlement.tribe.name} village`
+    } else if (tile.rumors) {
+      displayName = 'rumors'
     } else {
       if (tile.domain === 'sea') {
         displayName = 'the sea'
