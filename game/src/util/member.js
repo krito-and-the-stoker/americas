@@ -63,7 +63,7 @@ const unsubscribe = (entity, key, fn) => {
 
   entity[key].forEach(member => {
     if (member[cleanupKey(entity, key)][index]) {
-      member[cleanupKey(entity, key)][index]()
+      Util.execute(member[cleanupKey(entity, key)][index])
     }
     member[cleanupKey(entity, key)] = member[cleanupKey(entity, key)].filter(
       (cleanup, i) => i !== index

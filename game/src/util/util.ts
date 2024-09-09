@@ -66,8 +66,6 @@ const disordered = <T>(array: T[]): T[] => {
 
 const isFunction = (something: any): something is Function => typeof something === 'function'
 
-// const mergeFunctions = funcArray => funcArray.filter(fn => isFunction(fn)).reduce((all, fn) => arg => { all(arg); fn(arg) }, () => {})
-// const mergeFunctionsFlat = funcArray => mergeFunctions(flatten(funcArray))
 const execute = (something: unknown, ...arg: unknown[]): unknown => {
   if (!something) {
     return null
@@ -78,13 +76,11 @@ const execute = (something: unknown, ...arg: unknown[]): unknown => {
   }
 
   if (isArray(something)) {
-    return flatten<Function>(something)
-      .filter(isFunction)
-      .map(fn => fn(...arg))
+    return flatten<unknown>(something)
+      .map(fn => execute(fn, ...arg))
   }
 
   Message.util.warn('unable to execute', something)
-  // throw new Error('unable to execute')
 }
 
 const makeObject = Object.fromEntries
