@@ -1,13 +1,47 @@
 {
 	"caravel": {
 		"frame": {
-			"default": 9
+			"default": 7
 		},
 		"name": {
 			"default": "Caravel"
 		},
 		"domain": "sea",
 		"travelType": "water",
+		"speed": 12,
+		"cargo": 200,
+		"combat": 1,
+		"radius": 1,
+		"canExplore": true,
+		"discoverRange": 2,
+		"construction": {
+			"buildings": {
+				"harbour": 2000
+			},
+			"cost": {
+				"wood": 150,
+				"tools": 50,
+				"cloth": 20
+			}
+		},
+		"equipment": {
+			"wood": 50,
+			"tools": 10,
+			"cloth": 10
+		},
+		"repair": {
+			"harbour": 1
+		}
+	},
+	"carrack": {
+		"frame": {
+			"default": 7
+		},
+		"name": {
+			"default": "Carrack"
+		},
+		"domain": "sea",
+		"travelType": "sea",
 		"speed": 12,
 		"cargo": 200,
 		"combat": 1,
@@ -51,7 +85,7 @@
 		"discoverRange": 2,
 		"construction": {
 			"buildings": {
-				"harbour": 3
+				"harbour": 3000
 			},
 			"cost": {
 				"wood": 150,
@@ -72,7 +106,7 @@
 	},
 	"frigate": {
 		"frame": {
-			"default": 7
+			"default": 8
 		},
 		"name": {
 			"default": "Frigate"
@@ -89,7 +123,7 @@
 		"discoverRange": 2,
 		"construction": {
 			"buildings": {
-				"harbour": 3
+				"harbour": 3000
 			},
 			"cost": {
 				"wood": 300,
@@ -108,20 +142,18 @@
 			"harbour": 3
 		}
 	},
-	"galleon": {
+	"merchantman": {
 		"frame": {
-			"default": 7
+			"default": 52
 		},
 		"name": {
-			"default": "Galleon"
+			"default": "Merchantman"
 		},
 		"domain": "sea",
 		"travelType": "sea",
 		"canTransportTreasure": true,
 		"speed": 10,
-		"cargo": 1000,
-		"combat": 5,
-		"support": 0.5,
+		"cargo": 600,
 		"radius": 1,
 		"cost": 10,
 		"canExplore": true,
@@ -133,32 +165,30 @@
 			"cost": {
 				"wood": 400,
 				"tools": 150,
-				"guns": 50,
 				"cloth": 100
 			}
 		},
 		"equipment": {
 			"wood": 200,
 			"tools": 75,
-			"guns": 25,
 			"cloth": 50			
 		},
 		"repair": {
 			"harbour": 2
 		}
 	},
-	"merchantman": {
+	"galleon": {
 		"frame": {
-			"default": 52
+			"default": 6
 		},
 		"name": {
-			"default": "Merchantman"
+			"default": "Galleon"
 		},
 		"domain": "sea",
 		"travelType": "sea",
-		"speed": 14,
-		"cargo": 400,
-		"combat": 3,
+		"speed": 16,
+		"cargo": 300,
+		"combat": 4,
 		"radius": 1,
 		"canExplore": true,
 		"discoverRange": 2,
@@ -241,7 +271,7 @@
 			"damaged": "Damaged Artillery"
 		},
 		"domain": "land",
-		"travelType": "wagon",
+		"travelType": "foot",
 		"support": 1,
 		"speed": 1,
 		"combat": 1,
@@ -469,7 +499,7 @@
 			"default": "Treasure"
 		},
 		"domain": "land",
-		"travelType": "wagon",
+		"travelType": "foot",
 		"needsFood": false,
 		"canExplore": false,
 		"speed": 1,

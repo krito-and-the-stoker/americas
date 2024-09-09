@@ -304,7 +304,7 @@ const createConstruction = (colony, { building, unit }) => {
   }
 }
 
-const createTerraforming = unit => {
+const createTerraforming = (unit, terraform) => {
   const tile = MapEntity.tile(unit.mapCoordinates)
 
   const circle = new PIXI.Graphics()
@@ -333,6 +333,7 @@ const createTerraforming = unit => {
     name: 'notification.pioneer',
     context: {
       unit,
+      terraform,
       unitName: Unit.name(unit)
     }
   }
@@ -877,7 +878,7 @@ const createType = {
   immigration: params => createImmigration(params.unit),
   america: params => createAmerica(params.unit),
   construction: params => createConstruction(params.colony, params),
-  terraforming: params => createTerraforming(params.unit),
+  terraforming: params => createTerraforming(params.unit, params.terraform),
   rumor: params => createRumor(params.option, params.tile, params.unit),
   born: params => createSettlerBorn(params.colony, params.unit),
   starving: params => createStarving(params.colony),

@@ -91,9 +91,9 @@ const americaLarge = () => {
 
   const pioneer = Unit.create('scout', startCoordinates, Owner.player())
   const soldier = Unit.create('settler', startCoordinates, Owner.player())
-  const caravel = Unit.create('caravel', startCoordinates, Owner.player())
-  Unit.loadUnit(caravel, pioneer)
-  Unit.loadUnit(caravel, soldier)
+  const ship = Unit.create('carrack', startCoordinates, Owner.player())
+  Unit.loadUnit(ship, pioneer)
+  Unit.loadUnit(ship, soldier)
   MapView.centerAt(startCoordinates, 0, {
     x: 0.5,
     y: 0.5,
@@ -101,7 +101,7 @@ const americaLarge = () => {
   MapView.zoomBy(1 / 0.35, null, 0)
   Record.setGlobal('defaultShipArrival', startCoordinates)
 
-  return caravel
+  return ship
 }
 
 const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve))

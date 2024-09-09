@@ -191,11 +191,12 @@ const purchaseOptions = () =>
   [
     // { name: 'Slave', unit: 'slave', price: 500 },
     { name: 'Artillery', unit: 'artillery', price: 1000 },
-    { name: 'Caravel', unit: 'caravel', price: 2500 },
-    { name: 'Merchantman', unit: 'merchantman', price: 5000 },
-    { name: 'Privateer', unit: 'privateer', price: 5000 },
-    { name: 'Galleon', unit: 'galleon', price: 10000 },
-    { name: 'Frigate', unit: 'frigate', price: 15000 },
+    // { name: 'Caravel', unit: 'caravel', price: 2500 },
+    { name: 'Carrack', unit: 'carrack', price: 2500 },
+    { name: 'Galleon', unit: 'galleon', price: 5000 },
+    { name: 'Merchantman', unit: 'merchantman', price: 10000 },
+    // { name: 'Privateer', unit: 'privateer', price: 5000 },
+    // { name: 'Frigate', unit: 'frigate', price: 15000 },
   ]
     .map(option => ({
       ...option,
