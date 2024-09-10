@@ -21,6 +21,7 @@ import Market from 'entity/market'
 // for immigration at the docks of europe
 const INITIAL_CROSSES_NEEDED = 4
 const CROSSES_COST_IMPROVE = 1
+const EUROPE_EXPERT_RATE = 0.5
 
 const basePool = [
   { unit: 'settler', name: 'Petty Criminals', expert: 'criminal' },
@@ -280,7 +281,7 @@ const initialize = () => {
                   .map(colonist => ({
                     unit: 'settler',
                     name: Unit.name(colonist.unit),
-                    expert: colonist.unit.expert,
+                    expert: Math.random() < EUROPE_EXPERT_RATE ? colonist.unit.expert : null,
                   }))
               )
 
