@@ -24,9 +24,9 @@
 		"capacity": 400
 	},
 	"furs": {
-		"low": 50,
+		"low": 55,
 		"high": 60,
-		"consumption": 6,
+		"consumption": 5,
 		"capacity": 100
 	},
 	"wood": {
