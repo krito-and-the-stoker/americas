@@ -200,7 +200,7 @@
 			"damaged": "Damaged Artillery"
 		},
 		"domain": "land",
-		"travelType": "foot",
+		"travelType": "wagon",
 		"support": 1,
 		"speed": 1,
 		"combat": 1,
@@ -428,7 +428,7 @@
 			"default": "Treasure"
 		},
 		"domain": "land",
-		"travelType": "foot",
+		"travelType": "wagon",
 		"needsFood": false,
 		"canExplore": false,
 		"speed": 1,
