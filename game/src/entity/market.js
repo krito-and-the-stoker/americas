@@ -23,7 +23,7 @@ const update = {
 }
 
 const bid = good => market.europe[good].price
-const ask = good => market.europe[good].price + Properties[good].difference
+const ask = good => market.europe[good].price
 
 const buy = ({ good, amount }) => {
   const pricePerGood = ask(good)
@@ -38,12 +38,6 @@ const buy = ({ good, amount }) => {
   Message.europe.log(`bought ${actualAmount} ${good}`)
   market.europe[good].storage -= actualAmount
   return actualAmount
-}
-
-const unbuy = ({ good, amount }) => {
-  const pricePerGood = ask(good)
-  Treasure.gain(amount * pricePerGood)
-  market.europe[good].storage += amount
 }
 
 const sell = ({ good, amount }) => {
@@ -63,12 +57,6 @@ const load = data => {
     return
   }
 
-  // ensure backward compatibility
-  Object.entries(market.europe).forEach(([good, price]) => {
-    if (!price.stability) {
-      price.stability = Properties[good.stability]
-    }
-  })
   unsubscribeMarketPrices()
   unsubscribeMarketPrices = Time.schedule(MarketPrice.create(market.europe))
 }
@@ -89,7 +77,6 @@ const create = () => {
           storage: Properties[good].capacity * Math.random(),
           consumption: Properties[good].consumption,
           capacity: Properties[good].capacity,
-          stability: Properties[good].stability,
         },
       ])
   )
@@ -102,7 +89,6 @@ window.market = create
 
 export default {
   buy,
-  unbuy,
   sell,
   ask,
   bid,

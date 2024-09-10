@@ -10,7 +10,7 @@ export default (unit, pack) => {
       amount: reservedAmount,
     })
     if (boughtAmount < reservedAmount) {
-      Market.unbuy({
+      Market.sell({
         good: pack.good,
         amount: reservedAmount - boughtAmount,
       })
