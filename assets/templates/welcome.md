@@ -5,9 +5,9 @@
 
 Sir,
 
-We crossed the Atlantic Ocean.
-  The new world called *America* lies ahead.
+We have crossed the vast Atlantic Ocean.
+  The fabled new world of *America* now lies before us.
 
-Let us **sail west** and claim Englands fair share of this land!
+Let us **sail westward** and lay claim to England's rightful portion of this land!
 
-[answer action:select] Okay let's go []
+[answer action:select] Aye, proceed! []

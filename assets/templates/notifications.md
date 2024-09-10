@@ -137,13 +137,13 @@ We have secured the treasure worth **{unit.treasure}**[icon: gold] in *{colony.n
 [coordinates: colony.mapCoordinates]
 [backdrop: notified]
 
-You do not seem to have **a galleon** ready for transport. Would you like us to *take care of the transport*? The crown would, of course, take a **fair share** for its efforts.
+We are most pleased to learn of thy discovery of *treasure*. Might we offer to *attend to its conveyance*? The Crown, as is customary, shall claim a **modest portion** for its troubles.
 
 [answer action:transport]
-	Yes, please transport it for us (You keep **{unit.treasure - cost} [icon: gold]**).
+    Indeed, have it transported on our behalf (We will keep **{unit.treasure - cost} [icon: gold]**).
 []
 
-[answer] No thank you, we will transport our valuables *ourself*. []
+[answer] Nay, we shall see to the safekeeping of our riches *ourselves*. []
 
 
 ---dialog---

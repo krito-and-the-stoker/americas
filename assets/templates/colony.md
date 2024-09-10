@@ -39,8 +39,8 @@ What would you like to *construct*?
 [image: settlement.tribe.image]
 [backdrop: close]
 
-We *already use* this land and will appreciate if *you stay clear* of it.
+This land *belongs to us*. We ask you to *stay away*.
 
-[answer] We will **respect** your wishes []
-[answer action:buy] We offer you **500**[icon: gold] as a *compensation*. []
-[answer action:claim] We have rightfully **claimed** this land for the crown of England and will use it. []
+[answer] We shall **honor** thy wishes. []
+[answer action:buy] We offer thee **500**[icon: gold] as *compensation*. []
+[answer action:claim] We have justly **claimed** this land for the Crown of England and shall put it to use. []

@@ -2,9 +2,9 @@
 [name: natives.establish]
 [image: tribe.image]
 
-Hello strange men from the sea.
+Greetings, strangers from the sea.
 
-We are the **{tribe.name}** and live here. We welcome you on our land. Would you like to join our *peace* ceremony?
+We are the **{tribe.name}** and live upon this land. We bid thee welcome. Wilt thou partake in our *peace* ceremony?
 
 [answer action:yes] yes []
 [answer action:no] no []
@@ -15,6 +15,6 @@ We are the **{tribe.name}** and live here. We welcome you on our land. Would you
 [image: tribe.image]
 [coordinates: colony.mapCoordinates]
 
-You have made quite some progress with your village called **{colony.name}**. The *{tribe.name}* want to help you and gift you these **{amount}**[icon: good].
+We see much progress in your village, which ye call **{colony.name}**. The *{tribe.name}* wish to aid you and gift these **{amount}**[icon: good].
 
 [answer action:take] Thank you []

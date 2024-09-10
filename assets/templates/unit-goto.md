@@ -3,7 +3,7 @@
 [image: admiral]
 [backdrop: close]
 
-Where shall we go?
+To where shall we set our course, sir?
 
 [repeat colonies]
   [answer action:{.action}] **{.name}** ({.size}) []
@@ -17,7 +17,7 @@ Where shall we go?
 [image: admiral]
 [backdrop: close]
 
-Where shall we go?
+To where shall we set our course, sir?
 
 [repeat colonies]
   [answer action:{.action}] **{.name}** ({.size}) []
@@ -60,8 +60,8 @@ Where shall we *sail* to?
 [coordinates: unit.mapCoordinates]
 [backdrop: close]
 
-Would you like to set sail for *Europe*?
+Shall we set sail for *Europe*, sir?
 
 [answer action:sail] *Yes*, steady as she goes! []
-[answer] *No*, let as remain here []
+[answer] *Nay*, we shall remain here. []
 
