@@ -1,15 +1,16 @@
-import BuildingData from 'data/buildings'
+import BuildingData from 'data/buildings.json'
 import Triangles from 'data/triangles'
-import Goods from 'data/goods'
+import Goods from 'data/goods.json'
 
 import Util from 'util/util'
 import Record from 'util/record'
-import Message from 'util/message'
-import Events from 'util/events'
 import Binding from 'util/binding'
 
-import Colony from 'entity/colony'
 import Layout from 'entity/layout'
+import { BuildingEntity } from 'view/colony/buildings'
+import { ColonyEntity } from 'entity/colony/types'
+import { ColonistEntity } from 'entity/colonist/types'
+import { CleanupExec, Function1 } from 'signal-chain'
 
 
 export const positions = Util.range(11)
@@ -24,23 +25,23 @@ export const positions = Util.range(11)
   .flat()
   .filter(({ x, y }) => x >= 3 && x <= 8 && y >= 1 && y <= 3 && (x <= 7 || y >= 2))
 
-const save = building => ({
+const save = (building: BuildingEntity) => ({
   ...building,
   colony: Record.reference(building.colony)
 })
 
-const load = building => {
-  Record.dereferenceLazy(building.colony, entity => {
+const load = (building: BuildingEntity) => {
+  Record.dereferenceLazy(building.colony, (entity: ColonyEntity) => {
     building.colony = entity
   })
 
-  Record.entitiesLoaded(() => initialize(building))
+  Record.entitiesLoaded(() => initialize(/* building */))
 
   return building
 }
 
 
-const upgradeCost = building => {
+const upgradeCost = (building: BuildingEntity) => {
   const buildingLevel = building.level
 
   return (
@@ -49,17 +50,15 @@ const upgradeCost = building => {
   )
 }
 
-const workspace = building =>
+const workspace = (building: BuildingEntity) =>
   (BuildingData[building.name].workspace.length
     ? BuildingData[building.name].workspace[building.level]
     : BuildingData[building.name].workspace) || 0
 
-const initialize = building => {
-
-}
+const initialize = () => {}
 
 
-const upgradeDisplay = building => {
+const upgradeDisplay = (building: BuildingEntity) => {
   const level = building ? building.level + 1 : 1
   return (
     BuildingData[building.name].name[level] ||
@@ -67,11 +66,11 @@ const upgradeDisplay = building => {
   )
 }
 
-const isInteractive = building => {
+const isInteractive = (building: BuildingEntity) => {
   return building.name === 'carpenters'
 }
 
-const production = (building, colonist) => {
+const production = (building: BuildingEntity, colonist: ColonistEntity) => {
   const good = BuildingData[building.name].production.good
   let amount = BuildingData[building.name].production.amount[building.level]
   if (!colonist.state.noLuxury && colonist.unit?.expert === Goods[good].expert) {
@@ -81,7 +80,7 @@ const production = (building, colonist) => {
   return { amount, good }
 }
 
-const consumption = building => {
+const consumption = (building: BuildingEntity) => {
   const good = BuildingData[building.name].consumption ? BuildingData[building.name].consumption.good : null
   const factor = BuildingData[building.name]?.consumption?.factor ?? 1
 
@@ -93,43 +92,43 @@ const consumption = building => {
   }
 }
 
-const canEmploy = (building, expert) => {
+const canEmploy = (building: BuildingEntity) => {
   return building.colony.colonists
-    .filter(colonist => colonist.work && colonist.work.building === building)
+    .filter(colonist => colonist.work?.type === 'Building' && colonist.work.building === building)
     .length < workspace(building)
 }
 
 const update = {
-  level: (building, level) => Binding.update(building, 'level', level)
+  level: (building: BuildingEntity, level: number) => Binding.update(building, 'level', level)
 }
 
 const listen = {
-  level: (buliding, fn) => Binding.listen(building, 'level', fn)
+  level: (building: BuildingEntity, fn: Function1<number, CleanupExec>) => Binding.listen(building, 'level', fn)
 }
 
 
-const make = name => {
-  const create = (colony, level = 1) => {
-    const building = {
+const make = (name: string) => {
+  const create = (colony: ColonyEntity, level = 1) => {
+    const building: BuildingEntity = {
       name,
       level,
       colony,
       width: BuildingData[name].width,
       height: 1,
-      triangles: Triangles[name] || Triangles.empty,
+      triangles: (Triangles as any)[name] || Triangles.empty,
       placement: [],
       destroy: null,
     }
 
-    building.placement = [Layout.placeBuilding(colony, building)]
+    building.placement = [Layout.placeBuilding(colony, building)].filter(x => !!x)
 
-    building.destroy = initialize(building)
+    building.destroy = initialize(/* building */)
 
     Record.add('building', building)
     return building
   }
 
-  const display = building => {
+  const display = (building: BuildingEntity) => {
     const level = building?.level ?? 1
     return (
       BuildingData[name].name[level] ||
@@ -160,5 +159,6 @@ const make = name => {
 }
 
 export default {
-  make
+  make,
+  listen
 }

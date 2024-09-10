@@ -1,20 +1,18 @@
 import Triangles from 'data/triangles'
-import BuildingFactory from './factory'
 
-import Time from 'timeline/time'
-
-import Util from 'util/util'
 import Record from 'util/record'
 import Binding from 'util/binding'
 
 import Layout from 'entity/layout'
 import Colony from 'entity/colony'
 
-import Produce from 'task/colony/produce'
+import { ColonyEntity } from 'entity/colony/types'
+import { CleanupExec, Function1 } from 'signal-chain'
+import { BuildingEntity } from 'view/colony/buildings'
 
 
-const create = (colony, level = 1) => {
-	const building = {
+const create = (colony: ColonyEntity, level = 1) => {
+	const building: BuildingEntity = {
 		name: 'house',
 		level,
 		colony,
@@ -22,6 +20,7 @@ const create = (colony, level = 1) => {
 		height: 1,
 		triangles: Triangles.house,
 		placement: [],
+		destroy: null,
 	}
 
 	building.destroy = initialize(building)
@@ -30,21 +29,22 @@ const create = (colony, level = 1) => {
 	return building
 }
 
-const initialize = building => {
+const initialize = (building: BuildingEntity) => {
 	if (!building.colony.name) {
 		console.warn('Skipped dangling building', building, building.colony)
 		return
 	}
 
 	return [
-		listen.level(building, level => {
+		listen.level(building, () => {
 			if (building.placement.length === 0) {
 				const colony = building.colony
+
 				building.placement = [
 					Layout.placeBuilding(colony, building),
 					Layout.placeBuilding(colony, building),
 					Layout.placeBuilding(colony, building),
-				]
+				].filter(x => !!x)
 				Colony.update.newBuildings(colony)
 			}
 
@@ -56,19 +56,18 @@ const initialize = building => {
 	]
 }
 
-const save = building => ({
+const save = (building: BuildingEntity) => ({
 	name: building.name,
 	level: building.level,
 	width: building.width,
 	height: building.height,
 	triangles: building.triangles,
-	colony: building.colony,
 	placement: building.placement,
 	colony: Record.reference(building.colony)
 })
 
-const load = building => {
-	Record.dereferenceLazy(building.colony, entity => {
+const load = (building: BuildingEntity) => {
+	Record.dereferenceLazy(building.colony, (entity: ColonyEntity) => {
 		building.colony = entity
 	})
 
@@ -78,7 +77,7 @@ const load = building => {
 }
 
 const isInteractive = () => false
-const display = building => {
+const display = (building: BuildingEntity) => {
 	if (building?.level === 0) {
 		return 'Camp'
 	}
@@ -97,11 +96,11 @@ const upgradeCost = () => ({
 const workspace = () => 0
 
 const update = {
-	level: (building, value) => Binding.update(building, 'level', value)
+	level: (building: BuildingEntity, value: number) => Binding.update(building, 'level', value)
 }
 
 const listen = {
-	level: (building, fn) => Binding.listen(building, 'level', fn)
+	level: (building: BuildingEntity, fn: Function1<number, CleanupExec>) => Binding.listen(building, 'level', fn)
 }
 
 export default {

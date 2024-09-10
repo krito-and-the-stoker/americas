@@ -26,6 +26,8 @@ export interface BuildingEntity {
   triangles: {
     level: any[]
   }
+  width: number
+  height: number
   destroy: CleanupExec
 }
 

@@ -52,7 +52,6 @@ export const goTo = (unit: UnitEntity, target?: Target) => {
 
 export const updateType = (unit: UnitEntity, name: string) => {
     update.name(unit, name)
-    // @ts-expect-error lookup
     update.properties(unit, UnitData[name])
     update.radius(unit, 0)
 }

@@ -35,11 +35,9 @@ export const profession = $.unique.chain(
                     return 'teacher'
                 }
 
-                // @ts-expect-error impossible to teach typescript this lookup
                 return GoodsData[BuildingData[work.building.name].production.good].expert as string
             }
 
-            // @ts-expect-error lookup
             let currentProfession: string = GoodsData[work.good].expert
             if (currentProfession === 'farmer' && work.tile.domain === 'sea') {
                 currentProfession = 'fisher'
@@ -52,7 +50,6 @@ export const profession = $.unique.chain(
 )
 
 export const professionName = $.unique.chain(
-    // @ts-expect-error lookup
     $.select<string>(profession => UnitsData.settler.name[profession] as string || 'Settler')
 )
 
@@ -65,8 +62,7 @@ export const expert = $.unique.chain(
 
 export const expertName = $.unique.chain(
     expert,
-    // @ts-expect-error lookup
-    $.select(colonist => UnitsData.settler.name[colonist.unit.expert] as string || 'Settler')
+    $.select(expert => (expert && UnitsData.settler.name[expert] as string) || 'Settler')
 )
 
 export const power = $.unique.chain(
@@ -82,10 +78,8 @@ export const power = $.unique.chain(
             mood +
             power +
             (expert === profession ? 1 : 0) +
-            // @ts-expect-error lookup
             (ColonistData[profession] || ColonistData.default).power +
-            // @ts-expect-error lookup
-            (ColonistData[expert] || ColonistData.default).power
+            ((expert && ColonistData[expert]) || ColonistData.default).power
         ), 0)
     })
 )
@@ -219,7 +213,6 @@ type ColonistDescription = {
 }
 
 export const needsForPromotion = $.unique.chain(
-    // @ts-expect-error lookup
     $.select<string, ColonistDescription>(promotionTarget => ColonistData[promotionTarget] || ColonistData.default),
     $.select(description => {
         const luxury = description?.consumption?.luxury

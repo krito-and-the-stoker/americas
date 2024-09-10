@@ -49,15 +49,12 @@ export const at = (coords: Coordinates) =>
     )
 
 export const create = (name: string, coords: Coordinates, owner: OwnerEntity) => {
-  // @ts-expect-error lookup
   if (Units[name]) {
     const unit: UnitEntity = {
       name,
       owner: owner || Owner.player(),
       tile: MapEntity.tile(coords),
-      // @ts-expect-error lookup
       properties: Units[name],
-      // @ts-expect-error lookup
       domain: Units[name].domain,
       mapCoordinates: coords || { x: undefined, y: undefined },
       passengers: [],
@@ -213,7 +210,6 @@ export const initialize = (unit: UnitEntity) => {
       $.effect(([properties, equipment]) => {
         if (properties.promote) {
           const promoteUnitTo = properties.promote.find(name =>
-            // @ts-expect-error lookup
             Object.entries((Units[name].equipment || {}) as StorageEntity).every(
               ([good, amount]) => equipment[good] >= MINIMAL_EQUPIMENT * amount
             )

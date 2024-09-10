@@ -8,7 +8,6 @@ import Building from 'entity/building'
 import { PASSENGER_WEIGHT, TRAVEL_EQUIPMENT, UNIT_FOOD_CAPACITY } from "./constants"
 import { UnitEntity } from "./types"
 import { Coordinates } from 'util/la'
-import { StorageEntity } from 'entity/colonist/types'
 
 type Pack = {
     good: string
@@ -111,8 +110,7 @@ export const speed = (unit: UnitEntity) => {
     result += 1
   }
 
-  // @ts-expect-error lookup
-  const equipment: StorageEntity = TRAVEL_EQUIPMENT[unit.properties.travelType]
+  const equipment = TRAVEL_EQUIPMENT[unit.properties.travelType as keyof typeof TRAVEL_EQUIPMENT]
   if (equipment && unit.properties.equipment) {
     const minimalRelation = Math.min(
       ...Storage.goods(unit.equipment).map(pack =>

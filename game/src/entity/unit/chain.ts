@@ -217,8 +217,7 @@ export const speed = $.unique.chain(
             result += 1
         }
 
-        // @ts-expect-error lookup
-        const equipmentType = TRAVEL_EQUIPMENT[properties.travelType]
+        const equipmentType = TRAVEL_EQUIPMENT[properties.travelType as keyof typeof TRAVEL_EQUIPMENT]
         if (equipmentType && properties.equipment) {
             const minimalRelation = Math.min(
                 ...Storage.goods(equipment).map(pack =>

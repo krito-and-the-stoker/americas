@@ -40,7 +40,7 @@ const flatten = <T>(array: any[]): T[] => {
   return result.some(value => isArray(value)) ? flatten(result) : result
 }
 
-let names = Names
+let names: string[] = Names
 const tag = () => {
   const name = choose(names)
   names = names.filter(n => n !== name)
