@@ -182,9 +182,13 @@ function GoodSummary() {
 			productionSummaryChain, // total amount
 			productionChain, // sum of colonists
 			manufacturingChain, // sum of colonists
-			consumptionChain // sum of colonists
+			consumptionChain, // sum of colonists
+			$.chain(
+				supportChain,
+				$.select(items => items ? Util.sum(items.map(item => -item.goods)) : 0)
+			)
 		),
-		$.select(([summary, production, manufacturing, consumption]) => summary - production + manufacturing + consumption),
+		$.select(([summary, production, manufacturing, consumption, support]) => summary - production + manufacturing + consumption + support),
 		$.select(Math.round),
 	)
 
