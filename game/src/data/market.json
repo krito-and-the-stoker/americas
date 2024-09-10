@@ -57,7 +57,7 @@
 		"low": 30,
 		"high": 40,
 		"consumption": 3,
-		"capacity": 150
+		"capacity": 200
 	},
 	"cigars": {
 		"low": 70,
