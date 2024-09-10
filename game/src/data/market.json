@@ -99,15 +99,15 @@
 	},
 	"tools": {
 		"difference": 0,
-		"low": 10,
-		"high": 15,
+		"low": 20,
+		"high": 20,
 		"consumption": -2,
 		"capacity": 300
 	},
 	"guns": {
 		"difference": 0,
-		"low": 20,
-		"high": 25,
+		"low": 25,
+		"high": 30,
 		"consumption": -1,
 		"capacity": 300
 	}

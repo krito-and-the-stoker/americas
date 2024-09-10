@@ -27,6 +27,7 @@ const goods = trade => Storage.goods(trade)
 
 const TRADE_ROUTE_DISTANCE_CAP = 10 // transport at most at a distance of 10 per speed
 const TRADE_ROUTE_MIN_GOODS = 10 // transport at least that many goods
+const TRADE_ROUTE_MIN_RELATIVE = 0.10 // transport at least that cargo fraction
 const BUY_GOODS_RELATIVE_BUDGET = 0.3 // do not spend more than 30% of the current treasure for automatic trade
 
 const STORAGE_PER_POPULATION = 33
@@ -179,7 +180,7 @@ const match = transport => {
       }
     })
     .filter(route => route.distance < TRADE_ROUTE_DISTANCE_CAP * transport.properties.speed)
-    .filter(route => route.amount >= TRADE_ROUTE_MIN_GOODS)
+    .filter(route => route.amount >= TRADE_ROUTE_MIN_GOODS && route.amount >= TRADE_ROUTE_MIN_RELATIVE * transport.properties.cargo)
 
   if (routes.length === 0) {
     return {}
