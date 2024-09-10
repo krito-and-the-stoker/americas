@@ -49,17 +49,17 @@
 		},
 		"domain": "sea",
 		"travelType": "coast",
-		"speed": 5,
+		"speed": 6,
 		"cargo": 300,
 		"radius": 1,
 		"canExplore": true,
 		"discoverRange": 1,
 		"construction": {
 			"buildings": {
-				"harbour": 1
+				"harbour": 2
 			},
 			"cost": {
-				"wood": 60,
+				"wood": 70,
 				"tools": 20,
 				"cloth": 10
 			}

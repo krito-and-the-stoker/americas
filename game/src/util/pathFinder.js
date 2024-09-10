@@ -260,11 +260,11 @@ const distance = Cache.create({
     const initialCache = {}
     const colonies = Record.getAll('colony')
     colonies.forEach(colony => {
-      const cacheCaravel = Unit.create('caravel', colony.mapCoordinates, colony.owner)
+      const cacheSloop = Unit.create('sloop', colony.mapCoordinates, colony.owner)
       const cacheMerch = Unit.create('merchantman', colony.mapCoordinates, colony.owner)
       const cacheWagon = Unit.create('wagontrain', colony.mapCoordinates, colony.owner)
 
-      warmCache(colony, cacheCaravel, colonies, initialCache)
+      warmCache(colony, cacheSloop, colonies, initialCache)
       warmCache(colony, cacheMerch, colonies, initialCache)
       warmCache(colony, cacheWagon, colonies, initialCache)
     })
