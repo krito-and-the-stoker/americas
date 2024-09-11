@@ -36,7 +36,7 @@ const create = (colony: ColonyEntity, building: BuildingEntity) => {
     if (!rectangle || !placement.position) {
       return null
     }
-    const sprite = Resources.sprite('triangles', { rectangle })
+    const sprite = Resources.sprite(Building.texture(building), { rectangle })
     sprite.x = placement.position.x * Triangles.WIDTH
     sprite.y = placement.position.y * Triangles.HEIGHT
     sprite.hitArea = Triangles.hitArea(placement)

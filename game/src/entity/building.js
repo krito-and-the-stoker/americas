@@ -38,6 +38,7 @@ const isInteractive = building => Buildings[building.name].isInteractive(buildin
 const upgradeDisplay = building => Buildings[building.name].upgradeDisplay(building)
 const upgradeCost = building => Buildings[building.name].upgradeCost(building)
 const canEmploy = (building, expert) => Buildings[building.name]?.canEmploy && Buildings[building.name]?.canEmploy(building, expert)
+const texture = (building) => Buildings[building.name]?.texture ?? 'triangles'
 
 const update = {
   level: (building, value) => Buildings[building.name].update.level(building, value)
@@ -50,6 +51,7 @@ export default {
   disband,
   level,
   canEmploy,
+  texture,
   name: display,
   display,
   upgradeDisplay,
