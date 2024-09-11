@@ -7,8 +7,10 @@ import Click from 'input/click'
 import Hover from 'input/hover'
 
 import Colonist from 'entity/colonist'
+import Colony from 'entity/colony'
 import Building from 'entity/building'
 import Construction from 'entity/construction'
+import Layout from 'entity/layout'
 
 import JoinColony from 'interaction/joinColony'
 
@@ -22,9 +24,25 @@ import type { Placement } from 'view/colony/buildings/triangles'
 import type { ColonyEntity } from 'entity/colony/types'
 import type { BuildingEntity } from '.'
 
-
 import BuildingColonists from './colonists'
+
+
 const create = (colony: ColonyEntity, building: BuildingEntity) => {
+  console.log('reflow fn setup for colony', colony.name)
+  // @ts-ignore
+  window.reflow = () => {
+    colony.newBuildings.forEach(building => {
+      Layout.removeBuilding(colony, building)
+    })
+
+    colony.newBuildings.forEach(building => {
+      building.placement = [Layout.placeBuilding(colony, building)].filter(x => !!x)
+    })
+
+    Colony.update.newBuildings(colony)
+    console.log('reflowed', colony.name)
+  }
+
   const container = {
     building: new PIXI.Container(),
     colonists: new PIXI.Container(),
@@ -36,10 +54,15 @@ const create = (colony: ColonyEntity, building: BuildingEntity) => {
     if (!rectangle || !placement.position) {
       return null
     }
-    const sprite = Resources.sprite(Building.texture(building), { rectangle })
+    const texture = placement.triangle.texture ?? 'triangles'
+    if (texture !== 'triangles') {
+      console.log('found non triangles', placement, building)
+    }
+    const sprite = Resources.sprite(texture, { rectangle })
     sprite.x = placement.position.x * Triangles.WIDTH
     sprite.y = placement.position.y * Triangles.HEIGHT
     sprite.hitArea = Triangles.hitArea(placement)
+    sprite.scale.set(1.0 / Resources.getResolution(texture))
     container.building.addChild(sprite)
 
     const unsubscribeDrag = Drag.makeDragTarget(

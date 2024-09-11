@@ -9,6 +9,7 @@ import $ from 'signal-chain'
 
 import Tile from 'entity/tile'
 import Colony from 'entity/colony'
+import { Placement, TriangleView } from 'view/colony/buildings/triangles'
 
 const SIZE_X = 40
 const SIZE_Y = 40
@@ -175,12 +176,12 @@ const removeBuilding = (colony: ColonyEntity, building: BuildingEntity) => {
 	})
 }
 
-const placeBuilding = (colony: ColonyEntity, building: BuildingEntity) => {
+const placeBuilding = (colony: ColonyEntity, building: BuildingEntity): Placement | undefined => {
 	const landValue = iterate(landValueMap(colony, building)).sort((a, b) => b.shape - a.shape)
 	const triangles = building.triangles.level[building.level]
 
 	for(const entry of landValue) {
-		const fit = Util.disordered(triangles).find((triangle: any) => canPutLayout(colony.layout, triangle.shape, entry.x, entry.y)) as any
+		const fit = Util.disordered(triangles).find((triangle: TriangleView) => canPutLayout(colony.layout, triangle.shape, entry.x, entry.y))
 		if (fit) {
 			putLayout(colony.layout, fit.shape, entry.x, entry.y)
 			return {

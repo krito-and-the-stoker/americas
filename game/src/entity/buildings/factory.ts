@@ -6,7 +6,9 @@ import Util from 'util/util'
 import Record from 'util/record'
 import Binding from 'util/binding'
 
+import Colony from 'entity/colony'
 import Layout from 'entity/layout'
+
 import { BuildingEntity } from 'view/colony/buildings'
 import { ColonyEntity } from 'entity/colony/types'
 import { ColonistEntity } from 'entity/colonist/types'
@@ -35,7 +37,9 @@ const load = (building: BuildingEntity) => {
     building.colony = entity
   })
 
-  Record.entitiesLoaded(() => initialize(/* building */))
+  Record.entitiesLoaded(() => {
+    building.destroy = initialize(building)
+  })
 
   return building
 }
@@ -55,7 +59,25 @@ const workspace = (building: BuildingEntity) =>
     ? BuildingData[building.name].workspace[building.level]
     : BuildingData[building.name].workspace) || 0
 
-const initialize = () => {}
+const initialize = (building: BuildingEntity): CleanupExec => {
+  return [
+    listen.level(building, () => {
+      if (building.placement.length === 0) {
+        const colony = building.colony
+
+        building.placement = [
+          Layout.placeBuilding(colony, building),
+        ].filter(x => !!x)
+        Colony.update.newBuildings(colony)
+      }
+
+      return () => {
+        Layout.removeBuilding(building.colony, building)
+        building.placement = []
+      }
+    })
+  ]
+}
 
 
 const upgradeDisplay = (building: BuildingEntity) => {
@@ -120,9 +142,7 @@ const make = (name: string) => {
       destroy: null,
     }
 
-    building.placement = [Layout.placeBuilding(colony, building)].filter(x => !!x)
-
-    building.destroy = initialize(/* building */)
+    building.destroy = initialize(building)
 
     Record.add('building', building)
     return building
@@ -146,7 +166,6 @@ const make = (name: string) => {
     consumption,
     load,
     save,
-    initialize,
     display,
     upgradeDisplay,
     cost,

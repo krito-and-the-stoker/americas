@@ -1,5 +1,5 @@
 import type { ColonyEntity } from 'entity/colony/types'
-import type { Placement } from 'view/colony/buildings/triangles'
+import type { Placement, TriangleView } from 'view/colony/buildings/triangles'
 import type { CleanupExec } from 'util/types'
 import * as PIXI from 'pixi.js'
 
@@ -24,7 +24,9 @@ export interface BuildingEntity {
   colony: ColonyEntity
   level: number
   triangles: {
-    level: any[]
+    level: {
+      [level: number]: TriangleView[]
+    }
   }
   width: number
   height: number

@@ -12,6 +12,7 @@ const paths = Object.freeze({
   // used for colony display
   colonyBackground: 'images/colony_triangle_pack/colony_background.png',
   triangles: 'images/colony_triangle_pack/first_version_4k.png',
+  prod_compl_church_tabacco_education_cloth_4k: 'images/colony_triangle_pack/prod_compl_church_tabacco_education_cloth_4k.png',
 
   // europe full screen
   europeBackground: 'images/europe/background.jpg',
@@ -36,6 +37,18 @@ const paths = Object.freeze({
 
 const textures = {
   white: PIXI.Texture.WHITE,
+}
+
+const resolution = {
+  prod_compl_church_tabacco_education_cloth_4k: 2.0
+}
+
+const getResolution = name => {
+  if (name in resolution) {
+    return resolution[name]
+  }
+
+  return 1.0
 }
 
 const videos = {
@@ -109,6 +122,9 @@ const loadAll = () => {
       Object.keys(paths).map(async key => {
         const path = paths[key]
         textures[key] = await loadTexture('/' + path)
+        if (key in resolution) {
+          // textures[key].baseTexture.resolution = resolution[key]
+        }
       })
     )
   }
@@ -125,6 +141,7 @@ export default {
   video,
   sprite,
   texture,
+  getResolution,
   rectangle,
   paths,
   numberOfAssets,
