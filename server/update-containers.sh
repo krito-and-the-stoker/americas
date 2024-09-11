@@ -1,5 +1,6 @@
 #!/bin/bash
 
+asset_directory="/mnt/volume_fra1_01/americas-images"
 target_directory="/mnt/volume_fra1_01/live"
 log_file="./docker-build.log"
 
@@ -12,5 +13,7 @@ echo "Build started on: $(date)"
 cp .env.backend $target_directory
 
 cd $target_directory
+
+cp -R $asset_directory/* ./assets/images
 
 ./iterative-build.sh
