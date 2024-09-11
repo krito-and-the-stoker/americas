@@ -37,7 +37,7 @@ const level1 = [{
 }]
 
 const level2 = level1.map(entry => move(entry, 0, 4))
-const level3 = level1.map(entry => move(entry, 0, 6))
+const level3 = level1.map(entry => move(entry, 0, 8))
 
 export default {
 	level: [

@@ -137,9 +137,12 @@ const make = (name: string) => {
       colony,
       width: BuildingData[name].width,
       height: 1,
-      triangles: (Triangles as any)[name] || Triangles.empty,
       placement: [],
       destroy: null,
+
+      get triangles() {
+        return (Triangles as any)[name] || Triangles.empty
+      },
     }
 
     building.destroy = initialize(building)
