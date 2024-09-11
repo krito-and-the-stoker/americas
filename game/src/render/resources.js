@@ -2,50 +2,36 @@ import * as PIXI from 'pixi.js'
 import Message from 'util/message'
 
 const paths = Object.freeze({
+  // icons, units, colonists, resources, etc
   map: 'images/map.png',
-  mapWithMargin: 'images/margin/map.png',
-  // colonyBackground: 'images/colony-screen/background.jpg',
-  colonyBackground: 'images/buildings/colony-background.png',
-  europeBackground: 'images/europe.jpg',
-  undiscovered: 'images/undiscovered.jpg',
-  colonyWoodBackground: 'images/colony-screen/wood-background.jpg',
-  goodsBackground: 'images/goods-background.jpg',
-  triangles: 'images/buildings/main.png',
-  help: 'images/help.jpg',
-  welcome: 'images/welcome.png',
-  ring: 'images/ring.png',
-  coastup: 'images/colony-screen/coast-up.png',
-  coastrightup: 'images/colony-screen/coast-rightup.png',
-  coastright: 'images/colony-screen/coast-right.png',
-  coastrightdown: 'images/colony-screen/coast-rightdown.png',
-  coastdown: 'images/colony-screen/coast-down.png',
-  coastleftdown: 'images/colony-screen/coast-leftdown.png',
-  coastleft: 'images/colony-screen/coast-left.png',
-  coastleftup: 'images/colony-screen/coast-leftup.png',
-  admiral: 'images/dialog-characters/admiral.png',
-  govenor: 'images/dialog-characters/govenor.png',
-  kingJames: 'images/dialog-characters/king-james.png',
-  marshal: 'images/dialog-characters/marshal.png',
-  religion: 'images/dialog-characters/religion.png',
-  scout: 'images/dialog-characters/scout.png',
-  status: 'images/status.png',
-  stockade: 'images/colony-screen/stockade.png',
-  fort: 'images/colony-screen/fort.png',
-  fortress: 'images/colony-screen/fortress.png',
-  native1: 'images/characters-head/native1.png',
-  native2: 'images/characters-head/native2.png',
-  native3: 'images/characters-head/native3.png',
-  native4: 'images/characters-head/native4.png',
-  native5: 'images/characters-head/native5.png',
-  native6: 'images/characters-head/native6.png',
-  native7: 'images/characters-head/native7.png',
-  native8: 'images/characters-head/native8.png',
-  native9: 'images/characters-head/native9.png',
+
+  // map
+  mapWithMargin: 'images/map/tilesWithMargin.png', // used for map background
+  undiscovered: 'images/map/undiscovered.jpg',
+
+  // used for colony display
+  colonyBackground: 'images/colony_triangle_pack/colony_background.png',
+  triangles: 'images/colony_triangle_pack/first_version_4k.png',
+
+  // europe full screen
+  europeBackground: 'images/europe/background.jpg',
+  goodsBackground: 'images/europe/goods-background.jpg',
+
+  // ui elements
+  ring: 'images/ui/ring.png', // ui element used in production selection
+  status: 'images/ui/status.png', // used as button in europe, should be deprecated
+
+  // the help screen is deprecated, but still in the code
+  help: 'images/deprecated/help.jpg',
+
+  // full screen events (should be moved to solid-ui)
   discovery: 'images/fullscreen-events/discovery.jpg',
   firstColony: 'images/fullscreen-events/first-colony.jpg',
   enteringVillage: 'images/fullscreen-events/entering-village.jpg',
   firstFreight: 'images/fullscreen-events/first-freight.jpg',
-  tutorialFrame: 'images/tutorial-frame.png',
+
+  // should be deprecated but still in the code
+  tutorialFrame: 'images/deprecated/tutorial-frame.png',
 })
 
 const textures = {

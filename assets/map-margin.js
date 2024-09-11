@@ -1,6 +1,11 @@
 import gulp from 'gulp'
 import sharp from 'sharp'
 import { Transform } from 'stream'
+import rename from 'gulp-rename' // Import the rename utility
+
+const SRC_FILE = './images/map.png'
+const TARGET_DIR = './images/map/' // Target directory
+const TARGET_FILE_NAME = 'tilesWithMargin.png' // The final file name
 
 const tileSize = 64
 const marginSize = 2
@@ -9,7 +14,6 @@ const columns = 16 // Adjust based on your sprite sheet
 const newTileSize = tileSize + marginSize * 2; // Calculate the new tile size including the margin
 const outputWidth = columns * newTileSize; // Calculate the total width of the output image
 const outputHeight = rows * newTileSize; // Calculate the total height of the output image
-
 
 const calculateTileWithMargin = async (tile) => {
    const left = await tile
@@ -82,7 +86,7 @@ const calculateTileWithMargin = async (tile) => {
 }
 
 export default function () {
-    return gulp.src('./images/map.png')
+    return gulp.src(SRC_FILE)
          .pipe(new Transform({
             objectMode: true,
             async transform(file, _, callback) {
@@ -123,5 +127,6 @@ export default function () {
                 callback(null, file)
             }
         }))
-        .pipe(gulp.dest('./images/margin'))
+        .pipe(rename(TARGET_FILE_NAME)) // Rename the final file
+        .pipe(gulp.dest(TARGET_DIR)) // Output to the target directory
 }

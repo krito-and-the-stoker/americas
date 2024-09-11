@@ -23,7 +23,6 @@ const open = colony => {
 
 const create = colony => {
   const container = new PIXI.Container()
-  // const colonyWoodBackground = new PIXI.extras.TilingSprite(Resources.texture('colonyWoodBackground'), RenderView.getDimensions().x, RenderView.getDimensions().y)
   const colonyWoodBackground = Resources.sprite('white')
   colonyWoodBackground.tint = 0x382f1f
   colonyWoodBackground.alpha = 0.7

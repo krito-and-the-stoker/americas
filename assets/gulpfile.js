@@ -68,7 +68,10 @@ gulp.task('clean', done => {
     done()
 })
 
-gulp.task('build', gulp.series(gulp.parallel(['clean', 'templates', 'sass', 'images'])))
+gulp.task('build', gulp.series([
+    gulp.parallel(['clean', 'templates', 'sass', 'images']),
+    'map-margin'
+]))
 
 gulp.task('watch', () => {
     gulp.watch('scss/**/*.scss', gulp.series('sass'))
