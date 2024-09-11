@@ -1,19 +1,8 @@
 import Version from 'version/version.json'
 import Tracking from 'util/tracking'
 import isMobile from 'is-mobile'
-import Audience from 'intro/audience'
-import Journey from 'intro/journey'
 
 const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve))
-
-const intro = () =>
-  new Promise(async resolve => {
-    await Audience.create()
-    document.querySelector('#intro').classList.add('opaque')
-    await Journey.create()
-    document.querySelector('#intro').classList.remove('opaque')
-    resolve()
-  })
 
 let loadingGameCode = null
 const clickStart = async () => {
@@ -71,8 +60,6 @@ window.addEventListener('load', async () => {
     document.querySelector('.start').addEventListener('click', clickStart)
     document.querySelector('.start').classList.remove('disabled')
 
-    Audience.preload()
-    Journey.preload()
     loadingGameCode = import(/* webpackChunkName: "game" */ './game.js').then(module => {
       game = module.default
       return module.default.preload(clickResume)
