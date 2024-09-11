@@ -55,9 +55,6 @@ const create = (colony: ColonyEntity, building: BuildingEntity) => {
       return null
     }
     const texture = placement.triangle.texture ?? 'triangles'
-    if (texture !== 'triangles') {
-      console.log('found non triangles', placement, building)
-    }
     const sprite = Resources.sprite(texture, { rectangle })
     sprite.x = placement.position.x * Triangles.WIDTH
     sprite.y = placement.position.y * Triangles.HEIGHT

@@ -109,6 +109,8 @@ a {
     margin: auto;
 
     width: 30vw;
+    padding: 15px;
+
     @media (max-width: 1200px) {
         width: 40vw;
     }
@@ -119,7 +121,6 @@ a {
         width: 70vw;
     }
 
-    padding: 15px;
     div.links {
         display: flex;
         justify-content: space-between;

@@ -75,6 +75,11 @@ const initialize = (building: BuildingEntity): CleanupExec => {
         Layout.removeBuilding(building.colony, building)
         building.placement = []
       }
+    }),
+    Colony.listen.constructionTarget(building.colony, (constructionInfo: string) => {
+      if (constructionInfo.endsWith(`${building.referenceId}`)) {
+        // console.log(building.name, 'is under construction for upgrade')
+      }
     })
   ]
 }
