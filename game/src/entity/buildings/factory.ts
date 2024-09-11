@@ -144,15 +144,17 @@ const make = (name: string) => {
       height: 1,
       placement: [],
       destroy: null,
+      referenceId: -1,
 
       get triangles() {
         return (Triangles as any)[name] || Triangles.empty
       },
     }
 
+    Record.add('building', building)
+
     building.destroy = initialize(building)
 
-    Record.add('building', building)
     return building
   }
 
