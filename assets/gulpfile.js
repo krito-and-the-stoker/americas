@@ -70,7 +70,7 @@ gulp.task('clean', done => {
 
 gulp.task('build', gulp.series([
     gulp.parallel(['clean', 'templates', 'sass', 'images']),
-    'map-margin'
+    // 'map-margin'
 ]))
 
 gulp.task('watch', () => {
