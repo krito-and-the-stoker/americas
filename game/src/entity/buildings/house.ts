@@ -21,7 +21,6 @@ const create = (colony: ColonyEntity, level = 1) => {
 		triangles: Triangles.house,
 		placement: [],
 		destroy: null,
-		referenceId: -1,
 	}
 
 	building.destroy = initialize(building)

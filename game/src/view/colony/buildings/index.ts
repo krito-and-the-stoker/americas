@@ -30,7 +30,6 @@ export interface BuildingEntity {
   }
   width: number
   height: number
-  referenceId: number
   destroy: CleanupExec
 }
 
