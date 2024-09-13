@@ -9,12 +9,12 @@ const TILE_SIZE = 64
 const WIDTH = 128
 const HEIGHT = 64
 const OFFSET_X = 0.5 * WIDTH
-const OFFSET_Y = 1.5 * HEIGHT
+const OFFSET_Y = 0.5 * HEIGHT
 const PADDING_X = 64
 const PADDING_Y = 32
 
 const offsets_y: Record<string, number> = {
-  'prod_compl_church_tabacco_education_cloth_4k': 0.5 * HEIGHT,
+  'triangles': 1.5 * HEIGHT
 }
 
 export type TriangleView = {

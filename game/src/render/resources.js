@@ -13,6 +13,7 @@ const paths = Object.freeze({
   colonyBackground: 'images/colony_triangle_pack/colony_background.png',
   triangles: 'images/colony_triangle_pack/first_version_4k.png',
   prod_compl_church_tabacco_education_cloth_4k: 'images/colony_triangle_pack/prod_compl_church_tabacco_education_cloth_4k.png',
+  prod_compl_townhall_carpenter_4k: 'images/colony_triangle_pack/prod_compl_townhall_carpenter_4k.png',
 
   // europe full screen
   europeBackground: 'images/europe/background.jpg',
@@ -40,7 +41,8 @@ const textures = {
 }
 
 const resolution = {
-  prod_compl_church_tabacco_education_cloth_4k: 2.0
+  prod_compl_church_tabacco_education_cloth_4k: 2.0,
+  prod_compl_townhall_carpenter_4k: 2.0,
 }
 
 const getResolution = name => {

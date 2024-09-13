@@ -41,6 +41,8 @@ const load = (building: BuildingEntity) => {
     building.destroy = initialize(building)
   })
 
+  building.triangles = (Triangles as any)[building.name] ?? Triangles.empty
+
   return building
 }
 
@@ -139,10 +141,7 @@ const make = (name: string) => {
       height: 1,
       placement: [],
       destroy: null,
-
-      get triangles() {
-        return (Triangles as any)[name] || Triangles.empty
-      },
+      triangles: (Triangles as any)[name] ?? Triangles.empty,
     }
 
     building.destroy = initialize(building)
