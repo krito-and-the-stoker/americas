@@ -1,14 +1,16 @@
 import empty from './empty'
+import move from './move'
 
 const level0 = empty
 
 const properties = {
+	texture: 'prod_compl_townhall_carpenter_4k'
 }
 
 const level1 = [{
 	position: {
 		x: 0,
-		y: 5,
+		y: 0,
 	},
 	width: 2,
 	height: 1,
@@ -19,7 +21,7 @@ const level1 = [{
 }, {
 	position: {
 		x: 3,
-		y: 5,
+		y: 0,
 	},
 	width: 1,
 	height: 2,
@@ -31,7 +33,7 @@ const level1 = [{
 }, {
 	position: {
 		x: 5,
-		y: 5,
+		y: 0,
 	},
 	width: 2,
 	height: 1,
@@ -42,7 +44,7 @@ const level1 = [{
 }, {
 	position: {
 		x: 8,
-		y: 5,
+		y: 0,
 	},
 	width: 1,
 	height: 2,
@@ -53,11 +55,14 @@ const level1 = [{
 	...properties,
 }]
 
+const level2 = level1.map(entry => move(entry, 0, 6))
+const level3 = level1.map(entry => move(entry, 0, 12))
+
 export default {
 	level: [
 		level0,
 		level1,
-		level1,
-		level1
+		level2,
+		level3
 	]
 }
