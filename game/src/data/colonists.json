@@ -467,7 +467,6 @@
         "housing": 1
       },
       "bonus": {
-        "rum": 1,
         "silver": 1
       }
     },
@@ -493,7 +492,6 @@
       },
       "bonus": {
         "cigars": 1,
-        "rum": 1,
         "housing": 1
       }
     },
