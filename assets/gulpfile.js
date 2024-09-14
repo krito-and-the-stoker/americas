@@ -75,8 +75,8 @@ gulp.task('build', gulp.series([
 
 gulp.task('watch', () => {
     gulp.watch('scss/**/*.scss', gulp.series('sass'))
-    gulp.watch('images/**/*', gulp.series('images'))
-    gulp.watch('templates/**/*', gulp.series('templates'))
+    gulp.watch('images/**/*', { usePolling: true, interval: 1000 }, gulp.series('images'))
+    gulp.watch('templates/**/*', { usePolling: true, interval: 1000 }, gulp.series('templates'))
     // gulp.watch('images/map.png', gulp.series('map-margin'))
 })
 
