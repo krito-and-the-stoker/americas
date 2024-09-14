@@ -25,7 +25,7 @@
 - 1516 Carlos V inherits Castille, Aragon and the Habsburg possessions
 - 1519 Carlos V becomes Holy Roman Emperor
 - 1521 Hernán Cortés (Spain) conquers the Aztec Empire in Mexico
-- 1522 Ferdinand Magellan (Spain) circumvents the world
+- 1522 Ferdinand Magellan (Spain) circumvents the world[[readme]]
 - 1524 Giovanni da Verrazzano (France) North American east cost
 - 1527 Carlos V abdicated and Philipp II becomes king of Spain
 - 1533 Francisco Pizarro (Spain) conquers the Inca Empire in South America.

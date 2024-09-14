@@ -34,6 +34,14 @@ const handleKeydown = e => {
       e.preventDefault()
     }
 
+    if(e.key === 'b') {
+      console.log('TODO: finish the building of currently open city')
+    }
+
+    if (e.key === 'r') {
+      console.log('TODO: reflow the currently open city')
+    }
+
     if (e.key === 'g') {
       Treasure.gain(100)
       e.preventDefault()
