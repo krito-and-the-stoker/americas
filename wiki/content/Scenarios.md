@@ -32,7 +32,7 @@
 - 1542 Francisco Vásquez de Coronado (Spain) exploration of American South West
 - 1542 Spanish crown forbids enslavement of natives
 - 1543 Hernando de Soto (Spain) exploration of the Missisipi River
-- 1568 Dutch protestants rbelling against Spanish rule and trigger 80 years war
+- 1568 Dutch protestants rebelling against Spanish rule and trigger 80 years war
 - 1580 The Iberian Union unites Spain and Portugal under Philipp II of Spain
 - 1588 Spain fails to invade England (Battle of Calais) and loses its naval superiority
 - 1609 Henry Hudson (Netherlands) explores Hudson River
@@ -42,6 +42,7 @@
 - 1640 Portugal gains independence from Spain
 - 1642 until 1651 English civil war
 - 1661 Barbados Slave Codes allowing slavery in the British colonies
+- 1667 until 1668 Devolution war
 - 1672 until 1678 Franco Dutch war
 - 1681 Robert La Salle (France) explores Missispi River
 - 1685 Code Noir legalizing black slaves in new France
