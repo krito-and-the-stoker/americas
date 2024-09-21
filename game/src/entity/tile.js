@@ -738,7 +738,7 @@ const description = (tile, owner) => {
       }
     }
   } else {
-    displayName = 'undiscovered terrain'
+    displayName = 'terra incognita'
   }
 
   const measuringUnit = {
