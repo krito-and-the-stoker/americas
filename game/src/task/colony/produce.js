@@ -11,6 +11,7 @@ import Building from 'entity/building'
 
 const PRODUCTION_BASE_FACTOR = 1.0 / Time.PRODUCTION_BASE_TIME
 const HORSE_PER_1_GROWTH = 50.0
+const MAX_NEW_HORSES_PER_COLONY = 20.0
 
 const create = (colony, good) => {
   if (['housing', 'horses'].includes(good)) {
@@ -23,7 +24,10 @@ const create = (colony, good) => {
         Colony.update.housing(colony, amount * scale)
       }
       if (good === 'horses') {
-        amount = Math.floor(colony.storage.horses / HORSE_PER_1_GROWTH)
+        amount = Math.min(
+          Math.floor(colony.storage.horses / HORSE_PER_1_GROWTH),
+          MAX_NEW_HORSES_PER_COLONY
+        )
         Storage.update(colony.storage, { good, amount: scale * amount })
       }
 
