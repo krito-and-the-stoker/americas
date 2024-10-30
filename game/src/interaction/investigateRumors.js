@@ -1,7 +1,7 @@
 import Record from 'util/record'
 import Events from 'util/events'
 
-import MapEntity from 'entity/map'
+import Tile from 'entity/tile'
 import Unit from 'entity/unit'
 import Treasure from 'entity/treasure'
 import Europe from 'entity/europe'
@@ -87,7 +87,7 @@ export default unit => {
   )
 
   const random = Math.random()
-  const tile = MapEntity.tile(unit.mapCoordinates)
+  const tile = Tile.closest(unit.mapCoordinates)
   const evaluatedOption = {
     name: option.name,
     context: {
