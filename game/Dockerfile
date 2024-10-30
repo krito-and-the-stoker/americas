@@ -20,4 +20,6 @@ RUN mkdir -p /dist
 # Copy the rest of the application code into the container
 COPY . .
 
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 RUN npm run build
