@@ -87,14 +87,18 @@ func (es *EventService) HandleTimeline(w http.ResponseWriter, r *http.Request) {
     	groupByDay,
     	countUsers,
    	})
-    if err != nil {
-        log.Fatal(err) // Or handle the error more gracefully
-    }
+	if err != nil {
+	    log.Println("Error executing aggregation:", err)
+	    http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	    return
+	}
 
     var resultDays []bson.M
-    if err = cursor.All(r.Context(), &resultDays); err != nil {
-        log.Fatal(err) // Or handle the error more gracefully
-    }
+	if err = cursor.All(r.Context(), &resultDays); err != nil {
+	    log.Println("Error fetching aggregation results:", err)
+	    http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	    return
+	}
 
     result := TimelineResult{
         CountByDay:     make(map[string]EventCount),
