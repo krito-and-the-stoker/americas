@@ -15,8 +15,10 @@ const assign = unit => {
 }
 
 const unassign = unit => {
-  const owner = unit.owner
-  created[owner.referenceId] = created[owner.referenceId].filter(u => u !== unit)
+  if (unit?.owner) {
+    const owner = unit.owner
+    created[owner.referenceId] = created[owner.referenceId].filter(u => u !== unit)
+  }
 }
 
 const unassignAll = owner => {
