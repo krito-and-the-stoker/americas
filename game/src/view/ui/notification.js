@@ -121,30 +121,6 @@ const buildingRectangle = (colony, building) => {
   const height = 128
   return new PIXI.Rectangle(x, y, width, height)
 }
-const buildingIcon = (colony, building) => {
-  if (building.name === 'fortifications') {
-    return new PIXI.Container()
-  }
-
-  // TODO: fixme, this is unacceptable
-  const rectangle = buildingRectangle(colony, building)
-  if (!rectangle) {
-    return new PIXI.Container()
-  }
-
-  const sprite = Resources.sprite('buildings', { rectangle })
-  if (rectangle.width === 128) {
-    sprite.scale.set(0.75)
-    sprite.x = -16
-    sprite.y = -16
-  }
-  if (rectangle.width === 256) {
-    sprite.scale.set(0.5)
-    sprite.x = -16
-  }
-
-  return sprite
-}
 
 const combine = (slot1, slot2, slot3) => {
   const container = new PIXI.Container()
@@ -275,7 +251,7 @@ const createAmerica = unit => {
 const createConstruction = (colony, { building, unit }) => {
   const colonyView = colonyIcon(colony)
   const targetView = building
-    ? buildingIcon(colony, building)
+    ? null // TODO: Add building icon
     : Resources.sprite('map', { frame: UnitView.getFrame(unit) })
   const icon = Icon.create('plus')
   const container = combine(colonyView, targetView, icon)
