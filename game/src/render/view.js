@@ -1,6 +1,10 @@
+import Util from 'util/util'
 import Record from 'util/record'
 import Binding from 'util/binding'
 import Events from 'util/events'
+
+import Tile from 'entity/tile'
+import MapEntity from 'entity/map'
 
 import Background from 'render/background'
 import Foreground from 'render/foreground'
@@ -15,7 +19,34 @@ let resizeFunctions = []
 
 const restart = () => {
   AssembleMap.initialize()
-  const { scale, coords } = get()
+  let { scale, coords } = get()
+
+  if (!scale) {
+    console.warn('No map scale found, set to 1')
+    scale = 1
+  }
+
+  if (!coords) {
+    console.warn('No map view coords found, setting reasonable default coordinates')
+    const colony = Record.getAll('colony')[0]
+    if (colony) {
+      coords = {
+        ...colony.mapCoordinates
+      }
+    } else {
+      const unit = Record.getAll('unit')[0]
+      if (unit) {
+        coords = {
+          ...unit.mapCoordinates
+        }
+      } else {
+        coords = Util.choose(
+          MapEntity.get().tiles.filter(Tile.isPossibleStartLocation)
+        ).mapCoordinates
+      }
+    }
+  }
+
   updateScale(scale)
   updateMapCoords(coords)
   Background.restart()

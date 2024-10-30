@@ -57,7 +57,7 @@ export default Factory.commander(
     const init = () => {
       const targetTile = MapEntity.tile(coords)
       if (!targetTile) {
-        console.warn('Could not find target tile', coords)
+        console.warn('MoveTo init: Could not find target tile', coords)
         return false
       }
 
@@ -72,7 +72,7 @@ export default Factory.commander(
     const finished = () => {
       const target = Tile.get(coords)
       if (!target) {
-        console.warn('Could not find target tile', coords)
+        console.warn('MoveTo finished: Could not find target tile', coords)
         return false
       }
 
