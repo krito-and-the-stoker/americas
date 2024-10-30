@@ -89,7 +89,10 @@ export const unloadUnit = (unit: UnitEntity, tile: TileEntity, desiredPassenger?
     if (unit.passengers.length > 0) {
         const passenger = unit.passengers.find(p => p === desiredPassenger) || unit.passengers[0]
         passenger.movement.target = tile
-        remove.passenger(passenger)
+        if (!passenger.vehicle) {
+            console.warn('Fixed inconsistent state: passenger has no vehicle.', passenger)
+        }
+        remove.passenger(unit, passenger)
         update.mapCoordinates(passenger, { ...tile.mapCoordinates })
         update.tile(passenger, tile)
         update.offTheMap(passenger, unit.offTheMap)

@@ -7,7 +7,7 @@ export const add = {
 }
 
 export const remove = {
-  passenger: passenger => Member.remove(passenger.vehicle, 'passengers', passenger),
+  passenger: (unit, passenger) => Member.remove(unit, 'passengers', passenger),
 }
 
 export const computed = {
