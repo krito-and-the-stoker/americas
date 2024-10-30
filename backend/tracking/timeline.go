@@ -121,5 +121,22 @@ func (es *EventService) HandleTimeline(w http.ResponseWriter, r *http.Request) {
 	    result.CountByDay[date] = eventCount
 	}
 
+	// make sure to insert 0 data points if no event exists for a day
+	endDate := time.Now()
+	for i := 0; i < ThirtyDays; i++ {
+	    date := endDate.AddDate(0, 0, -i).Format("2006-01-02")
+
+	    if _, exists := result.CountByDay[date]; !exists {
+	        result.CountByDay[date] = EventCount{
+	            PageView:   0,
+	            NewGame:    0,
+	            ResumeGame: 0,
+	            AutoSave:   0,
+	            Error:      0,
+	            Users:      0,
+	        }
+	    }
+	}
+
     json.NewEncoder(w).Encode(result)
 }
