@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { defineConfig } from 'vite'
 import solid from 'vite-plugin-solid'
 import path from 'path'
@@ -21,5 +20,8 @@ export default defineConfig({
       '/styles': 'http://assets:3000',
       '/templates': 'http://assets:3000',
     },
+  },
+  build: {
+    sourcemap: true, // Enable source maps for easier debugging
   },
 })
