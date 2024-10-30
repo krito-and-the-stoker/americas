@@ -468,10 +468,14 @@ const unitMovementCost = unit => {
     }))
     .filter(({ cost }) => cost < Infinity)
 
-  return (
-    Util.sum(tiles.map(tile => tile.weight * tile.cost)) /
-    Util.sum(tiles.map(tile => tile.weight))
-  )
+  const weight = Util.sum(tiles.map(tile => tile.weight))
+  if (weight > 0) {
+    return Util.sum(tiles.map(tile => tile.weight * tile.cost)) / weight
+  }
+
+  // TODO: This should ideally not happen,
+  // because it means that the unit is surrounded by ininite cost movement tiles
+  return 1
 }
 
 // TODO: this function is kind of deprecated... (its complicated)
