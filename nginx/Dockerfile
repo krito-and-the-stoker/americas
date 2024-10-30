@@ -1,4 +1,4 @@
-FROM nginx:1.25.3-alpine
+FROM nginx:1.25-alpine
 
 # Add Community Repository for Certbot
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/community" >> /etc/apk/repositories

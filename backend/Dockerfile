@@ -1,5 +1,5 @@
 # Start from the official Go image
-FROM golang:1.22.0
+FROM golang:1.23
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -11,7 +11,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 # Install Air for live reloading
-RUN go install github.com/cosmtrek/air@latest
+RUN go install github.com/air-verse/air@latest
 
 # Copy the Air configuration file
 COPY .air.toml ./

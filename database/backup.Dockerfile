@@ -1,5 +1,5 @@
 # Use the same MongoDB image
-FROM mongo:7.0.4
+FROM mongo:7.0
 
 # Install Python and pip
 RUN apt-get update && \
