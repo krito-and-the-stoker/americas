@@ -69,6 +69,7 @@ const createOne = (building: BuildingEntity, colonist: ColonistEntity, container
       unsubscribeProduction = [
         $.connect(
           realProduction.listen,
+          $.select(x => x ?? 0),
           $.effect(amount => {
             const productionSprites = ProductionView.create(
               production.good,

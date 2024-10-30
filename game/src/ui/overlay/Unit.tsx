@@ -84,6 +84,7 @@ type UnitView = {
 
 function UnitComponent() {
     const unitChain = $.chain(
+        $.select<void>(),
         UnitMapView.listen.selectedView,
         $.select((view: UnitView) => view?.unit)
     )
@@ -136,9 +137,7 @@ function UnitComponent() {
     )
     const speed = $.solid.create(
         unitChain,
-        $.type.not.isNothing(
-            speedChain
-        ),
+        $.maybe.chain(speedChain),
         $.select(speed => speed?.toFixed(2) ?? '')
     )
 
@@ -203,8 +202,10 @@ function UnitComponent() {
         $.select(x => !!x)
     )
 
-
-    const treasure = () => unit()?.treasure
+    const treasure = $.solid.create(
+        unitChain,
+        $.select(unit => unit?.treasure)
+    )
 
     const screen = $.solid.create(Foreground.listen.screen)
     const isVisible = () => !screen() && !!unit()
@@ -215,8 +216,21 @@ function UnitComponent() {
 
     const center = () => { if (coords()) { MapView.centerAt(coords()!, 350) } }
 
-    const isPioneering = () => ['cutForest', 'plow', 'road'].includes(command()?.id ?? '')
-    const isTrading = () => command()?.id === 'tradeRoute'
+    const commandChain = $.chain(
+        unitChain,
+        $.maybe.listen.key('command')
+    )
+    const isPioneering = $.solid.create(
+        commandChain,
+        $.maybe.select(command => ['cutForest', 'plow', 'road'].includes(command.id)),
+        $.select(x => !!x)
+    )
+    const isTrading = $.solid.create(
+        commandChain,
+        $.maybe.select(command => command.id === 'tradeRoute'),
+        $.select(x => !!x)
+    )
+
     const isMoving = () => !tile()
 
     const canFoundColony = () =>

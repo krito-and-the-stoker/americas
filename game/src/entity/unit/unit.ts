@@ -295,8 +295,8 @@ export const initialize = (unit: UnitEntity) => {
         if (colony) {
           Colony.update.supportedUnits(colony, [...colony.supportedUnits, unit])
           return [
-            properties.needsFood && Time.schedule(FillFoodStock.create(unit, colony)),
-            properties.equipment && Time.schedule(FillEquipment.create(unit, colony)),
+            properties?.needsFood && Time.schedule(FillFoodStock.create(unit, colony)),
+            properties?.equipment && Time.schedule(FillEquipment.create(unit, colony)),
             () => {
               Colony.update.supportedUnits(colony, colony.supportedUnits.filter(other => other !== unit))
             }
