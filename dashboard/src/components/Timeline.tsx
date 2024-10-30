@@ -62,8 +62,13 @@ function Timeline() {
             return null
         }
 
+        const labels = Object.keys(counts).map(date => {
+            const jsDate = new Date(date);
+            return jsDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+        })
+
         return {
-            labels: Object.keys(counts),
+            labels,
             datasets: [
                 {
                     label: 'Users',
