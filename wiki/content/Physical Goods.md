@@ -26,9 +26,98 @@ These are the physical goods. We also have [[Virtual Goods]]
 - sulfur (tools + sulfur -> guns) (not high priority for me)
 - dye (made from trees in Brazil) (probably not necessary)
 - salt (for meat and fish conservation, probably not necessary)
+- glassware
+- furniture
+- paper
+
+### Production Chains (including new goods)
+Directly harvestable
+- tobacco leaves
+- wood
+- clay
+- stone
+- ore
+- sugarcane
+- cotton
+- silver
+- corn
+- wheat
+- fruits
+
+Production Chains
+- stone -> bricks
+- clay + wood -> bricks
+
+- ore + wood -> iron -> tools / nails / weapons
+- tools -> glassware
+- wood + tools -> furniture
+
+- tobacco leaves -> tobacco -> cigars
+- sugarcane + wood -> sugar (+ molasse -> liquor)
+- fruits / wheat -> liquor
+
+- wool / cotton  -> fabric -> cloths
+- leather / furs + cloths -> coats
+- livestock -> wool
+- livestock -> meat (+ leather)
+- fabric + wood -> paper
+
+- corn -> flour -> staple food
+- wheat -> flour -> staple food
+- meat -> staple food
+- fish -> staple food
+- wheat -> staple food
+- fruit -> staple food
+
+Goods have different levels:
+1. Raw
+2. Durable
+3. Transportable
+Raw goods can only be used locally and will be spilled if not used immediately
+Durable goods can be stored locally, but are too fragile for transport
+Transportable goods are the most versatile.
+
+Raw goods are:
+- tobacco leaves
+- sugarcane
+- wheat
+- corn
+- fruits
+- meat
+- fish
+
+Durable goods are:
+- clay
+- ore
+- stone
+
+Transportable goods are
+- wood
+- cotton
+- wool
+- silver
+- bricks (historically very challenging transport)
+- iron
+- tools
+- nails
+- weapons
+- flour
+- staple food
+- glassware
+- paper
+- furniture
+- wool
+- cotton
+- fabric
+- cloths
+- leather
+- coats
+- molasse
+- sugar
+- liquor
 
 ## Idea
-We want to tell the story, that tools, guns and horses (or animals in general) make a huge technological difference for the settlers. early settlements rely on their availablility and often fail when they run out of stock.
+We want to tell the story, that tools, guns and horses (or animals in general) make a huge technological difference for the settlers. early settlements rely on their availability and often fail when they run out of stock.
 - tools will increase the efficiency of farming, mining, fishing, woodcutting
 - guns will increase the efficiency of hunting
 - horses/livestock will increase the efficiency of farming, mining, hunting and woodcutting
