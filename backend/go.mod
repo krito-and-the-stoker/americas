@@ -1,6 +1,6 @@
 module backend
 
-go 1.22.0
+go 1.23.0
 
 require (
 	github.com/satori/go.uuid v1.2.0
