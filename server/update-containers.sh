@@ -1,6 +1,6 @@
 #!/bin/bash
 
-asset_directory="/root/americas/assets"
+asset_directory="/root/americas/images"
 target_directory="/root/americas/live"
 log_file="./docker-build.log"
 
