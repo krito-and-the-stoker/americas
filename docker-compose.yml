@@ -99,4 +99,4 @@ volumes:
   wiki-dist:
   assets-dist:
   certificates:
-  live-database
+  live-database:
