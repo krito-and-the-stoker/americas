@@ -1,7 +1,7 @@
 #!/bin/bash
 
-asset_directory="/mnt/volume_fra1_01/americas-images"
-target_directory="/mnt/volume_fra1_01/live"
+asset_directory="/root/americas/assets"
+target_directory="/root/americas/live"
 log_file="./docker-build.log"
 
 # Redirect output to the log file

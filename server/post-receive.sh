@@ -1,12 +1,12 @@
 #!/bin/bash
 
-target_directory="/mnt/volume_fra1_01/live"
-log_file="/mnt/volume_fra1_01/git-receive.log"
+target_directory="/root/americas/live"
+log_file="/root/americas/git-receive.log"
 
 while read oldrev newrev refname
 do
     # Check if the received branch is 'live'
-    if [ "$refname" = "refs/heads/live" ]; then
+    if [ "$refname" = "refs/heads/hetzner-live" ]; then
         # Redirect output to the log file
         exec >> "$log_file" 2>&1
 
@@ -14,7 +14,7 @@ do
         rm -rf $target_directory/*
 
         # Copy the content of the 'live' branch to the target directory
-        git --work-tree="$target_directory" checkout -f live -- .
+        git --work-tree="$target_directory" checkout -f hetzner-live -- .
 
         # Update version.json within the target directory
         echo "{\"revision\": \"${newrev}\", \"date\": \"$(date -u)\"}" > "$target_directory/game/src/version/version.json"
