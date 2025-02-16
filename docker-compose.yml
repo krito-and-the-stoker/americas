@@ -50,7 +50,7 @@ services:
     env_file:
       - .env.backend
     volumes:
-      - /root/database/live:/data/db
+      - live-database:/data/db
     command: mongod --quiet --logpath /dev/null
     restart: always
 
@@ -99,3 +99,4 @@ volumes:
   wiki-dist:
   assets-dist:
   certificates:
+  live-database
