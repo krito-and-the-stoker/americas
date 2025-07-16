@@ -9,3 +9,6 @@ certbot renew --webroot -w $WEBROOT_PATH --email $EMAIL --agree-tos --no-eff-ema
 
 # Reload Nginx to apply the renewed certificate (optional, uncomment if needed)
 nginx -s reload
+
+# usage:
+# docker exec live-webserver-1 renew-certificates.sh
